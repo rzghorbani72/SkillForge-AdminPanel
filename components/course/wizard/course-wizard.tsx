@@ -75,15 +75,27 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
     goTo(steps[index + 1]);
   };
 
-  /** The one place the course, its visibility and its access grants are written. */
-  const finish = async () => {
+  /**
+   * Writes the course, its visibility and any staged access grants right now —
+   * used both by the per-step Save button and by the final Finish button, so
+   * a grant made on the access step is never left waiting on a later step.
+   */
+  const saveStep = async () => {
     const previous = form.getValues('published');
     form.setValue('published', isPublic);
     if (!(await course.saveNow())) {
       form.setValue('published', previous);
-      return;
+      return false;
     }
-    await applyAccessSelection(courseId, pendingAccess);
+    if (pendingAccess) {
+      await applyAccessSelection(courseId, pendingAccess);
+      setPendingAccess(null);
+    }
+    return true;
+  };
+
+  const finish = async () => {
+    if (!(await saveStep())) return;
     router.push(`/courses/${courseId}`);
   };
 
@@ -167,26 +179,41 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 {t('common.back')}
               </Button>
 
-              {isLast ? (
-                <Button
-                  type="button"
-                  disabled={isSaving}
-                  onClick={() => void finish()}
-                  className="gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  {t('courses.wizard.saveCourse')}
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={() => void goNext()}
-                  className="gap-2"
-                >
-                  {t('common.next')}
-                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-                </Button>
-              )}
+              <div className="flex items-center gap-3">
+                {!isLast && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isSaving}
+                    onClick={() => void saveStep()}
+                    className="gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    {t('common.save')}
+                  </Button>
+                )}
+
+                {isLast ? (
+                  <Button
+                    type="button"
+                    disabled={isSaving}
+                    onClick={() => void finish()}
+                    className="gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    {t('courses.wizard.saveCourse')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={() => void goNext()}
+                    className="gap-2"
+                  >
+                    {t('common.next')}
+                    <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                  </Button>
+                )}
+              </div>
             </div>
           </form>
         </Form>
