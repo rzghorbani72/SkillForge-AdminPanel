@@ -1154,6 +1154,13 @@ export const ar = {
     lessonCover: 'صورة الغلاف',
     removeVideo: 'حذف الفيديو',
     removeCover: 'حذف صورة الغلاف',
+    videoNeedsSecuring: 'لم يتم تحويل هذا الفيديو إلى النسخة الآمنة بعد.',
+    secureThisVideo: 'تحويل إلى النسخة الآمنة',
+    videoSecuringQueued:
+      'تمت إضافة الفيديو إلى قائمة الانتظار للتحويل الآمن. يستغرق ذلك بضع دقائق.',
+    videoSecuringFailed:
+      'فشل التحويل الآمن لهذا الفيديو. يمكنك المحاولة مرة أخرى.',
+    videoSecuringInProgress: 'جارٍ التحويل إلى النسخة الآمنة…',
     cancelUpload: 'إلغاء',
     uploadVideo: 'رفع فيديو',
     uploadImage: 'رفع صورة',

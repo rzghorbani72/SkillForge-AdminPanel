@@ -6,11 +6,13 @@ import {
   Image as ImageIcon,
   Loader2,
   Mic,
+  ShieldCheck,
   Video,
   X,
   type LucideIcon
 } from 'lucide-react';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 import { useEffect, useRef, useState } from 'react';
 import Link from '@/components/ui/link';
 import { Label } from '@/components/ui/label';
@@ -31,8 +33,19 @@ import { SecureVideoPlayer } from '@/components/media/secure-video-player';
 
 type SlotKey = 'video' | 'audio' | 'document' | 'cover';
 
-/** Shared outer size for every type — prevents layout jump on type change. */
-export const LESSON_MEDIA_SLOT_CLASS = 'h-[14rem] w-full';
+/**
+ * Viewport slots — video, audio and cover. They sit side by side in equal grid
+ * columns, so one shared 16:9 ratio makes them exactly the same size as each
+ * other at every breakpoint, and the video fills its box with no letterbox bars.
+ */
+export const LESSON_MEDIA_SLOT_CLASS = 'aspect-video w-full';
+
+/**
+ * Info slots — the attachment box and the live-class hint. These hold a line of
+ * text, not a picture, and they span a whole row on their own: a 16:9 ratio
+ * there would stretch a one-line label into a huge empty panel.
+ */
+export const LESSON_INFO_SLOT_CLASS = 'h-40 w-full';
 
 function ProgressBar({ value }: { value: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -54,6 +67,8 @@ interface UploadSlotProps {
   uploading: boolean;
   progress: number;
   hint?: string;
+  /** Box size: a 16:9 viewport by default, overridden for info-only slots. */
+  boxClass?: string;
   onSelect: (file: File) => void;
   onCancel?: () => void;
 }
@@ -68,6 +83,7 @@ function UploadSlot({
   uploading,
   progress,
   hint,
+  boxClass = LESSON_MEDIA_SLOT_CLASS,
   onSelect,
   onCancel
 }: UploadSlotProps) {
@@ -87,18 +103,20 @@ function UploadSlot({
 
   const frameClass = cn(
     'flex shrink-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border border-dashed px-3 text-center transition-colors',
-    LESSON_MEDIA_SLOT_CLASS,
+    boxClass,
     toneClass
   );
 
   return (
     <div className="w-full space-y-2">
-      <div className="flex items-center justify-between gap-2">
-        <Label className="text-xs font-medium text-muted-foreground">
+      {/* Fixed height, top-aligned: a one-line hint and a two-line hint must
+          leave the media box at the same Y, or the columns sit out of step. */}
+      <div className="flex min-h-8 items-start justify-between gap-2">
+        <Label className="shrink-0 text-xs font-medium leading-5 text-muted-foreground">
           {label}
         </Label>
         {hint ? (
-          <span className="text-[11px] leading-snug text-muted-foreground">
+          <span className="line-clamp-2 text-end text-[11px] leading-snug text-muted-foreground">
             {hint}
           </span>
         ) : null}
@@ -188,6 +206,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   const { onCoverPicked, onVideoAttached } = useVideoCover();
   const [progress, setProgress] = useState<Record<SlotKey, number>>(ZERO);
   const [uploading, setUploading] = useState<Record<SlotKey, boolean>>(FALSE);
+  const [securing, setSecuring] = useState(false);
   const abortRefs = useRef<Record<SlotKey, AbortController | null>>({
     video: null,
     audio: null,
@@ -293,6 +312,29 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     ? `${getBrowserApiBaseUrl()}/files/preview/${lesson.document_id}`
     : null;
 
+  // Uploads default to secure (PENDING → the cron worker converts them within
+  // a minute). Only a legacy video migrated in as SKIPPED, or one whose
+  // conversion errored out (FAILED), ever needs this manual nudge.
+  const needsSecuring =
+    lesson.video_id &&
+    (lesson.videoHlsStatus === 'SKIPPED' || lesson.videoHlsStatus === 'FAILED');
+
+  async function secureVideo() {
+    if (!lesson.video_id) return;
+    setSecuring(true);
+    try {
+      const result = await apiClient.secureVideo(lesson.video_id);
+      onUpdate({
+        videoHlsStatus: result?.hls_status as LessonDraft['videoHlsStatus']
+      });
+      toast.success(t('courses.videoSecuringQueued'));
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+    } finally {
+      setSecuring(false);
+    }
+  }
+
   return (
     <div className={cn('grid gap-3', showCover && 'md:grid-cols-2')}>
       {showVideo && (
@@ -367,6 +409,30 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                 {uploading.video && (
                   <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-center text-[10px] text-white">
                     {percentLabel(progress.video)}
+                  </div>
+                )}
+                {needsSecuring && !uploading.video && (
+                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-black/70 px-2 py-1.5 text-[11px] text-white">
+                    <span className="truncate">
+                      {securing
+                        ? t('courses.videoSecuringInProgress')
+                        : lesson.videoHlsStatus === 'FAILED'
+                          ? t('courses.videoSecuringFailed')
+                          : t('courses.videoNeedsSecuring')}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={securing}
+                      onClick={secureVideo}
+                      className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 font-medium hover:bg-white/25 disabled:opacity-60"
+                    >
+                      {securing ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <ShieldCheck className="h-3 w-3" />
+                      )}
+                      {t('courses.secureThisVideo')}
+                    </button>
                   </div>
                 )}
                 <button
@@ -553,6 +619,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           uploadLabel={t('courses.uploadDocument')}
           accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
           toneClass={tone}
+          boxClass={LESSON_INFO_SLOT_CLASS}
           uploading={uploading.document && !lesson.documentPreviewName}
           progress={progress.document}
           onCancel={() => abortRefs.current.document?.abort()}
@@ -579,7 +646,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
               <div
                 className={cn(
                   'relative flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border px-3 text-center',
-                  LESSON_MEDIA_SLOT_CLASS,
+                  LESSON_INFO_SLOT_CLASS,
                   tone
                 )}
               >

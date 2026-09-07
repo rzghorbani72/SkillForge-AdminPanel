@@ -2015,6 +2015,13 @@ export const fa = {
       'به عنوان تصویر شاخص این درس نمایش داده می‌شود — تصویر کوچک‌تر سریع‌تر بارگذاری می‌شود',
     removeVideo: 'حذف ویدیو',
     removeCover: 'حذف تصویر پوشش',
+    videoNeedsSecuring: 'این ویدیو هنوز به نسخه امن تبدیل نشده است.',
+    secureThisVideo: 'تبدیل به نسخه امن',
+    videoSecuringQueued:
+      'ویدیو برای تبدیل امن در صف قرار گرفت. چند دقیقه طول می‌کشد.',
+    videoSecuringFailed:
+      'تبدیل امن این ویدیو ناموفق بود. می‌توانید دوباره تلاش کنید.',
+    videoSecuringInProgress: 'در حال تبدیل به نسخه امن…',
     cancelUpload: 'لغو',
     uploadVideo: 'آپلود ویدیو',
     videoUploadSizeLimit: '۷۰۰ مگابایت محدودیت حجم آپلود',

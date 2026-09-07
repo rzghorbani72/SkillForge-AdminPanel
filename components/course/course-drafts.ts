@@ -4,6 +4,7 @@
  */
 
 import { toEnglishDigits } from '@/lib/phone-utils';
+import type { VideoHlsStatus } from '@/types/api';
 
 // ─── Draft types ──────────────────────────────────────────────────────────────
 
@@ -30,6 +31,8 @@ export interface LessonDraft {
   audio_id?: string;
   cover_id?: string;
   document_id?: string;
+  /** Read-only, set from the server response — not sent back on save. */
+  videoHlsStatus?: VideoHlsStatus;
   videoPreviewUrl?: string;
   audioPreviewUrl?: string;
   coverPreviewUrl?: string;

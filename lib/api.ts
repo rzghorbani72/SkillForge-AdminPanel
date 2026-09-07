@@ -3057,6 +3057,15 @@ class ApiClient {
     return response.data;
   }
 
+  /** Re-queues a legacy or failed video for HLS conversion. */
+  async secureVideo(videoId: string) {
+    const response = await this.request<{ hls_status: string }>(
+      `/videos/${videoId}/secure`,
+      { method: 'PATCH' }
+    );
+    return response.data;
+  }
+
   async getAudios() {
     const response = await this.request('/audios');
     const payload = response.data as any;

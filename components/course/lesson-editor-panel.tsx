@@ -23,7 +23,7 @@ import {
   hasTimedMedia,
   isTimedLessonType
 } from './course-drafts';
-import { LessonMedia, LESSON_MEDIA_SLOT_CLASS } from './LessonMedia';
+import { LessonMedia, LESSON_INFO_SLOT_CLASS } from './LessonMedia';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
 import { LessonDurationInfo } from './lesson-duration-info';
 
@@ -124,7 +124,7 @@ export function LessonEditorPanel({
                 <div
                   className={cn(
                     'flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-4 text-center text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
-                    LESSON_MEDIA_SLOT_CLASS
+                    LESSON_INFO_SLOT_CLASS
                   )}
                 >
                   {settingsHref ? (
@@ -150,16 +150,15 @@ export function LessonEditorPanel({
 
           {/* Settings read as one list of "label → value" rows, so they stay
               aligned instead of floating around the player. */}
-          <div className={cn(LESSON_SETTINGS_COLUMN_CLASS, 'space-y-2')}>
-            <Label className="text-xs font-medium text-muted-foreground">
+          {/* Stretches to whatever height the media column takes, so the two
+              columns end level however the 16:9 box resizes. */}
+          <div
+            className={cn(LESSON_SETTINGS_COLUMN_CLASS, 'flex flex-col gap-2')}
+          >
+            <Label className="min-h-8 text-xs font-medium leading-5 text-muted-foreground">
               {t('courses.lessonSectionSettings')}
             </Label>
-            <div
-              className={cn(
-                'flex flex-col divide-y rounded-lg border bg-muted/20 [&>*]:flex-1',
-                LESSON_MEDIA_SLOT_CLASS
-              )}
-            >
+            <div className="flex min-h-0 flex-1 flex-col divide-y rounded-lg border bg-muted/20 [&>*]:flex-1">
               {hasTimedMedia(lesson) && <LessonDurationInfo lesson={lesson} />}
 
               {seasons.length > 0 && (

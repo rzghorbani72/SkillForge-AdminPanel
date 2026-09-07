@@ -2036,6 +2036,14 @@ export const en = {
       'Shown as the thumbnail for this lesson — a smaller image loads faster',
     removeVideo: 'Remove video',
     removeCover: 'Remove cover image',
+    videoNeedsSecuring:
+      'This video has not been converted to the secure format yet.',
+    secureThisVideo: 'Convert to secure format',
+    videoSecuringQueued:
+      'Video queued for secure conversion. This takes a few minutes.',
+    videoSecuringFailed:
+      'Secure conversion failed for this video. You can try again.',
+    videoSecuringInProgress: 'Converting to secure format…',
     cancelUpload: 'Cancel',
     uploadVideo: 'Upload video',
     videoUploadSizeLimit: '700 MB upload size limit',

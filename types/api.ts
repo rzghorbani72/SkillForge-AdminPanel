@@ -561,11 +561,19 @@ export interface Lesson {
 }
 
 // Media Types
+export type VideoHlsStatus =
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'READY'
+  | 'FAILED'
+  | 'SKIPPED';
+
 export interface Video {
   id: number;
   publicUrl: string;
   title: string;
   duration?: number;
+  hls_status?: VideoHlsStatus;
   created_at: string;
   updated_at: string;
 }

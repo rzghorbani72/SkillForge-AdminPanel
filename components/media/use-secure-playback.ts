@@ -85,12 +85,40 @@ export function useSecurePlayback(
         return;
       }
 
-      const hls = new Hls({ enableWorker: true, lowLatencyMode: false });
+      const hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: false,
+        // A lesson segment is several MB, and our students watch on slow mobile
+        // links while the bytes may still be proxied from object storage. The
+        // stock 20s fragment timeout gives up on a connection that is merely
+        // slow rather than broken, which reads to the student as "video failed".
+        manifestLoadingTimeOut: 30_000,
+        levelLoadingTimeOut: 30_000,
+        fragLoadingTimeOut: 120_000,
+        manifestLoadingMaxRetry: 4,
+        levelLoadingMaxRetry: 4,
+        fragLoadingMaxRetry: 6
+      });
       hls.loadSource(next.playlistUrl);
       hls.attachMedia(element);
       hls.on(Hls.Events.MANIFEST_PARSED, () => setStatus('ready'));
+
+      // A fatal network or media error is usually a hiccup, not a dead video.
+      // Try to resume a bounded number of times before giving up, so one lost
+      // segment does not end the lesson.
+      let recoveries = 0;
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (!data.fatal) return;
+        if (recoveries < 2 && data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          recoveries += 1;
+          hls.startLoad();
+          return;
+        }
+        if (recoveries < 2 && data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          recoveries += 1;
+          hls.recoverMediaError();
+          return;
+        }
         setStatus('error');
         logger.error('Media', 'PlayerError', {
           video_id: videoId ?? 'unknown',

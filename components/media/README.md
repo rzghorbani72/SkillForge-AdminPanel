@@ -28,9 +28,11 @@ The protection is a chain, and every link is required:
 
 Screen recording. Nothing in a browser stops it — only hardware DRM
 (Widevine L1 / FairPlay) does, and that needs a licence server we cannot reach
-from Iran. The moving watermark is the honest answer: a leak carries the name and
-phone tail of the account it came from. Never describe this player as
-"impossible to copy".
+from Iran. The watermark is the honest answer: a leak carries the name and
+phone tail of the account it came from. It is pinned to the bottom-right corner,
+which is a deliberate trade — a fixed mark is calmer to watch but easier to crop
+away than one that moves, so it deters casual sharing rather than a determined
+ripper. Never describe this player as "impossible to copy".
 
 ## Data flow
 

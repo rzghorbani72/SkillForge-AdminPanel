@@ -239,6 +239,7 @@ export function useCourseForm(courseId: string) {
           audio_id: l.audio_id,
           cover_id: l.image_id,
           document_id: l.document_id,
+          videoHlsStatus: l.Video?.hls_status,
           videoPreviewUrl:
             l.Video?.publicUrl ??
             (l.video_id ? apiClient.getVideoStreamUrl(l.video_id) : undefined),

@@ -1193,6 +1193,13 @@ export const tr = {
     uploadCoverImage: 'Kapak görseli yükle',
     removeVideo: 'Videoyu kaldır',
     removeCover: 'Kapak görselini kaldır',
+    videoNeedsSecuring: 'Bu video henüz güvenli biçime dönüştürülmedi.',
+    secureThisVideo: 'Güvenli biçime dönüştür',
+    videoSecuringQueued:
+      'Video güvenli dönüştürme için sıraya alındı. Bu birkaç dakika sürer.',
+    videoSecuringFailed:
+      'Bu videonun güvenli dönüştürmesi başarısız oldu. Tekrar deneyebilirsiniz.',
+    videoSecuringInProgress: 'Güvenli biçime dönüştürülüyor…',
     cancelUpload: 'İptal',
     uploadVideo: 'Video yükle',
     uploadImage: 'Görsel yükle',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useSecurePlayback } from './use-secure-playback';
@@ -18,14 +18,12 @@ interface SecureVideoPlayerProps {
   className?: string;
 }
 
-/** How often the watermark jumps, so it cannot be cropped or masked out. */
-const WATERMARK_MOVE_MS = 20_000;
-const WATERMARK_POSITIONS = [
-  'top-6 start-6',
-  'top-6 end-6',
-  'bottom-16 start-6',
-  'bottom-16 end-6'
-] as const;
+/**
+ * The watermark sits in the bottom-right corner, clear of the control bar.
+ * `right`, not `end`: this is placed over the video picture, which does not
+ * mirror in an RTL page the way the interface around it does.
+ */
+const WATERMARK_POSITION = 'bottom-16 right-6';
 
 /**
  * The one video player for protected content.
@@ -35,7 +33,7 @@ const WATERMARK_POSITIONS = [
  * fetches are AES-128 encrypted and the key is a two-minute ticket bound to this
  * viewer, so a copied playlist is dead outside this browser.
  *
- * None of that stops a screen recorder — nothing in a browser does. The moving
+ * None of that stops a screen recorder — nothing in a browser does. The
  * watermark is the answer to that: a leaked recording names the account it came
  * from. See ./README.md.
  */
@@ -52,16 +50,6 @@ export function SecureVideoPlayer({
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const { session, status } = useSecurePlayback(videoId, videoRef);
-  const [markSlot, setMarkSlot] = useState(0);
-
-  useEffect(() => {
-    if (!session?.watermark) return;
-    const timer = setInterval(
-      () => setMarkSlot((slot) => (slot + 1) % WATERMARK_POSITIONS.length),
-      WATERMARK_MOVE_MS
-    );
-    return () => clearInterval(timer);
-  }, [session?.watermark]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -85,8 +73,14 @@ export function SecureVideoPlayer({
   }, [initialPosition, status]);
 
   if (status === 'error') {
+    // Same footprint as the player it replaces, so a failure never resizes the
+    // slot it sits in.
     return (
-      <div className="grid min-h-72 place-items-center rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+      <div
+        className={`grid place-items-center rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-center text-sm text-muted-foreground ${
+          fill ? 'h-full w-full' : 'aspect-video w-full'
+        } ${className ?? ''}`}
+      >
         {t('media.videoPlaybackFailed')}
       </div>
     );
@@ -94,7 +88,7 @@ export function SecureVideoPlayer({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl bg-black ${className ?? ''}`}
+      className={`relative overflow-hidden rounded-l bg-black ${className ?? ''}`}
     >
       <video
         ref={videoRef}
@@ -120,7 +114,7 @@ export function SecureVideoPlayer({
       {session?.watermark ? (
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute select-none rounded-md bg-black/25 px-2 py-1 text-[11px] font-medium text-white/60 transition-all duration-700 ${WATERMARK_POSITIONS[markSlot]}`}
+          className={`pointer-events-none absolute select-none rounded-md bg-black/25 px-2 py-1 text-[11px] font-medium text-white/60 ${WATERMARK_POSITION}`}
         >
           {session.watermark}
         </span>
