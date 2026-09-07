@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { renderMarkdown } from '@/lib/markdown';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { toPersianDigits } from '@/lib/phone-utils';
 import { secondsToDuration } from './course-drafts';
@@ -113,9 +114,14 @@ export function CourseStudentPreview({
               )}
           </div>
 
-          <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground">
-            {course.description}
-          </p>
+          {course.description.trim() && (
+            <div
+              className="prose-description text-sm leading-6 text-muted-foreground"
+              dangerouslySetInnerHTML={{
+                __html: renderMarkdown(course.description)
+              }}
+            />
+          )}
 
           <div className="flex flex-wrap gap-4 border-t pt-4 text-sm text-muted-foreground">
             <span>
