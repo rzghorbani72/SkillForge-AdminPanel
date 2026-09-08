@@ -175,11 +175,18 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
   ]
 };
 
+/**
+ * The server's own bullet list wins — it is generated from the same limits
+ * the plan actually enforces (see Backend/prisma/plans.seed.ts), so it can
+ * never drift from the real GB/teacher/student caps. `PLAN_FEATURE_LIST_FA`
+ * only covers a request the API could not answer (offline, new deploy).
+ */
 export function planFeatureList(
   slug: string,
-  fallback: readonly string[] | null | undefined
+  live: readonly string[] | null | undefined
 ): readonly string[] {
-  return PLAN_FEATURE_LIST_FA[slug] ?? fallback ?? [];
+  if (live && live.length > 0) return live;
+  return PLAN_FEATURE_LIST_FA[slug] ?? [];
 }
 
 export function formatPrice(price: number) {
