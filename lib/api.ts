@@ -249,6 +249,8 @@ class ApiClient {
   private refreshPromise: Promise<boolean> | null = null;
   /** Blocks new fetches after the first auth/consent failure to avoid throttle storms. */
   private pauseReason: ApiPauseReason | null = null;
+  /** Shared in-flight /auth/me so parallel mounts ask the session question once. */
+  private currentUserRequest: Promise<UserType | null> | null = null;
 
   /** Resolve base URL per request so language switches apply immediately. */
   private get baseURL(): string {
@@ -534,8 +536,14 @@ class ApiClient {
           }
         }
 
-        // For auth endpoints, let the caller handle the message (avoid extra redirect/toast)
-        if (isAuthEndpoint) {
+        // For auth endpoints, let the caller handle the message (avoid extra redirect/toast).
+        // Same on an auth page: a visitor there is already logging in, so "please log
+        // in again" toasts, a redirect to /login and the session pause are all noise.
+        const onAuthPage =
+          typeof window !== 'undefined' &&
+          isAuthPagePath(window.location.pathname);
+
+        if (isAuthEndpoint || onAuthPage) {
           throw new ApiResponseError(parseApiError(response.status, data));
         }
 
@@ -4062,9 +4070,19 @@ class ApiClient {
     const response = await this.request(`/payments/transactions/${id}`);
     return response.data || null;
   }
+  /**
+   * Several providers/pages ask "who am I?" on the same mount; they share one
+   * in-flight request instead of firing /auth/me (and its refresh retry) N times.
+   */
   async getCurrentUser(): Promise<UserType | null> {
-    const response = await this.request('/auth/me');
-    return (response.data as UserType) || null;
+    if (!this.currentUserRequest) {
+      this.currentUserRequest = this.request('/auth/me')
+        .then((response) => (response.data as UserType) || null)
+        .finally(() => {
+          this.currentUserRequest = null;
+        });
+    }
+    return this.currentUserRequest;
   }
 
   // Enrollments endpoints

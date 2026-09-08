@@ -1,7 +1,7 @@
 import { ApiResponseError } from './api-error';
 
 /**
- * Next buffers the whole request body before middleware runs, and its default
+ * Next buffers the whole request body before the request proxy runs, and its default
  * cap is 10MB: a bigger upload is truncated, the backend then reads a broken
  * multipart body and answers 500. We stop it in the browser instead, keeping
  * headroom for the multipart envelope itself.

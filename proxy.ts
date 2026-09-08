@@ -170,7 +170,7 @@ async function handlePageAuth(request: NextRequest): Promise<NextResponse> {
   return response;
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const blocked =
     enforceTrustedHost(request) ??
     enforceApiRateLimit(request) ??

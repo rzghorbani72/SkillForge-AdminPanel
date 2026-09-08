@@ -3,11 +3,12 @@ import { isPlatformStaff } from './roles';
 /**
  * One source of truth for "what role is this session" and "where may that role go".
  *
- * The login hooks and `middleware.ts` both import this. When they each kept their
- * own answer they disagreed, and the login page sent users to routes the middleware
+ * The login hooks and `proxy.ts` both import this. When they each kept their
+ * own answer they disagreed, and the login page sent users to routes the proxy
  * then bounced — which is how a successful login ended back on /login.
  *
- * Must stay dependency-free: middleware runs in the edge runtime (no window, no Node APIs).
+ * Must stay dependency-free: the request proxy runs before the app and must not
+ * import browser-only or app-only modules.
  */
 
 /**
@@ -47,7 +48,7 @@ type SessionShape = {
  * The authoritative role of a login response or JWT payload.
  *
  * `roles[0]` is what the backend put into the JWT, so it is the only value that can
- * agree with the middleware. `currentProfile.Role.name` is a fallback because platform
+ * agree with the proxy. `currentProfile.Role.name` is a fallback because platform
  * staff sessions carry an AdminProfile, which has no Role relation at all.
  */
 export function resolveSessionRole(session: unknown): string | null {

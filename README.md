@@ -145,7 +145,7 @@ SkillForge-AdminPanel/
 │   └── validations.ts           # Form validations
 ├── types/                       # TypeScript types
 │   └── api.ts                   # API response types
-├── middleware.ts                # Next.js middleware
+├── proxy.ts                     # Next.js request proxy (auth, host, CSRF)
 └── README.md                    # Project documentation
 ```
 

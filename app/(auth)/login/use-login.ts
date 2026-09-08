@@ -31,7 +31,7 @@ import {
 type Academy = { id: string; name: string; slug: string };
 
 type LoginResponse = {
-  /** The role the backend put in the JWT — the only one middleware agrees with. */
+  /** The role the backend put in the JWT — the only one the request proxy agrees with. */
   roles?: string[];
   currentProfile?: { Role?: { name?: string }; academy_id?: string };
   currentAcademy?: unknown;

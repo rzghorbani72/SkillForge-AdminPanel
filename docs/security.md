@@ -4,12 +4,12 @@ Hardening for SSRF, CSRF, host abuse, and Next.js server resource limits.
 
 ## Layers
 
-| Layer       | File                   | What it does                                                                                |
-| ----------- | ---------------------- | ------------------------------------------------------------------------------------------- |
-| Next config | `next.config.ts`       | CSP, HSTS, rewrite target allowlist, image host allowlist, server action origin/body limits |
-| Middleware  | `middleware.ts`        | Host allowlist, API rate limits, origin CSRF for `/api/*`, page auth                        |
-| SSRF guards | `lib/security/ssrf.ts` | Backend URL/path validation for server-side `fetch`                                         |
-| API proxy   | `lib/api-proxy.ts`     | Proxies only to trusted backend paths                                                       |
+| Layer         | File                   | What it does                                                                                |
+| ------------- | ---------------------- | ------------------------------------------------------------------------------------------- |
+| Next config   | `next.config.ts`       | CSP, HSTS, rewrite target allowlist, image host allowlist, server action origin/body limits |
+| Request proxy | `proxy.ts`             | Host allowlist, API rate limits, origin CSRF for `/api/*`, page auth                        |
+| SSRF guards   | `lib/security/ssrf.ts` | Backend URL/path validation for server-side `fetch`                                         |
+| API proxy     | `lib/api-proxy.ts`     | Proxies only to trusted backend paths                                                       |
 
 ## Environment overrides
 

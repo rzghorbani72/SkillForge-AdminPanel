@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLogin } from './use-login';
 import { IdentifyStep } from '@/components/auth/identify-step';
@@ -25,14 +25,16 @@ export default function LoginPage() {
   // an already-authenticated visitor sees the login form for a moment (and can
   // start typing) before the check resolves and sends them to their dashboard.
   const [checkingSession, setCheckingSession] = useState(true);
+  // One probe per visit: re-renders (and StrictMode's remount) must not re-ask.
+  const probedRef = useRef(false);
 
   useEffect(() => {
-    let cancelled = false;
+    if (probedRef.current) return;
+    probedRef.current = true;
 
     apiClient
       .getCurrentUser()
       .then((user) => {
-        if (cancelled) return;
         const home = homeRouteFor(resolveSessionRole(user));
         if (home) {
           router.replace(home);
@@ -40,13 +42,7 @@ export default function LoginPage() {
         }
         setCheckingSession(false);
       })
-      .catch(() => {
-        if (!cancelled) setCheckingSession(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+      .catch(() => setCheckingSession(false));
   }, [router]);
 
   if (checkingSession) {
