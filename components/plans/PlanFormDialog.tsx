@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -52,6 +53,14 @@ export function PlanFormDialog({
             {editingPlan
               ? MESSAGES.planForm.editPlanDesc
               : MESSAGES.planForm.createPlanDesc}
+            <span className="mt-2 block text-xs">
+              <Link
+                href="/platform/pricing"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                {t('pricing.platform.editLimitsLink')}
+              </Link>
+            </span>
           </DialogDescription>
         </DialogHeader>
 

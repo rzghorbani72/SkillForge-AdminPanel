@@ -1218,7 +1218,7 @@ export const en = {
       lessons_per_course: 'Lessons per course',
       tutoring_students: 'Tutoring students',
       storage_gb: 'Storage (GB)',
-      live_classes_per_month: 'Live classes per month',
+      dedicated_templates: 'Dedicated site templates',
       videos: 'Videos'
     },
     cards: {
@@ -5123,8 +5123,11 @@ export const en = {
         lessonsPerCourse: 'Lessons per course',
         tutoringStudents: 'Tutoring students',
         storageGb: 'Storage (GB)',
-        liveClassesPerMonth: 'Live classes / month',
+        dedicatedTemplates: 'Dedicated site templates',
         videos: 'Videos',
+        marginOverride: 'Override margin check (requires note)',
+        marginOverrideHint:
+          'For intentional loss-leader enterprise deals only. A note is required.',
         featuresLabel: 'Features (one per line)',
         featuresPlaceholder: 'e.g. Dedicated support',
         priceMonthlyLabel: 'Monthly price (Toman)',
@@ -6836,8 +6839,18 @@ export const en = {
         lessons_per_course: 'Lessons / course',
         tutoring_students: 'Private tutoring students',
         storage_gb: 'Storage (GB)',
-        live_classes_per_month: 'Live classes / month',
-        videos: 'Videos'
+        videos: 'Videos',
+        dedicated_templates: 'Dedicated site templates'
+      },
+      marginOk: 'Gross margin {{margin}}% — within target (≥70%)',
+      marginLow: 'Gross margin {{margin}}% — below 70% minimum',
+      marginDetail: 'COGS {{cogs}}% — largest cost: {{driver}}',
+      costDriver: {
+        storage: 'storage',
+        egress: 'bandwidth',
+        compute: 'compute',
+        sms: 'SMS',
+        gateway: 'payment gateway'
       }
     },
     platform: {
@@ -6857,6 +6870,7 @@ export const en = {
       planUpdated: 'Plan updated',
       planDeleted: 'Plan deleted',
       deletePlanFailed: 'Failed to delete plan',
+      editLimitsLink: 'Edit plan limits and margin on Platform Pricing',
       financialRates: 'Financial Rates',
       financialRatesDesc:
         'These rates apply to all payment settlements and financial reports. Enter values as percentages (e.g. 9 = 9%).',

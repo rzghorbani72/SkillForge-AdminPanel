@@ -749,7 +749,7 @@ export const ar = {
       lessons_per_course: 'دروس لكل دورة',
       tutoring_students: 'طلاب الدروس الخصوصية',
       storage_gb: 'التخزين (غيغابايت)',
-      live_classes_per_month: 'حصص مباشرة شهريًا',
+      dedicated_templates: 'قوالب موقع مخصصة',
       videos: 'مقاطع الفيديو'
     },
     cards: {
@@ -2695,7 +2695,7 @@ export const ar = {
         lessonsPerCourse: 'الدروس لكل دورة',
         tutoringStudents: 'طلاب التدريس الخصوصي',
         storageGb: 'مساحة التخزين (جيجابايت)',
-        liveClassesPerMonth: 'الحصص المباشرة شهريًا',
+        dedicatedTemplates: 'قوالب موقع مخصصة',
         videos: 'الفيديوهات',
         featuresLabel: 'الميزات (سطر لكل ميزة)',
         featuresPlaceholder: 'مثال: دعم مخصص',

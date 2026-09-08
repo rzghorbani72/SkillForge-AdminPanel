@@ -55,8 +55,8 @@ export type PlanLimitKey =
   | 'lessons_per_course'
   | 'tutoring_students'
   | 'storage_gb'
-  | 'live_classes_per_month'
-  | 'videos';
+  | 'videos'
+  | 'dedicated_templates';
 
 export interface PlanLimitUsage {
   key: PlanLimitKey;

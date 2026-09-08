@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2, Save, Trash2, Building2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
@@ -19,6 +20,7 @@ import {
 } from '@/components/ui/dialog';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { PlanMarginPreviewCard } from '@/components/platform/pricing/plan-margin-preview-card';
 import {
   AcademyCustomPlanFormData,
   DEFAULT_CUSTOM_PLAN_FORM,
@@ -41,8 +43,8 @@ const LIMIT_FIELDS: Array<{
   { key: 'lessons_per_course', labelKey: 'lessonsPerCourse' },
   { key: 'tutoring_students', labelKey: 'tutoringStudents' },
   { key: 'storage_gb', labelKey: 'storageGb' },
-  { key: 'live_classes_per_month', labelKey: 'liveClassesPerMonth' },
-  { key: 'videos', labelKey: 'videos' }
+  { key: 'videos', labelKey: 'videos' },
+  { key: 'dedicated_templates', labelKey: 'dedicatedTemplates' }
 ];
 
 export function AcademyCustomPlanCard({ academyId, t }: Props) {
@@ -85,7 +87,8 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
           data?.custom_plan_price_yearly != null
             ? String(data.custom_plan_price_yearly)
             : '',
-        note: data?.custom_plan_note ?? ''
+        note: data?.custom_plan_note ?? '',
+        margin_override: false
       });
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -102,16 +105,26 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
     setForm((f) => ({ ...f, limits: { ...f.limits, [key]: value } }));
   }
 
+  const parsedLimits = useMemo(
+    () =>
+      LIMIT_FIELDS.reduce(
+        (acc, { key }) => ({
+          ...acc,
+          [key]: Number(form.limits[key]) || 0
+        }),
+        {} as StructuredPlanLimits
+      ),
+    [form.limits]
+  );
+
+  const revenueToman = Number(form.price_monthly_toman) || 0;
+
   async function handleSave() {
     try {
       setIsSaving(true);
-      const limits = LIMIT_FIELDS.reduce(
-        (acc, { key }) => ({ ...acc, [key]: Number(form.limits[key]) || 0 }),
-        {} as StructuredPlanLimits
-      );
       await apiClient.setAcademyCustomPlan(academyId, {
         name: form.name.trim(),
-        limits,
+        limits: parsedLimits,
         features: form.features
           .split('\n')
           .map((f) => f.trim())
@@ -122,7 +135,8 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
         price_yearly_toman: form.price_yearly_toman
           ? Number(form.price_yearly_toman)
           : undefined,
-        note: form.note.trim() || undefined
+        note: form.note.trim() || undefined,
+        margin_override: form.margin_override || undefined
       });
       toast.success(t('platform.stores.customPlan.saveSuccess'));
       await load();
@@ -213,6 +227,13 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
           </div>
         </div>
 
+        {revenueToman > 0 && (
+          <PlanMarginPreviewCard
+            revenueToman={revenueToman}
+            limits={parsedLimits}
+          />
+        )}
+
         <div className="space-y-1.5">
           <Label>{t('platform.stores.customPlan.featuresLabel')}</Label>
           <Textarea
@@ -258,6 +279,23 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
             rows={3}
           />
         </div>
+
+        <label className="flex items-start gap-3 rounded-xl border p-3">
+          <Switch
+            checked={form.margin_override}
+            onCheckedChange={(v) =>
+              setForm((f) => ({ ...f, margin_override: v }))
+            }
+          />
+          <div>
+            <p className="text-sm font-medium">
+              {t('platform.stores.customPlan.marginOverride')}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t('platform.stores.customPlan.marginOverrideHint')}
+            </p>
+          </div>
+        </label>
 
         <div className="flex items-center justify-between border-t pt-4">
           {isEnabled ? (

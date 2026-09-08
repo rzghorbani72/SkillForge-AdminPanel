@@ -7,7 +7,8 @@ import { Switch } from '@/components/ui/switch';
 import { PriceInput } from '@/components/ui/price-input';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { StructuredPlanLimits } from '@/lib/api';
-import { PLAN_LIMIT_KEYS } from './pricing-helpers';
+import { PLAN_LIMIT_KEYS, planRevenueForMargin } from './pricing-helpers';
+import { PlanMarginPreviewCard } from './plan-margin-preview-card';
 
 export type PlanFormState = {
   name: string;
@@ -148,6 +149,14 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
           ))}
         </div>
       </div>
+
+      <PlanMarginPreviewCard
+        revenueToman={planRevenueForMargin(
+          form.slug,
+          Number(form.price_monthly_toman) || 0
+        )}
+        limits={form.limits}
+      />
 
       <div className="space-y-1">
         <Label className="text-xs">{t('pricing.planLimits.features')}</Label>

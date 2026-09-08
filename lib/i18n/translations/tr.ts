@@ -766,7 +766,7 @@ export const tr = {
       lessons_per_course: 'Kurs başına ders',
       tutoring_students: 'Özel ders öğrencileri',
       storage_gb: 'Depolama (GB)',
-      live_classes_per_month: 'Aylık canlı ders',
+      dedicated_templates: 'Özel site şablonları',
       videos: 'Videolar'
     },
     cards: {
@@ -2770,7 +2770,7 @@ export const tr = {
         lessonsPerCourse: 'Kurs başına ders',
         tutoringStudents: 'Özel ders öğrencileri',
         storageGb: 'Depolama (GB)',
-        liveClassesPerMonth: 'Aylık canlı ders',
+        dedicatedTemplates: 'Özel site şablonları',
         videos: 'Videolar',
         featuresLabel: 'Özellikler (satır başına bir tane)',
         featuresPlaceholder: 'ör. Özel destek',

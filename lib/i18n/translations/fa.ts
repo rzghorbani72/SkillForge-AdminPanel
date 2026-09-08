@@ -1202,7 +1202,7 @@ export const fa = {
       lessons_per_course: 'درس در هر دوره',
       tutoring_students: 'دانشجوی کلاس خصوصی',
       storage_gb: 'فضای ذخیره‌سازی (گیگابایت)',
-      live_classes_per_month: 'کلاس زنده در ماه',
+      dedicated_templates: 'قالب سایت اختصاصی',
       videos: 'ویدیو'
     },
     cards: {
@@ -5105,8 +5105,11 @@ export const fa = {
         lessonsPerCourse: 'جلسه به‌ازای هر دوره',
         tutoringStudents: 'دانشجویان تدریس خصوصی',
         storageGb: 'فضای ذخیره‌سازی (گیگابایت)',
-        liveClassesPerMonth: 'کلاس آنلاین در ماه',
+        dedicatedTemplates: 'قالب سایت اختصاصی',
         videos: 'ویدیو',
+        marginOverride: 'نادیده گرفتن بررسی حاشیه سود (نیاز به یادداشت)',
+        marginOverrideHint:
+          'فقط برای معاملات سازمانی عمدی. یادداشت الزامی است.',
         featuresLabel: 'امکانات (هر خط یک مورد)',
         featuresPlaceholder: 'مثلاً: پشتیبانی اختصاصی',
         priceMonthlyLabel: 'قیمت ماهانه (تومان)',
@@ -6811,8 +6814,18 @@ export const fa = {
         lessons_per_course: 'درس / دوره',
         tutoring_students: 'دانشجوی تدریس خصوصی',
         storage_gb: 'فضا (GB)',
-        live_classes_per_month: 'کلاس آنلاین (زنده) / ماه',
-        videos: 'ویدیوها'
+        videos: 'ویدیوها',
+        dedicated_templates: 'قالب سایت اختصاصی'
+      },
+      marginOk: 'حاشیه سود {{margin}}٪ — در محدوده هدف (≥۷۰٪)',
+      marginLow: 'حاشیه سود {{margin}}٪ — کمتر از حداقل ۷۰٪',
+      marginDetail: 'هزینه COGS {{cogs}}٪ — بیشترین هزینه: {{driver}}',
+      costDriver: {
+        storage: 'فضا',
+        egress: 'پهنای باند',
+        compute: 'پردازش',
+        sms: 'پیامک',
+        gateway: 'درگاه پرداخت'
       }
     },
     platform: {
@@ -6832,6 +6845,7 @@ export const fa = {
       planUpdated: 'پلن به‌روزرسانی شد',
       planDeleted: 'پلن حذف شد',
       deletePlanFailed: 'حذف پلن ناموفق بود',
+      editLimitsLink: 'ویرایش محدودیت‌ها و حاشیه سود در قیمت‌گذاری پلتفرم',
       financialRates: 'نرخ‌های مالی',
       financialRatesDesc:
         'این نرخ‌ها روی همه تسویه‌ها و گزارش‌های مالی اعمال می‌شوند. مقادیر را به درصد وارد کنید (مثلاً ۹ = ۹٪).',

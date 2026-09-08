@@ -6473,6 +6473,23 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
+  async previewPlanEconomics(payload: {
+    revenue_toman: number;
+    limits: StructuredPlanLimits;
+  }): Promise<PlanEconomicsPreview> {
+    const res = await this.request<{
+      data?: PlanEconomicsPreview;
+    }>('/platform-settings/plans/economics-preview', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    const body = res.data;
+    return (
+      (body as { data?: PlanEconomicsPreview })?.data ??
+      (body as PlanEconomicsPreview)
+    );
+  }
+
   async deleteSubscriptionPlan(id: string) {
     const res = await this.request(`/platform-settings/plans/${id}`, {
       method: 'DELETE'
@@ -6613,6 +6630,7 @@ class ApiClient {
       price_monthly_toman?: number;
       price_yearly_toman?: number;
       note?: string;
+      margin_override?: boolean;
     }
   ) {
     const res = await this.request<any>(`/academies/${id}/custom-plan`, {
@@ -7063,8 +7081,24 @@ export interface StructuredPlanLimits {
   lessons_per_course: number;
   tutoring_students: number;
   storage_gb: number;
-  live_classes_per_month: number;
   videos: number;
+  dedicated_templates: number;
+}
+
+export interface PlanEconomicsPreview {
+  ok: boolean;
+  revenue: number;
+  grossMarginPercent: number;
+  cogsPercent: number;
+  topCostDriver: 'storage' | 'egress' | 'compute' | 'sms' | 'gateway';
+  storageCost: number;
+  egressCost: number;
+  computeCost: number;
+  smsCost: number;
+  gatewayCost: number;
+  cogs: number;
+  grossProfit: number;
+  streamedGb: number;
 }
 
 export type StorageMediaType = 'video' | 'image' | 'audio' | 'document';
