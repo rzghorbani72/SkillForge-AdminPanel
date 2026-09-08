@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Loader2, Save } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
@@ -36,6 +36,7 @@ import {
 export default function CourseWizard({ courseId }: { courseId: string }) {
   const { t } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const course = useCourseForm(courseId);
@@ -60,8 +61,17 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
   const index = steps.indexOf(step);
   const isLast = index === steps.length - 1;
 
+  // Keeps the address bar authoritative: reloading, sharing the link, or
+  // using the browser's back/forward button lands on the step it names.
+  useEffect(() => {
+    setStep(stepFromParam(searchParams.get('step')));
+  }, [searchParams]);
+
   const goTo = (next: CourseWizardStep) => {
     setStep(next);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('step', next);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     window.scrollTo({ top: 0 });
   };
 
@@ -77,13 +87,15 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
 
   /**
    * Writes the course, its visibility and any staged access grants right now —
-   * used both by the per-step Save button and by the final Finish button, so
-   * a grant made on the access step is never left waiting on a later step.
+   * used both by the header Save button and by the final Finish button, so a
+   * grant made on the access step is never left waiting on a later step.
+   * `silentSuccess`: the header button flashes its own "ذخیره شد", and Finish
+   * navigates away immediately, so neither wants the confirmation toast too.
    */
   const saveStep = async () => {
     const previous = form.getValues('published');
     form.setValue('published', isPublic);
-    if (!(await course.saveNow())) {
+    if (!(await course.saveNow({ silentSuccess: true }))) {
       form.setValue('published', previous);
       return false;
     }
@@ -116,6 +128,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
         steps={steps}
         onSelectStep={goTo}
         saveStatus={saveStatus}
+        onSave={saveStep}
         onRetrySave={course.retrySave}
       />
 
@@ -180,19 +193,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
               </Button>
 
               <div className="flex items-center gap-3">
-                {!isLast && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={isSaving}
-                    onClick={() => void saveStep()}
-                    className="gap-2"
-                  >
-                    <Save className="h-4 w-4" />
-                    {t('common.save')}
-                  </Button>
-                )}
-
                 {isLast ? (
                   <Button
                     type="button"

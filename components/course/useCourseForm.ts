@@ -137,7 +137,9 @@ export function useCourseForm(courseId: string) {
           audio_id: l.audio_id,
           cover_id: l.cover_id,
           document_id: l.document_id,
-          allow_download: l.allow_download,
+          // Omitted unless the manager touched this lesson's switch in this
+          // session — see LessonDraft.allowDownloadTouched.
+          allow_download: l.allowDownloadTouched ? l.allow_download : undefined,
           season_client_key: l.seasonClientKey
         })),
         deleted_season_ids:
@@ -288,7 +290,10 @@ export function useCourseForm(courseId: string) {
    * a toast on every pause in typing would be noise.
    */
   const save = useCallback(
-    async (data: CourseFormData, { silent = false } = {}) => {
+    async (
+      data: CourseFormData,
+      { silent = false, silentSuccess = false } = {}
+    ) => {
       if (!selectedAcademy) {
         if (!silent) toast.error(t('toasts.selectAcademyFirst'));
         return false;
@@ -324,7 +329,7 @@ export function useCourseForm(courseId: string) {
       if (!hasDeletes && fingerprint === lastSavedRef.current) {
         savingRef.current = false;
         setSaveStatus('saved');
-        if (!silent) toast.success(t('courses.updatedToast'));
+        if (!silent && !silentSuccess) toast.success(t('courses.updatedToast'));
         return true;
       }
 
@@ -391,7 +396,7 @@ export function useCourseForm(courseId: string) {
         setSaveStatus('saved');
         // Autosave stays quiet (the status indicator is feedback enough); a
         // save the manager asked for always confirms itself.
-        if (!silent) toast.success(t('courses.updatedToast'));
+        if (!silent && !silentSuccess) toast.success(t('courses.updatedToast'));
         return true;
       } catch (err) {
         setSaveStatus('error');
@@ -508,17 +513,25 @@ export function useCourseForm(courseId: string) {
 
   /**
    * The explicit Save button. Autosave already covers the normal case, but a
-   * manager should never have to trust an invisible mechanism: this validates,
-   * saves immediately and confirms with a toast.
+   * manager should never have to trust an invisible mechanism: this validates
+   * and saves immediately. A validation or network failure still surfaces as a
+   * toast (and a 401 still redirects to login) — `silentSuccess` only drops the
+   * confirmation toast, for callers that already show their own, like the
+   * wizard header's Save button flashing "ذخیره شد" on its own.
    */
-  const saveNow = useCallback(async () => {
-    const valid = await form.trigger();
-    if (!valid) {
-      toast.error(t('courses.fixErrorsBeforeSaving'));
-      return false;
-    }
-    return save(form.getValues());
-  }, [form, save, t]);
+  const saveNow = useCallback(
+    async (options?: { silentSuccess?: boolean }) => {
+      const valid = await form.trigger();
+      if (!valid) {
+        toast.error(t('courses.fixErrorsBeforeSaving'));
+        return false;
+      }
+      return save(form.getValues(), {
+        silentSuccess: options?.silentSuccess
+      });
+    },
+    [form, save, t]
+  );
 
   /**
    * Save and exit to the courses list — used by the explicit Save button.

@@ -33,6 +33,14 @@ export interface LessonDraft {
   document_id?: string;
   /** Lets students save a copy of this lesson's media, free lesson or not. */
   allow_download?: boolean;
+  /**
+   * True only once the manager flips the switch above in this session. Until
+   * then `allow_download` merely reflects what the server already has, and
+   * must NOT be sent back — otherwise every lesson would look like an explicit
+   * override on every save and the course-wide "apply to all lessons" switch
+   * could never reach an untouched lesson again.
+   */
+  allowDownloadTouched?: boolean;
   /** Read-only, set from the server response — not sent back on save. */
   videoHlsStatus?: VideoHlsStatus;
   videoPreviewUrl?: string;

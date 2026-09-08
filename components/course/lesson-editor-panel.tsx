@@ -210,7 +210,9 @@ export function LessonEditorPanel({
                 </span>
                 <Switch
                   checked={lesson.allow_download ?? false}
-                  onCheckedChange={(v) => onUpdate({ allow_download: v })}
+                  onCheckedChange={(v) =>
+                    onUpdate({ allow_download: v, allowDownloadTouched: true })
+                  }
                 />
               </label>
             </div>

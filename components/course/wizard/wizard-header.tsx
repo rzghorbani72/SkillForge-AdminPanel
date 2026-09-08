@@ -4,9 +4,9 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { CourseTypePill } from '../course-type-pill';
-import { SaveStatusIndicator } from '../SaveStatusIndicator';
 import type { CourseType } from '../course-drafts';
 import type { SaveStatus } from '../useCourseForm';
+import { WizardSaveButton } from './wizard-save-button';
 import { WizardStepper } from './wizard-stepper';
 import type { CourseWizardStep } from './wizard-steps';
 
@@ -18,8 +18,9 @@ type WizardHeaderProps = {
   step: CourseWizardStep;
   steps?: readonly CourseWizardStep[];
   onSelectStep: (step: CourseWizardStep) => void;
-  /** Absent while the course does not exist yet (nothing to autosave). */
+  /** Absent while the course does not exist yet (nothing to autosave or save). */
   saveStatus?: SaveStatus;
+  onSave?: () => Promise<boolean>;
   onRetrySave?: () => void;
   onBack?: () => void;
 };
@@ -36,6 +37,7 @@ export function WizardHeader({
   steps,
   onSelectStep,
   saveStatus,
+  onSave,
   onRetrySave,
   onBack
 }: WizardHeaderProps) {
@@ -73,8 +75,12 @@ export function WizardHeader({
 
       <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
         <WizardStepper current={step} steps={steps} onSelect={onSelectStep} />
-        {saveStatus && onRetrySave && (
-          <SaveStatusIndicator status={saveStatus} onRetry={onRetrySave} />
+        {saveStatus && onSave && onRetrySave && (
+          <WizardSaveButton
+            saveStatus={saveStatus}
+            onSave={onSave}
+            onRetry={onRetrySave}
+          />
         )}
       </div>
     </div>
