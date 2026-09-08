@@ -87,7 +87,11 @@ export function AuthPhoneField({
       inputMode="tel"
       dir="ltr"
       autoComplete="tel"
-      placeholder={PHONE_PLACEHOLDER}
+      placeholder={
+        language === 'fa'
+          ? toPersianDigits(PHONE_PLACEHOLDER)
+          : PHONE_PLACEHOLDER
+      }
       maxLength={IRAN_PHONE_MAX_LENGTH}
       value={language === 'fa' ? toPersianDigits(value) : value}
       onChange={(e) => {
