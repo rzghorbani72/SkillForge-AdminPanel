@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { call } from '@/lib/api-call';
 import { logger } from '@/lib/logging/app-logger';
+import { toPlayableMediaUrl } from './playable-media-url';
 
 /**
  * Opens a watch session for one video and keeps an hls.js instance attached to
@@ -49,8 +50,12 @@ export function useSecurePlayback(
           { method: 'POST' }
         );
         if (cancelled) return;
-        setSession(next);
-        await attach(next);
+        const playable = {
+          ...next,
+          playlistUrl: toPlayableMediaUrl(next.playlistUrl)
+        };
+        setSession(playable);
+        await attach(playable);
       } catch (error) {
         if (cancelled) return;
         setStatus('error');

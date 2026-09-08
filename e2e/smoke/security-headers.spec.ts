@@ -14,6 +14,7 @@ test.describe('AdminPanel security headers (smoke)', () => {
     const h = res!.headers();
 
     expect(h['content-security-policy']).toContain("frame-ancestors 'none'");
+    expect(h['content-security-policy']).toContain('worker-src');
     expect(h['x-frame-options']).toBe('DENY');
     expect(h['x-content-type-options']).toBe('nosniff');
     expect(h['referrer-policy']).toBeTruthy();
