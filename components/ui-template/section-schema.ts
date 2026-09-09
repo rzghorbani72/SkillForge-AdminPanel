@@ -63,11 +63,12 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         defaultValue: 'آکادمی من'
       },
       {
-        key: 'reverseActions',
-        label: 'جابه‌جایی جای دکمه و حساب کاربری',
-        kind: 'toggle',
-        defaultOn: false,
-        hint: 'ترتیب دکمه ثبت‌نام و بخش حساب کاربری در نوار بالا را برعکس می‌کند'
+        key: 'loginText',
+        label: 'متن دکمه ورود',
+        kind: 'text',
+        placeholder: 'مثلاً: ورود',
+        defaultValue: 'ورود',
+        hint: 'دکمه ورود همیشه در سمت چپ نوار می‌ماند و حذف یا جابه‌جا نمی‌شود'
       }
     ]
   },
