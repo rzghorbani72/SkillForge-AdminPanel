@@ -30,18 +30,15 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
     <StoreProvider>
       <ThemeInitializer />
       <SubscriptionRequiredGate />
-      <div
-        className="grid h-screen grid-rows-[auto_1fr] overflow-hidden"
-        dir={direction}
-      >
+      <div className="flex h-screen flex-col overflow-hidden" dir={direction}>
         <PlanVoucherBanner className="w-full" />
-        <div className="flex min-h-0 min-w-0 overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
           <Sidebar />
           <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
             <Header />
             <ScopeContextBanner />
             <div className="beautiful-scrollbar flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden overscroll-contain">
-              <div className="mx-auto flex min-h-full w-full min-w-0 max-w-[1700px] flex-col">
+              <div className="mx-auto flex min-h-full w-full min-w-0 max-w-[1700px] flex-1 flex-col">
                 <div className="flex min-w-0 flex-1 flex-col">
                   <AcademyRequiredGate>{children}</AcademyRequiredGate>
                 </div>
