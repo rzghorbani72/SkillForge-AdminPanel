@@ -43,7 +43,8 @@ const numberOr = (value: number | undefined, fallback: number): number =>
 export function previewPlanMargin(
   revenueToman: number,
   limits: StructuredPlanLimits,
-  costs?: Partial<MarginCosts>
+  costs?: Partial<MarginCosts>,
+  smsPerActiveStudent: number = SMS_PER_STUDENT
 ): PlanMarginPreview {
   const storagePerGb = numberOr(
     costs?.cost_storage_per_gb_toman,
@@ -85,7 +86,7 @@ export function previewPlanMargin(
     deliveredGb * egressPerGb +
     deliveredGb * APP_EGRESS_SHARE_OF_TRAFFIC * appEgressPerGb;
   const computeCost = computeBase + activeStudents * computePerStudent;
-  const smsCost = activeStudents * SMS_PER_STUDENT * smsPerMessage;
+  const smsCost = activeStudents * smsPerActiveStudent * smsPerMessage;
   const gatewayCost = revenueToman * gatewayFeeRate;
   const cogs = storageCost + egressCost + computeCost + smsCost + gatewayCost;
   const grossProfit = revenueToman - cogs;

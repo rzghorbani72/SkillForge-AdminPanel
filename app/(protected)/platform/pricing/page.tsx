@@ -46,6 +46,7 @@ import {
 } from '@/components/platform/pricing/plan-form-fields';
 import { GatewayTogglesCard } from '@/components/platform/pricing/gateway-toggles-card';
 import { CostAssumptionsCard } from '@/components/platform/pricing/cost-assumptions-card';
+import { PlanPriceCalculatorCard } from '@/components/platform/pricing/plan-price-calculator-card';
 import {
   DEFAULT_LIMITS,
   formatIRR,
@@ -479,6 +480,8 @@ export default function PlatformPricingPage() {
       </div>
 
       <CostAssumptionsCard settings={settings} onSaved={loadAll} />
+
+      <PlanPriceCalculatorCard settings={settings} plans={plans} />
 
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">

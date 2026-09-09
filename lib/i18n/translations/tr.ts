@@ -3512,7 +3512,36 @@ export const tr = {
     planLimits: {
       keys: {
         monthly_traffic_gb: 'Aylık trafik (GB)'
+      },
+      costDriver: {
+        storage: 'Depolama',
+        egress: 'Trafik',
+        compute: 'İşlem',
+        sms: 'SMS',
+        gateway: 'Ödeme geçidi'
       }
+    },
+    calculator: {
+      title: 'Plan fiyat hesaplayıcı',
+      description:
+        'Ölçülmüş altyapı maliyetlerinizi ve hedef brüt marjınızı girin. Hesaplayıcı, her yerleşik kademe için %100 kap doluluğunda aylık ve üç aylık önerilen fiyatı verir — plan kaydından önce marj kontrolünün uyguladığı kuralın aynısı.',
+      targetMargin: 'Hedef brüt marj (%)',
+      targetMarginHint: 'Varsayılan %70 — sistem COGS en fazla %30 olmalı.',
+      gatewayFee: 'Abonelikte ödeme geçidi komisyonu (%)',
+      smsPerStudent: 'Özel öğrenci başına SMS / ay',
+      smsPerStudentHint:
+        'Canlı ders hatırlatıcıları öğrenciye birden fazla SMS gönderebilir. Ortalamayı değil, en kötü ayı modelleyin.',
+      formula:
+        'Fiyat ≥ değişken COGS ÷ (1 − geçidi komisyonu − maks COGS payı). Değişken COGS = depolama + sunulan trafik + işlem + SMS, plan tavanında. Sonuç 500.000 Tomana yukarı yuvarlanır.',
+      noPlans: 'Fiyatlandırılacak aktif plan yok.',
+      colPlan: 'Plan',
+      colCogs: 'Değişken COGS',
+      colRecommended: 'Önerilen / ay',
+      colQuarterly: 'Önerilen / 3 ay',
+      colLive: 'Canlı / ay',
+      colDelta: 'Fark',
+      colMargin: 'Marj @ önerilen',
+      colBreakEven: 'Başa baş akademi'
     },
     costs: {
       title: 'Maliyet varsayımları ve ek paketler',

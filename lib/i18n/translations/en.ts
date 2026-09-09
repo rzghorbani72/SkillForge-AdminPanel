@@ -6855,6 +6855,28 @@ export const en = {
         gateway: 'payment gateway'
       }
     },
+    calculator: {
+      title: 'Plan price calculator',
+      description:
+        'Enter your measured infrastructure costs and a target gross margin. The calculator recommends a monthly and quarterly price for each built-in tier at 100% cap fill — the same rule the margin check enforces before a plan save is accepted.',
+      targetMargin: 'Target gross margin (%)',
+      targetMarginHint: 'Default 70% — system COGS must stay at or below 30%.',
+      gatewayFee: 'Gateway fee on subscription (%)',
+      smsPerStudent: 'SMS per tutoring student / month',
+      smsPerStudentHint:
+        'Live-class reminders can send more than one SMS per student. Model the worst month, not the average.',
+      formula:
+        'Price ≥ variable COGS ÷ (1 − gateway fee − max COGS share). Variable COGS = storage + delivered traffic + compute + SMS at full plan caps. Result is rounded up to 500,000 Toman.',
+      noPlans: 'No active plans to price.',
+      colPlan: 'Plan',
+      colCogs: 'Variable COGS',
+      colRecommended: 'Recommended / mo',
+      colQuarterly: 'Recommended / 3 mo',
+      colLive: 'Live / mo',
+      colDelta: 'Delta',
+      colMargin: 'Margin @ recommended',
+      colBreakEven: 'Break-even academies'
+    },
     costs: {
       title: 'Cost assumptions & add-on packs',
       description:
