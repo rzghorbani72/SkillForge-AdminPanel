@@ -36,6 +36,7 @@ import {
   RegisterDetailsForm,
   type RegisterValues
 } from './_components/register-details-form';
+import { AnonymousAuthGate } from '@/components/auth/anonymous-auth-gate';
 
 const useRegisterSchema = (t: Translate) =>
   z
@@ -60,6 +61,14 @@ const useRegisterSchema = (t: Translate) =>
     });
 
 export default function RegisterPage() {
+  return (
+    <AnonymousAuthGate>
+      <RegisterPageBody />
+    </AnonymousAuthGate>
+  );
+}
+
+function RegisterPageBody() {
   const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();

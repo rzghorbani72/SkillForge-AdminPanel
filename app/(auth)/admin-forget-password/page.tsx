@@ -9,8 +9,17 @@ import { useAdminForgetPassword } from './use-admin-forget-password';
 import { IdentifierStep } from './_components/identifier-step';
 import { PasswordStep } from './_components/password-step';
 import { SuccessStep } from './_components/success-step';
+import { AnonymousAuthGate } from '@/components/auth/anonymous-auth-gate';
 
 export default function AdminForgetPasswordPage() {
+  return (
+    <AnonymousAuthGate>
+      <AdminForgetPasswordBody />
+    </AnonymousAuthGate>
+  );
+}
+
+function AdminForgetPasswordBody() {
   const fp = useAdminForgetPassword();
   const { t, step } = fp;
 

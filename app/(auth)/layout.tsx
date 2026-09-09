@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { PANEL_NOINDEX_ROBOTS } from '@/lib/seo/panel-metadata';
+import { AuthStorageReset } from '@/components/auth/auth-storage-reset';
 
 /** Auth flows are private — block indexing even if a link leaks. */
 export const metadata: Metadata = {
@@ -12,5 +13,10 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      <AuthStorageReset />
+      {children}
+    </>
+  );
 }

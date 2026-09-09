@@ -1,21 +1,7 @@
 'use client';
 
 import { apiClient } from './api';
-
-/** UI preferences are not user data, so they survive sign-out. */
-const KEEP_KEYS = ['preferred_language', 'theme'];
-
-function wipeBrowserStorage(): void {
-  for (const store of [window.localStorage, window.sessionStorage]) {
-    try {
-      for (const key of Object.keys(store)) {
-        if (!KEEP_KEYS.includes(key)) store.removeItem(key);
-      }
-    } catch {
-      // Storage can be blocked (private mode); the redirect below still applies.
-    }
-  }
-}
+import { wipeNonPlatformClient } from './wipe-non-platform-storage';
 
 /**
  * The one way to sign out. The browser call is what revokes the refresh token
@@ -31,7 +17,7 @@ export async function signOut(redirectTo = '/login'): Promise<void> {
 
   if (typeof window === 'undefined') return;
 
-  wipeBrowserStorage();
+  wipeNonPlatformClient();
 
   const { useUserStore, useCategoriesStore } = await import('@/lib/store');
   useUserStore.getState().reset();

@@ -9,8 +9,17 @@ import { useForgetPassword } from './use-forget-password';
 import { IdentifierStep } from './_components/identifier-step';
 import { PasswordStep } from './_components/password-step';
 import { SuccessStep } from './_components/success-step';
+import { AnonymousAuthGate } from '@/components/auth/anonymous-auth-gate';
 
 export default function ForgetPasswordPage() {
+  return (
+    <AnonymousAuthGate>
+      <ForgetPasswordBody />
+    </AnonymousAuthGate>
+  );
+}
+
+function ForgetPasswordBody() {
   const fp = useForgetPassword();
   const { t, step } = fp;
 

@@ -13,6 +13,8 @@ import { AuthStatusScreen } from '@/components/auth/auth-status-screen';
 import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
+import { wipeNonPlatformStorage } from '@/lib/wipe-non-platform-storage';
+import { resetAnonymousAuthClient } from '@/lib/drop-login-session';
 import { homeRouteFor, resolveSessionRole } from '@/lib/auth-routing';
 
 export default function LoginPage() {
@@ -29,6 +31,7 @@ export default function LoginPage() {
   const probedRef = useRef(false);
 
   useEffect(() => {
+    wipeNonPlatformStorage();
     if (probedRef.current) return;
     probedRef.current = true;
 
@@ -40,9 +43,11 @@ export default function LoginPage() {
           router.replace(home);
           return;
         }
-        setCheckingSession(false);
+        return resetAnonymousAuthClient().then(() => setCheckingSession(false));
       })
-      .catch(() => setCheckingSession(false));
+      .catch(() =>
+        resetAnonymousAuthClient().then(() => setCheckingSession(false))
+      );
   }, [router]);
 
   if (checkingSession) {

@@ -3,8 +3,9 @@
 import { useAdminLogin } from './use-admin-login';
 import { AdminLoginForm } from './_components/admin-login-form';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
+import { AnonymousAuthGate } from '@/components/auth/anonymous-auth-gate';
 
-export default function AdminLoginPage() {
+function AdminLoginBody() {
   const login = useAdminLogin();
 
   if (login.loginMethod === 'otp' && login.otpSent) {
@@ -24,4 +25,12 @@ export default function AdminLoginPage() {
   }
 
   return <AdminLoginForm login={login} />;
+}
+
+export default function AdminLoginPage() {
+  return (
+    <AnonymousAuthGate>
+      <AdminLoginBody />
+    </AnonymousAuthGate>
+  );
 }
