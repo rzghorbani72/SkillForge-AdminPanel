@@ -1115,7 +1115,9 @@ export default function PlansPage() {
                 // every tier — including that one — stays buyable at full price
                 // to convert the trial into a paid subscription.
                 const isSameTier =
-                  hasActivePaidPlan && currentPlan?.id === plan.id;
+                  hasActivePaidPlan &&
+                  (currentPlan?.slug === plan.slug ||
+                    currentPlan?.id === plan.id);
                 const isCurrent = isSameTier && period === currentPeriod;
                 // Same tier, other term: not an upgrade and not a lock — it is
                 // a renewal that extends the plan by the chosen term.

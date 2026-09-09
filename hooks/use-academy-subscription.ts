@@ -4,6 +4,7 @@ import { apiClient, type StructuredPlanLimits } from '@/lib/api';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { queryKeys } from '@/lib/query/keys';
 import {
+  overlayPaidEnrollment,
   isStarterPlan,
   isTopPlan,
   needsPlanPurchase as computeNeedsPlanPurchase,
@@ -111,7 +112,8 @@ export function useAcademySubscription(enabled = true) {
         : false;
     }
   });
-  const subscription = data ?? null;
+  const rawSubscription = data ?? null;
+  const subscription = overlayPaidEnrollment(rawSubscription);
 
   const planSlug = subscription?.academy?.subscription_plan ?? null;
   const customPlan = subscription?.academy?.custom_plan ?? null;

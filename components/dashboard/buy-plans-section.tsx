@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from '@/components/ui/link';
-import { Loader2, Zap } from 'lucide-react';
+import { Check, Crown, Loader2, Zap } from 'lucide-react';
 import { apiClient, type SubscriptionPlanData } from '@/lib/api';
+import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 import {
@@ -18,9 +19,15 @@ import {
 
 export function BuyPlansSection() {
   const { t } = useTranslation();
+  const { planSlug, status } = useAcademySubscription();
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [period, setPeriod] = useState<BillingPeriod>('monthly');
+  const currentSlug = planSlug?.trim().toLowerCase() ?? '';
+  const hasActivePlan =
+    (status === 'ACTIVE' || status === 'GRACE') &&
+    currentSlug.length > 0 &&
+    currentSlug !== 'none';
 
   useEffect(() => {
     let cancelled = false;
@@ -87,7 +94,10 @@ export function BuyPlansSection() {
           className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
           {plans.map((plan, i) => {
-            const isPopular = i === popularIndex && plans.length >= 2;
+            const isCurrent =
+              hasActivePlan && plan.slug.toLowerCase() === currentSlug;
+            const isPopular =
+              !isCurrent && i === popularIndex && plans.length >= 2;
             const price = periodPrice(plan, period);
             const vatRate = plan.vat_rate ?? 0;
             const vat = vatAmount(price, vatRate);
@@ -98,17 +108,26 @@ export function BuyPlansSection() {
             );
             return (
               <Link
-                key={plan.id}
+                key={plan.slug}
                 href={`/plans?plan=${encodeURIComponent(plan.slug)}`}
                 className={cn(
                   'relative flex flex-col rounded-2xl border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md',
+                  isCurrent &&
+                    'border-success/45 bg-success/[0.04] ring-1 ring-success/25',
                   isPopular && 'border-primary ring-2 ring-primary/30'
                 )}
               >
-                {isPopular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground">
-                    {t('plans.popular')}
+                {isCurrent ? (
+                  <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-success px-3 py-1 text-[11px] font-bold text-success-foreground">
+                    <Crown className="h-3 w-3" />
+                    {t('plans.currentPlan')}
                   </span>
+                ) : (
+                  isPopular && (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground">
+                      {t('plans.popular')}
+                    </span>
+                  )
                 )}
                 <h3 className="text-lg font-bold">{plan.name}</h3>
                 <p className="mt-4">
@@ -140,8 +159,22 @@ export function BuyPlansSection() {
                     ))}
                   </ul>
                 )}
-                <span className="mt-6 inline-flex h-10 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground">
-                  {t('dashboard.buyPlanCta')}
+                <span
+                  className={cn(
+                    'mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold',
+                    isCurrent
+                      ? 'bg-success/10 text-success'
+                      : 'bg-primary text-primary-foreground'
+                  )}
+                >
+                  {isCurrent ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      {t('plans.currentPlan')}
+                    </>
+                  ) : (
+                    t('dashboard.buyPlanCta')
+                  )}
                 </span>
               </Link>
             );
