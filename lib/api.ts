@@ -2067,6 +2067,7 @@ class ApiClient {
   async createCourse(courseData: {
     title: string;
     description: string;
+    learning_outcomes?: string;
     course_type?: CourseType;
     primary_price: number;
     secondary_price: number;
@@ -2124,6 +2125,7 @@ class ApiClient {
     payload: {
       title?: string;
       description?: string;
+      learning_outcomes?: string;
       primary_price?: number;
       secondary_price?: number;
       category_id?: string;

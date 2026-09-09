@@ -72,6 +72,7 @@ export function useCourseForm(courseId: string) {
     defaultValues: {
       title: '',
       description: '',
+      learning_outcomes: '',
       primary_price: '0',
       secondary_price: '',
       meta_title: '',
@@ -106,6 +107,7 @@ export function useCourseForm(courseId: string) {
       return {
         title: data.title.trim(),
         description: data.description.trim(),
+        learning_outcomes: (data.learning_outcomes ?? '').trim(),
         meta_title: data.meta_title.trim(),
         meta_description: data.meta_description.trim(),
         keywords: data.keywords,
@@ -192,6 +194,7 @@ export function useCourseForm(courseId: string) {
         const loadedForm: CourseFormData = {
           title: course.title ?? '',
           description: course.description ?? '',
+          learning_outcomes: course.learning_outcomes ?? '',
           meta_title: course.meta_title ?? '',
           meta_description: course.meta_description ?? '',
           keywords: course.keywords ?? [],

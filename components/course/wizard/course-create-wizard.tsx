@@ -47,6 +47,7 @@ export default function CourseCreateWizard() {
     defaultValues: {
       title: '',
       description: '',
+      learning_outcomes: '',
       primary_price: '0',
       secondary_price: '',
       meta_title: '',
@@ -80,6 +81,7 @@ export default function CourseCreateWizard() {
       const response = await apiClient.createCourse({
         title: values.title.trim(),
         description: values.description.trim(),
+        learning_outcomes: values.learning_outcomes.trim() || undefined,
         course_type: courseType,
         cover_id: values.cover_id || undefined,
         primary_price: 0,

@@ -371,6 +371,13 @@ export const ar = {
       'حدث خطأ أثناء تحميل هذه الصفحة. قد يكون السبب مشكلة في الشبكة أو في الخادم.',
     noDescriptionProvided: 'لم يتم تقديم وصف',
     refresh: 'تحديث',
+    noStoreSelected: 'لم يتم اختيار أكاديمية',
+    selectStoreToView:
+      'يرجى اختيار أكاديمية من الشريط العلوي لعرض المحتوى.',
+    selectStoreToViewCourses:
+      'لعرض الدورات، اختر أكاديمية من الشريط العلوي.',
+    selectStoreToCreateProduct:
+      'لإنشاء منتج، اختر أكاديمية من الشريط العلوي.',
     moreFilters: 'المزيد من الفلاتر',
     tryAdjustingFilters: 'حاول تعديل البحث أو الفلاتر',
     email: 'البريد الإلكتروني',
@@ -1119,6 +1126,8 @@ export const ar = {
       titleMax: 'يجب أن يكون العنوان أقل من 80 حرفًا',
       descriptionRequired: 'الوصف مطلوب',
       descriptionMax: 'يجب أن يكون الوصف أقل من 4000 حرف',
+      learningOutcomesMax:
+        'يجب أن يكون قسم «ماذا ستتعلم» أقل من 2000 حرف',
       primaryPriceRequired: 'السعر الأساسي مطلوب',
       primaryPriceWholeNumber: 'يجب أن يكون السعر الأساسي رقمًا صحيحًا',
       primaryPriceRange: 'يجب أن يكون السعر الأساسي بين 0 و 999,999,999',
@@ -1129,6 +1138,11 @@ export const ar = {
     enterCourseTitle: 'أدخل عنوان الدورة (5 أحرف على الأقل)',
     titleLength: 'يجب أن يكون العنوان بين 5 و 80 حرفاً',
     enterDescription: 'أدخل وصف الدورة',
+    whatYouWillLearn: 'ماذا ستتعلم في هذه الدورة',
+    whatYouWillLearnHint:
+      'اكتب كل مهارة أو نتيجة في سطر مستقل. يراها الطالب في صفحة تعريف الدورة.',
+    whatYouWillLearnPlaceholder:
+      'إجراء محادثات يومية بالإنجليزية\nتقديم عرض قصير في العمل',
     descriptionLength: 'يجب أن يكون الوصف أقل من 4000 حرف',
     noCourses: 'لم يتم العثور على دورات',
     createFirstCourse: 'أنشئ دورتك الأولى',

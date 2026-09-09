@@ -1,19 +1,18 @@
-import React from 'react';
+'use client';
+
+import { Building2 } from 'lucide-react';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const NoAcademyState = () => {
+  const { t } = useTranslation();
+
   return (
-    <div className="flex-1 space-y-6 p-4 sm:p-6">
-      <div className="flex h-64 items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-muted-foreground">
-            No Store Selected
-          </h2>
-          <p className="text-muted-foreground">
-            Please select a store from the header to view courses.
-          </p>
-        </div>
-      </div>
-    </div>
+    <EmptyState
+      icon={<Building2 className="h-10 w-10" />}
+      title={t('common.noStoreSelected')}
+      description={t('common.selectStoreToViewCourses')}
+    />
   );
 };
 

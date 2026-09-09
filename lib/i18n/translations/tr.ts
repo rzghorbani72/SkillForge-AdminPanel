@@ -377,6 +377,13 @@ export const tr = {
       'Bu sayfa yüklenirken bir hata oluştu. Bunun nedeni bir ağ sorunu veya sunucu sorunu olabilir.',
     noDescriptionProvided: 'Açıklama girilmedi',
     refresh: 'Yenile',
+    noStoreSelected: 'Akademi seçilmedi',
+    selectStoreToView:
+      'İçeriği görmek için üst çubuktan bir akademi seçin.',
+    selectStoreToViewCourses:
+      'Kursları görmek için üst çubuktan bir akademi seçin.',
+    selectStoreToCreateProduct:
+      'Ürün oluşturmak için üst çubuktan bir akademi seçin.',
     moreFilters: 'Daha Fazla Filtre',
     tryAdjustingFilters: 'Arama veya filtreleri ayarlamayı deneyin',
     email: 'E-posta',
@@ -1151,6 +1158,8 @@ export const tr = {
       titleMax: 'Başlık 80 karakterden az olmalıdır',
       descriptionRequired: 'Açıklama gereklidir',
       descriptionMax: 'Açıklama 4000 karakterden az olmalıdır',
+      learningOutcomesMax:
+        '“Bu kursta neler öğreneceksiniz” 2000 karakterden az olmalıdır',
       primaryPriceRequired: 'Ana fiyat gereklidir',
       primaryPriceWholeNumber: 'Ana fiyat tam sayı olmalıdır',
       primaryPriceRange: 'Ana fiyat 0 ile 999.999.999 arasında olmalıdır',
@@ -1163,6 +1172,11 @@ export const tr = {
     enterCourseTitle: 'Kurs başlığını girin (en az 5 karakter)',
     titleLength: 'Başlık 5 ile 80 karakter arasında olmalıdır',
     enterDescription: 'Kurs açıklamasını girin',
+    whatYouWillLearn: 'Bu kursta neler öğreneceksiniz',
+    whatYouWillLearnHint:
+      'Her beceriyi ayrı bir satıra yazın. Öğrenciler bunu kurs tanıtım sayfasında görür.',
+    whatYouWillLearnPlaceholder:
+      'Günlük İngilizce konuşmalar yapmak\nİş yerinde kısa sunum vermek',
     descriptionLength: 'Açıklama 4000 karakterden az olmalıdır',
     noCourses: 'Kurs bulunamadı',
     createFirstCourse: 'İlk kursunuzu oluşturun',

@@ -519,6 +519,10 @@ export const en = {
     noStoreSelected: 'No Academy Selected',
     selectStoreToView:
       'Please select an academy from the header to view content.',
+    selectStoreToViewCourses:
+      'Please select an academy from the header to view courses.',
+    selectStoreToCreateProduct:
+      'Please select an academy from the header to create a product.',
     selectStoreToViewProducts:
       'Please select an academy from the header to view products.',
     selectStoreToManageLessons:
@@ -1947,6 +1951,8 @@ export const en = {
       titleMax: 'Title must be less than 80 characters',
       descriptionRequired: 'Description is required',
       descriptionMax: 'Description must be less than 4,000 characters',
+      learningOutcomesMax:
+        'What you will learn must be less than 2,000 characters',
       primaryPriceRequired: 'Sale price is required',
       primaryPriceWholeNumber: 'Sale price must be a whole number',
       primaryPriceRange: 'Sale price must be between 0 and 999,999,999',
@@ -1959,6 +1965,11 @@ export const en = {
     enterCourseTitle: 'Enter course title (min 5 characters)',
     titleLength: 'Title must be between 5 and 80 characters',
     enterDescription: 'Enter course description',
+    whatYouWillLearn: 'What you will learn',
+    whatYouWillLearnHint:
+      'One skill or result per line. Students see this on the course overview page.',
+    whatYouWillLearnPlaceholder:
+      'Hold everyday English conversations\nGive a short presentation at work',
     descriptionLength: 'Description must be less than 4,000 characters',
     noCourses: 'No courses found',
     createFirstCourse: 'Create your first course',

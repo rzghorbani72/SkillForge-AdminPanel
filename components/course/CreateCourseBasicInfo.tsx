@@ -4,6 +4,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -11,9 +12,11 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
+import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 import {
   COURSE_DESCRIPTION_MAX,
+  COURSE_LEARNING_OUTCOMES_MAX,
   COURSE_TITLE_MAX,
   CourseFormData
 } from './schema';
@@ -70,6 +73,30 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
                   maxLength={COURSE_DESCRIPTION_MAX}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="learning_outcomes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('courses.whatYouWillLearn')}</FormLabel>
+              <FormControl>
+                <Textarea
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder={t('courses.whatYouWillLearnPlaceholder')}
+                  maxLength={COURSE_LEARNING_OUTCOMES_MAX}
+                  className="min-h-[120px]"
+                />
+              </FormControl>
+              <FormDescription>
+                {t('courses.whatYouWillLearnHint')}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -8,7 +8,7 @@ from its timetable, so `/courses/[id]/edit` keeps the old single-page form for
 
 | #   | Step      | What it writes                                        |
 | --- | --------- | ----------------------------------------------------- |
-| 1   | `basics`  | title, description, course type, cover image          |
+| 1   | `basics`  | title, description, what you will learn, course type, cover |
 | 2   | `content` | category, sections, lessons (video + attached file)   |
 | 3   | `access`  | public vs invited-only, plus per-student/group grants |
 | 4   | `pricing` | base price and every other way to enrol               |

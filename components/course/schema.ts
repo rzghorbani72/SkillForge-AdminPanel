@@ -4,6 +4,7 @@ import * as z from 'zod';
 // schema and validated again by the backend DTOs — they must never drift.
 export const COURSE_TITLE_MAX = 80;
 export const COURSE_DESCRIPTION_MAX = 4000;
+export const COURSE_LEARNING_OUTCOMES_MAX = 2000;
 export const COURSE_META_TITLE_MAX = 60;
 export const COURSE_META_DESCRIPTION_MAX = 160;
 export const COURSE_KEYWORDS_MAX = 10;
@@ -18,6 +19,11 @@ export const courseFormFields = z.object({
     .string()
     .min(1, 'courses.errors.descriptionRequired')
     .max(COURSE_DESCRIPTION_MAX, 'courses.errors.descriptionMax'),
+  // One outcome per line. Empty hides the public "what you will learn" block.
+  learning_outcomes: z
+    .string()
+    .max(COURSE_LEARNING_OUTCOMES_MAX, 'courses.errors.learningOutcomesMax')
+    .default(''),
   primary_price: z
     .string()
     .min(1, 'courses.errors.primaryPriceRequired')

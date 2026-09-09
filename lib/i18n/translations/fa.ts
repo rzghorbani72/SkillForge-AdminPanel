@@ -509,6 +509,10 @@ export const fa = {
     noStoreSelected: 'آکادمی‌ای انتخاب نشده',
     selectStoreToView:
       'لطفاً یک آکادمی از هدر انتخاب کنید تا محتوا را مشاهده کنید.',
+    selectStoreToViewCourses:
+      'برای مشاهده دوره‌ها، از هدر یک آکادمی انتخاب کنید.',
+    selectStoreToCreateProduct:
+      'برای ساخت محصول، از هدر یک آکادمی انتخاب کنید.',
     selectStoreToViewProducts:
       'لطفاً یک آکادمی از هدر انتخاب کنید تا محصولات را مشاهده کنید.',
     selectStoreToManageLessons:
@@ -1935,6 +1939,8 @@ export const fa = {
       titleMax: 'عنوان باید کمتر از ۸۰ کاراکتر باشد',
       descriptionRequired: 'توضیحات الزامی است',
       descriptionMax: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
+      learningOutcomesMax:
+        'بخش «پس از این دوره چه یاد می‌گیری» باید کمتر از ۲۰۰۰ کاراکتر باشد',
       primaryPriceRequired: 'قیمت فروش الزامی است',
       primaryPriceWholeNumber: 'قیمت فروش باید عدد صحیح باشد',
       primaryPriceRange: 'قیمت فروش باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
@@ -1945,6 +1951,11 @@ export const fa = {
     enterCourseTitle: 'عنوان دوره را وارد کنید (حداقل ۵ کاراکتر)',
     titleLength: 'عنوان باید بین ۵ تا ۸۰ کاراکتر باشد',
     enterDescription: 'توضیحات دوره را وارد کنید',
+    whatYouWillLearn: 'پس از این دوره چه یاد می‌گیری',
+    whatYouWillLearnHint:
+      'هر مهارت یا نتیجه را در یک خط بنویس. دانشجو آن را در صفحه معرفی دوره می‌بیند.',
+    whatYouWillLearnPlaceholder:
+      'مکالمه روزمره به انگلیسی\nارائه کوتاه در محیط کار',
     descriptionLength: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
     noCourses: 'دوره‌ای یافت نشد',
     createFirstCourse: 'اولین دوره خود را ایجاد کنید',
