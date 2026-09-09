@@ -77,108 +77,132 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const hasFetchedRef = useRef(false);
   const isFetchingRef = useRef(false);
 
-  const fetchUser = useCallback(async () => {
-    // Prevent multiple simultaneous fetches
-    if (isFetchingRef.current) {
-      return;
-    }
-
-    try {
-      isFetchingRef.current = true;
-      setIsLoading(true);
-      setError(null);
-
-      // Call API endpoint which will use JWT cookie from headers
-      const userData = (await apiClient.getCurrentUser()) as any;
-      const currentUser = userData?.data as any;
-
-      if (!currentUser) {
-        // No user found, redirect to login
-        router.replace('/login');
+  const fetchUser = useCallback(
+    async (isRetry = false) => {
+      // Prevent multiple simultaneous fetches
+      if (isFetchingRef.current) {
         return;
       }
 
-      // Extract role from user data (API returns role directly)
-      const role =
-        currentUser?.role ||
-        currentUser?.profile?.role?.name ||
-        currentUser?.profile?.role_name ||
-        currentUser?.profile?.role ||
-        null;
+      try {
+        isFetchingRef.current = true;
+        setIsLoading(true);
+        setError(null);
 
-      if (!role) {
-        // No role found, redirect to login
-        router.replace('/login');
-        return;
-      }
+        // Call API endpoint which will use JWT cookie from headers
+        const userData = (await apiClient.getCurrentUser()) as any;
+        const currentUser = userData?.data as any;
 
-      // Extract store information
-      const academyId =
-        currentUser?.academyId ?? currentUser?.academy_id ?? null;
-      const currentAcademy = currentUser?.currentAcademy ?? null;
-
-      const isAdminProfile = currentUser?.isAdminProfile ?? false;
-      const platformLevel = currentUser?.platformLevel ?? false;
-      const canManageAllAcademies =
-        currentUser?.canManageAllAcademies ??
-        currentUser?.canManageAllStores ??
-        false;
-      const canManagePlatform = currentUser?.canManagePlatform ?? false;
-      const granularPermissions: string[] =
-        currentUser?.granularPermissions ?? [];
-
-      const rawProfiles: AcademyProfile[] = (
-        currentUser?.availableProfiles ??
-        currentUser?.profiles ??
-        []
-      ).map((p: any) => ({
-        academy_id: p.academy_id ?? null,
-        role: (p.Role?.name ?? p.role?.name ?? p.role ?? '') as string
-      }));
-
-      setUser({
-        id: (currentUser as any)?.id || 0,
-        displayName: currentUser?.full_name ?? currentUser?.display_name ?? '',
-        email: currentUser?.email ?? '',
-        phone: currentUser?.phone_number ?? '',
-        role: role as AuthUser['role'],
-        lastLogin: currentUser?.last_login ?? null,
-        avatarUrl: currentUser?.avatar?.url ?? null,
-        academyId: academyId,
-        currentAcademy: currentAcademy,
-        isAdminProfile: isAdminProfile,
-        platformLevel: platformLevel,
-        canManageAllAcademies: canManageAllAcademies,
-        canManagePlatform: canManagePlatform,
-        granularPermissions: granularPermissions,
-        // Defaulting both to the "nothing to show" side keeps an older API payload
-        // from popping the onboarding dialog at someone who never signed up.
-        isSelfRegisteredManager: currentUser?.isSelfRegisteredManager === true,
-        onboardingSeen: currentUser?.onboardingSeen !== false,
-        profiles: rawProfiles,
-        profile: {
-          academy_id: academyId,
-          academyId: academyId,
-          academy: currentAcademy || null,
-          role: role as AuthUser['role'],
-          isAdminProfile: isAdminProfile,
-          platformLevel: platformLevel
+        if (!currentUser) {
+          // A fresh login can land here before the session is fully visible
+          // yet (the redirect that got us here fires the instant the login
+          // response resolves). One short retry absorbs that race instead of
+          // bouncing a just-logged-in user back to step 1 of the login form.
+          if (!isRetry) {
+            isFetchingRef.current = false;
+            setTimeout(() => fetchUser(true), 500);
+            return;
+          }
+          router.replace('/login');
+          return;
         }
-      });
-    } catch (err: any) {
-      console.error('Error fetching authenticated user:', err);
-      setError(err?.message || 'Failed to fetch user');
 
-      // If unauthorized or token invalid, redirect to login
-      if (err?.status === 401 || err?.response?.status === 401) {
-        router.replace('/login');
+        // Extract role from user data (API returns role directly)
+        const role =
+          currentUser?.role ||
+          currentUser?.profile?.role?.name ||
+          currentUser?.profile?.role_name ||
+          currentUser?.profile?.role ||
+          null;
+
+        if (!role) {
+          // Same race as the missing-user case above: give it one retry first.
+          if (!isRetry) {
+            isFetchingRef.current = false;
+            setTimeout(() => fetchUser(true), 500);
+            return;
+          }
+          router.replace('/login');
+          return;
+        }
+
+        // Extract store information
+        const academyId =
+          currentUser?.academyId ?? currentUser?.academy_id ?? null;
+        const currentAcademy = currentUser?.currentAcademy ?? null;
+
+        const isAdminProfile = currentUser?.isAdminProfile ?? false;
+        const platformLevel = currentUser?.platformLevel ?? false;
+        const canManageAllAcademies =
+          currentUser?.canManageAllAcademies ??
+          currentUser?.canManageAllStores ??
+          false;
+        const canManagePlatform = currentUser?.canManagePlatform ?? false;
+        const granularPermissions: string[] =
+          currentUser?.granularPermissions ?? [];
+
+        const rawProfiles: AcademyProfile[] = (
+          currentUser?.availableProfiles ??
+          currentUser?.profiles ??
+          []
+        ).map((p: any) => ({
+          academy_id: p.academy_id ?? null,
+          role: (p.Role?.name ?? p.role?.name ?? p.role ?? '') as string
+        }));
+
+        setUser({
+          id: (currentUser as any)?.id || 0,
+          displayName:
+            currentUser?.full_name ?? currentUser?.display_name ?? '',
+          email: currentUser?.email ?? '',
+          phone: currentUser?.phone_number ?? '',
+          role: role as AuthUser['role'],
+          lastLogin: currentUser?.last_login ?? null,
+          avatarUrl: currentUser?.avatar?.url ?? null,
+          academyId: academyId,
+          currentAcademy: currentAcademy,
+          isAdminProfile: isAdminProfile,
+          platformLevel: platformLevel,
+          canManageAllAcademies: canManageAllAcademies,
+          canManagePlatform: canManagePlatform,
+          granularPermissions: granularPermissions,
+          // Defaulting both to the "nothing to show" side keeps an older API payload
+          // from popping the onboarding dialog at someone who never signed up.
+          isSelfRegisteredManager:
+            currentUser?.isSelfRegisteredManager === true,
+          onboardingSeen: currentUser?.onboardingSeen !== false,
+          profiles: rawProfiles,
+          profile: {
+            academy_id: academyId,
+            academyId: academyId,
+            academy: currentAcademy || null,
+            role: role as AuthUser['role'],
+            isAdminProfile: isAdminProfile,
+            platformLevel: platformLevel
+          }
+        });
+      } catch (err: any) {
+        console.error('Error fetching authenticated user:', err);
+        setError(err?.message || 'Failed to fetch user');
+
+        // If unauthorized or token invalid, redirect to login (after one retry
+        // for the same post-login race described above).
+        if (err?.status === 401 || err?.response?.status === 401) {
+          if (!isRetry) {
+            isFetchingRef.current = false;
+            setTimeout(() => fetchUser(true), 500);
+            return;
+          }
+          router.replace('/login');
+        }
+      } finally {
+        setIsLoading(false);
+        isFetchingRef.current = false;
+        hasFetchedRef.current = true;
       }
-    } finally {
-      setIsLoading(false);
-      isFetchingRef.current = false;
-      hasFetchedRef.current = true;
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   useEffect(() => {
     clearLegacyAuthStorage();
