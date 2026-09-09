@@ -1,6 +1,6 @@
 'use client';
 
-import { Icons } from '@/components/icons';
+import { AnimatedNavIcon } from '@/components/layout/animated-nav-icon';
 import { useBreakpoint } from '@/hooks/useBreakPoints';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
@@ -47,11 +47,9 @@ const NavItemContent = React.memo(
     isChildItem: boolean;
     translatedTitle: string;
   }) => {
-    const Icon =
-      item.icon && Icons[item.icon as keyof typeof Icons]
-        ? Icons[item.icon as keyof typeof Icons]
-        : Icons.logo;
     const hasChildren = item.children && item.children.length > 0;
+    const [hovered, setHovered] = useState(false);
+    const canPlay = !isActive && !item.disabled && hovered;
 
     return (
       <div
@@ -60,17 +58,20 @@ const NavItemContent = React.memo(
           isActive && (isChildItem ? 'active-child' : 'active'),
           item.disabled && 'cursor-not-allowed opacity-45 hover:bg-transparent'
         )}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        {/* Plain icon — no box, matches Mentoma design */}
-        <Icon
-          className={cn(
-            'h-[17px] w-[17px] shrink-0 transition-[transform,color] duration-200 ease-out',
-            isActive ? 'text-primary' : 'text-muted-foreground',
-            !isActive &&
-              !item.disabled &&
-              'group-hover:scale-110 group-hover:text-primary'
-          )}
-        />
+        {!isChildItem && (
+          <AnimatedNavIcon
+            name={item.icon}
+            playing={canPlay}
+            className={cn(
+              'shrink-0 transition-colors duration-200 ease-out',
+              isActive ? 'text-primary' : 'text-muted-foreground',
+              !isActive && !item.disabled && 'group-hover:text-primary'
+            )}
+          />
+        )}
         {!isMinimized && (
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <span
@@ -371,7 +372,7 @@ export function DashboardNav({
           isExpanded &&
           (() => {
             return (
-              <div className="ms-4 mt-0.5 space-y-px border-s border-border/60 ps-2.5">
+              <div className="relative ms-4 mt-0.5 space-y-px overflow-visible border-s border-border/60 ps-2.5">
                 {item.children &&
                   item.children.map((child, index) => (
                     <div key={`${child.title}-${index}`}>

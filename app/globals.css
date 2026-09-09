@@ -204,6 +204,10 @@ body {
     color: hsl(var(--primary));
   }
 
+  .sidebar-item svg {
+    overflow: visible;
+  }
+
   /* 3px brand accent bar flush with sidebar start edge */
   .sidebar-item.active::before {
     content: '';
@@ -229,17 +233,23 @@ body {
     border-radius: 3px 0 0 3px;
   }
 
-  /* Active child — no box, just brand color + a trailing bar mark */
+  /* Active child — brand tick sits on the nested track (RTL: right) */
   .sidebar-item.active-child::after {
     content: '';
     position: absolute;
-    inset-inline-end: 8px;
+    inset-inline-start: calc(-0.625rem - 1px);
+    inset-inline-end: auto;
     top: 50%;
     transform: translateY(-50%);
     width: 2px;
     height: 14px;
     background: hsl(var(--primary));
     border-radius: 2px;
+  }
+
+  [dir='rtl'] .sidebar-item.active-child::after {
+    left: auto;
+    right: calc(-0.625rem - 1px);
   }
 
   /* Nav section label */
