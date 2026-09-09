@@ -2695,6 +2695,7 @@ export const ar = {
         lessonsPerCourse: 'الدروس لكل دورة',
         tutoringStudents: 'طلاب التدريس الخصوصي',
         storageGb: 'مساحة التخزين (جيجابايت)',
+        monthlyTrafficGb: 'الترافيك الشهري (جيجابايت)',
         dedicatedTemplates: 'قوالب موقع مخصصة',
         videos: 'الفيديوهات',
         featuresLabel: 'الميزات (سطر لكل ميزة)',
@@ -3415,6 +3416,36 @@ export const ar = {
     replyPlaceholder: 'اكتب ردًا مرتبطًا بالتعلم…',
     send: 'إرسال الرد',
     sendFailed: 'تعذر إرسال الرسالة.'
+  },
+  pricing: {
+    planLimits: {
+      keys: {
+        monthly_traffic_gb: 'الترافيك الشهري (GB)'
+      }
+    },
+    costs: {
+      title: 'افتراضات التكلفة وحِزم الإضافات',
+      description:
+        'تكاليف الوحدة لدى المزوّد التي يُقاس بها هامش ربح كل خطة، وحِزم السعة التي يمكن لمدير الأكاديمية شراؤها لمرة واحدة خلال الفترة. القيمة الظاهرة في كل حقل هي القيمة المقاسة التي بُني عليها التسعير الحالي.',
+      unitCostsTitle: 'تكاليف وحدة البنية التحتية (تومان)',
+      addonsTitle: 'حِزم السعة لمرة واحدة',
+      saveSuccess: 'تم حفظ افتراضات التكلفة',
+      saveFailed: 'تعذر حفظ افتراضات التكلفة',
+      keys: {
+        cost_storage_per_gb_toman: 'التخزين، لكل GB / شهر',
+        cost_egress_per_gb_toman: 'الترافيك المُسلَّم، لكل GB',
+        cost_app_egress_per_gb_toman: 'ترافيك التطبيق/API، لكل GB',
+        cost_compute_base_per_academy_toman: 'المعالجة، لكل أكاديمية / شهر',
+        cost_compute_per_student_toman: 'المعالجة، لكل طالب نشط',
+        cost_sms_per_message_toman: 'الرسائل القصيرة، لكل رسالة',
+        cost_gateway_fee_rate: 'عمولة بوابة الدفع (%)',
+        cost_platform_fixed_monthly_toman: 'إجمالي فاتورة المنصة / شهر',
+        storage_addon_gb: 'حزمة التخزين (GB)',
+        storage_addon_price_toman: 'سعر حزمة التخزين (تومان)',
+        traffic_addon_gb: 'حزمة الترافيك (GB)',
+        traffic_addon_price_toman: 'سعر حزمة الترافيك (تومان)'
+      }
+    }
   },
   userNav: {
     profile: 'الملف الشخصي',

@@ -4,18 +4,20 @@ import { useMemo } from 'react';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import type { StructuredPlanLimits } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { previewPlanMargin } from './plan-margin-preview';
+import { previewPlanMargin, type MarginCosts } from './plan-margin-preview';
 
 interface Props {
   revenueToman: number;
   limits: StructuredPlanLimits;
+  /** Owner-edited unit costs, so the preview matches the backend's verdict. */
+  costs?: Partial<MarginCosts>;
 }
 
-export function PlanMarginPreviewCard({ revenueToman, limits }: Props) {
+export function PlanMarginPreviewCard({ revenueToman, limits, costs }: Props) {
   const { t } = useTranslation();
   const preview = useMemo(
-    () => previewPlanMargin(revenueToman, limits),
-    [revenueToman, limits]
+    () => previewPlanMargin(revenueToman, limits, costs),
+    [revenueToman, limits, costs]
   );
 
   if (revenueToman <= 0) return null;

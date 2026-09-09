@@ -2770,6 +2770,7 @@ export const tr = {
         lessonsPerCourse: 'Kurs başına ders',
         tutoringStudents: 'Özel ders öğrencileri',
         storageGb: 'Depolama (GB)',
+        monthlyTrafficGb: 'Aylık trafik (GB)',
         dedicatedTemplates: 'Özel site şablonları',
         videos: 'Videolar',
         featuresLabel: 'Özellikler (satır başına bir tane)',
@@ -3506,6 +3507,36 @@ export const tr = {
     replyPlaceholder: 'Bağlama uygun bir yanıt yazın…',
     send: 'Yanıt gönder',
     sendFailed: 'Mesaj gönderilemedi.'
+  },
+  pricing: {
+    planLimits: {
+      keys: {
+        monthly_traffic_gb: 'Aylık trafik (GB)'
+      }
+    },
+    costs: {
+      title: 'Maliyet varsayımları ve ek paketler',
+      description:
+        'Her planın kâr marjının karşılaştırıldığı sağlayıcı birim maliyetleri ve akademi yöneticisinin dönem ortasında satın alabileceği tek seferlik kapasite paketleri. Her alanın yer tutucusu, mevcut fiyatlandırmanın dayandığı ölçülmüş değeri gösterir.',
+      unitCostsTitle: 'Altyapı birim maliyetleri (Toman)',
+      addonsTitle: 'Tek seferlik kapasite paketleri',
+      saveSuccess: 'Maliyet varsayımları kaydedildi',
+      saveFailed: 'Maliyet varsayımları kaydedilemedi',
+      keys: {
+        cost_storage_per_gb_toman: 'Depolama, GB / ay',
+        cost_egress_per_gb_toman: 'Sunulan trafik, GB başına',
+        cost_app_egress_per_gb_toman: 'Uygulama/API trafiği, GB başına',
+        cost_compute_base_per_academy_toman: 'İşlem, akademi / ay',
+        cost_compute_per_student_toman: 'İşlem, aktif öğrenci başına',
+        cost_sms_per_message_toman: 'SMS, mesaj başına',
+        cost_gateway_fee_rate: 'Ödeme geçidi komisyonu (%)',
+        cost_platform_fixed_monthly_toman: 'Toplam platform faturası / ay',
+        storage_addon_gb: 'Depolama paketi (GB)',
+        storage_addon_price_toman: 'Depolama paketi fiyatı (Toman)',
+        traffic_addon_gb: 'Trafik paketi (GB)',
+        traffic_addon_price_toman: 'Trafik paketi fiyatı (Toman)'
+      }
+    }
   },
   userNav: {
     profile: 'Profil',

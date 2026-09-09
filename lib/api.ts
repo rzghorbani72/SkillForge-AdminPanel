@@ -7069,6 +7069,20 @@ export interface PlatformSettingsData {
   vat_registration_no: string | null;
   economic_code: string | null;
   owner_notify_phone: string | null;
+  /** Unit costs (Toman) the plan margin check is run against. */
+  cost_storage_per_gb_toman: number;
+  cost_egress_per_gb_toman: number;
+  cost_app_egress_per_gb_toman: number;
+  cost_compute_base_per_academy_toman: number;
+  cost_compute_per_student_toman: number;
+  cost_sms_per_message_toman: number;
+  cost_gateway_fee_rate: number;
+  cost_platform_fixed_monthly_toman: number;
+  /** One-shot capacity packs a manager can buy mid-period. */
+  storage_addon_gb: number;
+  storage_addon_price_toman: number;
+  traffic_addon_gb: number;
+  traffic_addon_price_toman: number;
   created_at: string;
   updated_at: string;
 }
@@ -7081,6 +7095,8 @@ export interface StructuredPlanLimits {
   lessons_per_course: number;
   tutoring_students: number;
   storage_gb: number;
+  /** Delivered media traffic allowed per calendar month, in GB. */
+  monthly_traffic_gb: number;
   videos: number;
   dedicated_templates: number;
 }
@@ -7093,12 +7109,15 @@ export interface PlanEconomicsPreview {
   topCostDriver: 'storage' | 'egress' | 'compute' | 'sms' | 'gateway';
   storageCost: number;
   egressCost: number;
+  appEgressCost: number;
   computeCost: number;
   smsCost: number;
   gatewayCost: number;
   cogs: number;
   grossProfit: number;
   streamedGb: number;
+  streamedHours: number;
+  breakEvenAcademies: number;
 }
 
 export type StorageMediaType = 'video' | 'image' | 'audio' | 'document';

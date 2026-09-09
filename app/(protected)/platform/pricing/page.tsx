@@ -45,6 +45,7 @@ import {
   type PlanFormState
 } from '@/components/platform/pricing/plan-form-fields';
 import { GatewayTogglesCard } from '@/components/platform/pricing/gateway-toggles-card';
+import { CostAssumptionsCard } from '@/components/platform/pricing/cost-assumptions-card';
 import {
   DEFAULT_LIMITS,
   formatIRR,
@@ -477,6 +478,8 @@ export default function PlatformPricingPage() {
         </Button>
       </div>
 
+      <CostAssumptionsCard settings={settings} onSaved={loadAll} />
+
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
@@ -503,6 +506,7 @@ export default function PlatformPricingPage() {
                 form={planForm}
                 isNew={editingPlanId === 'new'}
                 onChange={setPlanForm}
+                costs={settings ?? undefined}
               />
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={cancelPlan}>

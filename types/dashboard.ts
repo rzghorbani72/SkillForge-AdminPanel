@@ -55,6 +55,7 @@ export type PlanLimitKey =
   | 'lessons_per_course'
   | 'tutoring_students'
   | 'storage_gb'
+  | 'monthly_traffic_gb'
   | 'videos'
   | 'dedicated_templates';
 

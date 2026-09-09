@@ -5105,6 +5105,7 @@ export const fa = {
         lessonsPerCourse: 'جلسه به‌ازای هر دوره',
         tutoringStudents: 'دانشجویان تدریس خصوصی',
         storageGb: 'فضای ذخیره‌سازی (گیگابایت)',
+        monthlyTrafficGb: 'ترافیک ماهانه (گیگابایت)',
         dedicatedTemplates: 'قالب سایت اختصاصی',
         videos: 'ویدیو',
         marginOverride: 'نادیده گرفتن بررسی حاشیه سود (نیاز به یادداشت)',
@@ -6814,6 +6815,7 @@ export const fa = {
         lessons_per_course: 'درس / دوره',
         tutoring_students: 'دانشجوی تدریس خصوصی',
         storage_gb: 'فضا (GB)',
+        monthly_traffic_gb: 'ترافیک ماهانه (GB)',
         videos: 'ویدیوها',
         dedicated_templates: 'قالب سایت اختصاصی'
       },
@@ -6826,6 +6828,29 @@ export const fa = {
         compute: 'پردازش',
         sms: 'پیامک',
         gateway: 'درگاه پرداخت'
+      }
+    },
+    costs: {
+      title: 'مفروضات هزینه و بسته‌های افزودنی',
+      description:
+        'هزینه‌های واحد سرویس‌دهنده که حاشیه سود هر پلن با آن سنجیده می‌شود، و بسته‌های ظرفیت تک‌خریدی که مدیر آکادمی می‌تواند در میانه دوره بخرد. مقدار راهنمای هر فیلد، همان عدد اندازه‌گیری‌شده‌ای است که قیمت‌گذاری فعلی بر اساس آن طراحی شده است.',
+      unitCostsTitle: 'هزینه‌های واحد زیرساخت (تومان)',
+      addonsTitle: 'بسته‌های ظرفیت تک‌خریدی',
+      saveSuccess: 'مفروضات هزینه ذخیره شد',
+      saveFailed: 'ذخیره مفروضات هزینه ناموفق بود',
+      keys: {
+        cost_storage_per_gb_toman: 'فضا، هر GB / ماه',
+        cost_egress_per_gb_toman: 'ترافیک تحویل‌شده، هر GB',
+        cost_app_egress_per_gb_toman: 'ترافیک اپ/API، هر GB',
+        cost_compute_base_per_academy_toman: 'پردازش، هر آکادمی / ماه',
+        cost_compute_per_student_toman: 'پردازش، هر دانشجوی فعال',
+        cost_sms_per_message_toman: 'پیامک، هر پیام',
+        cost_gateway_fee_rate: 'کارمزد درگاه پرداخت (%)',
+        cost_platform_fixed_monthly_toman: 'کل صورت‌حساب پلتفرم / ماه',
+        storage_addon_gb: 'بسته فضا (GB)',
+        storage_addon_price_toman: 'قیمت بسته فضا (تومان)',
+        traffic_addon_gb: 'بسته ترافیک (GB)',
+        traffic_addon_price_toman: 'قیمت بسته ترافیک (تومان)'
       }
     },
     platform: {

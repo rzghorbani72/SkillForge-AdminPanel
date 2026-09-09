@@ -5123,6 +5123,7 @@ export const en = {
         lessonsPerCourse: 'Lessons per course',
         tutoringStudents: 'Tutoring students',
         storageGb: 'Storage (GB)',
+        monthlyTrafficGb: 'Monthly traffic (GB)',
         dedicatedTemplates: 'Dedicated site templates',
         videos: 'Videos',
         marginOverride: 'Override margin check (requires note)',
@@ -6839,6 +6840,7 @@ export const en = {
         lessons_per_course: 'Lessons / course',
         tutoring_students: 'Private tutoring students',
         storage_gb: 'Storage (GB)',
+        monthly_traffic_gb: 'Monthly traffic (GB)',
         videos: 'Videos',
         dedicated_templates: 'Dedicated site templates'
       },
@@ -6851,6 +6853,29 @@ export const en = {
         compute: 'compute',
         sms: 'SMS',
         gateway: 'payment gateway'
+      }
+    },
+    costs: {
+      title: 'Cost assumptions & add-on packs',
+      description:
+        "The provider unit costs every plan's profit margin is checked against, and the one-off capacity packs an academy manager can buy mid-period. Each field's placeholder shows the measured value the current pricing was designed against.",
+      unitCostsTitle: 'Infrastructure unit costs (Toman)',
+      addonsTitle: 'One-off capacity packs',
+      saveSuccess: 'Cost assumptions saved',
+      saveFailed: 'Could not save cost assumptions',
+      keys: {
+        cost_storage_per_gb_toman: 'Storage, per GB / month',
+        cost_egress_per_gb_toman: 'Delivered traffic, per GB',
+        cost_app_egress_per_gb_toman: 'App/API traffic, per GB',
+        cost_compute_base_per_academy_toman: 'Compute, per academy / month',
+        cost_compute_per_student_toman: 'Compute, per active student',
+        cost_sms_per_message_toman: 'SMS, per message',
+        cost_gateway_fee_rate: 'Payment gateway fee (%)',
+        cost_platform_fixed_monthly_toman: 'Total platform bill / month',
+        storage_addon_gb: 'Storage pack (GB)',
+        storage_addon_price_toman: 'Storage pack price (Toman)',
+        traffic_addon_gb: 'Traffic pack (GB)',
+        traffic_addon_price_toman: 'Traffic pack price (Toman)'
       }
     },
     platform: {

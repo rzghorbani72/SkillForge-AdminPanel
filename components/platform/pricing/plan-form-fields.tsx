@@ -7,8 +7,14 @@ import { Switch } from '@/components/ui/switch';
 import { PriceInput } from '@/components/ui/price-input';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { StructuredPlanLimits } from '@/lib/api';
-import { PLAN_LIMIT_KEYS, planRevenueForMargin } from './pricing-helpers';
+import {
+  PLAN_LIMIT_KEYS,
+  planDefaults,
+  planRevenueForMargin
+} from './pricing-helpers';
 import { PlanMarginPreviewCard } from './plan-margin-preview-card';
+import type { MarginCosts } from './plan-margin-preview';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 export type PlanFormState = {
   name: string;
@@ -28,10 +34,19 @@ interface Props {
   form: PlanFormState;
   isNew: boolean;
   onChange: (next: PlanFormState) => void;
+  /** Live unit costs, so the inline margin verdict matches the backend's. */
+  costs?: Partial<MarginCosts>;
 }
 
-export function PlanFormFields({ form, isNew, onChange }: Props) {
+export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
+
+  // The designed launch values for this tier, shown as placeholders so the
+  // owner can see what a field started as while editing what is live.
+  const defaults = planDefaults(form.slug);
+  const hint = (value: number | undefined) =>
+    value === undefined ? undefined : formatNumber(value);
 
   const set = (patch: Partial<PlanFormState>) =>
     onChange({ ...form, ...patch });
@@ -77,6 +92,7 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
           <PriceInput
             value={form.price_monthly_toman}
             onChange={(raw) => set({ price_monthly_toman: raw })}
+            placeholder={hint(defaults?.price_monthly_toman)}
           />
         </div>
         <div className="space-y-1">
@@ -86,7 +102,10 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
           <PriceInput
             value={form.price_yearly_toman}
             onChange={(raw) => set({ price_yearly_toman: raw })}
-            placeholder={t('pricing.planLimits.optional')}
+            placeholder={
+              hint(defaults?.price_quarterly_toman) ??
+              t('pricing.planLimits.optional')
+            }
           />
         </div>
         <div className="space-y-1">
@@ -96,6 +115,7 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
           <NumberInput
             value={form.storage_limit_gb}
             onChange={(raw) => set({ storage_limit_gb: raw })}
+            placeholder={hint(defaults?.limits.storage_gb)}
           />
         </div>
         <div className="space-y-1">
@@ -144,6 +164,7 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
               <NumberInput
                 value={String(form.limits[key])}
                 onChange={(raw) => setLimit(key, raw)}
+                placeholder={hint(defaults?.limits[key])}
               />
             </div>
           ))}
@@ -156,6 +177,7 @@ export function PlanFormFields({ form, isNew, onChange }: Props) {
           Number(form.price_monthly_toman) || 0
         )}
         limits={form.limits}
+        costs={costs}
       />
 
       <div className="space-y-1">

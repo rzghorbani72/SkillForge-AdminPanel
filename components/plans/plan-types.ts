@@ -69,6 +69,7 @@ export const DEFAULT_CUSTOM_PLAN_FORM: AcademyCustomPlanFormData = {
     lessons_per_course: '50',
     tutoring_students: '10',
     storage_gb: '10',
+    monthly_traffic_gb: '100',
     videos: '10',
     dedicated_templates: '1'
   },
