@@ -1,3 +1,7 @@
+/** 22rem = 352px so course cards stay wider than 320px when the row allows it. */
+export const COURSE_CARD_GRID_COLUMNS =
+  'repeat(auto-fill, minmax(min(100%, 22rem), 1fr))';
+
 export const CATEGORY_COLORS: Record<number, { h: number }> = {
   0: { h: 22 },
   1: { h: 240 },

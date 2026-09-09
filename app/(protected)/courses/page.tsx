@@ -14,6 +14,7 @@ import { CourseCard } from '@/components/course/CourseCard';
 import { CourseRow } from '@/components/course/CourseRow';
 import { GridSkeleton } from '@/components/course/GridSkeleton';
 import { CourseFilterBar } from '@/components/course/CourseFilterBar';
+import { COURSE_CARD_GRID_COLUMNS } from '@/components/course/courseUtils';
 import { ConfirmDeleteDialog } from '@/components/shared/ConfirmDeleteDialog';
 import { RequirePermission } from '@/components/access-control/RequirePermission';
 
@@ -114,11 +115,8 @@ export default function CoursesPage() {
           </div>
         ) : view === 'grid' ? (
           <div
-            className="grid gap-4"
-            style={{
-              gridTemplateColumns:
-                'repeat(auto-fill, minmax(min(100%, 16rem), 1fr))'
-            }}
+            className="grid gap-5"
+            style={{ gridTemplateColumns: COURSE_CARD_GRID_COLUMNS }}
           >
             {filteredCourses.map((c) => (
               <CourseCard
@@ -132,12 +130,12 @@ export default function CoursesPage() {
             <button
               type="button"
               onClick={handleCreate}
-              className="flex min-h-[260px] flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-border/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+              className="flex h-full min-h-[22rem] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border/70 bg-muted/20 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Plus className="h-5 w-5" />
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Plus className="h-6 w-6" />
               </span>
-              <span className="text-[14px] font-semibold text-foreground">
+              <span className="text-base font-semibold text-foreground">
                 {t('courses.newCourse')}
               </span>
             </button>

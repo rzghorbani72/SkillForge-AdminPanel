@@ -429,6 +429,14 @@ export const navItems: NavItem[] = [
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy'
   },
+  {
+    title: 'My Academies',
+    href: '/academies',
+    icon: 'store' as IconType,
+    label: 'myAcademies',
+    roles: ['MANAGER', 'TEACHER'],
+    scope: 'academy'
+  },
   // Growth — what measures or feeds the public site, not the site itself
   {
     title: 'Growth',
@@ -513,14 +521,6 @@ export const navItems: NavItem[] = [
         scope: 'academy'
       }
     ]
-  },
-  {
-    title: 'My Academies',
-    href: '/academies',
-    icon: 'store' as IconType,
-    label: 'myAcademies',
-    roles: ['MANAGER', 'TEACHER'],
-    scope: 'academy'
   },
   {
     title: 'My Affiliate',
