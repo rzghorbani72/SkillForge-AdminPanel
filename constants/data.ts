@@ -423,11 +423,60 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Website',
-    href: '/website',
     icon: 'layout' as IconType,
     label: 'academyWebsite',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy'
+    scope: 'academy',
+    children: [
+      {
+        title: 'Overview',
+        href: '/website',
+        icon: 'dashboard' as IconType,
+        label: 'websiteOverview',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
+      },
+      {
+        title: 'Appearance',
+        href: '/website/appearance',
+        icon: 'gallery' as IconType,
+        label: 'websiteAppearance',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
+      },
+      {
+        title: 'Pages',
+        href: '/website/pages',
+        icon: 'fileText' as IconType,
+        label: 'websitePages',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
+      },
+      {
+        title: 'Search & sharing',
+        href: '/website/seo',
+        icon: 'search' as IconType,
+        label: 'websiteSeo',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
+      },
+      {
+        title: 'Trust badge',
+        href: '/website/trust',
+        icon: 'shield' as IconType,
+        label: 'websiteTrust',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
+      },
+      {
+        title: 'Domain',
+        href: '/website/domain',
+        icon: 'globe' as IconType,
+        label: 'websiteDomain',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
+      }
+    ]
   },
   {
     title: 'My Academies',

@@ -173,7 +173,7 @@ export const fa = {
       metaDescription: 'توضیح در جست‌وجو'
     },
     seo: {
-      title: 'جست‌وجو و اشتراک‌گذاری',
+      title: 'سئو',
       description:
         'چیزی که گوگل و شبکه‌های اجتماعی نشان می‌دهند. خالی بگذارید تا از عنوان و خلاصه استفاده شود.'
     },
@@ -828,6 +828,12 @@ export const fa = {
     requests: 'درخواست‌ها',
     siteTemplate: 'قالب سایت',
     academyWebsite: 'وب‌سایت',
+    websiteOverview: 'نمای کلی',
+    websiteAppearance: 'ظاهر سایت',
+    websitePages: 'صفحه‌ها',
+    websiteSeo: 'سئو',
+    websiteTrust: 'نماد اعتماد',
+    websiteDomain: 'دامنه',
     financial: 'مالی',
     plans: 'پلن‌ها',
     platformPlan: 'اشتراک آکادمی',
@@ -2151,7 +2157,7 @@ export const fa = {
     toman: 'تومان',
     courseSettings: 'تنظیمات دوره',
     seo: {
-      title: 'جست‌وجو و اشتراک‌گذاری',
+      title: 'سئو',
       description:
         'چیزی که مردم می‌بینند وقتی این دوره در گوگل بالا می‌آید. اگر خالی بماند، عنوان و توضیح خود دوره استفاده می‌شود.',
       metaTitle: 'عنوان در جست‌وجو',
@@ -6119,7 +6125,7 @@ export const fa = {
       overview: 'نمای کلی',
       appearance: 'ظاهر سایت',
       pages: 'صفحه‌ها',
-      seo: 'جست‌وجو و اشتراک‌گذاری',
+      seo: 'سئو',
       trust: 'نماد اعتماد',
       domain: 'دامنه'
     },
@@ -6133,7 +6139,7 @@ export const fa = {
       pagesTitle: 'صفحه‌ها و تماس',
       pagesDescription:
         'صفحهٔ دربارهٔ ما و تماس با ما را بنویسید و راه‌های ارتباطی را وارد کنید.',
-      seoTitle: 'جست‌وجو و اشتراک‌گذاری',
+      seoTitle: 'سئو',
       seoDescription:
         'عنوان، توضیح و تصویری که در گوگل و هنگام اشتراک لینک دیده می‌شود.',
       trustTitle: 'نماد اعتماد',
@@ -6145,10 +6151,10 @@ export const fa = {
       brandingDescription: 'نام آکادمی، نشانی، لوگو، فاوآیکون و رنگ برند.'
     },
     seo: {
-      title: 'جست‌وجو و اشتراک‌گذاری',
+      title: 'سئو',
       description:
         'چیزی که مردم می‌بینند وقتی آکادمی شما در گوگل بالا می‌آید یا کسی لینک آن را به اشتراک می‌گذارد.',
-      formTitle: 'مشخصات جست‌وجو و اشتراک‌گذاری',
+      formTitle: 'مشخصات سئو',
       metaTitle: 'عنوان در جست‌وجو',
       metaTitlePlaceholder: 'مثال: آموزشگاه زبان مارال — آیلتس و زبان عمومی',
       metaTitleHint:
@@ -6166,7 +6172,7 @@ export const fa = {
       previewSearch: 'پیش‌نمایش گوگل',
       previewShare: 'پیش‌نمایش لینک اشتراکی',
       previewEmptyDescription: 'هنوز توضیحی وارد نشده است.',
-      saved: 'مشخصات جست‌وجو و اشتراک‌گذاری ذخیره شد'
+      saved: 'مشخصات سئو ذخیره شد'
     }
   },
   sitePreview: {

@@ -134,18 +134,33 @@ test.describe('sidebar shape', () => {
         tutoring: true
       }
     });
-    expect(items.length).toBeLessThanOrEqual(8);
+    expect(items.length).toBeLessThanOrEqual(9);
   });
 
   // The daily destinations must be one click away, not hidden in a group.
   test('the everyday screens sit at the top level', () => {
     const items = filterNavItems(navItems, MANAGER);
-    for (const href of ['/dashboard', '/courses', '/users', '/website']) {
+    for (const href of ['/dashboard', '/courses', '/users']) {
       expect(
         items.some((item) => item.href === href),
         href
       ).toBe(true);
     }
+    expect(items.some((item) => item.title === 'Website')).toBe(true);
+  });
+
+  test('website destinations live under the Website group', () => {
+    const items = filterNavItems(navItems, MANAGER);
+    const website = items.find((item) => item.title === 'Website');
+    expect(website?.href).toBeUndefined();
+    expect(website?.children?.map((child) => child.href)).toEqual([
+      '/website',
+      '/website/appearance',
+      '/website/pages',
+      '/website/seo',
+      '/website/trust',
+      '/website/domain'
+    ]);
   });
 
   test('every group holds at least two children', () => {

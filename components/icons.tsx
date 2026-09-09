@@ -12,6 +12,7 @@ import {
   File,
   FileText,
   Folder,
+  Globe,
   GraduationCap,
   HelpCircle,
   Image,
@@ -56,6 +57,7 @@ import {
   Wand2,
   Package,
   RotateCcw,
+  Search,
   Banknote,
   Wallet2,
   Network,
@@ -133,7 +135,9 @@ export type IconType =
   | 'webhook'
   | 'hardDrive'
   | 'gallery'
-  | 'megaphone';
+  | 'megaphone'
+  | 'globe'
+  | 'search';
 export type Icon = LucideIcon;
 
 export const Icons = {
@@ -204,5 +208,7 @@ export const Icons = {
   webhook: Webhook,
   hardDrive: HardDrive,
   gallery: LayoutGrid,
-  megaphone: Megaphone
+  megaphone: Megaphone,
+  globe: Globe,
+  search: Search
 };
