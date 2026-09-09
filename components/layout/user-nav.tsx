@@ -17,6 +17,7 @@ import { isPlatformStaff } from '@/lib/roles';
 import { signOut } from '@/lib/sign-out';
 import {
   Banknote,
+  Building2,
   ChevronDown,
   LifeBuoy,
   LogOut,
@@ -28,6 +29,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { formatIdentifierDisplay } from '@/lib/format-identifier';
 
 const SETTLEMENT_ROLES = ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'];
+const MY_ACADEMIES_ROLES = ['MANAGER', 'TEACHER'];
 
 function getInitials(name: string): string {
   return name
@@ -58,6 +60,7 @@ export function UserNav() {
 
   const canSeeSettlement =
     hasAcademyContext && SETTLEMENT_ROLES.includes(roleName);
+  const canSeeMyAcademies = MY_ACADEMIES_ROLES.includes(roleName);
 
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
   const avatarUrl = user?.avatarUrl ?? null;
@@ -142,6 +145,16 @@ export function UserNav() {
           >
             <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
             <span>{t('userNav.settings')}</span>
+          </DropdownMenuItem>
+        )}
+
+        {canSeeMyAcademies && (
+          <DropdownMenuItem
+            className="cursor-pointer gap-2.5 py-2"
+            onClick={() => router.push('/academies')}
+          >
+            <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span>{t('navigation.myAcademies')}</span>
           </DropdownMenuItem>
         )}
 

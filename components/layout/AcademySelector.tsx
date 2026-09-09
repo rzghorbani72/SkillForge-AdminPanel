@@ -22,6 +22,12 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import type { Academy } from '@/types/api';
 
 const AVATAR_COLORS = [
@@ -42,6 +48,26 @@ function truncateName(name: string): string {
   return name.length > SELECTOR_NAME_MAX_CHARS
     ? `${name.slice(0, SELECTOR_NAME_MAX_CHARS)}…`
     : name;
+}
+
+function TruncatedAcademyName({ name }: { name: string }) {
+  const display = truncateName(name);
+  const isTruncated = name.length > SELECTOR_NAME_MAX_CHARS;
+
+  if (!isTruncated) {
+    return <p className="text-sm font-semibold leading-tight">{display}</p>;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <p className="cursor-default text-sm font-semibold leading-tight">
+          {display}
+        </p>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">{name}</TooltipContent>
+    </Tooltip>
+  );
 }
 
 function academyColor(id: string) {
@@ -186,9 +212,7 @@ export function AcademySelector() {
     <div className="flex items-center gap-0 sm:gap-2.5">
       <AcademyAvatar name={current.name} id={current.id} logo={current.logo} />
       <div className="hidden min-w-0 items-center gap-1.5 text-start sm:flex">
-        <p className="text-sm font-semibold leading-tight" title={current.name}>
-          {truncateName(current.name)}
-        </p>
+        <TruncatedAcademyName name={current.name} />
         <AcademyStatusBadge academy={current} dotOnly />
       </div>
       {hasMultiple && (
@@ -207,101 +231,103 @@ export function AcademySelector() {
   );
 
   return (
-    <div className="flex items-center gap-1.5">
-      {/* Academy switcher trigger */}
-      {hasMultiple ? (
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              className="flex h-9 items-center rounded-xl border bg-background px-2 shadow-sm transition-colors hover:bg-accent sm:h-10 sm:px-3"
+    <TooltipProvider delayDuration={200}>
+      <div className="flex items-center gap-1.5">
+        {/* Academy switcher trigger */}
+        {hasMultiple ? (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="flex h-9 items-center rounded-xl border bg-background px-2 shadow-sm transition-colors hover:bg-accent sm:h-10 sm:px-3"
+              >
+                {selectorContent}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="start"
+              className="w-72 p-0 shadow-xl"
+              sideOffset={6}
             >
-              {selectorContent}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent
-            align="start"
-            className="w-72 p-0 shadow-xl"
-            sideOffset={6}
-          >
-            <div className="flex items-center gap-2 border-b px-3 py-2">
-              <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <input
-                autoFocus
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-                placeholder={t('stores.searchStores')}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-            </div>
-            <div className="max-h-64 overflow-y-auto py-1.5">
-              {filtered.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-muted-foreground">
-                  {t('stores.noStoresFound')}
-                </p>
-              ) : (
-                filtered.map((academy) => {
-                  const isActive = selectedAcademy?.id === academy.id;
-                  const role = resolveAcademyRole(
-                    academy,
-                    user?.academyId,
-                    user?.role ?? ''
-                  );
-                  const roleLabel = role
-                    ? t(`userNav.roles.${role}`) || role
-                    : '';
-                  return (
-                    <button
-                      key={academy.id}
-                      type="button"
-                      className={cn(
-                        'flex w-full items-center gap-3 px-3 py-2.5 transition-colors hover:bg-accent',
-                        isActive && 'bg-primary/5'
-                      )}
-                      onClick={() => handleSelectAcademy(academy.id)}
-                    >
-                      <AcademyAvatar
-                        name={academy.name}
-                        id={academy.id}
-                        logo={academy.logo}
-                      />
-                      <div className="min-w-0 flex-1 text-start">
-                        <p
-                          className={cn(
-                            'truncate text-sm font-medium',
-                            isActive && 'text-primary'
-                          )}
-                        >
-                          {academy.name}
-                        </p>
-                        <div className="flex items-center gap-1.5">
-                          <p className="truncate text-xs text-muted-foreground">
-                            {getAcademyDomain(academy)}
+              <div className="flex items-center gap-2 border-b px-3 py-2">
+                <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <input
+                  autoFocus
+                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  placeholder={t('stores.searchStores')}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </div>
+              <div className="max-h-64 overflow-y-auto py-1.5">
+                {filtered.length === 0 ? (
+                  <p className="px-4 py-3 text-sm text-muted-foreground">
+                    {t('stores.noStoresFound')}
+                  </p>
+                ) : (
+                  filtered.map((academy) => {
+                    const isActive = selectedAcademy?.id === academy.id;
+                    const role = resolveAcademyRole(
+                      academy,
+                      user?.academyId,
+                      user?.role ?? ''
+                    );
+                    const roleLabel = role
+                      ? t(`userNav.roles.${role}`) || role
+                      : '';
+                    return (
+                      <button
+                        key={academy.id}
+                        type="button"
+                        className={cn(
+                          'flex w-full items-center gap-3 px-3 py-2.5 transition-colors hover:bg-accent',
+                          isActive && 'bg-primary/5'
+                        )}
+                        onClick={() => handleSelectAcademy(academy.id)}
+                      >
+                        <AcademyAvatar
+                          name={academy.name}
+                          id={academy.id}
+                          logo={academy.logo}
+                        />
+                        <div className="min-w-0 flex-1 text-start">
+                          <p
+                            className={cn(
+                              'truncate text-sm font-medium',
+                              isActive && 'text-primary'
+                            )}
+                          >
+                            {academy.name}
                           </p>
-                          {roleLabel && (
-                            <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                              {roleLabel}
-                            </span>
-                          )}
-                          <AcademyStatusBadge academy={academy} />
+                          <div className="flex items-center gap-1.5">
+                            <p className="truncate text-xs text-muted-foreground">
+                              {getAcademyDomain(academy)}
+                            </p>
+                            {roleLabel && (
+                              <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                                {roleLabel}
+                              </span>
+                            )}
+                            <AcademyStatusBadge academy={academy} />
+                          </div>
                         </div>
-                      </div>
-                      {isActive && (
-                        <Check className="h-4 w-4 shrink-0 text-primary" />
-                      )}
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          </PopoverContent>
-        </Popover>
-      ) : (
-        <div className="flex h-10 items-center rounded-xl border bg-background px-3 shadow-sm">
-          {selectorContent}
-        </div>
-      )}
-    </div>
+                        {isActive && (
+                          <Check className="h-4 w-4 shrink-0 text-primary" />
+                        )}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <div className="flex h-10 items-center rounded-xl border bg-background px-3 shadow-sm">
+            {selectorContent}
+          </div>
+        )}
+      </div>
+    </TooltipProvider>
   );
 }
 
@@ -343,12 +369,7 @@ function AdminModeSwitcher() {
         logo={selectedAcademy.logo}
       />
       <div className="hidden min-w-0 items-center gap-1.5 text-start sm:flex">
-        <p
-          className="text-sm font-semibold leading-tight"
-          title={selectedAcademy.name}
-        >
-          {truncateName(selectedAcademy.name)}
-        </p>
+        <TruncatedAcademyName name={selectedAcademy.name} />
         <AcademyStatusBadge academy={selectedAcademy} dotOnly />
       </div>
       <ChevronDown
@@ -384,113 +405,115 @@ function AdminModeSwitcher() {
     : academies;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="flex h-9 items-center rounded-xl border bg-background px-2 shadow-sm transition-colors hover:bg-accent sm:h-10 sm:px-3"
+    <TooltipProvider delayDuration={200}>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="flex h-9 items-center rounded-xl border bg-background px-2 shadow-sm transition-colors hover:bg-accent sm:h-10 sm:px-3"
+          >
+            {trigger}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          align="start"
+          className="w-72 p-0 shadow-xl"
+          sideOffset={6}
         >
-          {trigger}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className="w-72 p-0 shadow-xl"
-        sideOffset={6}
-      >
-        {/* Platform mode entry */}
-        <button
-          type="button"
-          onClick={enterPlatformMode}
-          className={cn(
-            'flex w-full items-center gap-3 border-b px-3 py-2.5 transition-colors hover:bg-accent',
-            !selectedAcademy && 'bg-primary/5'
-          )}
-        >
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/90">
-            <Building2 className="h-4 w-4 text-background" />
-          </div>
-          <div className="min-w-0 flex-1 text-start">
-            <p
-              className={cn(
-                'truncate text-sm font-medium',
-                !selectedAcademy && 'text-primary'
-              )}
-            >
-              {platformLabel}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {t('stores.platformLevel') || 'Platform level'}
-            </p>
-          </div>
-          {!selectedAcademy && (
-            <Check className="h-4 w-4 shrink-0 text-primary" />
-          )}
-        </button>
-
-        <div className="flex items-center gap-2 border-b px-3 py-2">
-          <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <input
-            autoFocus
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-            placeholder={t('stores.searchStores')}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-
-        <div className="max-h-64 overflow-y-auto py-1.5">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          {/* Platform mode entry */}
+          <button
+            type="button"
+            onClick={enterPlatformMode}
+            className={cn(
+              'flex w-full items-center gap-3 border-b px-3 py-2.5 transition-colors hover:bg-accent',
+              !selectedAcademy && 'bg-primary/5'
+            )}
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/90">
+              <Building2 className="h-4 w-4 text-background" />
             </div>
-          ) : filtered.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-muted-foreground">
-              {t('stores.noStoresFound')}
-            </p>
-          ) : (
-            filtered.map((academy) => {
-              const isActive = selectedAcademy?.id === academy.id;
-              return (
-                <button
-                  key={academy.id}
-                  type="button"
-                  onClick={() => enterAcademyMode(academy.id)}
-                  className={cn(
-                    'flex w-full items-center gap-3 px-3 py-2.5 transition-colors hover:bg-accent',
-                    isActive && 'bg-primary/5'
-                  )}
-                >
-                  <AcademyAvatar
-                    name={academy.name}
-                    id={academy.id}
-                    logo={academy.logo}
-                  />
-                  <div className="min-w-0 flex-1 text-start">
-                    <p
-                      className={cn(
-                        'truncate text-sm font-medium',
-                        isActive && 'text-primary'
-                      )}
-                    >
-                      {academy.name}
-                    </p>
-                    <div className="flex items-center gap-1.5">
-                      <p className="truncate text-xs text-muted-foreground">
-                        {getAcademyDomain(academy)}
+            <div className="min-w-0 flex-1 text-start">
+              <p
+                className={cn(
+                  'truncate text-sm font-medium',
+                  !selectedAcademy && 'text-primary'
+                )}
+              >
+                {platformLabel}
+              </p>
+              <p className="truncate text-xs text-muted-foreground">
+                {t('stores.platformLevel') || 'Platform level'}
+              </p>
+            </div>
+            {!selectedAcademy && (
+              <Check className="h-4 w-4 shrink-0 text-primary" />
+            )}
+          </button>
+
+          <div className="flex items-center gap-2 border-b px-3 py-2">
+            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <input
+              autoFocus
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              placeholder={t('stores.searchStores')}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+
+          <div className="max-h-64 overflow-y-auto py-1.5">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+              </div>
+            ) : filtered.length === 0 ? (
+              <p className="px-4 py-3 text-sm text-muted-foreground">
+                {t('stores.noStoresFound')}
+              </p>
+            ) : (
+              filtered.map((academy) => {
+                const isActive = selectedAcademy?.id === academy.id;
+                return (
+                  <button
+                    key={academy.id}
+                    type="button"
+                    onClick={() => enterAcademyMode(academy.id)}
+                    className={cn(
+                      'flex w-full items-center gap-3 px-3 py-2.5 transition-colors hover:bg-accent',
+                      isActive && 'bg-primary/5'
+                    )}
+                  >
+                    <AcademyAvatar
+                      name={academy.name}
+                      id={academy.id}
+                      logo={academy.logo}
+                    />
+                    <div className="min-w-0 flex-1 text-start">
+                      <p
+                        className={cn(
+                          'truncate text-sm font-medium',
+                          isActive && 'text-primary'
+                        )}
+                      >
+                        {academy.name}
                       </p>
-                      <AcademyStatusBadge academy={academy} />
+                      <div className="flex items-center gap-1.5">
+                        <p className="truncate text-xs text-muted-foreground">
+                          {getAcademyDomain(academy)}
+                        </p>
+                        <AcademyStatusBadge academy={academy} />
+                      </div>
                     </div>
-                  </div>
-                  {isActive && (
-                    <Check className="h-4 w-4 shrink-0 text-primary" />
-                  )}
-                </button>
-              );
-            })
-          )}
-        </div>
-      </PopoverContent>
-    </Popover>
+                    {isActive && (
+                      <Check className="h-4 w-4 shrink-0 text-primary" />
+                    )}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </TooltipProvider>
   );
 }
