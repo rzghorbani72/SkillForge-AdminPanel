@@ -238,11 +238,14 @@ export default function PlansPage() {
     toast.success(t('plans.paymentSuccess'), {
       toastId: 'plans-payment-success'
     });
+    // The subscription query can still be within its staleTime from before the
+    // payment, so force a refetch instead of trusting the cache after redirect.
+    void refreshSubscription();
     // Drop ?paid without router deps (keeps this effect's dep array size stable).
     const url = new URL(window.location.href);
     url.searchParams.delete('paid');
     window.history.replaceState(null, '', `${url.pathname}${url.search}`);
-  }, [paidParam, t]);
+  }, [paidParam, t, refreshSubscription]);
 
   // Coming from the landing page's "enroll" link: open the confirm dialog
   // pre-selected on that plan so buying it is one click away, not a re-pick.
