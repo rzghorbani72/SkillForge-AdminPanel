@@ -7032,7 +7032,7 @@ export const en = {
     title: 'Platform broadcasts',
     compose: 'Compose broadcast',
     composeDescription:
-      'Draft a message and send it to academy managers or teachers.',
+      'Write the message yourself, then send it to every academy dashboard (or only teachers / selected academies). Price changes are not announced automatically.',
     saveDraft: 'Save draft',
     send: 'Send',
     created: 'Broadcast draft saved',
@@ -7050,7 +7050,7 @@ export const en = {
       academyIdsPlaceholder: 'Comma-separated academy IDs'
     },
     audiences: {
-      ALL_MANAGERS: 'All managers',
+      ALL_MANAGERS: 'All academy dashboards',
       ALL_TEACHERS: 'All teachers',
       SELECTED_ACADEMIES: 'Selected academies'
     },

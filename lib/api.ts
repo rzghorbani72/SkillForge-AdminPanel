@@ -1501,11 +1501,10 @@ class ApiClient {
   }
 
   async getUnreadNotificationCount() {
-    const res = await this.request('/notifications/unread-count');
-    const body = (
-      res as { data?: { data?: { count?: number }; count?: number } }
-    ).data;
-    return body?.data?.count ?? body?.count ?? 0;
+    const data = unwrapEnvelope<{ count?: number }>(
+      await this.request('/notifications/unread-count')
+    );
+    return typeof data?.count === 'number' ? data.count : 0;
   }
 
   async markNotificationRead(id: string) {

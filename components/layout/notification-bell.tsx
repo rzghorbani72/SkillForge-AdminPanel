@@ -1,21 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { BellIcon } from '@animateicons/react/lucide/bell-icon';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Bell, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { AnimatedHoverIcon } from '@/components/layout/animated-hover-icon';
 import { apiClient, PanelNotification } from '@/lib/api';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { localizeNotificationText } from '@/lib/i18n/localize-notification-text';
 import { cn } from '@/lib/utils';
 
 export function NotificationBell() {
-  const { t } = useTranslation();
-  const { locale } = useLanguage();
+  const { t, language } = useTranslation();
+  const { isRTL } = useLanguage();
+  const formatDate = useDateFormat();
+  const formatNumber = useNumberFormat();
   const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [unread, setUnread] = useState(0);
   const [items, setItems] = useState<PanelNotification[]>([]);
   const [loading, setLoading] = useState(false);
@@ -65,25 +73,39 @@ export function NotificationBell() {
     setUnread(0);
   };
 
+  const unreadLabel = unread > 9 ? `${formatNumber(9)}+` : formatNumber(unread);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="relative flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border/80 bg-background text-foreground shadow-sm transition-colors hover:bg-muted"
           aria-label={t('notifications.bell.title')}
         >
-          <Bell className="h-[18px] w-[18px]" />
+          <AnimatedHoverIcon
+            icon={BellIcon}
+            playing={hovered || open}
+            size={18}
+            className="text-foreground"
+          />
           {unread > 0 && (
-            <span className="absolute end-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground ring-2 ring-background">
-              {unread > 9
-                ? `${(9).toLocaleString(locale)}+`
-                : unread.toLocaleString(locale)}
+            <span
+              className="absolute -end-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground"
+              aria-label={unreadLabel}
+            >
+              {unreadLabel}
             </span>
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 p-0">
+      <PopoverContent
+        align="end"
+        className="w-80 p-0"
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
         <div className="flex items-center justify-between border-b px-3 py-2">
           <p className="text-sm font-medium">{t('notifications.bell.title')}</p>
           {unread > 0 && (
@@ -117,12 +139,17 @@ export function NotificationBell() {
                   !n.is_read && 'bg-primary/5'
                 )}
               >
-                <p className="font-medium">{n.title}</p>
+                <p className="font-medium">
+                  {localizeNotificationText(n.title, language, formatDate)}
+                </p>
                 <p className="line-clamp-2 text-xs text-muted-foreground">
-                  {n.message}
+                  {localizeNotificationText(n.message, language, formatDate)}
                 </p>
                 <p className="mt-1 text-[10px] text-muted-foreground">
-                  {new Date(n.created_at).toLocaleString(locale)}
+                  {formatDate(n.created_at, {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
                 </p>
               </button>
             ))

@@ -35,8 +35,9 @@ export default function Header() {
           <HeaderPlanBadge />
           <HeaderUpgradeButton />
 
-          {/* Notification bell */}
-          <NotificationBell />
+          <div className="shrink-0">
+            <NotificationBell />
+          </div>
 
           <div className="hidden h-6 w-px bg-border/50 sm:block" />
 
