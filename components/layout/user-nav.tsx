@@ -13,8 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { useStore } from '@/hooks/useStore';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useKyc } from '@/hooks/use-kyc';
 import { isPlatformStaff } from '@/lib/roles';
 import { signOut } from '@/lib/sign-out';
+import { KYC_IDENTITY_PATH } from '@/lib/kyc-error';
+import { KycStatusBadge } from '@/components/settings/kyc/kyc-readonly-panel';
 import {
   Banknote,
   Building2,
@@ -44,6 +48,7 @@ function getInitials(name: string): string {
 export function UserNav() {
   const { user } = useAuthUser();
   const { academies, isLoading: academiesLoading } = useStore();
+  const academy = useCurrentAcademy();
   const router = useRouter();
   const { t, language } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -51,6 +56,8 @@ export function UserNav() {
   const email = user?.email ?? '';
   const phone = user?.phone ?? '';
   const roleName = user?.role ?? '';
+  const showKyc = roleName === 'MANAGER' && Boolean(academy?.id);
+  const { state: kycState } = useKyc(showKyc, { silent: true });
 
   // Everything except the profile and signing out needs a tenant, so a user who
   // has not created an academy yet would only reach a blocked page. Assume an
@@ -106,7 +113,7 @@ export function UserNav() {
       {/* Narrow enough to sit flush under the trigger instead of overhanging
           it — the trigger already shows the avatar, so it is not repeated. */}
       <DropdownMenuContent
-        className="w-44 bg-popover p-2"
+        className="w-56 bg-popover p-2"
         align="start"
         sideOffset={8}
         forceMount
@@ -120,11 +127,11 @@ export function UserNav() {
             <p className="truncate text-start text-xs leading-none text-muted-foreground">
               {email || formatIdentifierDisplay(phone, language)}
             </p>
-            {roleLabel && (
+            {roleLabel ? (
               <span className="mt-0.5 inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium leading-none text-primary">
                 {roleLabel}
               </span>
-            )}
+            ) : null}
           </div>
         </DropdownMenuLabel>
 
@@ -132,10 +139,15 @@ export function UserNav() {
 
         <DropdownMenuItem
           className="cursor-pointer gap-2.5 py-2"
-          onClick={() => router.push('/settings/profile')}
+          onClick={() =>
+            router.push(showKyc ? KYC_IDENTITY_PATH : '/settings/profile')
+          }
         >
           <User className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <span>{t('userNav.profile')}</span>
+          <span className="min-w-0 flex-1 truncate">
+            {t('userNav.profile')}
+          </span>
+          {kycState ? <KycStatusBadge status={kycState.status} /> : null}
         </DropdownMenuItem>
 
         {hasAcademyContext && (

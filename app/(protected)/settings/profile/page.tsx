@@ -27,6 +27,8 @@ import { PasswordCard } from './_components/password-card';
 import { VerifiedContactField } from './_components/verified-contact-field';
 import { useAvatarUpload } from './_hooks/use-avatar-upload';
 import { useContactOtp } from './_hooks/use-contact-otp';
+import { ProfileKycSection } from '@/components/settings/kyc/profile-kyc-section';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 
 interface ProfileForm {
   name: string;
@@ -49,7 +51,9 @@ function initialsOf(name: string): string {
 export default function ProfileSettingsPage() {
   const { t } = useTranslation();
   const { user, isLoading, refresh } = useSettingsData();
-  const { refetch: refetchAuthUser } = useAuthUser();
+  const { user: authUser, refetch: refetchAuthUser } = useAuthUser();
+  const academy = useCurrentAcademy();
+  const showKyc = authUser?.role === 'MANAGER' && Boolean(academy?.id);
 
   // The header avatar and name come from the auth provider, not this page's
   // fetch, so a save has to refresh both or the header stays stale.
@@ -238,6 +242,8 @@ export default function ProfileSettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      <ProfileKycSection enabled={showKyc} />
 
       <PasswordCard />
     </div>

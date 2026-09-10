@@ -15,6 +15,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { AcademyPolicyOverrides } from './academy-policy-overrides';
 import { EnamadReviewPanel } from './enamad-review-panel';
+import { KycReviewPanel } from './kyc-review-panel';
 import type {
   ContentKind,
   EnamadStatus,
@@ -22,6 +23,7 @@ import type {
   ModerationPolicyMap,
   ReviewQueueItem
 } from '@/types/compliance';
+import type { KycState } from '@/types/kyc';
 
 type Props = {
   item: ReviewQueueItem | null;
@@ -30,15 +32,17 @@ type Props = {
   onChanged: () => void;
 };
 
-/** Everything staff can decide about ONE academy: its eNamad, and its upload policy. */
+/** Everything staff can decide about ONE academy: KYC, eNamad, upload policy. */
 export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
   const { t } = useTranslation();
   const [defaults, setDefaults] = useState<ModerationPolicyMap | null>(null);
   const [overrides, setOverrides] = useState<Partial<ModerationPolicyMap>>({});
   const [enamadStatus, setEnamadStatus] = useState<EnamadStatus | null>(null);
+  const [kyc, setKyc] = useState<KycState | null>(null);
   const [loading, setLoading] = useState(false);
   const [savingKind, setSavingKind] = useState<ContentKind | null>(null);
   const [savingEnamad, setSavingEnamad] = useState(false);
+  const [savingKyc, setSavingKyc] = useState(false);
 
   const academyId = item?.academy_id ?? null;
 
@@ -46,12 +50,15 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
     if (!academyId) return;
     setLoading(true);
     try {
-      const [platformDefaults, academyOverrides] = await Promise.all([
-        apiClient.getModerationDefaults(),
-        apiClient.getAcademyModerationPolicy(academyId)
-      ]);
+      const [platformDefaults, academyOverrides, academyKyc] =
+        await Promise.all([
+          apiClient.getModerationDefaults(),
+          apiClient.getAcademyModerationPolicy(academyId),
+          apiClient.getAcademyKyc(academyId)
+        ]);
       setDefaults(platformDefaults);
       setOverrides(academyOverrides);
+      setKyc(academyKyc);
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -62,6 +69,7 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
   useEffect(() => {
     if (!item) return;
     setEnamadStatus(item.enamad_status);
+    setKyc(null);
     void load();
   }, [item, load]);
 
@@ -102,6 +110,22 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
     }
   };
 
+  const reviewKyc = async (approved: boolean, note: string) => {
+    if (!academyId) return;
+    setSavingKyc(true);
+    try {
+      const next = approved
+        ? await apiClient.approveKyc(academyId, note || undefined)
+        : await apiClient.rejectKyc(academyId, note);
+      setKyc(next);
+      onChanged();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setSavingKyc(false);
+    }
+  };
+
   return (
     <Dialog open={Boolean(item)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-2xl">
@@ -120,6 +144,23 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
           </div>
         ) : (
           <div className="space-y-5">
+            <section className="space-y-2">
+              <h3 className="text-sm font-semibold">
+                {t('compliance.kyc.title')}
+              </h3>
+              {kyc ? (
+                <KycReviewPanel
+                  state={kyc}
+                  submitting={savingKyc}
+                  onReview={reviewKyc}
+                />
+              ) : (
+                <Skeleton className="h-20 w-full" />
+              )}
+            </section>
+
+            <Separator />
+
             <section className="space-y-2">
               <h3 className="text-sm font-semibold">
                 {t('compliance.enamad.title')}

@@ -92,7 +92,8 @@ export const fa = {
     websitePages: 'صفحات وب‌سایت',
     websiteSeo: 'سئو وب‌سایت',
     websiteDomain: 'دامنهٔ وب‌سایت',
-    websiteTrust: 'نمادهای اعتماد'
+    websiteTrust: 'نمادهای اعتماد',
+    identity: 'احراز هویت'
   },
   panelFooter: {
     poweredBy: 'قدرت‌گرفته از',
@@ -2620,6 +2621,17 @@ export const fa = {
       savedComplete: 'هویت حقوقی ذخیره شد — اکنون می‌توانید دامنه را متصل کنید',
       savedIncomplete: 'ذخیره شد — فیلدهای باقی‌مانده را تکمیل کنید'
     },
+    kyc: {
+      title: 'احراز هویت',
+      approve: 'تأیید هویت',
+      reject: 'رد هویت',
+      notePlaceholder: 'یادداشت برای مدیر (برای رد الزامی است)',
+      rejectNeedsNote: 'برای رد کردن، نوشتن دلیل الزامی است.',
+      lastNote: 'آخرین یادداشت بررسی',
+      cardMeta: 'کارت ملی — رو: {{front}}، پشت: {{back}}',
+      cardPresent: 'بارگذاری شده',
+      cardMissing: 'بارگذاری نشده'
+    },
     enamad: {
       title: 'نماد اعتماد الکترونیکی',
       description:
@@ -2859,7 +2871,77 @@ export const fa = {
     created: 'ایجاد شده',
     profileSettings: 'تنظیمات پروفایل',
     profileSettingsDescription:
-      'جزئیات شخصی، آواتار و اطلاعات تماس خود را به‌روزرسانی کنید.',
+      'جزئیات شخصی، اطلاعات تماس و احراز هویت خود را به‌روزرسانی کنید.',
+    kyc: {
+      title: 'احراز هویت',
+      hubDescription:
+        'احراز هویت مدیر ایجادکننده با کد ملی، تصویر کارت و شماره شبا.',
+      description:
+        'احراز هویت را تکمیل کنید تا دامنهٔ اختصاصی و برداشت‌ها قابل تأیید باشند.',
+      formTitle: 'احراز هویت',
+      formDescription:
+        'کد ملی، تصویر کارت و شبا برای دامنهٔ اختصاصی و نشان تأیید. فقط مدیر ایجادکننده می‌تواند ارسال کند.',
+      ownerOnly:
+        'فقط مدیر ایجادکنندهٔ آکادمی می‌تواند احراز هویت را ببیند و ویرایش کند.',
+      stepProgress: 'گام {{current}} از {{total}}',
+      sectionIdentity: 'هویت',
+      sectionCard: 'کارت ملی',
+      sectionFinancial: 'اطلاعات بانکی',
+      sectionPublisher: 'نشانی و مجوز',
+      verifyIdentity: 'تأیید با شاهکار',
+      verifySheba: 'تأیید شبا',
+      verifying: 'در حال استعلام…',
+      shahkarMatched: 'کد ملی با شماره موبایل ورود مطابقت داشت',
+      ibanMatched: 'شبا با کد ملی و تاریخ تولد مطابقت داشت',
+      identityStepHint:
+        'کد ملی با شماره موبایل ورود شما از طریق شاهکار بررسی می‌شود.',
+      cardStepHint: 'تصویر واضح کارت ملی را بارگذاری کنید.',
+      shebaStepHint:
+        'شبا با کد ملی و تاریخ تولد از طریق IbanMatch بررسی می‌شود.',
+      submitHint:
+        'پس از ارسال، وضعیت «در انتظار تأیید» می‌شود تا تیم منتوما تصویر کارت را بررسی کند.',
+      serviceDisabled:
+        'استعلام خودکار هنوز پیکربندی نشده است. فرم نمایش داده می‌شود ولی تا تنظیم API_IR_TOKEN غیرفعال است.',
+      rateLimited: 'تعداد تلاش‌های ناموفق زیاد بود. تا ۲۴ ساعت دیگر صبر کنید.',
+      attemptsRemaining: '{{count}} تلاش استعلام برای امروز باقی مانده',
+      firstName: 'نام',
+      lastName: 'نام خانوادگی',
+      legalEntityName: 'نام و نام خانوادگی',
+      phoneNumber: 'شماره موبایل',
+      phoneLockedHelp:
+        'این شماره با ورود به پنل تأیید شده و قابل تغییر در این فرم نیست.',
+      nationalId: 'کد ملی',
+      nationalIdHelp: 'کد ملی ۱۰ رقمی یا شناسهٔ ملی ۱۱ رقمی',
+      birthDate: 'تاریخ تولد',
+      cardFront: 'کارت ملی (رو)',
+      cardFrontHelp: 'تصویر واضح از روی کارت ملی.',
+      cardBack: 'کارت ملی (پشت، اختیاری)',
+      cardBackHelp: 'در صورت وجود، تصویر پشت کارت.',
+      uploadCard: 'بارگذاری تصویر',
+      sheba: 'شماره شبا',
+      shebaHelp: 'IR به‌همراه ۲۴ رقم. در این مرحله کد تأیید لازم نیست.',
+      accountHolder: 'نام صاحب حساب',
+      contactAddress: 'نشانی تماس منتشرشونده',
+      contactAddressHelp:
+        'در صورت الزام قانونی روی سایت عمومی نمایش داده می‌شود.',
+      permitLabel: 'مجوزهای آموزشی موردنیاز فعالیتم را دارم',
+      permitHelp: 'اعلام ناشر طبق توافق‌نامهٔ پلتفرم.',
+      submit: 'ارسال برای بررسی',
+      submitted: 'هویت برای بررسی ارسال شد',
+      pendingNotice: 'هویت شما در انتظار بررسی تیم منتوماست.',
+      verifiedNotice: 'هویت تأیید شد. می‌توانید دامنهٔ اختصاصی متصل کنید.',
+      rejectedTitle: 'هویت رد شد',
+      domainBlocked: 'قبل از اتصال دامنهٔ اختصاصی، احراز هویت را تکمیل کنید.',
+      domainReady: 'احراز هویت این آکادمی ارسال یا تأیید شده است.',
+      goToIdentity: 'رفتن به احراز هویت',
+      status: {
+        MISSING: 'احراز هویت نشده',
+        PARTIAL: 'احراز هویت ناقص',
+        PENDING: 'در انتظار تأیید',
+        VERIFIED: 'تأیید شده',
+        REJECTED: 'رد شده'
+      }
+    },
     storeSettings: 'مشخصات آکادمی',
     storeSettingsDescription: 'نام آکادمی، معرفی و آدرس سایت را ویرایش کنید.',
     themeBranding: 'تم و برندینگ',

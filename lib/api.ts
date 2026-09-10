@@ -46,6 +46,13 @@ import type {
   UpdateSellerIdentityPayload
 } from '@/types/seller-identity';
 import type {
+  KycCardUploadResult,
+  KycState,
+  SubmitKycPayload,
+  VerifyKycIdentityPayload,
+  VerifyKycShebaPayload
+} from '@/types/kyc';
+import type {
   CustomDomainSetupResponse,
   VerifyDnsResponse
 } from '@/types/custom-domain-setup';
@@ -67,6 +74,13 @@ import {
   SELLER_IDENTITY_INCOMPLETE
 } from './seller-identity-error';
 import type { SellerIdentityField } from '@/types/seller-identity';
+import {
+  createKycIncompleteError,
+  KYC_IDENTITY_PATH,
+  KYC_INCOMPLETE,
+  KYC_PROFILE_PATH,
+  parseKycMissingFields
+} from './kyc-error';
 import type {
   AcademyPage,
   AcademyPagePayload,
@@ -632,6 +646,35 @@ class ApiClient {
               )
             : [];
           throw createSellerIdentityIncompleteError(missing);
+        }
+
+        const kycIncompleteCode =
+          payload?.code === KYC_INCOMPLETE ||
+          (data as Record<string, unknown> | null)?.code === KYC_INCOMPLETE;
+
+        if (kycIncompleteCode) {
+          const missingRaw = (payload?.missing ??
+            (data as Record<string, unknown> | null)?.missing) as unknown;
+          const missing = parseKycMissingFields(missingRaw);
+          const kycError = createKycIncompleteError(missing);
+          const errorMessage = resolveApiErrorMessage(
+            new ApiResponseError(parseApiError(response.status, data)),
+            currentLanguage()
+          );
+          if (
+            typeof window !== 'undefined' &&
+            !isAuthPagePath(window.location.pathname) &&
+            !window.location.pathname.startsWith(KYC_PROFILE_PATH)
+          ) {
+            toast.error(errorMessage, {
+              toastId: `kyc-incomplete:${errorMessage}`,
+              onClick: () => {
+                window.location.assign(KYC_IDENTITY_PATH);
+              }
+            });
+            window.location.assign(KYC_IDENTITY_PATH);
+          }
+          throw kycError;
         }
 
         const forbiddenError = new ApiResponseError(
@@ -4395,6 +4438,98 @@ class ApiClient {
       body: JSON.stringify(payload)
     });
     return response.data as SellerIdentity;
+  }
+
+  async getKyc() {
+    const response = await this.request('/academies/current/kyc');
+    return response.data as KycState;
+  }
+
+  async verifyKycIdentity(payload: VerifyKycIdentityPayload) {
+    const response = await this.request(
+      '/academies/current/kyc/verify-identity',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }
+    );
+    return response.data as KycState;
+  }
+
+  async verifyKycSheba(payload: VerifyKycShebaPayload) {
+    const response = await this.request('/academies/current/kyc/verify-sheba', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return response.data as KycState;
+  }
+
+  async submitKyc(payload: SubmitKycPayload) {
+    const response = await this.request('/academies/current/kyc', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return response.data as KycState;
+  }
+
+  async uploadKycCard(
+    file: File,
+    onProgress?: (progress: number) => void,
+    abortController?: AbortController
+  ): Promise<KycCardUploadResult> {
+    assertUploadSize(file, MAX_IMAGE_UPLOAD_BYTES);
+
+    const formData = new FormData();
+    formData.append('imagefile', file);
+    formData.append('alt', 'national-card');
+
+    const response = await this.uploadFileWithProgress(
+      '/images/kyc-card',
+      formData,
+      onProgress,
+      abortController
+    );
+    const raw = (response.data ?? null) as unknown;
+    const record =
+      raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : null;
+    const nested =
+      record?.data && typeof record.data === 'object'
+        ? (record.data as Record<string, unknown>)
+        : record;
+    const id = nested?.id;
+    if (typeof id !== 'string' && typeof id !== 'number') {
+      throw new Error('KYC card upload did not return an image id');
+    }
+    return { id: String(id) };
+  }
+
+  async getAcademyKyc(academyId: string) {
+    const response = await this.request(
+      `/compliance/review-queue/${academyId}/kyc`
+    );
+    return response.data as KycState;
+  }
+
+  async approveKyc(academyId: string, note?: string) {
+    const response = await this.request(
+      `/compliance/review-queue/${academyId}/kyc/approve`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(note ? { note } : {})
+      }
+    );
+    return response.data as KycState;
+  }
+
+  async rejectKyc(academyId: string, note: string) {
+    const response = await this.request(
+      `/compliance/review-queue/${academyId}/kyc/reject`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ note })
+      }
+    );
+    return response.data as KycState;
   }
 
   // --- Compliance: eNamad (manager) and content moderation (platform staff) ---
