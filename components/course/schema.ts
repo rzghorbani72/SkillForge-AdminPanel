@@ -5,10 +5,35 @@ import * as z from 'zod';
 export const COURSE_TITLE_MAX = 80;
 export const COURSE_DESCRIPTION_MAX = 4000;
 export const COURSE_LEARNING_OUTCOMES_MAX = 2000;
+export const COURSE_REQUIREMENTS_MAX = 2000;
 export const COURSE_META_TITLE_MAX = 60;
 export const COURSE_META_DESCRIPTION_MAX = 160;
 export const COURSE_KEYWORDS_MAX = 10;
 export const COURSE_KEYWORD_MAX = 40;
+export const COURSE_ACCESS_DAYS_MAX = 1825;
+export const COURSE_DIFFICULTIES = [
+  'BEGINNER',
+  'INTERMEDIATE',
+  'ADVANCED',
+  'EXPERT'
+] as const;
+export type CourseDifficultyLevel = (typeof COURSE_DIFFICULTIES)[number];
+
+export function parseAccessDurationDays(value: string): number | null {
+  const trimmed = value.trim();
+  if (trimmed === '') return null;
+  return Number(trimmed);
+}
+
+export function parseCourseDifficulty(value: unknown): CourseDifficultyLevel {
+  if (
+    typeof value === 'string' &&
+    (COURSE_DIFFICULTIES as readonly string[]).includes(value)
+  ) {
+    return value as CourseDifficultyLevel;
+  }
+  return 'BEGINNER';
+}
 
 export const courseFormFields = z.object({
   title: z
@@ -23,6 +48,26 @@ export const courseFormFields = z.object({
   learning_outcomes: z
     .string()
     .max(COURSE_LEARNING_OUTCOMES_MAX, 'courses.errors.learningOutcomesMax')
+    .default(''),
+  // One requirement per line. Empty hides the public prerequisites block.
+  requirements: z
+    .string()
+    .max(COURSE_REQUIREMENTS_MAX, 'courses.errors.requirementsMax')
+    .default(''),
+  difficulty: z.enum(COURSE_DIFFICULTIES).default('BEGINNER'),
+  is_certificate: z.boolean().default(false),
+  // Empty = students keep access while the academy is active.
+  access_duration_days: z
+    .string()
+    .refine(
+      (val) => val.trim() === '' || /^\d+$/.test(val.trim()),
+      'courses.errors.accessDurationWholeNumber'
+    )
+    .refine((val) => {
+      if (val.trim() === '') return true;
+      const days = Number(val);
+      return days >= 1 && days <= COURSE_ACCESS_DAYS_MAX;
+    }, 'courses.errors.accessDurationRange')
     .default(''),
   primary_price: z
     .string()

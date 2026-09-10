@@ -1941,6 +1941,9 @@ export const fa = {
       descriptionMax: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
       learningOutcomesMax:
         'بخش «پس از این دوره چه یاد می‌گیری» باید کمتر از ۲۰۰۰ کاراکتر باشد',
+      requirementsMax: 'پیش‌نیازها باید کمتر از ۲۰۰۰ کاراکتر باشند',
+      accessDurationWholeNumber: 'مدت دسترسی باید عدد صحیح روز باشد',
+      accessDurationRange: 'مدت دسترسی باید بین ۱ تا ۱۸۲۵ روز باشد',
       primaryPriceRequired: 'قیمت فروش الزامی است',
       primaryPriceWholeNumber: 'قیمت فروش باید عدد صحیح باشد',
       primaryPriceRange: 'قیمت فروش باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
@@ -1956,6 +1959,18 @@ export const fa = {
       'هر مهارت یا نتیجه را در یک خط بنویس. دانشجو آن را در صفحه معرفی دوره می‌بیند.',
     whatYouWillLearnPlaceholder:
       'مکالمه روزمره به انگلیسی\nارائه کوتاه در محیط کار',
+    requirements: 'پیش‌نیازها',
+    requirementsHint:
+      'هر پیش‌نیاز را در یک خط بنویس. دانشجو آن را در صفحه معرفی دوره می‌بیند. اگر پیش‌نیازی نیست خالی بگذار.',
+    requirementsPlaceholder:
+      'هفته‌ای ۳ ساعت زمان برای تمرین\nهدست و اینترنت پایدار برای کلاس زنده',
+    publicFacts: 'آنچه دانشجو می‌بیند',
+    levelHint: 'در صفحه معرفی دوره نمایش داده می‌شود تا سطح دوره مشخص باشد.',
+    accessDurationDaysPlaceholder: 'روز (خالی = تا وقتی آکادمی فعال است)',
+    accessDurationDaysHint:
+      'خریدار چند روز به دوره دسترسی دارد. برای دسترسی تا زمان فعال بودن آکادمی خالی بگذارید.',
+    includesCertificateHint:
+      'فقط اگر واقعاً برای این دوره گواهی صادر می‌کنید روشن کنید. دانشجو آن را در صفحه معرفی می‌بیند.',
     descriptionLength: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
     noCourses: 'دوره‌ای یافت نشد',
     createFirstCourse: 'اولین دوره خود را ایجاد کنید',
@@ -2127,6 +2142,7 @@ export const fa = {
     beginner: 'مقدماتی',
     intermediate: 'متوسط',
     advanced: 'پیشرفته',
+    expert: 'حرفه‌ای',
     stepDetails: 'مشخصات',
     stepPublish: 'انتشار',
     uploading: 'در حال آپلود...',

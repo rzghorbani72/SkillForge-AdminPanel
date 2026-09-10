@@ -7,6 +7,7 @@ import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { useTranslation } from '@/lib/i18n/hooks';
 import CreateCourseBasicInfo from '../CreateCourseBasicInfo';
 import CreateCourseAssociations from '../CreateCourseAssociations';
+import CourseFactsCard from '../CourseFactsCard';
 import CourseSettingsCard from '../CourseSettingsCard';
 import { CourseTypePicker } from '../course-type-picker';
 import type { CourseType } from '../course-drafts';
@@ -56,6 +57,8 @@ export function StepBasics({
       </Card>
 
       <CreateCourseBasicInfo form={form} />
+
+      <CourseFactsCard form={form} />
 
       <CreateCourseAssociations
         categoryId={form.watch('category_id')}

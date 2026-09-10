@@ -2067,6 +2067,9 @@ class ApiClient {
     title: string;
     description: string;
     learning_outcomes?: string;
+    requirements?: string;
+    difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+    is_certificate?: boolean;
     course_type?: CourseType;
     primary_price: number;
     secondary_price: number;
@@ -2125,6 +2128,9 @@ class ApiClient {
       title?: string;
       description?: string;
       learning_outcomes?: string;
+      requirements?: string;
+      difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+      is_certificate?: boolean;
       primary_price?: number;
       secondary_price?: number;
       category_id?: string;
@@ -2132,7 +2138,7 @@ class ApiClient {
       published?: boolean;
       is_featured?: boolean;
       base_price_active?: boolean;
-      access_duration_days?: number;
+      access_duration_days?: number | null;
       seasons: Array<{
         id?: string;
         client_key: string;
@@ -2169,7 +2175,15 @@ class ApiClient {
     const payload = response.data as { data?: unknown } | undefined;
     const nested =
       payload && typeof payload === 'object' ? payload.data : undefined;
-    return Array.isArray(nested) ? nested : [];
+    if (Array.isArray(nested)) return nested;
+    if (
+      nested &&
+      typeof nested === 'object' &&
+      Array.isArray((nested as { items?: unknown }).items)
+    ) {
+      return (nested as { items: unknown[] }).items;
+    }
+    return [];
   }
 
   async createCourseQnA(courseId: number, question: string) {

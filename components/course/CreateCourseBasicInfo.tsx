@@ -17,6 +17,7 @@ import { UseFormReturn } from 'react-hook-form';
 import {
   COURSE_DESCRIPTION_MAX,
   COURSE_LEARNING_OUTCOMES_MAX,
+  COURSE_REQUIREMENTS_MAX,
   COURSE_TITLE_MAX,
   CourseFormData
 } from './schema';
@@ -97,6 +98,28 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
               <FormDescription>
                 {t('courses.whatYouWillLearnHint')}
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="requirements"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('courses.requirements')}</FormLabel>
+              <FormControl>
+                <Textarea
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder={t('courses.requirementsPlaceholder')}
+                  maxLength={COURSE_REQUIREMENTS_MAX}
+                  className="min-h-[120px]"
+                />
+              </FormControl>
+              <FormDescription>{t('courses.requirementsHint')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

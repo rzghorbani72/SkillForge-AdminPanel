@@ -43,7 +43,13 @@ export const WIZARD_STEP_FIELDS: Record<
   CourseWizardStep,
   (keyof CourseFormData)[]
 > = {
-  basics: ['title', 'description'],
+  basics: [
+    'title',
+    'description',
+    'requirements',
+    'difficulty',
+    'access_duration_days'
+  ],
   content: [],
   access: ['meta_title', 'meta_description', 'keywords'],
   pricing: ['primary_price', 'secondary_price'],

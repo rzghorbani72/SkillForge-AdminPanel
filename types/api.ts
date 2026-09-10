@@ -335,7 +335,8 @@ export interface Course {
   author_id: number;
   academy_id: string;
   category_id?: number;
-  difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+  access_duration_days?: number | null;
   duration?: number;
   lessons_count: number;
   students_count: number;

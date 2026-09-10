@@ -1953,6 +1953,10 @@ export const en = {
       descriptionMax: 'Description must be less than 4,000 characters',
       learningOutcomesMax:
         'What you will learn must be less than 2,000 characters',
+      requirementsMax: 'Prerequisites must be less than 2,000 characters',
+      accessDurationWholeNumber:
+        'Access duration must be a whole number of days',
+      accessDurationRange: 'Access duration must be between 1 and 1,825 days',
       primaryPriceRequired: 'Sale price is required',
       primaryPriceWholeNumber: 'Sale price must be a whole number',
       primaryPriceRange: 'Sale price must be between 0 and 999,999,999',
@@ -1970,6 +1974,18 @@ export const en = {
       'One skill or result per line. Students see this on the course overview page.',
     whatYouWillLearnPlaceholder:
       'Hold everyday English conversations\nGive a short presentation at work',
+    requirements: 'Prerequisites',
+    requirementsHint:
+      'One requirement per line. Students see this on the course overview page. Leave empty if there are none.',
+    requirementsPlaceholder:
+      '3 hours a week to practice\nA headset and a stable internet connection for live classes',
+    publicFacts: 'What students see',
+    levelHint: 'Shown on the public course page so students know the level.',
+    accessDurationDaysPlaceholder: 'Days (empty = while the academy is active)',
+    accessDurationDaysHint:
+      'How many days a buyer keeps access. Leave empty if access lasts as long as the academy is active.',
+    includesCertificateHint:
+      'Turn on only if you really issue a certificate for this course. Students see it on the public page.',
     descriptionLength: 'Description must be less than 4,000 characters',
     noCourses: 'No courses found',
     createFirstCourse: 'Create your first course',
@@ -2144,6 +2160,7 @@ export const en = {
     beginner: 'Beginner',
     intermediate: 'Intermediate',
     advanced: 'Advanced',
+    expert: 'Expert',
     stepDetails: 'Details',
     stepPublish: 'Publish',
     uploading: 'Uploading...',

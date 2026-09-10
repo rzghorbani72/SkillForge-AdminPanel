@@ -13,7 +13,11 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import NoAcademyState from '../NoAcademyState';
-import { courseFormSchema, type CourseFormData } from '../schema';
+import {
+  courseFormSchema,
+  parseAccessDurationDays,
+  type CourseFormData
+} from '../schema';
 import type { CourseType } from '../course-drafts';
 import { StepBasics } from './step-basics';
 import { WizardHeader } from './wizard-header';
@@ -48,6 +52,10 @@ export default function CourseCreateWizard() {
       title: '',
       description: '',
       learning_outcomes: '',
+      requirements: '',
+      difficulty: 'BEGINNER',
+      is_certificate: false,
+      access_duration_days: '',
       primary_price: '0',
       secondary_price: '',
       meta_title: '',
@@ -82,6 +90,11 @@ export default function CourseCreateWizard() {
         title: values.title.trim(),
         description: values.description.trim(),
         learning_outcomes: values.learning_outcomes.trim() || undefined,
+        requirements: values.requirements.trim() || undefined,
+        difficulty: values.difficulty,
+        is_certificate: values.is_certificate,
+        access_duration_days:
+          parseAccessDurationDays(values.access_duration_days) ?? undefined,
         course_type: courseType,
         cover_id: values.cover_id || undefined,
         primary_price: 0,
