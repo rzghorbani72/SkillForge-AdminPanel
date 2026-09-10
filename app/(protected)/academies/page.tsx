@@ -65,8 +65,16 @@ export default function AcademiesPage() {
     }
     setSwitching(academyId);
     try {
-      await apiClient.switchAcademy(academyId);
-      clearAcademyData();
+      // Platform staff keep an academy-less JWT and scope via X-Academy-ID.
+      // Re-issuing through switchAcademy is unnecessary and used to 500 when
+      // the Profile lookup pulled a full Academy row during KYC migrations.
+      if (platformStaffView) {
+        clearAcademyData();
+        setSelectedAcademyId(academyId);
+      } else {
+        await apiClient.switchAcademy(academyId);
+        clearAcademyData();
+      }
       // Settings pages read the selected academy from the store, so the switch
       // has to land before the target page renders.
       if (redirectTo) {

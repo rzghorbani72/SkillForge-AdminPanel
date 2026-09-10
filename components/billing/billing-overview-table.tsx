@@ -17,6 +17,8 @@ import {
 import { cn } from '@/lib/utils';
 import { apiClient, type AcademySubscriptionOverviewRow } from '@/lib/api';
 import { setSelectedAcademyId } from '@/lib/store-utils';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformStaff } from '@/lib/roles';
 
 interface BillingOverviewTableProps {
   rows: readonly AcademySubscriptionOverviewRow[];
@@ -30,11 +32,18 @@ export function BillingOverviewTable({
   const { t } = useTranslation();
   const router = useRouter();
   const formatNumber = useNumberFormat();
+  const { user } = useAuthUser();
+  const platformStaff = isPlatformStaff(user);
 
   async function openAcademyPlan(academyId: string) {
-    // Each academy has its own plan page, so paying means switching to it first.
-    await apiClient.switchAcademy(academyId);
-    setSelectedAcademyId(academyId);
+    // Each academy has its own plan page. Platform staff scope via header;
+    // academy managers re-issue the JWT onto that academy's seat.
+    if (platformStaff) {
+      setSelectedAcademyId(academyId);
+    } else {
+      await apiClient.switchAcademy(academyId);
+      setSelectedAcademyId(academyId);
+    }
     window.location.assign('/plans');
   }
 

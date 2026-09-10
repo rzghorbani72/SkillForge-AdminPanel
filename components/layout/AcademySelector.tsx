@@ -17,6 +17,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { colorIndexForId } from '@/lib/id-color';
+import { isPlatformStaff } from '@/lib/roles';
 import {
   Popover,
   PopoverContent,
@@ -147,7 +148,7 @@ export function AcademySelector() {
   const [query, setQuery] = useState('');
   const [switching, setSwitching] = useState(false);
 
-  const isPlatformAdmin = user?.isAdminProfile || user?.platformLevel || false;
+  const isPlatformAdmin = isPlatformStaff(user);
   if (isPlatformAdmin) return <AdminModeSwitcher />;
 
   if (HIDDEN_ROLES.includes(user?.role ?? '')) return null;
