@@ -43,7 +43,7 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 const refundSchema = z.object({
   refund_amount: z.coerce.number().optional(),
-  reason: z.string().min(1),
+  reason: z.string().min(1, 'validation.required'),
   revoke_enrollment: z.boolean().default(false)
 });
 type RefundValues = z.infer<typeof refundSchema>;

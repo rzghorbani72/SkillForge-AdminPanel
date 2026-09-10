@@ -77,12 +77,12 @@ import { useCouponCodeAvailability } from '@/hooks/useCouponCodeAvailability';
 function buildCouponSchema(endBeforeStartMessage: string) {
   return z
     .object({
-      code: z.string().min(1),
+      code: z.string().min(1, 'validation.required'),
       coupon_type: z.enum(COUPON_TYPES),
       discount_value: z.coerce.number().min(0).optional(),
       free_trial_days: z.coerce.number().int().min(1).optional(),
-      start_date: z.string().min(1),
-      end_date: z.string().min(1),
+      start_date: z.string().min(1, 'validation.required'),
+      end_date: z.string().min(1, 'validation.required'),
       usage_type: z.enum(USAGE_TYPES),
       usage_limit: z.coerce.number().int().min(1).optional(),
       academy_id: z.string().optional(),
@@ -93,12 +93,12 @@ function buildCouponSchema(endBeforeStartMessage: string) {
       (values) =>
         values.coupon_type !== 'FREE_TRIAL' ||
         (values.free_trial_days ?? 0) >= 1,
-      { path: ['free_trial_days'], message: 'required' }
+      { path: ['free_trial_days'], message: 'validation.required' }
     )
     .refine(
       (values) =>
         values.usage_type !== 'LIMITED' || (values.usage_limit ?? 0) >= 1,
-      { path: ['usage_limit'], message: 'required' }
+      { path: ['usage_limit'], message: 'validation.required' }
     )
     .refine(
       (values) =>
@@ -515,6 +515,11 @@ export default function CouponsPage() {
                               onChange={(raw) =>
                                 field.onChange(raw === '' ? '' : Number(raw))
                               }
+                              suffix={
+                                couponType === 'FIXED'
+                                  ? t('common.toman')
+                                  : undefined
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -536,6 +541,7 @@ export default function CouponsPage() {
                                 onChange={(raw) =>
                                   field.onChange(raw === '' ? '' : Number(raw))
                                 }
+                                suffix={t('common.toman')}
                               />
                             </FormControl>
                             <FormMessage />

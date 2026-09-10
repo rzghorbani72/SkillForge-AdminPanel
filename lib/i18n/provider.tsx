@@ -10,6 +10,7 @@ import {
   isRTL,
   getTextDirection
 } from './config';
+import { applyZodErrorMap } from './zod-error-map';
 
 interface I18nContextValue {
   language: LanguageCode;
@@ -71,6 +72,8 @@ export function I18nProvider({
   const config = getLanguageConfig(defaultLanguage);
   const direction = config.direction;
   const rtl = isRTL(defaultLanguage);
+
+  applyZodErrorMap(defaultLanguage);
 
   // Language switching functionality
   const setLanguage = (language: LanguageCode) => {

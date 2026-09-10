@@ -45,7 +45,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
 const approveSchema = z.object({
-  bank_transaction_code: z.string().min(1),
+  bank_transaction_code: z.string().min(1, 'validation.required'),
   notes: z.string().optional()
 });
 const rejectSchema = z.object({ notes: z.string().optional() });
