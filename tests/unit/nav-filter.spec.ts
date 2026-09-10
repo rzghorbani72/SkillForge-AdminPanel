@@ -176,18 +176,37 @@ test.describe('sidebar shape', () => {
     ]);
   });
 
-  test('every group holds at least two children', () => {
+  test('every group holds at least two children, unless keepGrouped', () => {
     for (const options of [
       MANAGER,
       { role: 'TEACHER' as const, hasStore: true }
     ]) {
       for (const item of flatten(filterNavItems(navItems, options))) {
         if (!item.children) continue;
+        if (item.keepGrouped) {
+          expect(
+            item.children.length,
+            `keepGrouped "${item.title}"`
+          ).toBeGreaterThan(0);
+          continue;
+        }
         expect(item.children.length, `group "${item.title}"`).toBeGreaterThan(
           1
         );
       }
     }
+  });
+
+  test('platform finance hub stays grouped even with only vouchers', () => {
+    const items = filterNavItems(navItems, MANAGER);
+    const hub = items.find((item) => item.label === 'platformFinanceHub');
+    expect(hub?.keepGrouped).toBe(true);
+    expect(
+      hub?.children?.some((c) => c.href === '/coupons/plan-vouchers')
+    ).toBe(true);
+    expect(items.some((item) => item.href === '/coupons/plan-vouchers')).toBe(
+      false
+    );
   });
 
   test('the nesting never goes deeper than one level', () => {

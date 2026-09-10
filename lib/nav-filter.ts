@@ -147,10 +147,10 @@ function filterItem(
     .map((child) => filterItem(child, options, platformMode))
     .filter((child): child is NavItem => child !== null);
 
-  // An empty group is not a destination, and a group of one is noise: the
-  // lone child is promoted to the top level under its own name.
+  // An empty group is not a destination. A group of one is usually noise (the
+  // lone child is promoted), unless keepGrouped asks to preserve the hub label.
   if (children.length === 0) return null;
-  if (children.length === 1) return children[0];
+  if (children.length === 1 && !item.keepGrouped) return children[0];
 
   return { ...item, children };
 }

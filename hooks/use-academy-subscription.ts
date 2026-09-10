@@ -20,7 +20,7 @@ import { useLiveSubscriptionDays } from '@/hooks/use-live-subscription-days';
 import type { TrialContext } from '@/components/plans/trial-move-card';
 
 export interface AcademySubscriptionInvoice {
-  id: number;
+  id: string | number;
   plan_name: string;
   amount: number;
   currency: string;
@@ -35,6 +35,10 @@ export interface AcademySubscriptionInvoice {
   vat_amount?: number;
   discount_code?: string | null;
   discount_amount?: number | null;
+  gateway?: string | null;
+  tracking_code?: string | null;
+  authority?: string | null;
+  payment_method?: string | null;
 }
 
 export interface AcademySubscriptionState {

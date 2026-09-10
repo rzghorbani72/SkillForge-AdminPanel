@@ -3,6 +3,14 @@
 import { FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import type { AcademySubscriptionInvoice } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -12,7 +20,7 @@ import { getPlanDisplayName } from '@/lib/plan-display-name';
 
 interface SubscriptionInvoicesListProps {
   invoices: AcademySubscriptionInvoice[];
-  highlightId?: number;
+  highlightId?: string | number;
 }
 
 const STATUS_META: Record<
@@ -36,6 +44,11 @@ function currencyLabel(code: string, rialLabel: string): string {
   return code.toUpperCase() === 'IRR' ? rialLabel : code;
 }
 
+function dash(value: string | null | undefined): string {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : '—';
+}
+
 export function SubscriptionInvoicesList({
   invoices,
   highlightId
@@ -45,7 +58,7 @@ export function SubscriptionInvoicesList({
   const formatDate = useDateFormat();
   const rialLabel = t('common.rial');
 
-  const handleViewInvoice = async (invoiceId: number) => {
+  const handleViewInvoice = async (invoiceId: string | number) => {
     const { apiClient } = await import('@/lib/api');
     const url = apiClient.getCurrentAcademySubscriptionInvoicePdfUrl(invoiceId);
     window.open(url, '_blank');
@@ -58,113 +71,114 @@ export function SubscriptionInvoicesList({
   }
 
   return (
-    <div className="space-y-3">
-      {invoices.map((invoice) => {
-        const meta = STATUS_META[invoice.status] ?? STATUS_META.PENDING;
-        const isPaid = invoice.status === 'PAID';
-        const isFailed = invoice.status === 'FAILED';
-        const showAmountLoud = isPaid || invoice.status === 'DUPLICATE';
-        const amount = invoice.amount.toLocaleString(locale);
-        const unit = currencyLabel(invoice.currency, rialLabel);
-        // A paid invoice shows when the money landed; an unpaid one can only
-        // show when it was issued, so the label has to follow the field used.
-        const paidOn = invoice.paid_at ?? null;
-        const dateValue = paidOn ?? invoice.created_at ?? invoice.starts_at;
-        const dateLabel = paidOn
-          ? t('plans.invoicePaidOn')
-          : t('plans.invoiceIssuedOn');
+    <div className="overflow-x-auto rounded-xl border">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/30">
+            <TableHead>{t('plans.invoicePlan')}</TableHead>
+            <TableHead>{t('plans.invoiceStatus')}</TableHead>
+            <TableHead className="text-end">
+              {t('plans.invoiceAmount')}
+            </TableHead>
+            <TableHead className="text-end">
+              {t('plans.invoiceNetAmount')}
+            </TableHead>
+            <TableHead className="text-end">
+              {t('plans.invoiceVatShort')}
+            </TableHead>
+            <TableHead>{t('plans.invoiceDiscountCode')}</TableHead>
+            <TableHead>{t('plans.invoicePaidOn')}</TableHead>
+            <TableHead>{t('plans.invoicePeriodLabel')}</TableHead>
+            <TableHead>{t('plans.payTrackingCode')}</TableHead>
+            <TableHead className="text-end">
+              {t('plans.invoiceActions')}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {invoices.map((invoice) => {
+            const meta = STATUS_META[invoice.status] ?? STATUS_META.PENDING;
+            const isPaid = invoice.status === 'PAID';
+            const unit = currencyLabel(invoice.currency, rialLabel);
+            const paidOn = invoice.paid_at ?? null;
+            const dateValue = paidOn ?? invoice.created_at ?? null;
+            const tracking = dash(invoice.tracking_code ?? invoice.authority);
+            const discount =
+              invoice.discount_code != null && invoice.discount_code !== ''
+                ? `${invoice.discount_code}${
+                    invoice.discount_amount
+                      ? ` (${invoice.discount_amount.toLocaleString(locale)} ${unit})`
+                      : ''
+                  }`
+                : '—';
 
-        return (
-          <div
-            key={invoice.id}
-            className={cn(
-              'flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between',
-              isPaid &&
-                'border-emerald-200 bg-emerald-50/50 dark:border-emerald-900 dark:bg-emerald-950/20',
-              isFailed &&
-                'border-red-200 bg-red-50/40 dark:border-red-900 dark:bg-red-950/20',
-              invoice.id === highlightId && 'ring-2 ring-primary'
-            )}
-          >
-            <div className="min-w-0 space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="truncate text-sm font-semibold text-foreground">
-                  {getPlanDisplayName(invoice.plan_name)}
-                </p>
-                <Badge variant={meta.variant}>{t(meta.labelKey)}</Badge>
-              </div>
-              <p
+            return (
+              <TableRow
+                key={invoice.id}
                 className={cn(
-                  'tabular-nums tracking-tight text-foreground',
-                  showAmountLoud
-                    ? 'text-xl font-bold sm:text-2xl'
-                    : 'text-base font-semibold text-muted-foreground'
+                  invoice.id === highlightId && 'bg-primary/5',
+                  invoice.status === 'FAILED' &&
+                    'bg-red-50/40 dark:bg-red-950/10'
                 )}
               >
-                {amount}
-                <span className="ms-1.5 text-sm font-medium text-muted-foreground">
-                  {unit}
-                </span>
-              </p>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                {dateValue ? (
-                  <span>
-                    {dateLabel}: {formatDate(dateValue)}
-                  </span>
-                ) : null}
-                {isPaid ? (
-                  <span>
-                    {t('plans.invoicePeriodLabel')}:{' '}
-                    {t('plans.invoicePeriod', {
-                      start: formatDate(invoice.starts_at),
-                      end: formatDate(invoice.ends_at)
-                    })}
-                  </span>
-                ) : null}
-                {isFailed ? <span>{t('plans.invoiceFailedHint')}</span> : null}
-              </div>
-              {isPaid &&
-              (invoice.vat_amount != null || invoice.discount_code) ? (
-                <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                  {invoice.net_amount != null ? (
-                    <span>
-                      {t('plans.invoiceNetAmount')}:{' '}
-                      {invoice.net_amount.toLocaleString(locale)} {unit}
-                    </span>
-                  ) : null}
-                  {invoice.vat_amount != null ? (
-                    <span>
-                      {t('plans.invoiceVat', {
-                        rate: Math.round((invoice.vat_rate ?? 0) * 100)
-                      })}
-                      : {invoice.vat_amount.toLocaleString(locale)} {unit}
-                    </span>
-                  ) : null}
-                  {invoice.discount_code ? (
-                    <span>
-                      {t('plans.invoiceDiscountCode')}: {invoice.discount_code}
-                      {invoice.discount_amount
-                        ? ` (${invoice.discount_amount.toLocaleString(locale)} ${unit})`
-                        : ''}
-                    </span>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-            {isPaid ? (
-              <Button
-                size="sm"
-                variant="outline"
-                className="shrink-0"
-                onClick={() => handleViewInvoice(invoice.id)}
-              >
-                <FileDown className="me-1.5 h-4 w-4" />
-                {t('plans.downloadFactor')}
-              </Button>
-            ) : null}
-          </div>
-        );
-      })}
+                <TableCell className="whitespace-nowrap font-medium">
+                  {getPlanDisplayName(invoice.plan_name)}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={meta.variant}>{t(meta.labelKey)}</Badge>
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-end tabular-nums">
+                  {invoice.amount.toLocaleString(locale)} {unit}
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-end tabular-nums text-muted-foreground">
+                  {invoice.net_amount != null
+                    ? `${invoice.net_amount.toLocaleString(locale)} ${unit}`
+                    : '—'}
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-end tabular-nums text-muted-foreground">
+                  {invoice.vat_amount != null
+                    ? `${invoice.vat_amount.toLocaleString(locale)} ${unit}`
+                    : '—'}
+                </TableCell>
+                <TableCell className="whitespace-nowrap font-mono text-xs">
+                  {discount}
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-muted-foreground">
+                  {dateValue ? formatDate(dateValue) : '—'}
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-muted-foreground">
+                  {isPaid
+                    ? t('plans.invoicePeriod', {
+                        start: formatDate(invoice.starts_at),
+                        end: formatDate(invoice.ends_at)
+                      })
+                    : '—'}
+                </TableCell>
+                <TableCell
+                  className="max-w-[12rem] truncate font-mono text-xs"
+                  title={tracking === '—' ? undefined : tracking}
+                >
+                  {tracking}
+                </TableCell>
+                <TableCell className="text-end">
+                  {isPaid ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleViewInvoice(invoice.id)}
+                    >
+                      <FileDown className="me-1.5 h-4 w-4" />
+                      {t('plans.downloadFactor')}
+                    </Button>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }

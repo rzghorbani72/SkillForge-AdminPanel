@@ -13,11 +13,18 @@ import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoic
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
 
+interface PlatformInvoicesCardProps {
+  /** When false, only the invoice list is rendered (page already has a title). */
+  showHeader?: boolean;
+}
+
 /**
  * Money the manager pays the platform for their subscription — deliberately kept
  * apart from academy income, because it is a cost, not revenue.
  */
-export function PlatformInvoicesCard() {
+export function PlatformInvoicesCard({
+  showHeader = true
+}: PlatformInvoicesCardProps) {
   const { t } = useTranslation();
   const { subscription, isLoading } = useAcademySubscription(true);
 
@@ -32,6 +39,16 @@ export function PlatformInvoicesCard() {
     [subscription?.invoices]
   );
 
+  const body = isLoading ? (
+    <Skeleton className="h-16 w-full" />
+  ) : (
+    <SubscriptionInvoicesList invoices={invoices} />
+  );
+
+  if (!showHeader) {
+    return body;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -42,13 +59,7 @@ export function PlatformInvoicesCard() {
           {t('financial.store.overview.platformPaymentsHint')}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <Skeleton className="h-16 w-full" />
-        ) : (
-          <SubscriptionInvoicesList invoices={invoices} />
-        )}
-      </CardContent>
+      <CardContent>{body}</CardContent>
     </Card>
   );
 }

@@ -57,8 +57,9 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { useAuthUser } from '@/hooks/useAuthUser';
+import { useHasStore } from '@/hooks/useHasStore';
 import { isPlatformAdmin } from '@/lib/roles';
-import { PlanVouchersCard } from '@/components/coupons/plan-vouchers-card';
+import { isPlatformMode } from '@/lib/nav-filter';
 import { CalendarDatePicker } from '@/components/shared/calendar-date-picker';
 import { addInputDays, todayInputValue } from '@/lib/i18n/calendar-date';
 import {
@@ -116,10 +117,16 @@ export default function CouponsPage() {
   const formatDate = useDateFormat();
   const formatPercent = usePercentLabel();
   const { user } = useAuthUser();
-  const canManagePlatformVouchers = isPlatformAdmin(user);
-  // Managers mint academy coupons; the backend forces their own academy_id.
-  const canManageCoupons =
-    canManagePlatformVouchers || user?.role === 'MANAGER';
+  const hasStore = useHasStore();
+  const platformMode = isPlatformMode(user?.role ?? null, hasStore);
+  const isManager = user?.role === 'MANAGER';
+  // Platform mode = Mentoma plan vouchers. Academy mode = student checkout codes.
+  // useHasStore() is undefined for managers — never gate them on hasStore.
+  const canManagePlatformVouchers =
+    isPlatformAdmin(user) && platformMode === true;
+  const canManageAcademyCoupons =
+    isManager || (isPlatformAdmin(user) && hasStore === true);
+  const canManageCoupons = canManagePlatformVouchers || canManageAcademyCoupons;
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -203,7 +210,9 @@ export default function CouponsPage() {
     setLoading(true);
     try {
       const data = await apiClient.getDiscounts(
-        canManagePlatformVouchers ? { academy_id: 'platform' } : {}
+        canManagePlatformVouchers
+          ? { academy_id: 'platform', limit: 100 }
+          : { limit: 100 }
       );
       const list =
         (data as any)?.discounts ?? (Array.isArray(data) ? data : []);
@@ -425,8 +434,6 @@ export default function CouponsPage() {
           )}
         </CardContent>
       </Card>
-
-      {!canManagePlatformVouchers && <PlanVouchersCard />}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-2xl">

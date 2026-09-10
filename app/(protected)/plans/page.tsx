@@ -803,9 +803,9 @@ export default function PlansPage() {
     if (selectedCardSlug || plans.length === 0) return;
     setSelectedCardSlug(currentPlanSlug ?? recommendedSlug);
   }, [selectedCardSlug, plans.length, currentPlanSlug, recommendedSlug]);
-  const newestPaidInvoiceId = (currentSub?.invoices ?? [])
-    .filter((invoice) => invoice.status === 'PAID')
-    .reduce((newest, invoice) => Math.max(newest, invoice.id), 0);
+  const newestPaidInvoiceId =
+    (currentSub?.invoices ?? []).find((invoice) => invoice.status === 'PAID')
+      ?.id ?? null;
 
   // On a paid plan the manager does not pay the target plan's full price — they
   // pay the prorated difference for the days left. Quote every higher tier up

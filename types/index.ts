@@ -28,6 +28,8 @@ export interface NavItem {
   supportOnly?: boolean;
   scope?: 'platform' | 'academy';
   paymentGated?: boolean;
+  /** Keep this group even when only one child survives filtering. */
+  keepGrouped?: boolean;
   requiresLearningCapability?:
     | 'students'
     | 'assignments'

@@ -2049,7 +2049,9 @@ class ApiClient {
   }
 
   /** Auth is cookie-based, so this URL can be opened directly (e.g. `window.open`). */
-  getCurrentAcademySubscriptionInvoicePdfUrl(invoiceId: number): string {
+  getCurrentAcademySubscriptionInvoicePdfUrl(
+    invoiceId: string | number
+  ): string {
     return `${this.baseURL}/academies/current/subscription/invoices/${invoiceId}/pdf`;
   }
 

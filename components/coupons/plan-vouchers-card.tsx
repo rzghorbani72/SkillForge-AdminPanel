@@ -27,7 +27,7 @@ import {
 /**
  * The read-only half of the coupon split: vouchers Mentoma minted for this
  * manager's own plan pay/upgrade. The manager can use them, never edit them —
- * their own academy coupons (for students) are managed in the card above.
+ * student checkout codes are managed separately at /coupons.
  */
 export function PlanVouchersCard() {
   const { t } = useTranslation();

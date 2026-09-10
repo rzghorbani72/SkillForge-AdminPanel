@@ -113,11 +113,11 @@ export const navItems: NavItem[] = [
     supportOnly: true,
     scope: 'platform'
   },
-  // Money — platform cash out
+  // Money — platform cash in (managers → Mentoma) and cash out
   {
-    title: 'Money',
+    title: 'Platform Money',
     icon: 'dollarSign' as IconType,
-    label: 'financeHub',
+    label: 'platformFinanceHub',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
     scope: 'platform',
     children: [
@@ -149,6 +149,26 @@ export const navItems: NavItem[] = [
         paymentGated: true
       },
       {
+        title: 'Manager subscriptions',
+        href: '/subscriptions',
+        icon: 'calendarClock' as IconType,
+        label: 'managerSubscriptions',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
+        financeOnly: true,
+        adminOnly: true,
+        scope: 'platform',
+        paymentGated: true
+      },
+      {
+        title: 'Platform Vouchers',
+        href: '/coupons',
+        icon: 'percent' as IconType,
+        label: 'platformVouchers',
+        roles: ['PLATFORM_OWNER', 'ADMIN'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
         title: 'Withdrawals',
         href: '/withdrawals',
         icon: 'banknote' as IconType,
@@ -163,17 +183,6 @@ export const navItems: NavItem[] = [
         href: '/teacher-payouts',
         icon: 'wallet2' as IconType,
         label: 'teacherPayouts',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-        financeOnly: true,
-        adminOnly: true,
-        scope: 'platform',
-        paymentGated: true
-      },
-      {
-        title: 'Subscriptions',
-        href: '/subscriptions',
-        icon: 'calendarClock' as IconType,
-        label: 'subscriptions',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
         financeOnly: true,
         adminOnly: true,
@@ -259,15 +268,6 @@ export const navItems: NavItem[] = [
         href: '/platform/pricing',
         icon: 'layers' as IconType,
         label: 'planPricing',
-        roles: ['PLATFORM_OWNER', 'ADMIN'],
-        adminOnly: true,
-        scope: 'platform'
-      },
-      {
-        title: 'Platform Vouchers',
-        href: '/coupons',
-        icon: 'percent' as IconType,
-        label: 'platformVouchers',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
         scope: 'platform'
@@ -401,48 +401,64 @@ export const navItems: NavItem[] = [
       }
     ]
   },
-  // Money — academy cash in and out. Everything but the overview is payment
-  // gated, so before payments go live this collapses to a single flat row.
+  // مالی آکادمی — students → academy (income)
   {
-    title: 'Money',
+    title: 'Academy Finances',
     icon: 'dollarSign' as IconType,
-    label: 'financeHub',
+    label: 'academyFinanceHub',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
     scope: 'academy',
     children: [
       {
-        title: 'Financial',
-        href: '/financial',
-        icon: 'dollarSign' as IconType,
-        label: 'financialOverview',
+        title: 'Student Payments',
+        href: '/financial/academy',
+        icon: 'creditCard' as IconType,
+        label: 'studentPayments',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
         scope: 'academy'
       },
       {
-        title: 'Settlement',
-        href: '/financial/academy/settlement',
-        icon: 'banknote' as IconType,
-        label: 'settlement',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-        paymentGated: true
-      },
-      {
-        title: 'Discounts',
+        title: 'Student Vouchers',
         href: '/coupons',
         icon: 'percent' as IconType,
-        label: 'discounts',
+        label: 'studentVouchers',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
+      }
+    ]
+  },
+  // مالی پلتفرم — academy → Mentoma (invoices, plan pay, platform vouchers)
+  {
+    title: 'Platform Finances',
+    icon: 'billing' as IconType,
+    label: 'platformFinanceHub',
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+    scope: 'academy',
+    keepGrouped: true,
+    children: [
+      {
+        title: 'Payments to platform',
+        href: '/financial/academy/platform-invoices',
+        icon: 'creditCard' as IconType,
+        label: 'platformPaymentsNav',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
         scope: 'academy'
       },
       {
-        title: 'Student Plans',
-        href: '/plans?tab=academy',
-        icon: 'layers' as IconType,
-        label: 'studentPlans',
+        title: 'Academy Subscription',
+        href: '/plans',
+        icon: 'billing' as IconType,
+        label: 'platformPlan',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-        paymentGated: true
+        scope: 'academy'
+      },
+      {
+        title: 'Platform vouchers',
+        href: '/coupons/plan-vouchers',
+        icon: 'percent' as IconType,
+        label: 'planVouchers',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
+        scope: 'academy'
       }
     ]
   },
@@ -568,15 +584,6 @@ export const navItems: NavItem[] = [
         label: 'settingsHub',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
         scope: 'academy'
-      },
-      {
-        title: 'Academy Subscription',
-        href: '/plans',
-        icon: 'billing' as IconType,
-        label: 'platformPlan',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
-        scope: 'academy',
-        paymentGated: true
       },
       {
         title: 'Storage',

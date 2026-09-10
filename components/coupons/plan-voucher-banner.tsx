@@ -64,7 +64,7 @@ function CodeChip({ code }: { code: string }) {
 /**
  * Full-width strip stuck above sidebar + header: tells a manager they have a
  * usable Mentoma plan voucher (all-managers or targeted to them). Same codes
- * also appear on the coupons page in PlanVouchersCard.
+ * also appear on /coupons/plan-vouchers.
  */
 export function PlanVoucherBanner({ className }: { className?: string }) {
   const { t } = useTranslation();
@@ -80,7 +80,7 @@ export function PlanVoucherBanner({ className }: { className?: string }) {
   const redeemHref =
     vouchers.length === 1
       ? `/plans?voucher=${encodeURIComponent(primary.code)}`
-      : '/coupons';
+      : '/coupons/plan-vouchers';
 
   return (
     <div

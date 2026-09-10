@@ -29,10 +29,11 @@ export function DashboardHeroSlideshow({ children }: Props) {
             alt=""
             loading={index === 0 ? 'eager' : 'lazy'}
             aria-hidden={index !== active}
-            className="duration-[1200ms] absolute inset-0 h-full w-full object-cover transition-[opacity,transform] ease-out"
+            className="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] ease-out"
             style={{
               opacity: index === active ? 1 : 0,
-              transform: index === active ? 'scale(1)' : 'scale(1.04)'
+              transform: index === active ? 'scale(1)' : 'scale(1.04)',
+              transitionDuration: '1200ms'
             }}
           />
         );
