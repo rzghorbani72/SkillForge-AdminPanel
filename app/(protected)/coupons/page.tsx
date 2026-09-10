@@ -44,6 +44,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
+import { CopyableVoucherCode } from '@/components/coupons/copyable-voucher-code';
 import {
   Table,
   TableBody,
@@ -376,8 +377,8 @@ export default function CouponsPage() {
               <TableBody>
                 {coupons.map((c) => (
                   <TableRow key={c.id}>
-                    <TableCell className="font-mono font-medium">
-                      {c.code}
+                    <TableCell>
+                      <CopyableVoucherCode code={c.code} />
                     </TableCell>
                     <TableCell>
                       <StatusBadge

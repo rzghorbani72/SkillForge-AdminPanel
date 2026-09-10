@@ -23,6 +23,7 @@ import {
   couponTypeOf,
   type CouponSummary
 } from '@/lib/coupons';
+import { CopyableVoucherCode } from '@/components/coupons/copyable-voucher-code';
 
 /**
  * The read-only half of the coupon split: vouchers Mentoma minted for this
@@ -79,7 +80,9 @@ export function PlanVouchersCard() {
             <TableBody>
               {vouchers.map((voucher) => (
                 <TableRow key={voucher.id}>
-                  <TableCell className="font-medium">{voucher.code}</TableCell>
+                  <TableCell>
+                    <CopyableVoucherCode code={voucher.code} />
+                  </TableCell>
                   <TableCell>
                     <StatusBadge
                       status={COUPON_TYPE_BADGE[couponTypeOf(voucher)]}
