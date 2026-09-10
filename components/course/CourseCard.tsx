@@ -69,6 +69,9 @@ export function CourseCard({
     formatNumber,
     t
   );
+  const isMonetaryPrice = isLive
+    ? seatPrice !== null && seatPrice > 0
+    : pricingType !== 'FREE' && priceVal > 0;
   const priceLabel = isLive
     ? seatPrice === null
       ? t('courses.seatPriceNotSet')
@@ -167,8 +170,15 @@ export function CourseCard({
               <div className="mb-1 truncate text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                 {t(isLive ? 'courses.seatPrice' : 'courses.price')}
               </div>
-              <div className="truncate text-sm font-semibold tabular-nums text-primary">
-                {priceLabel}
+              <div className="flex min-w-0 items-baseline justify-end gap-1">
+                <span className="truncate text-lg font-semibold tabular-nums text-primary">
+                  {priceLabel}
+                </span>
+                {isMonetaryPrice ? (
+                  <span className="shrink-0 text-[11px] font-medium text-muted-foreground">
+                    {t('common.toman')}
+                  </span>
+                ) : null}
               </div>
             </div>
           </div>
