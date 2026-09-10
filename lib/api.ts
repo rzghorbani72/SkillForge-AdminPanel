@@ -5216,7 +5216,7 @@ class ApiClient {
     }
   ) {
     const response = await this.request<any>(
-      `/financial/academies/${academyId}/settle`,
+      `/financial/settlement/academies/${academyId}/settle`,
       {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -6905,14 +6905,31 @@ class ApiClient {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) qs.append(k, String(v));
       });
+    const query = qs.toString();
     const res = await this.request<any>(
-      `/financial/withdrawals${qs.toString() ? `?${qs}` : ''}`
+      `/financial/withdrawals${query ? `?${query}` : ''}`
+    );
+    return (res.data as any)?.data ?? res.data;
+  }
+
+  async getSettlementWithdrawals(params?: {
+    academy_id?: string;
+    status?: string;
+  }) {
+    const qs = new URLSearchParams();
+    if (params)
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined) qs.append(k, String(v));
+      });
+    const query = qs.toString();
+    const res = await this.request<any>(
+      `/financial/settlement/withdrawals${query ? `?${query}` : ''}`
     );
     return (res.data as any)?.data ?? res.data;
   }
 
   async approveWithdrawal(
-    id: number,
+    id: string,
     data: { bank_transaction_code: string; notes?: string }
   ) {
     const res = await this.request<any>(
@@ -6925,7 +6942,7 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
-  async rejectWithdrawal(id: number, data: { notes?: string }) {
+  async rejectWithdrawal(id: string, data: { notes?: string }) {
     const res = await this.request<any>(
       `/financial/settlement/withdrawals/${id}/reject`,
       {
@@ -7492,6 +7509,12 @@ export interface AcademyHealthView {
   student_count?: number;
   course_count?: number;
   open_ticket_count?: number;
+  closed_ticket_count?: number;
+  wallet_balance?: number;
+  pending_settlement_amount?: number;
+  to_deposit?: number;
+  pending_withdrawal_count?: number;
+  bank_account_approved?: boolean;
   limits?: PlanLimitUsageSnapshot;
 }
 

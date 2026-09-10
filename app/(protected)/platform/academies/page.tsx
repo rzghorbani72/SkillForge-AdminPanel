@@ -262,28 +262,8 @@ export default function PlatformAcademiesPage() {
           </Badge>
         </div>
         <div>
-          <Button
-            variant="default"
-            onClick={async () => {
-              const bankCode = window.prompt(
-                'Enter bank transaction code for settlement'
-              );
-              if (!bankCode) return;
-              try {
-                await apiClient.settleAcademy(selectedStore.id, {
-                  bank_transaction_code: bankCode
-                });
-                const detail = await apiClient.getAcademySettlementDetail(
-                  selectedStore.id
-                );
-                setStoreFinancial(detail?.totals || null);
-                setStorePayments(detail?.lines || []);
-              } catch (error) {
-                console.error('Settlement failed', error);
-              }
-            }}
-          >
-            Settled
+          <Button variant="default" asChild>
+            <Link href="/academies">{t('userNav.settlement')}</Link>
           </Button>
         </div>
 
