@@ -8,7 +8,6 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { formatPhoneDisplay } from '@/lib/phone-utils';
-import { cn } from '@/lib/utils';
 import type { KycState, SubmitKycPayload } from '@/types/kyc';
 import {
   KycStepIdentity,
@@ -32,6 +31,7 @@ type Props = {
 /**
  * Multi-step KYC: Shahkar on identity, card upload, IbanMatch on Sheba,
  * then final submit for staff card review. Inputs lock while an API call runs.
+ * Env/config faults are not grayed out — the API returns the error on verify.
  */
 export function KycWizardForm({ initial, onSubmitted }: Props) {
   const { t } = useTranslation();
@@ -69,10 +69,8 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
 
   const step = STEPS[stepIndex] as Step;
   const fullName = joinLegalName(identity.firstName, identity.lastName);
-  const serviceDisabled = !state.verification_enabled;
   const rateLimited = Boolean(state.verify_locked_until);
-  const inputsLocked =
-    serviceDisabled || rateLimited || !state.can_edit || busy;
+  const inputsLocked = rateLimited || !state.can_edit || busy;
   const nextBlocked = inputsLocked || uploading !== null;
 
   const identityReady =
@@ -107,7 +105,7 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
   };
 
   const goNext = async () => {
-    if (nextBlocked || serviceDisabled || rateLimited) return;
+    if (nextBlocked || rateLimited) return;
     setBusy(true);
     try {
       if (step === 'identity') {
@@ -194,18 +192,7 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
       step === 'extras');
 
   return (
-    <div
-      className={cn(
-        'space-y-6',
-        serviceDisabled && 'pointer-events-none opacity-50'
-      )}
-    >
-      {serviceDisabled ? (
-        <p className="rounded-lg border border-dashed bg-muted/40 p-3 text-sm text-muted-foreground">
-          {t('settings.kyc.serviceDisabled')}
-        </p>
-      ) : null}
-
+    <div className="space-y-6">
       {state.verify_locked_until ? (
         <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
           {t('settings.kyc.rateLimited')}
