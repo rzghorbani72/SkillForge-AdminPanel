@@ -378,8 +378,7 @@ export const tr = {
     noDescriptionProvided: 'Açıklama girilmedi',
     refresh: 'Yenile',
     noStoreSelected: 'Akademi seçilmedi',
-    selectStoreToView:
-      'İçeriği görmek için üst çubuktan bir akademi seçin.',
+    selectStoreToView: 'İçeriği görmek için üst çubuktan bir akademi seçin.',
     selectStoreToViewCourses:
       'Kursları görmek için üst çubuktan bir akademi seçin.',
     selectStoreToCreateProduct:
@@ -483,6 +482,12 @@ export const tr = {
     websiteSeo: 'Arama ve paylaşım',
     websiteTrust: 'Güven rozeti',
     websiteDomain: 'Alan adı',
+    support: 'Destek',
+    ticketing: 'Destek talepleri',
+    supportEmail: 'E-posta',
+    supportFaq: 'SSS',
+    supportPhone: 'Telefon numarası',
+    supportSuggestion: 'Öneri',
     platformBlog: 'Platform blogu',
     allSubscriptions: 'Tüm Abonelikler',
     rolesPermissions: 'Roller ve İzinler',

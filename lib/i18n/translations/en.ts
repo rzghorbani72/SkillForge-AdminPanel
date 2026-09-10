@@ -392,6 +392,55 @@ export const en = {
         RESOLVED: 'Answered',
         SPAM: 'Spam'
       }
+    },
+    help: {
+      emailTitle: 'Email',
+      emailSubtitle:
+        'Write to Mentoma support. We reply within one business day.',
+      emailHint: 'Best for general questions, sales, and partnership requests.',
+      emailAction: 'Open email app',
+      phoneTitle: 'Phone number',
+      phoneSubtitle:
+        'Call only for urgent outages. Everyday requests belong in a ticket.',
+      phoneHint: 'Urgent issues and service outages only.',
+      phoneAction: 'Call now',
+      faqTitle: 'FAQ',
+      faqSubtitle: 'Short answers to the questions academy managers ask most.',
+      suggestionTitle: 'Suggestion',
+      suggestionSubtitle:
+        'Tell us what would make Mentoma better for your academy. We read every note.',
+      suggestionPrefix: '[Suggestion]',
+      suggestionSubjectPlaceholder: 'What should we improve?',
+      suggestionBodyPlaceholder:
+        'Describe the idea, who it helps, and why it matters.',
+      sendSuggestion: 'Send suggestion',
+      suggestionSent: 'Thanks — your suggestion was sent',
+      faq: {
+        ticket: {
+          q: 'How do I open a support ticket?',
+          a: 'Open Support → Ticketing, then New ticket. Pick a category, describe what you tried and what you expected. You can follow the reply in the same thread.'
+        },
+        enrollment: {
+          q: 'How does a student get access to a course?',
+          a: 'After a successful purchase, or when you enroll them by hand from Users. Access follows the course selling type: one-time, subscription, or live class slot.'
+        },
+        payment: {
+          q: 'How do student payments work?',
+          a: 'Student money is remitted to your academy in full. Mentoma charges 0% commission. You pay only the platform plan, plus storage overage if you go past the included space.'
+        },
+        teacher: {
+          q: 'How do I add a teacher?',
+          a: 'Go to Users, add the person with the Teacher role, or approve a teacher request. They can then manage the courses you give them.'
+        },
+        live: {
+          q: 'How do live classes work?',
+          a: 'Set class times and a meeting link on the course. Students reserve a slot. You grant lesson access per student, group, or on the schedule tied to those class times.'
+        },
+        plan: {
+          q: 'What is the difference between one-time and subscription?',
+          a: 'One-time is a single purchase for that course. A subscription covers tagged courses for 3, 6, or 12 months and is renewed by the student — it is not auto-charged.'
+        }
+      }
     }
   },
   selectSchool: {
@@ -501,6 +550,7 @@ export const en = {
     cannotBeUndone: 'This action cannot be undone.',
     permanentlyDelete: 'This will permanently delete',
     deleting: 'Deleting...',
+    copy: 'Copy',
     saving: 'Saving...',
     updating: 'Updating...',
     creating: 'Creating...',
@@ -772,6 +822,11 @@ export const en = {
     platformCosts: 'Platform costs',
     support: 'Support',
     supportInbox: 'Support Inbox',
+    ticketing: 'Ticketing',
+    supportEmail: 'Email',
+    supportFaq: 'FAQ',
+    supportPhone: 'Phone number',
+    supportSuggestion: 'Suggestion',
     planPricing: 'Plan Pricing',
     platformVouchers: 'Platform Vouchers',
     broadcasts: 'Broadcasts',

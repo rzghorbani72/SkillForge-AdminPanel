@@ -134,7 +134,7 @@ test.describe('sidebar shape', () => {
         tutoring: true
       }
     });
-    expect(items.length).toBeLessThanOrEqual(9);
+    expect(items.length).toBeLessThanOrEqual(10);
   });
 
   // The daily destinations must be one click away, not hidden in a group.
@@ -160,6 +160,19 @@ test.describe('sidebar shape', () => {
       '/website/seo',
       '/website/trust',
       '/website/domain'
+    ]);
+  });
+
+  test('support destinations live under the Support group', () => {
+    const items = filterNavItems(navItems, MANAGER);
+    const support = items.find((item) => item.title === 'Support');
+    expect(support?.href).toBeUndefined();
+    expect(support?.children?.map((child) => child.href)).toEqual([
+      '/support',
+      '/support/email',
+      '/support/faq',
+      '/support/phone',
+      '/support/suggestion'
     ]);
   });
 

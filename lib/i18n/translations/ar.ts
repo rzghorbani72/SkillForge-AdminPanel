@@ -372,12 +372,9 @@ export const ar = {
     noDescriptionProvided: 'لم يتم تقديم وصف',
     refresh: 'تحديث',
     noStoreSelected: 'لم يتم اختيار أكاديمية',
-    selectStoreToView:
-      'يرجى اختيار أكاديمية من الشريط العلوي لعرض المحتوى.',
-    selectStoreToViewCourses:
-      'لعرض الدورات، اختر أكاديمية من الشريط العلوي.',
-    selectStoreToCreateProduct:
-      'لإنشاء منتج، اختر أكاديمية من الشريط العلوي.',
+    selectStoreToView: 'يرجى اختيار أكاديمية من الشريط العلوي لعرض المحتوى.',
+    selectStoreToViewCourses: 'لعرض الدورات، اختر أكاديمية من الشريط العلوي.',
+    selectStoreToCreateProduct: 'لإنشاء منتج، اختر أكاديمية من الشريط العلوي.',
     moreFilters: 'المزيد من الفلاتر',
     tryAdjustingFilters: 'حاول تعديل البحث أو الفلاتر',
     email: 'البريد الإلكتروني',
@@ -475,6 +472,12 @@ export const ar = {
     websiteSeo: 'البحث والمشاركة',
     websiteTrust: 'شارة الثقة',
     websiteDomain: 'النطاق',
+    support: 'الدعم',
+    ticketing: 'التذاكر',
+    supportEmail: 'البريد',
+    supportFaq: 'الأسئلة الشائعة',
+    supportPhone: 'رقم الهاتف',
+    supportSuggestion: 'اقتراح',
     platformBlog: 'مدونة المنصة',
     allSubscriptions: 'كل الاشتراكات',
     rolesPermissions: 'الأدوار والصلاحيات',
@@ -1126,8 +1129,7 @@ export const ar = {
       titleMax: 'يجب أن يكون العنوان أقل من 80 حرفًا',
       descriptionRequired: 'الوصف مطلوب',
       descriptionMax: 'يجب أن يكون الوصف أقل من 4000 حرف',
-      learningOutcomesMax:
-        'يجب أن يكون قسم «ماذا ستتعلم» أقل من 2000 حرف',
+      learningOutcomesMax: 'يجب أن يكون قسم «ماذا ستتعلم» أقل من 2000 حرف',
       primaryPriceRequired: 'السعر الأساسي مطلوب',
       primaryPriceWholeNumber: 'يجب أن يكون السعر الأساسي رقمًا صحيحًا',
       primaryPriceRange: 'يجب أن يكون السعر الأساسي بين 0 و 999,999,999',

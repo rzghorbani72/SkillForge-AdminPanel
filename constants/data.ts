@@ -51,6 +51,31 @@ export type Product = {
   updated_at: string;
 };
 
+const ACADEMY_SUPPORT_ROLES: NonNullable<NavItem['roles']> = [
+  'PLATFORM_OWNER',
+  'ADMIN',
+  'FINANCE',
+  'SUPPORT',
+  'MANAGER',
+  'TEACHER'
+];
+
+function academySupportItem(
+  title: string,
+  href: string,
+  label: string,
+  icon: IconType = 'help'
+): NavItem {
+  return {
+    title,
+    href,
+    icon,
+    label,
+    roles: ACADEMY_SUPPORT_ROLES,
+    scope: 'academy'
+  };
+}
+
 export const navItems: NavItem[] = [
   // ── Platform mode ──────────────────────────────────────────────────────────
   // The daily destinations stay at the top level; everything a staff member
@@ -569,6 +594,25 @@ export const navItems: NavItem[] = [
         roles: ['MANAGER'],
         scope: 'academy'
       }
+    ]
+  },
+  {
+    title: 'Support',
+    icon: 'help' as IconType,
+    label: 'support',
+    roles: ACADEMY_SUPPORT_ROLES,
+    scope: 'academy',
+    children: [
+      academySupportItem('Ticketing', '/support', 'ticketing'),
+      academySupportItem('Email', '/support/email', 'supportEmail'),
+      academySupportItem('FAQ', '/support/faq', 'supportFaq'),
+      academySupportItem('Phone number', '/support/phone', 'supportPhone'),
+      academySupportItem(
+        'Suggestion',
+        '/support/suggestion',
+        'supportSuggestion',
+        'megaphone'
+      )
     ]
   },
   {
