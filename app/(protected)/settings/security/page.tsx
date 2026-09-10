@@ -79,24 +79,6 @@ export default function SecuritySettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />{' '}
-            {t('settings.twoFactorAuthentication')}
-          </CardTitle>
-          <CardDescription>
-            {t('settings.twoFactorAuthenticationDescription')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4 text-sm text-muted-foreground">
-          <p>{t('settings.twoFactorAuthenticationText')}</p>
-          <Button variant="outline" size="sm">
-            {t('settings.configure2FA')}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" /> {t('settings.notificationPreferences')}
           </CardTitle>
           <CardDescription>
