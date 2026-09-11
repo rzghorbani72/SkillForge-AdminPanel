@@ -1,5 +1,6 @@
 'use client';
 
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Copy,
@@ -328,8 +329,8 @@ export default function MyAffiliatePage() {
     try {
       const data = await apiClient.getMyAffiliateLinks();
       setLinks(Array.isArray(data) ? data : []);
-    } catch {
-      toast.error(t('affiliates.loadFailed'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('affiliates.loadFailed')));
     } finally {
       setLoading(false);
     }

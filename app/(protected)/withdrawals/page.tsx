@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 const approveSchema = z.object({
   bank_transaction_code: z.string().min(1, 'validation.required'),
@@ -87,8 +88,8 @@ export default function WithdrawalsPage() {
       const params = status && status !== 'ALL' ? { status } : undefined;
       const data = await apiClient.getWithdrawals(params);
       setWithdrawals(Array.isArray(data) ? data : (data?.withdrawals ?? []));
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
       setLoading(false);
     }

@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, CircleCheck, Phone, Sparkles, Copy, Check } from 'lucide-react';
+import {
+  Loader2,
+  CircleCheck,
+  Phone,
+  Sparkles,
+  Copy,
+  Check
+} from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
@@ -33,6 +40,7 @@ import {
   type AddAffiliateForm
 } from './types';
 import { CopyBtn } from './copy-btn';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 const QUICK_RATES = [10, 15, 20, 25];
 
@@ -150,7 +158,7 @@ export function AffiliateDialog({
         onDone();
         handleClose();
       } catch (e: unknown) {
-        const message = e instanceof Error ? e.message : t('common.error');
+        const message = apiErrorMessage(e, t('common.error'));
         toast.error(message);
       } finally {
         setSaving(false);
@@ -184,7 +192,7 @@ export function AffiliateDialog({
       onDone();
       handleClose();
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : t('common.error');
+      const message = apiErrorMessage(e, t('common.error'));
       toast.error(message);
     } finally {
       setSaving(false);

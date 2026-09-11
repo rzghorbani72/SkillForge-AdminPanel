@@ -12,6 +12,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { QuizGrading } from './quiz-grading';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 type QType = 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'SHORT_TEXT';
 
@@ -89,7 +90,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
       await fn();
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('quiz.actionFailed'));
+      setError(apiErrorMessage(e, t('quiz.actionFailed')));
     }
   };
 

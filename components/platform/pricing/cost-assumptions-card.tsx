@@ -1,5 +1,6 @@
 'use client';
 
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import {
@@ -55,16 +56,18 @@ const ADDON_FIELDS: CostSettingKey[] = [
 type FormState = Record<CostSettingKey, string>;
 
 const toForm = (settings: PlatformSettingsData | null): FormState => {
-  const entries = (Object.keys(COST_DEFAULTS) as CostSettingKey[]).map((key) => {
-    const raw = settings?.[key];
-    const value =
-      key === 'cost_gateway_fee_rate'
-        ? toPercent(typeof raw === 'number' ? raw : COST_DEFAULTS[key])
-        : typeof raw === 'number'
-          ? raw
-          : COST_DEFAULTS[key];
-    return [key, String(value)] as const;
-  });
+  const entries = (Object.keys(COST_DEFAULTS) as CostSettingKey[]).map(
+    (key) => {
+      const raw = settings?.[key];
+      const value =
+        key === 'cost_gateway_fee_rate'
+          ? toPercent(typeof raw === 'number' ? raw : COST_DEFAULTS[key])
+          : typeof raw === 'number'
+            ? raw
+            : COST_DEFAULTS[key];
+      return [key, String(value)] as const;
+    }
+  );
   return Object.fromEntries(entries) as FormState;
 };
 
@@ -116,8 +119,10 @@ export function CostAssumptionsCard({ settings, onSaved }: Props) {
       );
       ErrorHandler.showSuccess(t('pricing.costs.saveSuccess'));
       await onSaved();
-    } catch {
-      ErrorHandler.showError(t('pricing.costs.saveFailed'));
+    } catch (error) {
+      ErrorHandler.showError(
+        apiErrorMessage(error, t('pricing.costs.saveFailed'))
+      );
     } finally {
       setSaving(false);
     }

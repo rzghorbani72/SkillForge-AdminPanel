@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 const refundSchema = z.object({
   refund_amount: z.coerce.number().optional(),
@@ -72,8 +73,8 @@ export default function RefundsPage() {
         ? data
         : (data?.payments ?? data?.data ?? []);
       setPayments(list);
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
       setLoading(false);
     }

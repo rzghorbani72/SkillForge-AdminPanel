@@ -1,5 +1,6 @@
 'use client';
 
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { useCallback, useEffect, useState } from 'react';
 import { Plus, Save, Trash2, Pencil, X, Check } from 'lucide-react';
 import {
@@ -140,8 +141,10 @@ export default function PlatformPricingPage() {
     try {
       const data = await apiClient.listGatewayConfigs();
       setGateways(data.gateways);
-    } catch {
-      ErrorHandler.showError(t('pricing.platform.gatewaysLoadFailed'));
+    } catch (error) {
+      ErrorHandler.showError(
+        apiErrorMessage(error, t('pricing.platform.gatewaysLoadFailed'))
+      );
     }
   }, [t]);
 
@@ -197,8 +200,10 @@ export default function PlatformPricingPage() {
       } as Partial<PlatformSettingsData>);
       ErrorHandler.showSuccess(t('pricing.platform.saveSettingsSuccess'));
       await loadAll();
-    } catch {
-      ErrorHandler.showError(t('pricing.platform.saveSettingsFailed'));
+    } catch (error) {
+      ErrorHandler.showError(
+        apiErrorMessage(error, t('pricing.platform.saveSettingsFailed'))
+      );
     } finally {
       setSavingSettings(false);
     }
@@ -261,8 +266,10 @@ export default function PlatformPricingPage() {
       }
       cancelPlan();
       await loadAll();
-    } catch {
-      ErrorHandler.showError(t('pricing.platform.savePlanFailed'));
+    } catch (error) {
+      ErrorHandler.showError(
+        apiErrorMessage(error, t('pricing.platform.savePlanFailed'))
+      );
     } finally {
       setSavingPlan(false);
     }
@@ -274,8 +281,10 @@ export default function PlatformPricingPage() {
       await apiClient.deleteSubscriptionPlan(id);
       ErrorHandler.showSuccess(t('pricing.platform.planDeleted'));
       await loadAll();
-    } catch {
-      ErrorHandler.showError(t('pricing.platform.deletePlanFailed'));
+    } catch (error) {
+      ErrorHandler.showError(
+        apiErrorMessage(error, t('pricing.platform.deletePlanFailed'))
+      );
     } finally {
       setDeletingPlanId(null);
     }
@@ -292,13 +301,15 @@ export default function PlatformPricingPage() {
     try {
       await apiClient.updateGatewayConfig(gateway.id, { is_active: isActive });
       ErrorHandler.showSuccess(t('pricing.platform.gatewaySaved'));
-    } catch {
+    } catch (error) {
       setGateways((prev) =>
         prev.map((g) =>
           g.id === gateway.id ? { ...g, is_active: gateway.is_active } : g
         )
       );
-      ErrorHandler.showError(t('pricing.platform.gatewaySaveFailed'));
+      ErrorHandler.showError(
+        apiErrorMessage(error, t('pricing.platform.gatewaySaveFailed'))
+      );
     } finally {
       setSavingGatewayId(null);
     }

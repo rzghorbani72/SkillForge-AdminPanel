@@ -25,6 +25,7 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 type Props = {
   academy: AcademyHealthView | null;
@@ -90,11 +91,11 @@ export function AcademySettlementSheet({
         setPending(asList(pendingRows));
         setHistory(asList(paidRows).slice(0, 12));
         setAmount(String(Math.floor(sum.balance.available || 0)));
-      } catch {
+      } catch (error) {
         setSummary(null);
         setPending([]);
         setHistory([]);
-        toast.error(t('common.error'));
+        toast.error(apiErrorMessage(error, t('common.error')));
       } finally {
         setLoading(false);
       }

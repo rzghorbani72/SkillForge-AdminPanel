@@ -15,6 +15,7 @@ import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { toEnglishDigits } from '@/lib/phone-utils';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 interface SettlementRequestCardProps {
   academyId: string;
@@ -53,7 +54,7 @@ export function SettlementRequestCard({
       setNotes('');
       onRequested();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setIsSubmitting(false);
     }

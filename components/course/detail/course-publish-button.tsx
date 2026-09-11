@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCourseWorkspace } from './course-workspace-context';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 /**
  * Publishing is safe and reversible, so it fires straight away. Unpublishing
@@ -41,8 +42,8 @@ export function CoursePublishButton() {
           ? t('courseDetail.publishedToast')
           : t('courseDetail.unpublishedToast')
       );
-    } catch {
-      toast.error(t('courseDetail.publishFailed'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('courseDetail.publishFailed')));
     } finally {
       setSaving(false);
     }

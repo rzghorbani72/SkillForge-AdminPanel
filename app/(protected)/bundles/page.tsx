@@ -1,5 +1,6 @@
 'use client';
 
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -273,8 +274,8 @@ export default function BundlesPage() {
       // Single-course offers are managed on the course itself; this page is the
       // bundle view, so it only lists offers that span more than one course.
       setBundles(data.filter((o) => (o.Courses?.length ?? 0) > 1));
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
       setLoadingBundles(false);
     }
@@ -363,8 +364,8 @@ export default function BundlesPage() {
     try {
       await apiClient.updateOffer(bundle.id, { is_active: !bundle.is_active });
       loadBundles();
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     }
   }
 

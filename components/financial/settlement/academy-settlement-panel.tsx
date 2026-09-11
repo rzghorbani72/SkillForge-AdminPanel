@@ -14,6 +14,7 @@ import { KYC_IDENTITY_PATH } from '@/lib/kyc-error';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 interface AcademySettlementPanelProps {
   academyId: string;
@@ -43,7 +44,7 @@ export function AcademySettlementPanel({
       toast.success(t('settlement.request.submitted'));
       await reload();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setIsSubmitting(false);
     }

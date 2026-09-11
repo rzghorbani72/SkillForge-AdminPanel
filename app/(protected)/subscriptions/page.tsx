@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 export default function SubscriptionsPage() {
   const { t } = useTranslation();
@@ -39,8 +40,8 @@ export default function SubscriptionsPage() {
     try {
       const data = await apiClient.getAcademyPlans();
       setPlans(Array.isArray(data) ? data : (data?.plans ?? []));
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
       setLoading(false);
     }

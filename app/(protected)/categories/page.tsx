@@ -17,6 +17,7 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { Folder, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 export default function CategoriesPage() {
   const { t, language } = useTranslation();
@@ -112,8 +113,7 @@ export default function CategoriesPage() {
       setIsCreateDialogOpen(false);
       resetForm();
     } catch (error) {
-      console.error('Error creating category:', error);
-      toast.error(t('categories.createFailed'));
+      toast.error(apiErrorMessage(error, t('categories.createFailed')));
     }
   };
 
@@ -138,8 +138,7 @@ export default function CategoriesPage() {
       setEditingCategory(null);
       resetForm();
     } catch (error) {
-      console.error('Error updating category:', error);
-      toast.error(t('categories.updateFailed'));
+      toast.error(apiErrorMessage(error, t('categories.updateFailed')));
     }
   };
 
@@ -162,8 +161,7 @@ export default function CategoriesPage() {
       await fetchCategories({ force: true });
       toast.success(t('categories.deleteSuccess'));
     } catch (error) {
-      console.error('Error deleting category:', error);
-      toast.error(t('categories.deleteFailed'));
+      toast.error(apiErrorMessage(error, t('categories.deleteFailed')));
     }
   };
 

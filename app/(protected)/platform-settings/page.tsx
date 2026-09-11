@@ -29,6 +29,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 const settingsSchema = z.object({
   vat_rate_pct: z.coerce.number().min(0).max(100),
@@ -74,8 +75,8 @@ export default function PlatformSettingsPage() {
             owner_notify_phone: data.owner_notify_phone ?? ''
           });
         }
-      } catch {
-        toast.error(t('common.error'));
+      } catch (error) {
+        toast.error(apiErrorMessage(error, t('common.error')));
       } finally {
         setLoading(false);
       }

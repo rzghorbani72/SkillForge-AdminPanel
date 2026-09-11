@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 interface Attempt {
   id: string;
@@ -58,7 +58,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
       const list = await apiClient.listQuizAttempts<Attempt[]>(quizId);
       setAttempts(list);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('quiz.loadAttemptsFailed'));
+      setError(apiErrorMessage(e, t('quiz.loadAttemptsFailed')));
     } finally {
       setLoading(false);
     }
@@ -78,7 +78,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
       detail.Answer.forEach((a) => (initial[a.id] = a.awarded_points));
       setScores(initial);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('quiz.openAttemptFailed'));
+      setError(apiErrorMessage(e, t('quiz.openAttemptFailed')));
     }
   };
 
@@ -97,7 +97,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
       await loadAttempts();
       await openAttempt(selected.id);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('quiz.finalizeFailed'));
+      setError(apiErrorMessage(e, t('quiz.finalizeFailed')));
     }
   };
 

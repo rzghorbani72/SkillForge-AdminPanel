@@ -19,6 +19,7 @@ import { AffiliateLoginPreview } from '@/components/affiliates/login-preview';
 import { AffiliateDialog } from '@/components/affiliates/affiliate-dialog';
 import { academySiteUrl } from '@/lib/academy-site-url';
 import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 export default function AffiliatesPage() {
   const { t } = useTranslation();
@@ -42,8 +43,8 @@ export default function AffiliatesPage() {
       setAffiliates(
         Array.isArray(data) ? data : (data?.affiliates ?? data?.data ?? [])
       );
-    } catch {
-      toast.error(t('affiliates.loadError'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('affiliates.loadError')));
     } finally {
       setLoading(false);
     }

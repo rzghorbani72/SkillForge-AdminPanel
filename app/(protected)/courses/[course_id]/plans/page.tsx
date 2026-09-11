@@ -39,6 +39,7 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 const planSchema = z.object({
   installment_count: z.coerce.number().int().min(1),
@@ -73,8 +74,8 @@ export default function PaymentPlansPage() {
     try {
       const data = await apiClient.getPaymentPlans(courseId);
       setPlans(Array.isArray(data) ? data : (data?.plans ?? []));
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
       setLoading(false);
     }
@@ -104,8 +105,8 @@ export default function PaymentPlansPage() {
         is_active: !plan.is_active
       });
       load();
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     }
   }
 

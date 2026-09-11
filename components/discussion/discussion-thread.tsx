@@ -7,6 +7,7 @@ import { MessageSquare, Send } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { DiscussionParent } from '@/types/learning-operations';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 interface ThreadMessage {
   id: string;
@@ -90,7 +91,7 @@ export function DiscussionThread({
       setBody('');
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('discussion.sendFailed'));
+      setError(apiErrorMessage(e, t('discussion.sendFailed')));
     } finally {
       setSending(false);
     }

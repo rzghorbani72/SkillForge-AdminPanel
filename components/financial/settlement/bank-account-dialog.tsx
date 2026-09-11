@@ -17,6 +17,7 @@ import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { settlementApi } from '@/lib/api-settlement';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toEnglishDigits } from '@/lib/phone-utils';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 const OTP_LENGTH = 5;
 const SHEBA_PATTERN = /^IR\d{24}$/;
@@ -69,7 +70,7 @@ export function BankAccountDialog({
       setStep('otp');
       toast.success(t('settlement.bank.codeSent'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setIsSubmitting(false);
     }
@@ -87,7 +88,7 @@ export function BankAccountDialog({
       close(false);
       onSaved();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setIsSubmitting(false);
     }

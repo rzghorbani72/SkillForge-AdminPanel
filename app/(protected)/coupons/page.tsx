@@ -74,6 +74,7 @@ import {
   type CouponType
 } from '@/lib/coupons';
 import { useCouponCodeAvailability } from '@/hooks/useCouponCodeAvailability';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 function buildCouponSchema(endBeforeStartMessage: string) {
   return z
@@ -218,8 +219,8 @@ export default function CouponsPage() {
       const list =
         (data as any)?.discounts ?? (Array.isArray(data) ? data : []);
       setCoupons(list);
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
       setLoading(false);
     }
@@ -308,8 +309,8 @@ export default function CouponsPage() {
       toast.success(t('common.success'));
       setDeleteTarget(null);
       load();
-    } catch {
-      toast.error(t('common.error'));
+    } catch (error) {
+      toast.error(apiErrorMessage(error, t('common.error')));
     }
   }
 
