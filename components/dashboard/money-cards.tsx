@@ -70,6 +70,7 @@ export default function MoneyCards({
         )
       }),
       icon: Landmark,
+      tone: 'pending',
       change: null
     },
     {
@@ -78,6 +79,7 @@ export default function MoneyCards({
       value: settlement?.balance.withdrawn_total ?? 0,
       hint: t('dashboard.money.paidToAcademyHint'),
       icon: Banknote,
+      tone: 'paid',
       change: null
     }
   ];
@@ -97,6 +99,7 @@ export default function MoneyCards({
       value: money.teacher_paid,
       hint: t('dashboard.money.teacherPaidHint'),
       icon: BadgeCheck,
+      tone: 'paid',
       change: null
     },
     {
@@ -107,6 +110,7 @@ export default function MoneyCards({
         count: formatNumber(payoutsDue.count, language)
       }),
       icon: HandCoins,
+      tone: 'pending',
       change: null
     },
     {

@@ -21,12 +21,23 @@ export type CardModel = {
   value: number;
   /** Shown instead of the money value, e.g. a percentage. */
   valueLabel?: string;
+  /** Colors the value when it is above zero: money waiting vs money settled. */
+  tone?: 'pending' | 'paid';
   hint: string;
   icon: typeof DollarSign;
   /** Whole-percent move against the previous window; null when there is no base. */
   change: number | null;
   meter?: number;
 };
+
+const TONE_CLASS = {
+  pending: 'text-amber-600 dark:text-amber-400',
+  paid: 'text-emerald-600 dark:text-emerald-400'
+} as const;
+
+function toneClass(card: CardModel): string | undefined {
+  return card.tone && card.value > 0 ? TONE_CLASS[card.tone] : undefined;
+}
 
 export function MoneyCard({
   card,
@@ -69,7 +80,7 @@ export function MoneyCard({
                   {card.valueLabel}
                 </span>
               ) : (
-                <MoneyValue value={card.value} />
+                <MoneyValue value={card.value} className={toneClass(card)} />
               )}
               {card.change !== null ? (
                 <span

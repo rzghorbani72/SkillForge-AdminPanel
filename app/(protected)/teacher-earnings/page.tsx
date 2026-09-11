@@ -12,9 +12,17 @@ export default function TeacherEarningsPage() {
   const { t } = useTranslation();
   const { balance, payouts, isLoading, reload } = useTeacherEarnings();
   const cards = [
-    { key: 'earned', value: balance?.total_earned ?? 0 },
-    { key: 'paid', value: balance?.total_paid_out ?? 0 },
-    { key: 'owed', value: balance?.available_balance ?? 0 }
+    { key: 'earned', value: balance?.total_earned ?? 0, tone: '' },
+    {
+      key: 'paid',
+      value: balance?.total_paid_out ?? 0,
+      tone: 'text-emerald-600 dark:text-emerald-400'
+    },
+    {
+      key: 'owed',
+      value: balance?.available_balance ?? 0,
+      tone: 'text-amber-600 dark:text-amber-400'
+    }
   ] as const;
 
   return (
@@ -40,7 +48,10 @@ export default function TeacherEarningsPage() {
                 <Skeleton className="mt-2 h-7 w-28" />
               ) : (
                 <p className="mt-1">
-                  <MoneyValue value={card.value} />
+                  <MoneyValue
+                    value={card.value}
+                    className={card.value > 0 ? card.tone : undefined}
+                  />
                 </p>
               )}
             </CardContent>

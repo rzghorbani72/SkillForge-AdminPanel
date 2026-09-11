@@ -22,7 +22,7 @@ export function splitMoney(formatted: string): {
 
 type Props = { value: number; className?: string };
 
-/** A money figure with the currency unit small and gray, so the number leads. */
+/** A money figure with the currency unit small and gray; className colors the number. */
 export function MoneyValue({ value, className }: Props) {
   const { language } = useTranslation();
   const academy = useCurrentAcademy();
@@ -30,8 +30,10 @@ export function MoneyValue({ value, className }: Props) {
     formatCurrencyWithStore(value, academy, undefined, language)
   );
   return (
-    <span className={cn('inline-flex items-baseline gap-1', className)}>
-      <span className="text-2xl font-bold tracking-tight">{amount}</span>
+    <span className="inline-flex items-baseline gap-1">
+      <span className={cn('text-2xl font-bold tracking-tight', className)}>
+        {amount}
+      </span>
       {unit ? (
         <span className="text-xs font-normal text-muted-foreground">
           {unit}
