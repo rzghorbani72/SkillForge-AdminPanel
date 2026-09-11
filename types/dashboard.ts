@@ -14,6 +14,7 @@ export interface MoneySummary {
   refunds: number;
   discounts: number;
   teacher_payouts: number;
+  teacher_paid: number;
   net: number;
   gross_previous: number;
   net_previous: number;
@@ -83,6 +84,7 @@ export const EMPTY_MANAGER_DASHBOARD: ManagerDashboard = {
     refunds: 0,
     discounts: 0,
     teacher_payouts: 0,
+    teacher_paid: 0,
     net: 0,
     gross_previous: 0,
     net_previous: 0

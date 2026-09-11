@@ -203,7 +203,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="stagger-children space-y-6">
-          {/* Row 1: the four money numbers a manager acts on */}
+          {/* Row 1: the money numbers a manager acts on */}
           <MoneyCards
             money={money.money}
             payouts_due={money.payouts_due}
@@ -244,6 +244,7 @@ export default function DashboardPage() {
             <TeacherMoneyTable
               rows={money.teachers}
               isLoading={money.isLoading}
+              onPayoutRecorded={money.reload}
             />
             <CompletionDonut
               segments={statusData}

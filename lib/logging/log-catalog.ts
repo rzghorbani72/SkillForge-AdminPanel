@@ -67,6 +67,18 @@ export const LOG_CATALOG = {
         fields: ['step'] as const
       }
     }
+  },
+  TeacherPayout: {
+    description:
+      'Off-platform teacher payouts a manager records from the dashboard.',
+    actions: {
+      Recorded: {
+        description:
+          'The manager saved a bank transfer to a teacher from the teacher money table.',
+        status: 'ok',
+        fields: ['amount'] as const
+      }
+    }
   }
 } as const satisfies LogCatalog;
 

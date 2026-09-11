@@ -478,6 +478,7 @@ export const tr = {
     deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.'
   },
   navigation: {
+    teacherEarnings: 'Kazançlarım',
     contentHub: 'İçerik ve şablonlar',
     configurationHub: 'Yapılandırma',
     governanceHub: 'Güven ve hukuk',
@@ -793,6 +794,21 @@ export const tr = {
     regularLogin: 'Normal Giriş',
     loginTitle: 'Hesabınıza giriş yapın'
   },
+  teacherEarnings: {
+    title: 'Kazançlarım',
+    description:
+      'Kurs satışlarından payınız, akademinin size ödediği tutar ve kalan borç.',
+    earned: 'Toplam payınız',
+    paid: 'Size ödenen',
+    owed: 'Kalan borç',
+    payoutsTitle: 'Akademinin size ödemeleri',
+    payoutsSubtitle: 'Her havalenin takip kodu ödeme kanıtınızdır',
+    colDate: 'Tarih',
+    colAmount: 'Tutar',
+    colTrackingCode: 'Takip kodu',
+    colBankResponse: 'Banka yanıtı',
+    noPayouts: 'Henüz ödeme kaydedilmedi'
+  },
   dashboard: {
     limits: {
       title: 'Plan limitleriniz',
@@ -820,8 +836,23 @@ export const tr = {
       active: 'Aktif kayıtlar',
       activeHint: '{{period}} içinde kursa devam eden öğrenciler'
     },
+    teacherPayout: {
+      title: '{{name}} için ödeme kaydet',
+      description:
+        'Bu öğretmene borç: {{owed}}. Kaydettikten sonra öğretmen SMS alır ve takip kodunu ödeme kanıtı olarak görür.',
+      amount: 'Ödenen tutar',
+      trackingCode: 'Banka takip kodu',
+      bankResponse: 'Banka yanıtı (isteğe bağlı)',
+      bankResponseHint: 'örn. referans numarası veya dekont metni',
+      submit: 'Ödemeyi kaydet',
+      success: 'Ödeme kaydedildi',
+      failed: 'Ödeme kaydedilemedi'
+    },
     money: {
       teacherShare: 'Öğretmen payı',
+      teacherPaid: 'Öğretmenlere ödenen',
+      teacherPaidHint: 'Bu dönemde öğretmenlere aktarıp kaydettiğiniz tutar',
+      payTeacher: 'Ödeme kaydet',
       teacherShareHint:
         'Öğretmenlerin bu dönemdeki satışlardan kazandığı tutar',
       flowTitle: 'Para akışı',

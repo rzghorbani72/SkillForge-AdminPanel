@@ -3,6 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import {
+  BadgeCheck,
   HandCoins,
   DollarSign,
   TrendingDown,
@@ -20,7 +21,8 @@ const LINES = [
   'hsl(var(--viz-1))',
   'hsl(var(--viz-2))',
   'hsl(var(--viz-3))',
-  'hsl(var(--viz-1))'
+  'hsl(var(--viz-1))',
+  'hsl(var(--viz-2))'
 ];
 
 type CardModel = {
@@ -103,8 +105,8 @@ type Props = Pick<ManagerDashboard, 'money' | 'payouts_due'> & {
 };
 
 /**
- * The four numbers a manager acts on: what came in, what they keep, what they
- * still owe teachers, and what teachers earned this period.
+ * The money story in one row: what came in, what the academy keeps, what
+ * teachers earned, what they were paid, and what is still owed to them.
  */
 export default function MoneyCards({
   money,
@@ -138,6 +140,22 @@ export default function MoneyCards({
       change: delta(money.net, money.net_previous)
     },
     {
+      key: 'teacherShare',
+      title: t('dashboard.money.teacherShare'),
+      value: amount(money.teacher_payouts),
+      hint: t('dashboard.money.teacherShareHint'),
+      icon: GraduationCap,
+      change: null
+    },
+    {
+      key: 'teacherPaid',
+      title: t('dashboard.money.teacherPaid'),
+      value: amount(money.teacher_paid),
+      hint: t('dashboard.money.teacherPaidHint'),
+      icon: BadgeCheck,
+      change: null
+    },
+    {
       key: 'payouts',
       title: t('dashboard.money.payoutsDue'),
       value: amount(payoutsDue.amount),
@@ -146,19 +164,11 @@ export default function MoneyCards({
       }),
       icon: HandCoins,
       change: null
-    },
-    {
-      key: 'teacherShare',
-      title: t('dashboard.money.teacherShare'),
-      value: amount(money.teacher_payouts),
-      hint: t('dashboard.money.teacherShareHint'),
-      icon: GraduationCap,
-      change: null
     }
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {cards.map((card, index) => (
         <MoneyCard
           key={card.key}

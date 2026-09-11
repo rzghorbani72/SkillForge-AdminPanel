@@ -943,6 +943,7 @@ export const fa = {
     broadcasts: 'اعلان‌های سراسری',
     dashboardBanners: 'بنرهای داشبورد',
     myAcademies: 'آکادمی‌های من',
+    teacherEarnings: 'درآمد من',
     templatesGallery: 'گالری قالب‌ها',
     templateCovers: 'کاور قالب‌ها',
     section: {
@@ -1304,8 +1305,23 @@ export const fa = {
       active: 'ثبت‌نام‌های فعال',
       activeHint: 'دانشجویانی که در {{period}} در حال گذراندن دوره هستند'
     },
+    teacherPayout: {
+      title: 'ثبت پرداخت به {{name}}',
+      description:
+        'مبلغ بدهی به این مدرس {{owed}} است. پس از ثبت، مدرس پیامک دریافت می‌کند و کد پیگیری را به‌عنوان مدرک پرداخت می‌بیند.',
+      amount: 'مبلغ پرداختی',
+      trackingCode: 'کد پیگیری بانک',
+      bankResponse: 'پاسخ بانک (اختیاری)',
+      bankResponseHint: 'مثلاً شماره پیگیری یا متن رسید',
+      submit: 'ثبت پرداخت',
+      success: 'پرداخت ثبت شد',
+      failed: 'ثبت پرداخت انجام نشد'
+    },
     money: {
       teacherShare: 'سهم مدرسان',
+      teacherPaid: 'پرداخت‌شده به مدرسان',
+      teacherPaidHint: 'مبلغی که در این بازه به مدرسان واریز و ثبت کردید',
+      payTeacher: 'ثبت پرداخت',
       teacherShareHint: 'سهمی که در این بازه به مدرسان تعلق گرفت',
       flowTitle: 'گردش پول',
       flowSubtitle: 'پول کجا می‌رود',
@@ -5624,6 +5640,21 @@ export const fa = {
     notInformed: 'اطلاع‌رسانی نشده',
     informedSms: 'پیامک ارسال شد',
     informedEmail: 'ایمیل ارسال شد'
+  },
+  teacherEarnings: {
+    title: 'درآمد من',
+    description:
+      'سهم شما از فروش دوره‌ها، مبالغی که آکادمی به شما پرداخت کرده و مانده‌ی تسویه‌نشده.',
+    earned: 'کل سهم شما',
+    paid: 'پرداخت‌شده به شما',
+    owed: 'مانده‌ی تسویه‌نشده',
+    payoutsTitle: 'پرداخت‌های آکادمی به شما',
+    payoutsSubtitle: 'کد پیگیری هر واریز، مدرک پرداخت شماست',
+    colDate: 'تاریخ',
+    colAmount: 'مبلغ',
+    colTrackingCode: 'کد پیگیری',
+    colBankResponse: 'پاسخ بانک',
+    noPayouts: 'هنوز پرداختی ثبت نشده است'
   },
   teacherPayouts: {
     title: 'پرداخت‌های معلمان',

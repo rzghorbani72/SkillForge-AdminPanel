@@ -1,3 +1,7 @@
+import type {
+  TeacherBalance,
+  TeacherPayoutRecord
+} from '@/types/teacher-earnings';
 import { OtpType } from '@/constants/data';
 import type {
   Article,
@@ -7005,6 +7009,18 @@ class ApiClient {
   // Teacher Payouts
   // -------------------------------------------------------------------------
 
+  async getTeacherBalance() {
+    const res = await this.request<TeacherBalance>('/teacher-wallet/balance');
+    return res.data;
+  }
+
+  async getTeacherPayoutRecords() {
+    const res = await this.request<TeacherPayoutRecord[]>(
+      '/teacher-wallet/payout-requests'
+    );
+    return res.data;
+  }
+
   async getTeacherPayouts(params?: {
     profile_id?: number;
     status?: string;
@@ -7020,6 +7036,19 @@ class ApiClient {
       `/teacher-wallet/payout-requests${qs.toString() ? `?${qs}` : ''}`
     );
     return (res.data as any)?.data ?? res.data;
+  }
+
+  async recordTeacherPayout(body: {
+    teacher_profile_id: string;
+    amount: number;
+    tracking_code: string;
+    bank_response?: string;
+  }) {
+    const res = await this.request<{ id: string }>('/teacher-wallet/payouts', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return res.data;
   }
 
   async approveTeacherPayout(id: number) {

@@ -468,6 +468,7 @@ export const ar = {
     deniedDescription: 'ليس لديك صلاحية لعرض هذه الصفحة.'
   },
   navigation: {
+    teacherEarnings: 'أرباحي',
     contentHub: 'المحتوى والقوالب',
     configurationHub: 'الإعدادات',
     governanceHub: 'الحوكمة والقانون',
@@ -774,6 +775,21 @@ export const ar = {
     regularLogin: 'تسجيل الدخول العادي',
     loginTitle: 'سجّل الدخول إلى حسابك'
   },
+  teacherEarnings: {
+    title: 'أرباحي',
+    description:
+      'حصتك من مبيعات الدورات، وما دفعته لك الأكاديمية، وما لا يزال مستحقًا.',
+    earned: 'إجمالي حصتك',
+    paid: 'المدفوع لك',
+    owed: 'المتبقي المستحق',
+    payoutsTitle: 'مدفوعات الأكاديمية لك',
+    payoutsSubtitle: 'رمز تتبع كل تحويل هو إثبات الدفع الخاص بك',
+    colDate: 'التاريخ',
+    colAmount: 'المبلغ',
+    colTrackingCode: 'رمز التتبع',
+    colBankResponse: 'رد البنك',
+    noPayouts: 'لم تُسجَّل أي دفعة بعد'
+  },
   dashboard: {
     limits: {
       title: 'حدود خطتك',
@@ -801,8 +817,23 @@ export const ar = {
       active: 'التسجيلات النشطة',
       activeHint: 'الطلاب الذين ما زالوا يدرسون في {{period}}'
     },
+    teacherPayout: {
+      title: 'تسجيل دفعة إلى {{name}}',
+      description:
+        'المستحق لهذا المعلم: {{owed}}. بعد الحفظ يصل المعلم رسالة نصية ويرى رمز التتبع كإثبات للدفع.',
+      amount: 'المبلغ المدفوع',
+      trackingCode: 'رمز تتبع البنك',
+      bankResponse: 'رد البنك (اختياري)',
+      bankResponseHint: 'مثلاً رقم المرجع أو نص الإيصال',
+      submit: 'تسجيل الدفعة',
+      success: 'تم تسجيل الدفعة',
+      failed: 'تعذر تسجيل الدفعة'
+    },
     money: {
       teacherShare: 'حصة المعلمين',
+      teacherPaid: 'المدفوع للمعلمين',
+      teacherPaidHint: 'ما حوّلته للمعلمين وسجّلته في هذه الفترة',
+      payTeacher: 'تسجيل دفعة',
       teacherShareHint: 'ما كسبه المعلمون من المبيعات في هذه الفترة',
       flowTitle: 'حركة الأموال',
       flowSubtitle: 'إلى أين تذهب الأموال',

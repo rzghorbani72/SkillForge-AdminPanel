@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { useStore } from '@/hooks/useStore';
 import {
@@ -18,6 +18,8 @@ export function useManagerMoney(period: DashboardPeriodKey) {
   const academyId = selectedAcademy?.id ?? null;
   const [data, setData] = useState<ManagerDashboard>(EMPTY_MANAGER_DASHBOARD);
   const [isLoading, setIsLoading] = useState(true);
+  const [version, setVersion] = useState(0);
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,7 +45,7 @@ export function useManagerMoney(period: DashboardPeriodKey) {
     return () => {
       cancelled = true;
     };
-  }, [academyId, period, storeLoading]);
+  }, [academyId, period, storeLoading, version]);
 
-  return { ...data, isLoading };
+  return { ...data, isLoading, reload };
 }

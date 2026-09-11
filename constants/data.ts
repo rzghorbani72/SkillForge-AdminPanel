@@ -528,6 +528,14 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'My Earnings',
+    href: '/teacher-earnings',
+    icon: 'wallet2' as IconType,
+    label: 'teacherEarnings',
+    roles: ['TEACHER'],
+    scope: 'academy'
+  },
+  {
     title: 'My Academies',
     href: '/academies',
     icon: 'store' as IconType,

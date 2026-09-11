@@ -953,6 +953,7 @@ export const en = {
     legalDocuments: 'Legal Documents',
     allAcademies: 'Academies',
     myAcademies: 'My Academies',
+    teacherEarnings: 'My earnings',
     templatesGallery: 'Templates Gallery',
     templateCovers: 'Template Covers',
     section: {
@@ -1319,8 +1320,24 @@ export const en = {
       active: 'Active enrolments',
       activeHint: 'Students still working through a course in {{period}}'
     },
+    teacherPayout: {
+      title: 'Record payment to {{name}}',
+      description:
+        'Owed to this teacher: {{owed}}. After saving, the teacher gets an SMS and sees the tracking code as proof of payment.',
+      amount: 'Amount paid',
+      trackingCode: 'Bank tracking code',
+      bankResponse: 'Bank response (optional)',
+      bankResponseHint: 'e.g. reference number or receipt text',
+      submit: 'Record payment',
+      success: 'Payment recorded',
+      failed: 'Could not record the payment'
+    },
     money: {
       teacherShare: 'Teacher share',
+      teacherPaid: 'Paid to teachers',
+      teacherPaidHint:
+        'What you transferred to teachers and recorded in this period',
+      payTeacher: 'Record payment',
       teacherShareHint: 'What teachers earned from sales in this period',
       flowTitle: 'Money flow',
       flowSubtitle: 'Where the money goes',
@@ -5642,6 +5659,22 @@ export const en = {
     notInformed: 'Not informed',
     informedSms: 'SMS sent',
     informedEmail: 'Email sent'
+  },
+  teacherEarnings: {
+    title: 'My earnings',
+    description:
+      'Your share of course sales, what the academy has paid you, and what is still owed.',
+    earned: 'Total share',
+    paid: 'Paid to you',
+    owed: 'Still owed',
+    payoutsTitle: 'Payments from the academy',
+    payoutsSubtitle:
+      'The tracking code of each transfer is your proof of payment',
+    colDate: 'Date',
+    colAmount: 'Amount',
+    colTrackingCode: 'Tracking code',
+    colBankResponse: 'Bank response',
+    noPayouts: 'No payment recorded yet'
   },
   teacherPayouts: {
     title: 'Teacher Payouts',

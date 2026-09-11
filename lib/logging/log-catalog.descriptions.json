@@ -2,7 +2,8 @@
   "domains": {
     "Gdpr": "Cookie and privacy consent captured in the browser.",
     "Media": "Video and file storage, transcoding and secure playback.",
-    "Onboarding": "First-run setup steps a manager completes to go live."
+    "Onboarding": "First-run setup steps a manager completes to go live.",
+    "TeacherPayout": "Off-platform teacher payouts a manager records from the dashboard."
   },
   "events": {
     "Gdpr.ConsentAccepted": "GDPR consent accepted.",
@@ -13,6 +14,7 @@
     "Onboarding.FirstAcademyCreated": "Onboarding first academy created.",
     "Onboarding.SetupBannerDismissed": "Manager dismissed the first-run setup checklist.",
     "Onboarding.SetupBannerShown": "First-run setup checklist shown on the dashboard.",
-    "Onboarding.SetupStepOpened": "Manager opened a first-run setup step from the dashboard banner."
+    "Onboarding.SetupStepOpened": "Manager opened a first-run setup step from the dashboard banner.",
+    "TeacherPayout.Recorded": "The manager saved a bank transfer to a teacher from the teacher money table."
   }
 }
