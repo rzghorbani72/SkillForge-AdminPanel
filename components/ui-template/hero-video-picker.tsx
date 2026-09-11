@@ -24,8 +24,8 @@ interface HeroVideoPickerProps {
 }
 
 /**
- * Picks one video for the hero media box. A video replaces the photo slideshow
- * in the same frame, so the ratio/height controls above it still apply.
+ * Chooses a library video for the hero. Uploading a new one happens on the
+ * canvas itself (the slot's upload button), so the sidebar only lists.
  */
 export function HeroVideoPicker({
   cfg,

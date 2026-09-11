@@ -3141,7 +3141,7 @@ export const tr = {
     blockSlideshow: 'Slayt Gösterisi',
     heroVideoTitle: 'Banner videosu',
     heroVideoHint:
-      'Video, aynı kutuda foto slaytının yerini alır. Videoyu İçerik bölümünden yükleyin.',
+      'Videoyu afişin üzerinden yükleyin veya medya kitaplığından seçin.',
     heroVideoPick: 'Video seç',
     heroVideoSelected: 'Seçilen video',
     heroVideoAutoplay: 'Otomatik ve sessiz oynat',

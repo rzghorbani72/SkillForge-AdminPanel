@@ -6609,7 +6609,7 @@ export const en = {
     blockSlideshow: 'Slideshow / Banner',
     heroVideoTitle: 'Banner video',
     heroVideoHint:
-      "A video takes the photo slideshow's place in the same box. Upload videos from the Content area.",
+      'Upload a video on the banner itself, or pick one from the media library.',
     heroVideoPick: 'Choose a video',
     heroVideoSelected: 'Selected video',
     heroVideoAutoplay: 'Autoplay, muted',

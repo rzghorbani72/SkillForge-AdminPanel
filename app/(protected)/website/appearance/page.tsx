@@ -35,7 +35,7 @@ import {
   getPreviewPostMessageTarget,
   isTrustedPreviewOrigin
 } from '@/lib/trusted-preview-origin';
-import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { uploadCanvasMedia } from '@/lib/ui-template/canvas-media-upload';
 import type { HeroPreviewContext } from '@/components/ui-template/hero-variant-picker';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
 import {
@@ -246,6 +246,7 @@ export default function UITemplateSettingsPage() {
         action?: string;
         fileName?: string;
         mimeType?: string;
+        kind?: 'image' | 'video';
         buffer?: ArrayBuffer;
         message?: string;
       };
@@ -336,23 +337,17 @@ export default function UITemplateSettingsPage() {
         void (async () => {
           try {
             postUploadState(true, 0);
-            const result = await apiClient.uploadImage(
+            const patch = await uploadCanvasMedia(
+              data.kind ?? 'image',
               file,
-              { title: 'Section Media' },
+              data.fieldKey!,
               (percent) => postUploadState(true, percent)
             );
-            const raw = result as unknown as Record<string, unknown>;
-            const id =
-              (raw?.id as number | undefined) ??
-              ((raw?.data as Record<string, unknown>)?.id as
-                | number
-                | undefined);
-            if (!id) return;
-            const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
+            if (!patch) return;
             // "Restore with photo": land the visibility flag and the uploaded
             // URL in the same patch, so this is the slot's only reload.
             handleBlockConfigChangeRef.current(data.blockId!, {
-              [data.fieldKey!]: url,
+              ...patch,
               ...(data.restoreKey ? { [data.restoreKey]: true } : {})
             });
           } catch (error) {

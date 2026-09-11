@@ -3056,7 +3056,7 @@ export const ar = {
     blockSlideshow: 'عرض الشرائح',
     heroVideoTitle: 'فيديو البانر',
     heroVideoHint:
-      'يحل الفيديو محل عرض الصور في الصندوق نفسه. ارفع الفيديو من قسم المحتوى.',
+      'ارفع الفيديو على اللافتة نفسها أو اختر واحدًا من مكتبة الوسائط.',
     heroVideoPick: 'اختر فيديو',
     heroVideoSelected: 'الفيديو المختار',
     heroVideoAutoplay: 'تشغيل تلقائي وصامت',
