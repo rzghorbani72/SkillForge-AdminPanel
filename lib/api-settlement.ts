@@ -47,7 +47,7 @@ export interface SettlementSummary {
   };
   bank_account: {
     status: BankAccountStatus;
-    sheba_masked: string;
+    sheba_number: string;
     account_holder_name: string;
     review_note: string | null;
   } | null;

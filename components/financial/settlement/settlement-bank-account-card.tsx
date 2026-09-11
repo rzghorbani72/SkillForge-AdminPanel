@@ -1,5 +1,6 @@
 'use client';
 
+import { CopyableValue } from '@/components/shared/copyable-value';
 import { useState } from 'react';
 import { AlertTriangle, CheckCircle2, CreditCard, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,9 +53,10 @@ export function SettlementBankAccountCard({
         ) : (
           <>
             <div className="flex flex-wrap items-center gap-3">
-              <span className="font-mono text-lg tracking-wider">
-                {bankAccount.sheba_masked}
-              </span>
+              <CopyableValue
+                value={bankAccount.sheba_number}
+                className="font-mono text-lg tracking-wider"
+              />
               <Badge
                 variant={STATUS_STYLE[bankAccount.status].variant}
                 className="gap-1"

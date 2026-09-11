@@ -1,5 +1,6 @@
 'use client';
 
+import { CopyableValue } from '@/components/shared/copyable-value';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
@@ -47,6 +48,9 @@ function asList(data: unknown): StaffWithdrawal[] {
   }
   return [];
 }
+
+const statusKey = (status: string) =>
+  status.charAt(0) + status.slice(1).toLowerCase();
 
 export function AcademySettlementSheet({
   academy,
@@ -233,9 +237,12 @@ export function AcademySettlementSheet({
                     {t('academiesHealth.settle.holder')}:{' '}
                     {summary.bank_account.account_holder_name}
                   </p>
-                  <p className="font-mono text-xs" dir="ltr">
-                    {t('academiesHealth.settle.sheba')}:{' '}
-                    {summary.bank_account.sheba_masked}
+                  <p className="flex flex-wrap items-center gap-1 text-xs">
+                    {t('academiesHealth.settle.sheba')}:
+                    <CopyableValue
+                      value={summary.bank_account.sheba_number}
+                      className="font-mono"
+                    />
                   </p>
                 </div>
               ) : (
@@ -314,10 +321,15 @@ export function AcademySettlementSheet({
                     className="space-y-2 rounded-md border p-3 text-sm"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-medium tabular-nums">
-                        {formatNumber(row.amount)} {t('common.toman')}
-                      </span>
-                      <Badge variant="secondary">{row.status}</Badge>
+                      <CopyableValue
+                        value={String(row.amount)}
+                        display={`${formatNumber(row.amount)} ${t('common.toman')}`}
+                        dir="rtl"
+                        className="font-medium tabular-nums"
+                      />
+                      <Badge variant="secondary">
+                        {t(`withdrawals.status${statusKey(row.status)}`)}
+                      </Badge>
                     </div>
                     <Input
                       placeholder={t('academiesHealth.settle.trackingCode')}

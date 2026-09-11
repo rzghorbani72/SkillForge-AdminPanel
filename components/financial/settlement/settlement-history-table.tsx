@@ -14,7 +14,7 @@ import { StatusBadge } from '@/components/shared/status-badge';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
-import { maskSheba } from '@/lib/mask-sheba';
+import { CopyableValue } from '@/components/shared/copyable-value';
 import type { WithdrawalRecord } from '@/lib/api-settlement';
 
 interface SettlementHistoryTableProps {
@@ -71,8 +71,12 @@ export function SettlementHistoryTable({
                         ? formatDate(record.processed_at)
                         : '—'}
                     </TableCell>
-                    <TableCell dir="ltr" className="font-mono text-xs">
-                      {maskSheba(record.sheba_number)}
+                    <TableCell className="font-mono text-xs">
+                      {record.sheba_number ? (
+                        <CopyableValue value={record.sheba_number} />
+                      ) : (
+                        '—'
+                      )}
                     </TableCell>
                     <TableCell dir="ltr" className="font-mono text-xs">
                       {record.bank_transaction_code ?? '—'}
