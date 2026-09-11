@@ -19,6 +19,7 @@ import { apiClient } from '@/lib/api';
 import { authService } from '@/lib/auth';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { formatPhoneDisplay } from '@/lib/phone-utils';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { useSettingsData } from '../_hooks/use-settings-data';
@@ -49,7 +50,7 @@ function initialsOf(name: string): string {
 }
 
 export default function ProfileSettingsPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { user, isLoading, refresh } = useSettingsData();
   const { user: authUser, refetch: refetchAuthUser } = useAuthUser();
   const academy = useCurrentAcademy();
@@ -174,12 +175,22 @@ export default function ProfileSettingsPage() {
               id="phone"
               label={t('settings.phoneNumber')}
               value={form.phone}
+              displayValue={formatPhoneDisplay(form.phone, language)}
+              savedValue={user?.phone_number ?? ''}
               isConfirmed={user?.phone_confirmed === true}
-              isDirty={form.phone !== (user?.phone_number ?? '')}
               otp={phoneOtp.state}
+              changeLabel={t('settings.changePhone')}
+              verifyLabel={t('settings.verifyPhone')}
               onCodeChange={phoneOtp.setCode}
               onVerify={phoneOtp.verify}
-              onResend={phoneOtp.send}
+              onSend={phoneOtp.send}
+              onRevert={() => {
+                setForm((current) => ({
+                  ...current,
+                  phone: user?.phone_number ?? ''
+                }));
+                phoneOtp.reset();
+              }}
             >
               <LocalizedDigitsInput
                 id="phone"
@@ -198,12 +209,21 @@ export default function ProfileSettingsPage() {
               id="email"
               label={t('settings.email')}
               value={form.email}
+              savedValue={user?.email ?? ''}
               isConfirmed={user?.email_confirmed === true}
-              isDirty={form.email !== (user?.email ?? '')}
               otp={emailOtp.state}
+              changeLabel={t('settings.changeEmail')}
+              verifyLabel={t('settings.verifyEmail')}
               onCodeChange={emailOtp.setCode}
               onVerify={emailOtp.verify}
-              onResend={emailOtp.send}
+              onSend={emailOtp.send}
+              onRevert={() => {
+                setForm((current) => ({
+                  ...current,
+                  email: user?.email ?? ''
+                }));
+                emailOtp.reset();
+              }}
             >
               <Input
                 id="email"

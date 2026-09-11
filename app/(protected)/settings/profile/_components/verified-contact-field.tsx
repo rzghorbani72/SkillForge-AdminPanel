@@ -1,9 +1,10 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { OtpPanel } from './otp-panel';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -13,72 +14,122 @@ interface VerifiedContactFieldProps {
   id: string;
   label: string;
   value: string;
+  displayValue?: string;
+  savedValue: string;
   isConfirmed: boolean;
-  isDirty: boolean;
   otp: OtpState;
+  changeLabel: string;
+  verifyLabel: string;
   onCodeChange: (code: string) => void;
   onVerify: () => void;
-  onResend: () => void;
+  onSend: () => void;
+  onRevert: () => void;
   children: ReactNode;
 }
 
-/** Label + verified badge + input + inline "send me a code" verification. */
+/** Confirmed contacts stay locked; change opens a new-value + OTP flow. */
 export function VerifiedContactField({
   id,
   label,
   value,
+  displayValue,
+  savedValue,
   isConfirmed,
-  isDirty,
   otp,
+  changeLabel,
+  verifyLabel,
   onCodeChange,
   onVerify,
-  onResend,
+  onSend,
+  onRevert,
   children
 }: VerifiedContactFieldProps) {
   const { t } = useTranslation();
-  const showStatus = !isDirty;
-  const canVerify =
-    !isConfirmed && !isDirty && Boolean(value) && otp.step === 'idle';
+  const [changing, setChanging] = useState(false);
+  const locked = isConfirmed && !changing;
+  const canSend = Boolean(value) && otp.step === 'idle' && !locked;
+
+  useEffect(() => {
+    setChanging(false);
+  }, [savedValue]);
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
         <Label htmlFor={id}>{label}</Label>
-        {showStatus &&
-          (isConfirmed ? (
-            <Badge className="gap-1 border-transparent bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 hover:bg-emerald-500/10">
-              <CheckCircle2 className="h-3 w-3" />
-              {t('settings.emailVerified')}
-            </Badge>
-          ) : (
-            <Badge className="gap-1 border-transparent bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-600 hover:bg-amber-500/10">
-              <AlertCircle className="h-3 w-3" />
-              {t('settings.emailNotVerified')}
-            </Badge>
-          ))}
+        {locked ? (
+          <Badge className="gap-1 border-transparent bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 hover:bg-emerald-500/10">
+            <CheckCircle2 className="h-3 w-3" />
+            {t('settings.emailVerified')}
+          </Badge>
+        ) : !isConfirmed && otp.step === 'idle' ? (
+          <Badge className="gap-1 border-transparent bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-600 hover:bg-amber-500/10">
+            <AlertCircle className="h-3 w-3" />
+            {t('settings.emailNotVerified')}
+          </Badge>
+        ) : null}
       </div>
 
       <div className="flex gap-2">
-        {children}
-        {canVerify && (
+        {locked ? (
+          <Input
+            id={id}
+            value={displayValue ?? value}
+            readOnly
+            disabled
+            dir="ltr"
+            className="flex-1 bg-muted"
+          />
+        ) : (
+          children
+        )}
+        {locked ? (
           <Button
+            type="button"
             variant="outline"
             size="sm"
-            onClick={onResend}
+            onClick={() => setChanging(true)}
             className="h-9 shrink-0"
           >
-            {t('settings.verifyEmail')}
+            {changeLabel}
           </Button>
-        )}
+        ) : null}
+        {canSend ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onSend}
+            className="h-9 shrink-0"
+          >
+            {changing ? t('settings.sendCode') : verifyLabel}
+          </Button>
+        ) : null}
+        {changing ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setChanging(false);
+              onRevert();
+            }}
+            className="h-9 shrink-0"
+          >
+            {t('common.cancel')}
+          </Button>
+        ) : null}
       </div>
 
-      <OtpPanel
-        state={otp}
-        sentTo={value}
-        onCodeChange={onCodeChange}
-        onVerify={onVerify}
-        onResend={onResend}
-      />
+      {locked ? null : (
+        <OtpPanel
+          state={otp}
+          sentTo={value}
+          onCodeChange={onCodeChange}
+          onVerify={onVerify}
+          onResend={onSend}
+        />
+      )}
     </div>
   );
 }
