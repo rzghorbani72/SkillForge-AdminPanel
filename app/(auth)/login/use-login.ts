@@ -265,6 +265,7 @@ export function useLogin() {
     }
 
     if (response.requires_academy_selection || academies.length > 0) {
+      setOtpRequired(false);
       setAvailableAcademies(academies);
       setAcademyPickerOpen(true);
       return;
@@ -434,9 +435,6 @@ export function useLogin() {
         );
       setRegistrationRequired(needsRegistration);
       setOtpError(message);
-      if (!needsRegistration) {
-        toast.error(message, { toastId: 'login-otp-error' });
-      }
     } finally {
       setOtpLoading(false);
     }
