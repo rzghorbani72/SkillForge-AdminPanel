@@ -205,20 +205,27 @@ export default function DashboardPage() {
         </div>
 
         <div className="stagger-children space-y-6">
-          {/* Row 1: the money numbers a manager acts on */}
           <MoneyCards
+            row="academy"
             money={money.money}
             payouts_due={money.payouts_due}
             settlement={settlement.summary}
             isLoading={money.isLoading || settlement.isLoading}
           />
 
-          {/* Row 2: academy panel + stock counters */}
           <DashboardHero
             cards={statsCards}
             period={period}
             isLoading={isLoading}
             loadingLabel={loadingLabel}
+          />
+
+          <MoneyCards
+            row="teacher"
+            money={money.money}
+            payouts_due={money.payouts_due}
+            settlement={settlement.summary}
+            isLoading={money.isLoading || settlement.isLoading}
           />
 
           {/* Row 3: where the money goes (2/3) + student journey (1/3) */}

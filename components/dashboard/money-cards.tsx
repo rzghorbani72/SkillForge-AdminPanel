@@ -21,17 +21,19 @@ import { MoneyCard, TONE_CLASS, type CardModel } from './money-card';
 type Props = Pick<ManagerDashboard, 'money' | 'payouts_due'> & {
   settlement: SettlementSummary | null;
   isLoading: boolean;
+  row: 'academy' | 'teacher';
 };
 
 /**
- * Two rows: the academy's own money (what came in, what it keeps, what the
- * platform still holds / paid), then the teachers' money (earned, paid, owed).
+ * One row per call: the academy's own money (what came in, what it keeps, what
+ * the platform still holds / paid), or the teachers' money (earned, paid, owed).
  */
 export default function MoneyCards({
   money,
   payouts_due: payoutsDue,
   settlement,
-  isLoading
+  isLoading,
+  row
 }: Props) {
   const { t, language } = useTranslation();
   const academy = useCurrentAcademy();
@@ -122,21 +124,16 @@ export default function MoneyCards({
     }
   ];
 
+  const isAcademy = row === 'academy';
   return (
-    <div className="space-y-5">
-      <CardRow
-        title={t('dashboard.money.academyRow')}
-        cards={academyCards}
-        isLoading={isLoading}
-        className="sm:grid-cols-2 xl:grid-cols-4"
-      />
-      <CardRow
-        title={t('dashboard.money.teacherRow')}
-        cards={teacherCards}
-        isLoading={isLoading}
-        className="sm:grid-cols-2 xl:grid-cols-4"
-      />
-    </div>
+    <CardRow
+      title={t(
+        isAcademy ? 'dashboard.money.academyRow' : 'dashboard.money.teacherRow'
+      )}
+      cards={isAcademy ? academyCards : teacherCards}
+      isLoading={isLoading}
+      className="sm:grid-cols-2 xl:grid-cols-4"
+    />
   );
 }
 
