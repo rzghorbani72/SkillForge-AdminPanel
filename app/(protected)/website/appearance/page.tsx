@@ -86,6 +86,7 @@ type PendingSave =
   | { kind: 'delete'; preset: TemplatePreset };
 
 const HISTORY_LIMIT = 30;
+const PREVIEW_LOAD_GUARD_MS = 8000;
 
 export default function UITemplateSettingsPage() {
   const { t } = useTranslation();
@@ -204,6 +205,9 @@ export default function UITemplateSettingsPage() {
   const debouncedRebuildPreviewRef = useRef<() => void>(() => {
     /* patched after declaration */
   });
+  const previewLoadingRef = useRef(false);
+  const rebuildQueuedRef = useRef(false);
+  const rebuildPreviewRef = useRef<() => void>(() => {});
 
   // Tell the in-canvas preview which section is selected, so it shows the dashed
   // outline. `scroll` is true only when the user picked a section — a reload
@@ -259,7 +263,12 @@ export default function UITemplateSettingsPage() {
       // Preview finished (re)hydrating — restore the selection ring without
       // scrolling, so a save-triggered reload keeps the manager in place.
       if (data.type === 'ready') {
+        previewLoadingRef.current = false;
         postHighlight(selectedBlockIdRef.current, false);
+        if (rebuildQueuedRef.current) {
+          rebuildQueuedRef.current = false;
+          rebuildPreviewRef.current();
+        }
       }
 
       // Ctrl/Cmd+S pressed inside the canvas: the iframe owns the key event, so
@@ -774,9 +783,29 @@ export default function UITemplateSettingsPage() {
 
   // The preview asks for this when an edit cannot be patched into the live DOM.
   // Debounced so a burst of un-patchable fields costs one rebuild, not many.
-  const rebuildPreview = useCallback(() => setRefreshKey((k) => k + 1), []);
+  // Guarded so a rebuild asked for while the iframe is still loading is queued
+  // and fired once on `ready` — a slow storefront never stacks reloads.
+  const rebuildPreview = useCallback(() => {
+    if (previewLoadingRef.current) {
+      rebuildQueuedRef.current = true;
+      return;
+    }
+    setRefreshKey((k) => k + 1);
+  }, []);
+  rebuildPreviewRef.current = rebuildPreview;
   const debouncedRebuildPreview = useDebouncedCallback(rebuildPreview, 500);
   debouncedRebuildPreviewRef.current = debouncedRebuildPreview;
+
+  // Every src change is a load in flight. The timer is the fallback for a
+  // storefront that never answers `ready`, so the guard cannot stay stuck.
+  useEffect(() => {
+    if (!iframeSrc) return;
+    previewLoadingRef.current = true;
+    const timer = setTimeout(() => {
+      previewLoadingRef.current = false;
+    }, PREVIEW_LOAD_GUARD_MS);
+    return () => clearTimeout(timer);
+  }, [iframeSrc]);
 
   const debouncedSaveTheme = useDebouncedCallback(saveThemeDraft, 800);
   // 400ms gives fast preview refresh for discrete style/layout clicks while
@@ -832,9 +861,9 @@ export default function UITemplateSettingsPage() {
     async (blocks: UIBlockConfig[]) => {
       setDraftBlocks(blocks);
       await saveBlocksDraft(blocks);
-      setRefreshKey((k) => k + 1);
+      rebuildPreview();
     },
-    [saveBlocksDraft]
+    [saveBlocksDraft, rebuildPreview]
   );
 
   const undo = useCallback(() => {
@@ -1041,7 +1070,7 @@ export default function UITemplateSettingsPage() {
     ) {
       void (async () => {
         await saveBlocksDraft(next);
-        setRefreshKey((k) => k + 1);
+        rebuildPreview();
       })();
     }
   };
@@ -1061,7 +1090,7 @@ export default function UITemplateSettingsPage() {
       setSelectedBlockId(null);
       postOrder(next);
       commitBlocks(next);
-      setRefreshKey((k) => k + 1);
+      rebuildPreview();
       return;
     }
 
@@ -1080,7 +1109,7 @@ export default function UITemplateSettingsPage() {
     setShowCustomizer(true);
     postOrder(next);
     commitBlocks(next);
-    setRefreshKey((k) => k + 1);
+    rebuildPreview();
   };
 
   const handlePickBlockType = (blockId: string, type: string) => {
@@ -1153,7 +1182,7 @@ export default function UITemplateSettingsPage() {
         | UIBlockConfig[]
         | undefined;
       if (blocks) setDraftBlocks(blocks);
-      setRefreshKey((k) => k + 1);
+      rebuildPreview();
     } catch (error) {
       ErrorHandler.handleApiError(error);
     }
