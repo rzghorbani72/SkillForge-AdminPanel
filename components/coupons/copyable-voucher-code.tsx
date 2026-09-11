@@ -27,7 +27,7 @@ export function CopyableVoucherCode({
   }
 
   return (
-    <div className={cn('flex w-full justify-end text-right', className)}>
+    <div className={cn('flex w-full justify-start text-right', className)}>
       <button
         type="button"
         onClick={() => {
