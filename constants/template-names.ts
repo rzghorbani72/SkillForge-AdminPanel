@@ -44,6 +44,8 @@ export interface TemplateIdentity {
   vertical: string;
   /** Three role words shown as tags on the gallery card. */
   tagline: string;
+  /** What the hero *is*, when the academy vertical would not say it (e.g. a video banner). */
+  heroLabel?: string;
 }
 
 export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
@@ -150,7 +152,8 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
   pardeh: {
     name: 'پرده',
     vertical: 'فیلم، عکاسی و رسانهٔ بصری',
-    tagline: 'سینمایی · ویدیویی · تمام‌عرض'
+    tagline: 'سینمایی · ویدیویی · تمام‌عرض',
+    heroLabel: 'بنر ویدیویی تمام‌عرض'
   }
 };
 
@@ -236,5 +239,5 @@ export function getTemplateIdentity(key: string): TemplateIdentity {
 /** `name — vertical`, used wherever a picker needs one self-explaining line. */
 export function getTemplateLabel(key: string): string {
   const identity = getTemplateIdentity(key);
-  return `${identity.name} — ${identity.vertical}`;
+  return `${identity.name} — ${identity.heroLabel ?? identity.vertical}`;
 }
