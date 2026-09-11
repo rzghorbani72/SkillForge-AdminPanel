@@ -7588,6 +7588,7 @@ export interface AcademyHealthView {
   to_deposit?: number;
   pending_withdrawal_count?: number;
   bank_account_approved?: boolean;
+  kyc_verified?: boolean;
   limits?: PlanLimitUsageSnapshot;
 }
 

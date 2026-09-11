@@ -7371,6 +7371,8 @@ export const en = {
     openTickets: 'Open',
     closedTickets: 'Closed',
     toDeposit: 'To deposit',
+    kycVerified: 'Shahkar verified',
+    kycVerifiedTitle: 'Manager identity verified via Shahkar and Sheba matched',
     pendingRequests: 'requests',
     settlementCol: 'Settlement',
     ticketsCol: 'Tickets',

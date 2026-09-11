@@ -7339,6 +7339,8 @@ export const fa = {
     openTickets: 'باز',
     closedTickets: 'بسته',
     toDeposit: 'قابل واریز',
+    kycVerified: 'شاهکار تأیید شده',
+    kycVerifiedTitle: 'هویت مدیر با شاهکار تأیید و شبا تطبیق داده شده',
     pendingRequests: 'درخواست',
     settlementCol: 'تسویه مالی',
     ticketsCol: 'تیکت‌ها',

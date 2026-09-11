@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ShieldCheck } from 'lucide-react';
 import { apiClient, AcademyHealthView } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -181,8 +183,18 @@ export function AcademiesHealthTable() {
                         </TableCell>
                         <TableCell className="align-top">
                           <div className="space-y-1">
-                            <p className="font-medium leading-tight">
+                            <p className="flex flex-wrap items-center gap-1.5 font-medium leading-tight">
                               {academy.name}
+                              {academy.kyc_verified ? (
+                                <Badge
+                                  variant="outline"
+                                  title={t('academiesHealth.kycVerifiedTitle')}
+                                  className="gap-1 border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400"
+                                >
+                                  <ShieldCheck className="size-3" />
+                                  {t('academiesHealth.kycVerified')}
+                                </Badge>
+                              ) : null}
                             </p>
                             <div onClick={(e) => e.stopPropagation()}>
                               <CopyableId
