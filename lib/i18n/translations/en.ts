@@ -6241,12 +6241,13 @@ export const en = {
       claimDescription: 'You have one free trial. Use it on this academy.',
       claimCta: 'Start free trial',
       claimConfirm:
-        'Your one free trial will start on {academy} and run for 14 days.',
+        'Your one free trial will start on {{academy}} and run for 14 days.',
+      moveCta: 'Move trial here',
       moveTitle: 'Move your free trial here',
       moveDescription:
-        'Your trial is running on {academy} with {days} days left.',
+        'Your trial is running on {{academy}} with {{days}} days left.',
       moveConfirm:
-        '{from} becomes read-only immediately. You keep {days} days on {to} — no new days are added, and the trial cannot be moved again once it ends.',
+        '{{from}} becomes read-only immediately. You keep {{days}} days on {{to}} — no new days are added, and the trial cannot be moved again once it ends.',
       applied: 'Free trial applied to this academy'
     },
     title: 'Pricing Plans',
