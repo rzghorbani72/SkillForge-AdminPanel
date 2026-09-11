@@ -1333,17 +1333,17 @@ export const en = {
       failed: 'Could not record the payment'
     },
     money: {
-      academyRow: 'Academy money',
-      teacherRow: 'Teacher money',
+      academyRow: 'Academy revenue',
+      teacherRow: 'Teacher revenue',
       platformOwes: 'Ready to settle',
       platformOwesHint:
-        'Held by the platform; you can request the transfer now',
-      settlementPending: 'Transfer pending',
-      settlementPendingHint:
-        'Settlement requests filed but not yet in the academy account',
+        'Held by the platform and requestable; {{pending}} more is pending transfer',
       paidToAcademy: 'Paid to academy',
       paidToAcademyHint:
         'Everything transferred to the academy bank account so far',
+      teacherRate: 'Teacher share rate',
+      teacherRateHint:
+        'Each teacher’s share of every sale; change it in academy settings',
       teacherShare: 'Teacher share',
       teacherPaid: 'Paid to teachers',
       teacherPaidHint:
@@ -1353,7 +1353,7 @@ export const en = {
       flowTitle: 'Money flow',
       flowSubtitle: 'Where the money goes',
       unnamed: 'Unnamed',
-      gross: 'Revenue collected',
+      gross: 'Total revenue',
       grossHint: 'All successful student payments in this period',
       net: 'Academy net share',
       netHint: 'Collected revenue after refunds and teacher payouts',

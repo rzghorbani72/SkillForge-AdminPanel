@@ -1,22 +1,22 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import {
   BadgeCheck,
   Banknote,
-  Clock,
   DollarSign,
   GraduationCap,
   HandCoins,
   Landmark,
+  Percent,
   Wallet
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { formatNumber } from '@/lib/utils';
+import { formatCurrencyWithStore, formatNumber } from '@/lib/utils';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import type { ManagerDashboard } from '@/types/dashboard';
 import type { SettlementSummary } from '@/lib/api-settlement';
 import { MoneyCard, type CardModel } from './money-card';
-import { TeacherShareNote } from '@/components/shared/teacher-share-note';
 
 type Props = Pick<ManagerDashboard, 'money' | 'payouts_due'> & {
   settlement: SettlementSummary | null;
@@ -34,6 +34,8 @@ export default function MoneyCards({
   isLoading
 }: Props) {
   const { t, language } = useTranslation();
+  const academy = useCurrentAcademy();
+  const percent = usePercentLabel();
 
   const delta = (current: number, previous: number) =>
     previous === 0 ? null : Math.round(((current - previous) / previous) * 100);
@@ -59,16 +61,15 @@ export default function MoneyCards({
       key: 'platformOwes',
       title: t('dashboard.money.platformOwes'),
       value: settlement?.balance.available ?? 0,
-      hint: t('dashboard.money.platformOwesHint'),
+      hint: t('dashboard.money.platformOwesHint', {
+        pending: formatCurrencyWithStore(
+          settlement?.balance.pending ?? 0,
+          academy,
+          undefined,
+          language
+        )
+      }),
       icon: Landmark,
-      change: null
-    },
-    {
-      key: 'settlementPending',
-      title: t('dashboard.money.settlementPending'),
-      value: settlement?.balance.pending ?? 0,
-      hint: t('dashboard.money.settlementPendingHint'),
-      icon: Clock,
       change: null
     },
     {
@@ -107,6 +108,15 @@ export default function MoneyCards({
       }),
       icon: HandCoins,
       change: null
+    },
+    {
+      key: 'teacherRate',
+      title: t('dashboard.money.teacherRate'),
+      value: 0,
+      valueLabel: percent((academy?.teacher_share_rate ?? 0) * 100),
+      hint: t('dashboard.money.teacherRateHint'),
+      icon: Percent,
+      change: null
     }
   ];
 
@@ -116,14 +126,13 @@ export default function MoneyCards({
         title={t('dashboard.money.academyRow')}
         cards={academyCards}
         isLoading={isLoading}
-        className="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+        className="sm:grid-cols-2 xl:grid-cols-4"
       />
       <CardRow
         title={t('dashboard.money.teacherRow')}
         cards={teacherCards}
         isLoading={isLoading}
-        className="sm:grid-cols-3"
-        note={<TeacherShareNote />}
+        className="sm:grid-cols-2 xl:grid-cols-4"
       />
     </div>
   );
@@ -133,21 +142,16 @@ function CardRow({
   title,
   cards,
   isLoading,
-  className,
-  note
+  className
 }: {
   title: string;
   cards: CardModel[];
   isLoading: boolean;
   className: string;
-  note?: ReactNode;
 }) {
   return (
     <section className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>
-        {note}
-      </div>
+      <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>
       <div className={`grid gap-4 ${className}`}>
         {cards.map((card, index) => (
           <MoneyCard

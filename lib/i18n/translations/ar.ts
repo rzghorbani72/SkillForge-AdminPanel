@@ -842,15 +842,16 @@ export const ar = {
       failed: 'تعذر تسجيل الدفعة'
     },
     money: {
-      academyRow: 'أموال الأكاديمية',
-      teacherRow: 'أموال المعلمين',
+      academyRow: 'إيرادات الأكاديمية',
+      teacherRow: 'إيرادات المعلمين',
       platformOwes: 'جاهز للتسوية',
-      platformOwesHint: 'محفوظ لدى المنصة؛ يمكنك طلب التحويل الآن',
-      settlementPending: 'تحويل قيد الانتظار',
-      settlementPendingHint:
-        'طلبات تسوية مسجّلة لم تصل بعد إلى حساب الأكاديمية',
+      platformOwesHint:
+        'محفوظ لدى المنصة وقابل للطلب؛ و{{pending}} قيد التحويل',
       paidToAcademy: 'المدفوع للأكاديمية',
       paidToAcademyHint: 'كل ما حُوّل حتى الآن إلى الحساب البنكي للأكاديمية',
+      teacherRate: 'نسبة حصة المعلم',
+      teacherRateHint:
+        'حصة كل معلم من كل عملية بيع؛ تُغيَّر من إعدادات الأكاديمية',
       teacherShare: 'حصة المعلمين',
       teacherPaid: 'المدفوع للمعلمين',
       teacherPaidHint: 'ما حوّلته للمعلمين وسجّلته في هذه الفترة',
@@ -859,7 +860,7 @@ export const ar = {
       flowTitle: 'حركة الأموال',
       flowSubtitle: 'إلى أين تذهب الأموال',
       unnamed: 'بدون اسم',
-      gross: 'الإيراد المحصّل',
+      gross: 'إجمالي الإيراد',
       grossHint: 'كل مدفوعات الطلاب الناجحة في هذه الفترة',
       net: 'صافي حصة الأكاديمية',
       netHint: 'الإيراد المحصّل بعد المستردات وحصص المعلمين',

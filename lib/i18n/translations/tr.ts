@@ -861,17 +861,17 @@ export const tr = {
       failed: 'Ödeme kaydedilemedi'
     },
     money: {
-      academyRow: 'Akademi parası',
-      teacherRow: 'Öğretmen parası',
+      academyRow: 'Akademi geliri',
+      teacherRow: 'Öğretmen geliri',
       platformOwes: 'Tasfiyeye hazır',
       platformOwesHint:
-        'Platformda tutulan tutar; şimdi transfer talep edebilirsiniz',
-      settlementPending: 'Transfer bekliyor',
-      settlementPendingHint:
-        'Kaydedilmiş ancak henüz akademi hesabına geçmemiş tasfiye talepleri',
+        'Platformda tutuluyor ve talep edilebilir; {{pending}} transfer bekliyor',
       paidToAcademy: 'Akademiye ödenen',
       paidToAcademyHint:
         'Şimdiye kadar akademi banka hesabına aktarılan toplam',
+      teacherRate: 'Öğretmen payı oranı',
+      teacherRateHint:
+        'Her öğretmenin her satıştaki payı; akademi ayarlarından değiştirilir',
       teacherShare: 'Öğretmen payı',
       teacherPaid: 'Öğretmenlere ödenen',
       teacherPaidHint: 'Bu dönemde öğretmenlere aktarıp kaydettiğiniz tutar',
@@ -881,7 +881,7 @@ export const tr = {
       flowTitle: 'Para akışı',
       flowSubtitle: 'Para nereye gidiyor',
       unnamed: 'İsimsiz',
-      gross: 'Tahsil edilen gelir',
+      gross: 'Toplam gelir',
       grossHint: 'Bu dönemdeki tüm başarılı öğrenci ödemeleri',
       net: 'Akademinin net payı',
       netHint:

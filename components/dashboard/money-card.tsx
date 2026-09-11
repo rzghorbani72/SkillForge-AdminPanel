@@ -19,6 +19,8 @@ export type CardModel = {
   key: string;
   title: string;
   value: number;
+  /** Shown instead of the money value, e.g. a percentage. */
+  valueLabel?: string;
   hint: string;
   icon: typeof DollarSign;
   /** Whole-percent move against the previous window; null when there is no base. */
@@ -62,7 +64,13 @@ export function MoneyCard({
         ) : (
           <>
             <div className="mt-1 flex flex-wrap items-baseline gap-2">
-              <MoneyValue value={card.value} />
+              {card.valueLabel ? (
+                <span className="text-2xl font-bold tracking-tight">
+                  {card.valueLabel}
+                </span>
+              ) : (
+                <MoneyValue value={card.value} />
+              )}
               {card.change !== null ? (
                 <span
                   className={cn(
