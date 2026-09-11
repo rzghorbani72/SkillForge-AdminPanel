@@ -802,8 +802,8 @@ export const ar = {
       activeHint: 'الطلاب الذين ما زالوا يدرسون في {{period}}'
     },
     money: {
-      discounts: 'الخصومات الممنوحة',
-      discountsHint: 'مبالغ لم تُحصّل من الطلاب بسبب أكواد الخصم',
+      teacherShare: 'حصة المعلمين',
+      teacherShareHint: 'ما كسبه المعلمون من المبيعات في هذه الفترة',
       flowTitle: 'حركة الأموال',
       flowSubtitle: 'إلى أين تذهب الأموال',
       unnamed: 'بدون اسم',
@@ -812,7 +812,7 @@ export const ar = {
       net: 'صافي حصة الأكاديمية',
       netHint: 'الإيراد المحصّل بعد المستردات وحصص المعلمين',
       payoutsDue: 'مستحق للمعلمين',
-      payoutsDueHint: '{{count}} طلبات سحب بانتظار الدفع',
+      payoutsDueHint: 'إجمالي حصة {{count}} معلمين لم تُدفع لهم بعد',
       coursesTitle: 'الإيراد حسب الدورة',
       coursesSubtitle: 'أي دورة تحقق أكبر دخل',
       teachersTitle: 'الإيراد حسب المعلم',

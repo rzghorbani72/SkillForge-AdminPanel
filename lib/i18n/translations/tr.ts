@@ -821,9 +821,9 @@ export const tr = {
       activeHint: '{{period}} içinde kursa devam eden öğrenciler'
     },
     money: {
-      discounts: 'Verilen indirim',
-      discountsHint:
-        'İndirim kodları nedeniyle öğrencilerden tahsil edilmeyen tutar',
+      teacherShare: 'Öğretmen payı',
+      teacherShareHint:
+        'Öğretmenlerin bu dönemdeki satışlardan kazandığı tutar',
       flowTitle: 'Para akışı',
       flowSubtitle: 'Para nereye gidiyor',
       unnamed: 'İsimsiz',
@@ -833,7 +833,7 @@ export const tr = {
       netHint:
         'İadeler ve öğretmen payları düşüldükten sonra tahsil edilen gelir',
       payoutsDue: 'Öğretmenlere borç',
-      payoutsDueHint: '{{count}} ödeme talebi bekliyor',
+      payoutsDueHint: '{{count}} öğretmene henüz ödenmemiş toplam pay',
       coursesTitle: 'Kursa göre gelir',
       coursesSubtitle: 'En çok parayı hangi kurs kazandırıyor',
       teachersTitle: 'Öğretmene göre gelir',

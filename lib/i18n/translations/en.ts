@@ -1320,8 +1320,8 @@ export const en = {
       activeHint: 'Students still working through a course in {{period}}'
     },
     money: {
-      discounts: 'Discounts given',
-      discountsHint: 'Money not charged to students because of discount codes',
+      teacherShare: 'Teacher share',
+      teacherShareHint: 'What teachers earned from sales in this period',
       flowTitle: 'Money flow',
       flowSubtitle: 'Where the money goes',
       unnamed: 'Unnamed',
@@ -1330,7 +1330,7 @@ export const en = {
       net: 'Academy net share',
       netHint: 'Collected revenue after refunds and teacher payouts',
       payoutsDue: 'Owed to teachers',
-      payoutsDueHint: '{{count}} payout requests waiting to be paid',
+      payoutsDueHint: 'Total share of {{count}} teachers not paid to them yet',
       coursesTitle: 'Revenue by course',
       coursesSubtitle: 'Which course makes the most money',
       teachersTitle: 'Revenue by teacher',

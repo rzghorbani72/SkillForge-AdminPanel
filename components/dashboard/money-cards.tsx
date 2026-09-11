@@ -7,7 +7,7 @@ import {
   DollarSign,
   TrendingDown,
   TrendingUp,
-  TicketPercent,
+  GraduationCap,
   Wallet
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -103,8 +103,8 @@ type Props = Pick<ManagerDashboard, 'money' | 'payouts_due'> & {
 };
 
 /**
- * The four numbers a manager acts on: what came in, what they keep, what is
- * still owed to them, and how close they are to their plan's student cap.
+ * The four numbers a manager acts on: what came in, what they keep, what they
+ * still owe teachers, and what teachers earned this period.
  */
 export default function MoneyCards({
   money,
@@ -148,11 +148,11 @@ export default function MoneyCards({
       change: null
     },
     {
-      key: 'discounts',
-      title: t('dashboard.money.discounts'),
-      value: amount(money.discounts),
-      hint: t('dashboard.money.discountsHint'),
-      icon: TicketPercent,
+      key: 'teacherShare',
+      title: t('dashboard.money.teacherShare'),
+      value: amount(money.teacher_payouts),
+      hint: t('dashboard.money.teacherShareHint'),
+      icon: GraduationCap,
       change: null
     }
   ];

@@ -1305,8 +1305,8 @@ export const fa = {
       activeHint: 'دانشجویانی که در {{period}} در حال گذراندن دوره هستند'
     },
     money: {
-      discounts: 'تخفیف داده‌شده',
-      discountsHint: 'مبلغی که با کد تخفیف از دانشجویان دریافت نشد',
+      teacherShare: 'سهم مدرسان',
+      teacherShareHint: 'سهمی که در این بازه به مدرسان تعلق گرفت',
       flowTitle: 'گردش پول',
       flowSubtitle: 'پول کجا می‌رود',
       unnamed: 'بدون نام',
@@ -1314,8 +1314,8 @@ export const fa = {
       grossHint: 'مجموع پرداخت‌های موفق دانشجویان در این بازه',
       net: 'سهم خالص آکادمی',
       netHint: 'درآمد وصول‌شده پس از کسر بازپرداخت‌ها و سهم مدرسان',
-      payoutsDue: 'در انتظار تسویه با مدرسان',
-      payoutsDueHint: '{{count}} درخواست برداشت ثبت‌شده و پرداخت‌نشده',
+      payoutsDue: 'بدهی به مدرسان',
+      payoutsDueHint: 'کل سهم {{count}} مدرس که هنوز به آن‌ها پرداخت نشده',
       coursesTitle: 'درآمد بر اساس دوره',
       coursesSubtitle: 'کدام دوره بیشترین پول را می‌سازد',
       teachersTitle: 'درآمد بر اساس مدرس',
