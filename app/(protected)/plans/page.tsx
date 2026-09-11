@@ -82,11 +82,11 @@ import type { PaymentGatewayProvider } from '@/types/api';
 import { paymentGatewayCallbackUrl } from '@/lib/payment-callback-url';
 
 /**
- * Used for the first "probe" call, before the backend has told us which
- * gateways are enabled. BitPay is the only production rail, so a probe that
- * goes straight through lands on the right callback.
+ * Used for the first "probe" call before the backend names the live rail.
+ * Saman is the default preferred gateway; the backend rewrites the callback
+ * path if the owner has BitPay active instead.
  */
-const DEFAULT_GATEWAY: PaymentGatewayProvider = 'BITPAY';
+const DEFAULT_GATEWAY: PaymentGatewayProvider = 'SAMAN_SEP';
 
 export default function PlansPage() {
   const { t } = useTranslation();

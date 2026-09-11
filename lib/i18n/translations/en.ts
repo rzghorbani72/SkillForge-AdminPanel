@@ -7131,9 +7131,9 @@ export const en = {
       reminderDays: 'Subscription Reminder Days (before expiry)',
       paymentPhase: 'Payment Release Phase',
       paymentPhaseHint:
-        'Master switch for modern gateways. Turn each gateway (Bitpay, Saman, ...) on or off separately below.',
-      paymentPhasePaypingOnly: 'Legacy — PayPing only',
-      paymentPhaseAllGateways: 'Modern gateways (per-gateway switches below)',
+        'ALL_GATEWAYS unlocks Saman + BitPay. Activate exactly one live rail below — it is used for both platform billing and academy checkout. BitPay-only is an emergency lock.',
+      paymentPhasePaypingOnly: 'Emergency — BitPay only',
+      paymentPhaseAllGateways: 'Selectable gateways (one active rail below)',
       taxTitle: 'Iran Tax Registration',
       taxDesc: 'Used in official settlement statements and tax reports.',
       legalEntityName: 'Legal Entity Name',
@@ -7173,7 +7173,7 @@ export const en = {
       daysBefore: 'days before',
       gatewaysTitle: 'Payment Gateways',
       gatewaysDesc:
-        'Enable or disable gateways used for academy plan checkout and student payments.',
+        'Activate exactly one live gateway. It is used for both academy plan checkout (AdminPanel) and student payments (edusphere). Turning one on switches the others off.',
       gatewayActive: 'Active — accepting payments',
       gatewaySandbox: 'Active — sandbox (test payments only)',
       gatewayNeedsToken:

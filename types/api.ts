@@ -1,6 +1,6 @@
 /**
- * Gateways the platform can charge a manager through. BITPAY is the only one
- * enabled in production; the others are kept for historical payments.
+ * Gateways the platform can charge a manager through. Owner panel activates
+ * exactly one live rail (Saman preferred; BitPay is standby).
  */
 export type PaymentGatewayProvider = 'BITPAY' | 'SAMAN_SEP' | 'MELLAT_BP';
 
