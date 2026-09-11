@@ -27,16 +27,21 @@ export function DashboardSkeleton({ label }: { label: string }) {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="stat-card h-[190px]">
-              <div className="shimmer h-10 w-10 rounded-2xl" />
-              <div className="shimmer mt-4 h-3 w-24 rounded-full" />
-              <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
-              <div className="shimmer mt-2 h-3 w-32 rounded-full" />
+        {[0, 1].map((row) => (
+          <div key={row} className="space-y-3">
+            <div className="shimmer h-4 w-28 rounded-full" />
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="stat-card h-[190px]">
+                  <div className="shimmer h-10 w-10 rounded-2xl" />
+                  <div className="shimmer mt-4 h-3 w-24 rounded-full" />
+                  <div className="shimmer mt-2 h-7 w-28 rounded-lg" />
+                  <div className="shimmer mt-2 h-3 w-32 rounded-full" />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
         <div className="grid gap-4 lg:grid-cols-[0.8fr_1.4fr_0.8fr]">
           <div className="flex flex-col gap-4">
