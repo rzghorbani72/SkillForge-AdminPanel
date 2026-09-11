@@ -140,7 +140,9 @@ export default function DashboardPage() {
       <div className="dashboard-shell flex-1">
         <DashboardGlow />
         <div className="relative space-y-5 p-4 sm:p-6">
-          <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
+          {!isLoading && (
+            <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
+          )}
           <BuyPlansSection />
         </div>
       </div>
@@ -151,7 +153,9 @@ export default function DashboardPage() {
     <div className="dashboard-shell flex-1">
       <DashboardGlow />
       <div className="relative space-y-6 p-4 sm:p-6">
-        <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
+        {!isLoading && (
+          <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
+        )}
         {/* Page header */}
         <div className="fade-in-up flex flex-wrap items-end justify-between gap-4">
           <div>
