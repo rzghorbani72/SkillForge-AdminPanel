@@ -23,7 +23,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { VisitSiteLink } from '@/components/shared/visit-site-link';
-import type { TemplatePreset, UIBlockConfig } from '@/types/api';
+import type { TemplatePreset, UIBlockConfig, UITemplate } from '@/types/api';
 import { presetSourceKey } from '@/lib/ui-template/preset-source';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import {
@@ -114,7 +114,10 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const [baseIframeSrc, setBaseIframeSrc] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  // "Applied" = the public site already shows this draft. Any draft save clears
+  // it, so the publish button only rests while live and draft are identical.
   const [isApplied, setIsApplied] = useState(false);
+  const hasUnpublishedRef = useRef(false);
   const [categoryFilter, setCategoryFilter] = useState<
     TemplateCategory | 'all'
   >('all');
@@ -140,6 +143,10 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const [future, setFuture] = useState<UIBlockConfig[][]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
+  const markDraftSaved = useCallback(() => {
+    setLastSavedAt(Date.now());
+    setIsApplied(false);
+  }, []);
   const [isPublishing, setIsPublishing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<{
@@ -442,6 +449,8 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
           ((templateData as Record<string, unknown>)
             ?.template_preset as string) ?? ''
         );
+        hasUnpublishedRef.current =
+          (templateData as UITemplate | null)?.has_unpublished_changes ?? false;
         if (previewSession?.token) {
           setGalleryPreviewToken(previewSession.token);
           setGalleryStorefrontUrl(
@@ -493,7 +502,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     setBaseIframeSrc(null);
     setPreviewToken(null);
     setRefreshKey(0);
-    setIsApplied(false);
+    setIsApplied(preset.id === activePresetId && !hasUnpublishedRef.current);
     setShowCustomizer(false);
     setSelectedBlockId(null);
     setHistory([]);
@@ -743,7 +752,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         ErrorHandler.showSuccess(t('sitePreview.saveCopyDone'));
       }
       await refreshPresets();
-      setLastSavedAt(Date.now());
+      markDraftSaved();
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -765,7 +774,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
           backgroundSvgPattern: ''
         });
         await apiClient.saveThemeDraft({ ...payload, dark_mode: dm });
-        setLastSavedAt(Date.now());
+        markDraftSaved();
       } catch (error) {
         ErrorHandler.handleApiError(error);
       } finally {
@@ -782,7 +791,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     setIsSaving(true);
     try {
       await apiClient.saveUITemplateDraft({ blocks });
-      setLastSavedAt(Date.now());
+      markDraftSaved();
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -951,7 +960,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     setIsSaving(true);
     apiClient
       .saveThemeDraft(apiPatch)
-      .then(() => setLastSavedAt(Date.now()))
+      .then(markDraftSaved)
       .catch((error) => ErrorHandler.handleApiError(error))
       .finally(() => setIsSaving(false));
   };
@@ -1372,7 +1381,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               {isSaving
                 ? 'در حال ذخیره...'
                 : savedAgo
-                  ? `ذخیره شد ${savedAgo}`
+                  ? `ذخیره شد ${savedAgo}${isApplied ? '' : ' · منتشر نشده'}`
                   : isEditingMaster
                     ? 'در حال ویرایش قالب اصلی'
                     : 'پیش‌نمایش زنده'}
