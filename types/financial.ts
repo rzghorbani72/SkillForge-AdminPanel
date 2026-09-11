@@ -10,6 +10,7 @@ export interface AcademyPaymentRow {
   currency: string;
   status: PaymentStatus;
   payment_method?: string | null;
+  provider?: string | null;
   gateway?: string | null;
   created_at: string;
   Profile?: { display_name?: string | null } | null;
