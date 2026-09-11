@@ -34,7 +34,12 @@ import { HeroVideoPicker } from './hero-video-picker';
 import { SlidesEditor } from './slides-editor';
 import { VideosEditor } from './videos-editor';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
-import { TEMPLATE_KEYS, isVideoBannerHero } from '@/constants/template-names';
+import { HeroAlignPicker } from './hero-align-picker';
+import {
+  TEMPLATE_KEYS,
+  isCenteredHero,
+  isVideoBannerHero
+} from '@/constants/template-names';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
 
@@ -231,6 +236,13 @@ export function SectionEditor({
                   onUpdate={(config) => onUpdate(block.id, config)}
                   alwaysAutoplay={isVideoBannerHero(cfg.style)}
                 />
+
+                {isCenteredHero(cfg.style) && (
+                  <HeroAlignPicker
+                    value={cfg.textAlign}
+                    onChange={(align) => set('textAlign', align)}
+                  />
+                )}
 
                 {hasMediaFrame && (cfg.mediaRatio ?? 'free') === 'free' && (
                   <div>

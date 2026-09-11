@@ -34,8 +34,6 @@ export interface SectionSchema {
   content: ContentFieldSchema[];
   // Style tab: hero-style background controls (type/color/image/overlay).
   hasBackground?: boolean;
-  // Layout tab: text alignment chips.
-  hasAlignment?: boolean;
   // Layout tab: section height chips.
   hasHeight?: boolean;
   // Layout tab: grid column chips (2/3/4). Only set this where the renderer
@@ -146,7 +144,6 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true }
     ],
     hasBackground: true,
-    hasAlignment: true,
     hasHeight: true
   },
 
@@ -343,7 +340,6 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
   slideshow: {
     name: 'اسلایدشو / بنر',
     content: [],
-    hasAlignment: true,
     hasHeight: true,
     dynamicContentNote:
       'تصویر، عنوان و متن هر اسلاید را در همین پنل، بخش «اسلایدها» تنظیم کنید. تا زمانی که اسلایدی اضافه نشود این بخش در سایت نمایش داده نمی‌شود.'

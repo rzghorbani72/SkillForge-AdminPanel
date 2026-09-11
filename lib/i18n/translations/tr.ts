@@ -3199,6 +3199,7 @@ export const tr = {
     panelTextAlignment: 'Metin Hizalaması',
     panelAlignCenter: 'Orta',
     panelAlignRight: 'Sağ',
+    panelAlignLeft: 'Sol',
     panelSectionHeight: 'Bölüm Yüksekliği',
     panelHeightShort: 'Kısa',
     panelHeightMedium: 'Orta',

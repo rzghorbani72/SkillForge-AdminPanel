@@ -6668,6 +6668,7 @@ export const en = {
     panelTextAlignment: 'Text Alignment',
     panelAlignCenter: 'Center',
     panelAlignRight: 'Right',
+    panelAlignLeft: 'Left',
     panelSectionHeight: 'Section Height',
     panelHeightShort: 'Short',
     panelHeightMedium: 'Medium',

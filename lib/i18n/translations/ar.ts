@@ -3110,6 +3110,7 @@ export const ar = {
     panelTextAlignment: 'محاذاة النص',
     panelAlignCenter: 'وسط',
     panelAlignRight: 'يمين',
+    panelAlignLeft: 'يسار',
     panelSectionHeight: 'ارتفاع القسم',
     panelHeightShort: 'قصير',
     panelHeightMedium: 'متوسط',

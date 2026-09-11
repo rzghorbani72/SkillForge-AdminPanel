@@ -6641,6 +6641,7 @@ export const fa = {
     panelTextAlignment: 'تراز متن',
     panelAlignCenter: 'مرکز',
     panelAlignRight: 'راست',
+    panelAlignLeft: 'چپ',
     panelSectionHeight: 'ارتفاع بخش',
     panelHeightShort: 'کوتاه',
     panelHeightMedium: 'متوسط',

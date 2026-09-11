@@ -169,6 +169,24 @@ export function isVideoBannerHero(style: unknown): boolean {
 }
 
 /**
+ * Heroes whose text stack is centred with free space on both sides, so it can
+ * also sit on the start or end edge (`config.textAlign`). Two-column heroes
+ * have no room to move and are left out.
+ */
+const CENTERED_HEROES: readonly TemplateKey[] = [
+  'baran',
+  'hamrang',
+  'shabtab',
+  'sepid',
+  'partow',
+  'pardeh'
+];
+
+export function isCenteredHero(style: unknown): boolean {
+  return (CENTERED_HEROES as readonly unknown[]).includes(style);
+}
+
+/**
  * Design family. Groups the hero picker and filters the gallery, so the catalog
  * reads as a few short lists instead of one long scroll. One map for both — the
  * gallery used to carry a partial copy that silently called half the catalog
