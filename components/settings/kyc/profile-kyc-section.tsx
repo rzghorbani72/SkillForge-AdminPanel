@@ -17,6 +17,7 @@ import {
 import { KycWizardForm } from '@/components/settings/kyc/kyc-wizard-form';
 import { useKyc } from '@/hooks/use-kyc';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { KYC_STATUS } from '@/types/kyc';
 
 type Props = {
   enabled: boolean;
@@ -25,7 +26,7 @@ type Props = {
 /** KYC block embedded on the profile page (merged with account settings). */
 export function ProfileKycSection({ enabled }: Props) {
   const { t } = useTranslation();
-  const { state, isLoading, reload } = useKyc(enabled);
+  const { state, isLoading, setState } = useKyc(enabled);
 
   useEffect(() => {
     if (!enabled || typeof window === 'undefined') return;
@@ -44,7 +45,12 @@ export function ProfileKycSection({ enabled }: Props) {
             <ShieldCheck className="h-4 w-4" />
           </span>
           {t('settings.kyc.formTitle')}
-          {state ? <KycStatusBadge status={state.status} /> : null}
+          {state ? (
+            <KycStatusBadge
+              status={state.status}
+              complete={state.settlement_eligible}
+            />
+          ) : null}
         </CardTitle>
         <CardDescription>{t('settings.kyc.formDescription')}</CardDescription>
       </CardHeader>
@@ -55,13 +61,10 @@ export function ProfileKycSection({ enabled }: Props) {
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-24 w-full" />
           </div>
-        ) : state.can_edit ? (
-          <KycWizardForm
-            initial={state}
-            onSubmitted={() => {
-              void reload();
-            }}
-          />
+        ) : state.is_owner &&
+          state.status !== KYC_STATUS.PENDING &&
+          state.status !== KYC_STATUS.VERIFIED ? (
+          <KycWizardForm initial={state} onSubmitted={setState} />
         ) : (
           <KycReadonlyPanel state={state} />
         )}

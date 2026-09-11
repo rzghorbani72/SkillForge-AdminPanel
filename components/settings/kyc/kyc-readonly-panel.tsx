@@ -1,24 +1,43 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { formatPhoneDisplay, toPersianDigits } from '@/lib/phone-utils';
 import { KYC_STATUS, type KycState, type KycStatus } from '@/types/kyc';
 
-const STATUS_VARIANT: Record<
-  KycStatus,
-  'default' | 'secondary' | 'destructive' | 'outline'
-> = {
-  MISSING: 'secondary',
-  PARTIAL: 'secondary',
-  PENDING: 'outline',
-  VERIFIED: 'default',
-  REJECTED: 'destructive'
-};
+const TONE_CLASS = {
+  warning: 'border-transparent bg-warning/15 text-warning hover:bg-warning/15',
+  success: 'border-transparent bg-success/15 text-success hover:bg-success/15',
+  destructive:
+    'border-transparent bg-destructive/15 text-destructive hover:bg-destructive/15'
+} as const;
 
-export function KycStatusBadge({ status }: { status: KycStatus }) {
+function kycBadgeTone(
+  status: KycStatus,
+  complete: boolean
+): keyof typeof TONE_CLASS {
+  if (status === KYC_STATUS.REJECTED) return 'destructive';
+  if (
+    complete ||
+    status === KYC_STATUS.PENDING ||
+    status === KYC_STATUS.VERIFIED
+  ) {
+    return 'success';
+  }
+  return 'warning';
+}
+
+export function KycStatusBadge({
+  status,
+  complete = false
+}: {
+  status: KycStatus;
+  complete?: boolean;
+}) {
   const { t } = useTranslation();
   return (
-    <Badge variant={STATUS_VARIANT[status]}>
+    <Badge className={TONE_CLASS[kycBadgeTone(status, complete)]}>
       {t(`settings.kyc.status.${status}`)}
     </Badge>
   );
@@ -28,9 +47,14 @@ type KycReadonlyProps = {
   state: KycState;
 };
 
-/** Read-only summary when the manager cannot edit (pending/verified/not owner). */
 export function KycReadonlyPanel({ state }: KycReadonlyProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const formatDate = useDateFormat();
+  const fa = language === 'fa';
+  const digits = (value: string | null) => {
+    const text = value?.trim() || '—';
+    return fa ? toPersianDigits(text) : text;
+  };
 
   if (!state.is_owner) {
     return (
@@ -43,7 +67,15 @@ export function KycReadonlyPanel({ state }: KycReadonlyProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <KycStatusBadge status={state.status} />
+        <KycStatusBadge
+          status={state.status}
+          complete={state.settlement_eligible}
+        />
+        {state.settlement_eligible ? (
+          <p className="text-sm text-muted-foreground">
+            {t('settings.kyc.settlementUnlocked')}
+          </p>
+        ) : null}
         {state.status === KYC_STATUS.PENDING ? (
           <p className="text-sm text-muted-foreground">
             {t('settings.kyc.pendingNotice')}
@@ -67,24 +99,32 @@ export function KycReadonlyPanel({ state }: KycReadonlyProps) {
 
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
         <ReadonlyRow
-          label={t('settings.kyc.legalEntityName')}
-          value={state.legal_entity_name}
+          label={t('settings.kyc.phoneNumber')}
+          value={
+            state.phone_number
+              ? formatPhoneDisplay(state.phone_number, language)
+              : '—'
+          }
         />
         <ReadonlyRow
           label={t('settings.kyc.nationalId')}
-          value={state.national_id_masked ?? state.national_id}
+          value={digits(state.national_id)}
+        />
+        <ReadonlyRow
+          label={t('settings.kyc.legalEntityName')}
+          value={state.iban_info?.name ?? state.legal_entity_name}
         />
         <ReadonlyRow
           label={t('settings.kyc.birthDate')}
-          value={state.birth_date}
+          value={state.birth_date ? formatDate(state.birth_date) : '—'}
         />
         <ReadonlyRow
           label={t('settings.kyc.sheba')}
-          value={state.sheba_masked}
+          value={digits(state.sheba_number)}
         />
         <ReadonlyRow
-          label={t('settings.kyc.contactAddress')}
-          value={state.contact_address}
+          label={t('settings.kyc.bankName')}
+          value={state.iban_info?.bank_name ?? null}
         />
       </dl>
     </div>
@@ -101,7 +141,7 @@ function ReadonlyRow({
   return (
     <div>
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-medium">{value?.trim() || '—'}</dd>
+      <dd className="break-all font-medium">{value?.trim() || '—'}</dd>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
+import { ImageIcon, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export type KycCardFields = {
@@ -11,6 +12,8 @@ export type KycCardFields = {
   frontPreview: string | null;
   backPreview: string | null;
 };
+
+const NATIONAL_CARD_FRAME = 'aspect-[86/54]';
 
 type Props = {
   values: KycCardFields;
@@ -53,8 +56,8 @@ export function KycStepCard({
   }, []);
 
   return (
-    <div className="space-y-6">
-      <CardUpload
+    <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
+      <CardSlot
         id="kyc-card-front"
         label={t('settings.kyc.cardFront')}
         help={t('settings.kyc.cardFrontHelp')}
@@ -64,7 +67,7 @@ export function KycStepCard({
         disabled={disabled}
         onPick={(file) => onPick('front', file)}
       />
-      <CardUpload
+      <CardSlot
         id="kyc-card-back"
         label={t('settings.kyc.cardBack')}
         help={t('settings.kyc.cardBackHelp')}
@@ -77,7 +80,7 @@ export function KycStepCard({
   );
 }
 
-function CardUpload({
+function CardSlot({
   id,
   label,
   help,
@@ -97,6 +100,7 @@ function CardUpload({
   onPick: (file: File) => void;
 }) {
   const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
   const blocked = busy || disabled === true;
 
   return (
@@ -106,42 +110,62 @@ function CardUpload({
         {required ? ' *' : ''}
       </Label>
       <p className="text-xs text-muted-foreground">{help}</p>
-      {preview ? (
-        // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
-        <img
-          src={preview}
-          alt={label}
-          className="h-40 w-full max-w-sm rounded-lg border object-cover"
-        />
-      ) : null}
-      <div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={blocked}
-          asChild
-        >
-          <label
-            htmlFor={id}
-            className={blocked ? 'pointer-events-none' : 'cursor-pointer'}
-          >
-            {busy ? t('common.loading') : t('settings.kyc.uploadCard')}
-          </label>
-        </Button>
-        <input
-          id={id}
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          disabled={blocked}
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) onPick(file);
-            event.target.value = '';
-          }}
-        />
-      </div>
+      <button
+        id={id}
+        type="button"
+        disabled={blocked}
+        aria-busy={busy}
+        onClick={() => inputRef.current?.click()}
+        className={cn(
+          'group relative w-full overflow-hidden rounded-lg border-2 bg-muted/40',
+          NATIONAL_CARD_FRAME,
+          preview
+            ? 'border-solid border-border'
+            : 'border-dashed border-muted-foreground/30',
+          !blocked && 'cursor-pointer hover:border-primary/60 hover:bg-muted/70'
+        )}
+      >
+        {preview ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element -- local object URL preview */}
+            <img
+              src={preview}
+              alt={label}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+            {!busy ? (
+              <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                {t('media.changeImage')}
+              </span>
+            ) : null}
+          </>
+        ) : (
+          <span className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 px-3 text-center">
+            <ImageIcon className="h-8 w-8 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">
+              {t('settings.kyc.uploadCard')}
+            </span>
+          </span>
+        )}
+        {busy ? (
+          <span className="absolute inset-0 flex items-center justify-center bg-background/80">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          </span>
+        ) : null}
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        tabIndex={-1}
+        className="hidden"
+        disabled={blocked}
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) onPick(file);
+          event.target.value = '';
+        }}
+      />
     </div>
   );
 }

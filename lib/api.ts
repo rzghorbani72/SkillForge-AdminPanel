@@ -3550,6 +3550,24 @@ class ApiClient {
     });
   }
 
+  async sendMyContactOtp(channel: 'phone' | 'email', value: string) {
+    return this.request('/users/me/contact/otp', {
+      method: 'POST',
+      body: JSON.stringify({ channel, value })
+    });
+  }
+
+  async verifyMyContactOtp(
+    channel: 'phone' | 'email',
+    value: string,
+    otp: string
+  ) {
+    return this.request<{ success?: boolean }>('/users/me/contact/otp/verify', {
+      method: 'POST',
+      body: JSON.stringify({ channel, value, otp })
+    });
+  }
+
   async updateUser(id: string, userData: unknown) {
     return this.request(`/users/${id}`, {
       method: 'PATCH',
@@ -4462,6 +4480,13 @@ class ApiClient {
     const response = await this.request('/academies/current/kyc/verify-sheba', {
       method: 'POST',
       body: JSON.stringify(payload)
+    });
+    return response.data as KycState;
+  }
+
+  async confirmKycIban() {
+    const response = await this.request('/academies/current/kyc/confirm-iban', {
+      method: 'POST'
     });
     return response.data as KycState;
   }

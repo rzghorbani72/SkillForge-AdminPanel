@@ -14,23 +14,33 @@ export type KycMissingField =
   | 'card_front'
   | 'sheba';
 
+export type KycIbanInfo = {
+  name: string;
+  bank_name: string;
+  active: boolean;
+};
+
 export type KycState = {
   status: KycStatus;
   is_owner: boolean;
   can_edit: boolean;
+  current_step: 0 | 1 | 2;
   verification_enabled: boolean;
   shahkar_matched: boolean;
   iban_matched: boolean;
+  iban_info_confirmed: boolean;
+  settlement_eligible: boolean;
   verify_attempts_remaining: number;
   verify_locked_until: string | null;
+  phone_number: string | null;
   legal_entity_name: string | null;
   national_id: string | null;
-  national_id_masked: string | null;
   birth_date: string | null;
   card_front_id: string | null;
   card_back_id: string | null;
-  sheba_masked: string | null;
+  sheba_number: string | null;
   sheba_status: string | null;
+  iban_info: KycIbanInfo | null;
   contact_address: string | null;
   permit_declared_at: string | null;
   missing: readonly KycMissingField[];
@@ -41,26 +51,17 @@ export type KycState = {
 };
 
 export type VerifyKycIdentityPayload = {
-  legal_entity_name: string;
   national_id: string;
-  birth_date: string;
 };
 
 export type VerifyKycShebaPayload = {
+  birth_date: string;
   sheba_number: string;
-  account_holder_name: string;
 };
 
 export type SubmitKycPayload = {
-  legal_entity_name: string;
-  national_id: string;
-  birth_date: string;
   card_front_id: string;
   card_back_id?: string;
-  sheba_number: string;
-  account_holder_name: string;
-  contact_address?: string;
-  permit_declared?: boolean;
 };
 
 export type KycCardUploadResult = {

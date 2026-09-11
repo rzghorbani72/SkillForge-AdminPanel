@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Info } from 'lucide-react';
 import { KycStatusBadge } from '@/components/settings/kyc/kyc-readonly-panel';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { toPersianDigits } from '@/lib/phone-utils';
 import { KYC_STATUS, type KycState } from '@/types/kyc';
 
 type Props = {
@@ -17,27 +19,46 @@ type Props = {
 
 /** Staff decision panel for creating-manager KYC (approve / reject with note). */
 export function KycReviewPanel({ state, submitting, onReview }: Props) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const formatDate = useDateFormat();
+  const fa = language === 'fa';
+  const digits = (value: string | null) => {
+    const text = value?.trim() || '—';
+    return fa ? toPersianDigits(text) : text;
+  };
   const [note, setNote] = useState('');
   const decidable = state.status === KYC_STATUS.PENDING;
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <KycStatusBadge status={state.status} />
+        <KycStatusBadge
+          status={state.status}
+          complete={state.settlement_eligible}
+        />
       </div>
 
       <dl className="grid gap-2 text-sm sm:grid-cols-2">
         <Row
           label={t('settings.kyc.legalEntityName')}
-          value={state.legal_entity_name}
+          value={state.iban_info?.name ?? state.legal_entity_name}
         />
         <Row
           label={t('settings.kyc.nationalId')}
-          value={state.national_id_masked}
+          value={digits(state.national_id)}
         />
-        <Row label={t('settings.kyc.birthDate')} value={state.birth_date} />
-        <Row label={t('settings.kyc.sheba')} value={state.sheba_masked} />
+        <Row
+          label={t('settings.kyc.birthDate')}
+          value={state.birth_date ? formatDate(state.birth_date) : '—'}
+        />
+        <Row
+          label={t('settings.kyc.sheba')}
+          value={digits(state.sheba_number)}
+        />
+        <Row
+          label={t('settings.kyc.bankName')}
+          value={state.iban_info?.bank_name ?? null}
+        />
       </dl>
 
       <Alert>
@@ -98,7 +119,7 @@ function Row({ label, value }: { label: string; value: string | null }) {
   return (
     <div>
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-medium">{value?.trim() || '—'}</dd>
+      <dd className="break-all font-medium">{value?.trim() || '—'}</dd>
     </div>
   );
 }

@@ -147,7 +147,12 @@ export function UserNav() {
           <span className="min-w-0 flex-1 truncate">
             {t('userNav.profile')}
           </span>
-          {kycState ? <KycStatusBadge status={kycState.status} /> : null}
+          {kycState ? (
+            <KycStatusBadge
+              status={kycState.status}
+              complete={kycState.settlement_eligible}
+            />
+          ) : null}
         </DropdownMenuItem>
 
         {hasAcademyContext && (

@@ -3228,26 +3228,46 @@ export const en = {
         'Complete identity verification so Mentoma can approve custom domains and payouts.',
       formTitle: 'Identity verification',
       formDescription:
-        'National ID, card photo, and Sheba for custom domain and verified badge. Only the creating manager can submit.',
+        'National ID vs your login mobile, then Sheba. After Sheba confirm you can request settlement. National-card photos are optional and reviewed by Mentoma staff.',
       ownerOnly:
         'Only the academy creating manager can view and edit identity verification.',
       stepProgress: 'Step {{current}} of {{total}}',
-      sectionIdentity: 'Identity',
-      sectionCard: 'National card',
-      sectionFinancial: 'Bank details',
+      sectionIdentity: 'Mobile and national ID',
+      sectionCard: 'National card (optional)',
+      sectionFinancial: 'Birth date and Sheba',
       sectionPublisher: 'Address and permit',
-      verifyIdentity: 'Confirm',
+      verifyIdentity: 'Check Shahkar',
       verifySheba: 'Verify Sheba',
+      confirmIban: 'Confirm account details',
       verifying: 'Verifying…',
       shahkarMatched: 'National ID matched your login phone',
       ibanMatched: 'Sheba matched your national ID and birth date',
+      ibanConfirmed:
+        'Account details confirmed. You can request a settlement now.',
+      confirmedSoFar: 'Confirmed so far',
       identityStepHint:
-        'We check national ID against your logged-in mobile (Shahkar).',
-      cardStepHint: 'Upload a clear photo of your national card.',
+        'We check national ID against your logged-in mobile (ShahkarLite).',
+      cardStepHint:
+        'Upload a clear photo of your national card. This step is optional.',
+      cardOptionalHint:
+        'Card photos are for Mentoma staff review and are not required for payouts.',
+      cardSkipHint:
+        'You can send the card later. Settlement is already unlocked after Sheba confirm.',
+      skipCardForNow: 'I will upload later',
+      resumeCardUpload: 'Upload national card',
       shebaStepHint:
-        'We check Sheba against national ID and birth date (IbanMatch).',
+        'We check birth date and Sheba against the national ID from the previous step (IbanMatch).',
+      ibanInfoTitle: 'Account details from Sheba lookup',
+      ibanConfirmHint: 'Confirm if the name and bank are correct.',
+      ibanInactiveHint: 'This Sheba is not active. Use an active account.',
+      ibanActive: 'Account status',
+      ibanActiveYes: 'Active',
+      ibanActiveNo: 'Inactive',
+      bankName: 'Bank name',
+      settlementUnlocked:
+        'Bank identity is complete. You can request a settlement.',
       submitHint:
-        'After submit, status becomes Pending until Mentoma staff reviews the card photo.',
+        'After you send the card photo, status becomes Pending until Mentoma staff reviews it.',
       serviceDisabled:
         'Automatic verification is not configured yet. The form is visible but disabled until API_IR_TOKEN is set on the server.',
       rateLimited:

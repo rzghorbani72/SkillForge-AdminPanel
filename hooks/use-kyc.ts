@@ -22,7 +22,6 @@ export function useKyc(enabled: boolean, options?: UseKycOptions) {
       setIsLoading(false);
       return;
     }
-    setIsLoading(true);
     try {
       setState(await apiClient.getKyc());
     } catch (error) {
@@ -39,5 +38,5 @@ export function useKyc(enabled: boolean, options?: UseKycOptions) {
     void reload();
   }, [reload]);
 
-  return { state, isLoading, reload };
+  return { state, isLoading, reload, setState };
 }

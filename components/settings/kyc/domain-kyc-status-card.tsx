@@ -46,7 +46,10 @@ export function DomainKycStatusCard() {
                 : t('settings.kyc.domainBlocked')}
             </CardDescription>
           </div>
-          <KycStatusBadge status={state.status} />
+          <KycStatusBadge
+            status={state.status}
+            complete={state.settlement_eligible}
+          />
         </div>
       </CardHeader>
       {!ready ? (
