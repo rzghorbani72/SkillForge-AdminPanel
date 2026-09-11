@@ -19,13 +19,20 @@ interface HeroVideoPickerProps {
   cfg: Record<string, unknown>;
   set: (key: string, value: unknown) => void;
   onUpdate: (config: Record<string, unknown>) => void;
+  /** Banner heroes always loop muted, so the autoplay switch is hidden. */
+  alwaysAutoplay?: boolean;
 }
 
 /**
  * Picks one video for the hero media box. A video replaces the photo slideshow
  * in the same frame, so the ratio/height controls above it still apply.
  */
-export function HeroVideoPicker({ cfg, set, onUpdate }: HeroVideoPickerProps) {
+export function HeroVideoPicker({
+  cfg,
+  set,
+  onUpdate,
+  alwaysAutoplay = false
+}: HeroVideoPickerProps) {
   const { t } = useTranslation();
   const { videos, isLoading } = useAcademyVideos();
   const currentUrl =
@@ -73,15 +80,17 @@ export function HeroVideoPicker({ cfg, set, onUpdate }: HeroVideoPickerProps) {
               <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
-          <div className="flex items-center justify-between rounded-lg border border-zinc-200 px-2.5 py-2">
-            <span className="text-xs text-zinc-700">
-              {t('sitePreview.heroVideoAutoplay')}
-            </span>
-            <Switch
-              checked={cfg.heroVideoAutoplay === true}
-              onCheckedChange={(value) => set('heroVideoAutoplay', value)}
-            />
-          </div>
+          {!alwaysAutoplay && (
+            <div className="flex items-center justify-between rounded-lg border border-zinc-200 px-2.5 py-2">
+              <span className="text-xs text-zinc-700">
+                {t('sitePreview.heroVideoAutoplay')}
+              </span>
+              <Switch
+                checked={cfg.heroVideoAutoplay === true}
+                onCheckedChange={(value) => set('heroVideoAutoplay', value)}
+              />
+            </div>
+          )}
         </>
       ) : (
         <Select value="" onValueChange={pick} disabled={isLoading}>

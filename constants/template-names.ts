@@ -31,7 +31,8 @@ export const TEMPLATE_KEYS = [
   'peleh',
   'andisheh',
   'shaparak',
-  'partow'
+  'partow',
+  'pardeh'
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -145,8 +146,24 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
     name: 'پرتو',
     vertical: 'مدرس برنامه‌نویسی',
     tagline: 'متمرکز · کارت‌محور · روشن'
+  },
+  pardeh: {
+    name: 'پرده',
+    vertical: 'فیلم، عکاسی و رسانهٔ بصری',
+    tagline: 'سینمایی · ویدیویی · تمام‌عرض'
   }
 };
+
+/**
+ * Heroes whose visual is a full-bleed looping video banner: it always
+ * autoplays and has no frame, so the ratio/height and autoplay controls
+ * do not apply.
+ */
+const VIDEO_BANNER_HEROES: readonly TemplateKey[] = ['pardeh'];
+
+export function isVideoBannerHero(style: unknown): boolean {
+  return (VIDEO_BANNER_HEROES as readonly unknown[]).includes(style);
+}
 
 /**
  * Design family. Groups the hero picker and filters the gallery, so the catalog
@@ -186,7 +203,8 @@ export const TEMPLATE_CATEGORY: Record<TemplateKey, TemplateCategory> = {
   peleh: 'personal',
   andisheh: 'personal',
   shaparak: 'personal',
-  partow: 'personal'
+  partow: 'personal',
+  pardeh: 'creative'
 };
 
 export const CATEGORY_LABELS: {

@@ -34,7 +34,7 @@ import { HeroVideoPicker } from './hero-video-picker';
 import { SlidesEditor } from './slides-editor';
 import { VideosEditor } from './videos-editor';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
-import { TEMPLATE_KEYS } from '@/constants/template-names';
+import { TEMPLATE_KEYS, isVideoBannerHero } from '@/constants/template-names';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
 
@@ -122,6 +122,7 @@ export function SectionEditor({
     }
   };
   const isGalleryHero = block.type === 'hero' && isGalleryHeroStyle(cfg.style);
+  const hasMediaFrame = isGalleryHero && !isVideoBannerHero(cfg.style);
 
   return (
     <div className="flex h-full flex-col" dir="rtl">
@@ -192,43 +193,46 @@ export function SectionEditor({
 
             {isGalleryHero && (
               <div className="mt-4 space-y-3 border-b border-zinc-200/70 pb-4">
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-                    {t('sitePreview.panelMediaRatio')}
-                  </span>
-                  <div className="grid grid-cols-4 gap-1.5" dir="ltr">
-                    {MEDIA_RATIOS.map((ratio) => {
-                      const current =
-                        typeof cfg.mediaRatio === 'string'
-                          ? cfg.mediaRatio
-                          : 'free';
-                      return (
-                        <button
-                          key={ratio}
-                          type="button"
-                          onClick={() => set('mediaRatio', ratio)}
-                          className={`rounded border py-1.5 text-[11px] font-medium transition-colors ${
-                            current === ratio
-                              ? 'border-blue-500 bg-blue-600 text-white'
-                              : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100'
-                          }`}
-                        >
-                          {ratio === 'free'
-                            ? t('sitePreview.panelRatioFree')
-                            : ratio}
-                        </button>
-                      );
-                    })}
+                {hasMediaFrame && (
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+                      {t('sitePreview.panelMediaRatio')}
+                    </span>
+                    <div className="grid grid-cols-4 gap-1.5" dir="ltr">
+                      {MEDIA_RATIOS.map((ratio) => {
+                        const current =
+                          typeof cfg.mediaRatio === 'string'
+                            ? cfg.mediaRatio
+                            : 'free';
+                        return (
+                          <button
+                            key={ratio}
+                            type="button"
+                            onClick={() => set('mediaRatio', ratio)}
+                            className={`rounded border py-1.5 text-[11px] font-medium transition-colors ${
+                              current === ratio
+                                ? 'border-blue-500 bg-blue-600 text-white'
+                                : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100'
+                            }`}
+                          >
+                            {ratio === 'free'
+                              ? t('sitePreview.panelRatioFree')
+                              : ratio}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <HeroVideoPicker
                   cfg={cfg}
                   set={set}
                   onUpdate={(config) => onUpdate(block.id, config)}
+                  alwaysAutoplay={isVideoBannerHero(cfg.style)}
                 />
 
-                {(cfg.mediaRatio ?? 'free') === 'free' && (
+                {hasMediaFrame && (cfg.mediaRatio ?? 'free') === 'free' && (
                   <div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-zinc-600">

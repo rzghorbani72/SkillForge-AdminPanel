@@ -285,6 +285,21 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
     shape: { borderRadius: 'soft', shadow: 'subtle' },
     motion: 'subtle',
     darkMode: null
+  },
+  pardeh: {
+    colors: {
+      primary: '#d1462f',
+      secondary: '#3a1f18',
+      secondaryDark: '#f6e7dd',
+      accent: '#f2a33a',
+      background: '#fdf6f0',
+      backgroundDark: '#180d0a',
+      surface: '#ffffff'
+    },
+    typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
+    shape: { borderRadius: 'soft', shadow: 'subtle' },
+    motion: 'subtle',
+    darkMode: null
   }
 };
 
