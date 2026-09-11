@@ -266,10 +266,12 @@ export default function CouponsPage() {
     setSaving(true);
     try {
       const academyId = values.academy_id?.trim();
-      const payload: Record<string, unknown> = {
-        code: normalizeDiscountCode(values.code),
+      const body = {
         coupon_type: values.coupon_type,
-        discount_type: values.coupon_type === 'FIXED' ? 'FIXED' : 'PERCENT',
+        discount_type:
+          values.coupon_type === 'FIXED'
+            ? ('FIXED' as const)
+            : ('PERCENT' as const),
         discount_value: values.discount_value ?? 0,
         free_trial_days: values.free_trial_days,
         start_date: new Date(values.start_date).toISOString(),
@@ -279,15 +281,15 @@ export default function CouponsPage() {
         max_discount_amount: values.max_discount_amount,
         min_purchase_amount: values.min_purchase_amount
       };
-      // Omit academy_id for Mentoma platform plan vouchers.
-      if (academyId) payload.academy_id = academyId;
 
       if (editTarget) {
-        await apiClient.updateDiscount(editTarget.id, payload);
+        await apiClient.updateDiscount(editTarget.id, body);
       } else {
-        await apiClient.createDiscount(
-          payload as Parameters<typeof apiClient.createDiscount>[0]
-        );
+        await apiClient.createDiscount({
+          ...body,
+          code: normalizeDiscountCode(values.code),
+          ...(academyId ? { academy_id: academyId } : {})
+        });
       }
       toast.success(t('common.success'));
       setDialogOpen(false);
