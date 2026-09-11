@@ -155,7 +155,7 @@ test.describe('sidebar shape', () => {
     expect(website?.href).toBeUndefined();
     expect(website?.children?.map((child) => child.href)).toEqual([
       '/website',
-      '/website/appearance',
+      '/website/appearance/list',
       '/website/pages',
       '/website/seo',
       '/website/trust',

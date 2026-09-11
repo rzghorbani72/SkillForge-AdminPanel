@@ -27,7 +27,7 @@ export default function WebsiteHubPage() {
 
   const cards = [
     {
-      href: '/website/appearance',
+      href: '/website/appearance/list',
       icon: Layout,
       title: t('website.cards.appearanceTitle'),
       description: t('website.cards.appearanceDescription'),

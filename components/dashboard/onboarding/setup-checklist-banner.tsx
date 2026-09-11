@@ -34,7 +34,7 @@ const STEP_META: Record<
     titleKey: 'onboarding.setupStepWebsite'
   },
   template: {
-    href: '/website/appearance',
+    href: '/website/appearance/list',
     icon: LayoutTemplate,
     titleKey: 'onboarding.setupStepTemplate'
   },

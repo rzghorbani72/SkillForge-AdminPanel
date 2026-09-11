@@ -228,7 +228,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Templates Gallery',
-        href: '/website/appearance',
+        href: '/website/appearance/list',
         icon: 'gallery' as IconType,
         label: 'templatesGallery',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
@@ -487,7 +487,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Appearance',
-        href: '/website/appearance',
+        href: '/website/appearance/list',
         icon: 'gallery' as IconType,
         label: 'websiteAppearance',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
