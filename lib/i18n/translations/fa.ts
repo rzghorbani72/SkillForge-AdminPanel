@@ -4850,7 +4850,13 @@ export const fa = {
         platformPayments: 'صورت‌حساب اشتراک آکادمی',
         platformPaymentsHint:
           'هزینه‌ای که برای اشتراک آکادمی پرداخت کرده‌اید. این مبلغ درآمد آکادمی نیست.',
-        pageOf: 'صفحه {{page}} از {{total}}'
+        pageOf: 'صفحه {{page}} از {{total}}',
+        discount: 'تخفیف',
+        vat: 'مالیات',
+        paid: 'پرداختی',
+        net: 'سهم آکادمی',
+        coupon: 'کد تخفیف',
+        refunded: 'مسترد'
       },
       revenue: {
         title: 'درآمد و مزایا',

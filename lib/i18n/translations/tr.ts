@@ -2462,7 +2462,13 @@ export const tr = {
         noPayments: 'Ödeme bulunamadı',
         courseRevenue: 'Kurs Gelir Dökümü',
         courseRevenueDescription: 'Kursa göre gelir',
-        comingSoon: 'Kurs gelir dökümü yakında'
+        comingSoon: 'Kurs gelir dökümü yakında',
+        discount: 'İndirim',
+        vat: 'KDV',
+        paid: 'Ödenen',
+        net: 'Akademi payı',
+        coupon: 'Kupon',
+        refunded: 'İade'
       },
       revenue: {
         title: 'Gelir ve Faydalar',

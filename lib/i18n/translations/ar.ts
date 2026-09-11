@@ -2389,7 +2389,13 @@ export const ar = {
         noPayments: 'لم يتم العثور على مدفوعات',
         courseRevenue: 'تفصيل إيرادات الدورة',
         courseRevenueDescription: 'الإيرادات حسب الدورة',
-        comingSoon: 'تفصيل إيرادات الدورة قريباً'
+        comingSoon: 'تفصيل إيرادات الدورة قريباً',
+        discount: 'الخصم',
+        vat: 'الضريبة',
+        paid: 'المدفوع',
+        net: 'حصة الأكاديمية',
+        coupon: 'كوبون',
+        refunded: 'مسترد'
       },
       revenue: {
         title: 'الإيرادات والفوائد',

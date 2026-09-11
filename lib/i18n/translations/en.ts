@@ -4890,7 +4890,13 @@ export const en = {
         platformPayments: 'Academy subscription invoices',
         platformPaymentsHint:
           'What you pay for your academy subscription. This is a cost, not academy income.',
-        pageOf: 'Page {{page}} of {{total}}'
+        pageOf: 'Page {{page}} of {{total}}',
+        discount: 'Discount',
+        vat: 'VAT',
+        paid: 'Paid',
+        net: 'Academy net',
+        coupon: 'Coupon',
+        refunded: 'Refunded'
       },
       revenue: {
         title: 'Revenue & Benefits',

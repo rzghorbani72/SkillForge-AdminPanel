@@ -13,6 +13,12 @@ export interface AcademyPaymentRow {
   provider?: string | null;
   gateway?: string | null;
   created_at: string;
+  discount_amount?: number | null;
+  coupon_code?: string | null;
+  vat_amount?: number | null;
+  platform_fee?: number | null;
+  school_net_revenue?: number | null;
+  refund_amount?: number | null;
   Profile?: { display_name?: string | null } | null;
   Course?: { title?: string | null } | null;
 }
