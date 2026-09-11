@@ -5539,8 +5539,8 @@ export const en = {
     description:
       'See where your money came from, how much of it Mentoma is still holding, and request a transfer to your academy bank account.',
     custody: {
-      PLATFORM: 'Held by Mentoma',
-      ACADEMY: 'Held by you'
+      PLATFORM: 'Via Mentoma gateway',
+      ACADEMY: 'Directly by you'
     },
     balance: {
       available: {
@@ -5565,7 +5565,7 @@ export const en = {
       description:
         'Only money that went through the Mentoma online gateway is held by us and settleable. The rest you collected yourself and is shown for the record.',
       method: 'Payment method',
-      custody: 'Who holds it',
+      custody: 'Collected via',
       count: 'Transactions',
       gross: 'Total amount',
       share: 'Share'
