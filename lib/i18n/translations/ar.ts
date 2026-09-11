@@ -816,6 +816,7 @@ export const ar = {
       lessons_per_course: 'دروس لكل دورة',
       tutoring_students: 'طلاب الدروس الخصوصية',
       storage_gb: 'التخزين (غيغابايت)',
+      monthly_traffic_gb: 'حركة البيانات الشهرية (جيجابايت)',
       dedicated_templates: 'قوالب موقع مخصصة',
       videos: 'مقاطع الفيديو'
     },

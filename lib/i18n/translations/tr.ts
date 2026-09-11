@@ -835,6 +835,7 @@ export const tr = {
       lessons_per_course: 'Kurs başına ders',
       tutoring_students: 'Özel ders öğrencileri',
       storage_gb: 'Depolama (GB)',
+      monthly_traffic_gb: 'Aylık trafik (GB)',
       dedicated_templates: 'Özel site şablonları',
       videos: 'Videolar'
     },

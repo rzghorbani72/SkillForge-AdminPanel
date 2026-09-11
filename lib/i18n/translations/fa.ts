@@ -1291,6 +1291,7 @@ export const fa = {
       lessons_per_course: 'درس در هر دوره',
       tutoring_students: 'دانشجوی کلاس خصوصی',
       storage_gb: 'فضای ذخیره‌سازی (گیگابایت)',
+      monthly_traffic_gb: 'ترافیک ماهانه (گیگابایت)',
       dedicated_templates: 'قالب سایت اختصاصی',
       videos: 'ویدیو'
     },

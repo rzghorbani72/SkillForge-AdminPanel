@@ -1307,6 +1307,7 @@ export const en = {
       lessons_per_course: 'Lessons per course',
       tutoring_students: 'Tutoring students',
       storage_gb: 'Storage (GB)',
+      monthly_traffic_gb: 'Monthly traffic (GB)',
       dedicated_templates: 'Dedicated site templates',
       videos: 'Videos'
     },
