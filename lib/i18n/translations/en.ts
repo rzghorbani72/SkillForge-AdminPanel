@@ -7385,6 +7385,13 @@ export const en = {
       pending: 'In flight',
       toDeposit: 'Payable now',
       bankAccount: 'Bank account',
+      kycTitle: 'Identity verification',
+      kycVerified:
+        'Manager identity verified via Shahkar and Sheba matched to national ID',
+      kycMissing:
+        'Identity verification (Shahkar + Sheba match) not completed yet',
+      lockedNoKyc:
+        'Form locked: manager identity verification is incomplete. No deposit until Shahkar and Sheba match are confirmed.',
       bankMissing: 'No verified bank account — cannot settle',
       sheba: 'Sheba',
       holder: 'Account holder',
@@ -7403,7 +7410,21 @@ export const en = {
       openTicketsLink: 'Open tickets ({{count}})',
       closedTicketsLink: 'Closed tickets ({{count}})',
       settledOk: 'Settled and manager notified',
-      nothingToSettle: 'Nothing available to settle'
+      nothingToSettle: 'Nothing available to settle',
+      intro:
+        'Here you deposit the money the platform holds from students’ online payments for this academy into the academy bank account, and record it.',
+      walletHint: 'Academy share of all online payments',
+      pendingHint: 'Already in requests not yet paid',
+      toDepositHint: 'Wallet minus pending',
+      formTitle: 'Record a new deposit',
+      formHelp:
+        'First transfer the amount to the Sheba above, then enter the bank tracking code here. Saving deducts the amount from the wallet and notifies the manager by SMS.',
+      lockedNoBank:
+        'Form locked: the academy bank account is not approved yet. The manager must submit a Sheba and you must approve it.',
+      lockedNoBalance:
+        'Form locked: nothing to deposit. The wallet is only filled by verified online payments; cash and bank-transfer sales stay with the academy.',
+      pendingHelp:
+        'Requests the academy manager submitted. After the transfer, enter the tracking code and approve.'
     }
   },
   entitySearch: {

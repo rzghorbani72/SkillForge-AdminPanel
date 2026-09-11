@@ -3,6 +3,7 @@
 import { CopyableValue } from '@/components/shared/copyable-value';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { ShieldAlert, ShieldCheck } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { apiClient, type AcademyHealthView } from '@/lib/api';
 import {
@@ -12,7 +13,8 @@ import {
 } from '@/lib/api-settlement';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { LocalizedDigitsInput } from '@/components/ui/localized-digits-input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -177,6 +179,14 @@ export function AcademySettlementSheet({
 
   const bankOk = summary?.bank_account?.status === 'APPROVED';
   const available = summary?.balance.available ?? academy?.to_deposit ?? 0;
+  const kycOk = summary ? !summary.blockers.includes('KYC_REQUIRED') : false;
+  const lockedReason = !kycOk
+    ? t('academiesHealth.settle.lockedNoKyc')
+    : !bankOk
+      ? t('academiesHealth.settle.lockedNoBank')
+      : available <= 0
+        ? t('academiesHealth.settle.lockedNoBalance')
+        : null;
   const ticketCount = academy?.open_ticket_count ?? 0;
   const closedTicketCount = academy?.closed_ticket_count ?? 0;
 
@@ -193,7 +203,7 @@ export function AcademySettlementSheet({
             })}
           </SheetTitle>
           <SheetDescription>
-            {t('academiesHealth.clickToSettle')}
+            {t('academiesHealth.settle.intro')}
           </SheetDescription>
         </SheetHeader>
 
@@ -206,6 +216,7 @@ export function AcademySettlementSheet({
             <div className="grid grid-cols-3 gap-2 text-center">
               <BalanceCell
                 label={t('academiesHealth.settle.wallet')}
+                hint={t('academiesHealth.settle.walletHint')}
                 value={formatNumber(
                   summary?.balance.balance ?? academy.wallet_balance ?? 0
                 )}
@@ -213,6 +224,7 @@ export function AcademySettlementSheet({
               />
               <BalanceCell
                 label={t('academiesHealth.settle.pending')}
+                hint={t('academiesHealth.settle.pendingHint')}
                 value={formatNumber(
                   summary?.balance.pending ??
                     academy.pending_settlement_amount ??
@@ -222,11 +234,32 @@ export function AcademySettlementSheet({
               />
               <BalanceCell
                 label={t('academiesHealth.settle.toDeposit')}
+                hint={t('academiesHealth.settle.toDepositHint')}
                 value={formatNumber(available)}
                 suffix={t('common.toman')}
                 emphasize
               />
             </div>
+
+            <section className="space-y-2 rounded-md border p-3">
+              <h3 className="text-sm font-medium">
+                {t('academiesHealth.settle.kycTitle')}
+              </h3>
+              <p
+                className={`flex items-center gap-2 text-sm ${kycOk ? 'text-emerald-700 dark:text-emerald-400' : 'text-destructive'}`}
+              >
+                {kycOk ? (
+                  <ShieldCheck className="size-4 shrink-0" />
+                ) : (
+                  <ShieldAlert className="size-4 shrink-0" />
+                )}
+                {t(
+                  kycOk
+                    ? 'academiesHealth.settle.kycVerified'
+                    : 'academiesHealth.settle.kycMissing'
+                )}
+              </p>
+            </section>
 
             <section className="space-y-2 rounded-md border p-3">
               <h3 className="text-sm font-medium">
@@ -254,16 +287,28 @@ export function AcademySettlementSheet({
             </section>
 
             <section className="space-y-3 rounded-md border p-3">
+              <div className="space-y-1">
+                <h3 className="text-sm font-medium">
+                  {t('academiesHealth.settle.formTitle')}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {t('academiesHealth.settle.formHelp')}
+                </p>
+              </div>
+              {lockedReason ? (
+                <p className="rounded-md bg-amber-50 p-2 text-xs text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+                  {lockedReason}
+                </p>
+              ) : null}
               <div className="space-y-1.5">
                 <Label htmlFor="settle-amount">
                   {t('academiesHealth.settle.amount')}
                 </Label>
-                <Input
+                <NumberInput
                   id="settle-amount"
-                  type="number"
-                  inputMode="numeric"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={setAmount}
+                  suffix={t('common.toman')}
                   disabled={!bankOk || available <= 0}
                 />
               </div>
@@ -271,12 +316,11 @@ export function AcademySettlementSheet({
                 <Label htmlFor="settle-code">
                   {t('academiesHealth.settle.trackingCode')}
                 </Label>
-                <Input
+                <LocalizedDigitsInput
                   id="settle-code"
                   value={trackingCode}
-                  onChange={(e) => setTrackingCode(e.target.value)}
+                  onChange={setTrackingCode}
                   disabled={!bankOk || available <= 0}
-                  dir="ltr"
                 />
               </div>
               <div className="space-y-1.5">
@@ -311,6 +355,11 @@ export function AcademySettlementSheet({
               <h3 className="text-sm font-medium">
                 {t('academiesHealth.settle.pendingTitle')}
               </h3>
+              {pending.length > 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  {t('academiesHealth.settle.pendingHelp')}
+                </p>
+              ) : null}
               {pending.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   {t('academiesHealth.settle.noPending')}
@@ -332,16 +381,12 @@ export function AcademySettlementSheet({
                         {t(`withdrawals.status${statusKey(row.status)}`)}
                       </Badge>
                     </div>
-                    <Input
+                    <LocalizedDigitsInput
                       placeholder={t('academiesHealth.settle.trackingCode')}
                       value={approveCode[row.id] ?? ''}
-                      onChange={(e) =>
-                        setApproveCode((prev) => ({
-                          ...prev,
-                          [row.id]: e.target.value
-                        }))
+                      onChange={(code) =>
+                        setApproveCode((prev) => ({ ...prev, [row.id]: code }))
                       }
-                      dir="ltr"
                     />
                     <div className="flex gap-2">
                       <Button
@@ -436,11 +481,13 @@ export function AcademySettlementSheet({
 
 function BalanceCell({
   label,
+  hint,
   value,
   suffix,
   emphasize
 }: {
   label: string;
+  hint: string;
   value: string;
   suffix: string;
   emphasize?: boolean;
@@ -452,6 +499,9 @@ function BalanceCell({
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="text-sm font-semibold tabular-nums">{value}</p>
       <p className="text-[10px] text-muted-foreground">{suffix}</p>
+      <p className="mt-1 text-[10px] leading-tight text-muted-foreground">
+        {hint}
+      </p>
     </div>
   );
 }
