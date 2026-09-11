@@ -5671,6 +5671,9 @@ export const en = {
     informedSms: 'SMS sent',
     informedEmail: 'Email sent'
   },
+  teacherShare: {
+    note: 'In this academy the teacher share is {{teacher}} of each sale and {{academy}} goes to the academy; the manager sets this rate.'
+  },
   teacherEarnings: {
     title: 'My earnings',
     description:

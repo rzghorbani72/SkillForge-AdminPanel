@@ -11,6 +11,7 @@ import { CourseEnrollmentsCard } from '@/components/course/detail/course-enrollm
 import { CourseFactsCard } from '@/components/course/detail/course-facts-card';
 import { CourseMoneyBand } from '@/components/course/detail/course-money-band';
 import { StatTile } from '@/components/course/detail/stat-tile';
+import { TeacherShareNote } from '@/components/shared/teacher-share-note';
 import {
   activeClassCount,
   seatTotals
@@ -140,7 +141,10 @@ export default function CourseFinancePage() {
       </div>
 
       {canViewCourseMoney(course) && (
-        <CourseMoneyBand payments={payments} loading={paymentsLoading} />
+        <div className="space-y-2">
+          <TeacherShareNote />
+          <CourseMoneyBand payments={payments} loading={paymentsLoading} />
+        </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-3">

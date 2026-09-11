@@ -5652,6 +5652,9 @@ export const fa = {
     informedSms: 'پیامک ارسال شد',
     informedEmail: 'ایمیل ارسال شد'
   },
+  teacherShare: {
+    note: 'سهم مدرس در این آکادمی {{teacher}} از هر فروش است و {{academy}} به آکادمی می‌رسد؛ این نسبت را مدیر آکادمی تعیین می‌کند.'
+  },
   teacherEarnings: {
     title: 'درآمد من',
     description:

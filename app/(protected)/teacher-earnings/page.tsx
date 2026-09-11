@@ -6,6 +6,7 @@ import { TeacherPayoutsTable } from '@/components/teacher-earnings/teacher-payou
 import { useTeacherEarnings } from '@/components/teacher-earnings/use-teacher-earnings';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { MoneyValue } from '@/components/dashboard/money-value';
+import { TeacherShareNote } from '@/components/shared/teacher-share-note';
 
 export default function TeacherEarningsPage() {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ export default function TeacherEarningsPage() {
         <p className="max-w-2xl text-sm text-muted-foreground">
           {t('teacherEarnings.description')}
         </p>
+        <TeacherShareNote className="pt-1" />
       </header>
 
       <div className="grid gap-4 sm:grid-cols-3">

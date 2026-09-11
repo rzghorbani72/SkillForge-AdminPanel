@@ -794,6 +794,9 @@ export const tr = {
     regularLogin: 'Normal Giriş',
     loginTitle: 'Hesabınıza giriş yapın'
   },
+  teacherShare: {
+    note: 'Bu akademide öğretmen payı her satışın {{teacher}}’i, {{academy}}’i akademiye gider; bu oranı yönetici belirler.'
+  },
   teacherEarnings: {
     title: 'Kazançlarım',
     description:

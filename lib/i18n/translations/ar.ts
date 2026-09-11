@@ -775,6 +775,9 @@ export const ar = {
     regularLogin: 'تسجيل الدخول العادي',
     loginTitle: 'سجّل الدخول إلى حسابك'
   },
+  teacherShare: {
+    note: 'في هذه الأكاديمية حصة المعلم {{teacher}} من كل عملية بيع و{{academy}} للأكاديمية؛ يحدد المدير هذه النسبة.'
+  },
   teacherEarnings: {
     title: 'أرباحي',
     description:

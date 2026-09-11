@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
   BadgeCheck,
   Banknote,
@@ -15,6 +16,7 @@ import { formatNumber } from '@/lib/utils';
 import type { ManagerDashboard } from '@/types/dashboard';
 import type { SettlementSummary } from '@/lib/api-settlement';
 import { MoneyCard, type CardModel } from './money-card';
+import { TeacherShareNote } from '@/components/shared/teacher-share-note';
 
 type Props = Pick<ManagerDashboard, 'money' | 'payouts_due'> & {
   settlement: SettlementSummary | null;
@@ -121,6 +123,7 @@ export default function MoneyCards({
         cards={teacherCards}
         isLoading={isLoading}
         className="sm:grid-cols-3"
+        note={<TeacherShareNote />}
       />
     </div>
   );
@@ -130,16 +133,21 @@ function CardRow({
   title,
   cards,
   isLoading,
-  className
+  className,
+  note
 }: {
   title: string;
   cards: CardModel[];
   isLoading: boolean;
   className: string;
+  note?: ReactNode;
 }) {
   return (
     <section className="space-y-3">
-      <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>
+        {note}
+      </div>
       <div className={`grid gap-4 ${className}`}>
         {cards.map((card, index) => (
           <MoneyCard
