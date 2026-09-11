@@ -2720,6 +2720,10 @@ export const ar = {
   },
   platform: {
     overview: {
+      pendingSettlements: '{{count}} طلبات تسوية بانتظار المراجعة',
+      pendingSettlementsHint:
+        'مدراء الأكاديميات بانتظار التحويل؛ انقر للمراجعة',
+      noPendingSettlements: 'لا يوجد طلب تسوية بانتظار',
       title: 'نظرة عامة على المنصة',
       description: 'إدارة ومراقبة جميع المدارس وإحصائيات المنصة',
       loading: 'جاري تحميل نظرة عامة على المنصة...',

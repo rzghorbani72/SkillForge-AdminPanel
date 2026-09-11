@@ -2793,6 +2793,10 @@ export const tr = {
   },
   platform: {
     overview: {
+      pendingSettlements: '{{count}} tasfiye talebi inceleme bekliyor',
+      pendingSettlementsHint:
+        'Akademi yöneticileri transferi bekliyor; incelemek için tıklayın',
+      noPendingSettlements: 'Bekleyen tasfiye talebi yok',
       title: 'Platform Genel Bakış',
       description:
         'Tüm okulları ve platform genelindeki istatistikleri yönetin ve izleyin',

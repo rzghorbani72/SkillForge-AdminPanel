@@ -6982,6 +6982,13 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
+  async getPendingSettlementCount() {
+    const res = await this.request<
+      { count: number } | { data: { count: number } }
+    >('/financial/settlement/withdrawals/pending-count');
+    return unwrapDataEnvelope(res.data).count;
+  }
+
   async getSettlementDesk() {
     const res = await this.request<SettlementDesk | { data: SettlementDesk }>(
       '/financial/settlement/desk'

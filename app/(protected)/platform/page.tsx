@@ -27,6 +27,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { isPlatformOwner } from '@/lib/roles';
 import { useMetricsFetch } from './metrics/_hooks/use-metrics-fetch';
 import { useMetricFormat } from './metrics/_components/metric-format';
+import { PendingSettlementsCard } from '@/components/platform/pending-settlements-card';
 
 const HEADLINE = [
   { key: 'total_academies', icon: Store, hint: 'active_academies' },
@@ -94,6 +95,8 @@ export default function PlatformOverviewPage() {
           />
         ))}
       </div>
+
+      <PendingSettlementsCard />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Link href="/platform/academies" className="block">

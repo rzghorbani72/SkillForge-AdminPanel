@@ -5289,6 +5289,10 @@ export const en = {
         'Platform pricing policy can only be edited by platform admins.'
     },
     overview: {
+      pendingSettlements: '{{count}} settlement requests awaiting review',
+      pendingSettlementsHint:
+        'Academy managers are waiting for the transfer; click to review',
+      noPendingSettlements: 'No settlement request is waiting',
       title: 'Platform Overview',
       description:
         'Manage and monitor all schools and platform-wide statistics',

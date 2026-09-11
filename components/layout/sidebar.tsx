@@ -13,6 +13,8 @@ import { useHasStore } from '@/hooks/useHasStore';
 import { useHasAcademy } from '@/hooks/useHasAcademy';
 import { SidebarUpgradeBanner } from '@/components/layout/sidebar-upgrade-banner';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
+import { usePendingSettlementCount } from '@/hooks/usePendingSettlementCount';
+import { withPendingSettlementBadge } from '@/lib/nav-badges';
 
 type SidebarProps = {
   className?: string;
@@ -35,15 +37,17 @@ export default function Sidebar({ className }: SidebarProps) {
   const hasStore = useHasStore();
   const { visibility: learningVisibility } = useLearningNavCapabilities();
   const hasAcademy = useHasAcademy();
+  const pendingSettlements = usePendingSettlementCount();
 
   const filteredNavItems = useMemo(() => {
-    return filterNavItems(navItems, {
+    const items = filterNavItems(navItems, {
       role: userRole,
       hasStore,
       learningVisibility,
       hasAcademy
     });
-  }, [userRole, hasStore, learningVisibility, hasAcademy]);
+    return withPendingSettlementBadge(items, pendingSettlements);
+  }, [userRole, hasStore, learningVisibility, hasAcademy, pendingSettlements]);
 
   if (isLoading) {
     return (

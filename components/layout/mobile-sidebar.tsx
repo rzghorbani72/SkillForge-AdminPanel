@@ -5,6 +5,8 @@ import { navItems } from '@/constants/data';
 import { MenuIcon } from 'lucide-react';
 import { useState, Suspense, useMemo } from 'react';
 import { filterNavItems } from '@/lib/nav-filter';
+import { usePendingSettlementCount } from '@/hooks/usePendingSettlementCount';
+import { withPendingSettlementBadge } from '@/lib/nav-badges';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHasStore } from '@/hooks/useHasStore';
 import { useHasAcademy } from '@/hooks/useHasAcademy';
@@ -25,14 +27,17 @@ export function MobileSidebar() {
     return user.role;
   }, [user]);
 
+  const pendingSettlements = usePendingSettlementCount();
+
   const filteredNavItems = useMemo(() => {
-    return filterNavItems(navItems, {
+    const items = filterNavItems(navItems, {
       role: userRole,
       hasStore,
       learningVisibility,
       hasAcademy
     });
-  }, [userRole, hasStore, learningVisibility, hasAcademy]);
+    return withPendingSettlementBadge(items, pendingSettlements);
+  }, [userRole, hasStore, learningVisibility, hasAcademy, pendingSettlements]);
 
   return (
     <>

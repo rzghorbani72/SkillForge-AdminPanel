@@ -5279,6 +5279,10 @@ export const fa = {
       notAvailable: '-'
     },
     overview: {
+      pendingSettlements: '{{count}} درخواست تسویه در انتظار بررسی',
+      pendingSettlementsHint:
+        'مدیران آکادمی منتظر واریز هستند؛ برای بررسی کلیک کنید',
+      noPendingSettlements: 'درخواست تسویه‌ای در انتظار نیست',
       title: 'نمای کلی پلتفرم',
       description: 'مدیریت و نظارت بر تمام آکادمی‌ها و آمارهای سراسر پلتفرم',
       loading: 'در حال بارگذاری نمای کلی پلتفرم...',
