@@ -1099,7 +1099,6 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       setSelectedBlockId(null);
       postOrder(next);
       commitBlocks(next);
-      rebuildPreview();
       return;
     }
 
@@ -1116,9 +1115,11 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     );
     setSelectedBlockId(blockId);
     setShowCustomizer(true);
-    postOrder(next);
+    previewIframeRef.current?.contentWindow?.postMessage(
+      { source: 'template-admin', type: 'sync-placeholder', blockId },
+      getPreviewPostMessageTarget(storefrontBaseRef.current)
+    );
     commitBlocks(next);
-    rebuildPreview();
   };
 
   const handlePickBlockType = (blockId: string, type: string) => {
