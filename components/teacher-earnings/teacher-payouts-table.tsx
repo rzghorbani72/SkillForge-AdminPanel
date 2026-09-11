@@ -10,11 +10,16 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore, formatDate } from '@/lib/utils';
 import type { TeacherPayoutRecord } from '@/types/teacher-earnings';
+import { PayoutResponseActions } from './payout-response-actions';
 
-type Props = { rows: TeacherPayoutRecord[]; isLoading: boolean };
+type Props = {
+  rows: TeacherPayoutRecord[];
+  isLoading: boolean;
+  onChanged: () => void;
+};
 
 /** Each row is the teacher's proof of one payment: amount, tracking code, bank text. */
-export function TeacherPayoutsTable({ rows, isLoading }: Props) {
+export function TeacherPayoutsTable({ rows, isLoading, onChanged }: Props) {
   const { t, language } = useTranslation();
   const academy = useCurrentAcademy();
   const money = (value: number) =>
@@ -51,6 +56,14 @@ export function TeacherPayoutsTable({ rows, isLoading }: Props) {
       header: t('common.status'),
       align: 'end',
       cell: (row) => <StatusBadge status={row.status.toLowerCase()} />
+    },
+    {
+      id: 'actions',
+      header: t('common.actions'),
+      align: 'end',
+      cell: (row) => (
+        <PayoutResponseActions payout={row} onChanged={onChanged} />
+      )
     }
   ];
 
@@ -59,6 +72,9 @@ export function TeacherPayoutsTable({ rows, isLoading }: Props) {
       title={t('teacherEarnings.payoutsTitle')}
       subtitle={t('teacherEarnings.payoutsSubtitle')}
     >
+      <p className="px-5 pb-3 text-xs text-muted-foreground">
+        {t('teacherEarnings.responseNote')}
+      </p>
       <DataList
         items={rows}
         columns={columns}

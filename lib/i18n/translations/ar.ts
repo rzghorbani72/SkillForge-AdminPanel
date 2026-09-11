@@ -788,6 +788,15 @@ export const ar = {
     colAmount: 'المبلغ',
     colTrackingCode: 'رمز التتبع',
     colBankResponse: 'رد البنك',
+    confirm: 'استلمت',
+    reject: 'لم أستلم',
+    confirmDone: 'تم تأكيد الاستلام',
+    rejectDone: 'تم رفض الدفعة وأصبح المبلغ مستحقًا لك مجددًا',
+    confirmedAt: 'تم التأكيد في {{date}}',
+    rejectWaitHint:
+      'بسبب دورة التسوية البنكية، يمكن الرفض اعتبارًا من {{date}}',
+    responseNote:
+      'التأكيد أو الرفض مجرد محاسبة بينك وبين مدير الأكاديمية ولا علاقة للمنصة به. إذا لم يصل المال، يمكنك الرفض بعد ٧٢ ساعة ليعود المبلغ مستحقًا.',
     noPayouts: 'لم تُسجَّل أي دفعة بعد'
   },
   dashboard: {
@@ -830,6 +839,15 @@ export const ar = {
       failed: 'تعذر تسجيل الدفعة'
     },
     money: {
+      academyRow: 'أموال الأكاديمية',
+      teacherRow: 'أموال المعلمين',
+      platformOwes: 'جاهز للتسوية',
+      platformOwesHint: 'محفوظ لدى المنصة؛ يمكنك طلب التحويل الآن',
+      settlementPending: 'تحويل قيد الانتظار',
+      settlementPendingHint:
+        'طلبات تسوية مسجّلة لم تصل بعد إلى حساب الأكاديمية',
+      paidToAcademy: 'المدفوع للأكاديمية',
+      paidToAcademyHint: 'كل ما حُوّل حتى الآن إلى الحساب البنكي للأكاديمية',
       teacherShare: 'حصة المعلمين',
       teacherPaid: 'المدفوع للمعلمين',
       teacherPaidHint: 'ما حوّلته للمعلمين وسجّلته في هذه الفترة',

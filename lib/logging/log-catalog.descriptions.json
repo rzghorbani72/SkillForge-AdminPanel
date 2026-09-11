@@ -15,6 +15,7 @@
     "Onboarding.SetupBannerDismissed": "Manager dismissed the first-run setup checklist.",
     "Onboarding.SetupBannerShown": "First-run setup checklist shown on the dashboard.",
     "Onboarding.SetupStepOpened": "Manager opened a first-run setup step from the dashboard banner.",
-    "TeacherPayout.Recorded": "The manager saved a bank transfer to a teacher from the teacher money table."
+    "TeacherPayout.Recorded": "The manager saved a bank transfer to a teacher from the teacher money table.",
+    "TeacherPayout.TeacherAnswered": "The teacher confirmed or rejected a recorded payout from the earnings page."
   }
 }

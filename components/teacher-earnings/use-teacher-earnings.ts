@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import type {
   TeacherBalance,
@@ -11,6 +11,8 @@ export function useTeacherEarnings() {
   const [balance, setBalance] = useState<TeacherBalance | null>(null);
   const [payouts, setPayouts] = useState<TeacherPayoutRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [version, setVersion] = useState(0);
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,7 +32,7 @@ export function useTeacherEarnings() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [version]);
 
-  return { balance, payouts, isLoading };
+  return { balance, payouts, isLoading, reload };
 }

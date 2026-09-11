@@ -1318,6 +1318,17 @@ export const fa = {
       failed: 'ثبت پرداخت انجام نشد'
     },
     money: {
+      academyRow: 'پول آکادمی',
+      teacherRow: 'پول مدرسان',
+      platformOwes: 'قابل تسویه از پلتفرم',
+      platformOwesHint:
+        'مبلغی نزد منتوما که همین حالا می‌توانید درخواست واریز آن را بدهید',
+      settlementPending: 'در انتظار واریز',
+      settlementPendingHint:
+        'درخواست‌های تسویه ثبت‌شده که هنوز به حساب آکادمی نرسیده',
+      paidToAcademy: 'واریزشده به آکادمی',
+      paidToAcademyHint:
+        'مجموع مبالغی که تاکنون به حساب بانکی آکادمی واریز شده',
       teacherShare: 'سهم مدرسان',
       teacherPaid: 'پرداخت‌شده به مدرسان',
       teacherPaidHint: 'مبلغی که در این بازه به مدرسان واریز و ثبت کردید',
@@ -5654,6 +5665,14 @@ export const fa = {
     colAmount: 'مبلغ',
     colTrackingCode: 'کد پیگیری',
     colBankResponse: 'پاسخ بانک',
+    confirm: 'دریافت کردم',
+    reject: 'دریافت نکردم',
+    confirmDone: 'دریافت وجه تأیید شد',
+    rejectDone: 'پرداخت رد شد و مبلغ دوباره در بدهی آکادمی قرار گرفت',
+    confirmedAt: 'تأیید شده در {{date}}',
+    rejectWaitHint: 'به‌خاطر چرخه تسویه بانکی، رد کردن از {{date}} ممکن است',
+    responseNote:
+      'تأیید یا رد فقط برای حساب‌وکتاب بین شما و مدیر آکادمی است و ربطی به پلتفرم ندارد. اگر پول نرسید، پس از ۷۲ ساعت می‌توانید رد کنید تا مبلغ دوباره به بدهی آکادمی برگردد.',
     noPayouts: 'هنوز پرداختی ثبت نشده است'
   },
   teacherPayouts: {

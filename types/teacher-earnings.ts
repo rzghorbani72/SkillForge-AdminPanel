@@ -12,6 +12,8 @@ export interface TeacherPayoutRecord {
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'PAID';
   tracking_code: string | null;
   bank_response: string | null;
+  teacher_confirmed_at: string | null;
+  teacher_rejected_at: string | null;
   notes: string | null;
   processed_at: string | null;
   requested_at: string;

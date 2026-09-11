@@ -1333,6 +1333,17 @@ export const en = {
       failed: 'Could not record the payment'
     },
     money: {
+      academyRow: 'Academy money',
+      teacherRow: 'Teacher money',
+      platformOwes: 'Ready to settle',
+      platformOwesHint:
+        'Held by the platform; you can request the transfer now',
+      settlementPending: 'Transfer pending',
+      settlementPendingHint:
+        'Settlement requests filed but not yet in the academy account',
+      paidToAcademy: 'Paid to academy',
+      paidToAcademyHint:
+        'Everything transferred to the academy bank account so far',
       teacherShare: 'Teacher share',
       teacherPaid: 'Paid to teachers',
       teacherPaidHint:
@@ -5674,6 +5685,15 @@ export const en = {
     colAmount: 'Amount',
     colTrackingCode: 'Tracking code',
     colBankResponse: 'Bank response',
+    confirm: 'Received',
+    reject: 'Not received',
+    confirmDone: 'Payment confirmed',
+    rejectDone: 'Payment rejected; the amount is owed to you again',
+    confirmedAt: 'Confirmed on {{date}}',
+    rejectWaitHint:
+      'Because of the bank settlement cycle, rejecting opens on {{date}}',
+    responseNote:
+      'Confirm or reject is only bookkeeping between you and the academy manager; the platform is not involved. If the money never arrives, you can reject after 72 hours so the amount is owed again.',
     noPayouts: 'No payment recorded yet'
   },
   teacherPayouts: {

@@ -7021,6 +7021,18 @@ class ApiClient {
     return res.data;
   }
 
+  async confirmTeacherPayout(id: string) {
+    await this.request(`/teacher-wallet/payouts/${id}/confirm`, {
+      method: 'POST'
+    });
+  }
+
+  async rejectRecordedTeacherPayout(id: string) {
+    await this.request(`/teacher-wallet/payouts/${id}/reject`, {
+      method: 'POST'
+    });
+  }
+
   async getTeacherPayouts(params?: {
     profile_id?: number;
     status?: string;

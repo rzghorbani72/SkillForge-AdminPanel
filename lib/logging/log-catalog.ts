@@ -77,6 +77,12 @@ export const LOG_CATALOG = {
           'The manager saved a bank transfer to a teacher from the teacher money table.',
         status: 'ok',
         fields: ['amount'] as const
+      },
+      TeacherAnswered: {
+        description:
+          'The teacher confirmed or rejected a recorded payout from the earnings page.',
+        status: 'ok',
+        fields: ['action'] as const
       }
     }
   }

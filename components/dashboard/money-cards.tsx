@@ -1,132 +1,46 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import {
   BadgeCheck,
-  HandCoins,
+  Banknote,
+  Clock,
   DollarSign,
-  TrendingDown,
-  TrendingUp,
   GraduationCap,
+  HandCoins,
+  Landmark,
   Wallet
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { usePercentLabel } from '@/lib/i18n/use-percent-label';
-import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { cn, formatCurrencyWithStore, formatNumber } from '@/lib/utils';
+import { formatNumber } from '@/lib/utils';
 import type { ManagerDashboard } from '@/types/dashboard';
-
-const LINES = [
-  'hsl(var(--viz-1))',
-  'hsl(var(--viz-2))',
-  'hsl(var(--viz-3))',
-  'hsl(var(--viz-1))',
-  'hsl(var(--viz-2))'
-];
-
-type CardModel = {
-  key: string;
-  title: string;
-  value: string;
-  hint: string;
-  icon: typeof DollarSign;
-  /** Whole-percent move against the previous window; null when there is no base. */
-  change: number | null;
-  meter?: number;
-};
-
-function MoneyCard({
-  card,
-  index,
-  isLoading
-}: {
-  card: CardModel;
-  index: number;
-  isLoading: boolean;
-}) {
-  const percent = usePercentLabel();
-  const line = LINES[index % LINES.length];
-  const isUp = (card.change ?? 0) >= 0;
-  const Trend = isUp ? TrendingUp : TrendingDown;
-
-  return (
-    <Card className="stat-card group flex flex-col">
-      <CardContent className="flex flex-1 flex-col p-0">
-        <div
-          className="w-fit shrink-0 rounded-2xl p-2.5"
-          style={{ background: `${line.slice(0, -1)} / 0.1)` }}
-        >
-          <card.icon className="h-5 w-5" style={{ color: line }} />
-        </div>
-
-        <p className="mt-4 text-[13px] font-medium text-muted-foreground">
-          {card.title}
-        </p>
-
-        {isLoading ? (
-          <>
-            <div className="shimmer mt-2 h-7 w-24 rounded-lg" />
-            <div className="shimmer mt-2 h-3 w-32 rounded-full" />
-          </>
-        ) : (
-          <>
-            <div className="mt-1 flex flex-wrap items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight">
-                {card.value}
-              </span>
-              {card.change !== null ? (
-                <span
-                  className={cn(
-                    'flex items-center gap-0.5 text-xs font-semibold',
-                    isUp
-                      ? 'text-emerald-600 dark:text-emerald-400'
-                      : 'text-rose-600 dark:text-rose-400'
-                  )}
-                >
-                  <Trend className="h-3.5 w-3.5" />
-                  {percent(Math.abs(card.change))}
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">{card.hint}</p>
-            {card.meter !== undefined ? (
-              <Progress value={card.meter} className="mt-3 h-1.5" />
-            ) : null}
-          </>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
+import type { SettlementSummary } from '@/lib/api-settlement';
+import { MoneyCard, type CardModel } from './money-card';
 
 type Props = Pick<ManagerDashboard, 'money' | 'payouts_due'> & {
+  settlement: SettlementSummary | null;
   isLoading: boolean;
 };
 
 /**
- * The money story in one row: what came in, what the academy keeps, what
- * teachers earned, what they were paid, and what is still owed to them.
+ * Two rows: the academy's own money (what came in, what it keeps, what the
+ * platform still holds / paid), then the teachers' money (earned, paid, owed).
  */
 export default function MoneyCards({
   money,
   payouts_due: payoutsDue,
+  settlement,
   isLoading
 }: Props) {
   const { t, language } = useTranslation();
-  const academy = useCurrentAcademy();
-
-  const amount = (value: number) =>
-    formatCurrencyWithStore(value, academy, undefined, language);
 
   const delta = (current: number, previous: number) =>
     previous === 0 ? null : Math.round(((current - previous) / previous) * 100);
 
-  const cards: CardModel[] = [
+  const academyCards: CardModel[] = [
     {
       key: 'gross',
       title: t('dashboard.money.gross'),
-      value: amount(money.gross),
+      value: money.gross,
       hint: t('dashboard.money.grossHint'),
       icon: DollarSign,
       change: delta(money.gross, money.gross_previous)
@@ -134,15 +48,42 @@ export default function MoneyCards({
     {
       key: 'net',
       title: t('dashboard.money.net'),
-      value: amount(money.net),
+      value: money.net,
       hint: t('dashboard.money.netHint'),
       icon: Wallet,
       change: delta(money.net, money.net_previous)
     },
     {
+      key: 'platformOwes',
+      title: t('dashboard.money.platformOwes'),
+      value: settlement?.balance.available ?? 0,
+      hint: t('dashboard.money.platformOwesHint'),
+      icon: Landmark,
+      change: null
+    },
+    {
+      key: 'settlementPending',
+      title: t('dashboard.money.settlementPending'),
+      value: settlement?.balance.pending ?? 0,
+      hint: t('dashboard.money.settlementPendingHint'),
+      icon: Clock,
+      change: null
+    },
+    {
+      key: 'paidToAcademy',
+      title: t('dashboard.money.paidToAcademy'),
+      value: settlement?.balance.withdrawn_total ?? 0,
+      hint: t('dashboard.money.paidToAcademyHint'),
+      icon: Banknote,
+      change: null
+    }
+  ];
+
+  const teacherCards: CardModel[] = [
+    {
       key: 'teacherShare',
       title: t('dashboard.money.teacherShare'),
-      value: amount(money.teacher_payouts),
+      value: money.teacher_payouts,
       hint: t('dashboard.money.teacherShareHint'),
       icon: GraduationCap,
       change: null
@@ -150,7 +91,7 @@ export default function MoneyCards({
     {
       key: 'teacherPaid',
       title: t('dashboard.money.teacherPaid'),
-      value: amount(money.teacher_paid),
+      value: money.teacher_paid,
       hint: t('dashboard.money.teacherPaidHint'),
       icon: BadgeCheck,
       change: null
@@ -158,7 +99,7 @@ export default function MoneyCards({
     {
       key: 'payouts',
       title: t('dashboard.money.payoutsDue'),
-      value: amount(payoutsDue.amount),
+      value: payoutsDue.amount,
       hint: t('dashboard.money.payoutsDueHint', {
         count: formatNumber(payoutsDue.count, language)
       }),
@@ -168,15 +109,47 @@ export default function MoneyCards({
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-      {cards.map((card, index) => (
-        <MoneyCard
-          key={card.key}
-          card={card}
-          index={index}
-          isLoading={isLoading}
-        />
-      ))}
+    <div className="space-y-5">
+      <CardRow
+        title={t('dashboard.money.academyRow')}
+        cards={academyCards}
+        isLoading={isLoading}
+        className="sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+      />
+      <CardRow
+        title={t('dashboard.money.teacherRow')}
+        cards={teacherCards}
+        isLoading={isLoading}
+        className="sm:grid-cols-3"
+      />
     </div>
+  );
+}
+
+function CardRow({
+  title,
+  cards,
+  isLoading,
+  className
+}: {
+  title: string;
+  cards: CardModel[];
+  isLoading: boolean;
+  className: string;
+}) {
+  return (
+    <section className="space-y-3">
+      <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>
+      <div className={`grid gap-4 ${className}`}>
+        {cards.map((card, index) => (
+          <MoneyCard
+            key={card.key}
+            card={card}
+            index={index}
+            isLoading={isLoading}
+          />
+        ))}
+      </div>
+    </section>
   );
 }

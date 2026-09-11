@@ -20,6 +20,7 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { canManageSubscription } from '@/lib/subscription-access';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onboarding';
+import { useSettlement } from '@/components/financial/settlement/use-settlement';
 import { SetupChecklistBanner } from '@/components/dashboard/onboarding/setup-checklist-banner';
 import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
 import {
@@ -70,6 +71,7 @@ export default function DashboardPage() {
   // Money, course and teacher figures are aggregated by the API so they stay
   // correct past the page caps the list endpoints impose.
   const money = useManagerMoney(period);
+  const settlement = useSettlement(selectedAcademy?.id ?? null);
 
   const canManagePlan = canManageSubscription(user);
   const { needsPlanPurchase, isLoading: subscriptionLoading } =
@@ -207,7 +209,8 @@ export default function DashboardPage() {
           <MoneyCards
             money={money.money}
             payouts_due={money.payouts_due}
-            isLoading={money.isLoading}
+            settlement={settlement.summary}
+            isLoading={money.isLoading || settlement.isLoading}
           />
 
           {/* Row 2: academy panel + stock counters */}

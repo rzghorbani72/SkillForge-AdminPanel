@@ -807,6 +807,15 @@ export const tr = {
     colAmount: 'Tutar',
     colTrackingCode: 'Takip kodu',
     colBankResponse: 'Banka yanıtı',
+    confirm: 'Aldım',
+    reject: 'Almadım',
+    confirmDone: 'Ödeme onaylandı',
+    rejectDone: 'Ödeme reddedildi; tutar yeniden size borç olarak yazıldı',
+    confirmedAt: '{{date}} tarihinde onaylandı',
+    rejectWaitHint:
+      'Banka takas döngüsü nedeniyle reddetme {{date}} itibarıyla açılır',
+    responseNote:
+      'Onay veya ret yalnızca sizinle akademi yöneticisi arasındaki hesaptır; platformun ilgisi yoktur. Para gelmezse 72 saat sonra reddedebilirsiniz; tutar yeniden borç olur.',
     noPayouts: 'Henüz ödeme kaydedilmedi'
   },
   dashboard: {
@@ -849,6 +858,17 @@ export const tr = {
       failed: 'Ödeme kaydedilemedi'
     },
     money: {
+      academyRow: 'Akademi parası',
+      teacherRow: 'Öğretmen parası',
+      platformOwes: 'Tasfiyeye hazır',
+      platformOwesHint:
+        'Platformda tutulan tutar; şimdi transfer talep edebilirsiniz',
+      settlementPending: 'Transfer bekliyor',
+      settlementPendingHint:
+        'Kaydedilmiş ancak henüz akademi hesabına geçmemiş tasfiye talepleri',
+      paidToAcademy: 'Akademiye ödenen',
+      paidToAcademyHint:
+        'Şimdiye kadar akademi banka hesabına aktarılan toplam',
       teacherShare: 'Öğretmen payı',
       teacherPaid: 'Öğretmenlere ödenen',
       teacherPaidHint: 'Bu dönemde öğretmenlere aktarıp kaydettiğiniz tutar',
