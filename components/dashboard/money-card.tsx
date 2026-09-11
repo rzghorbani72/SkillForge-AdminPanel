@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
@@ -23,14 +24,14 @@ export type CardModel = {
   valueLabel?: string;
   /** Colors the value when it is above zero: money waiting vs money settled. */
   tone?: 'pending' | 'paid';
-  hint: string;
+  hint: ReactNode;
   icon: typeof DollarSign;
   /** Whole-percent move against the previous window; null when there is no base. */
   change: number | null;
   meter?: number;
 };
 
-const TONE_CLASS = {
+export const TONE_CLASS = {
   pending: 'text-amber-600 dark:text-amber-400',
   paid: 'text-emerald-600 dark:text-emerald-400'
 } as const;

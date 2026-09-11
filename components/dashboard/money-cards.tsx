@@ -11,12 +11,12 @@ import {
   Wallet
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { formatCurrencyWithStore, formatNumber } from '@/lib/utils';
+import { cn, formatCurrencyWithStore, formatNumber } from '@/lib/utils';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import type { ManagerDashboard } from '@/types/dashboard';
 import type { SettlementSummary } from '@/lib/api-settlement';
-import { MoneyCard, type CardModel } from './money-card';
+import { MoneyCard, TONE_CLASS, type CardModel } from './money-card';
 
 type Props = Pick<ManagerDashboard, 'money' | 'payouts_due'> & {
   settlement: SettlementSummary | null;
@@ -61,14 +61,12 @@ export default function MoneyCards({
       key: 'platformOwes',
       title: t('dashboard.money.platformOwes'),
       value: settlement?.balance.available ?? 0,
-      hint: t('dashboard.money.platformOwesHint', {
-        pending: formatCurrencyWithStore(
-          settlement?.balance.pending ?? 0,
-          academy,
-          undefined,
-          language
-        )
-      }),
+      hint: (
+        <PendingHint
+          template={t('dashboard.money.platformOwesHint')}
+          amount={settlement?.balance.pending ?? 0}
+        />
+      ),
       icon: Landmark,
       tone: 'pending',
       change: null
@@ -167,5 +165,27 @@ function CardRow({
         ))}
       </div>
     </section>
+  );
+}
+
+/** The hint's amount turns orange while money is still on its way. */
+function PendingHint({
+  template,
+  amount
+}: {
+  template: string;
+  amount: number;
+}) {
+  const { language } = useTranslation();
+  const academy = useCurrentAcademy();
+  const [before, after] = template.split('{{pending}}');
+  return (
+    <>
+      {before}
+      <span className={cn('font-medium', amount > 0 && TONE_CLASS.pending)}>
+        {formatCurrencyWithStore(amount, academy, undefined, language)}
+      </span>
+      {after}
+    </>
   );
 }
