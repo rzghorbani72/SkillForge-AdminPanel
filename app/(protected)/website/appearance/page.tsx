@@ -484,6 +484,9 @@ export default function UITemplateSettingsPage() {
     setLastSavedAt(null);
     setViewport('desktop');
     setIsPreviewLoading(true);
+    // The URL change below re-runs the deep-link effect; mark this id as opened
+    // so a card click does not open the same template twice.
+    openedFromUrlRef.current = preset.id;
     router.replace(`${pathname}?template=${encodeURIComponent(preset.id)}`, {
       scroll: false
     });

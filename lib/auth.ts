@@ -2,7 +2,7 @@ import { apiClient } from './api';
 import { ErrorHandler } from './error-handler';
 import { User, Profile, Academy } from '@/types/api';
 import { isDevelopmentMode, getStoreUrl, logDevInfo } from './dev-utils';
-import { clearLegacyAuthStorage } from './clear-legacy-auth-storage';
+import { wipeNonPlatformStorage } from './wipe-non-platform-storage';
 
 export interface AuthUser {
   user: User;
@@ -88,10 +88,13 @@ class AuthService {
   /**
    * Session lives in HttpOnly cookies — never persist tokens or RBAC in
    * localStorage (readable from DevTools / XSS).
+   * Every login starts from clean client storage: a stale academy cache,
+   * selected academy or per-tab rescope flag from an earlier session would
+   * otherwise scope the new token's requests to the wrong academy.
    */
   private persistSession(user: AuthUser | null) {
     if (typeof window === 'undefined') return;
-    clearLegacyAuthStorage();
+    wipeNonPlatformStorage();
     if (!user) return;
 
     const academyId =
