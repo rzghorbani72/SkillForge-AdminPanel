@@ -845,8 +845,7 @@ export const ar = {
       academyRow: 'إيرادات الأكاديمية',
       teacherRow: 'إيرادات المعلمين',
       platformOwes: 'جاهز للتسوية',
-      platformOwesHint:
-        'محفوظ لدى المنصة وقابل للطلب؛ و{{pending}} قيد التحويل',
+      platformOwesHint: '{{pending}} قيد التحويل',
       paidToAcademy: 'المدفوع للأكاديمية',
       paidToAcademyHint: 'كل ما حُوّل حتى الآن إلى الحساب البنكي للأكاديمية',
       teacherRate: 'نسبة حصة المعلم',

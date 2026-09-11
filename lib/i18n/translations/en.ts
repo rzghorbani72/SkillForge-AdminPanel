@@ -1336,8 +1336,7 @@ export const en = {
       academyRow: 'Academy revenue',
       teacherRow: 'Teacher revenue',
       platformOwes: 'Ready to settle',
-      platformOwesHint:
-        'Held by the platform and requestable; {{pending}} more is pending transfer',
+      platformOwesHint: '{{pending}} is pending transfer',
       paidToAcademy: 'Paid to academy',
       paidToAcademyHint:
         'Everything transferred to the academy bank account so far',

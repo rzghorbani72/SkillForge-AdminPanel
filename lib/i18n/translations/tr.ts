@@ -864,8 +864,7 @@ export const tr = {
       academyRow: 'Akademi geliri',
       teacherRow: 'Öğretmen geliri',
       platformOwes: 'Tasfiyeye hazır',
-      platformOwesHint:
-        'Platformda tutuluyor ve talep edilebilir; {{pending}} transfer bekliyor',
+      platformOwesHint: '{{pending}} transfer bekliyor',
       paidToAcademy: 'Akademiye ödenen',
       paidToAcademyHint:
         'Şimdiye kadar akademi banka hesabına aktarılan toplam',

@@ -1321,8 +1321,7 @@ export const fa = {
       academyRow: 'درآمد آکادمی',
       teacherRow: 'درآمد مدرسان',
       platformOwes: 'قابل تسویه از پلتفرم',
-      platformOwesHint:
-        'نزد منتوما و قابل درخواست؛ {{pending}} هم در انتظار واریز است',
+      platformOwesHint: '{{pending}} در انتظار واریز است',
       paidToAcademy: 'واریزشده به آکادمی',
       paidToAcademyHint:
         'مجموع مبالغی که تاکنون به حساب بانکی آکادمی واریز شده',
