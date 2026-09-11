@@ -11,13 +11,21 @@ import type { KycShebaFields } from './kyc-step-sheba';
 const SHEBA_PATTERN = /^IR\d{24}$/;
 export const KYC_STEPS = ['identity', 'iban', 'card'] as const;
 export type KycWizardStep = (typeof KYC_STEPS)[number];
+export type KycStepIndex = 0 | 1 | 2;
+
+/** First step that is not finished yet — where the manager resumes. */
+export function resumeStep(state: KycState): KycStepIndex {
+  if (!state.shahkar_matched) return 0;
+  if (!state.iban_matched || !state.iban_info_confirmed) return 1;
+  return 2;
+}
 
 export function useKycWizard(
   initial: KycState,
   onSubmitted: (next: KycState) => void
 ) {
   const { t } = useTranslation();
-  const [stepIndex, setStepIndex] = useState(initial.current_step);
+  const [stepIndex, setStepIndex] = useState<KycStepIndex>(resumeStep(initial));
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState<'front' | 'back' | null>(null);
   const [cardDeferred, setCardDeferred] = useState(false);
@@ -34,11 +42,24 @@ export function useKycWizard(
     backPreview: null
   });
 
-  const step = KYC_STEPS[stepIndex] as KycWizardStep;
-  const rateLimited = Boolean(state.verify_locked_until);
-  const inputsLocked = rateLimited || !state.can_edit || busy;
+  const step = KYC_STEPS[stepIndex];
   const awaitingIbanConfirm =
     step === 'iban' && state.iban_matched && !state.iban_info_confirmed;
+  // Each api.ir endpoint locks on its own, so only its step goes read-only.
+  const stepLockedUntil =
+    step === 'identity'
+      ? state.shahkar_attempts.locked_until
+      : step === 'iban' && !awaitingIbanConfirm
+        ? state.iban_attempts.locked_until
+        : null;
+  const rateLimited = Boolean(stepLockedUntil);
+  const inputsLocked = rateLimited || !state.can_edit || busy;
+  const stepAttempts =
+    step === 'identity'
+      ? state.shahkar_attempts
+      : step === 'iban'
+        ? state.iban_attempts
+        : null;
 
   const identityReady = nationalId.trim().length >= 10;
   const shebaReady =
@@ -48,9 +69,17 @@ export function useKycWizard(
 
   const applyState = (next: KycState) => {
     setState(next);
-    setStepIndex(next.current_step);
+    setStepIndex(resumeStep(next));
     setCardDeferred(false);
     onSubmitted(next);
+  };
+
+  /** Steps already confirmed stay reachable so the manager can review them. */
+  const maxReachableStep = Math.max(stepIndex, resumeStep(state));
+  const goToStep = (target: KycStepIndex) => {
+    if (busy || target > maxReachableStep) return;
+    setCardDeferred(false);
+    setStepIndex(target);
   };
 
   const uploadCard = async (side: 'front' | 'back', file: File) => {
@@ -137,9 +166,8 @@ export function useKycWizard(
   };
 
   const goBack = () => {
-    if (busy || stepIndex === 0) return;
-    setCardDeferred(false);
-    setStepIndex((index) => (index - 1) as 0 | 1 | 2);
+    if (stepIndex === 0) return;
+    goToStep((stepIndex - 1) as KycStepIndex);
   };
 
   const nextLabel =
@@ -172,6 +200,9 @@ export function useKycWizard(
     cards,
     inputsLocked,
     awaitingIbanConfirm,
+    stepAttempts,
+    stepLockedUntil,
+    maxReachableStep,
     nextLabel,
     canAdvance,
     setNationalId,
@@ -179,6 +210,7 @@ export function useKycWizard(
     uploadCard,
     goNext,
     goBack,
+    goToStep,
     skipCard: () => setCardDeferred(true),
     resumeCard: () => setCardDeferred(false)
   };

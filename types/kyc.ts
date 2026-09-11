@@ -14,6 +14,11 @@ export type KycMissingField =
   | 'card_front'
   | 'sheba';
 
+export type KycAttemptState = {
+  attempts_remaining: number;
+  locked_until: string | null;
+};
+
 export type KycIbanInfo = {
   name: string;
   bank_name: string;
@@ -24,14 +29,14 @@ export type KycState = {
   status: KycStatus;
   is_owner: boolean;
   can_edit: boolean;
-  current_step: 0 | 1 | 2;
   verification_enabled: boolean;
   shahkar_matched: boolean;
   iban_matched: boolean;
   iban_info_confirmed: boolean;
   settlement_eligible: boolean;
-  verify_attempts_remaining: number;
-  verify_locked_until: string | null;
+  max_verify_attempts: number;
+  shahkar_attempts: KycAttemptState;
+  iban_attempts: KycAttemptState;
   phone_number: string | null;
   legal_entity_name: string | null;
   national_id: string | null;

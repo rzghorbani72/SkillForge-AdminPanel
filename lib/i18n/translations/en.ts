@@ -3231,12 +3231,15 @@ export const en = {
         'National ID vs your login mobile, then Sheba. After Sheba confirm you can request settlement. National-card photos are optional and reviewed by Mentoma staff.',
       ownerOnly:
         'Only the academy creating manager can view and edit identity verification.',
-      stepProgress: 'Step {{current}} of {{total}}',
+      stepDone: 'Confirmed',
+      stepCurrent: 'In progress',
+      stepPending: 'Not started',
+      notProvided: 'Not provided',
       sectionIdentity: 'Mobile and national ID',
       sectionCard: 'National card (optional)',
       sectionFinancial: 'Birth date and Sheba',
       sectionPublisher: 'Address and permit',
-      verifyIdentity: 'Check Shahkar',
+      verifyIdentity: 'Check mobile and national code',
       verifySheba: 'Verify Sheba',
       confirmIban: 'Confirm account details',
       verifying: 'Verifying…',
@@ -3246,7 +3249,7 @@ export const en = {
         'Account details confirmed. You can request a settlement now.',
       confirmedSoFar: 'Confirmed so far',
       identityStepHint:
-        'We check national ID against your logged-in mobile (ShahkarLite).',
+        'We check your national code against the mobile you signed in with.',
       cardStepHint:
         'Upload a clear photo of your national card. This step is optional.',
       cardOptionalHint:
@@ -3256,8 +3259,8 @@ export const en = {
       skipCardForNow: 'I will upload later',
       resumeCardUpload: 'Upload national card',
       shebaStepHint:
-        'We check birth date and Sheba against the national ID from the previous step (IbanMatch).',
-      ibanInfoTitle: 'Account details from Sheba lookup',
+        'We check your Sheba against the national code from the previous step and your birth date.',
+      ibanInfoTitle: 'Bank account details',
       ibanConfirmHint: 'Confirm if the name and bank are correct.',
       ibanInactiveHint: 'This Sheba is not active. Use an active account.',
       ibanActive: 'Account status',
@@ -3271,8 +3274,9 @@ export const en = {
       serviceDisabled:
         'Automatic verification is not configured yet. The form is visible but disabled until API_IR_TOKEN is set on the server.',
       rateLimited:
-        'Too many failed attempts. Wait 24 hours before trying again.',
-      attemptsRemaining: '{{count}} verification attempts left today',
+        'Too many failed attempts on this step. Wait 24 hours. Other steps stay open.',
+      attemptsRemaining:
+        '{{count}} of {{total}} attempts left today for this step',
       firstName: 'First name',
       lastName: 'Last name',
       legalEntityName: 'Legal / full name',

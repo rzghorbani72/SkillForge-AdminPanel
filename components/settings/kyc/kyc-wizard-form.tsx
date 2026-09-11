@@ -8,8 +8,9 @@ import { KycIbanConfirmCard } from './kyc-iban-confirm';
 import { KycStepIdentity } from './kyc-step-identity';
 import { KycStepCard } from './kyc-step-card';
 import { KycStepSheba } from './kyc-step-sheba';
+import { KycStepper } from './kyc-stepper';
 import { KycWizardNav } from './kyc-wizard-nav';
-import { KYC_STEPS, useKycWizard } from './use-kyc-wizard';
+import { resumeStep, useKycWizard } from './use-kyc-wizard';
 
 type Props = {
   initial: KycState;
@@ -31,6 +32,9 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
     cards,
     inputsLocked,
     awaitingIbanConfirm,
+    stepAttempts,
+    stepLockedUntil,
+    maxReachableStep,
     nextLabel,
     canAdvance
   } = wizard;
@@ -41,17 +45,18 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
         <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
           {t('settings.kyc.serviceDisabled')}
         </p>
-      ) : state.verify_locked_until ? (
+      ) : stepLockedUntil ? (
         <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
           {t('settings.kyc.rateLimited')}
         </p>
-      ) : (
+      ) : stepAttempts ? (
         <p className="text-xs text-muted-foreground">
           {t('settings.kyc.attemptsRemaining', {
-            count: state.verify_attempts_remaining
+            count: stepAttempts.attempts_remaining,
+            total: state.max_verify_attempts
           })}
         </p>
-      )}
+      ) : null}
 
       {state.settlement_eligible ? (
         <p className="rounded-lg border border-success/30 bg-success/5 p-3 text-sm">
@@ -59,12 +64,12 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
         </p>
       ) : null}
 
-      <p className="text-sm font-medium">
-        {t('settings.kyc.stepProgress', {
-          current: stepIndex + 1,
-          total: KYC_STEPS.length
-        })}
-      </p>
+      <KycStepper
+        current={stepIndex}
+        doneUpto={resumeStep(state)}
+        maxReachable={maxReachableStep}
+        onSelect={wizard.goToStep}
+      />
 
       {step === 'identity' ? (
         <section className="space-y-3">
