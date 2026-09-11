@@ -6,6 +6,7 @@ import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { PeriodPicker } from '@/components/shared/period-picker';
 import { AcademyPaymentsTable } from '@/components/financial/academy-payments-table';
+import { AcademySettlementPanel } from '@/components/financial/settlement/academy-settlement-panel';
 
 export default function AcademyFinancialPage() {
   const { t } = useTranslation();
@@ -39,6 +40,8 @@ export default function AcademyFinancialPage() {
         </div>
         <PeriodPicker period={period} />
       </header>
+
+      <AcademySettlementPanel academyId={currentAcademy.id} />
 
       <AcademyPaymentsTable
         startDate={period.startIso}

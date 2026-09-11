@@ -10,6 +10,8 @@ export type PaymentChannel =
 export type MoneyCustody = 'PLATFORM' | 'ACADEMY';
 
 export type SettlementBlocker =
+  | 'KYC_REQUIRED'
+  | 'KYC_PENDING'
   | 'NO_BANK_ACCOUNT'
   | 'BANK_ACCOUNT_PENDING'
   | 'BANK_ACCOUNT_REJECTED'

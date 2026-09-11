@@ -48,6 +48,7 @@ export function SettlementHistoryTable({
                   <TableHead>{t('settlement.history.requestedAt')}</TableHead>
                   <TableHead>{t('settlement.history.amount')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
+                  <TableHead>{t('settlement.history.settledAt')}</TableHead>
                   <TableHead>{t('settlement.history.destination')}</TableHead>
                   <TableHead>{t('settlement.history.bankRef')}</TableHead>
                 </TableRow>
@@ -64,6 +65,11 @@ export function SettlementHistoryTable({
                         status={record.status.toLowerCase()}
                         label={t(`settlement.status.${record.status}`)}
                       />
+                    </TableCell>
+                    <TableCell>
+                      {record.processed_at
+                        ? formatDate(record.processed_at)
+                        : '—'}
                     </TableCell>
                     <TableCell dir="ltr" className="font-mono text-xs">
                       {maskSheba(record.sheba_number)}

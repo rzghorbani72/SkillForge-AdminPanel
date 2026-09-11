@@ -5541,7 +5541,19 @@ export const en = {
       manualHint:
         'Transfers are made manually during banking hours; the bank reference appears here once it is done.'
     },
+    panel: {
+      heldTitle: 'Held by Mentoma to settle',
+      heldHint:
+        'Student money still with the platform. In progress: {{pending}}. Already settled: {{withdrawn}}.',
+      request: 'Request settlement',
+      oncePerDay: 'You can send one request per day.',
+      details: 'Bank account and settlement details'
+    },
     blockers: {
+      KYC_REQUIRED:
+        'Identity verification (احراز هویت) must be completed and approved before you can request a settlement.',
+      KYC_PENDING:
+        'Identity verification is waiting for Mentoma staff approval.',
       NO_BANK_ACCOUNT: 'You have not added a Sheba number yet.',
       BANK_ACCOUNT_PENDING: 'Your Sheba number is being reviewed.',
       BANK_ACCOUNT_REJECTED:
@@ -5560,9 +5572,11 @@ export const en = {
     },
     history: {
       title: 'Settlement history',
-      empty: 'You have not requested a settlement yet.',
+      empty:
+        'No settlements yet. Staff transfers and your requests appear here.',
       requestedAt: 'Requested at',
       amount: 'Amount',
+      settledAt: 'Settled at',
       destination: 'Destination account',
       bankRef: 'Bank reference'
     }

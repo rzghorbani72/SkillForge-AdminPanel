@@ -1,14 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowUpRight, Info } from 'lucide-react';
+import { ArrowUpRight, Info, ShieldCheck } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import Link from '@/components/ui/link';
 import { settlementApi, type SettlementSummary } from '@/lib/api-settlement';
+import { KYC_IDENTITY_PATH } from '@/lib/kyc-error';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -91,6 +93,16 @@ export function SettlementRequestCard({
               </li>
             ))}
           </ul>
+        ) : null}
+
+        {summary.blockers.includes('KYC_REQUIRED') ||
+        summary.blockers.includes('KYC_PENDING') ? (
+          <Button asChild variant="outline" size="sm" className="gap-2">
+            <Link href={KYC_IDENTITY_PATH}>
+              <ShieldCheck className="h-4 w-4" />
+              {t('settings.kyc.goToIdentity')}
+            </Link>
+          </Button>
         ) : null}
 
         <div className="grid gap-4 sm:grid-cols-2">

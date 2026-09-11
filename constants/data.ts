@@ -418,6 +418,14 @@ export const navItems: NavItem[] = [
         scope: 'academy'
       },
       {
+        title: 'Settlement',
+        href: '/financial/academy/settlement',
+        icon: 'banknote' as IconType,
+        label: 'settlement',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
+        scope: 'academy'
+      },
+      {
         title: 'Student Vouchers',
         href: '/coupons',
         icon: 'percent' as IconType,

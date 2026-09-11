@@ -121,15 +121,6 @@ export function AcademyPaymentsTable({
 
   return (
     <section className="space-y-3">
-      <div>
-        <h2 className="text-lg font-semibold tracking-tight">
-          {t('financial.store.overview.studentPayments')}
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          {t('financial.store.overview.studentPaymentsHint')}
-        </p>
-      </div>
-
       <div className="flex w-fit flex-wrap gap-1 rounded-lg border bg-muted/30 p-1">
         {STATUS_TABS.map((tab) => (
           <button
@@ -186,7 +177,8 @@ export function AcademyPaymentsTable({
               </TableRow>
             ) : (
               payments.map((payment) => {
-                const gateway = payment.gateway ?? payment.payment_method;
+                const gateway =
+                  payment.provider ?? payment.gateway ?? payment.payment_method;
                 return (
                   <TableRow key={payment.id}>
                     <TableCell className="font-medium">
