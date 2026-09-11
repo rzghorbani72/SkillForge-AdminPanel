@@ -3236,7 +3236,7 @@ export const en = {
       sectionCard: 'National card',
       sectionFinancial: 'Bank details',
       sectionPublisher: 'Address and permit',
-      verifyIdentity: 'Verify with Shahkar',
+      verifyIdentity: 'Confirm',
       verifySheba: 'Verify Sheba',
       verifying: 'Verifying…',
       shahkarMatched: 'National ID matched your login phone',

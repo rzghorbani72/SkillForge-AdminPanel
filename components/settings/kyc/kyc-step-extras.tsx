@@ -30,6 +30,7 @@ export function KycStepExtras({ values, disabled = false, onChange }: Props) {
             onChange({ ...values, contactAddress: event.target.value })
           }
           rows={3}
+          className="max-w-xl"
           disabled={disabled}
         />
         <p className="text-xs text-muted-foreground">

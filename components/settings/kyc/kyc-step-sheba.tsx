@@ -20,8 +20,8 @@ export function KycStepSheba({ values, disabled = false, onChange }: Props) {
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
+    <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
+      <div className="space-y-2 sm:col-span-2">
         <Label htmlFor="kyc-sheba">{t('settings.kyc.sheba')}</Label>
         <Input
           id="kyc-sheba"
@@ -34,7 +34,7 @@ export function KycStepSheba({ values, disabled = false, onChange }: Props) {
           }}
           placeholder="IR062960000000100324200001"
           dir="ltr"
-          className="font-mono"
+          className="max-w-md font-mono"
           required
           disabled={disabled}
         />

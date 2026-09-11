@@ -1,8 +1,12 @@
 'use client';
 
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { LocalizedDigitsInput } from '@/components/ui/localized-digits-input';
 import { useTranslation } from '@/lib/i18n/hooks';
+
+const NATIONAL_ID_MAX_LENGTH = 11;
 
 export type KycIdentityFields = {
   firstName: string;
@@ -27,34 +31,32 @@ export function KycStepIdentity({
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="kyc-first-name">{t('settings.kyc.firstName')}</Label>
-          <Input
-            id="kyc-first-name"
-            value={values.firstName}
-            onChange={(event) =>
-              onChange({ ...values, firstName: event.target.value })
-            }
-            required
-            disabled={disabled}
-            autoComplete="given-name"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="kyc-last-name">{t('settings.kyc.lastName')}</Label>
-          <Input
-            id="kyc-last-name"
-            value={values.lastName}
-            onChange={(event) =>
-              onChange({ ...values, lastName: event.target.value })
-            }
-            required
-            disabled={disabled}
-            autoComplete="family-name"
-          />
-        </div>
+    <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
+      <div className="space-y-2">
+        <Label htmlFor="kyc-first-name">{t('settings.kyc.firstName')}</Label>
+        <Input
+          id="kyc-first-name"
+          value={values.firstName}
+          onChange={(event) =>
+            onChange({ ...values, firstName: event.target.value })
+          }
+          required
+          disabled={disabled}
+          autoComplete="given-name"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="kyc-last-name">{t('settings.kyc.lastName')}</Label>
+        <Input
+          id="kyc-last-name"
+          value={values.lastName}
+          onChange={(event) =>
+            onChange({ ...values, lastName: event.target.value })
+          }
+          required
+          disabled={disabled}
+          autoComplete="family-name"
+        />
       </div>
 
       <div className="space-y-2">
@@ -74,13 +76,17 @@ export function KycStepIdentity({
 
       <div className="space-y-2">
         <Label htmlFor="kyc-national-id">{t('settings.kyc.nationalId')}</Label>
-        <Input
+        <LocalizedDigitsInput
           id="kyc-national-id"
           value={values.nationalId}
-          onChange={(event) =>
-            onChange({ ...values, nationalId: event.target.value })
-          }
-          inputMode="numeric"
+          onChange={(nationalId) => {
+            const digits = nationalId
+              .replace(/\D/g, '')
+              .slice(0, NATIONAL_ID_MAX_LENGTH);
+            onChange({ ...values, nationalId: digits });
+          }}
+          maxLength={NATIONAL_ID_MAX_LENGTH}
+          autoComplete="off"
           required
           disabled={disabled}
         />
@@ -91,14 +97,12 @@ export function KycStepIdentity({
 
       <div className="space-y-2">
         <Label htmlFor="kyc-birth-date">{t('settings.kyc.birthDate')}</Label>
-        <Input
+        <DatePicker
           id="kyc-birth-date"
-          type="date"
           value={values.birthDate}
-          onChange={(event) =>
-            onChange({ ...values, birthDate: event.target.value })
-          }
-          required
+          onChange={(birthDate) => onChange({ ...values, birthDate })}
+          placeholder={t('datePicker.pickDate')}
+          maxDate={new Date()}
           disabled={disabled}
         />
       </div>

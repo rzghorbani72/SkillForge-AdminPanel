@@ -2965,7 +2965,7 @@ export const fa = {
       sectionCard: 'کارت ملی',
       sectionFinancial: 'اطلاعات بانکی',
       sectionPublisher: 'نشانی و مجوز',
-      verifyIdentity: 'تأیید با شاهکار',
+      verifyIdentity: 'تأیید',
       verifySheba: 'تأیید شبا',
       verifying: 'در حال استعلام…',
       shahkarMatched: 'کد ملی با شماره موبایل ورود مطابقت داشت',

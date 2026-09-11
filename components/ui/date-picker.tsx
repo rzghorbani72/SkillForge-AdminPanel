@@ -30,6 +30,7 @@ interface DatePickerProps {
   placeholder?: string;
   className?: string;
   minDate?: Date;
+  maxDate?: Date;
 }
 
 /**
@@ -46,7 +47,8 @@ export function DatePicker({
   disabled,
   placeholder,
   className,
-  minDate
+  minDate,
+  maxDate
 }: DatePickerProps) {
   const { language } = useTranslation();
   const isPersian = language === 'fa';
@@ -77,6 +79,7 @@ export function DatePicker({
           : []
       }
       minDate={minDate}
+      maxDate={maxDate}
       disabled={disabled}
       placeholder={placeholder}
       inputClass={cn(
