@@ -28,6 +28,7 @@ import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
 import { currentLanguage } from '@/lib/current-language';
 import { isStudentRankSeat } from '@/components/academies/academy-helpers';
 import { setLogContext } from '@/lib/logging/browser-context';
+import { identifyAnalytics } from '@/lib/analytics/analytics';
 
 interface StoreContextValue {
   academies: Academy[];
@@ -100,11 +101,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     user?.academyId ?? user?.profile?.academy_id ?? null;
 
   useEffect(() => {
-    setLogContext({
+    const identity = {
       user_id: user?.id,
       academy_id: selectedAcademy?.id ?? preferredAcademyId,
       role: user?.role
-    });
+    };
+    setLogContext(identity);
+    identifyAnalytics(identity);
   }, [user?.id, user?.role, selectedAcademy?.id, preferredAcademyId]);
 
   const isPlatformStaff =

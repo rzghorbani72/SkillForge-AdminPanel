@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { track } from '@/lib/analytics/analytics';
 import {
   Dialog,
   DialogContent,
@@ -142,6 +143,7 @@ export function AddUserDialog({
         password: form.password || undefined
       });
 
+      track('MemberAdded', { role: form.role, created_account: needsAccount });
       ErrorHandler.showSuccess(t('members.memberAdded'));
       handleClose(false);
       onSuccess?.();

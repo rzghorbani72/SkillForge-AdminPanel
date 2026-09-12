@@ -7,6 +7,7 @@ import { useStore } from '@/hooks/useStore';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { createAcademy, type AcademyCreateInput } from '@/lib/academy-create';
 import { logger } from '@/lib/logging/app-logger';
+import { track } from '@/lib/analytics/analytics';
 
 /**
  * Creating the first academy changes every academy-scoped request in the panel,
@@ -31,6 +32,7 @@ export function useCreateFirstAcademy() {
         logger.ok('Onboarding', 'FirstAcademyCreated', {
           academy_id: result.id ?? ''
         });
+        track('AcademyCreated', { academy_id: result.id ?? '' });
         toast.success(t('auth.academyCreatedTitle'));
         setTimeout(() => {
           window.location.href = '/dashboard';

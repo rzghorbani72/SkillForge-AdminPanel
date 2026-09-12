@@ -1,6 +1,7 @@
 packages:
   - '.'
 allowBuilds:
+  '@sentry/cli': false
   core-js: false
   sharp: true
   unrs-resolver: true

@@ -29,6 +29,16 @@ export interface LogEntry extends LogFields {
 
 export type LogSink = (entry: LogEntry) => void;
 
+const ENVELOPE_KEYS = [
+  'event',
+  'action',
+  'level',
+  'ts',
+  'app',
+  'env',
+  'release'
+] as const;
+
 export interface LoggerConfig<C extends LogCatalog> {
   catalog: C;
   app: LogApp;
@@ -184,19 +194,20 @@ export function createLogger<C extends LogCatalog>(
     level: LogLevel,
     fields: LogFields
   ): void => {
-    const details = flattenFields(fields);
-    if (level !== 'error') delete details.error_stack;
-    // Envelope keys are written LAST so callers can never overwrite them.
+    const extra: LogFields = { ...getContext(), ...flattenFields(fields) };
+    if (level !== 'error') delete extra.error_stack;
+    // Envelope keys come first (readable in a console) and can never be
+    // overwritten: any caller field with an envelope name is dropped.
+    for (const key of ENVELOPE_KEYS) delete extra[key];
     sink({
-      ...getContext(),
-      ...details,
-      ts: new Date().toISOString(),
+      event,
+      action,
       level,
+      ts: new Date().toISOString(),
       app: config.app,
       env,
       release,
-      event,
-      action
+      ...extra
     });
   };
 

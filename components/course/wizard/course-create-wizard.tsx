@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { track } from '@/lib/analytics/analytics';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -104,6 +105,7 @@ export default function CourseCreateWizard() {
       const id = newCourseId(response);
       if (!id) throw new Error('Course creation returned no id');
 
+      track('CourseCreated', { course_id: id, course_type: courseType });
       toast.success(t('courses.createdDraftToast'));
       router.push(`/courses/${id}/edit?step=${step}`);
     } catch (error) {
