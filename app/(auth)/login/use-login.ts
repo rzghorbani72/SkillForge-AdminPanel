@@ -19,6 +19,7 @@ import {
 } from '@/lib/auth-login-errors';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { notifyOtpSent } from '@/lib/otp-notify';
+import { setSelectedAcademyId } from '@/lib/store-utils';
 import type { AccountIdentity } from '@/types/auth';
 import { nextStepFor } from '@/lib/auth-identify';
 import {
@@ -337,9 +338,11 @@ export function useLogin() {
       // password), pick the academy by switching. Logging in again would replay a
       // password that is spent or already replaced, failing on a valid session.
       if (sessionReadyRef.current) {
+        apiClient.resumeRequests();
         const switched = (await apiClient.switchAcademy(academyId)) as {
           data?: LoginResponse & { data?: LoginResponse };
         };
+        setSelectedAcademyId(academyId);
         toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
 
         // Someone who just picked an academy is academy staff by definition, so

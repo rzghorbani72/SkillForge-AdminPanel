@@ -20,4 +20,5 @@ export async function resetAnonymousAuthClient(): Promise<void> {
   await logout().catch(() => undefined);
   wipeNonPlatformClient();
   await resetClientStores().catch(() => undefined);
+  apiClient.resumeRequests();
 }

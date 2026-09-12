@@ -472,6 +472,7 @@ class ApiClient {
       endpoint.includes('/auth/confirm-phone') ||
       endpoint.includes('/auth/set-new-password') ||
       endpoint.includes('/auth/select-academy') ||
+      endpoint.includes('/auth/switch-academy') ||
       endpoint.includes('/auth/panel-handoff') ||
       endpoint.includes('/auth/academies/lookup') ||
       endpoint.includes('/auth/csrf')

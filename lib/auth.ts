@@ -96,6 +96,8 @@ class AuthService {
     if (typeof window === 'undefined') return;
     wipeNonPlatformStorage();
     if (!user) return;
+    // Drop a leftover 401/legal pause from the login-page session probe.
+    apiClient.resumeRequests();
 
     const academyId =
       user.currentProfile?.academy_id ??
