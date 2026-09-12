@@ -1549,6 +1549,7 @@ export const fa = {
     removeAcademy: 'حذف آکادمی',
     removeAcademyLocked:
       'این آکادمی تراکنش دارد و حذف نمی‌شود؛ می‌توانید آن را تعلیق یا مسدود کنید.',
+    removeAcademyLockedManager: 'این آکادمی پرداخت دارد و حذف نمی‌شود.',
     removeAcademyConfirm:
       'این آکادمی از سایت عمومی و این فهرست حذف می‌شود. سوابق دانشجویان و پرداخت‌ها باقی می‌ماند.',
     landingScreenshots: 'تصویرهای صفحه اصلی',

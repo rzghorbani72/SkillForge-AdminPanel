@@ -1562,6 +1562,8 @@ export const en = {
     removeAcademy: 'Remove academy',
     removeAcademyLocked:
       'This academy has transactions and cannot be deleted. You can suspend or ban it.',
+    removeAcademyLockedManager:
+      'This academy has payments and cannot be deleted.',
     removeAcademyConfirm:
       'This academy will leave the public site and this list. Student records and payments stay saved.',
     landingScreenshots: 'Landing screenshots',

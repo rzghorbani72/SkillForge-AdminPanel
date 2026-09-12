@@ -1017,6 +1017,7 @@ export const tr = {
     listedToast: 'Akademi herkese açık sitede listeleniyor',
     hiddenToast: 'Akademi herkese açık siteden gizlendi',
     removeAcademy: 'Akademiyi kaldır',
+    removeAcademyLockedManager: 'Bu akademide ödeme var ve silinemez.',
     removeAcademyConfirm:
       'Bu akademi herkese açık siteden ve bu listeden kalkar. Öğrenci kayıtları ve ödemeler saklanır.',
     landingScreenshots: 'Tanıtım ekran görüntüleri'

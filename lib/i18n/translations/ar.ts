@@ -993,6 +993,7 @@ export const ar = {
     listedToast: 'المعهد ظاهر في الموقع العام',
     hiddenToast: 'تم إخفاء المعهد عن الموقع العام',
     removeAcademy: 'إزالة المعهد',
+    removeAcademyLockedManager: 'هذا المعهد فيه مدفوعات ولا يمكن حذفه.',
     removeAcademyConfirm:
       'سيختفي هذا المعهد من الموقع العام ومن هذه القائمة. سجلات الطلاب والمدفوعات تبقى محفوظة.',
     landingScreenshots: 'لقطات الصفحة الرئيسية'

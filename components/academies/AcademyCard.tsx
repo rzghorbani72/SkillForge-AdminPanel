@@ -13,6 +13,7 @@ import {
   academyDomain,
   canEditAcademy,
   canEnterAcademy,
+  canRemoveAcademy,
   type AcademyRow
 } from './academy-helpers';
 import { AcademyStaffActions } from './academy-staff-actions';
@@ -83,7 +84,7 @@ type AcademyCardProps = {
   onDetails: (academy: Academy) => void;
   onEdit: (academy: Academy) => void;
   switching: string | null;
-  showStaffActions?: boolean;
+  platformControls?: boolean;
   onStaffChanged?: () => void;
   t: (k: string) => string;
 };
@@ -96,7 +97,7 @@ export function AcademyCard({
   onDetails,
   onEdit,
   switching,
-  showStaffActions = false,
+  platformControls = false,
   onStaffChanged,
   t
 }: AcademyCardProps) {
@@ -227,8 +228,12 @@ export function AcademyCard({
             <Info className={ACTION_ICON} />
             {t('stores.details')}
           </Button>
-          {showStaffActions && onStaffChanged && (
-            <AcademyStaffActions academy={academy} onChanged={onStaffChanged} />
+          {canRemoveAcademy(academy) && onStaffChanged && (
+            <AcademyStaffActions
+              academy={academy}
+              onChanged={onStaffChanged}
+              platformControls={platformControls}
+            />
           )}
         </div>
       </div>

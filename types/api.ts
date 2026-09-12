@@ -237,8 +237,10 @@ export interface Academy {
   /** Set while platform staff have suspended the academy; data is kept. */
   suspended_at?: string | null;
   suspended_reason?: string | null;
-  /** Platform-staff list only: money moved here, so the academy cannot be deleted. */
+  /** Money moved here, so the academy cannot be deleted. */
   has_transactions?: boolean;
+  /** This caller may delete the academy if it has no transactions. */
+  can_remove?: boolean;
   country_code?: string;
   currency?: string;
   currency_symbol?: string;

@@ -21,6 +21,10 @@ export function canEditAcademy(academy: Academy): boolean {
   return ['MANAGER', 'ADMIN'].includes((academy.userRole ?? '').toUpperCase());
 }
 
+export function canRemoveAcademy(academy: Academy): boolean {
+  return academy.can_remove === true;
+}
+
 export function academyDomain(academy: Academy): string {
   return (
     academy.domain?.private_address ??

@@ -23,7 +23,7 @@ interface AcademiesListProps {
   onDetails: (academy: Academy) => void;
   onEdit: (academy: Academy) => void;
   onCreate: () => void;
-  showStaffActions?: boolean;
+  platformControls?: boolean;
   onStaffChanged?: () => void;
   t: (key: string, params?: InterpolationParams) => string;
 }
@@ -42,7 +42,7 @@ export function AcademiesList({
   onDetails,
   onEdit,
   onCreate,
-  showStaffActions,
+  platformControls,
   onStaffChanged,
   t
 }: AcademiesListProps) {
@@ -72,7 +72,7 @@ export function AcademiesList({
             onDetails={onDetails}
             onEdit={onEdit}
             switching={switching}
-            showStaffActions={showStaffActions}
+            platformControls={platformControls}
             onStaffChanged={onStaffChanged}
             t={t}
           />

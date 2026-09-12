@@ -38,11 +38,13 @@ type AcademyStaffActionsProps = {
     | 'has_transactions'
   >;
   onChanged: () => void;
+  platformControls?: boolean;
 };
 
 export function AcademyStaffActions({
   academy,
-  onChanged
+  onChanged,
+  platformControls = false
 }: AcademyStaffActionsProps) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
@@ -111,42 +113,54 @@ export function AcademyStaffActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            disabled={busy}
-            onSelect={() => setShowcaseOpen(true)}
-          >
-            <ImageIcon className="me-2 h-4 w-4" />
-            {t('stores.landingScreenshots')}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={busy}
-            onSelect={() => void setListed(!listed)}
-          >
-            {listed ? (
-              <EyeOff className="me-2 h-4 w-4" />
-            ) : (
-              <Eye className="me-2 h-4 w-4" />
-            )}
-            {listed ? t('stores.hideFromPublic') : t('stores.showOnPublic')}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={busy}
-            onSelect={() =>
-              suspended ? void liftSuspension() : setSuspendOpen(true)
-            }
-          >
-            {suspended ? (
-              <Play className="me-2 h-4 w-4" />
-            ) : (
-              <Pause className="me-2 h-4 w-4" />
-            )}
-            {suspended
-              ? t('accountActions.unsuspend')
-              : t('accountActions.suspend')}
-          </DropdownMenuItem>
+          {platformControls && (
+            <>
+              <DropdownMenuItem
+                disabled={busy}
+                onSelect={() => setShowcaseOpen(true)}
+              >
+                <ImageIcon className="me-2 h-4 w-4" />
+                {t('stores.landingScreenshots')}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={busy}
+                onSelect={() => void setListed(!listed)}
+              >
+                {listed ? (
+                  <EyeOff className="me-2 h-4 w-4" />
+                ) : (
+                  <Eye className="me-2 h-4 w-4" />
+                )}
+                {listed ? t('stores.hideFromPublic') : t('stores.showOnPublic')}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={busy}
+                onSelect={() =>
+                  suspended ? void liftSuspension() : setSuspendOpen(true)
+                }
+              >
+                {suspended ? (
+                  <Play className="me-2 h-4 w-4" />
+                ) : (
+                  <Pause className="me-2 h-4 w-4" />
+                )}
+                {suspended
+                  ? t('accountActions.unsuspend')
+                  : t('accountActions.suspend')}
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuItem
             disabled={busy || !deletable}
-            title={deletable ? undefined : t('stores.removeAcademyLocked')}
+            title={
+              deletable
+                ? undefined
+                : t(
+                    platformControls
+                      ? 'stores.removeAcademyLocked'
+                      : 'stores.removeAcademyLockedManager'
+                  )
+            }
             className="text-destructive focus:text-destructive"
             onSelect={() => setConfirmRemove(true)}
           >
@@ -155,25 +169,29 @@ export function AcademyStaffActions({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <AcademyShowcaseModal
-        academy={academy}
-        open={showcaseOpen}
-        onClose={() => setShowcaseOpen(false)}
-        onSaved={onChanged}
-      />
-      <ReasonDialog
-        open={suspendOpen}
-        onOpenChange={setSuspendOpen}
-        title={t('accountActions.suspendTitle')}
-        description={t('accountActions.suspendDescription')}
-        subject={academy.name}
-        confirmLabel={t('accountActions.suspend')}
-        onConfirm={async (reason) => {
-          await apiClient.suspendAcademy(academy.id, reason);
-          toast.success(t('accountActions.suspended_ok'));
-        }}
-        onDone={onChanged}
-      />
+      {platformControls && (
+        <>
+          <AcademyShowcaseModal
+            academy={academy}
+            open={showcaseOpen}
+            onClose={() => setShowcaseOpen(false)}
+            onSaved={onChanged}
+          />
+          <ReasonDialog
+            open={suspendOpen}
+            onOpenChange={setSuspendOpen}
+            title={t('accountActions.suspendTitle')}
+            description={t('accountActions.suspendDescription')}
+            subject={academy.name}
+            confirmLabel={t('accountActions.suspend')}
+            onConfirm={async (reason) => {
+              await apiClient.suspendAcademy(academy.id, reason);
+              toast.success(t('accountActions.suspended_ok'));
+            }}
+            onDone={onChanged}
+          />
+        </>
+      )}
       <ConfirmDeleteModal
         open={confirmRemove}
         onOpenChange={setConfirmRemove}

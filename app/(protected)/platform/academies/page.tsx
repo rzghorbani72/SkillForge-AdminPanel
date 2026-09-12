@@ -126,7 +126,10 @@ export default function PlatformAcademiesPage() {
               is_active: row.is_active,
               listed_publicly: listed?.listed_publicly !== false,
               showcase_desktop: listed?.showcase_desktop ?? null,
-              showcase_mobile: listed?.showcase_mobile ?? null
+              showcase_mobile: listed?.showcase_mobile ?? null,
+              has_transactions: listed?.has_transactions,
+              can_remove: listed?.can_remove,
+              suspended_at: listed?.suspended_at
             };
           }) as Academy[]
         );
@@ -778,6 +781,7 @@ export default function PlatformAcademiesPage() {
                         <AcademyStaffActions
                           academy={store}
                           onChanged={() => setListVersion((n) => n + 1)}
+                          platformControls
                         />
                       )}
                     </div>
