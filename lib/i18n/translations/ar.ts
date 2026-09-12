@@ -2067,6 +2067,7 @@ export const ar = {
     colEmail: 'البريد الإلكتروني',
     colPhone: 'الهاتف',
     colActions: 'الإجراءات',
+    joinDate: 'تاريخ الانضمام',
     detailSheetDescription:
       'تفاصيل المستخدم وسجل الشراء وأدوار الأكاديمية وإجراءات الدعم',
     loadingDetails: 'جارٍ تحميل التفاصيل...',

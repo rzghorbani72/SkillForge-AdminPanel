@@ -47,6 +47,8 @@ export interface User {
   academy_name?: string | null;
   platform_role?: 'PLATFORM_OWNER' | 'ADMIN' | 'FINANCE' | 'SUPPORT';
   created_at: string;
+  /** When this person first joined Mentoma (User.created_at). */
+  joined_at?: string | null;
   updated_at: string;
   profiles?: UserProfile[];
 }

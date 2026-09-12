@@ -17,9 +17,13 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip';
+import { CopyableValue } from '@/components/shared/copyable-value';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { getRoleDisplayLabel } from '@/lib/i18n/role-label';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { formatPhoneDisplay, toEnglishDigits } from '@/lib/phone-utils';
 import { ReasonDialog } from '@/components/platform/reason-dialog';
 import { ResetUserDialog } from '@/components/platform/reset-user-dialog';
 import type { User } from '@/types/api';
@@ -54,7 +58,8 @@ export function AcademyMembersTable({
   canModerate?: boolean;
   onChanged?: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const formatDate = useDateFormat();
   const [banTarget, setBanTarget] = useState<User | null>(null);
   const [resetTarget, setResetTarget] = useState<User | null>(null);
 
@@ -87,6 +92,7 @@ export function AcademyMembersTable({
               <TableHead>{t('users.colRole')}</TableHead>
               <TableHead>{t('platformUsers.academy')}</TableHead>
               <TableHead>{t('users.colPhone')}</TableHead>
+              <TableHead>{t('users.joinDate')}</TableHead>
               {canModerate && <TableHead className="w-20" />}
             </TableRow>
           </TableHeader>
@@ -107,14 +113,30 @@ export function AcademyMembersTable({
                 </TableCell>
                 <TableCell>
                   <Badge variant="secondary">
-                    {row.role_label || row.role_name || '—'}
+                    {row.role_name
+                      ? getRoleDisplayLabel(
+                          { name: row.role_name, label: row.role_label },
+                          t
+                        )
+                      : '—'}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {row.academy_name || '—'}
                 </TableCell>
-                <TableCell dir="ltr" className="text-end tabular-nums">
-                  {row.phone_number || '—'}
+                <TableCell>
+                  {row.phone_number ? (
+                    <CopyableValue
+                      value={toEnglishDigits(row.phone_number)}
+                      display={formatPhoneDisplay(row.phone_number, language)}
+                      className="tabular-nums"
+                    />
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-muted-foreground">
+                  {formatDate(row.joined_at || row.created_at)}
                 </TableCell>
                 {canModerate && (
                   <TableCell>

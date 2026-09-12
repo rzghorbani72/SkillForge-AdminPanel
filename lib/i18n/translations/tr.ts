@@ -2134,6 +2134,7 @@ export const tr = {
     colEmail: 'E-posta',
     colPhone: 'Telefon',
     colActions: 'İşlemler',
+    joinDate: 'Katılım tarihi',
     detailSheetDescription:
       'Kullanıcı detayı, satın alma geçmişi, enstitü rolleri ve destek işlemleri',
     loadingDetails: 'Detaylar yükleniyor...',
