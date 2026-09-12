@@ -10,11 +10,28 @@ export type StormVerdict =
   | { readonly tripped: false }
   | { readonly tripped: true; readonly count: number };
 
-const hitsByRoute = new Map<string, number[]>();
+const hitsByKey = new Map<string, number[]>();
 
 export function routeKey(method: string, path: string): string {
   const pathname = path.split('?')[0] ?? path;
   return `${method.toUpperCase()} ${pathname}`;
+}
+
+/** Sliding-window counter for any key (a route, an IP, …). */
+export function trackKey(
+  key: string,
+  maxHits: number,
+  windowMs: number,
+  now = Date.now()
+): StormVerdict {
+  const recent = (hitsByKey.get(key) ?? []).filter((ts) => now - ts < windowMs);
+  recent.push(now);
+  if (recent.length > maxHits) recent.shift();
+  hitsByKey.set(key, recent);
+
+  return recent.length >= maxHits
+    ? { tripped: true, count: recent.length }
+    : { tripped: false };
 }
 
 export function trackRoute(
@@ -22,19 +39,14 @@ export function trackRoute(
   path: string,
   now = Date.now()
 ): StormVerdict {
-  const key = routeKey(method, path);
-  const recent = (hitsByRoute.get(key) ?? []).filter(
-    (ts) => now - ts < STORM_WINDOW_MS
+  return trackKey(
+    routeKey(method, path),
+    STORM_MAX_HITS_PER_ROUTE,
+    STORM_WINDOW_MS,
+    now
   );
-  recent.push(now);
-  if (recent.length > STORM_MAX_HITS_PER_ROUTE) recent.shift();
-  hitsByRoute.set(key, recent);
-
-  return recent.length >= STORM_MAX_HITS_PER_ROUTE
-    ? { tripped: true, count: recent.length }
-    : { tripped: false };
 }
 
 export function resetStormGuard(): void {
-  hitsByRoute.clear();
+  hitsByKey.clear();
 }

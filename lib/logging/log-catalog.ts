@@ -12,12 +12,12 @@ export const LOG_CATALOG = {
     actions: {
       ConsentAccepted: {
         description: 'GDPR consent accepted.',
-        status: 'ok',
+        level: 'info',
         fields: ['surface'] as const
       },
       ConsentDeclined: {
         description: 'GDPR consent declined.',
-        status: 'ok',
+        level: 'info',
         fields: ['surface'] as const
       }
     }
@@ -27,12 +27,12 @@ export const LOG_CATALOG = {
     actions: {
       PlaybackSessionFailed: {
         description: 'Media playback session failed.',
-        status: 'error',
+        level: 'error',
         fields: ['error_name', 'video_id'] as const
       },
       PlayerError: {
         description: 'Media player error.',
-        status: 'error',
+        level: 'error',
         fields: ['error_details', 'error_type', 'video_id'] as const
       }
     }
@@ -42,28 +42,28 @@ export const LOG_CATALOG = {
     actions: {
       AcademyDialogShown: {
         description: 'Onboarding academy dialog shown.',
-        status: 'ok',
+        level: 'info',
         fields: [] as const
       },
       FirstAcademyCreated: {
         description: 'Onboarding first academy created.',
-        status: 'ok',
+        level: 'info',
         fields: ['academy_id'] as const
       },
       SetupBannerDismissed: {
         description: 'Manager dismissed the first-run setup checklist.',
-        status: 'ok',
+        level: 'info',
         fields: [] as const
       },
       SetupBannerShown: {
         description: 'First-run setup checklist shown on the dashboard.',
-        status: 'ok',
+        level: 'info',
         fields: [] as const
       },
       SetupStepOpened: {
         description:
           'Manager opened a first-run setup step from the dashboard banner.',
-        status: 'ok',
+        level: 'info',
         fields: ['step'] as const
       }
     }
@@ -75,7 +75,7 @@ export const LOG_CATALOG = {
       Tripped: {
         description:
           "A single route exceeded the per-window hit limit in the manager's browser; protected routes force a sign-out and storage wipe.",
-        status: 'error',
+        level: 'error',
         fields: [
           'count',
           'is_protected',
@@ -93,13 +93,13 @@ export const LOG_CATALOG = {
       Recorded: {
         description:
           'The manager saved a bank transfer to a teacher from the teacher money table.',
-        status: 'ok',
+        level: 'info',
         fields: ['amount'] as const
       },
       TeacherAnswered: {
         description:
           'The teacher confirmed or rejected a recorded payout from the earnings page.',
-        status: 'ok',
+        level: 'info',
         fields: ['action'] as const
       }
     }

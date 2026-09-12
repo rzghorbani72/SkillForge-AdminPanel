@@ -27,6 +27,7 @@ import { useSessionAcademyRescope } from '@/hooks/use-session-academy-rescope';
 import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
 import { currentLanguage } from '@/lib/current-language';
 import { isStudentRankSeat } from '@/components/academies/academy-helpers';
+import { setLogContext } from '@/lib/logging/browser-context';
 
 interface StoreContextValue {
   academies: Academy[];
@@ -97,6 +98,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const preferredAcademyId =
     user?.academyId ?? user?.profile?.academy_id ?? null;
+
+  useEffect(() => {
+    setLogContext({
+      user_id: user?.id,
+      academy_id: selectedAcademy?.id ?? preferredAcademyId,
+      role: user?.role
+    });
+  }, [user?.id, user?.role, selectedAcademy?.id, preferredAcademyId]);
 
   const isPlatformStaff =
     !!user?.isAdminProfile ||
