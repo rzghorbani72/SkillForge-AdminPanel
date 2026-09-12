@@ -35,7 +35,9 @@ export function ProfileKycSection({ enabled }: Props) {
 
   const applyState = (next: KycState) => {
     setState(next);
-    if (next.status === KYC_STATUS.VERIFIED) setAddingIban(false);
+    if (next.status === KYC_STATUS.VERIFIED && !next.pending_sheba_number) {
+      setAddingIban(false);
+    }
   };
 
   useEffect(() => {
@@ -88,6 +90,11 @@ export function ProfileKycSection({ enabled }: Props) {
         ) : (
           <div className="space-y-4">
             <KycReadonlyPanel state={state} />
+            {state.pending_sheba_number ? (
+              <p className="rounded-lg border border-warning/40 bg-warning/5 p-3 text-sm">
+                {t('settings.kyc.pendingIbanNotice')}
+              </p>
+            ) : null}
             {state.is_owner ? (
               <KycChangeIban
                 onSelected={applyState}

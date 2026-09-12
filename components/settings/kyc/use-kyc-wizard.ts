@@ -33,8 +33,16 @@ export function useKycWizard(
   });
 
   const step = KYC_STEPS[stepIndex];
+  // On a verified academy the new Sheba waits in pending_* until confirmed,
+  // so settlement keeps using the approved one meanwhile.
+  const pendingIban = Boolean(state.pending_sheba_number);
   const awaitingIbanConfirm =
-    step === 'iban' && state.iban_matched && !state.iban_info_confirmed;
+    step === 'iban' &&
+    (pendingIban || (state.iban_matched && !state.iban_info_confirmed));
+  const confirmInfo = pendingIban ? state.pending_iban_info : state.iban_info;
+  const confirmSheba = pendingIban
+    ? state.pending_sheba_number
+    : state.sheba_number;
   // Each api.ir endpoint locks on its own, so only its step goes read-only.
   const stepLockedUntil =
     step === 'identity'
@@ -127,7 +135,7 @@ export function useKycWizard(
     (step === 'identity'
       ? identityReady
       : awaitingIbanConfirm
-        ? state.iban_info?.active === true
+        ? confirmInfo?.active === true
         : shebaReady);
 
   return {
@@ -139,6 +147,8 @@ export function useKycWizard(
     sheba,
     inputsLocked,
     awaitingIbanConfirm,
+    confirmInfo,
+    confirmSheba,
     stepAttempts,
     stepLockedUntil,
     maxReachableStep,

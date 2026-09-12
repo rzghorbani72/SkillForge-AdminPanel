@@ -3295,6 +3295,8 @@ export const en = {
       addNewIban: 'Add a new Sheba',
       cancelChangeIban: 'Cancel Sheba change',
       ibanSelected: 'The Sheba for this academy was changed.',
+      pendingIbanNotice:
+        'A new Sheba is waiting for your confirmation. Until then, settlements go to the current Sheba. Press "Add a new Sheba" to continue.',
       usedInAcademies: 'Used in: {{names}}',
       settlementUnlocked:
         'Bank identity is complete. You can request a settlement.',

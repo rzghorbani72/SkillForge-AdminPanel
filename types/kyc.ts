@@ -39,6 +39,8 @@ export type KycState = {
   sheba_number: string | null;
   sheba_status: string | null;
   iban_info: KycIbanInfo | null;
+  pending_sheba_number: string | null;
+  pending_iban_info: KycIbanInfo | null;
   contact_address: string | null;
   permit_declared_at: string | null;
   missing: readonly KycMissingField[];

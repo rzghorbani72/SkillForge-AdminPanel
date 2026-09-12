@@ -28,6 +28,8 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
     sheba,
     inputsLocked,
     awaitingIbanConfirm,
+    confirmInfo,
+    confirmSheba,
     stepAttempts,
     stepLockedUntil,
     maxReachableStep,
@@ -81,11 +83,8 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
             {t('settings.kyc.sectionFinancial')}
           </h3>
           <KycConfirmedSummary state={state} upto="identity" />
-          {awaitingIbanConfirm && state.iban_info ? (
-            <KycIbanConfirmCard
-              info={state.iban_info}
-              shebaNumber={state.sheba_number}
-            />
+          {awaitingIbanConfirm && confirmInfo ? (
+            <KycIbanConfirmCard info={confirmInfo} shebaNumber={confirmSheba} />
           ) : (
             <KycStepSheba
               values={sheba}
