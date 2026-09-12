@@ -19,6 +19,7 @@ import {
 } from '@/components/settings/tinted-nav-card';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { formatNumber } from '@/lib/utils';
 import type { SettingsScope } from '@/lib/settings-scope';
 import type { LucideIcon } from 'lucide-react';
 
@@ -42,6 +43,13 @@ type SettingsHubGroupsProps = {
   isPlatformAdmin: boolean;
 };
 
+const SUBSCRIPTION_STATUS_LABEL_KEYS: Record<string, string> = {
+  ACTIVE: 'settings.statusActive',
+  GRACE: 'settings.statusGrace',
+  EXPIRED: 'settings.statusExpired',
+  INACTIVE: 'settings.statusInactive'
+};
+
 function HubCard({ item }: { item: HubItem }) {
   const { t } = useTranslation();
 
@@ -59,7 +67,7 @@ function HubCard({ item }: { item: HubItem }) {
 }
 
 function PlatformPlanCard() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { planName, status, daysRemaining, isLoading } =
     useAcademySubscription(true);
 
@@ -85,13 +93,17 @@ function PlatformPlanCard() {
           </div>
           <div className="flex justify-between">
             <span>{t('settings.subscriptionStatus')}</span>
-            <span className="font-medium text-foreground">{status ?? '—'}</span>
+            <span className="font-medium text-foreground">
+              {status
+                ? t(SUBSCRIPTION_STATUS_LABEL_KEYS[status] ?? '') || status
+                : '—'}
+            </span>
           </div>
           {daysRemaining != null ? (
             <div className="flex justify-between">
               <span>{t('settings.daysRemaining')}</span>
               <span className="font-medium text-foreground">
-                {daysRemaining}
+                {formatNumber(daysRemaining, language)}
               </span>
             </div>
           ) : null}
