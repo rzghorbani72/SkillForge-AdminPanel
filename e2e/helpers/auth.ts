@@ -1,7 +1,6 @@
 import { Page, expect } from '@playwright/test';
 
-// Defaults match `Backend/scripts/seed-e2e-users.ts` (pnpm --dir Backend seed:e2e)
-// so the @backend journeys log in out of the box.
+// Set E2E_* to a manager/teacher that exist in your local dev DB.
 export const MANAGER_PHONE = process.env.E2E_MANAGER_PHONE ?? '09123334444';
 export const MANAGER_PASSWORD = process.env.E2E_MANAGER_PASSWORD ?? 'Passw0rd!';
 export const TEACHER_PHONE = process.env.E2E_TEACHER_PHONE ?? '09123336666';

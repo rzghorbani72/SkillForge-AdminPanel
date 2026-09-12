@@ -2,13 +2,11 @@ import { test, expect } from '@playwright/test';
 import { managerLogin, teacherLogin } from '../helpers/auth';
 
 /**
- * Manager & Teacher happy-path journeys (@backend) against the seeded API
- * (`pnpm --dir Backend seed:e2e`). These prove the seeded staff can log in and
- * reach their surface WITHOUT being blocked by the platform legal-consent gate
- * (the seed now records acceptance, mirroring a real onboarded user).
+ * Manager & Teacher happy-path journeys (@backend) against a local API.
+ * They prove existing staff can log in and reach their surface WITHOUT being
+ * blocked by the platform legal-consent gate.
  *
- * Run:
- *   pnpm --dir Backend seed:e2e
+ * Run (E2E_MANAGER_* / E2E_TEACHER_* must point at real local dev accounts):
  *   E2E_BACKEND=1 pnpm --dir AdminPanel test:e2e e2e/roles/manager-teacher-journey.spec.ts
  */
 test.describe('Manager & Teacher journeys @backend', () => {
