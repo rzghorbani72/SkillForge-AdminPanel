@@ -48,3 +48,47 @@ export function couponTypeOf(coupon: CouponSummary): CouponType {
 export function normalizeDiscountCode(code: string): string {
   return code.trim().toUpperCase();
 }
+
+export type CouponStatus =
+  | 'active'
+  | 'scheduled'
+  | 'expired'
+  | 'exhausted'
+  | 'inactive';
+
+export interface CouponStatusInput {
+  is_active?: boolean;
+  start_date?: string;
+  end_date?: string;
+  usage_limit?: number | null;
+  used_count?: number;
+}
+
+export function couponStatusOf(
+  coupon: CouponStatusInput,
+  now: Date = new Date()
+): CouponStatus {
+  if (coupon.is_active === false) return 'inactive';
+  if (coupon.end_date && new Date(coupon.end_date) < now) return 'expired';
+  if (coupon.start_date && new Date(coupon.start_date) > now)
+    return 'scheduled';
+  if (coupon.usage_limit && (coupon.used_count ?? 0) >= coupon.usage_limit)
+    return 'exhausted';
+  return 'active';
+}
+
+export const COUPON_STATUS_LABEL_KEY: Record<CouponStatus, string> = {
+  active: 'coupons.statusActive',
+  scheduled: 'coupons.statusScheduled',
+  expired: 'coupons.statusExpired',
+  exhausted: 'coupons.statusExhausted',
+  inactive: 'coupons.statusInactive'
+};
+
+export const COUPON_STATUS_BADGE: Record<CouponStatus, string> = {
+  active: 'active',
+  scheduled: 'pending',
+  expired: 'inactive',
+  exhausted: 'inactive',
+  inactive: 'inactive'
+};

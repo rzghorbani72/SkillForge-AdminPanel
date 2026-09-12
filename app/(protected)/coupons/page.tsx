@@ -69,6 +69,9 @@ import {
   COUPON_TYPE_LABEL_KEY,
   USAGE_TYPES,
   USAGE_TYPE_LABEL_KEY,
+  COUPON_STATUS_BADGE,
+  COUPON_STATUS_LABEL_KEY,
+  couponStatusOf,
   couponTypeOf,
   normalizeDiscountCode,
   type CouponType
@@ -374,65 +377,78 @@ export default function CouponsPage() {
                   )}
                   <TableHead>{t('coupons.uses')}</TableHead>
                   <TableHead>{t('coupons.validity')}</TableHead>
+                  <TableHead>{t('coupons.status')}</TableHead>
                   <TableHead />
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {coupons.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell>
-                      <CopyableVoucherCode code={c.code} />
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge
-                        status={COUPON_TYPE_BADGE[couponTypeOf(c)]}
-                        label={t(COUPON_TYPE_LABEL_KEY[couponTypeOf(c)])}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {c.coupon_type === 'FREE_TRIAL'
-                        ? t('coupons.daysValue', {
-                            count: c.free_trial_days ?? 0
-                          })
-                        : c.coupon_type === 'FULL_DISCOUNT'
-                          ? formatPercent(100)
-                          : c.coupon_type === 'PERCENT'
-                            ? formatPercent(c.discount_value ?? 0)
-                            : formatNumber(c.discount_value ?? 0)}
-                    </TableCell>
-                    {canManagePlatformVouchers && (
+                {coupons.map((c) => {
+                  const status = couponStatusOf(c);
+                  return (
+                    <TableRow
+                      key={c.id}
+                      className={status === 'active' ? undefined : 'opacity-60'}
+                    >
                       <TableCell>
-                        {c.Academy?.name ?? t('coupons.platformScope')}
+                        <CopyableVoucherCode code={c.code} />
                       </TableCell>
-                    )}
-                    <TableCell>
-                      {c.usage_limit
-                        ? `${formatNumber(c.used_count ?? 0)}/${formatNumber(c.usage_limit)}`
-                        : formatNumber(c.used_count ?? 0)}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {c.start_date && c.end_date
-                        ? `${formatDate(c.start_date)} → ${formatDate(c.end_date)}`
-                        : '—'}
-                    </TableCell>
-                    <TableCell className="text-end">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEdit(c)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setDeleteTarget(c)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell>
+                        <StatusBadge
+                          status={COUPON_TYPE_BADGE[couponTypeOf(c)]}
+                          label={t(COUPON_TYPE_LABEL_KEY[couponTypeOf(c)])}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {c.coupon_type === 'FREE_TRIAL'
+                          ? t('coupons.daysValue', {
+                              count: c.free_trial_days ?? 0
+                            })
+                          : c.coupon_type === 'FULL_DISCOUNT'
+                            ? formatPercent(100)
+                            : c.coupon_type === 'PERCENT'
+                              ? formatPercent(c.discount_value ?? 0)
+                              : formatNumber(c.discount_value ?? 0)}
+                      </TableCell>
+                      {canManagePlatformVouchers && (
+                        <TableCell>
+                          {c.Academy?.name ?? t('coupons.platformScope')}
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        {c.usage_limit
+                          ? `${formatNumber(c.used_count ?? 0)}/${formatNumber(c.usage_limit)}`
+                          : formatNumber(c.used_count ?? 0)}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {c.start_date && c.end_date
+                          ? `${formatDate(c.start_date)} → ${formatDate(c.end_date)}`
+                          : '—'}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge
+                          status={COUPON_STATUS_BADGE[status]}
+                          label={t(COUPON_STATUS_LABEL_KEY[status])}
+                        />
+                      </TableCell>
+                      <TableCell className="text-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEdit(c)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeleteTarget(c)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
