@@ -2996,15 +2996,7 @@ export const en = {
       savedIncomplete: 'Saved — fill the remaining fields to publish'
     },
     kyc: {
-      title: 'Identity verification',
-      approve: 'Approve identity',
-      reject: 'Reject identity',
-      notePlaceholder: 'Optional note for the manager (required to reject)',
-      rejectNeedsNote: 'A rejection note is required.',
-      lastNote: 'Last review note',
-      cardMeta: 'National card — front: {{front}}, back: {{back}}',
-      cardPresent: 'uploaded',
-      cardMissing: 'not uploaded'
+      title: 'Identity verification'
     },
     enamad: {
       title: 'eNamad trust seal',
@@ -3254,13 +3246,12 @@ export const en = {
       'Update your personal details, contact info, and identity verification.',
     kyc: {
       title: 'Identity verification',
-      hubDescription:
-        'Verify the creating manager with national ID, card photo, and Sheba.',
+      hubDescription: 'Verify the creating manager with national ID and Sheba.',
       description:
         'Complete identity verification so Mentoma can approve custom domains and payouts.',
       formTitle: 'Identity verification',
       formDescription:
-        'National ID vs your login mobile, then Sheba. After Sheba confirm you can request settlement. National-card photos are optional and reviewed by Mentoma staff.',
+        'National ID vs your login mobile, then Sheba. After Sheba confirm your identity is verified and you can request settlement.',
       ownerOnly:
         'Only the academy creating manager can view and edit identity verification.',
       stepDone: 'Confirmed',
@@ -3268,7 +3259,6 @@ export const en = {
       stepPending: 'Not started',
       notProvided: 'Not provided',
       sectionIdentity: 'Mobile and national ID',
-      sectionCard: 'National card (optional)',
       sectionFinancial: 'Birth date and Sheba',
       sectionPublisher: 'Address and permit',
       verifyIdentity: 'Check mobile and national code',
@@ -3282,14 +3272,6 @@ export const en = {
       confirmedSoFar: 'Confirmed so far',
       identityStepHint:
         'We check your national code against the mobile you signed in with.',
-      cardStepHint:
-        'Upload a clear photo of your national card. This step is optional.',
-      cardOptionalHint:
-        'Card photos are for Mentoma staff review and are not required for payouts.',
-      cardSkipHint:
-        'You can send the card later. Settlement is already unlocked after Sheba confirm.',
-      skipCardForNow: 'I will upload later',
-      resumeCardUpload: 'Upload national card',
       shebaStepHint:
         'We check your Sheba against the national code from the previous step and your birth date.',
       ibanInfoTitle: 'Bank account details',
@@ -3301,8 +3283,6 @@ export const en = {
       bankName: 'Bank name',
       settlementUnlocked:
         'Bank identity is complete. You can request a settlement.',
-      submitHint:
-        'After you send the card photo, status becomes Pending until Mentoma staff reviews it.',
       serviceDisabled:
         'Automatic verification is not configured yet. The form is visible but disabled until API_IR_TOKEN is set on the server.',
       rateLimited:
@@ -3317,11 +3297,6 @@ export const en = {
       nationalId: 'National ID',
       nationalIdHelp: '10-digit national code or 11-digit company ID',
       birthDate: 'Birth date',
-      cardFront: 'National card (front)',
-      cardFrontHelp: 'Clear photo of the front of your national card.',
-      cardBack: 'National card (back, optional)',
-      cardBackHelp: 'Optional back photo if available.',
-      uploadCard: 'Upload photo',
       sheba: 'Sheba / IBAN',
       shebaHelp: 'IR followed by 24 digits. No OTP in this step.',
       accountHolder: 'Account holder name',
@@ -3329,21 +3304,15 @@ export const en = {
       contactAddressHelp: 'Shown on the public site when required by law.',
       permitLabel: 'I hold any teaching permits my activity requires',
       permitHelp: 'Publisher declaration under the platform agreement.',
-      submit: 'Submit for review',
-      submitted: 'Identity submitted for review',
-      pendingNotice: 'Your identity is waiting for Mentoma staff review.',
       verifiedNotice: 'Identity verified. You can connect a custom domain.',
-      rejectedTitle: 'Identity was rejected',
       domainBlocked:
         'Complete identity verification before connecting a custom domain.',
-      domainReady: 'Identity is submitted or verified for this academy.',
+      domainReady: 'Identity is verified for this academy.',
       goToIdentity: 'Open identity verification',
       status: {
         MISSING: 'Identity missing',
         PARTIAL: 'Identity incomplete',
-        PENDING: 'Identity pending',
-        VERIFIED: 'Identity verified',
-        REJECTED: 'Identity rejected'
+        VERIFIED: 'Identity verified'
       }
     },
     storeSettings: 'Academy Details',

@@ -17,7 +17,6 @@ export type KycIncompleteError = Error & {
 const ALLOWED_MISSING = new Set<KycMissingField>([
   'national_id',
   'birth_date',
-  'card_front',
   'sheba'
 ]);
 

@@ -1,18 +1,12 @@
 export const KYC_STATUS = {
   MISSING: 'MISSING',
   PARTIAL: 'PARTIAL',
-  PENDING: 'PENDING',
-  VERIFIED: 'VERIFIED',
-  REJECTED: 'REJECTED'
+  VERIFIED: 'VERIFIED'
 } as const;
 
 export type KycStatus = (typeof KYC_STATUS)[keyof typeof KYC_STATUS];
 
-export type KycMissingField =
-  | 'national_id'
-  | 'birth_date'
-  | 'card_front'
-  | 'sheba';
+export type KycMissingField = 'national_id' | 'birth_date' | 'sheba';
 
 export type KycAttemptState = {
   attempts_remaining: number;
@@ -41,17 +35,12 @@ export type KycState = {
   legal_entity_name: string | null;
   national_id: string | null;
   birth_date: string | null;
-  card_front_id: string | null;
-  card_back_id: string | null;
   sheba_number: string | null;
   sheba_status: string | null;
   iban_info: KycIbanInfo | null;
   contact_address: string | null;
   permit_declared_at: string | null;
   missing: readonly KycMissingField[];
-  submitted_at: string | null;
-  reviewed_at: string | null;
-  review_note: string | null;
   is_verified: boolean;
 };
 
@@ -62,13 +51,4 @@ export type VerifyKycIdentityPayload = {
 export type VerifyKycShebaPayload = {
   birth_date: string;
   sheba_number: string;
-};
-
-export type SubmitKycPayload = {
-  card_front_id: string;
-  card_back_id?: string;
-};
-
-export type KycCardUploadResult = {
-  id: string;
 };

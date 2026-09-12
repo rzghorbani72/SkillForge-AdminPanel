@@ -15,7 +15,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { AcademyPolicyOverrides } from './academy-policy-overrides';
 import { EnamadReviewPanel } from './enamad-review-panel';
-import { KycReviewPanel } from './kyc-review-panel';
+import { KycStaffPanel } from './kyc-staff-panel';
 import type {
   ContentKind,
   EnamadStatus,
@@ -42,7 +42,6 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
   const [loading, setLoading] = useState(false);
   const [savingKind, setSavingKind] = useState<ContentKind | null>(null);
   const [savingEnamad, setSavingEnamad] = useState(false);
-  const [savingKyc, setSavingKyc] = useState(false);
 
   const academyId = item?.academy_id ?? null;
 
@@ -110,22 +109,6 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
     }
   };
 
-  const reviewKyc = async (approved: boolean, note: string) => {
-    if (!academyId) return;
-    setSavingKyc(true);
-    try {
-      const next = approved
-        ? await apiClient.approveKyc(academyId, note || undefined)
-        : await apiClient.rejectKyc(academyId, note);
-      setKyc(next);
-      onChanged();
-    } catch (error) {
-      ErrorHandler.handleApiError(error);
-    } finally {
-      setSavingKyc(false);
-    }
-  };
-
   return (
     <Dialog open={Boolean(item)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-2xl">
@@ -149,11 +132,7 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
                 {t('compliance.kyc.title')}
               </h3>
               {kyc ? (
-                <KycReviewPanel
-                  state={kyc}
-                  submitting={savingKyc}
-                  onReview={reviewKyc}
-                />
+                <KycStaffPanel state={kyc} />
               ) : (
                 <Skeleton className="h-20 w-full" />
               )}

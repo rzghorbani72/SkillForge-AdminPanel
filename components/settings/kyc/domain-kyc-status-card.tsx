@@ -17,7 +17,7 @@ import { KYC_IDENTITY_PATH } from '@/lib/kyc-error';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { KYC_STATUS } from '@/types/kyc';
 
-/** Domain page gate: link to KYC when not yet pending/verified. */
+/** Domain page gate: link to KYC when not yet verified. */
 export function DomainKycStatusCard() {
   const { t } = useTranslation();
   const { state, isLoading } = useKyc(true);
@@ -28,8 +28,7 @@ export function DomainKycStatusCard() {
 
   if (!state) return null;
 
-  const ready =
-    state.status === KYC_STATUS.PENDING || state.status === KYC_STATUS.VERIFIED;
+  const ready = state.status === KYC_STATUS.VERIFIED;
 
   return (
     <Card>

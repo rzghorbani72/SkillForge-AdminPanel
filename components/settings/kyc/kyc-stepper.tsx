@@ -7,8 +7,7 @@ import type { KycStepIndex } from './use-kyc-wizard';
 
 const STEP_LABEL_KEYS = [
   'settings.kyc.sectionIdentity',
-  'settings.kyc.sectionFinancial',
-  'settings.kyc.sectionCard'
+  'settings.kyc.sectionFinancial'
 ] as const;
 
 type Props = {
@@ -27,7 +26,7 @@ export function KycStepper({
 }: Props) {
   const { t, language } = useTranslation();
   const digit = (index: number) =>
-    language === 'fa' ? ['۱', '۲', '۳'][index] : String(index + 1);
+    language === 'fa' ? ['۱', '۲'][index] : String(index + 1);
 
   return (
     <ol className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-3">

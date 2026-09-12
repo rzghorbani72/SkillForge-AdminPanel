@@ -61,9 +61,7 @@ export function ProfileKycSection({ enabled }: Props) {
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-24 w-full" />
           </div>
-        ) : state.is_owner &&
-          state.status !== KYC_STATUS.PENDING &&
-          state.status !== KYC_STATUS.VERIFIED ? (
+        ) : state.is_owner && state.status !== KYC_STATUS.VERIFIED ? (
           <KycWizardForm initial={state} onSubmitted={setState} />
         ) : (
           <KycReadonlyPanel state={state} />

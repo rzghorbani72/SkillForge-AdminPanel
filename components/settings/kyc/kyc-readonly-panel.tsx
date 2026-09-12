@@ -8,24 +8,14 @@ import { KYC_STATUS, type KycState, type KycStatus } from '@/types/kyc';
 
 const TONE_CLASS = {
   warning: 'border-transparent bg-warning/15 text-warning hover:bg-warning/15',
-  success: 'border-transparent bg-success/15 text-success hover:bg-success/15',
-  destructive:
-    'border-transparent bg-destructive/15 text-destructive hover:bg-destructive/15'
+  success: 'border-transparent bg-success/15 text-success hover:bg-success/15'
 } as const;
 
 function kycBadgeTone(
   status: KycStatus,
   complete: boolean
 ): keyof typeof TONE_CLASS {
-  if (status === KYC_STATUS.REJECTED) return 'destructive';
-  if (
-    complete ||
-    status === KYC_STATUS.PENDING ||
-    status === KYC_STATUS.VERIFIED
-  ) {
-    return 'success';
-  }
-  return 'warning';
+  return complete || status === KYC_STATUS.VERIFIED ? 'success' : 'warning';
 }
 
 export function KycStatusBadge({
@@ -76,26 +66,12 @@ export function KycReadonlyPanel({ state }: KycReadonlyProps) {
             {t('settings.kyc.settlementUnlocked')}
           </p>
         ) : null}
-        {state.status === KYC_STATUS.PENDING ? (
-          <p className="text-sm text-muted-foreground">
-            {t('settings.kyc.pendingNotice')}
-          </p>
-        ) : null}
         {state.status === KYC_STATUS.VERIFIED ? (
           <p className="text-sm text-muted-foreground">
             {t('settings.kyc.verifiedNotice')}
           </p>
         ) : null}
       </div>
-
-      {state.status === KYC_STATUS.REJECTED && state.review_note ? (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm">
-          <p className="font-medium text-destructive">
-            {t('settings.kyc.rejectedTitle')}
-          </p>
-          <p className="mt-1 text-muted-foreground">{state.review_note}</p>
-        </div>
-      ) : null}
 
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
         <ReadonlyRow
