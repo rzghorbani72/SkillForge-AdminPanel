@@ -7,6 +7,7 @@ import type { Academy } from '@/types/api';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { colorIndexForId } from '@/lib/id-color';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import {
   AcademyStatusPill,
   academyDomain,
@@ -100,6 +101,7 @@ export function AcademyCard({
   t
 }: AcademyCardProps) {
   const formatNumber = useNumberFormat();
+  const formatDate = useDateFormat();
   const color = CARD_COLORS[colorIndexForId(academy.id, CARD_COLORS.length)];
   const isSwitch = switching === academy.id;
   const canEnter = canEnterAcademy(academy);
@@ -150,6 +152,20 @@ export function AcademyCard({
           {domain}.{ACADEMY_DOMAIN}
         </a>
         <CopyableId value={academy.id} className="mt-1 max-w-full" />
+        <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+          <div className="flex justify-between gap-2">
+            <span>{t('stores.creatingManager')}</span>
+            <span className="truncate text-end font-medium text-foreground">
+              {academy.manager_name ?? '—'}
+            </span>
+          </div>
+          <div className="flex justify-between gap-2">
+            <span>{t('stores.createdAt')}</span>
+            <span className="text-end font-medium text-foreground">
+              {academy.created_at ? formatDate(academy.created_at) : '—'}
+            </span>
+          </div>
+        </div>
 
         {/* Stats row */}
         <div className="mt-4 flex items-center justify-between text-sm">

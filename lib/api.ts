@@ -7553,6 +7553,8 @@ export interface AcademyHealthView {
   slug: string;
   plan_slug: string | null;
   expires_at: string | null;
+  created_at?: string;
+  manager_name?: string | null;
   monthly_revenue?: number;
   student_count?: number;
   course_count?: number;

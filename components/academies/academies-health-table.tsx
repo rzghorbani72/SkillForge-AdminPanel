@@ -161,6 +161,8 @@ export function AcademiesHealthTable() {
                   <TableRow>
                     <TableHead>{t('academiesHealth.row')}</TableHead>
                     <TableHead>{t('academiesHealth.name')}</TableHead>
+                    <TableHead>{t('academiesHealth.manager')}</TableHead>
+                    <TableHead>{t('academiesHealth.created')}</TableHead>
                     <TableHead>{t('academiesHealth.plan')}</TableHead>
                     <TableHead>{t('academiesHealth.settlementCol')}</TableHead>
                     <TableHead>{t('academiesHealth.ticketsCol')}</TableHead>
@@ -203,6 +205,14 @@ export function AcademiesHealthTable() {
                               />
                             </div>
                           </div>
+                        </TableCell>
+                        <TableCell className="align-top text-sm">
+                          {academy.manager_name ?? '—'}
+                        </TableCell>
+                        <TableCell className="align-top text-sm">
+                          {academy.created_at
+                            ? formatDate(academy.created_at)
+                            : '—'}
                         </TableCell>
                         <TableCell className="align-top text-sm">
                           {getPlanDisplayName(academy.plan_slug) ?? '—'}

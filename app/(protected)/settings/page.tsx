@@ -150,6 +150,12 @@ export default function SettingsOverviewPage() {
                 {academy?.created_at ? formatDate(academy.created_at) : '—'}
               </span>
             </div>
+            <div className="flex justify-between gap-3">
+              <span>{t('settings.creatingManager')}</span>
+              <span className="text-end font-medium text-foreground">
+                {academy?.manager_name ?? '—'}
+              </span>
+            </div>
           </CardContent>
         </Card>
       </div>

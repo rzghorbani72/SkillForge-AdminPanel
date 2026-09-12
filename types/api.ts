@@ -245,6 +245,8 @@ export interface Academy {
   currency_position?: 'before' | 'after';
   subscription_plan?: string;
   subscription_expires?: string;
+  /** Creating manager (academy owner). Null when the person has no stored name. */
+  manager_name?: string | null;
   primary_verification_method?: 'phone' | 'email';
   /** Decimal 0-1. Manager-set; shown to teachers as their notional earned share. */
   teacher_share_rate?: number;

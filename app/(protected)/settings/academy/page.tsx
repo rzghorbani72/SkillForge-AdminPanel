@@ -16,6 +16,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { AcademyFeaturesCard } from '@/components/settings/academy-features-card';
 import { AcademyTeacherShareCard } from '@/components/settings/academy-teacher-share-card';
 import { AcademySiteStatusCard } from '@/components/settings/academy-site-status-card';
@@ -30,6 +31,7 @@ import {
 
 export default function AcademySettingsPage() {
   const { t } = useTranslation();
+  const formatDate = useDateFormat();
   const { academy, isLoading, refresh } = useSettingsData();
   const { user } = useAuthUser();
 
@@ -120,6 +122,18 @@ export default function AcademySettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <div className="flex justify-between gap-3">
+                <span>{t('settings.creatingManager')}</span>
+                <span className="text-end font-medium text-foreground">
+                  {academy.manager_name ?? '—'}
+                </span>
+              </div>
+              <div className="flex justify-between gap-3">
+                <span>{t('settings.createdAt')}</span>
+                <span className="text-end font-medium text-foreground">
+                  {academy.created_at ? formatDate(academy.created_at) : '—'}
+                </span>
+              </div>
               <div className="flex justify-between">
                 <span>{t('settings.students')}</span>
                 <span className="font-medium text-foreground">
