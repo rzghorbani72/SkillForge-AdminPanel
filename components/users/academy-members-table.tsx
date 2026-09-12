@@ -111,7 +111,7 @@ export function AcademyMembersTable({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {row.academy_name ?? t('users.platformFallback')}
+                  {row.academy_name || '—'}
                 </TableCell>
                 <TableCell dir="ltr" className="text-end tabular-nums">
                   {row.phone_number || '—'}
