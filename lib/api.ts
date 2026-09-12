@@ -78,6 +78,9 @@ import {
   SELLER_IDENTITY_INCOMPLETE
 } from './seller-identity-error';
 import type { SellerIdentityField } from '@/types/seller-identity';
+import { logger } from '@/lib/logging/app-logger';
+import { STORM_WINDOW_MS, trackRoute } from './request-storm-guard';
+import { t } from './i18n';
 import {
   createKycIncompleteError,
   KYC_IDENTITY_PATH,
@@ -370,6 +373,37 @@ class ApiClient {
   }
 
   /**
+   * One route hammered far above human speed means a render loop, a runaway
+   * retry, or a hostile script. Client state is no longer trusted: on a
+   * session-carrying route we sign out and wipe storage; auth-flow routes
+   * are just blocked until the window cools down.
+   */
+  private handleRequestStorm(
+    endpoint: string,
+    method: string,
+    count: number
+  ): never {
+    const isProtected = !this.isAuthFlowEndpoint(endpoint);
+    logger.error('RequestStorm', 'Tripped', {
+      route: endpoint.split('?')[0] ?? endpoint,
+      method,
+      count,
+      window_ms: STORM_WINDOW_MS,
+      is_protected: isProtected
+    });
+
+    if (isProtected && this.pauseReason === null) {
+      this.enterPause('session');
+      if (typeof window !== 'undefined') {
+        toast.error(t('error.requestStorm', currentLanguage()));
+        void import('./sign-out').then(({ signOut }) => signOut());
+      }
+    }
+
+    throw new Error('Request storm detected. API calls paused.');
+  }
+
+  /**
    * Attempt to refresh the access token using the refresh token cookie
    * Returns true if refresh was successful, false otherwise
    */
@@ -476,6 +510,10 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     this.throwIfPaused(endpoint);
 
+    const method = (options.method ?? 'GET').toUpperCase();
+    const storm = trackRoute(method, endpoint);
+    if (storm.tripped) this.handleRequestStorm(endpoint, method, storm.count);
+
     const url = `${lang ? getBrowserApiBaseUrl(lang) : this.baseURL}${endpoint}`;
 
     // SECURITY: JWT token is stored in HttpOnly cookie and sent automatically by browser
@@ -495,7 +533,6 @@ class ApiClient {
     // No need to manually add Authorization header for cookie-based auth
 
     const isAuthFlowEndpoint = this.isAuthFlowEndpoint(endpoint);
-    const method = (options.method ?? 'GET').toUpperCase();
     const needsCsrf =
       typeof window !== 'undefined' &&
       !['GET', 'HEAD', 'OPTIONS'].includes(method);

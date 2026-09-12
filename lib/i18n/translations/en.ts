@@ -2768,6 +2768,8 @@ export const en = {
     serverError: 'Server error. Please try again later.',
     networkError: 'Network error. Please check your connection.',
     sessionExpired: 'Session expired. Please log in again.',
+    requestStorm:
+      'Too many unusual requests were sent. You were signed out for safety; please log in again.',
     failedToLoad: 'Failed to load data',
     failedToSave: 'Failed to save',
     failedToDelete: 'Failed to delete',

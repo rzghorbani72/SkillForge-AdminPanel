@@ -3,6 +3,7 @@
     "Gdpr": "Cookie and privacy consent captured in the browser.",
     "Media": "Video and file storage, transcoding and secure playback.",
     "Onboarding": "First-run setup steps a manager completes to go live.",
+    "RequestStorm": "Client-side circuit breaker: one API route called far above human speed.",
     "TeacherPayout": "Off-platform teacher payouts a manager records from the dashboard."
   },
   "events": {
@@ -15,6 +16,7 @@
     "Onboarding.SetupBannerDismissed": "Manager dismissed the first-run setup checklist.",
     "Onboarding.SetupBannerShown": "First-run setup checklist shown on the dashboard.",
     "Onboarding.SetupStepOpened": "Manager opened a first-run setup step from the dashboard banner.",
+    "RequestStorm.Tripped": "A single route exceeded the per-window hit limit in the manager's browser; protected routes force a sign-out and storage wipe.",
     "TeacherPayout.Recorded": "The manager saved a bank transfer to a teacher from the teacher money table.",
     "TeacherPayout.TeacherAnswered": "The teacher confirmed or rejected a recorded payout from the earnings page."
   }

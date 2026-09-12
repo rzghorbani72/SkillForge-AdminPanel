@@ -1890,6 +1890,8 @@ export const tr = {
     serverError: 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.',
     networkError: 'Ağ hatası. Lütfen bağlantınızı kontrol edin.',
     sessionExpired: 'Oturum süresi doldu. Lütfen tekrar giriş yapın.',
+    requestStorm:
+      'Çok fazla olağan dışı istek gönderildi. Güvenlik için oturumunuz kapatıldı; lütfen tekrar giriş yapın.',
     failedToLoad: 'Veri yüklenemedi',
     failedToSave: 'Kaydedilemedi',
     failedToDelete: 'Silinemedi',

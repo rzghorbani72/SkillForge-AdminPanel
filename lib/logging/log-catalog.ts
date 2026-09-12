@@ -68,6 +68,24 @@ export const LOG_CATALOG = {
       }
     }
   },
+  RequestStorm: {
+    description:
+      'Client-side circuit breaker: one API route called far above human speed.',
+    actions: {
+      Tripped: {
+        description:
+          "A single route exceeded the per-window hit limit in the manager's browser; protected routes force a sign-out and storage wipe.",
+        status: 'error',
+        fields: [
+          'count',
+          'is_protected',
+          'method',
+          'route',
+          'window_ms'
+        ] as const
+      }
+    }
+  },
   TeacherPayout: {
     description:
       'Off-platform teacher payouts a manager records from the dashboard.',
