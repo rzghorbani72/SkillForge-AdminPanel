@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { QueryProvider } from '@/components/providers/query-provider';
-import { AnalyticsProvider } from '@/components/providers/analytics-provider';
 import { ThemeProviderWrapper } from '@/components/providers/theme-provider-wrapper';
 import { I18nProvider } from '@/lib/i18n/provider';
 import { getAdminLanguage, getAdminDirection } from '@/lib/i18n/server';
@@ -58,22 +57,20 @@ export default async function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
-        <AnalyticsProvider>
-          <QueryProvider>
-            <ThemeProviderWrapper>
-              <I18nProvider initialLanguage={language}>
-                <LegacyAuthStorageCleaner />
-                <LanguageSync />
-                <PageTitleSync />
-                {children}
-                <ToastContainerWrapper />
-                {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
-                  <GdprConsentBanner />
-                )}
-              </I18nProvider>
-            </ThemeProviderWrapper>
-          </QueryProvider>
-        </AnalyticsProvider>
+        <QueryProvider>
+          <ThemeProviderWrapper>
+            <I18nProvider initialLanguage={language}>
+              <LegacyAuthStorageCleaner />
+              <LanguageSync />
+              <PageTitleSync />
+              {children}
+              <ToastContainerWrapper />
+              {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
+                <GdprConsentBanner />
+              )}
+            </I18nProvider>
+          </ThemeProviderWrapper>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -199,9 +199,6 @@ importers:
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
-      posthog-js:
-        specifier: ^1.430.1
-        version: 1.430.1(@types/react@19.2.7)(preact-render-to-string@6.5.11(preact@10.24.3))(react@19.2.1)
       react:
         specifier: ^19.2.0
         version: 19.2.1
@@ -2240,27 +2237,6 @@ packages:
       }
     engines: { node: '>=18' }
     hasBin: true
-
-  '@posthog/browser-common@0.8.3':
-    resolution:
-      {
-        integrity: sha512-4Hlbwyn+Hioc2+pjqSGWMTDrA5XsDshssPnGfv34khPKoJaeBe2YvPvsEPoH78jezOS6Wo3LJvCPhqyolg3S8w==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@posthog/browser-common/-/browser-common-0.8.3.tgz
-      }
-
-  '@posthog/core@1.53.2':
-    resolution:
-      {
-        integrity: sha512-Knx8442G2LyPVIzLvhcBX/TIdeHpZhrYrtZou3Uw8FWfbr9gQtQeOZDCog3MWcDxJ+4vAnMAAOzf5cYpc7Gxyw==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@posthog/core/-/core-1.53.2.tgz
-      }
-
-  '@posthog/types@1.411.1':
-    resolution:
-      {
-        integrity: sha512-Gd7tnSYctcSXup3naVlAgavvenByRao6rsSYdMgWgP35KE9jFn+rMHNRJeI5LNjJuLzMXHEVcgzAN7xcATefdw==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@posthog/types/-/types-1.411.1.tgz
-      }
 
   '@prettier/plugin-pug@3.4.2':
     resolution:
@@ -5658,13 +5634,6 @@ packages:
       }
     deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
 
-  core-js@3.50.0:
-    resolution:
-      {
-        integrity: sha512-BRWgOLKkFeCgRudR6zrs8p9XJZcE14grzKMMssoYrk6krtuEZ7MTKPIY5RzOnqsEKIR9kst7wNzphttraT+Yqw==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/core-js/-/core-js-3.50.0.tgz
-      }
-
   cosmiconfig@5.2.1:
     resolution:
       {
@@ -6105,13 +6074,6 @@ packages:
       {
         integrity: sha512-r+f6MYR1gGN1eJv0TVQbhA7if/U7P87cdPl3HN5rikqaBSBxLiCb/b9O+2eG0cxz0ghyU+mU1QkbsOwERMYlWQ==,
         tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/dompurify/-/dompurify-3.3.0.tgz
-      }
-
-  dompurify@3.4.15:
-    resolution:
-      {
-        integrity: sha512-EUBjM+B+lkDE41iE82DDSCfkoPGfXx8IxFxPMjNzm/Uk4xDet77rTN9wqlxlVg71kK7XGuUMv6wUxJUwwv+Xyw==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/dompurify/-/dompurify-3.4.15.tgz
       }
 
   domutils@3.2.2:
@@ -6747,13 +6709,6 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
-
-  fflate@0.4.9:
-    resolution:
-      {
-        integrity: sha512-zdxgIEddhfsyCaWpJ2SdXEP8ZMrKJ6+5jl4OupODcywU0IhRk6gdXuVGcPICyfx2H97hVK7xmJtRLPjkxAX8Vw==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/fflate/-/fflate-0.4.9.tgz
-      }
 
   file-entry-cache@8.0.0:
     resolution:
@@ -9145,21 +9100,6 @@ packages:
       }
     engines: { node: ^10 || ^12 || >=14 }
 
-  posthog-js@1.430.1:
-    resolution:
-      {
-        integrity: sha512-gfGL0ktRNrJo8Mlr5bv8DsWVpsG0ejJo/biw+1jVpTYRMOK6nCI+O+R1S+9n3kY/hAOQB7D/67kA+LKwnA6c0A==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/posthog-js/-/posthog-js-1.430.1.tgz
-      }
-    peerDependencies:
-      '@types/react': '>=16.8.0'
-      react: '>=16.8.0'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react:
-        optional: true
-
   preact-render-to-string@6.5.11:
     resolution:
       {
@@ -9175,18 +9115,6 @@ packages:
         integrity: sha512-Z2dPnBnMUfyQfSQ+GBdsGa16hz35YmLmtTLhM169uW944hYL6xzTYkJjC07j+Wosz733pMWx0fgON3JNw1jJQA==,
         tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/preact/-/preact-10.24.3.tgz
       }
-
-  preact@10.29.8:
-    resolution:
-      {
-        integrity: sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/preact/-/preact-10.29.8.tgz
-      }
-    peerDependencies:
-      preact-render-to-string: '>=5'
-    peerDependenciesMeta:
-      preact-render-to-string:
-        optional: true
 
   prelude-ls@1.2.1:
     resolution:
@@ -9515,13 +9443,6 @@ packages:
         tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/pvutils/-/pvutils-1.1.5.tgz
       }
     engines: { node: '>=16.0.0' }
-
-  query-selector-shadow-dom@1.0.1:
-    resolution:
-      {
-        integrity: sha512-lT5yCqEBgfoMYpf3F2xQRK7zEr1rhIIZuceDK6+xRkJQ4NMbHTwXqk4NkwDwQMNqXgG9r9fyHnzwNVs6zV5KRw==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/query-selector-shadow-dom/-/query-selector-shadow-dom-1.0.1.tgz
-      }
 
   queue-microtask@1.2.3:
     resolution:
@@ -10849,13 +10770,6 @@ packages:
       }
     engines: { node: '>=10.13.0' }
 
-  web-vitals@6.2.1:
-    resolution:
-      {
-        integrity: sha512-rLcLXA2sx6+9dE88NHFubwTtGxpK4yYBLj6qHPdFoCaLr0cXGb4efOqtKLlm4loGA4OEKHIQKMKzZkKyOh5ctw==,
-        tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/web-vitals/-/web-vitals-6.2.1.tgz
-      }
-
   webidl-conversions@3.0.1:
     resolution:
       {
@@ -12070,7 +11984,7 @@ snapshots:
   '@jridgewell/remapping@2.3.5':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.12
-      '@jridgewell/trace-mapping': 0.3.29
+      '@jridgewell/trace-mapping': 0.3.31
     optional: true
 
   '@jridgewell/resolve-uri@3.1.2': {}
@@ -12078,7 +11992,7 @@ snapshots:
   '@jridgewell/source-map@0.3.11':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.12
-      '@jridgewell/trace-mapping': 0.3.29
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/sourcemap-codec@1.5.4': {}
 
@@ -12255,17 +12169,6 @@ snapshots:
   '@playwright/test@1.60.0':
     dependencies:
       playwright: 1.60.0
-
-  '@posthog/browser-common@0.8.3':
-    dependencies:
-      '@posthog/core': 1.53.2
-      '@posthog/types': 1.411.1
-
-  '@posthog/core@1.53.2':
-    dependencies:
-      '@posthog/types': 1.411.1
-
-  '@posthog/types@1.411.1': {}
 
   '@prettier/plugin-pug@3.4.2(prettier@3.6.2)':
     dependencies:
@@ -13196,9 +13099,9 @@ snapshots:
   '@simplewebauthn/types@9.0.1':
     optional: true
 
-  '@sveltejs/acorn-typescript@1.0.10(acorn@8.15.0)':
+  '@sveltejs/acorn-typescript@1.0.10(acorn@8.18.0)':
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.18.0
     optional: true
 
   '@svgr/babel-plugin-add-jsx-attribute@8.0.0(@babel/core@7.28.0)':
@@ -14350,8 +14253,6 @@ snapshots:
   core-js@2.6.12:
     optional: true
 
-  core-js@3.50.0: {}
-
   cosmiconfig@5.2.1:
     dependencies:
       import-fresh: 2.0.0
@@ -14565,10 +14466,6 @@ snapshots:
       domelementtype: 2.3.0
 
   dompurify@3.3.0:
-    optionalDependencies:
-      '@types/trusted-types': 2.0.7
-
-  dompurify@3.4.15:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -14801,14 +14698,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.1(jiti@1.21.7)):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@1.21.7)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.8.3)
       eslint: 9.39.1(jiti@1.21.7)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 4.4.4(eslint-plugin-import-x@4.16.2(eslint-import-resolver-node@0.3.9)(eslint@9.39.1(jiti@1.21.7)))(eslint-plugin-import@2.32.0)(eslint@9.39.1(jiti@1.21.7))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import-x@4.16.2(eslint-import-resolver-node@0.3.9)(eslint@9.39.1(jiti@1.21.7)))(eslint-plugin-import@2.32.0)(eslint@9.39.1(jiti@1.21.7))
     transitivePeerDependencies:
       - supports-color
 
@@ -14821,7 +14718,7 @@ snapshots:
       eslint: 9.39.1(jiti@1.21.7)
       eslint-import-context: 0.1.9(unrs-resolver@1.11.1)
       is-glob: 4.0.3
-      minimatch: 9.0.5
+      minimatch: 10.2.6
       semver: 7.7.3
       stable-hash-x: 0.2.0
       unrs-resolver: 1.11.1
@@ -14842,7 +14739,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.1(jiti@1.21.7)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.1(jiti@1.21.7))
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@1.21.7))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -15061,8 +14958,6 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
-
-  fflate@0.4.9: {}
 
   file-entry-cache@8.0.0:
     dependencies:
@@ -15443,7 +15338,7 @@ snapshots:
 
   is-reference@3.0.3:
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.9
     optional: true
 
   is-regex@1.2.1:
@@ -16337,33 +16232,11 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.430.1(@types/react@19.2.7)(preact-render-to-string@6.5.11(preact@10.24.3))(react@19.2.1):
-    dependencies:
-      '@posthog/browser-common': 0.8.3
-      '@posthog/core': 1.53.2
-      '@posthog/types': 1.411.1
-      core-js: 3.50.0
-      dompurify: 3.4.15
-      fflate: 0.4.9
-      preact: 10.29.8(preact-render-to-string@6.5.11(preact@10.24.3))
-      query-selector-shadow-dom: 1.0.1
-      web-vitals: 6.2.1
-      web-vitals-soft-navs: web-vitals@6.2.1
-    optionalDependencies:
-      '@types/react': 19.2.7
-      react: 19.2.1
-    transitivePeerDependencies:
-      - preact-render-to-string
-
   preact-render-to-string@6.5.11(preact@10.24.3):
     dependencies:
       preact: 10.24.3
 
   preact@10.24.3: {}
-
-  preact@10.29.8(preact-render-to-string@6.5.11(preact@10.24.3)):
-    optionalDependencies:
-      preact-render-to-string: 6.5.11(preact@10.24.3)
 
   prelude-ls@1.2.1: {}
 
@@ -16569,8 +16442,6 @@ snapshots:
 
   pvutils@1.1.5:
     optional: true
-
-  query-selector-shadow-dom@1.0.1: {}
 
   queue-microtask@1.2.3: {}
 
@@ -17137,10 +17008,10 @@ snapshots:
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@jridgewell/sourcemap-codec': 1.5.5
-      '@sveltejs/acorn-typescript': 1.0.10(acorn@8.15.0)
-      '@types/estree': 1.0.8
+      '@sveltejs/acorn-typescript': 1.0.10(acorn@8.18.0)
+      '@types/estree': 1.0.9
       '@types/trusted-types': 2.0.7
-      acorn: 8.15.0
+      acorn: 8.18.0
       aria-query: 5.3.1
       axobject-query: 4.1.0
       clsx: 2.1.1
@@ -17209,7 +17080,7 @@ snapshots:
   terser@5.51.2:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.15.0
+      acorn: 8.18.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -17456,15 +17327,13 @@ snapshots:
     dependencies:
       graceful-fs: 4.2.11
 
-  web-vitals@6.2.1: {}
-
   webidl-conversions@3.0.1: {}
 
   webpack-sources@3.5.1: {}
 
   webpack@5.110.3(postcss@8.5.6)(sharp@0.34.5):
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.9
       '@types/json-schema': 7.0.15
       '@webassemblyjs/ast': 1.14.1
       '@webassemblyjs/wasm-edit': 1.14.1

@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { track } from '@/lib/analytics/analytics';
 import { useSearchParams } from 'next/navigation';
 import { logger } from '@/lib/logging/app-logger';
 
@@ -123,7 +122,6 @@ export function useSetupChecklist({
         done: { ...stored.done, [step]: true }
       });
       logger.ok('Onboarding', 'SetupStepOpened', { step });
-      track('SetupStepOpened', { step });
     },
     [persist, stored]
   );

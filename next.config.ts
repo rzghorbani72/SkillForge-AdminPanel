@@ -55,22 +55,7 @@ const nextConfig: NextConfig = {
       rawTarget || API_PRODUCTION_DEFAULTS.backendApiUrl
     );
 
-    const posthogHost = (process.env.NEXT_PUBLIC_POSTHOG_HOST ?? '').replace(
-      /\/$/,
-      ''
-    );
-    const analyticsRewrites = posthogHost
-      ? [
-          {
-            source: '/ingest/static/:path*',
-            destination: `${posthogHost}/static/:path*`
-          },
-          { source: '/ingest/:path*', destination: `${posthogHost}/:path*` }
-        ]
-      : [];
-
     return [
-      ...analyticsRewrites,
       {
         source: API_REWRITE_SOURCES.langPrefixed,
         destination: `${destination.replace(/\/v1\/?$/, '')}/:lang/v1/:path*`
