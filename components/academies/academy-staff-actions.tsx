@@ -35,6 +35,7 @@ type AcademyStaffActionsProps = {
     | 'suspended_at'
     | 'showcase_desktop'
     | 'showcase_mobile'
+    | 'has_transactions'
   >;
   onChanged: () => void;
 };
@@ -50,6 +51,7 @@ export function AcademyStaffActions({
   const [suspendOpen, setSuspendOpen] = useState(false);
   const listed = academy.listed_publicly !== false;
   const suspended = Boolean(academy.suspended_at);
+  const deletable = !academy.has_transactions;
 
   async function liftSuspension() {
     setBusy(true);
@@ -143,7 +145,8 @@ export function AcademyStaffActions({
               : t('accountActions.suspend')}
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={busy}
+            disabled={busy || !deletable}
+            title={deletable ? undefined : t('stores.removeAcademyLocked')}
             className="text-destructive focus:text-destructive"
             onSelect={() => setConfirmRemove(true)}
           >

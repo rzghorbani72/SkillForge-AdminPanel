@@ -1560,6 +1560,8 @@ export const en = {
     listedToast: 'Academy is listed on the public site',
     hiddenToast: 'Academy is hidden from the public site',
     removeAcademy: 'Remove academy',
+    removeAcademyLocked:
+      'This academy has transactions and cannot be deleted. You can suspend or ban it.',
     removeAcademyConfirm:
       'This academy will leave the public site and this list. Student records and payments stay saved.',
     landingScreenshots: 'Landing screenshots',
@@ -7558,6 +7560,8 @@ export const en = {
       'An item with this name or details already exists. Please choose a different one.',
     COURSE_HAS_ACTIVE_ENROLLMENTS:
       'Students paid for this course and still have access. It cannot be deleted or taken off the site until their access ends.',
+    ACADEMY_HAS_TRANSACTIONS:
+      'This academy has real transactions and cannot be deleted. Suspend or ban it instead.',
     ACADEMY_ENROLLMENT_CLOSED:
       'This academy is not accepting new enrollments right now.',
     RESOURCE_NOT_FOUND:
