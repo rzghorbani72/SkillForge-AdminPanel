@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -14,10 +14,12 @@ import {
   KycReadonlyPanel,
   KycStatusBadge
 } from '@/components/settings/kyc/kyc-readonly-panel';
+import { KycChangeIban } from '@/components/settings/kyc/kyc-change-iban';
 import { KycWizardForm } from '@/components/settings/kyc/kyc-wizard-form';
+import { Button } from '@/components/ui/button';
 import { useKyc } from '@/hooks/use-kyc';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { KYC_STATUS } from '@/types/kyc';
+import { KYC_STATUS, type KycState } from '@/types/kyc';
 
 type Props = {
   enabled: boolean;
@@ -27,6 +29,14 @@ type Props = {
 export function ProfileKycSection({ enabled }: Props) {
   const { t } = useTranslation();
   const { state, isLoading, setState } = useKyc(enabled);
+  const [addingIban, setAddingIban] = useState(false);
+  const verified = state?.status === KYC_STATUS.VERIFIED;
+  const showWizard = Boolean(state?.is_owner) && (!verified || addingIban);
+
+  const applyState = (next: KycState) => {
+    setState(next);
+    if (next.status === KYC_STATUS.VERIFIED) setAddingIban(false);
+  };
 
   useEffect(() => {
     if (!enabled || typeof window === 'undefined') return;
@@ -61,10 +71,30 @@ export function ProfileKycSection({ enabled }: Props) {
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-24 w-full" />
           </div>
-        ) : state.is_owner && state.status !== KYC_STATUS.VERIFIED ? (
-          <KycWizardForm initial={state} onSubmitted={setState} />
+        ) : showWizard ? (
+          <div className="space-y-4">
+            <KycWizardForm initial={state} onSubmitted={applyState} />
+            {addingIban ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setAddingIban(false)}
+              >
+                {t('settings.kyc.cancelChangeIban')}
+              </Button>
+            ) : null}
+          </div>
         ) : (
-          <KycReadonlyPanel state={state} />
+          <div className="space-y-4">
+            <KycReadonlyPanel state={state} />
+            {state.is_owner ? (
+              <KycChangeIban
+                onSelected={applyState}
+                onAddNew={() => setAddingIban(true)}
+              />
+            ) : null}
+          </div>
         )}
       </CardContent>
     </Card>

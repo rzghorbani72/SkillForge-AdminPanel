@@ -45,14 +45,14 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
         <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
           {t('settings.kyc.rateLimited')}
         </p>
-      ) : (
+      ) : stepAttempts.attempts_remaining < state.max_verify_attempts ? (
         <p className="text-xs text-muted-foreground">
           {t('settings.kyc.attemptsRemaining', {
             count: stepAttempts.attempts_remaining,
             total: state.max_verify_attempts
           })}
         </p>
-      )}
+      ) : null}
 
       <KycStepper
         current={stepIndex}

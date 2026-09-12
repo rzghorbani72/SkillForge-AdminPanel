@@ -23,6 +23,7 @@ export type KycState = {
   status: KycStatus;
   is_owner: boolean;
   can_edit: boolean;
+  can_change_iban: boolean;
   verification_enabled: boolean;
   shahkar_matched: boolean;
   iban_matched: boolean;
@@ -51,4 +52,12 @@ export type VerifyKycIdentityPayload = {
 export type VerifyKycShebaPayload = {
   birth_date: string;
   sheba_number: string;
+};
+
+export type VerifiedIban = {
+  sheba_number: string;
+  account_holder_name: string;
+  bank_name: string | null;
+  academy_names: string[];
+  is_current: boolean;
 };

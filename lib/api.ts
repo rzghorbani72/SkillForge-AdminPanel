@@ -51,6 +51,7 @@ import type {
 } from '@/types/seller-identity';
 import type {
   KycState,
+  VerifiedIban,
   VerifyKycIdentityPayload,
   VerifyKycShebaPayload
 } from '@/types/kyc';
@@ -4527,6 +4528,21 @@ class ApiClient {
   async confirmKycIban() {
     const response = await this.request('/academies/current/kyc/confirm-iban', {
       method: 'POST'
+    });
+    return response.data as KycState;
+  }
+
+  async getVerifiedKycIbans() {
+    const response = await this.request(
+      '/academies/current/kyc/verified-ibans'
+    );
+    return response.data as VerifiedIban[];
+  }
+
+  async selectKycIban(shebaNumber: string) {
+    const response = await this.request('/academies/current/kyc/select-iban', {
+      method: 'POST',
+      body: JSON.stringify({ sheba_number: shebaNumber })
     });
     return response.data as KycState;
   }

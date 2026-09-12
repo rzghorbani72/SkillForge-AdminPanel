@@ -3010,6 +3010,15 @@ export const fa = {
       ibanActiveYes: 'فعال',
       ibanActiveNo: 'غیرفعال',
       bankName: 'نام بانک',
+      changeIbanTitle: 'تغییر شبای تسویه',
+      changeIbanNotice:
+        'این تغییر فقط برای همین آکادمی اعمال می‌شود. تسویه‌ها به شبای تأییدشدهٔ این آکادمی واریز می‌شوند.',
+      verifiedIbansEmpty: 'شبای تأییدشدهٔ دیگری ندارید.',
+      useIban: 'استفاده برای این آکادمی',
+      addNewIban: 'افزودن شبای جدید',
+      cancelChangeIban: 'انصراف از تغییر شبا',
+      ibanSelected: 'شبای این آکادمی تغییر کرد.',
+      usedInAcademies: 'استفاده در: {{names}}',
       settlementUnlocked:
         'احراز هویت بانکی کامل شد. می‌توانید درخواست تسویه بدهید.',
       serviceDisabled:

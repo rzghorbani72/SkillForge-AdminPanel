@@ -3287,6 +3287,15 @@ export const en = {
       ibanActiveYes: 'Active',
       ibanActiveNo: 'Inactive',
       bankName: 'Bank name',
+      changeIbanTitle: 'Change settlement Sheba',
+      changeIbanNotice:
+        'This change applies to this academy only. Settlements are paid to the verified Sheba of this academy.',
+      verifiedIbansEmpty: 'You have no other verified Sheba.',
+      useIban: 'Use for this academy',
+      addNewIban: 'Add a new Sheba',
+      cancelChangeIban: 'Cancel Sheba change',
+      ibanSelected: 'The Sheba for this academy was changed.',
+      usedInAcademies: 'Used in: {{names}}',
       settlementUnlocked:
         'Bank identity is complete. You can request a settlement.',
       serviceDisabled:

@@ -43,7 +43,9 @@ export function useKycWizard(
         ? null
         : state.iban_attempts.locked_until;
   const rateLimited = Boolean(stepLockedUntil);
-  const inputsLocked = rateLimited || !state.can_edit || busy;
+  const stepEditable =
+    step === 'identity' ? state.can_edit : state.can_change_iban;
+  const inputsLocked = rateLimited || !stepEditable || busy;
   const stepAttempts =
     step === 'identity' ? state.shahkar_attempts : state.iban_attempts;
 
