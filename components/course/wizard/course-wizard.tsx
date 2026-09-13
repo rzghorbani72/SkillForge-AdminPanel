@@ -14,10 +14,10 @@ import { CoursePricingSection } from '../pricing/course-pricing-section';
 import { useCourseForm } from '../useCourseForm';
 import { StepAccess } from './step-access';
 import { StepBasics } from './step-basics';
+import { StepClassroom } from './step-classroom';
 import { StepContent } from './step-content';
 import { StepPreview } from './step-preview';
 import { WizardHeader } from './wizard-header';
-import { LiveClassroomBanner } from './live-classroom-banner';
 import {
   WIZARD_STEP_FIELDS,
   WIZARD_STEP_HINT,
@@ -42,7 +42,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
   const course = useCourseForm(courseId);
   const { form, isLoading, isSaving, saveStatus, selectedAcademy } = course;
 
-  const isLive = course.courseType === 'LIVE';
   const steps = stepsFor(course.courseType);
 
   const [requestedStep, setStep] = useState<CourseWizardStep>(() =>
@@ -139,8 +138,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
           {t(WIZARD_STEP_HINT[step])}
         </p>
 
-        {isLive && <LiveClassroomBanner courseId={courseId} />}
-
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} noValidate>
             {step === 'basics' && (
@@ -153,6 +150,8 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
             )}
 
             {step === 'content' && <StepContent curriculum={course} />}
+
+            {step === 'classroom' && <StepClassroom courseId={courseId} />}
 
             {step === 'access' && (
               <StepAccess

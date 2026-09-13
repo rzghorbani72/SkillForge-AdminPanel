@@ -17,11 +17,11 @@ type Props = {
 /**
  * A live course is not bought once and watched later: it is either open to
  * everyone or a seat is reserved in it. Both seat prices belong to the class
- * itself, so they are shown here read-only and edited on the class page.
+ * itself, so they are shown here read-only and edited on the Classroom step.
  */
 export function LiveSeatCards({ courseId, offers, termLabel }: Props) {
   const { t } = useTranslation();
-  const classPage = `/courses/${courseId}/live`;
+  const classPage = `/courses/${courseId}/edit?step=classroom`;
 
   const openClassPage = (
     <div className="mt-auto border-t pt-3">

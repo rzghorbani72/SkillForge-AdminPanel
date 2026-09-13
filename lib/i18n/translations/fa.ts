@@ -1867,9 +1867,9 @@ export const fa = {
     seatPrice: 'قیمت هر صندلی',
     seatPriceNotSet: 'تعیین نشده',
     seatPricingEmpty:
-      'قیمت هر صندلی کلاس گروهی و قیمت کلاس خصوصی در صفحهٔ کلاس زنده تعیین می‌شود.',
-    seatPricedOnClassPage: 'از صفحهٔ کلاس زنده قیمت‌گذاری می‌شود',
-    openLiveClassPage: 'رفتن به کلاس زنده',
+      'قیمت هر صندلی کلاس گروهی و قیمت کلاس خصوصی در گام «کلاس آنلاین» تعیین می‌شود.',
+    seatPricedOnClassPage: 'از گام «کلاس آنلاین» قیمت‌گذاری می‌شود',
+    openLiveClassPage: 'رفتن به گام کلاس آنلاین',
     includesLive: 'شامل کلاس آنلاین زنده',
     includesLiveOnHint: 'خریدار به لینک کلاس آنلاین (زنده) هم دسترسی دارد',
     includesLiveOffHint:
@@ -1997,6 +1997,9 @@ export const fa = {
       stepContent: 'محتوا',
       stepContentHint:
         'فصل‌ها و درس‌ها را بسازید: برای هر درس ویدیو و فایل پیوست.',
+      stepClassroom: 'کلاس آنلاین',
+      stepClassroomHint:
+        'این دوره زنده را همین‌جا مدیریت کنید: سرفصل‌ها، قیمت، زمان‌بندی هفتگی و هر کلاس.',
       stepAccess: 'دسترسی',
       stepAccessHint:
         'تعیین کنید چه کسی این دوره را ببیند: همه در سایت شما، یا فقط دانشجویان و گروه‌هایی که انتخاب می‌کنید.',

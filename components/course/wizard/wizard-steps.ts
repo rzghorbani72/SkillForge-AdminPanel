@@ -1,10 +1,11 @@
 import type { CourseType } from '../course-drafts';
 import type { CourseFormData } from '../schema';
 
-/** The five steps a course is built in, in create and in edit alike. */
+/** The steps a course is built in, in create and in edit alike. */
 export const COURSE_WIZARD_STEPS = [
   'basics',
   'content',
+  'classroom',
   'access',
   'pricing',
   'preview'
@@ -13,18 +14,19 @@ export const COURSE_WIZARD_STEPS = [
 export type CourseWizardStep = (typeof COURSE_WIZARD_STEPS)[number];
 
 /**
- * A live course has no lesson tree — its classes live in the classroom — so it
- * is built in the same steps minus `content`.
+ * A live course has no lesson tree — its topics, price and timetable are
+ * managed in `classroom` instead of `content`.
  */
 export function stepsFor(courseType: CourseType): readonly CourseWizardStep[] {
   return courseType === 'LIVE'
     ? COURSE_WIZARD_STEPS.filter((step) => step !== 'content')
-    : COURSE_WIZARD_STEPS;
+    : COURSE_WIZARD_STEPS.filter((step) => step !== 'classroom');
 }
 
 export const WIZARD_STEP_LABEL: Record<CourseWizardStep, string> = {
   basics: 'courses.wizard.stepBasics',
   content: 'courses.wizard.stepContent',
+  classroom: 'courses.wizard.stepClassroom',
   access: 'courses.wizard.stepAccess',
   pricing: 'courses.wizard.stepPricing',
   preview: 'courses.wizard.stepPreview'
@@ -33,6 +35,7 @@ export const WIZARD_STEP_LABEL: Record<CourseWizardStep, string> = {
 export const WIZARD_STEP_HINT: Record<CourseWizardStep, string> = {
   basics: 'courses.wizard.stepBasicsHint',
   content: 'courses.wizard.stepContentHint',
+  classroom: 'courses.wizard.stepClassroomHint',
   access: 'courses.wizard.stepAccessHint',
   pricing: 'courses.wizard.stepPricingHint',
   preview: 'courses.wizard.stepPreviewHint'
@@ -51,6 +54,7 @@ export const WIZARD_STEP_FIELDS: Record<
     'access_duration_days'
   ],
   content: [],
+  classroom: [],
   access: ['meta_title', 'meta_description', 'keywords'],
   pricing: ['primary_price', 'secondary_price'],
   preview: []

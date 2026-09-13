@@ -1880,9 +1880,9 @@ export const en = {
     seatPrice: 'Price per seat',
     seatPriceNotSet: 'Not set',
     seatPricingEmpty:
-      'The group seat price and the private class price are set on the class page.',
-    seatPricedOnClassPage: 'Priced on the class page',
-    openLiveClassPage: 'Open class page',
+      'The group seat price and the private class price are set on the Classroom step.',
+    seatPricedOnClassPage: 'Priced on the Classroom step',
+    openLiveClassPage: 'Go to Classroom step',
     includesLive: 'Includes the live class',
     includesLiveOnHint: 'The buyer also gets the live class link',
     includesLiveOffHint: 'Recorded videos only — no live class link',
@@ -2011,6 +2011,9 @@ export const en = {
       stepContent: 'Content',
       stepContentHint:
         'Build the sections and lessons: a video and an attached file for each lesson.',
+      stepClassroom: 'Classroom',
+      stepClassroomHint:
+        'Manage this live course right here: its topics, its price, its weekly timetable, and every class.',
       stepAccess: 'Access',
       stepAccessHint:
         'Decide who may open this course: everyone on your site, or only the students and groups you choose.',
