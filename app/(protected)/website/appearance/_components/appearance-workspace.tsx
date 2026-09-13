@@ -24,7 +24,10 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import type { TemplatePreset, UIBlockConfig, UITemplate } from '@/types/api';
-import { presetSourceKey } from '@/lib/ui-template/preset-source';
+import {
+  presetSourceKey,
+  formatPresetDisplayName
+} from '@/lib/ui-template/preset-source';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import {
   buildTemplatePreviewUrl,
@@ -1355,8 +1358,11 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
             <X className="h-4 w-4" />
           </button>
 
-          <span className="text-sm font-semibold text-zinc-900">
-            {selectedPreset.name}
+          <span
+            title={selectedPreset.name}
+            className="max-w-[40vw] truncate text-sm font-semibold text-zinc-900"
+          >
+            {formatPresetDisplayName(selectedPreset.name)}
           </span>
 
           {isAdmin && isPublicPreset && (
@@ -1613,8 +1619,11 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         <div className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
           <span className="h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-emerald-500" />
           <div className="flex-1">
-            <p className="text-sm font-semibold text-emerald-900">
-              قالب فعلی: {activePreset.name}
+            <p
+              title={activePreset.name}
+              className="truncate text-sm font-semibold text-emerald-900"
+            >
+              قالب فعلی: {formatPresetDisplayName(activePreset.name)}
             </p>
           </div>
           <Button

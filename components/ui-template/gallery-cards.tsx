@@ -4,7 +4,10 @@ import { useRef, useState } from 'react';
 import { Eye, Trash2, Check, Pencil, ImageUp, Loader2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TemplatePreset } from '@/types/api';
-import { presetSourceKey } from '@/lib/ui-template/preset-source';
+import {
+  presetSourceKey,
+  formatPresetDisplayName
+} from '@/lib/ui-template/preset-source';
 import { getDesignSystem } from '@/lib/design-systems';
 import { apiClient } from '@/lib/api';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
@@ -135,6 +138,7 @@ function GalleryCard({
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [frameLoaded, setFrameLoaded] = useState(false);
   const ds = getDesignSystem(presetSourceKey(preset));
+  const displayName = formatPresetDisplayName(preset.name);
   const isDedicated = preset.visibility === 'DEDICATED';
   // Every academy-owned template is a customized copy, whether or not it still
   // records the original it came from — one badge, one word for the manager.
@@ -238,7 +242,7 @@ function GalleryCard({
                 }}
               >
                 <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
-                  {preset.name}
+                  {displayName}
                 </span>
                 <div className="flex gap-1.5">
                   {swatches.map((c, i) => (
@@ -277,7 +281,7 @@ function GalleryCard({
             }}
           >
             <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
-              {preset.name}
+              {displayName}
             </span>
             <div className="flex gap-1.5">
               {swatches.map((c, i) => (
@@ -356,8 +360,11 @@ function GalleryCard({
       {/* Footer */}
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base font-bold leading-tight text-foreground">
-            {preset.name}
+          <h3
+            title={preset.name}
+            className="text-base font-bold leading-tight text-foreground"
+          >
+            {displayName}
           </h3>
           {/* Palette strip doubles as the at-a-glance identity of the template. */}
           <div className="flex flex-shrink-0 gap-1 rounded-full border border-border/60 bg-muted/40 p-1">
