@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
 import { NumberInput } from '@/components/ui/number-input';
-import { PriceInput } from '@/components/ui/price-input';
+import { ClassSellingFields } from '@/components/class/class-selling-fields';
+import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
 import { defaultTimezone } from '@/lib/class-slot-time';
 import { apiClient } from '@/lib/api';
@@ -63,6 +64,7 @@ export default function ScheduleBuilder({
     String(prefill?.minStudents ?? 2)
   );
   const [seatPrice, setSeatPrice] = useState('');
+  const [wholeClassBooking, setWholeClassBooking] = useState(true);
   const [startsOn, setStartsOn] = useState('');
   const [joinDeadline, setJoinDeadline] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -94,6 +96,7 @@ export default function ScheduleBuilder({
         capacity: Number(capacity) || 1,
         min_students: Number(minStudents) || 1,
         seat_price: seatPrice === '' ? undefined : Number(seatPrice),
+        whole_class_booking: wholeClassBooking,
         session_count: sessionCountValue,
         starts_on_requested: new Date(startsOn).toISOString(),
         join_deadline: joinDeadline
@@ -157,7 +160,10 @@ export default function ScheduleBuilder({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
+              <ClassSizeBadge capacity={Number(capacity) || 1} />
+            </div>
             <NumberInput
               id="capacity"
               value={capacity}
@@ -166,22 +172,15 @@ export default function ScheduleBuilder({
             />
           </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="seat-price">{t('courses.live.seatPrice')}</Label>
-          <PriceInput
-            id="seat-price"
-            value={seatPrice}
-            placeholder={
-              defaultSeatPrice !== undefined
-                ? String(defaultSeatPrice)
-                : undefined
-            }
-            onChange={setSeatPrice}
-          />
-          <p className="text-xs text-muted-foreground">
-            {t('courses.live.seatPriceHint')}
-          </p>
-        </div>
+        <ClassSellingFields
+          idPrefix="new-class"
+          capacity={Number(capacity) || 1}
+          seatPrice={seatPrice}
+          offerPrice={defaultSeatPrice}
+          wholeClassBooking={wholeClassBooking}
+          onSeatPriceChange={setSeatPrice}
+          onWholeClassBookingChange={setWholeClassBooking}
+        />
       </div>
 
       {preview.length > 0 && (

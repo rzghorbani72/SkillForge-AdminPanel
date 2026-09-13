@@ -1,7 +1,11 @@
 'use client';
 
+import Link from 'next/link';
+import { ArrowRightLeft } from 'lucide-react';
+
 import { Badge } from '@/components/ui/badge';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
+import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import type { TutoringEngagement } from '@/types/learning-operations';
@@ -14,6 +18,7 @@ export function EngagementSummaryCard({
 }) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
+  const formatCurrency = useFormatCurrency();
 
   const facts = [
     {
@@ -46,6 +51,23 @@ export function EngagementSummaryCard({
           </div>
         ))}
       </dl>
+      {engagement.moved_to_group_id ? (
+        <p className="mx-5 mb-5 flex items-start gap-2 rounded-lg bg-muted/50 p-3 text-sm">
+          <ArrowRightLeft className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+          <span>
+            {t('tutoring.movedBanner', {
+              title: engagement.Group?.title ?? '',
+              amount: formatCurrency(engagement.credit_granted ?? 0)
+            })}{' '}
+            <Link
+              href={`/courses/${engagement.course_id}/live/${engagement.moved_to_group_id}`}
+              className="font-medium underline"
+            >
+              {t('tutoring.groups.openFullPage')}
+            </Link>
+          </span>
+        </p>
+      ) : null}
     </DataPanel>
   );
 }

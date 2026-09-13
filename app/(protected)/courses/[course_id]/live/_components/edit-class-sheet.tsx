@@ -10,7 +10,6 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
-import { PriceInput } from '@/components/ui/price-input';
 import {
   Select,
   SelectContent,
@@ -26,7 +25,10 @@ import {
   SheetTitle
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
+import { ClassSellingFields } from '@/components/class/class-selling-fields';
+import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { GroupActionsCard } from '@/components/class/group-actions-card';
+import { InviteLink } from '@/components/class/invite-link';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
 import { useClassDetail } from '@/hooks/use-class-detail';
@@ -154,6 +156,9 @@ function ClassSettingsBody({
   const [seatPrice, setSeatPrice] = useState(
     group.seat_price != null ? String(group.seat_price) : ''
   );
+  const [wholeClassBooking, setWholeClassBooking] = useState(
+    group.whole_class_booking ?? true
+  );
   const [ageMin, setAgeMin] = useState(
     group.age_min ? String(group.age_min) : ''
   );
@@ -183,6 +188,7 @@ function ClassSettingsBody({
         capacity: Number(capacity) || undefined,
         min_students: Number(minStudents) || undefined,
         seat_price: seatPrice === '' ? undefined : Number(seatPrice),
+        whole_class_booking: wholeClassBooking,
         age_min: ageMin ? Number(ageMin) : undefined,
         age_max: ageMax ? Number(ageMax) : undefined,
         term_weeks: Number(termWeeks) || undefined,
@@ -240,13 +246,16 @@ function ClassSettingsBody({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="edit-group-capacity">
-                {t('tutoring.groups.capacity')}
-              </Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="edit-group-capacity">
+                  {t('tutoring.groups.capacity')}
+                </Label>
+                <ClassSizeBadge capacity={Number(capacity) || 1} />
+              </div>
               <NumberInput
                 id="edit-group-capacity"
                 value={capacity}
-                min={1}
+                min={Math.max(1, group.seats_taken)}
                 onChange={setCapacity}
               />
             </div>
@@ -261,23 +270,6 @@ function ClassSettingsBody({
                 min={1}
                 onChange={setMinStudents}
               />
-            </div>
-
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="edit-group-seat-price">
-                {t('courses.live.seatPrice')}
-              </Label>
-              <PriceInput
-                id="edit-group-seat-price"
-                value={seatPrice}
-                placeholder={
-                  group.Offer ? String(group.Offer.price) : undefined
-                }
-                onChange={setSeatPrice}
-              />
-              <p className="text-xs text-muted-foreground">
-                {t('courses.live.seatPriceHint')}
-              </p>
             </div>
 
             <div className="space-y-1.5">
@@ -352,6 +344,23 @@ function ClassSettingsBody({
             </div>
           </div>
         </div>
+
+        <ClassSellingFields
+          idPrefix="edit-group"
+          capacity={Number(capacity) || 1}
+          seatPrice={seatPrice}
+          offerPrice={group.Offer?.price}
+          wholeClassBooking={wholeClassBooking}
+          seatsHeld={group.seats_held}
+          onSeatPriceChange={setSeatPrice}
+          onWholeClassBookingChange={setWholeClassBooking}
+        />
+
+        {group.join_code ? (
+          <div className="rounded-lg border p-4">
+            <InviteLink joinCode={group.join_code} />
+          </div>
+        ) : null}
 
         <div className="space-y-2 rounded-lg border p-4">
           <Label>{t('tutoring.groups.timetable')}</Label>

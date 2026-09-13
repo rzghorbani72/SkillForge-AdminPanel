@@ -1,5 +1,6 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataList } from '@/components/shared/data-list/data-list';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
@@ -36,7 +37,16 @@ export const GroupRosterCard = ({ members, busy, onRemove }: Props) => {
           {
             id: 'student',
             header: t('tutoring.groups.columnStudent'),
-            cell: (member) => member.Student?.display_name ?? '—'
+            cell: (member) => (
+              <span className="inline-flex items-center gap-2">
+                {member.Student?.display_name ?? '—'}
+                {member.moved_from_private ? (
+                  <Badge variant="outline" className="font-normal">
+                    {t('tutoring.groups.movedFromPrivate')}
+                  </Badge>
+                ) : null}
+              </span>
+            )
           },
           {
             id: 'seats',

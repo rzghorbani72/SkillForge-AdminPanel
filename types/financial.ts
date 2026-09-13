@@ -14,6 +14,8 @@ export interface AcademyPaymentRow {
   gateway?: string | null;
   created_at: string;
   discount_amount?: number | null;
+  /** Store credit spent on this checkout; `amount` is the cash part. */
+  credit_amount?: number | null;
   coupon_code?: string | null;
   vat_amount?: number | null;
   platform_fee?: number | null;

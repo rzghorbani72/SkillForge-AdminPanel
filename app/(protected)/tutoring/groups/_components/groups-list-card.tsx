@@ -33,7 +33,11 @@ export const GroupsListCard = ({
       : `/tutoring/groups/${group.id}`;
 
   const seats = (group: TutoringGroup) =>
-    `${formatNumber(group.seats_taken, language)} / ${formatNumber(group.capacity, language)}`;
+    `${formatNumber(group.seats_taken, language)} / ${formatNumber(group.capacity, language)}${
+      group.seats_held
+        ? ` (${t('courses.live.seatsHeld', { held: formatNumber(group.seats_held, language) })})`
+        : ''
+    }`;
 
   const publishButton = (group: TutoringGroup) =>
     group.status === 'DRAFT' ? (

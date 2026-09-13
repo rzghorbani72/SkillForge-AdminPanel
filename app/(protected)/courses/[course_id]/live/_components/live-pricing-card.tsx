@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PriceInput } from '@/components/ui/price-input';
+import { PriceLadderPreview } from '@/components/class/price-ladder-preview';
 import { SetupCard } from '@/components/course/live/setup-card';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -145,6 +146,10 @@ export default function LivePricingCard({
             </p>
           </div>
         </div>
+        <PriceLadderPreview
+          groupPrice={Number(groupPrice) || 0}
+          soloPrice={Number(soloPrice) || 0}
+        />
         <Button
           type="button"
           size="sm"

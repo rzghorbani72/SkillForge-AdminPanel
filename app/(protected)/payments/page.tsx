@@ -478,6 +478,12 @@ export default function PaymentsPage() {
                   0
               )}
             </div>
+            {selectedPayment?.credit_amount ? (
+              <div>
+                {t('payments.creditApplied')}:{' '}
+                {formatCurrency(selectedPayment.credit_amount)}
+              </div>
+            ) : null}
             <div>
               {t('payments.detailVat')}:{' '}
               {formatCurrency(selectedPayment?.financials?.vat_amount ?? 0)}

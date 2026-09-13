@@ -1819,6 +1819,17 @@ export const en = {
       seatPrice: 'Price per seat',
       seatPriceHint:
         "Leave empty to sell at the course's per-seat price. One seat makes this a private class.",
+      priceLadderTitle: 'Prices as the student sees them',
+      priceLadderPrivate: 'Private class (1:1)',
+      priceLadderSmall: 'Per seat, small group (up to 15)',
+      priceLadderPublic: 'Per seat, public class (over 15)',
+      priceLadderWhole:
+        'Reserving a whole class = seats × seat price. Each class can override its seat price.',
+      soloBelowGroupWarning:
+        'The private price is below the seat price, so a private student can never move into a class. Raise the private price.',
+      wholeClassPrice: 'Whole class ({{count}} seats)',
+      seatsHeld: '{{held}} seats being paid for',
+      heldHint: 'released if unpaid after 10 minutes',
       requestsTitle: 'Class requests',
       requestsCount: '{{count}} students asked for a class time',
       requestSeats: '{{count}} seat(s)',
@@ -4711,6 +4722,7 @@ export const en = {
     detailAuthority: 'Authority',
     detailPlatformCommission: 'Platform Commission',
     detailVat: 'VAT',
+    creditApplied: 'Credit applied',
     detailAcademyRevenue: 'Academy Revenue',
     detailFlow: 'Flow',
     detailPricingProfile: 'Pricing Profile',
@@ -7010,6 +7022,14 @@ export const en = {
       startsOn: 'First meeting',
       ageRange: 'Age range',
       joinCode: 'Share code',
+      wholeClassBooking: 'Allow one buyer to reserve the whole class',
+      wholeClassBookingHint:
+        'Turn off for big public classes so one person cannot take every seat.',
+      inviteLink: 'Class invite link',
+      sizePrivate: 'Private',
+      sizeSmall: 'Small group',
+      sizePublic: 'Public class',
+      movedFromPrivate: 'from private class',
       rosterTitle: 'Students',
       rosterSubtitle: 'Everyone holding a seat in this class.',
       rosterEmpty: 'Nobody has joined yet.',
@@ -7112,6 +7132,8 @@ export const en = {
     tutor: 'Tutor',
     endsAt: 'Term ends',
     openEnded: 'No end date',
+    movedBanner:
+      'This student moved from a private class into “{{title}}”; {{amount}} stays as credit.',
     engagementSummaryHint:
       'A private class: name each meeting, add topic, files and homework, and take attendance.',
     openClass: 'Manage class',

@@ -1809,6 +1809,17 @@ export const fa = {
       seatPrice: 'قیمت هر صندلی',
       seatPriceHint:
         'خالی بگذارید تا با قیمت هر صندلی دوره فروخته شود. یک صندلی یعنی کلاس خصوصی.',
+      priceLadderTitle: 'قیمت‌ها همان‌طور که دانشجو می‌بیند',
+      priceLadderPrivate: 'کلاس خصوصی (یک‌نفره)',
+      priceLadderSmall: 'هر صندلی در گروه کوچک (تا ۱۵ نفر)',
+      priceLadderPublic: 'هر صندلی در کلاس عمومی (بیش از ۱۵ نفر)',
+      priceLadderWhole:
+        'رزرو کل یک کلاس = تعداد صندلی × قیمت صندلی. قیمت هر کلاس را می‌توان جداگانه تغییر داد.',
+      soloBelowGroupWarning:
+        'قیمت خصوصی کمتر از قیمت صندلی است؛ دانشجوی خصوصی نمی‌تواند به هیچ کلاسی بپیوندد. قیمت خصوصی را بالاتر بگذار.',
+      wholeClassPrice: 'رزرو کل کلاس ({{count}} صندلی)',
+      seatsHeld: '{{held}} صندلی در حال پرداخت',
+      heldHint: 'اگر تا ۱۰ دقیقه پرداخت نشود آزاد می‌شود',
       requestsTitle: 'درخواست‌های کلاس',
       requestsCount: '{{count}} دانشجو زمان کلاس درخواست کرده‌اند',
       requestSeats: '{{count}} صندلی',
@@ -4672,6 +4683,7 @@ export const fa = {
     detailAuthority: 'Authority',
     detailPlatformCommission: 'کمیسیون پلتفرم',
     detailVat: 'مالیات بر ارزش افزوده',
+    creditApplied: 'اعتبار استفاده‌شده',
     detailAcademyRevenue: 'درآمد آکادمی',
     detailFlow: 'جریان',
     detailPricingProfile: 'پروفایل قیمت‌گذاری',
@@ -6980,6 +6992,14 @@ export const fa = {
       startsOn: 'اولین جلسه',
       ageRange: 'بازهٔ سنی',
       joinCode: 'کد اشتراک‌گذاری',
+      wholeClassBooking: 'اجازهٔ رزرو کل کلاس توسط یک نفر',
+      wholeClassBookingHint:
+        'برای کلاس‌های عمومی بزرگ خاموش کن تا یک نفر همهٔ صندلی‌ها را نگیرد.',
+      inviteLink: 'لینک دعوت به کلاس',
+      sizePrivate: 'خصوصی',
+      sizeSmall: 'گروه کوچک',
+      sizePublic: 'کلاس عمومی',
+      movedFromPrivate: 'از کلاس خصوصی',
       rosterTitle: 'دانشجویان',
       rosterSubtitle: 'همهٔ کسانی که در این کلاس صندلی دارند.',
       rosterEmpty: 'هنوز کسی ثبت‌نام نکرده است.',
@@ -7081,6 +7101,8 @@ export const fa = {
     tutor: 'مدرس',
     endsAt: 'پایان دوره',
     openEnded: 'بدون تاریخ پایان',
+    movedBanner:
+      'این دانشجو از کلاس خصوصی به کلاس «{{title}}» پیوست؛ {{amount}} به‌عنوان اعتبار برایش ماند.',
     engagementSummaryHint:
       'کلاس خصوصی؛ هر جلسه را نام‌گذاری کنید، سرفصل، فایل و تکلیف بگذارید و حضور را ثبت کنید.',
     openClass: 'مدیریت کلاس',

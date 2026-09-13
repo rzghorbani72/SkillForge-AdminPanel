@@ -19,6 +19,8 @@ export interface GroupFormState {
   age_min: string;
   age_max: string;
   term_weeks: string;
+  seat_price: string;
+  whole_class_booking: boolean;
   visibility: 'PUBLIC' | 'PRIVATE';
   join_deadline: string;
   meeting_url: string;
@@ -34,6 +36,8 @@ export const EMPTY_GROUP_FORM: GroupFormState = {
   age_min: '',
   age_max: '',
   term_weeks: '8',
+  seat_price: '',
+  whole_class_booking: true,
   visibility: 'PUBLIC',
   join_deadline: '',
   meeting_url: '',
@@ -80,6 +84,9 @@ export function useTutoringGroups() {
         min_students: Number(form.min_students),
         age_min: optionalNumber(form.age_min),
         age_max: optionalNumber(form.age_max),
+        seat_price:
+          form.seat_price === '' ? undefined : Number(form.seat_price),
+        whole_class_booking: form.whole_class_booking,
         visibility: form.visibility,
         term_weeks: Number(form.term_weeks),
         join_deadline: form.join_deadline

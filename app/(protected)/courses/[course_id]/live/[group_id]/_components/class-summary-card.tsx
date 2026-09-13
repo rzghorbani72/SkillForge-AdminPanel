@@ -1,5 +1,7 @@
 'use client';
 
+import { ClassSizeBadge } from '@/components/class/class-size-badge';
+import { InviteLink } from '@/components/class/invite-link';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { termStart } from '@/lib/class-slot-time';
@@ -32,6 +34,17 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
             {formatNumber(group.seats_taken, language)} /{' '}
             {formatNumber(group.capacity, language)}
           </dd>
+          <dd className="mt-1">
+            <ClassSizeBadge capacity={group.capacity} />
+          </dd>
+          {group.seats_held ? (
+            <dd className="text-xs text-muted-foreground">
+              {t('courses.live.seatsHeld', {
+                held: formatNumber(group.seats_held, language)
+              })}{' '}
+              · {t('courses.live.heldHint')}
+            </dd>
+          ) : null}
         </div>
         <div>
           <dt className="text-xs text-muted-foreground">
@@ -73,13 +86,8 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
           </div>
         ) : null}
         {group.join_code ? (
-          <div>
-            <dt className="text-xs text-muted-foreground">
-              {t('tutoring.groups.joinCode')}
-            </dt>
-            <dd className="text-sm" dir="ltr">
-              {group.join_code}
-            </dd>
+          <div className="sm:col-span-3">
+            <InviteLink joinCode={group.join_code} />
           </div>
         ) : null}
       </dl>

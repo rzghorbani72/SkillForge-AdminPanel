@@ -6,6 +6,7 @@ import { CalendarClock, CalendarDays } from 'lucide-react';
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
 import { GroupTermRange } from '@/components/class/group-term-range';
+import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { SeatMeter } from '@/components/class/seat-meter';
 import {
   DataList,
@@ -55,13 +56,16 @@ export function ClassListCard({
       id: 'title',
       header: t('tutoring.groups.columnTitle'),
       cell: (group) => (
-        <button
-          type="button"
-          onClick={() => setEditingId(group.id)}
-          className="text-start font-medium hover:underline"
-        >
-          {group.title}
-        </button>
+        <div className="space-y-1">
+          <button
+            type="button"
+            onClick={() => setEditingId(group.id)}
+            className="text-start font-medium hover:underline"
+          >
+            {group.title}
+          </button>
+          <ClassSizeBadge capacity={group.capacity} />
+        </div>
       )
     },
     {
@@ -89,7 +93,11 @@ export function ClassListCard({
       header: t('tutoring.groups.columnSeats'),
       className: 'w-40',
       cell: (group) => (
-        <SeatMeter taken={group.seats_taken} capacity={group.capacity} />
+        <SeatMeter
+          taken={group.seats_taken}
+          capacity={group.capacity}
+          held={group.seats_held}
+        />
       )
     },
     {
@@ -135,7 +143,11 @@ export function ClassListCard({
               <CalendarClock className="h-3.5 w-3.5 shrink-0" />
               <GroupTermRange group={group} />
             </p>
-            <SeatMeter taken={group.seats_taken} capacity={group.capacity} />
+            <SeatMeter
+              taken={group.seats_taken}
+              capacity={group.capacity}
+              held={group.seats_held}
+            />
           </button>
         )}
         cardGridClassName="grid gap-3 p-4 sm:grid-cols-2"

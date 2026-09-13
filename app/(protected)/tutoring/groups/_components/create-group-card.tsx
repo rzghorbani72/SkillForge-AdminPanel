@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { ClassSellingFields } from '@/components/class/class-selling-fields';
+import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -90,9 +92,12 @@ export const CreateGroupCard = ({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="group-capacity">
-              {t('tutoring.groups.capacity')}
-            </Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="group-capacity">
+                {t('tutoring.groups.capacity')}
+              </Label>
+              <ClassSizeBadge capacity={Number(form.capacity) || 1} />
+            </div>
             <Input
               id="group-capacity"
               type="number"
@@ -210,6 +215,20 @@ export const CreateGroupCard = ({
             />
           </div>
         </div>
+
+        <ClassSellingFields
+          idPrefix="group"
+          capacity={Number(form.capacity) || 1}
+          seatPrice={form.seat_price}
+          offerPrice={
+            offers.find((offer) => offer.id === form.offer_id)?.price ?? null
+          }
+          wholeClassBooking={form.whole_class_booking}
+          onSeatPriceChange={(seat_price) => patch({ seat_price })}
+          onWholeClassBookingChange={(whole_class_booking) =>
+            patch({ whole_class_booking })
+          }
+        />
 
         <div className="space-y-1.5">
           <Label htmlFor="group-description">

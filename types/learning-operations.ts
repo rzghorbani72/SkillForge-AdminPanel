@@ -285,6 +285,12 @@ export interface TutoringEngagement {
   Course?: { id: string; title: string } | null;
   Student?: { id: string; display_name: string | null } | null;
   Tutor?: { id: string; display_name: string | null } | null;
+  Group?: { id: string; title: string } | null;
+  /** What the 1:1 was paid, pre-VAT. */
+  paid_value?: number;
+  /** Set when a paid 1:1 moved into this class. */
+  moved_to_group_id?: string | null;
+  credit_granted?: number;
 }
 
 export interface TutoringSession {
@@ -390,6 +396,8 @@ export interface TutoringGroupMember {
   status: string;
   seats_claimed: number;
   created_at: string;
+  /** Came from a paid 1:1 that moved into this class. */
+  moved_from_private?: boolean;
   Student?: { id: string; display_name: string | null } | null;
 }
 
@@ -414,8 +422,12 @@ export interface TutoringGroup {
   min_students: number;
   /** Per-seat price; null = the course's per-seat offer price. */
   seat_price?: number | null;
+  /** May one buyer reserve every seat (a private booking of the class)? */
+  whole_class_booking?: boolean;
   seats_taken: number;
   seats_left?: number;
+  /** Seats held at checkout right now; back on sale after 10 minutes unpaid. */
+  seats_held?: number;
   age_min?: number | null;
   age_max?: number | null;
   visibility: TutoringGroupVisibility;
@@ -447,6 +459,7 @@ export interface CreateTutoringGroupPayload {
   capacity: number;
   min_students: number;
   seat_price?: number;
+  whole_class_booking?: boolean;
   age_min?: number;
   age_max?: number;
   visibility?: TutoringGroupVisibility;
