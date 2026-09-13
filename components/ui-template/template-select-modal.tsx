@@ -19,7 +19,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { TemplatePreview } from './template-preview';
 import type { TemplatePreset } from '@/types/api';
-import { presetSourceKey } from '@/lib/ui-template/preset-source';
+import {
+  presetSourceKey,
+  formatPresetDisplayName
+} from '@/lib/ui-template/preset-source';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getDesignSystem } from '@/lib/design-systems';
 
@@ -308,7 +311,7 @@ export function TemplateSelectModal({
           <p className="text-xs text-muted-foreground">
             {selectedId === activePresetId
               ? 'یک قالب دیگر انتخاب کنید تا تغییرات اعمال شود'
-              : `اعمال "${selectedPreset?.name}" — شامل بلوک‌های چیدمان و توکن‌های طراحی`}
+              : `اعمال "${selectedPreset ? formatPresetDisplayName(selectedPreset.name) : ''}" — شامل بلوک‌های چیدمان و توکن‌های طراحی`}
           </p>
           <div className="flex gap-2">
             <Button type="button" variant="outline" size="sm" onClick={onClose}>
@@ -426,7 +429,9 @@ function TemplateCard({
         {/* Name + category */}
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-sm font-semibold leading-snug">{preset.name}</p>
+            <p className="text-sm font-semibold leading-snug">
+              {formatPresetDisplayName(preset.name)}
+            </p>
             <span
               className="mt-0.5 inline-block rounded-sm px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider"
               style={{
