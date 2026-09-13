@@ -48,6 +48,13 @@ export function useLiveSessionForm({
   onSaved
 }: UseLiveSessionFormInput) {
   const [meetingUrl, setMeetingUrl] = useState(initial?.meeting_url ?? '');
+  const [meetingUrlSource, setMeetingUrlSource] = useState(
+    initial?.meeting_url_source ?? null
+  );
+  const [manualEntry, setManualEntry] = useState(
+    Boolean(initial?.meeting_url) &&
+      initial?.meeting_url_source !== 'AUTO_JITSI'
+  );
   const [label, setLabel] = useState(initial?.provider_label ?? '');
   const [startsAt, setStartsAt] = useState(
     toDatetimeLocalValue(initial?.starts_at)
@@ -67,6 +74,11 @@ export function useLiveSessionForm({
 
   useEffect(() => {
     setMeetingUrl(initial?.meeting_url ?? '');
+    setMeetingUrlSource(initial?.meeting_url_source ?? null);
+    setManualEntry(
+      Boolean(initial?.meeting_url) &&
+        initial?.meeting_url_source !== 'AUTO_JITSI'
+    );
     setLabel(initial?.provider_label ?? '');
     setStartsAt(toDatetimeLocalValue(initial?.starts_at));
     setDurationMinutes(
@@ -84,9 +96,9 @@ export function useLiveSessionForm({
     if (next && repeatDays.length === 0) setRepeatDays(weekdayOf(startsAt));
   };
 
-  const save = async () => {
+  const save = async (options?: { regenerate?: boolean }) => {
     const url = meetingUrl.trim();
-    if (!url.startsWith('https://')) {
+    if (manualEntry && !url.startsWith('https://')) {
       toast.error(tNow('toasts.liveLinkHttps'));
       return;
     }
@@ -113,8 +125,9 @@ export function useLiveSessionForm({
 
     setSaving(true);
     try {
-      await apiClient.upsertLiveSession(lessonId, {
-        meeting_url: url,
+      const result = await apiClient.upsertLiveSession(lessonId, {
+        meeting_url: manualEntry ? url : undefined,
+        regenerate: options?.regenerate,
         playback_url: null,
         starts_at: new Date(startsAt).toISOString(),
         ends_at: null,
@@ -125,6 +138,10 @@ export function useLiveSessionForm({
         provider_label: label.trim() || null,
         notes: null
       });
+      const saved = (result as { data?: LiveSession })?.data;
+      if (saved?.meeting_url) setMeetingUrl(saved.meeting_url);
+      if (saved?.meeting_url_source)
+        setMeetingUrlSource(saved.meeting_url_source);
       toast.success(tNow('toasts.liveSaved'));
       onSaved?.();
     } catch (e) {
@@ -134,6 +151,8 @@ export function useLiveSessionForm({
     }
   };
 
+  const regenerate = () => save({ regenerate: true });
+
   const remove = async () => {
     if (!initial?.id) return;
     setRemoving(true);
@@ -141,6 +160,8 @@ export function useLiveSessionForm({
       await apiClient.deleteLiveSession(lessonId);
       toast.success(tNow('toasts.liveRemoved'));
       setMeetingUrl('');
+      setMeetingUrlSource(null);
+      setManualEntry(false);
       setLabel('');
       setStartsAt('');
       setDurationMinutes('60');
@@ -158,6 +179,9 @@ export function useLiveSessionForm({
   return {
     meetingUrl,
     setMeetingUrl,
+    meetingUrlSource,
+    manualEntry,
+    setManualEntry,
     label,
     setLabel,
     startsAt,
@@ -173,6 +197,7 @@ export function useLiveSessionForm({
     saving,
     removing,
     save,
+    regenerate,
     remove
   };
 }

@@ -511,6 +511,7 @@ export interface LiveSession {
   id: number;
   lesson_id: number;
   meeting_url: string | null;
+  meeting_url_source?: 'MANUAL' | 'AUTO_JITSI';
   playback_url?: string | null;
   starts_at: string;
   ends_at?: string | null;

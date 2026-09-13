@@ -61,8 +61,15 @@ export function useClassDetail(groupId: string) {
     confirm: () => run(() => apiClient.confirmTutoringGroup(groupId)),
     cancel: (reason: string) =>
       run(() => apiClient.cancelTutoringGroup(groupId, reason)),
-    updateLink: (url: string, notify: boolean) =>
-      run(() => apiClient.updateTutoringGroupMeetingLink(groupId, url, notify)),
+    updateLink: (url: string | null, notify: boolean, regenerate?: boolean) =>
+      run(() =>
+        apiClient.updateTutoringGroupMeetingLink(
+          groupId,
+          url,
+          notify,
+          regenerate
+        )
+      ),
     removeMember: (profileId: string) =>
       run(() => apiClient.removeTutoringGroupMember(groupId, profileId)),
     announce: (body: string, sendSms: boolean) =>

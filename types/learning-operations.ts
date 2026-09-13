@@ -294,6 +294,7 @@ export interface TutoringSession {
   ends_at: string | null;
   timezone: string;
   meeting_url?: string | null;
+  meeting_url_source?: 'MANUAL' | 'AUTO_JITSI';
   notes?: string | null;
   status: TutoringSessionStatus;
 }
@@ -350,6 +351,7 @@ export interface RescheduleTutoringSessionPayload {
   starts_at: string;
   ends_at?: string;
   meeting_url?: string;
+  regenerate?: boolean;
   notes?: string;
 }
 
@@ -420,6 +422,7 @@ export interface TutoringGroup {
   join_deadline?: string | null;
   status: TutoringGroupStatus;
   meeting_url?: string | null;
+  meeting_url_source?: 'MANUAL' | 'AUTO_JITSI';
   meeting_url_updated_at?: string | null;
   starts_on?: string | null;
   /** The date the manager asked for; the only date a draft class has. */

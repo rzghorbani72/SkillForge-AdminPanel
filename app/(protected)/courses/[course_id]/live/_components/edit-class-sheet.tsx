@@ -64,9 +64,18 @@ export function EditClassSheet({
     <Sheet open onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-xl"
+        className="flex w-full flex-col gap-0 p-0 sm:max-w-xl"
+        // A toast (react-toastify) renders in its own portal outside this
+        // sheet's DOM subtree, so Radix's outside-pointer-down detection
+        // treats clicking the "saved" toast as an outside click and closes
+        // the sheet mid-edit. Ignore interactions with anything outside that
+        // isn't part of an intentional dismiss (overlay/escape still work).
+        onInteractOutside={(event) => {
+          const target = event.target as HTMLElement | null;
+          if (target?.closest('.Toastify')) event.preventDefault();
+        }}
       >
-        <SheetHeader className="text-start">
+        <SheetHeader className="px-4 pt-4 text-start sm:px-6 sm:pt-6">
           <div className="flex items-center gap-2">
             <SheetTitle className="truncate">
               {detail.group?.title ?? t('common.loading')}
@@ -156,6 +165,7 @@ function ClassSettingsBody({
   );
   const [slots, setSlots] = useState<TutoringGroupSlot[]>(group.Slots ?? []);
   const [isSavingSlots, setIsSavingSlots] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
 
   const canEditSchedule = EDITABLE_SCHEDULE_STATUSES.includes(group.status);
 
@@ -198,193 +208,203 @@ function ClassSettingsBody({
   };
 
   return (
-    <div className="mt-5 space-y-6">
-      {group.status === 'DRAFT' && (
-        <Button
-          type="button"
-          size="sm"
-          disabled={busy}
-          onClick={() => void doPublish()}
-        >
-          {busy ? t('common.saving') : t('courses.live.publishClass')}
-        </Button>
-      )}
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 space-y-6 overflow-y-auto px-4 py-5 sm:px-6">
+        <div className="space-y-4 rounded-lg border p-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="edit-group-title">
+                {t('tutoring.groups.name')}
+              </Label>
+              <Input
+                id="edit-group-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
 
-      <div className="space-y-4 rounded-lg border p-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label htmlFor="edit-group-title">
-              {t('tutoring.groups.name')}
-            </Label>
-            <Input
-              id="edit-group-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="edit-group-description">
+                {t('tutoring.groups.description')}
+              </Label>
+              <Textarea
+                id="edit-group-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label htmlFor="edit-group-description">
-              {t('tutoring.groups.description')}
-            </Label>
-            <Textarea
-              id="edit-group-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-group-capacity">
+                {t('tutoring.groups.capacity')}
+              </Label>
+              <NumberInput
+                id="edit-group-capacity"
+                value={capacity}
+                min={1}
+                onChange={setCapacity}
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-group-capacity">
-              {t('tutoring.groups.capacity')}
-            </Label>
-            <NumberInput
-              id="edit-group-capacity"
-              value={capacity}
-              min={1}
-              onChange={setCapacity}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-group-min">
+                {t('tutoring.groups.minStudents')}
+              </Label>
+              <NumberInput
+                id="edit-group-min"
+                value={minStudents}
+                min={1}
+                onChange={setMinStudents}
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-group-min">
-              {t('tutoring.groups.minStudents')}
-            </Label>
-            <NumberInput
-              id="edit-group-min"
-              value={minStudents}
-              min={1}
-              onChange={setMinStudents}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-group-age-min">
+                {t('tutoring.groups.ageMin')}
+              </Label>
+              <NumberInput
+                id="edit-group-age-min"
+                value={ageMin}
+                min={3}
+                onChange={setAgeMin}
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-group-age-min">
-              {t('tutoring.groups.ageMin')}
-            </Label>
-            <NumberInput
-              id="edit-group-age-min"
-              value={ageMin}
-              min={3}
-              onChange={setAgeMin}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-group-age-max">
+                {t('tutoring.groups.ageMax')}
+              </Label>
+              <NumberInput
+                id="edit-group-age-max"
+                value={ageMax}
+                min={3}
+                onChange={setAgeMax}
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-group-age-max">
-              {t('tutoring.groups.ageMax')}
-            </Label>
-            <NumberInput
-              id="edit-group-age-max"
-              value={ageMax}
-              min={3}
-              onChange={setAgeMax}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-group-term">
+                {t('tutoring.groups.termWeeks')}
+              </Label>
+              <NumberInput
+                id="edit-group-term"
+                value={termWeeks}
+                min={1}
+                onChange={setTermWeeks}
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-group-term">
-              {t('tutoring.groups.termWeeks')}
-            </Label>
-            <NumberInput
-              id="edit-group-term"
-              value={termWeeks}
-              min={1}
-              onChange={setTermWeeks}
-            />
-          </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-group-visibility">
+                {t('tutoring.groups.visibility')}
+              </Label>
+              <Select
+                value={visibility}
+                onValueChange={(value) =>
+                  setVisibility(value as TutoringGroupVisibility)
+                }
+              >
+                <SelectTrigger id="edit-group-visibility">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PUBLIC">
+                    {t('tutoring.groups.visibilityPublic')}
+                  </SelectItem>
+                  <SelectItem value="PRIVATE">
+                    {t('tutoring.groups.visibilityPrivate')}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-group-visibility">
-              {t('tutoring.groups.visibility')}
-            </Label>
-            <Select
-              value={visibility}
-              onValueChange={(value) =>
-                setVisibility(value as TutoringGroupVisibility)
-              }
-            >
-              <SelectTrigger id="edit-group-visibility">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="PUBLIC">
-                  {t('tutoring.groups.visibilityPublic')}
-                </SelectItem>
-                <SelectItem value="PRIVATE">
-                  {t('tutoring.groups.visibilityPrivate')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label htmlFor="edit-group-deadline">
-              {t('tutoring.groups.joinDeadline')}
-            </Label>
-            <DatePicker
-              id="edit-group-deadline"
-              value={joinDeadline}
-              onChange={setJoinDeadline}
-            />
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="edit-group-deadline">
+                {t('tutoring.groups.joinDeadline')}
+              </Label>
+              <DatePicker
+                id="edit-group-deadline"
+                value={joinDeadline}
+                onChange={setJoinDeadline}
+              />
+            </div>
           </div>
         </div>
 
-        <Button
-          type="button"
-          size="sm"
-          disabled={busy}
-          onClick={() => void saveSettings()}
-        >
-          {busy ? t('common.saving') : t('common.save')}
+        <div className="space-y-2 rounded-lg border p-4">
+          <Label>{t('tutoring.groups.timetable')}</Label>
+          {canEditSchedule ? (
+            <>
+              <p className="text-xs text-muted-foreground">
+                {t('tutoring.groups.timetableHint')}
+              </p>
+              <GroupSlotEditor slots={slots} onChange={setSlots} />
+              <Button
+                type="button"
+                size="sm"
+                disabled={isSavingSlots}
+                onClick={() => void saveSlots()}
+              >
+                {isSavingSlots
+                  ? t('common.saving')
+                  : t('tutoring.groups.saveTimetable')}
+              </Button>
+            </>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              {t('tutoring.groups.timetableLockedHint')}
+            </p>
+          )}
+        </div>
+
+        <GroupActionsCard
+          group={group}
+          busy={busy}
+          onUpdateLink={(url, notify, regenerate) =>
+            void updateLink(url, notify, regenerate).then(
+              (ok) => ok && onChanged()
+            )
+          }
+          onAnnounce={(body, sms) => void announce(body, sms)}
+          onConfirm={() => void confirm().then((ok) => ok && onChanged())}
+          onCancel={(reason) =>
+            void cancel(reason).then((ok) => ok && onChanged())
+          }
+        />
+
+        <Button variant="outline" className="w-full" asChild>
+          <Link href={`/courses/${courseId}/live/${group.id}`}>
+            <ExternalLink className="me-1.5 h-4 w-4" />
+            {t('tutoring.groups.openFullPage')}
+          </Link>
         </Button>
       </div>
 
-      <div className="space-y-2 rounded-lg border p-4">
-        <Label>{t('tutoring.groups.timetable')}</Label>
-        {canEditSchedule ? (
-          <>
-            <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.timetableHint')}
-            </p>
-            <GroupSlotEditor slots={slots} onChange={setSlots} />
-            <Button
-              type="button"
-              size="sm"
-              disabled={isSavingSlots}
-              onClick={() => void saveSlots()}
-            >
-              {isSavingSlots
-                ? t('common.saving')
-                : t('tutoring.groups.saveTimetable')}
-            </Button>
-          </>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            {t('tutoring.groups.timetableLockedHint')}
-          </p>
+      <div className="flex shrink-0 gap-2 border-t bg-background p-4 sm:px-6">
+        {group.status === 'DRAFT' && (
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            disabled={busy}
+            onClick={() => void doPublish()}
+          >
+            {busy ? t('common.saving') : t('courses.live.publishClass')}
+          </Button>
         )}
+        <Button
+          type="button"
+          className="flex-1"
+          disabled={savingSettings}
+          onClick={async () => {
+            setSavingSettings(true);
+            await saveSettings();
+            setSavingSettings(false);
+          }}
+        >
+          {savingSettings ? t('common.saving') : t('common.saveChanges')}
+        </Button>
       </div>
-
-      <GroupActionsCard
-        group={group}
-        busy={busy}
-        onUpdateLink={(url, notify) =>
-          void updateLink(url, notify).then((ok) => ok && onChanged())
-        }
-        onAnnounce={(body, sms) => void announce(body, sms)}
-        onConfirm={() => void confirm().then((ok) => ok && onChanged())}
-        onCancel={(reason) =>
-          void cancel(reason).then((ok) => ok && onChanged())
-        }
-      />
-
-      <Button variant="outline" className="w-full" asChild>
-        <Link href={`/courses/${courseId}/live/${group.id}`}>
-          <ExternalLink className="me-1.5 h-4 w-4" />
-          {t('tutoring.groups.openFullPage')}
-        </Link>
-      </Button>
     </div>
   );
 }

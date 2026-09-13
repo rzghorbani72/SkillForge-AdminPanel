@@ -2678,7 +2678,8 @@ class ApiClient {
   async upsertLiveSession(
     lessonId: string,
     body: {
-      meeting_url: string;
+      meeting_url?: string;
+      regenerate?: boolean;
       playback_url?: string | null;
       starts_at: string;
       ends_at?: string | null;
@@ -6327,12 +6328,17 @@ class ApiClient {
 
   async updateTutoringGroupMeetingLink(
     groupId: string,
-    meetingUrl: string,
-    notify = true
+    meetingUrl: string | null,
+    notify = true,
+    regenerate = false
   ): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/meeting-link`, {
       method: 'PATCH',
-      body: JSON.stringify({ meeting_url: meetingUrl, notify })
+      body: JSON.stringify({
+        meeting_url: meetingUrl || undefined,
+        notify,
+        regenerate
+      })
     });
   }
 

@@ -106,11 +106,16 @@ export function ScheduleSessionCard({
           <Label htmlFor="meetingUrl">{t('tutoring.meetingUrl')}</Label>
           <Input
             id="meetingUrl"
+            dir="ltr"
+            placeholder="https://meet.google.com/..."
             value={form.meeting_url}
             onChange={(event) =>
               onChange({ ...form, meeting_url: event.target.value })
             }
           />
+          <p className="text-xs text-muted-foreground">
+            {t('tutoring.meetingUrlHint')}
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="notes">{t('tutoring.notes')}</Label>

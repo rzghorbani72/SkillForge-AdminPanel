@@ -38,7 +38,8 @@ export function useTutoringPage() {
     session_id: '',
     starts_at: '',
     ends_at: '',
-    meeting_url: ''
+    meeting_url: '',
+    regenerate: false
   });
 
   const [attendanceForm, setAttendanceForm] = useState({
@@ -141,7 +142,8 @@ export function useTutoringPage() {
           ends_at: rescheduleForm.ends_at
             ? new Date(rescheduleForm.ends_at).toISOString()
             : undefined,
-          meeting_url: rescheduleForm.meeting_url || undefined
+          meeting_url: rescheduleForm.meeting_url || undefined,
+          regenerate: rescheduleForm.regenerate
         }
       );
       setLastSession(session);

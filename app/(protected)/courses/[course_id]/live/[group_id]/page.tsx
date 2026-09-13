@@ -104,8 +104,8 @@ export default function ClassPage() {
             <GroupActionsCard
               group={group}
               busy={detail.busy}
-              onUpdateLink={(url, notify) =>
-                void detail.updateLink(url, notify)
+              onUpdateLink={(url, notify, regenerate) =>
+                void detail.updateLink(url, notify, regenerate)
               }
               onAnnounce={(body, sms) => void detail.announce(body, sms)}
               onConfirm={() => void detail.confirm()}

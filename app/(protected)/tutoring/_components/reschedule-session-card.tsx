@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { TutoringSessionSearchCombobox } from '@/components/entity-search';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -12,6 +13,7 @@ interface RescheduleFormState {
   starts_at: string;
   ends_at: string;
   meeting_url: string;
+  regenerate: boolean;
 }
 
 interface RescheduleSessionCardProps {
@@ -67,6 +69,18 @@ export function RescheduleSessionCard({
             }
             withTime
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            id="rescheduleRegenerate"
+            checked={form.regenerate}
+            onCheckedChange={(value) =>
+              onChange({ ...form, regenerate: value })
+            }
+          />
+          <Label htmlFor="rescheduleRegenerate" className="text-sm font-normal">
+            {t('tutoring.regenerateLink')}
+          </Label>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button onClick={() => void onReschedule()} disabled={saving}>
