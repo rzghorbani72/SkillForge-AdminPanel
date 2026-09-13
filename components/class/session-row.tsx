@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import {
   Ban,
+  CalendarPlus,
   CheckCircle2,
   Link2,
   MessageSquare,
   Pencil,
+  RotateCcw,
   Video
 } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -14,6 +16,12 @@ import { toast } from 'react-toastify';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -29,7 +37,11 @@ import {
   toDateTimeInputValue
 } from '@/lib/i18n/calendar-date';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type { ClassSession, CourseTopic } from '@/types/learning-operations';
+import type {
+  ClassSession,
+  ClassSessionCancelResolution,
+  CourseTopic
+} from '@/types/learning-operations';
 import { SessionRecordingField } from './session-recording-field';
 import { SessionMaterialsField } from './session-materials-field';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
@@ -106,11 +118,15 @@ export function SessionRow({
     }
   };
 
-  const cancel = async () => {
+  const cancel = async (resolution: ClassSessionCancelResolution) => {
     try {
-      await apiClient.cancelClassSession(session.id);
+      await apiClient.cancelClassSession(session.id, resolution);
       onChanged({ ...session, status: 'CANCELLED' });
-      toast.success(t('courses.live.sessionCancelled'));
+      toast.success(
+        resolution === 'MAKEUP'
+          ? t('courses.live.sessionCancelledMakeup')
+          : t('courses.live.sessionCancelledRefund')
+      );
     } catch (err) {
       ErrorHandler.handleApiError(err);
     }
@@ -170,10 +186,24 @@ export function SessionRow({
           )}
         </div>
         {!isCancelled && (
-          <Button type="button" variant="ghost" size="sm" onClick={cancel}>
-            <Ban className="h-4 w-4" />
-            {t('courses.live.cancelSession')}
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="ghost" size="sm">
+                <Ban className="h-4 w-4" />
+                {t('courses.live.cancelSession')}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => void cancel('MAKEUP')}>
+                <CalendarPlus className="h-4 w-4" />
+                {t('courses.live.cancelWithMakeup')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => void cancel('REFUND')}>
+                <RotateCcw className="h-4 w-4" />
+                {t('courses.live.cancelWithRefund')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
 

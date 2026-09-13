@@ -1842,6 +1842,12 @@ export const fa = {
       sessionRescheduled: 'زمان جلسه به‌روزرسانی شد.',
       cancelSession: 'لغو جلسه',
       sessionCancelled: 'جلسه لغو شد.',
+      cancelWithMakeup: 'لغو و افزودن جلسهٔ جایگزین به انتها',
+      cancelWithRefund: 'لغو و بازگشت وجه این جلسه',
+      sessionCancelledMakeup:
+        'جلسه لغو شد و جلسهٔ جایگزین به انتهای برنامه اضافه شد. به دانشجویان پیامک شد.',
+      sessionCancelledRefund:
+        'جلسه لغو شد و درخواست بازگشت وجه برای دانشجویان ثبت شد.',
       cancelled: 'لغو شده',
       uploadRecording: 'بارگذاری ویدیوی ضبط‌شده',
       uploadRecordingHint: 'ویدیوی این جلسه را برای دانشجویان کلاس بگذارید.',

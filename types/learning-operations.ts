@@ -465,6 +465,8 @@ export type UpdateTutoringGroupPayload = Partial<
 
 export type ClassRequestStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED';
 
+export type ClassSessionCancelResolution = 'MAKEUP' | 'REFUND';
+
 export interface ClassRequestWindow {
   weekday: number;
   start_minute: number;

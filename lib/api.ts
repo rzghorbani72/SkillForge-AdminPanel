@@ -113,6 +113,7 @@ import type {
   TutoringOffer,
   ClassRequest,
   ClassRequestStatus,
+  ClassSessionCancelResolution,
   ClassSession,
   CourseTopic,
   CertificateRoster,
@@ -6241,10 +6242,14 @@ class ApiClient {
     );
   }
 
-  async cancelClassSession(sessionId: string, reason?: string): Promise<void> {
+  async cancelClassSession(
+    sessionId: string,
+    resolution: ClassSessionCancelResolution,
+    reason?: string
+  ): Promise<void> {
     await this.request(`/tutoring/class-sessions/${sessionId}/cancel`, {
       method: 'PATCH',
-      body: JSON.stringify({ reason })
+      body: JSON.stringify({ resolution, reason })
     });
   }
 

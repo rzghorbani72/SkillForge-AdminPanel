@@ -1852,6 +1852,12 @@ export const en = {
       sessionRescheduled: 'Meeting time updated.',
       cancelSession: 'Cancel meeting',
       sessionCancelled: 'Meeting cancelled.',
+      cancelWithMakeup: 'Cancel and add a makeup session at the end',
+      cancelWithRefund: "Cancel and refund this session's price",
+      sessionCancelledMakeup:
+        'The meeting was cancelled and a makeup session was added at the end. Students were texted.',
+      sessionCancelledRefund:
+        'The meeting was cancelled and a refund request was opened for each student.',
       cancelled: 'Cancelled',
       uploadRecording: 'Upload recording',
       uploadRecordingHint:
