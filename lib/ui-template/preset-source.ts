@@ -10,22 +10,33 @@ export function presetSourceKey(preset: TemplatePreset): string {
 }
 
 /**
- * A dedicated copy is named "<academy name> - <base template name>". The
- * academy name has no length limit, so on its own it can blow out a card
- * title or the editor header — shorten only that part, never the template
- * name, and leave any other preset name untouched.
+ * A dedicated copy is named "<academy name> - <base template name>". Neither
+ * part has a length limit at the source, so either one — or old rows saved
+ * before a naming bug was fixed — can still blow out a card title or the
+ * editor header. Cap each part on its own, then cap the assembled string as
+ * a final safety net so no single cause can produce an unbounded name.
  */
 export function formatPresetDisplayName(
   name: string,
-  maxAcademyChars = 18
+  maxAcademyChars = 18,
+  maxTemplateChars = 24,
+  maxTotalChars = 40
 ): string {
   const separator = ' - ';
   const separatorIndex = name.indexOf(separator);
-  if (separatorIndex === -1) return name;
+  if (separatorIndex === -1) return truncate(name, maxTotalChars);
 
   const academyName = name.slice(0, separatorIndex);
   const templateName = name.slice(separatorIndex + separator.length);
-  if (academyName.length <= maxAcademyChars) return name;
 
-  return `${academyName.slice(0, maxAcademyChars)}…${separator}${templateName}`;
+  const shortAcademy = truncate(academyName, maxAcademyChars);
+  const shortTemplate = truncate(templateName, maxTemplateChars);
+  const result = `${shortAcademy}${separator}${shortTemplate}`;
+
+  return truncate(result, maxTotalChars);
+}
+
+function truncate(value: string, maxChars: number): string {
+  if (value.length <= maxChars) return value;
+  return `${value.slice(0, maxChars)}…`;
 }
