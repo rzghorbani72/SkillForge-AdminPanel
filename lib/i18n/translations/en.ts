@@ -1815,6 +1815,17 @@ export const en = {
       backToClasses: 'Back to classes',
       publishClass: 'Publish class',
       classPublished: 'Class published and its dates written.',
+      seatPrice: 'Price per seat',
+      seatPriceHint:
+        "Leave empty to sell at the course's per-seat price. One seat makes this a private class.",
+      requestsTitle: 'Class requests',
+      requestsCount: '{{count}} students asked for a class time',
+      requestSeats: '{{count}} seat(s)',
+      openClassForRequest: 'Open a class for this',
+      declineRequest: 'Decline',
+      requestAccepted: 'Class opened and the student was texted.',
+      requestsHint:
+        'Opening a class from a request links it and texts the student that the class is open to book.',
       noSessionsYet:
         'No meetings yet. Publish the class to generate its dates.',
       seatsTaken: '{{taken}} of {{capacity}} seats',

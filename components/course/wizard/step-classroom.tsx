@@ -5,6 +5,7 @@ import TopicListEditor from '@/app/(protected)/courses/[course_id]/live/_compone
 import LivePricingCard from '@/app/(protected)/courses/[course_id]/live/_components/live-pricing-card';
 import { CreateClassSheet } from '@/app/(protected)/courses/[course_id]/live/_components/create-class-sheet';
 import { ClassListCard } from '@/app/(protected)/courses/[course_id]/live/_components/class-list-card';
+import { ClassRequestsCard } from '@/app/(protected)/courses/[course_id]/live/_components/class-requests-card';
 import { useLiveCourse } from '@/app/(protected)/courses/[course_id]/live/hooks/use-live-course';
 
 /**
@@ -47,6 +48,14 @@ export function StepClassroom({ courseId }: { courseId: string }) {
         />
       </div>
 
+      <ClassRequestsCard
+        courseId={courseId}
+        courseTitle={course.title}
+        offerId={groupOffer?.id ?? null}
+        defaultSeatPrice={groupOffer?.price}
+        onClassCreated={() => void reload()}
+      />
+
       <ClassListCard
         courseId={courseId}
         groups={groups}
@@ -56,6 +65,7 @@ export function StepClassroom({ courseId }: { courseId: string }) {
             <CreateClassSheet
               offerId={groupOffer.id}
               courseTitle={course.title}
+              defaultSeatPrice={groupOffer.price}
               onCreated={() => void reload()}
             />
           ) : null
@@ -65,6 +75,7 @@ export function StepClassroom({ courseId }: { courseId: string }) {
             <CreateClassSheet
               offerId={groupOffer.id}
               courseTitle={course.title}
+              defaultSeatPrice={groupOffer.price}
               onCreated={() => void reload()}
               variant="cta"
             />

@@ -13,12 +13,18 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet';
 import { useTranslation } from '@/lib/i18n/hooks';
-import ScheduleBuilder from './schedule-builder';
+import ScheduleBuilder, {
+  type ScheduleBuilderPrefill
+} from './schedule-builder';
 
 interface CreateClassSheetProps {
   offerId: string;
   courseTitle: string;
-  onCreated: () => void;
+  defaultSeatPrice?: number;
+  prefill?: ScheduleBuilderPrefill;
+  /** Custom trigger, e.g. "open a class for this request". */
+  trigger?: React.ReactNode;
+  onCreated: (groupId: string) => void;
   /** Renders the trigger as the empty-state call to action instead of a toolbar button. */
   variant?: 'toolbar' | 'cta';
 }
@@ -31,6 +37,9 @@ interface CreateClassSheetProps {
 export function CreateClassSheet({
   offerId,
   courseTitle,
+  defaultSeatPrice,
+  prefill,
+  trigger,
   onCreated,
   variant = 'toolbar'
 }: CreateClassSheetProps) {
@@ -40,14 +49,16 @@ export function CreateClassSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button
-          type="button"
-          size={variant === 'cta' ? 'default' : 'sm'}
-          variant={variant === 'cta' ? 'default' : 'outline'}
-        >
-          <Plus className="me-1.5 h-4 w-4" />
-          {t('courses.live.createClass')}
-        </Button>
+        {trigger ?? (
+          <Button
+            type="button"
+            size={variant === 'cta' ? 'default' : 'sm'}
+            variant={variant === 'cta' ? 'default' : 'outline'}
+          >
+            <Plus className="me-1.5 h-4 w-4" />
+            {t('courses.live.createClass')}
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent
         side="right"
@@ -61,9 +72,11 @@ export function CreateClassSheet({
           <ScheduleBuilder
             offerId={offerId}
             courseTitle={courseTitle}
-            onCreated={() => {
+            defaultSeatPrice={defaultSeatPrice}
+            prefill={prefill}
+            onCreated={(groupId) => {
               setOpen(false);
-              onCreated();
+              onCreated(groupId);
             }}
           />
         </div>

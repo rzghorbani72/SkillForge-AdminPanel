@@ -111,6 +111,8 @@ import type {
   TutoringEngagement,
   TutoringGroup,
   TutoringOffer,
+  ClassRequest,
+  ClassRequestStatus,
   ClassSession,
   CourseTopic,
   CertificateRoster,
@@ -6311,6 +6313,33 @@ class ApiClient {
     });
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];
+  }
+
+  async getClassRequests(params: {
+    course_id?: string;
+    status?: ClassRequestStatus;
+  }): Promise<ClassRequest[]> {
+    const query = new URLSearchParams();
+    if (params.course_id) query.set('course_id', params.course_id);
+    if (params.status) query.set('status', params.status);
+    const res = await this.request<ClassRequest[] | { data: ClassRequest[] }>(
+      `/class-requests?${query.toString()}`
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async acceptClassRequest(requestId: string, groupId: string): Promise<void> {
+    await this.request(`/class-requests/${requestId}/accept`, {
+      method: 'PATCH',
+      body: JSON.stringify({ group_id: groupId })
+    });
+  }
+
+  async declineClassRequest(requestId: string): Promise<void> {
+    await this.request(`/class-requests/${requestId}/decline`, {
+      method: 'PATCH',
+      body: JSON.stringify({})
+    });
   }
 
   async publishTutoringGroup(groupId: string): Promise<void> {

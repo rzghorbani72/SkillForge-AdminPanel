@@ -23,9 +23,18 @@ const DEFAULT_SLOT: TutoringGroupSlot = {
   duration_minutes: 90
 };
 
+export interface ScheduleBuilderPrefill {
+  slots?: TutoringGroupSlot[];
+  capacity?: number;
+  minStudents?: number;
+}
+
 interface ScheduleBuilderProps {
   offerId: string;
   courseTitle: string;
+  /** The course's per-seat offer price, shown when the class sets none. */
+  defaultSeatPrice?: number;
+  prefill?: ScheduleBuilderPrefill;
   onCreated?: (groupId: string) => void;
 }
 
@@ -37,15 +46,22 @@ interface ScheduleBuilderProps {
 export default function ScheduleBuilder({
   offerId,
   courseTitle,
+  defaultSeatPrice,
+  prefill,
   onCreated
 }: ScheduleBuilderProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
-  const [slots, setSlots] = useState<TutoringGroupSlot[]>([DEFAULT_SLOT]);
+  const [slots, setSlots] = useState<TutoringGroupSlot[]>(
+    prefill?.slots?.length ? prefill.slots : [DEFAULT_SLOT]
+  );
   const [sessionCount, setSessionCount] = useState('10');
-  const [capacity, setCapacity] = useState('8');
-  const [minStudents, setMinStudents] = useState('2');
+  const [capacity, setCapacity] = useState(String(prefill?.capacity ?? 8));
+  const [minStudents, setMinStudents] = useState(
+    String(prefill?.minStudents ?? 2)
+  );
+  const [seatPrice, setSeatPrice] = useState('');
   const [startsOn, setStartsOn] = useState('');
   const [joinDeadline, setJoinDeadline] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -76,6 +92,7 @@ export default function ScheduleBuilder({
         timezone,
         capacity: Number(capacity) || 1,
         min_students: Number(minStudents) || 1,
+        seat_price: seatPrice === '' ? undefined : Number(seatPrice),
         session_count: sessionCountValue,
         starts_on_requested: new Date(startsOn).toISOString(),
         join_deadline: joinDeadline
@@ -147,6 +164,23 @@ export default function ScheduleBuilder({
               onChange={setCapacity}
             />
           </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="seat-price">{t('courses.live.seatPrice')}</Label>
+          <NumberInput
+            id="seat-price"
+            value={seatPrice}
+            min={0}
+            placeholder={
+              defaultSeatPrice !== undefined
+                ? String(defaultSeatPrice)
+                : undefined
+            }
+            onChange={setSeatPrice}
+          />
+          <p className="text-xs text-muted-foreground">
+            {t('courses.live.seatPriceHint')}
+          </p>
         </div>
       </div>
 

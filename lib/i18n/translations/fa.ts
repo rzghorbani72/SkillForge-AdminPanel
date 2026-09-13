@@ -1805,6 +1805,17 @@ export const fa = {
       backToClasses: 'بازگشت به کلاس‌ها',
       publishClass: 'انتشار کلاس',
       classPublished: 'کلاس منتشر شد و تاریخ جلسه‌ها ثبت شد.',
+      seatPrice: 'قیمت هر صندلی',
+      seatPriceHint:
+        'خالی بگذارید تا با قیمت هر صندلی دوره فروخته شود. یک صندلی یعنی کلاس خصوصی.',
+      requestsTitle: 'درخواست‌های کلاس',
+      requestsCount: '{{count}} دانشجو زمان کلاس درخواست کرده‌اند',
+      requestSeats: '{{count}} صندلی',
+      openClassForRequest: 'ایجاد کلاس برای این درخواست',
+      declineRequest: 'رد کردن',
+      requestAccepted: 'کلاس ایجاد شد و به دانشجو پیامک داده شد.',
+      requestsHint:
+        'ایجاد کلاس از روی درخواست، آن را به کلاس وصل می‌کند و به دانشجو پیامک می‌دهد که کلاس برای رزرو باز است.',
       noSessionsYet:
         'هنوز جلسه‌ای ثبت نشده است. کلاس را منتشر کنید تا تاریخ‌ها ساخته شوند.',
       seatsTaken: '{{taken}} از {{capacity}} صندلی',

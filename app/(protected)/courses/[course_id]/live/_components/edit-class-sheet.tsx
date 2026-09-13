@@ -150,6 +150,9 @@ function ClassSettingsBody({
   const [description, setDescription] = useState(group.description ?? '');
   const [capacity, setCapacity] = useState(String(group.capacity));
   const [minStudents, setMinStudents] = useState(String(group.min_students));
+  const [seatPrice, setSeatPrice] = useState(
+    group.seat_price != null ? String(group.seat_price) : ''
+  );
   const [ageMin, setAgeMin] = useState(
     group.age_min ? String(group.age_min) : ''
   );
@@ -178,6 +181,7 @@ function ClassSettingsBody({
         description: description.trim() || undefined,
         capacity: Number(capacity) || undefined,
         min_students: Number(minStudents) || undefined,
+        seat_price: seatPrice === '' ? undefined : Number(seatPrice),
         age_min: ageMin ? Number(ageMin) : undefined,
         age_max: ageMax ? Number(ageMax) : undefined,
         term_weeks: Number(termWeeks) || undefined,
@@ -256,6 +260,24 @@ function ClassSettingsBody({
                 min={1}
                 onChange={setMinStudents}
               />
+            </div>
+
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="edit-group-seat-price">
+                {t('courses.live.seatPrice')}
+              </Label>
+              <NumberInput
+                id="edit-group-seat-price"
+                value={seatPrice}
+                min={0}
+                placeholder={
+                  group.Offer ? String(group.Offer.price) : undefined
+                }
+                onChange={setSeatPrice}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t('courses.live.seatPriceHint')}
+              </p>
             </div>
 
             <div className="space-y-1.5">

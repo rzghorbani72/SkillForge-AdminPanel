@@ -412,6 +412,8 @@ export interface TutoringGroup {
   timezone: string;
   capacity: number;
   min_students: number;
+  /** Per-seat price; null = the course's per-seat offer price. */
+  seat_price?: number | null;
   seats_taken: number;
   seats_left?: number;
   age_min?: number | null;
@@ -444,6 +446,7 @@ export interface CreateTutoringGroupPayload {
   timezone: string;
   capacity: number;
   min_students: number;
+  seat_price?: number;
   age_min?: number;
   age_max?: number;
   visibility?: TutoringGroupVisibility;
@@ -459,6 +462,30 @@ export interface CreateTutoringGroupPayload {
 export type UpdateTutoringGroupPayload = Partial<
   Omit<CreateTutoringGroupPayload, 'offer_id' | 'slots' | 'timezone'>
 >;
+
+export type ClassRequestStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED';
+
+export interface ClassRequestWindow {
+  weekday: number;
+  start_minute: number;
+  end_minute: number;
+}
+
+/** A student asking for a class at times that suit them. */
+export interface ClassRequest {
+  id: string;
+  course_id: string;
+  seats: number;
+  windows: ClassRequestWindow[];
+  note: string | null;
+  status: ClassRequestStatus;
+  group_id: string | null;
+  answered_at: string | null;
+  created_at: string;
+  Course: { id: string; title: string; slug: string | null } | null;
+  Student: { id: string; display_name: string | null } | null;
+  Group: { id: string; title: string; status: TutoringGroupStatus } | null;
+}
 
 export interface CourseTopic {
   id: string;
