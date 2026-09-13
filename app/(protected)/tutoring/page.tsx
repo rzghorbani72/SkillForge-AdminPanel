@@ -7,10 +7,6 @@ import { TutoringEngagementsCard } from './_components/tutoring-engagements-card
 import { TutoringOffersCard } from './_components/tutoring-offers-card';
 import { CreateOfferCard } from './_components/create-offer-card';
 import { CreateEngagementCard } from './_components/create-engagement-card';
-import { ScheduleSessionCard } from './_components/schedule-session-card';
-import { RescheduleSessionCard } from './_components/reschedule-session-card';
-import { MarkAttendanceCard } from './_components/mark-attendance-card';
-import { LastSessionCard } from './_components/last-session-card';
 import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 import { OpsQueueFeatureGate } from '@/app/(protected)/learning/ops-queue/_components/ops-queue-feature-gate';
 import { useTutorLedFeature } from '@/app/(protected)/learning/ops-queue/hooks/use-tutor-led-feature';
@@ -83,45 +79,7 @@ export default function TutoringPage() {
                 saving={tutoring.saving}
                 onSubmit={tutoring.createEngagement}
               />
-
-              <ScheduleSessionCard
-                form={tutoring.sessionForm}
-                onChange={tutoring.setSessionForm}
-                activeEngagements={tutoring.activeEngagements}
-                saving={tutoring.saving}
-                onSubmit={tutoring.scheduleSession}
-              />
-
-              <RescheduleSessionCard
-                form={tutoring.rescheduleForm}
-                onChange={tutoring.setRescheduleForm}
-                saving={tutoring.saving}
-                onReschedule={tutoring.rescheduleSession}
-                onCancel={(sessionId) => void tutoring.cancelSession(sessionId)}
-              />
-
-              <MarkAttendanceCard
-                form={tutoring.attendanceForm}
-                onSessionIdChange={(sessionId) =>
-                  void tutoring.setAttendanceSessionId(sessionId)
-                }
-                onProfileIdChange={(profileId) =>
-                  tutoring.setAttendanceForm((prev) => ({
-                    ...prev,
-                    profile_id: profileId
-                  }))
-                }
-                onStatusChange={(status) =>
-                  tutoring.setAttendanceForm((prev) => ({ ...prev, status }))
-                }
-                saving={tutoring.saving}
-                onSubmit={tutoring.markAttendance}
-              />
             </div>
-
-            {tutoring.lastSession ? (
-              <LastSessionCard session={tutoring.lastSession} />
-            ) : null}
           </>
         )}
       </main>

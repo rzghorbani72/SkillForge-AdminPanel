@@ -7105,6 +7105,24 @@ export const en = {
     reschedule: 'Reschedule',
     cancel: 'Cancel session',
     cancelReasonDefault: 'Cancelled by academy staff',
+    student: 'Student',
+    tutor: 'Tutor',
+    endsAt: 'Term ends',
+    openEnded: 'No end date',
+    engagementSummaryHint:
+      'A private class: name each meeting, add topic, files and homework, and take attendance.',
+    openClass: 'Manage class',
+    backToTutoring: 'Back to tutoring',
+    engagementNotFound: 'This private class was not found.',
+    attendanceTitle: 'Take attendance',
+    attendanceHint:
+      'Taking attendance marks the meeting as held and ticks its topic for the student.',
+    attendanceSession: 'Meeting',
+    attendanceSubmit: 'Save attendance',
+    attendancePresent: 'Present',
+    attendanceAbsent: 'Absent',
+    attendanceJoined: 'Joined',
+    noSessionsYet: 'No meetings scheduled yet.',
     markAttendance: 'Mark attendance',
     profileId: 'Profile ID',
     attendanceStatus: 'Attendance status',
@@ -7174,7 +7192,11 @@ export const en = {
     user: 'User',
     replyPlaceholder: 'Write a contextual reply…',
     send: 'Send reply',
-    sendFailed: 'Failed to send the message.'
+    sendFailed: 'Failed to send the message.',
+    attachFile: 'Attach file',
+    removeAttachment: 'Remove attachment',
+    uploadFailed: 'The file could not be uploaded.',
+    openAttachment: 'Open file'
   },
   pricing: {
     planLimits: {

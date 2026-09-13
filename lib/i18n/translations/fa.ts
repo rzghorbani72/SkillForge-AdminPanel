@@ -7074,6 +7074,24 @@ export const fa = {
     reschedule: 'تغییر زمان',
     cancel: 'لغو جلسه',
     cancelReasonDefault: 'توسط کارکنان آکادمی لغو شد',
+    student: 'دانشجو',
+    tutor: 'مدرس',
+    endsAt: 'پایان دوره',
+    openEnded: 'بدون تاریخ پایان',
+    engagementSummaryHint:
+      'کلاس خصوصی؛ هر جلسه را نام‌گذاری کنید، سرفصل، فایل و تکلیف بگذارید و حضور را ثبت کنید.',
+    openClass: 'مدیریت کلاس',
+    backToTutoring: 'بازگشت به تدریس خصوصی',
+    engagementNotFound: 'این کلاس خصوصی پیدا نشد.',
+    attendanceTitle: 'ثبت حضور جلسه',
+    attendanceHint:
+      'با ثبت حضور، جلسه «برگزارشده» می‌شود و سرفصل آن برای دانشجو تیک می‌خورد.',
+    attendanceSession: 'جلسه',
+    attendanceSubmit: 'ثبت حضور',
+    attendancePresent: 'حاضر',
+    attendanceAbsent: 'غایب',
+    attendanceJoined: 'وارد شد',
+    noSessionsYet: 'هنوز جلسه‌ای زمان‌بندی نشده است.',
     markAttendance: 'ثبت حضور',
     profileId: 'شناسه پروفایل',
     attendanceStatus: 'وضعیت حضور',
@@ -7143,7 +7161,11 @@ export const fa = {
     user: 'کاربر',
     replyPlaceholder: 'پاسخ مرتبط بنویسید…',
     send: 'ارسال پاسخ',
-    sendFailed: 'ارسال پیام ناموفق بود.'
+    sendFailed: 'ارسال پیام ناموفق بود.',
+    attachFile: 'پیوست فایل',
+    removeAttachment: 'حذف پیوست',
+    uploadFailed: 'بارگذاری فایل ناموفق بود.',
+    openAttachment: 'باز کردن فایل'
   },
   pricing: {
     planLimits: {

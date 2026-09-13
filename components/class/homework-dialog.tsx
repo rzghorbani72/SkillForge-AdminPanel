@@ -33,7 +33,8 @@ const WHOLE_CLASS = 'class';
 interface HomeworkDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  groupId: string;
+  /** Absent for a 1:1 engagement, which has no class-wide parent. */
+  groupId?: string;
   sessions: ClassSession[];
   onCreated: () => void;
 }
@@ -51,7 +52,8 @@ export function HomeworkDialog({
   onCreated
 }: HomeworkDialogProps) {
   const { t, language } = useTranslation();
-  const [parent, setParent] = useState(WHOLE_CLASS);
+  const defaultParent = groupId ? WHOLE_CLASS : (sessions[0]?.id ?? '');
+  const [parent, setParent] = useState(defaultParent);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -60,7 +62,7 @@ export function HomeworkDialog({
   const [error, setError] = useState<string | null>(null);
 
   const reset = () => {
-    setParent(WHOLE_CLASS);
+    setParent(defaultParent);
     setTitle('');
     setDescription('');
     setDueDate('');
@@ -69,7 +71,7 @@ export function HomeworkDialog({
   };
 
   const create = async () => {
-    if (!title.trim()) {
+    if (!title.trim() || !parent) {
       setError(t('courses.live.homeworkTitleRequired'));
       return;
     }
@@ -131,9 +133,11 @@ export function HomeworkDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={WHOLE_CLASS}>
-                  {t('courses.live.homeworkWholeClass')}
-                </SelectItem>
+                {groupId ? (
+                  <SelectItem value={WHOLE_CLASS}>
+                    {t('courses.live.homeworkWholeClass')}
+                  </SelectItem>
+                ) : null}
                 {sessions
                   .filter((session) => session.status !== 'CANCELLED')
                   .map((session, index) => (

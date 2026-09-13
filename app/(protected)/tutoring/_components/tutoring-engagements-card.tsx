@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -81,7 +83,14 @@ export function TutoringEngagementsCard({
                     {engagement.Tutor?.display_name ?? t('users.unnamedUser')}
                   </p>
                 </div>
-                <Badge variant="outline">{engagement.status}</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline">{engagement.status}</Badge>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/tutoring/engagements/${engagement.id}`}>
+                      {t('tutoring.openClass')}
+                    </Link>
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

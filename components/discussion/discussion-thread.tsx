@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { MessageSquare, Send } from 'lucide-react';
+import { MessageSquare, Paperclip, Send, X } from 'lucide-react';
+import {
+  MessageAttachment,
+  type ThreadAttachment
+} from '@/components/discussion/message-attachment';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { DiscussionParent } from '@/types/learning-operations';
@@ -15,6 +19,7 @@ interface ThreadMessage {
   body: string;
   created_at: string;
   Author?: { id: string; display_name: string | null };
+  Document?: ThreadAttachment | null;
 }
 
 interface DiscussionThreadProps {
@@ -42,7 +47,9 @@ export function DiscussionThread({
   const [messages, setMessages] = useState<ThreadMessage[]>([]);
   const [body, setBody] = useState('');
   const [sending, setSending] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const activeThreadId = useRef<string | undefined>(threadId);
 
   const parent: DiscussionParent = attemptId
@@ -79,16 +86,27 @@ export function DiscussionThread({
 
   const send = async () => {
     const text = body.trim();
-    if (!text) return;
+    if (!text && !file) return;
     setSending(true);
     setError(null);
     try {
+      let documentId: string | undefined;
+      if (file) {
+        try {
+          documentId = (await apiClient.uploadDiscussionAttachment(file)).id;
+        } catch (e) {
+          setError(apiErrorMessage(e, t('discussion.uploadFailed')));
+          return;
+        }
+      }
       const msg = (await apiClient.postDiscussionMessage(
         parent,
-        text
+        text,
+        documentId
       )) as ThreadMessage;
       activeThreadId.current = msg.thread_id;
       setBody('');
+      setFile(null);
       await load();
     } catch (e) {
       setError(apiErrorMessage(e, t('discussion.sendFailed')));
@@ -123,14 +141,53 @@ export function DiscussionThread({
                 <p className="mb-1 text-xs opacity-70">
                   {m.Author?.display_name ?? t('discussion.user')}
                 </p>
-                <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                {m.body && (
+                  <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                )}
+                {m.Document && (
+                  <MessageAttachment
+                    attachment={m.Document}
+                    mine={Boolean(mine)}
+                  />
+                )}
               </div>
             </div>
           );
         })}
       </div>
 
+      {file && (
+        <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-1.5 text-xs">
+          <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate">{file.name}</span>
+          <button
+            type="button"
+            onClick={() => setFile(null)}
+            aria-label={t('discussion.removeAttachment')}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
       <div className="flex items-end gap-2">
+        <input
+          ref={fileInput}
+          type="file"
+          hidden
+          accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"
+          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => fileInput.current?.click()}
+          disabled={sending}
+          aria-label={t('discussion.attachFile')}
+        >
+          <Paperclip className="h-4 w-4" />
+        </Button>
         <Textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
@@ -140,7 +197,11 @@ export function DiscussionThread({
           maxLength={5000}
           className="flex-1"
         />
-        <Button onClick={send} disabled={sending || !body.trim()} size="sm">
+        <Button
+          onClick={send}
+          disabled={sending || (!body.trim() && !file)}
+          size="sm"
+        >
           <Send className="h-4 w-4" />
           <span className="sr-only">{t('discussion.send')}</span>
         </Button>

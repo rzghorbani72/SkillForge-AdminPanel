@@ -3563,6 +3563,24 @@ export const tr = {
     reschedule: 'Yeniden planla',
     cancel: 'Oturumu iptal et',
     cancelReasonDefault: 'Akademi personeli tarafından iptal edildi',
+    student: 'Student',
+    tutor: 'Tutor',
+    endsAt: 'Term ends',
+    openEnded: 'No end date',
+    engagementSummaryHint:
+      'A private class: name each meeting, add topic, files and homework, and take attendance.',
+    openClass: 'Manage class',
+    backToTutoring: 'Back to tutoring',
+    engagementNotFound: 'This private class was not found.',
+    attendanceTitle: 'Take attendance',
+    attendanceHint:
+      'Taking attendance marks the meeting as held and ticks its topic for the student.',
+    attendanceSession: 'Meeting',
+    attendanceSubmit: 'Save attendance',
+    attendancePresent: 'Present',
+    attendanceAbsent: 'Absent',
+    attendanceJoined: 'Joined',
+    noSessionsYet: 'No meetings scheduled yet.',
     markAttendance: 'Yoklama al',
     profileId: 'Profil kimliği',
     attendanceStatus: 'Yoklama durumu',
@@ -3632,7 +3650,11 @@ export const tr = {
     user: 'Kullanıcı',
     replyPlaceholder: 'Bağlama uygun bir yanıt yazın…',
     send: 'Yanıt gönder',
-    sendFailed: 'Mesaj gönderilemedi.'
+    sendFailed: 'Mesaj gönderilemedi.',
+    attachFile: 'Attach file',
+    removeAttachment: 'Remove attachment',
+    uploadFailed: 'The file could not be uploaded.',
+    openAttachment: 'Open file'
   },
   pricing: {
     planLimits: {

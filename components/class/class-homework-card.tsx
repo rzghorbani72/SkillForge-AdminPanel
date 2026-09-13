@@ -25,7 +25,7 @@ import type {
 import { HomeworkDialog } from './homework-dialog';
 
 interface ClassHomeworkCardProps {
-  groupId: string;
+  groupId?: string;
   sessions: ClassSession[];
 }
 
@@ -49,8 +49,15 @@ export function ClassHomeworkCard({
     try {
       // Two parents, so two reads: work set for the class, and work attached to
       // any one of its meetings.
-      const [forClass, ...forMeetings] = await Promise.all([
-        apiClient.getAssignments({ tutoring_group_id: groupId, limit: 100 }),
+      const pages = await Promise.all([
+        ...(groupId
+          ? [
+              apiClient.getAssignments({
+                tutoring_group_id: groupId,
+                limit: 100
+              })
+            ]
+          : []),
         ...sessions.map((session) =>
           apiClient.getAssignments({
             tutoring_session_id: session.id,
@@ -58,10 +65,7 @@ export function ClassHomeworkCard({
           })
         )
       ]);
-      setItems([
-        ...forClass.assignments,
-        ...forMeetings.flatMap((page) => page.assignments)
-      ]);
+      setItems(pages.flatMap((page) => page.assignments));
     } catch (err) {
       ErrorHandler.handleApiError(err);
     } finally {

@@ -2422,11 +2422,30 @@ class ApiClient {
     return this.quizData<T>(`/discussions/thread?${query.toString()}`);
   }
 
-  async postDiscussionMessage(parent: DiscussionParent, body: string) {
+  async postDiscussionMessage(
+    parent: DiscussionParent,
+    body: string,
+    documentId?: string
+  ) {
     return this.quizData(`/discussions/messages`, {
       method: 'POST',
-      body: JSON.stringify({ ...parent, body })
+      body: JSON.stringify({
+        ...parent,
+        body,
+        ...(documentId ? { document_id: documentId } : {})
+      })
     });
+  }
+
+  /** A file for a chat message; the returned id is sent with the message. */
+  async uploadDiscussionAttachment(file: File): Promise<{ id: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await this.uploadFileWithProgress(
+      '/discussions/attachments',
+      formData
+    );
+    return unwrapDataEnvelope(res as { data: { id: string } });
   }
 
   // Products endpoints
@@ -6137,6 +6156,13 @@ class ApiClient {
   async getClassSessions(groupId: string): Promise<ClassSession[]> {
     const res = await this.request<ClassSession[] | { data: ClassSession[] }>(
       `/tutoring/groups/${groupId}/sessions`
+    );
+    return unwrapDataEnvelope(res.data) ?? [];
+  }
+
+  async getEngagementSessions(engagementId: string): Promise<ClassSession[]> {
+    const res = await this.request<ClassSession[] | { data: ClassSession[] }>(
+      `/tutoring/engagements/${engagementId}/sessions`
     );
     return unwrapDataEnvelope(res.data) ?? [];
   }

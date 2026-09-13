@@ -20,6 +20,7 @@ interface ClassTimetableCardProps {
   topics: CourseTopic[];
   isLoading: boolean;
   onSessionChanged: (session: ClassSession) => void;
+  onCancelSession?: (session: ClassSession) => Promise<void>;
 }
 
 /** Every meeting of one class, in the order it happens. */
@@ -27,7 +28,8 @@ export function ClassTimetableCard({
   sessions,
   topics,
   isLoading,
-  onSessionChanged
+  onSessionChanged,
+  onCancelSession
 }: ClassTimetableCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -72,6 +74,9 @@ export function ClassTimetableCard({
               topics={topics}
               isNext={session.id === focusId}
               onChanged={onSessionChanged}
+              onCancel={
+                onCancelSession ? () => onCancelSession(session) : undefined
+              }
             />
           ))
         )}

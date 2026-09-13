@@ -55,6 +55,8 @@ interface SessionRowProps {
   /** The meeting the teacher is working towards: running now, or up next. */
   isNext?: boolean;
   onChanged: (session: ClassSession) => void;
+  /** A 1:1 meeting has no makeup/refund choice; the caller cancels it. */
+  onCancel?: () => Promise<void>;
 }
 
 /**
@@ -67,7 +69,8 @@ export function SessionRow({
   session,
   topics,
   isNext = false,
-  onChanged
+  onChanged,
+  onCancel
 }: SessionRowProps) {
   const { t, language } = useTranslation();
   const [title, setTitle] = useState(session.title ?? '');
@@ -185,7 +188,18 @@ export function SessionRow({
             </Badge>
           )}
         </div>
-        {!isCancelled && (
+        {!isCancelled && onCancel && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => void onCancel()}
+          >
+            <Ban className="h-4 w-4" />
+            {t('courses.live.cancelSession')}
+          </Button>
+        )}
+        {!isCancelled && !onCancel && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="ghost" size="sm">

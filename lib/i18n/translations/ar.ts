@@ -3468,6 +3468,24 @@ export const ar = {
     reschedule: 'إعادة الجدولة',
     cancel: 'إلغاء الجلسة',
     cancelReasonDefault: 'أُلغي بواسطة طاقم الأكاديمية',
+    student: 'Student',
+    tutor: 'Tutor',
+    endsAt: 'Term ends',
+    openEnded: 'No end date',
+    engagementSummaryHint:
+      'A private class: name each meeting, add topic, files and homework, and take attendance.',
+    openClass: 'Manage class',
+    backToTutoring: 'Back to tutoring',
+    engagementNotFound: 'This private class was not found.',
+    attendanceTitle: 'Take attendance',
+    attendanceHint:
+      'Taking attendance marks the meeting as held and ticks its topic for the student.',
+    attendanceSession: 'Meeting',
+    attendanceSubmit: 'Save attendance',
+    attendancePresent: 'Present',
+    attendanceAbsent: 'Absent',
+    attendanceJoined: 'Joined',
+    noSessionsYet: 'No meetings scheduled yet.',
     markAttendance: 'تسجيل الحضور',
     profileId: 'معرّف الملف',
     attendanceStatus: 'حالة الحضور',
@@ -3536,7 +3554,11 @@ export const ar = {
     user: 'مستخدم',
     replyPlaceholder: 'اكتب ردًا مرتبطًا بالتعلم…',
     send: 'إرسال الرد',
-    sendFailed: 'تعذر إرسال الرسالة.'
+    sendFailed: 'تعذر إرسال الرسالة.',
+    attachFile: 'Attach file',
+    removeAttachment: 'Remove attachment',
+    uploadFailed: 'The file could not be uploaded.',
+    openAttachment: 'Open file'
   },
   pricing: {
     planLimits: {
