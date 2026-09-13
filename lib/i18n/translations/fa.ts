@@ -942,6 +942,7 @@ export const fa = {
     platformVouchers: 'کد تخفیف پلتفرم',
     broadcasts: 'اعلان‌های سراسری',
     dashboardBanners: 'بنرهای داشبورد',
+    platformStorage: 'فضای ذخیره‌سازی',
     myAcademies: 'آکادمی‌های من',
     teacherEarnings: 'درآمد من',
     templatesGallery: 'گالری قالب‌ها',
@@ -7334,6 +7335,34 @@ export const fa = {
       manageGatewayDetails: 'مدیریت توکن و جزئیات',
       refresh: 'بازخوانی'
     }
+  },
+  platformStorage: {
+    title: 'فضای ذخیره‌سازی',
+    description:
+      'همهٔ فایل‌های ذخیره‌شده در فضای ابری. فایل «بدون استفاده» یعنی هیچ رکورد زنده‌ای (تصویر، ویدیو، صدا، سند) به آن اشاره نمی‌کند؛ فقط همین فایل‌ها قابل حذف‌اند.',
+    accessDenied: 'فقط مالک پلتفرم به فضای ذخیره‌سازی دسترسی دارد.',
+    totalObjects: 'تعداد فایل‌ها',
+    totalSize: 'حجم کل',
+    unusedObjects: 'فایل‌های بدون استفاده',
+    unusedSize: 'حجم بدون استفاده',
+    objectsTitle: 'فایل‌ها',
+    objectsHint: 'فایل‌های در حال استفاده قابل انتخاب نیستند.',
+    file: 'فایل',
+    academy: 'آکادمی',
+    platformScope: 'پلتفرم',
+    size: 'حجم',
+    lastModified: 'آخرین تغییر',
+    status: 'وضعیت',
+    used: 'در حال استفاده',
+    unused: 'بدون استفاده',
+    selectAllUnused: 'انتخاب همهٔ فایل‌های بدون استفاده',
+    deleteSelected: 'حذف {{count}} فایل',
+    empty: 'فایلی در این دسته وجود ندارد.',
+    confirmTitle: 'حذف فایل‌های بدون استفاده',
+    confirmDescription:
+      '{{count}} فایل برای همیشه از فضای ابری حذف می‌شود. این کار قابل بازگشت نیست.',
+    deleted: '{{count}} فایل حذف شد.',
+    refused: '{{count}} فایل هنوز در حال استفاده بود و حذف نشد.'
   },
   dashboardBanners: {
     title: 'بنرهای داشبورد',

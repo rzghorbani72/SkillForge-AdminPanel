@@ -853,6 +853,7 @@ export const en = {
     platformVouchers: 'Platform vouchers',
     broadcasts: 'Broadcasts',
     dashboardBanners: 'Dashboard banners',
+    platformStorage: 'Storage',
     supportAccessLogs: 'Support Access Logs',
     management: 'Management',
     academies: 'My Academies',
@@ -7365,6 +7366,34 @@ export const en = {
       manageGatewayDetails: 'Manage tokens & details',
       refresh: 'Refresh'
     }
+  },
+  platformStorage: {
+    title: 'Storage',
+    description:
+      'Every file stored in the cloud bucket. "Unused" means no live record (image, video, audio, document) points at it; only those can be deleted.',
+    accessDenied: 'Only the platform owner can manage storage.',
+    totalObjects: 'Files',
+    totalSize: 'Total size',
+    unusedObjects: 'Unused files',
+    unusedSize: 'Unused size',
+    objectsTitle: 'Files',
+    objectsHint: 'Files in use cannot be selected.',
+    file: 'File',
+    academy: 'Academy',
+    platformScope: 'Platform',
+    size: 'Size',
+    lastModified: 'Last modified',
+    status: 'Status',
+    used: 'In use',
+    unused: 'Unused',
+    selectAllUnused: 'Select all unused files',
+    deleteSelected: 'Delete {{count}} files',
+    empty: 'No files in this group.',
+    confirmTitle: 'Delete unused files',
+    confirmDescription:
+      '{{count}} files will be permanently removed from the bucket. This cannot be undone.',
+    deleted: '{{count}} files deleted.',
+    refused: '{{count}} files were still in use and were not deleted.'
   },
   dashboardBanners: {
     title: 'Dashboard banners',

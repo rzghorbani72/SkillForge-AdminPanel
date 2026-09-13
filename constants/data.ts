@@ -227,6 +227,15 @@ export const navItems: NavItem[] = [
         scope: 'platform'
       },
       {
+        title: 'Storage',
+        href: '/platform/storage',
+        icon: 'hardDrive' as IconType,
+        label: 'platformStorage',
+        roles: ['PLATFORM_OWNER'],
+        adminOnly: true,
+        scope: 'platform'
+      },
+      {
         title: 'Templates Gallery',
         href: '/website/appearance/list',
         icon: 'gallery' as IconType,

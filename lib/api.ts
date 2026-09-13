@@ -1685,6 +1685,21 @@ class ApiClient {
     });
   }
 
+  async listStorageObjects() {
+    return unwrapEnvelope<StorageInventory>(
+      await this.request('/platform/storage/objects')
+    );
+  }
+
+  async deleteStorageObjects(keys: string[]) {
+    return unwrapEnvelope<DeleteStorageObjectsResult>(
+      await this.request('/platform/storage/objects', {
+        method: 'DELETE',
+        body: JSON.stringify({ keys })
+      })
+    );
+  }
+
   async getAcademyDashboardBanners() {
     return (
       unwrapEnvelope<AcademyDashboardBanners>(
@@ -7725,6 +7740,26 @@ export interface DashboardBanner {
   sort_order: number;
   is_active: boolean;
   created_at: string;
+}
+
+export interface StorageObject {
+  key: string;
+  size: number;
+  last_modified: string | null;
+  academy_id: string | null;
+  academy_name: string | null;
+  used: boolean;
+}
+
+export interface StorageInventory {
+  objects: StorageObject[];
+  total_bytes: number;
+  unused_bytes: number;
+}
+
+export interface DeleteStorageObjectsResult {
+  deleted: string[];
+  refused: string[];
 }
 
 export interface CreateDashboardBannerPayload {
