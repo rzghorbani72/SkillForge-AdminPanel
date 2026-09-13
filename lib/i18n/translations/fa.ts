@@ -1820,6 +1820,8 @@ export const fa = {
       pickTopic: 'انتخاب سرفصل',
       noTopic: 'بدون سرفصل',
       sessionSaved: 'جلسه ذخیره شد.',
+      editTime: 'ویرایش زمان',
+      sessionRescheduled: 'زمان جلسه به‌روزرسانی شد.',
       cancelSession: 'لغو جلسه',
       sessionCancelled: 'جلسه لغو شد.',
       cancelled: 'لغو شده',

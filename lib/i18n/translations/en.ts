@@ -1831,6 +1831,8 @@ export const en = {
       pickTopic: 'Pick a topic',
       noTopic: 'No topic',
       sessionSaved: 'Meeting saved.',
+      editTime: 'Edit time',
+      sessionRescheduled: 'Meeting time updated.',
       cancelSession: 'Cancel meeting',
       sessionCancelled: 'Meeting cancelled.',
       cancelled: 'Cancelled',

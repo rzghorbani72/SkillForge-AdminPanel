@@ -72,7 +72,9 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
     const params = new URLSearchParams(searchParams.toString());
     params.set('step', next);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    window.scrollTo({ top: 0 });
+    // The page itself never scrolls — the panel body does, inside its own
+    // overflow-y-auto container — so window.scrollTo has no effect here.
+    document.getElementById('app-scroll-area')?.scrollTo({ top: 0 });
   };
 
   /** Next only moves on once the fields of the current step are valid. */
@@ -193,6 +195,18 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
               </Button>
 
               <div className="flex items-center gap-3">
+                {!isLast && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isSaving}
+                    onClick={() => void saveStep()}
+                    className="gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    {t('common.save')}
+                  </Button>
+                )}
                 {isLast ? (
                   <Button
                     type="button"

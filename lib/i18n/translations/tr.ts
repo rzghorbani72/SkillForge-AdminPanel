@@ -1106,6 +1106,8 @@ export const tr = {
       pickTopic: 'Konu seçin',
       noTopic: 'Konu yok',
       sessionSaved: 'Oturum kaydedildi.',
+      editTime: 'Saati düzenle',
+      sessionRescheduled: 'Oturum saati güncellendi.',
       cancelSession: 'Oturumu iptal et',
       sessionCancelled: 'Oturum iptal edildi.',
       cancelled: 'İptal edildi',

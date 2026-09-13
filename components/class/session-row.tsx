@@ -1,11 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { Ban, CheckCircle2, Link2, MessageSquare, Video } from 'lucide-react';
+import {
+  Ban,
+  CheckCircle2,
+  Link2,
+  MessageSquare,
+  Pencil,
+  Video
+} from 'lucide-react';
 import { toast } from 'react-toastify';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -16,6 +24,10 @@ import {
 } from '@/components/ui/select';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import {
+  fromDateTimeInputValue,
+  toDateTimeInputValue
+} from '@/lib/i18n/calendar-date';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { ClassSession, CourseTopic } from '@/types/learning-operations';
 import { SessionRecordingField } from './session-recording-field';
@@ -51,6 +63,11 @@ export function SessionRow({
   const [meetingUrl, setMeetingUrl] = useState(session.meeting_url ?? '');
   const [isSaving, setIsSaving] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [isEditingTime, setIsEditingTime] = useState(false);
+  const [timeValue, setTimeValue] = useState(() =>
+    toDateTimeInputValue(new Date(session.starts_at))
+  );
+  const [isRescheduling, setIsRescheduling] = useState(false);
 
   const isCancelled = session.status === 'CANCELLED';
 
@@ -68,6 +85,24 @@ export function SessionRow({
       ErrorHandler.handleApiError(err);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const reschedule = async () => {
+    const startsAt = fromDateTimeInputValue(timeValue);
+    if (!startsAt) return;
+    setIsRescheduling(true);
+    try {
+      const updated = await apiClient.rescheduleClassSession(session.id, {
+        starts_at: startsAt.toISOString()
+      });
+      onChanged(updated);
+      setIsEditingTime(false);
+      toast.success(t('courses.live.sessionRescheduled'));
+    } catch (err) {
+      ErrorHandler.handleApiError(err);
+    } finally {
+      setIsRescheduling(false);
     }
   };
 
@@ -100,6 +135,21 @@ export function SessionRow({
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">{index + 1}.</span>
           <span dir="ltr">{when}</span>
+          {!isCancelled && !isEditingTime && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => {
+                setTimeValue(toDateTimeInputValue(new Date(session.starts_at)));
+                setIsEditingTime(true);
+              }}
+              aria-label={t('courses.live.editTime')}
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </Button>
+          )}
           {isNext && (
             <Badge className="gap-1">{t('courses.live.nextSession')}</Badge>
           )}
@@ -126,6 +176,35 @@ export function SessionRow({
           </Button>
         )}
       </div>
+
+      {isEditingTime && (
+        <div className="flex flex-wrap items-center gap-2">
+          <DatePicker
+            value={timeValue}
+            onChange={setTimeValue}
+            withTime
+            className="max-w-[220px]"
+          />
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => void reschedule()}
+            disabled={isRescheduling}
+          >
+            <CheckCircle2 className="h-4 w-4" />
+            {isRescheduling ? t('common.saving') : t('common.save')}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsEditingTime(false)}
+            disabled={isRescheduling}
+          >
+            {t('common.cancel')}
+          </Button>
+        </div>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-[1fr_220px_auto]">
         <Input

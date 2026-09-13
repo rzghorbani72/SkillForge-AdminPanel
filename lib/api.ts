@@ -6153,6 +6153,17 @@ class ApiClient {
     return unwrapDataEnvelope(res.data);
   }
 
+  async rescheduleClassSession(
+    sessionId: string,
+    data: { starts_at: string; ends_at?: string | null }
+  ): Promise<ClassSession> {
+    const res = await this.request<ClassSession | { data: ClassSession }>(
+      `/tutoring/class-sessions/${sessionId}/reschedule`,
+      { method: 'PATCH', body: JSON.stringify(data) }
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
   async setSessionRecording(
     sessionId: string,
     data: { video_id: string | null; allow_download?: boolean }

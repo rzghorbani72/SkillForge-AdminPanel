@@ -1078,6 +1078,8 @@ export const ar = {
       pickTopic: 'اختر محورًا',
       noTopic: 'بدون محور',
       sessionSaved: 'تم حفظ الجلسة.',
+      editTime: 'تعديل الوقت',
+      sessionRescheduled: 'تم تحديث وقت الجلسة.',
       cancelSession: 'إلغاء الجلسة',
       sessionCancelled: 'تم إلغاء الجلسة.',
       cancelled: 'ملغاة',
