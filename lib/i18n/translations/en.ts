@@ -811,6 +811,12 @@ export const en = {
     deleteConfirm:
       '"{{name}}" ({{size}}) is not used anywhere. It will be permanently removed from storage and the space freed. This cannot be undone.',
     deleteSuccess: 'File deleted and space freed',
+    deleteAllUnused: 'Delete all unused files',
+    deleteAllUnusedTitle: 'Delete every unused file?',
+    deleteAllUnusedConfirm:
+      'Files that are not used in a lesson, course, page, or profile will be permanently removed, including any transcoded copies. This cannot be undone.',
+    deleteAllUnusedSuccess: '{{count}} unused files deleted and space freed',
+    deleteAllUnusedEmpty: 'No unused files to delete',
     noFiles: 'No files yet',
     pageOf: 'Page {{page}} of {{total}}'
   },
@@ -7397,14 +7403,15 @@ export const en = {
   platformStorage: {
     title: 'Storage',
     description:
-      'Every file stored in the cloud bucket. "Unused" means no live record (image, video, audio, document) points at it; only those can be deleted.',
+      'A file is in use when a lesson, course, page, or profile still uses it. Unused videos can be deleted — that also removes every transcoded copy and frees the space.',
     accessDenied: 'Only the platform owner can manage storage.',
     totalObjects: 'Files',
     totalSize: 'Total size',
     unusedObjects: 'Unused files',
     unusedSize: 'Unused size',
     objectsTitle: 'Files',
-    objectsHint: 'Files in use cannot be selected.',
+    objectsHint:
+      'Transcoded video slices are hidden; you see the real file. Files in use cannot be selected.',
     file: 'File',
     academy: 'Academy',
     platformScope: 'Platform',
@@ -7415,10 +7422,15 @@ export const en = {
     unused: 'Unused',
     selectAllUnused: 'Select all unused files',
     deleteSelected: 'Delete {{count}} files',
+    deleteAllUnused: 'Delete all unused files',
     empty: 'No files in this group.',
+    emptyUnusedHidden:
+      'Leftover transcoded pieces are hidden here. Delete all unused files to free that space.',
     confirmTitle: 'Delete unused files',
     confirmDescription:
       '{{count}} files will be permanently removed from the bucket. This cannot be undone.',
+    confirmDeleteAll:
+      '{{size}} of leftover files that no video, image, audio, or document uses will be permanently removed. This cannot be undone.',
     deleted: '{{count}} files deleted.',
     refused: '{{count}} files were still in use and were not deleted.'
   },

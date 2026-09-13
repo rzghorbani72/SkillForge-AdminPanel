@@ -1700,6 +1700,14 @@ class ApiClient {
     );
   }
 
+  async deleteAllUnusedStorageObjects() {
+    return unwrapEnvelope<DeleteStorageObjectsResult>(
+      await this.request('/platform/storage/objects/unused', {
+        method: 'DELETE'
+      })
+    );
+  }
+
   async getAcademyDashboardBanners() {
     return (
       unwrapEnvelope<AcademyDashboardBanners>(
@@ -1930,6 +1938,19 @@ class ApiClient {
   /** Only an unused upload; the backend 409s anything still in use. */
   async deleteStorageFile(kind: StorageMediaType, id: string) {
     return this.request(`/storage/files/${kind}/${id}`, { method: 'DELETE' });
+  }
+
+  async deleteAllUnusedStorageFiles(): Promise<{
+    deleted: number;
+    freed_bytes: number;
+  }> {
+    const response = await this.request('/storage/unused', {
+      method: 'DELETE'
+    });
+    const payload = response.data as {
+      data?: { deleted: number; freed_bytes: number };
+    };
+    return payload?.data ?? { deleted: 0, freed_bytes: 0 };
   }
 
   /** Every academy the signed-in owner pays for, each with its own plan. */
@@ -7751,6 +7772,7 @@ export interface StorageObject {
   academy_id: string | null;
   academy_name: string | null;
   used: boolean;
+  title?: string | null;
 }
 
 export interface StorageInventory {

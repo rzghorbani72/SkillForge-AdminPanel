@@ -53,6 +53,14 @@ export default function PlatformStoragePage() {
     await load();
   };
 
+  const handleDeleteAll = async () => {
+    const result = await apiClient.deleteAllUnusedStorageObjects();
+    toast.success(
+      t('platformStorage.deleted', { count: result?.deleted.length ?? 0 })
+    );
+    await load();
+  };
+
   if (isLoading) return <div className="flex-1 p-4 sm:p-6" />;
 
   if (!allowed) {
@@ -90,8 +98,10 @@ export default function PlatformStoragePage() {
 
       <StorageObjectsTable
         objects={inventory?.objects ?? []}
+        unusedBytes={inventory?.unused_bytes ?? 0}
         loading={loading}
         onDelete={handleDelete}
+        onDeleteAll={handleDeleteAll}
       />
     </div>
   );

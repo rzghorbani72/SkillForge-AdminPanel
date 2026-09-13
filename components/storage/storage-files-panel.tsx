@@ -16,6 +16,16 @@ import {
   type DataColumn
 } from '@/components/shared/data-list';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 import { formatFileSize } from '@/components/shared/utils';
 import {
   apiClient,
@@ -73,9 +83,29 @@ export function StorageFilesPanel({
   const [pendingDelete, setPendingDelete] = useState<StorageFileRow | null>(
     null
   );
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
   const lastPage = Math.max(1, Math.ceil(total / limit));
+
+  const handleDeleteAll = async () => {
+    try {
+      setIsDeleting(true);
+      const result = await apiClient.deleteAllUnusedStorageFiles();
+      if (result.deleted === 0) {
+        toast.info(t('storage.deleteAllUnusedEmpty'));
+      } else {
+        toast.success(
+          t('storage.deleteAllUnusedSuccess', { count: result.deleted })
+        );
+      }
+      setConfirmDeleteAll(false);
+      onDeleted();
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!pendingDelete) return;
@@ -176,6 +206,17 @@ export function StorageFilesPanel({
               : t(`storage.type${capitalize(option)}`)}
           </Button>
         ))}
+        actions={
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={isLoading || isDeleting}
+            onClick={() => setConfirmDeleteAll(true)}
+          >
+            <Trash2 className="h-4 w-4" />
+            {t('storage.deleteAllUnused')}
+          </Button>
+        }
         footer={
           total > limit ? (
             <>
@@ -226,6 +267,34 @@ export function StorageFilesPanel({
         onCancel={() => setPendingDelete(null)}
         onConfirm={handleDelete}
       />
+
+      <AlertDialog
+        open={confirmDeleteAll}
+        onOpenChange={(open) => !open && setConfirmDeleteAll(false)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('storage.deleteAllUnusedTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('storage.deleteAllUnusedConfirm')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAll}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('storage.deleteAllUnused')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

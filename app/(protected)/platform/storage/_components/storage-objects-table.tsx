@@ -30,20 +30,26 @@ type Filter = 'all' | 'used' | 'unused';
 
 interface StorageObjectsTableProps {
   objects: readonly StorageObject[];
+  unusedBytes: number;
   loading: boolean;
   onDelete: (keys: string[]) => Promise<void>;
+  onDeleteAll: () => Promise<void>;
 }
 
 export function StorageObjectsTable({
   objects,
+  unusedBytes,
   loading,
-  onDelete
+  onDelete,
+  onDeleteAll
 }: StorageObjectsTableProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const [filter, setFilter] = useState<Filter>('unused');
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmMode, setConfirmMode] = useState<'selected' | 'all' | null>(
+    null
+  );
   const [deleting, setDeleting] = useState(false);
 
   const visible = useMemo(
@@ -70,17 +76,23 @@ export function StorageObjectsTable({
     setSelected(allUnusedSelected ? new Set() : new Set(unusedVisibleKeys));
 
   const confirmDelete = async () => {
+    if (!confirmMode) return;
     setDeleting(true);
     try {
-      await onDelete(Array.from(selected));
-      setSelected(new Set());
+      if (confirmMode === 'all') {
+        await onDeleteAll();
+      } else {
+        await onDelete(Array.from(selected));
+        setSelected(new Set());
+      }
     } finally {
       setDeleting(false);
-      setConfirmOpen(false);
+      setConfirmMode(null);
     }
   };
 
-  const fileName = (key: string) => key.slice(key.lastIndexOf('/') + 1);
+  const fileLabel = (o: StorageObject) =>
+    o.title || o.key.slice(o.key.lastIndexOf('/') + 1);
 
   const columns: DataColumn<StorageObject>[] = [
     {
@@ -98,7 +110,7 @@ export function StorageObjectsTable({
           <Checkbox
             checked={selected.has(o.key)}
             onCheckedChange={() => toggle(o.key)}
-            aria-label={fileName(o.key)}
+            aria-label={fileLabel(o)}
           />
         ),
       className: 'w-10'
@@ -107,8 +119,12 @@ export function StorageObjectsTable({
       id: 'file',
       header: t('platformStorage.file'),
       cell: (o) => (
-        <span className="block max-w-[320px] truncate" title={o.key} dir="ltr">
-          {fileName(o.key)}
+        <span
+          className="block max-w-[320px] truncate"
+          title={o.title || o.key}
+          dir="auto"
+        >
+          {fileLabel(o)}
         </span>
       )
     },
@@ -155,15 +171,26 @@ export function StorageObjectsTable({
         </Tabs>
       }
       actions={
-        <Button
-          variant="destructive"
-          size="sm"
-          disabled={selected.size === 0}
-          onClick={() => setConfirmOpen(true)}
-        >
-          <Trash2 className="h-4 w-4" />
-          {t('platformStorage.deleteSelected', { count: selected.size })}
-        </Button>
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={unusedBytes <= 0 || loading || deleting}
+            onClick={() => setConfirmMode('all')}
+          >
+            <Trash2 className="h-4 w-4" />
+            {t('platformStorage.deleteAllUnused')}
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={selected.size === 0}
+            onClick={() => setConfirmMode('selected')}
+          >
+            <Trash2 className="h-4 w-4" />
+            {t('platformStorage.deleteSelected', { count: selected.size })}
+          </Button>
+        </>
       }
     >
       <DataList
@@ -173,21 +200,30 @@ export function StorageObjectsTable({
         isLoading={loading}
         emptyState={
           <p className="p-6 text-center text-sm text-muted-foreground">
-            {t('platformStorage.empty')}
+            {filter === 'unused' && unusedBytes > 0
+              ? t('platformStorage.emptyUnusedHidden')
+              : t('platformStorage.empty')}
           </p>
         }
       />
 
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+      <AlertDialog
+        open={confirmMode !== null}
+        onOpenChange={(open) => !open && setConfirmMode(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
               {t('platformStorage.confirmTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('platformStorage.confirmDescription', {
-                count: selected.size
-              })}
+              {confirmMode === 'all'
+                ? t('platformStorage.confirmDeleteAll', {
+                    size: formatFileSize(unusedBytes) || ''
+                  })
+                : t('platformStorage.confirmDescription', {
+                    count: selected.size
+                  })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
