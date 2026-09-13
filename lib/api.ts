@@ -6295,11 +6295,19 @@ class ApiClient {
     groupId: string,
     slots: TutoringGroupSlot[]
   ): Promise<TutoringGroupSlot[]> {
+    const writableSlots = slots.map(
+      ({ weekday, start_minute, duration_minutes, lesson_id }) => ({
+        weekday,
+        start_minute,
+        duration_minutes,
+        ...(lesson_id ? { lesson_id } : {})
+      })
+    );
     const res = await this.request<
       TutoringGroupSlot[] | { data: TutoringGroupSlot[] }
     >(`/tutoring/groups/${groupId}/slots`, {
       method: 'PUT',
-      body: JSON.stringify({ slots })
+      body: JSON.stringify({ slots: writableSlots })
     });
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];
