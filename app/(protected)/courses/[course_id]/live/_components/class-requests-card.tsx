@@ -1,13 +1,15 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { CalendarPlus, Inbox, X } from 'lucide-react';
+import Link from 'next/link';
+import { CalendarClock, CalendarPlus, Inbox, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { DataPanel } from '@/components/shared/data-list';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { formatRequestWindows } from '@/lib/class-request-windows';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -17,19 +19,6 @@ import type {
   TutoringGroupSlot
 } from '@/types/learning-operations';
 import { CreateClassSheet } from './create-class-sheet';
-
-const WEEKDAY_KEYS = [
-  'weekdays.sunday',
-  'weekdays.monday',
-  'weekdays.tuesday',
-  'weekdays.wednesday',
-  'weekdays.thursday',
-  'weekdays.friday',
-  'weekdays.saturday'
-];
-
-const minuteLabel = (minute: number) =>
-  `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
 
 /** A requested window becomes a weekly slot starting at its start time. */
 const toSlots = (windows: ClassRequestWindow[]): TutoringGroupSlot[] =>
@@ -126,18 +115,15 @@ export function ClassRequestsCard({
               <p className="font-medium">
                 {request.Student?.display_name ?? '—'}
                 <span className="ms-2 text-xs text-muted-foreground">
-                  {t('courses.live.requestSeats', {
-                    count: formatNumber(request.seats)
-                  })}
+                  {request.engagement_id
+                    ? t('courses.live.requestPrivatePaid')
+                    : t('courses.live.requestSeats', {
+                        count: formatNumber(request.seats)
+                      })}
                 </span>
               </p>
               <p className="text-muted-foreground">
-                {request.windows
-                  .map(
-                    (w) =>
-                      `${t(WEEKDAY_KEYS[w.weekday])} ${minuteLabel(w.start_minute)}–${minuteLabel(w.end_minute)}`
-                  )
-                  .join(' · ')}
+                {formatRequestWindows(request.windows, t)}
               </p>
               {request.note ? (
                 <p className="text-xs text-muted-foreground">{request.note}</p>
@@ -147,7 +133,14 @@ export function ClassRequestsCard({
               </p>
             </div>
             <div className="flex shrink-0 gap-2">
-              {offerId ? (
+              {request.engagement_id ? (
+                <Button type="button" size="sm" asChild>
+                  <Link href={`/tutoring/engagements/${request.engagement_id}`}>
+                    <CalendarClock className="me-1.5 h-4 w-4" />
+                    {t('courses.live.scheduleForRequest')}
+                  </Link>
+                </Button>
+              ) : offerId ? (
                 <CreateClassSheet
                   offerId={offerId}
                   courseTitle={courseTitle}

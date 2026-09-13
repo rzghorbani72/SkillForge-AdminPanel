@@ -482,6 +482,8 @@ export interface ClassRequest {
   note: string | null;
   status: ClassRequestStatus;
   group_id: string | null;
+  /** Set when a paid private student asked from inside their classroom. */
+  engagement_id: string | null;
   answered_at: string | null;
   created_at: string;
   Course: { id: string; title: string; slug: string | null } | null;

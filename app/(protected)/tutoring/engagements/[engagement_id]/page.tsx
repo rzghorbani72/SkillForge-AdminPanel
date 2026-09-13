@@ -13,6 +13,7 @@ import { NextSessionCard } from '@/components/class/next-session-card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { ScheduleSessionCard } from '../../_components/schedule-session-card';
 import { EngagementSummaryCard } from './_components/engagement-summary-card';
+import { RequestedTimesCard } from './_components/requested-times-card';
 import { SessionAttendanceCard } from './_components/session-attendance-card';
 import { useEngagementClass } from './hooks/use-engagement-class';
 
@@ -39,11 +40,13 @@ export default function EngagementClassPage() {
   const [scheduleForm, setScheduleForm] = useState(() =>
     emptyScheduleForm(engagementId)
   );
+  const [scheduledCount, setScheduledCount] = useState(0);
 
   const schedule = async () => {
     if (!scheduleForm.starts_at) return;
     await cls.schedule(scheduleForm);
     setScheduleForm(emptyScheduleForm(engagementId));
+    setScheduledCount((n) => n + 1);
   };
 
   return (
@@ -87,6 +90,10 @@ export default function EngagementClassPage() {
                 <ClassHomeworkCard sessions={cls.sessions} />
               </div>
               <div className="space-y-6">
+                <RequestedTimesCard
+                  engagementId={engagementId}
+                  refreshKey={scheduledCount}
+                />
                 <ScheduleSessionCard
                   form={scheduleForm}
                   onChange={setScheduleForm}

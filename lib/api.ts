@@ -6363,10 +6363,12 @@ class ApiClient {
 
   async getClassRequests(params: {
     course_id?: string;
+    engagement_id?: string;
     status?: ClassRequestStatus;
   }): Promise<ClassRequest[]> {
     const query = new URLSearchParams();
     if (params.course_id) query.set('course_id', params.course_id);
+    if (params.engagement_id) query.set('engagement_id', params.engagement_id);
     if (params.status) query.set('status', params.status);
     const res = await this.request<ClassRequest[] | { data: ClassRequest[] }>(
       `/class-requests?${query.toString()}`

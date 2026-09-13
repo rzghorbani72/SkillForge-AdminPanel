@@ -1813,6 +1813,8 @@ export const fa = {
       requestsCount: '{{count}} دانشجو زمان کلاس درخواست کرده‌اند',
       requestSeats: '{{count}} صندلی',
       openClassForRequest: 'ایجاد کلاس برای این درخواست',
+      requestPrivatePaid: 'کلاس خصوصی (پرداخت‌شده)',
+      scheduleForRequest: 'زمان‌بندی جلسه',
       declineRequest: 'رد کردن',
       requestAccepted: 'کلاس ایجاد شد و به دانشجو پیامک داده شد.',
       requestsHint:
@@ -7084,6 +7086,9 @@ export const fa = {
     openClass: 'مدیریت کلاس',
     backToTutoring: 'بازگشت به تدریس خصوصی',
     engagementNotFound: 'این کلاس خصوصی پیدا نشد.',
+    requestedTimesTitle: 'زمان‌های پیشنهادی دانشجو',
+    requestedTimesHint:
+      'ارسال‌شده در {{date}} — با تنظیم اولین جلسه، این درخواست بسته و دانشجو باخبر می‌شود.',
     attendanceTitle: 'ثبت حضور جلسه',
     attendanceHint:
       'با ثبت حضور، جلسه «برگزارشده» می‌شود و سرفصل آن برای دانشجو تیک می‌خورد.',

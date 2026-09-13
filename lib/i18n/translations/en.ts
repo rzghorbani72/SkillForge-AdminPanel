@@ -1823,6 +1823,8 @@ export const en = {
       requestsCount: '{{count}} students asked for a class time',
       requestSeats: '{{count}} seat(s)',
       openClassForRequest: 'Open a class for this',
+      requestPrivatePaid: 'Private class (paid)',
+      scheduleForRequest: 'Schedule a session',
       declineRequest: 'Decline',
       requestAccepted: 'Class opened and the student was texted.',
       requestsHint:
@@ -7115,6 +7117,9 @@ export const en = {
     openClass: 'Manage class',
     backToTutoring: 'Back to tutoring',
     engagementNotFound: 'This private class was not found.',
+    requestedTimesTitle: "Student's preferred times",
+    requestedTimesHint:
+      'Sent {{date}} — scheduling the first session closes this request and notifies the student.',
     attendanceTitle: 'Take attendance',
     attendanceHint:
       'Taking attendance marks the meeting as held and ticks its topic for the student.',
