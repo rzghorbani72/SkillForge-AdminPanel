@@ -14,8 +14,8 @@ export function useClassDetail(groupId: string) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
+  // Reloads after a write keep the form mounted; only the first fetch spins.
   const load = useCallback(async () => {
-    setLoading(true);
     try {
       setGroup(await apiClient.getTutoringGroup(groupId));
     } catch (error) {

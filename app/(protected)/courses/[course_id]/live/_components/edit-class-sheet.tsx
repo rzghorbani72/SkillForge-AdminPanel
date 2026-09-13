@@ -164,44 +164,44 @@ function ClassSettingsBody({
     group.join_deadline ? group.join_deadline.slice(0, 10) : ''
   );
   const [slots, setSlots] = useState<TutoringGroupSlot[]>(group.Slots ?? []);
-  const [isSavingSlots, setIsSavingSlots] = useState(false);
-  const [savingSettings, setSavingSettings] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const canEditSchedule = EDITABLE_SCHEDULE_STATUSES.includes(group.status);
 
-  const saveSettings = async () => {
-    const ok = await update({
-      title: title.trim(),
-      description: description.trim() || undefined,
-      capacity: Number(capacity) || undefined,
-      min_students: Number(minStudents) || undefined,
-      age_min: ageMin ? Number(ageMin) : undefined,
-      age_max: ageMax ? Number(ageMax) : undefined,
-      term_weeks: Number(termWeeks) || undefined,
-      visibility,
-      join_deadline: joinDeadline
-        ? new Date(joinDeadline).toISOString()
-        : undefined
-    });
-    if (ok) {
-      toast.success(t('courseDetail.settingsSaved'));
+  // One save writes every field, the timetable included — a manager who edits
+  // a slot and presses "save changes" must never lose it.
+  const saveAll = async (): Promise<boolean> => {
+    setSaving(true);
+    try {
+      const settingsOk = await update({
+        title: title.trim(),
+        description: description.trim() || undefined,
+        capacity: Number(capacity) || undefined,
+        min_students: Number(minStudents) || undefined,
+        age_min: ageMin ? Number(ageMin) : undefined,
+        age_max: ageMax ? Number(ageMax) : undefined,
+        term_weeks: Number(termWeeks) || undefined,
+        visibility,
+        join_deadline: joinDeadline
+          ? new Date(joinDeadline).toISOString()
+          : undefined
+      });
+      if (!settingsOk) return false;
+      if (canEditSchedule && !(await replaceSlots(slots))) return false;
       onChanged();
+      return true;
+    } finally {
+      setSaving(false);
     }
   };
 
-  const saveSlots = async () => {
-    setIsSavingSlots(true);
-    const ok = await replaceSlots(slots);
-    setIsSavingSlots(false);
-    if (ok) {
-      toast.success(t('tutoring.groups.timetableSaved'));
-      onChanged();
-    }
+  const doSave = async () => {
+    if (await saveAll()) toast.success(t('courseDetail.settingsSaved'));
   };
 
   const doPublish = async () => {
-    const ok = await publish();
-    if (ok) {
+    if (!(await saveAll())) return;
+    if (await publish()) {
       toast.success(t('courses.live.classPublished'));
       onChanged();
     }
@@ -339,16 +339,6 @@ function ClassSettingsBody({
                 {t('tutoring.groups.timetableHint')}
               </p>
               <GroupSlotEditor slots={slots} onChange={setSlots} />
-              <Button
-                type="button"
-                size="sm"
-                disabled={isSavingSlots}
-                onClick={() => void saveSlots()}
-              >
-                {isSavingSlots
-                  ? t('common.saving')
-                  : t('tutoring.groups.saveTimetable')}
-              </Button>
             </>
           ) : (
             <p className="text-xs text-muted-foreground">
@@ -386,23 +376,21 @@ function ClassSettingsBody({
             type="button"
             variant="outline"
             className="flex-1"
-            disabled={busy}
+            disabled={busy || saving}
             onClick={() => void doPublish()}
           >
-            {busy ? t('common.saving') : t('courses.live.publishClass')}
+            {busy || saving
+              ? t('common.saving')
+              : t('courses.live.publishClass')}
           </Button>
         )}
         <Button
           type="button"
           className="flex-1"
-          disabled={savingSettings}
-          onClick={async () => {
-            setSavingSettings(true);
-            await saveSettings();
-            setSavingSettings(false);
-          }}
+          disabled={busy || saving}
+          onClick={() => void doSave()}
         >
-          {savingSettings ? t('common.saving') : t('common.saveChanges')}
+          {saving ? t('common.saving') : t('common.saveChanges')}
         </Button>
       </div>
     </div>

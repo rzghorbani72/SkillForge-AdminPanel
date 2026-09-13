@@ -33,9 +33,10 @@ export function useLiveCourse(courseId: string) {
   const [data, setData] = useState<LiveCourseData>(EMPTY);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Only the first fetch shows the spinner: a reload after a save must keep the
+  // page mounted, or an open sheet (and its unsaved fields) is thrown away.
   const load = useCallback(async () => {
     if (!courseId) return;
-    setIsLoading(true);
     try {
       const [course, topics, offers, groups] = await Promise.all([
         apiClient.getCourse(courseId),
