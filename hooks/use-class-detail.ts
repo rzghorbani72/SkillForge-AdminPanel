@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import type { TutoringGroup } from '@/types/learning-operations';
+import type {
+  TutoringGroup,
+  TutoringGroupSlot,
+  UpdateTutoringGroupPayload
+} from '@/types/learning-operations';
 
 export function useClassDetail(groupId: string) {
   const [group, setGroup] = useState<TutoringGroup | null>(null);
@@ -49,6 +53,10 @@ export function useClassDetail(groupId: string) {
     loading,
     busy,
     reload: load,
+    update: (data: UpdateTutoringGroupPayload) =>
+      run(() => apiClient.updateTutoringGroup(groupId, data)),
+    replaceSlots: (slots: TutoringGroupSlot[]) =>
+      run(() => apiClient.replaceTutoringGroupSlots(groupId, slots)),
     publish: () => run(() => apiClient.publishTutoringGroup(groupId)),
     confirm: () => run(() => apiClient.confirmTutoringGroup(groupId)),
     cancel: (reason: string) =>

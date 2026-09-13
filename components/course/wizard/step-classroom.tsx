@@ -50,6 +50,7 @@ export function StepClassroom({ courseId }: { courseId: string }) {
       <ClassListCard
         courseId={courseId}
         groups={groups}
+        onChanged={() => void reload()}
         action={
           groupOffer ? (
             <CreateClassSheet

@@ -118,6 +118,7 @@ export default function LiveCoursePage() {
       <ClassListCard
         courseId={courseId}
         groups={groups}
+        onChanged={() => void reload()}
         action={
           groupOffer ? (
             <CreateClassSheet

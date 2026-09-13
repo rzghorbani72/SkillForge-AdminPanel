@@ -6920,6 +6920,10 @@ export const fa = {
       timetable: 'زمان‌های هفتگی',
       timetableHint:
         'برای هر جلسهٔ هفتگی یک ردیف اضافه کنید، مثلاً سه‌شنبه ۱۵:۰۰ به مدت ۹۰ دقیقه.',
+      saveTimetable: 'ذخیرهٔ زمان‌های هفتگی',
+      timetableSaved: 'زمان‌های هفتگی ذخیره شد.',
+      timetableLockedHint:
+        'زمان‌بندی پس از تأیید کلاس ثابت می‌شود. به‌جای آن، هر جلسه را جداگانه زمان‌بندی مجدد کنید.',
       slotRow: 'جلسهٔ هفتگی',
       slotStart: 'ساعت شروع',
       slotDurationLabel: 'مدت هر جلسه',
@@ -6947,6 +6951,9 @@ export const fa = {
       removeStudent: 'حذف',
       manageTitle: 'مدیریت کلاس',
       manageSubtitle: 'تغییر لینک، ارسال پیام به کلاس، شروع یا لغو آن.',
+      editSheetHint:
+        'همهٔ تنظیمات این کلاس در یک‌جا: نامش، قیمتش، ظرفیتش و زمان‌بندی‌اش.',
+      openFullPage: 'باز کردن صفحهٔ کامل کلاس',
       notifyOnLinkChange: 'تغییر لینک به دانشجویان اطلاع داده شود',
       saveLink: 'ذخیرهٔ لینک',
       announceLabel: 'پیام به کلاس',

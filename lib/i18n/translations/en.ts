@@ -6951,6 +6951,10 @@ export const en = {
       timetable: 'Weekly times',
       timetableHint:
         'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
+      saveTimetable: 'Save weekly times',
+      timetableSaved: 'Weekly times saved.',
+      timetableLockedHint:
+        'The timetable is fixed once the class is confirmed. Reschedule sessions one at a time instead.',
       slotRow: 'Weekly meeting',
       slotStart: 'Start time',
       slotDurationLabel: 'Session length',
@@ -6978,6 +6982,9 @@ export const en = {
       removeStudent: 'Remove',
       manageTitle: 'Run the class',
       manageSubtitle: 'Change the link, message the class, start or cancel it.',
+      editSheetHint:
+        'Every setting this class has, in one place: what it is called, its price, its capacity, and its timetable.',
+      openFullPage: 'Open full class page',
       notifyOnLinkChange: 'Tell students the link changed',
       saveLink: 'Save link',
       announceLabel: 'Message the class',

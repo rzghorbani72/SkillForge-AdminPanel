@@ -1,7 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import Link from 'next/link';
+import { useState, type ReactNode } from 'react';
 import { CalendarClock, CalendarDays } from 'lucide-react';
 
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
@@ -17,6 +16,7 @@ import { termStart } from '@/lib/class-slot-time';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroup } from '@/types/learning-operations';
+import { EditClassSheet } from './edit-class-sheet';
 
 interface ClassListCardProps {
   courseId: string;
@@ -24,6 +24,8 @@ interface ClassListCardProps {
   /** "Create class", shown in the panel header and again inside the empty state. */
   action?: ReactNode;
   emptyAction?: ReactNode;
+  /** Refreshes the list after a class's settings, schedule or status changes. */
+  onChanged?: () => void;
 }
 
 /** Without a group price there is nothing to sell a seat at, so say that instead. */
@@ -41,22 +43,25 @@ export function ClassListCard({
   courseId,
   groups,
   action,
-  emptyAction
+  emptyAction,
+  onChanged
 }: ClassListCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-
-  const href = (group: TutoringGroup) =>
-    `/courses/${courseId}/live/${group.id}`;
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const columns: DataColumn<TutoringGroup>[] = [
     {
       id: 'title',
       header: t('tutoring.groups.columnTitle'),
       cell: (group) => (
-        <Link href={href(group)} className="font-medium hover:underline">
+        <button
+          type="button"
+          onClick={() => setEditingId(group.id)}
+          className="text-start font-medium hover:underline"
+        >
           {group.title}
-        </Link>
+        </button>
       )
     },
     {
@@ -108,9 +113,10 @@ export function ClassListCard({
         columns={columns}
         rowKey={(group) => group.id}
         renderCard={(group) => (
-          <Link
-            href={href(group)}
-            className="block space-y-2.5 rounded-xl border p-4 transition-colors hover:border-primary/40 hover:bg-muted/40"
+          <button
+            type="button"
+            onClick={() => setEditingId(group.id)}
+            className="block w-full space-y-2.5 rounded-xl border p-4 text-start transition-colors hover:border-primary/40 hover:bg-muted/40"
           >
             <div className="flex items-center justify-between gap-2">
               <span className="truncate font-medium">{group.title}</span>
@@ -130,7 +136,7 @@ export function ClassListCard({
               <GroupTermRange group={group} />
             </p>
             <SeatMeter taken={group.seats_taken} capacity={group.capacity} />
-          </Link>
+          </button>
         )}
         cardGridClassName="grid gap-3 p-4 sm:grid-cols-2"
         emptyState={
@@ -143,6 +149,15 @@ export function ClassListCard({
           </div>
         }
       />
+
+      {editingId && (
+        <EditClassSheet
+          courseId={courseId}
+          groupId={editingId}
+          onOpenChange={(open) => !open && setEditingId(null)}
+          onChanged={() => onChanged?.()}
+        />
+      )}
     </DataPanel>
   );
 }
