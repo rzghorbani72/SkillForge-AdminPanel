@@ -10,33 +10,25 @@ export function presetSourceKey(preset: TemplatePreset): string {
 }
 
 /**
- * A dedicated copy is named "<academy name> - <base template name>". Neither
- * part has a length limit at the source, so either one — or old rows saved
- * before a naming bug was fixed — can still blow out a card title or the
- * editor header. Cap each part on its own, then cap the assembled string as
- * a final safety net so no single cause can produce an unbounded name.
+ * A dedicated copy is named "<academy name> - <base template name>". The
+ * academy name has no length limit, so on its own — or repeated by an old
+ * naming bug that kept prepending it — it can blow out a card title or the
+ * editor header. Split on the LAST separator so everything before it (the
+ * academy, however many times it repeats) gets shortened, while the base
+ * template name after it — the meaningful, platform-defined part — always
+ * stays fully visible.
  */
 export function formatPresetDisplayName(
   name: string,
-  maxAcademyChars = 18,
-  maxTemplateChars = 24,
-  maxTotalChars = 40
+  maxAcademyChars = 14
 ): string {
   const separator = ' - ';
-  const separatorIndex = name.indexOf(separator);
-  if (separatorIndex === -1) return truncate(name, maxTotalChars);
+  const separatorIndex = name.lastIndexOf(separator);
+  if (separatorIndex === -1) return name;
 
   const academyName = name.slice(0, separatorIndex);
   const templateName = name.slice(separatorIndex + separator.length);
+  if (academyName.length <= maxAcademyChars) return name;
 
-  const shortAcademy = truncate(academyName, maxAcademyChars);
-  const shortTemplate = truncate(templateName, maxTemplateChars);
-  const result = `${shortAcademy}${separator}${shortTemplate}`;
-
-  return truncate(result, maxTotalChars);
-}
-
-function truncate(value: string, maxChars: number): string {
-  if (value.length <= maxChars) return value;
-  return `${value.slice(0, maxChars)}…`;
+  return `${academyName.slice(0, maxAcademyChars)}…${separator}${templateName}`;
 }
