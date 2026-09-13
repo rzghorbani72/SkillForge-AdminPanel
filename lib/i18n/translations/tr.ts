@@ -600,6 +600,13 @@ export const tr = {
       students: 'Öğrenciler'
     }
   },
+  gdpr: {
+    message:
+      'Bu paneli çalıştırmak ve deneyiminizi geliştirmek için çerezleri kullanıyoruz.',
+    learnMore: 'Daha fazla bilgi',
+    decline: 'Reddet',
+    accept: 'Kabul et'
+  },
   legal: {
     mustAcceptTerms:
       'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.',

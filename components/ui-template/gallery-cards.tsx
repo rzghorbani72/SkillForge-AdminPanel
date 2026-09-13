@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Eye, Trash2, Check, Pencil, Loader2 } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Eye, Trash2, Check, Pencil, ImageUp, Loader2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TemplatePreset } from '@/types/api';
 import { presetSourceKey } from '@/lib/ui-template/preset-source';
 import { getDesignSystem } from '@/lib/design-systems';
-import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
+import { apiClient } from '@/lib/api';
+import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { isPlatformAdmin } from '@/lib/roles';
 import { SectionPreviewFrame } from './section-preview-frame';
 import {
   getTemplateCategoryByKey,
@@ -42,11 +45,15 @@ interface TemplateSectionProps {
   activePresetId: string;
   previewToken?: string | null;
   storefrontBaseUrl?: string | null;
+  /** Loading placeholder for a customized card: the base template's own banner. */
+  getBaseCover?: (preset: TemplatePreset) => string | null | undefined;
   onSelect: (preset: TemplatePreset) => void;
   onQuickApply?: (preset: TemplatePreset) => void;
   onDelete: (preset: TemplatePreset) => void;
   /** Stars reorder the gallery, so rating refetches the list. */
   onRate?: (preset: TemplatePreset, stars: number | null) => void;
+  /** Platform staff only: persists the uploaded banner and updates the list. */
+  onCoverUploaded?: (preset: TemplatePreset, url: string) => void;
 }
 
 export function TemplateSection({
@@ -56,10 +63,12 @@ export function TemplateSection({
   activePresetId,
   previewToken,
   storefrontBaseUrl,
+  getBaseCover,
   onSelect,
   onQuickApply,
   onDelete,
-  onRate
+  onRate,
+  onCoverUploaded
 }: TemplateSectionProps) {
   return (
     <section>
@@ -67,7 +76,7 @@ export function TemplateSection({
         <h2 className="text-lg font-bold text-foreground">{title}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {presets.map((preset, idx) => (
           <GalleryCard
             key={preset.id}
@@ -76,10 +85,16 @@ export function TemplateSection({
             index={idx}
             previewToken={previewToken}
             storefrontBaseUrl={storefrontBaseUrl}
+            baseCoverUrl={getBaseCover?.(preset)}
             onClick={() => onSelect(preset)}
             onQuickApply={onQuickApply ? () => onQuickApply(preset) : undefined}
             onDelete={preset.isOwned ? () => onDelete(preset) : undefined}
             onRate={onRate ? (stars) => onRate(preset, stars) : undefined}
+            onCoverUploaded={
+              onCoverUploaded
+                ? (url) => onCoverUploaded(preset, url)
+                : undefined
+            }
           />
         ))}
       </div>
@@ -93,10 +108,12 @@ interface GalleryCardProps {
   index: number;
   previewToken?: string | null;
   storefrontBaseUrl?: string | null;
+  baseCoverUrl?: string | null;
   onClick: () => void;
   onQuickApply?: () => void;
   onDelete?: () => void;
   onRate?: (stars: number | null) => void;
+  onCoverUploaded?: (url: string) => void;
 }
 
 function GalleryCard({
@@ -104,13 +121,18 @@ function GalleryCard({
   isActive,
   index,
   previewToken,
-  storefrontBaseUrl: storefrontBaseUrlProp,
+  storefrontBaseUrl,
+  baseCoverUrl,
   onClick,
   onQuickApply,
   onDelete,
-  onRate
+  onRate,
+  onCoverUploaded
 }: GalleryCardProps) {
   const { t } = useTranslation();
+  const { user } = useAuthUser();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [frameLoaded, setFrameLoaded] = useState(false);
   const ds = getDesignSystem(presetSourceKey(preset));
   const isDedicated = preset.visibility === 'DEDICATED';
@@ -124,15 +146,34 @@ function GalleryCard({
     colors.secondary,
     colors.accent
   ];
-  // The cover is a real storefront render of the template, so no manual cover
-  // upload is needed. The brand gradient shows as a placeholder until the iframe
-  // finishes loading (and stays as the fallback if no storefront URL is set).
-  const storefrontBaseUrl = resolveStorefrontBaseUrl(storefrontBaseUrlProp);
-  // Dedicated templates are academy-scoped. Embedding /preview/blocks without
-  // a token returns an empty page (the iframe still fires onLoad, so the
-  // gradient fades to white). Wait for the session token before mounting.
+  // Only platform staff can set the banner shown for a shared catalog
+  // template; a dedicated (academy-owned) copy has no such banner.
+  const canUploadCover =
+    !isDedicated && Boolean(onCoverUploaded) && isPlatformAdmin(user);
+  // A static banner can't show a manager's own edits, so only a customized
+  // card renders the real live storefront. Every other card (public, or a
+  // dedicated copy with no changes recorded) is banner-or-gradient only.
   const canRenderFrame =
-    Boolean(storefrontBaseUrl) && (!isDedicated || Boolean(previewToken));
+    isCustomized && Boolean(storefrontBaseUrl) && Boolean(previewToken);
+  // Loading placeholder: this card's own banner if staff/manager set one,
+  // otherwise the base template's banner, otherwise the brand gradient.
+  const loadingCover = preset.preview ?? baseCoverUrl ?? null;
+
+  const handleCoverFile = async (file: File) => {
+    setIsUploadingCover(true);
+    try {
+      const uploaded = (await apiClient.uploadImage(file, {
+        title: `${preset.name} banner`
+      })) as { id?: string | number } | null;
+      const id = uploaded?.id;
+      if (id === undefined || id === null) return;
+      const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
+      await apiClient.setTemplateCover(preset.id, url);
+      onCoverUploaded?.(url);
+    } finally {
+      setIsUploadingCover(false);
+    }
+  };
 
   return (
     <div
@@ -175,49 +216,111 @@ function GalleryCard({
       <button
         type="button"
         onClick={onClick}
-        className="relative block aspect-[16/10] w-full overflow-hidden border-b border-border/50 bg-muted/30"
+        className="relative block aspect-[16/9] w-full overflow-hidden border-b border-border/50 bg-muted/30"
       >
-        <div
-          className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-500 ${
-            frameLoaded ? 'opacity-0' : 'opacity-100'
-          }`}
-          style={{
-            background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
-          }}
-        >
-          <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
-            {preset.name}
-          </span>
-          <div className="flex gap-1.5">
-            {swatches.map((c, i) => (
-              <span
-                key={i}
-                className="h-2.5 w-2.5 rounded-full border border-white/40"
-                style={{ background: c }}
+        {canRenderFrame ? (
+          <>
+            {loadingCover ? (
+              <img
+                src={loadingCover}
+                alt={preset.name}
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+                  frameLoaded ? 'opacity-0' : 'opacity-100'
+                }`}
               />
-            ))}
-          </div>
-          {/* The cover is a live storefront render, so it takes a moment. Only
-              spin when a frame is actually on its way — otherwise the gradient
-              IS the final cover and a spinner would never stop. */}
-          {canRenderFrame && (
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-white/90">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              {t('sitePreview.coverLoading')}
-            </span>
-          )}
-        </div>
-
-        {canRenderFrame && (
-          <SectionPreviewFrame
-            baseUrl={storefrontBaseUrl!}
-            templateKey={preset.id}
-            token={isDedicated ? (previewToken ?? undefined) : undefined}
-            onLoad={() => setFrameLoaded(true)}
-            className={`h-full w-full transition-opacity duration-500 ${
-              frameLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
+            ) : (
+              <div
+                className={`absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-500 ${
+                  frameLoaded ? 'opacity-0' : 'opacity-100'
+                }`}
+                style={{
+                  background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
+                }}
+              >
+                <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
+                  {preset.name}
+                </span>
+                <div className="flex gap-1.5">
+                  {swatches.map((c, i) => (
+                    <span
+                      key={i}
+                      className="h-2.5 w-2.5 rounded-full border border-white/40"
+                      style={{ background: c }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            <SectionPreviewFrame
+              baseUrl={storefrontBaseUrl!}
+              templateKey={preset.id}
+              token={previewToken ?? undefined}
+              onLoad={() => setFrameLoaded(true)}
+              className={`h-full w-full transition-opacity duration-500 ${
+                frameLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          </>
+        ) : preset.preview ? (
+          // A staff-uploaded banner — object-cover keeps its own aspect ratio
+          // intact (no stretching), cropping only what overflows the box.
+          <img
+            src={preset.preview}
+            alt={preset.name}
+            className="h-full w-full object-cover"
           />
+        ) : (
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+            style={{
+              background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
+            }}
+          >
+            <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
+              {preset.name}
+            </span>
+            <div className="flex gap-1.5">
+              {swatches.map((c, i) => (
+                <span
+                  key={i}
+                  className="h-2.5 w-2.5 rounded-full border border-white/40"
+                  style={{ background: c }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {canUploadCover && (
+          <span
+            role="button"
+            tabIndex={0}
+            title="بارگذاری بنر قالب"
+            onClick={(e) => {
+              e.stopPropagation();
+              fileInputRef.current?.click();
+            }}
+            className="absolute bottom-2.5 end-2.5 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-sm transition-colors hover:bg-black/75"
+          >
+            {isUploadingCover ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <ImageUp className="h-3.5 w-3.5" />
+            )}
+            بنر
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (file) void handleCoverFile(file);
+              }}
+            />
+          </span>
         )}
 
         {/* Hover overlay: full preview + quick apply */}
@@ -251,9 +354,9 @@ function GalleryCard({
       </button>
 
       {/* Footer */}
-      <div className="flex flex-1 flex-col gap-2.5 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-[15px] font-bold leading-tight text-foreground">
+          <h3 className="text-base font-bold leading-tight text-foreground">
             {preset.name}
           </h3>
           {/* Palette strip doubles as the at-a-glance identity of the template. */}

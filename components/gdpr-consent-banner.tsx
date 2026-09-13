@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Cookie } from 'lucide-react';
 import { logger } from '@/lib/logging/app-logger';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { Button } from '@/components/ui/button';
 
 const COOKIE_NAME = 'gdpr_consent';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
@@ -17,6 +20,7 @@ function setCookie(name: string, value: string, maxAge: number): void {
 }
 
 export function GdprConsentBanner() {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -42,28 +46,35 @@ export function GdprConsentBanner() {
   return (
     <div
       role="dialog"
-      aria-label="Cookie consent"
-      className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-between gap-4 border-t border-border bg-background px-4 py-3 shadow-lg sm:px-6"
+      aria-label={t('gdpr.message')}
+      className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-4 sm:px-6"
     >
-      <p className="text-sm text-muted-foreground">
-        We use cookies to deliver this service and to improve your experience.{' '}
-        <a href="/privacy" className="underline hover:text-foreground">
-          Learn more
-        </a>
-      </p>
-      <div className="flex shrink-0 gap-2">
-        <button
-          onClick={decline}
-          className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
-        >
-          Decline
-        </button>
-        <button
-          onClick={accept}
-          className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:opacity-90"
-        >
-          Accept
-        </button>
+      <div className="flex w-full max-w-3xl flex-col items-start gap-3 rounded-2xl border border-border bg-background/95 p-4 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
+        <div className="flex shrink-0 items-center justify-center rounded-full bg-primary/10 p-2.5 text-primary">
+          <Cookie className="size-5" />
+        </div>
+        <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
+          {t('gdpr.message')}{' '}
+          <a
+            href="/privacy"
+            className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+          >
+            {t('gdpr.learnMore')}
+          </a>
+        </p>
+        <div className="flex w-full shrink-0 gap-2 sm:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 sm:flex-none"
+            onClick={decline}
+          >
+            {t('gdpr.decline')}
+          </Button>
+          <Button size="sm" className="flex-1 sm:flex-none" onClick={accept}>
+            {t('gdpr.accept')}
+          </Button>
+        </div>
       </div>
     </div>
   );

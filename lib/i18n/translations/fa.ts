@@ -962,6 +962,13 @@ export const fa = {
       students: 'دانشجویان'
     }
   },
+  gdpr: {
+    message:
+      'ما از کوکی‌ها برای اجرای این پنل و بهبود تجربهٔ شما استفاده می‌کنیم.',
+    learnMore: 'بیشتر بدانید',
+    decline: 'رد کردن',
+    accept: 'پذیرفتن'
+  },
   legal: {
     mustAcceptTerms: 'برای ادامه باید قوانین و سیاست حریم خصوصی را بپذیرید.',
     documentsUnavailable:

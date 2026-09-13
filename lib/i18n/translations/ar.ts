@@ -590,6 +590,12 @@ export const ar = {
       students: 'الطلاب'
     }
   },
+  gdpr: {
+    message: 'نستخدم ملفات تعريف الارتباط لتشغيل هذه اللوحة وتحسين تجربتك.',
+    learnMore: 'معرفة المزيد',
+    decline: 'رفض',
+    accept: 'قبول'
+  },
   legal: {
     mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.',
     documentsUnavailable:

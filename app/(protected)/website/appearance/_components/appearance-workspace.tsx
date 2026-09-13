@@ -156,10 +156,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [previewToken, setPreviewToken] = useState<string | null>(null);
   const [storefrontBase, setStorefrontBase] = useState<string | null>(null);
-  // Gallery thumbnails need their own session: dedicated templates are
-  // academy-scoped and /preview/blocks cannot resolve them without a token.
-  // Keep this separate from the editor session so closing the editor does
-  // not blank the cards.
+  // Only a customized (dedicated) card renders a live iframe — it is the one
+  // case a static banner can't represent, since it's this academy's own
+  // edited copy. Public catalog cards never need this session.
   const [galleryPreviewToken, setGalleryPreviewToken] = useState<string | null>(
     null
   );
@@ -1588,6 +1587,10 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
           (p) => getTemplateCategory(p) === categoryFilter
         );
   const activePreset = presets.find((p) => p.id === activePresetId) ?? null;
+  // While a customized template's live iframe loads, the card shows the base
+  // template's own banner instead of a blank/gradient placeholder.
+  const getBaseCover = (preset: TemplatePreset) =>
+    presets.find((p) => p.id === preset.sourcePresetKey)?.preview;
 
   return (
     <div className="min-h-full bg-[#f7faf9] p-8" dir="rtl">
@@ -1667,6 +1670,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               activePresetId={activePresetId}
               previewToken={galleryPreviewToken}
               storefrontBaseUrl={galleryStorefrontUrl}
+              getBaseCover={getBaseCover}
               onSelect={openTemplate}
               onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
@@ -1679,12 +1683,17 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               description="کاتالوگ آمادهٔ پلتفرم. سفارشی‌سازی و ذخیره، نسخهٔ اختصاصی خودتان را می‌سازد."
               presets={filteredPlatform}
               activePresetId={activePresetId}
-              previewToken={galleryPreviewToken}
-              storefrontBaseUrl={galleryStorefrontUrl}
               onSelect={openTemplate}
               onQuickApply={handleQuickApply}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
               onRate={handleRate}
+              onCoverUploaded={(preset, url) =>
+                setPresets((current) =>
+                  current.map((p) =>
+                    p.id === preset.id ? { ...p, preview: url } : p
+                  )
+                )
+              }
             />
           )}
         </div>

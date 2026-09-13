@@ -972,6 +972,12 @@ export const en = {
       students: 'Students'
     }
   },
+  gdpr: {
+    message: 'We use cookies to run this panel and to improve your experience.',
+    learnMore: 'Learn more',
+    decline: 'Decline',
+    accept: 'Accept'
+  },
   legal: {
     mustAcceptTerms:
       'You must accept the Terms and Privacy Policy to continue.',
