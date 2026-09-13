@@ -20,7 +20,7 @@ export function presetSourceKey(preset: TemplatePreset): string {
  */
 export function formatPresetDisplayName(
   name: string,
-  maxAcademyChars = 14
+  maxAcademyChars = 20
 ): string {
   const separator = ' - ';
   const separatorIndex = name.lastIndexOf(separator);
