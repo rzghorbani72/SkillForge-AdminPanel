@@ -351,6 +351,14 @@ export const navItems: NavItem[] = [
     ],
     scope: 'academy'
   },
+  {
+    title: 'My Academies',
+    href: '/academies',
+    icon: 'store' as IconType,
+    label: 'myAcademies',
+    roles: ['MANAGER', 'TEACHER'],
+    scope: 'academy'
+  },
   // Teaching — every child is capability-gated, so an academy that sells only
   // recorded courses never sees this group at all.
   {
@@ -533,14 +541,6 @@ export const navItems: NavItem[] = [
     icon: 'wallet2' as IconType,
     label: 'teacherEarnings',
     roles: ['TEACHER'],
-    scope: 'academy'
-  },
-  {
-    title: 'My Academies',
-    href: '/academies',
-    icon: 'store' as IconType,
-    label: 'myAcademies',
-    roles: ['MANAGER', 'TEACHER'],
     scope: 'academy'
   },
   // Growth — what measures or feeds the public site, not the site itself
