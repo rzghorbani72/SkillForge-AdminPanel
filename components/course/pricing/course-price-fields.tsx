@@ -41,7 +41,6 @@ export function CoursePriceFields({
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 name={field.name}
-                suffix={t('courses.toman')}
                 className="h-9"
               />
             </FormControl>
@@ -65,7 +64,6 @@ export function CoursePriceFields({
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 name={field.name}
-                suffix={t('courses.toman')}
                 className="h-9"
               />
             </FormControl>

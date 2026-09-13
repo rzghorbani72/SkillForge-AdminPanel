@@ -10,6 +10,7 @@ import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -554,14 +555,13 @@ export default function CouponsPage() {
                           <FormItem>
                             <FormLabel>{t('coupons.maxDiscount')}</FormLabel>
                             <FormControl>
-                              <NumberInput
+                              <PriceInput
                                 name={field.name}
                                 ref={field.ref}
                                 value={field.value ?? ''}
                                 onChange={(raw) =>
                                   field.onChange(raw === '' ? '' : Number(raw))
                                 }
-                                suffix={t('common.toman')}
                               />
                             </FormControl>
                             <FormMessage />

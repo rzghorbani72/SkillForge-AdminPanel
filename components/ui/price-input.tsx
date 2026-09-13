@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { toEnglishDigits, toPersianDigits } from '@/lib/phone-utils';
-import { useLanguage } from '@/lib/i18n/hooks';
+import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { Input } from './input';
 
 /** Group a raw digit string into thousands: "1234567" → "1,234,567" */
@@ -22,7 +22,7 @@ export interface PriceInputProps
   value: string | number | null | undefined;
   /** Receives the raw digit string */
   onChange: (raw: string) => void;
-  /** Currency unit shown inline at the end of the field, e.g. "تومان" */
+  /** Currency unit at the end of the field; defaults to Toman, pass '' to hide. */
   suffix?: string;
 }
 
@@ -31,9 +31,11 @@ export interface PriceInputProps
  * digit string, so validation/submit logic stays simple.
  */
 export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
-  ({ value, onChange, suffix, className, ...props }, ref) => {
+  ({ value, onChange, suffix: suffixProp, className, ...props }, ref) => {
     const { language } = useLanguage();
+    const { t } = useTranslation();
     const isFa = language === 'fa';
+    const suffix = suffixProp ?? t('common.toman');
     const raw = toEnglishDigits(String(value ?? '')).replace(/\D/g, '');
 
     if (!suffix) {

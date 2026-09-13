@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
 import { NumberInput } from '@/components/ui/number-input';
+import { PriceInput } from '@/components/ui/price-input';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
 import { defaultTimezone } from '@/lib/class-slot-time';
 import { apiClient } from '@/lib/api';
@@ -167,10 +168,9 @@ export default function ScheduleBuilder({
         </div>
         <div className="space-y-2">
           <Label htmlFor="seat-price">{t('courses.live.seatPrice')}</Label>
-          <NumberInput
+          <PriceInput
             id="seat-price"
             value={seatPrice}
-            min={0}
             placeholder={
               defaultSeatPrice !== undefined
                 ? String(defaultSeatPrice)

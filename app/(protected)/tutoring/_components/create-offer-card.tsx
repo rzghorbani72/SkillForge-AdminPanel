@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import {
   CourseSearchCombobox,
@@ -64,7 +65,7 @@ export function CreateOfferCard({
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="offerPrice">{t('tutoring.offerPrice')}</Label>
-            <NumberInput
+            <PriceInput
               id="offerPrice"
               value={form.price}
               onChange={(raw) => onChange({ ...form, price: raw })}

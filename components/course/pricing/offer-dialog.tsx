@@ -155,11 +155,7 @@ export function OfferDialog({
             <>
               <div className="space-y-1.5">
                 <Label>{t('courses.salePrice')} *</Label>
-                <PriceInput
-                  value={price}
-                  onChange={setPrice}
-                  suffix={t('courses.toman')}
-                />
+                <PriceInput value={price} onChange={setPrice} />
                 {priceMissing && (
                   <p className="text-[11px] text-amber-600">
                     {t('courses.offeringPriceRequired')}
@@ -172,7 +168,6 @@ export function OfferDialog({
                 <PriceInput
                   value={beforeDiscount}
                   onChange={setBeforeDiscount}
-                  suffix={t('courses.toman')}
                 />
                 <p
                   className={`text-[11px] ${beforeDiscountInvalid ? 'text-amber-600' : 'text-muted-foreground'}`}

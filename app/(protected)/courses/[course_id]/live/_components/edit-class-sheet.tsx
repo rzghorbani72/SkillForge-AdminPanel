@@ -10,6 +10,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
+import { PriceInput } from '@/components/ui/price-input';
 import {
   Select,
   SelectContent,
@@ -213,7 +214,7 @@ function ClassSettingsBody({
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex-1 space-y-6 overflow-y-auto px-4 py-5 sm:px-6">
+      <div className="beautiful-scrollbar flex-1 space-y-6 overflow-y-auto px-4 py-5 sm:px-6">
         <div className="space-y-4 rounded-lg border p-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5 sm:col-span-2">
@@ -229,7 +230,7 @@ function ClassSettingsBody({
 
             <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="edit-group-description">
-                {t('tutoring.groups.description')}
+                {t('tutoring.groups.description_')}
               </Label>
               <Textarea
                 id="edit-group-description"
@@ -266,10 +267,9 @@ function ClassSettingsBody({
               <Label htmlFor="edit-group-seat-price">
                 {t('courses.live.seatPrice')}
               </Label>
-              <NumberInput
+              <PriceInput
                 id="edit-group-seat-price"
                 value={seatPrice}
-                min={0}
                 placeholder={
                   group.Offer ? String(group.Offer.price) : undefined
                 }

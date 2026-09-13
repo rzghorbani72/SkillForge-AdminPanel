@@ -14,7 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { LocalizedDigitsInput } from '@/components/ui/localized-digits-input';
-import { NumberInput } from '@/components/ui/number-input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -304,11 +304,10 @@ export function AcademySettlementSheet({
                 <Label htmlFor="settle-amount">
                   {t('academiesHealth.settle.amount')}
                 </Label>
-                <NumberInput
+                <PriceInput
                   id="settle-amount"
                   value={amount}
                   onChange={setAmount}
-                  suffix={t('common.toman')}
                   disabled={!bankOk || available <= 0}
                 />
               </div>

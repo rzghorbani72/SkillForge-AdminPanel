@@ -82,7 +82,6 @@ export function CostForm({ busy, onSubmit }: Props) {
           id="cost-amount"
           value={amount}
           onChange={setAmount}
-          suffix={t('platformCosts.toman')}
           required
         />
       </div>

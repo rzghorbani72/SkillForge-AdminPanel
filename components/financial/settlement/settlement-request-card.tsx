@@ -5,7 +5,7 @@ import { ArrowUpRight, Info, ShieldCheck } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Link from '@/components/ui/link';
@@ -111,13 +111,11 @@ export function SettlementRequestCard({
             <Label htmlFor="settlement-amount">
               {t('settlement.request.amountLabel')}
             </Label>
-            <Input
+            <PriceInput
               id="settlement-amount"
-              inputMode="numeric"
-              dir="ltr"
               value={amount}
               disabled={!summary.can_request}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={setAmount}
             />
             <button
               type="button"
