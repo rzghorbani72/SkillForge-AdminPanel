@@ -1,34 +1,34 @@
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import nextTypescript from 'eslint-config-next/typescript';
+import prettier from 'eslint-config-prettier';
+import unusedImports from 'eslint-plugin-unused-imports';
+import { OVERSIZE_ALLOWLIST, MAX_LINES } from './eslint.oversize.mjs';
 
-/**
- * Flat config: `next lint` was removed in Next 16, so ESLint is run directly
- * (`pnpm lint`). The rule set is the one the old .eslintrc.json carried.
- */
+const LINE_LIMITS = { skipBlankLines: true, skipComments: true };
+
 export default [
   {
-    ignores: [
-      '.next/**',
-      'node_modules/**',
-      'out/**',
-      'build/**',
-      'next-env.d.ts',
-      'public/**',
-      '**/*.js'
-    ]
+    ignores: ['.next/**', 'node_modules/**', 'out/**', 'build/**', 'next-env.d.ts', 'public/**', '**/*.js', 'lib/logging/log-catalog.ts'],
   },
   ...nextCoreWebVitals,
   ...nextTypescript,
+  prettier,
   {
+    plugins: { 'unused-imports': unusedImports },
     rules: {
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-var-requires': 'warn',
-      'react/no-unescaped-entities': 'warn',
-      'react-hooks/exhaustive-deps': 'warn',
-      '@next/next/no-img-element': 'warn'
-    }
-  }
+      'unused-imports/no-unused-imports': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-console': 'error',
+      'max-lines': ['error', { max: MAX_LINES, ...LINE_LIMITS }],
+      'max-lines-per-function': ['warn', { max: 80, ...LINE_LIMITS }],
+    },
+  },
+  {
+    files: ['e2e/**', 'tests/**', 'loadtests/**', 'components/ui/**', 'lib/i18n/translations/**'],
+    rules: { 'max-lines': 'off', 'max-lines-per-function': 'off' },
+  },
+  { files: ['scripts/**', 'tools/**', 'lib/logging/**', 'app/api/log/**'], rules: { 'no-console': 'off' } },
+  { files: OVERSIZE_ALLOWLIST, rules: { 'max-lines': 'off' } },
 ];

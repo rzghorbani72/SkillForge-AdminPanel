@@ -41,8 +41,9 @@ next-env.d.ts
 /playwright/.cache/
 .last-run.json
 
-# Local Cursor/Claude agent state (worktrees, settings)
-.claude/
 
-# graphify agent tooling (regenerated locally)
-/graphify-out/
+
+# AI tooling: skills + settings.json are committed; local state is not
+.claude/settings.local.json
+.claude/worktrees/
+graphify-out/

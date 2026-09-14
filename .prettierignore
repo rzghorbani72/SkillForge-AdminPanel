@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+coverage
+pnpm-lock.yaml
+graphify-out
+public
+next-env.d.ts
+lib/logging/log-catalog.ts
+docs/legal
