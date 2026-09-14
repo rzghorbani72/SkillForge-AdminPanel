@@ -19,7 +19,7 @@ import {
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
 import { apiClient } from '@/lib/api';
-import { Category, Course } from '@/types/api';
+import { Course } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCategoriesStore } from '@/lib/store';
 import { useAutoSelect } from '@/hooks/useAutoSelect';

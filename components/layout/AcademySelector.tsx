@@ -200,14 +200,6 @@ export function AcademySelector() {
 
   const hasMultiple = academies.length > 1;
   const current = selectedAcademy ?? academies[0];
-  const currentRole = resolveAcademyRole(
-    current ?? { id: 0 },
-    user?.academyId,
-    user?.role ?? ''
-  );
-  const currentRoleLabel = currentRole
-    ? t(`userNav.roles.${currentRole}`) || currentRole
-    : '';
 
   const selectorContent = current ? (
     <div className="flex items-center gap-0 sm:gap-2.5">

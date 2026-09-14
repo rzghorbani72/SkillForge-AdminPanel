@@ -114,7 +114,7 @@ export function useForgetPassword() {
     setErrors({});
     try {
       if (authMethod === 'email') {
-        const response = await apiClient.sendEmailOtp(
+        await apiClient.sendEmailOtp(
           formData.email,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
@@ -125,7 +125,7 @@ export function useForgetPassword() {
         );
       } else {
         const phoneToSend = formData.fullPhoneNumber || formData.phoneNumber;
-        const response = await apiClient.sendPhoneOtp(
+        await apiClient.sendPhoneOtp(
           toE164Iran(phoneToSend),
           OtpType.RESET_PASSWORD_BY_PHONE
         );

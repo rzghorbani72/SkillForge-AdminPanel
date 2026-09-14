@@ -10,7 +10,6 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
-import { Button } from '@/components/ui/button';
 
 interface ImageUploadModalProps {
   /** Trigger button element - if not provided, modal must be controlled via open/onOpenChange */

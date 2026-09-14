@@ -19,7 +19,7 @@ const stale = OVERSIZE_ALLOWLIST.filter((f) => {
   return !existsSync(p) || codeLines(readFileSync(p, 'utf8')) <= MAX_LINES;
 });
 
-const LEGACY_PATTERN = /\bany\b|!\s*[.;)\],]/;
+const LEGACY_PATTERN = /\bany\b|!\s*[.;)\]},]|console\.(log|warn|error|info|debug)\(/;
 const cleanAny = LEGACY_ANY_ALLOWLIST.filter((f) => {
   const p = resolve(ROOT, f);
   return !existsSync(p) || !LEGACY_PATTERN.test(readFileSync(p, 'utf8'));

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useI18n } from '@/lib/i18n/provider';
 import { LANGUAGES } from '@/lib/i18n/config';
 import type { LanguageCode } from '@/lib/i18n/config';
-import { Button } from '@/components/ui/button';
 import { Globe } from 'lucide-react';
 import {
   Select,
@@ -15,7 +14,7 @@ import {
 } from '@/components/ui/select';
 
 export function LanguageSwitcherSimple() {
-  const { language, setLanguage, isRTL } = useI18n();
+  const { language, setLanguage } = useI18n();
   const [isChanging, setIsChanging] = useState(false);
 
   const handleLanguageChange = (newLanguage: LanguageCode) => {

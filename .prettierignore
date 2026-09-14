@@ -8,3 +8,4 @@ public
 next-env.d.ts
 lib/logging/log-catalog.ts
 docs/legal
+.claude

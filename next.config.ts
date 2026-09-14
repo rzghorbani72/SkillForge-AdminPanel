@@ -3,8 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs/config';
 import {
   API_DEVELOPMENT_DEFAULTS,
   API_PRODUCTION_DEFAULTS,
-  API_REWRITE_SOURCES,
-  API_VERSION_PATH
+  API_REWRITE_SOURCES
 } from './lib/api-config';
 import { getAllowedImageRemotePatterns } from './lib/security/config';
 import { buildSecurityHeaders } from './lib/security/headers';

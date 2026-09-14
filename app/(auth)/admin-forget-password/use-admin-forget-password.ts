@@ -88,7 +88,7 @@ export function useAdminForgetPassword() {
     setErrors({});
     try {
       if (authMethod === 'email') {
-        const response = await apiClient.sendEmailOtp(
+        await apiClient.sendEmailOtp(
           formData.email,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
@@ -98,7 +98,7 @@ export function useAdminForgetPassword() {
           'admin-forget-password-otp-sent'
         );
       } else {
-        const response = await apiClient.sendPhoneOtp(
+        await apiClient.sendPhoneOtp(
           toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
           OtpType.RESET_PASSWORD_BY_PHONE
         );

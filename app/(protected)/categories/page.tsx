@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Category } from '@/types/api';
@@ -20,7 +20,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { apiErrorMessage } from '@/lib/api-error-message';
 
 export default function CategoriesPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const { categories, isLoading, error, clearError, fetchCategories } =
     useCategoriesStore();

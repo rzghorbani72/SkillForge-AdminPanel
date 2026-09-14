@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { authService } from '@/lib/auth';
-import { isDevelopmentMode, logDevInfo } from '@/lib/dev-utils';
 import { isPanelStaffRole } from '@/lib/roles';
 
 interface UseAuthRedirectOptions {

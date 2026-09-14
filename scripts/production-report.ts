@@ -21,13 +21,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-interface CheckResult {
-  passed: boolean;
-  points: number;
-  maxPoints: number;
-  details: string;
-}
-
 const colors = {
   reset: '\x1b[0m',
   red: '\x1b[31m',

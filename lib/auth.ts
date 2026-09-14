@@ -54,33 +54,6 @@ export interface RegisterData {
   location?: string;
 }
 
-const normalizePermissionArray = (permissions: unknown): string[] => {
-  if (!permissions) return [];
-  if (!Array.isArray(permissions)) return [];
-
-  return permissions
-    .map((permission) => {
-      if (!permission) return null;
-      if (typeof permission === 'string') return permission;
-      if (typeof permission === 'object') {
-        if (
-          'name' in permission &&
-          typeof (permission as any).name === 'string'
-        ) {
-          return (permission as any).name as string;
-        }
-        if (
-          'permission' in permission &&
-          typeof (permission as any).permission === 'string'
-        ) {
-          return (permission as any).permission as string;
-        }
-      }
-      return null;
-    })
-    .filter((permission): permission is string => Boolean(permission));
-};
-
 class AuthService {
   private currentUser: AuthUser | null = null;
   private authType: AuthType['type'] = 'admin';

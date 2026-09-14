@@ -244,7 +244,7 @@ function RegisterPageBody() {
     setOtpLoading(true);
     setOtpCode('');
     try {
-      const response = await apiClient.sendPhoneOtp(
+      await apiClient.sendPhoneOtp(
         phone,
         OtpType.REGISTER_PHONE_VERIFICATION
       );

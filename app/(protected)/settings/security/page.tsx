@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Shield, Bell, Save } from 'lucide-react';
+import { Bell, Save } from 'lucide-react';
 import { useSettingsData } from '../_hooks/use-settings-data';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Skeleton } from '@/components/ui/skeleton';

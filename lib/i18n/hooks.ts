@@ -7,7 +7,7 @@
 import { useCallback } from 'react';
 import { useI18n } from './provider';
 import { t as translate, getTranslations } from './index';
-import { getLocaleForLanguage, type LanguageCode } from './config';
+import { getLocaleForLanguage } from './config';
 import type { InterpolationParams } from './index';
 
 /**

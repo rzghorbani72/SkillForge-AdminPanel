@@ -43,7 +43,7 @@ export function useUiTemplatePreview({
   const [isPreviewReady, setIsPreviewReady] = useState(false);
 
   const persistDraft = useCallback(
-    async (silent = false) => {
+    async () => {
       const templatePayload = {
         blocks,
         template_preset: null,
@@ -122,7 +122,7 @@ export function useUiTemplatePreview({
     const timer = window.setTimeout(async () => {
       setIsPreviewSyncing(true);
       try {
-        await persistDraft(true);
+        await persistDraft();
         bumpPreview();
         setIsDirty(false);
       } catch (error) {
@@ -137,7 +137,7 @@ export function useUiTemplatePreview({
 
   const openFullPreview = useCallback(async () => {
     if (!previewUrl) return;
-    await persistDraft(true);
+    await persistDraft();
     bumpPreview();
     window.open(
       buildFullPreviewUrl(previewUrl),

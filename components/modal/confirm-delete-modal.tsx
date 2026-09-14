@@ -62,7 +62,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             {description || (
               <>
                 {t('common.cannotBeUndone')} {t('common.permanentlyDelete')}{' '}
-                {itemType} <strong>"{title}"</strong>.
+                {itemType} <strong>&quot;{title}&quot;</strong>.
               </>
             )}
           </AlertDialogDescription>

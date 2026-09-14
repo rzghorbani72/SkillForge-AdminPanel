@@ -70,7 +70,7 @@ const useCourses = () => {
           : true
       );
       setRawCourses(list);
-    } catch (err: any) {
+    } catch {
       toast.error(tNow('toasts.coursesLoadFailed'));
       setRawCourses([]);
     } finally {

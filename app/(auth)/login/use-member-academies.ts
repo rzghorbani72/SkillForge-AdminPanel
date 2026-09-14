@@ -26,7 +26,7 @@ export function useMemberAcademies(phoneE164: string) {
     setLoading(true);
     setError('');
     try {
-      const response = await apiClient.sendAcademyLookupOtp(phoneE164);
+      await apiClient.sendAcademyLookupOtp(phoneE164);
       setStep('otp');
       notifyOtpSent(t('success.otpSent'), 'academy-lookup-otp');
     } catch (err: unknown) {

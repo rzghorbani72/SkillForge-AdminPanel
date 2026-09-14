@@ -94,8 +94,7 @@ export function SectionEditor({
   onToggleVisible,
   onBack,
   onPickBlockType,
-  preview,
-  academyName
+  preview
 }: SectionEditorProps) {
   const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);

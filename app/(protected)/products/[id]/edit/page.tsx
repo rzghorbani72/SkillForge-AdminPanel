@@ -54,7 +54,7 @@ export default function EditProductPage() {
               Product Not Found
             </h2>
             <p className="text-muted-foreground">
-              The product you're looking for doesn't exist or you don't have
+              The product you&apos;re looking for doesn&apos;t exist or you don&apos;t have
               permission to edit it.
             </p>
             <Button onClick={() => router.push('/products')} className="mt-4">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Check, X, BookOpen } from 'lucide-react';
+import { Check, BookOpen } from 'lucide-react';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { formatPhoneDisplay } from '@/lib/phone-utils';
 import { apiClient } from '@/lib/api';

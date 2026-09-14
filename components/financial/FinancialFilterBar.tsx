@@ -25,7 +25,7 @@ export function FinancialFilterBar({
   onYearChange,
   onMonthChange
 }: FinancialFilterBarProps) {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
 
   const locale = 'fa-IR';
 

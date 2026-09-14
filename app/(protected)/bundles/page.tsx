@@ -17,13 +17,12 @@ import {
   KeyRound
 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { cn } from '@/lib/utils';
 import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
 import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
 import { apiClient } from '@/lib/api';
 import type { Offer } from '@/types/api';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
-import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -239,7 +238,6 @@ function BundleCard({
 
 export default function BundlesPage() {
   const { t } = useTranslation();
-  const { isRTL } = useLanguage();
   const formatCurrency = useFormatCurrency();
   const academyId = useCurrentAcademyId();
 

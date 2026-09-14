@@ -51,9 +51,7 @@ interface DataTableProps<TData, TValue> {
 export function EmployeeTable<TData, TValue>({
   columns,
   data,
-  pageNo,
   searchKey,
-  totalUsers,
   pageCount,
   pageSizeOptions = [10, 20, 30, 40, 50]
 }: DataTableProps<TData, TValue>) {

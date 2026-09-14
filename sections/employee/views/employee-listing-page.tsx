@@ -16,9 +16,7 @@ const breadcrumbItems = [
   { title: 'Employee', link: '/dashboard/employee' }
 ];
 
-type TEmployeeListingPage = {};
-
-export default async function EmployeeListingPage({}: TEmployeeListingPage) {
+export default async function EmployeeListingPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
   const search = searchParamsCache.get('q');

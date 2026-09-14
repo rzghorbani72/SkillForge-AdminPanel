@@ -7,12 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   Search,
-  Plus,
   Trash2,
   Eye,
   Edit,
   Calendar,
-  User,
   Image as ImageIcon,
   X,
   SlidersHorizontal,
@@ -62,7 +60,7 @@ const resolveImageSrc = (image: ImageItem): string => {
 };
 
 export default function ImagesPage() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const [images, setImages] = useState<ImageItem[]>([]);
   const [filteredImages, setFilteredImages] = useState<ImageItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -234,7 +232,7 @@ export default function ImagesPage() {
               {t('media.uploadImage')}
             </Button>
           }
-          onSuccess={(image) => {
+          onSuccess={() => {
             fetchImages();
           }}
           onError={(error) => {

@@ -20,9 +20,7 @@ import {
   TrendingUp,
   TrendingDown,
   Users,
-  BookOpen,
-  Calendar,
-  FileText
+  Calendar
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';

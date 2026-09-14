@@ -68,7 +68,6 @@ export default function PlatformAcademiesPage() {
   const { user, isLoading: userLoading } = useAuthUser();
   const searchParams = useSearchParams();
   const academyId = searchParams.get('academyId');
-  const action = searchParams.get('action');
   const [stores, setStores] = useState<Academy[]>([]);
   const [settlementRows, setSettlementRows] = useState<AcademySettlementRow[]>(
     []
@@ -154,7 +153,7 @@ export default function PlatformAcademiesPage() {
       try {
         setIsLoadingDetail(true);
         // Find store from list
-        let store = stores.find((s) => s.id === academyId);
+        const store = stores.find((s) => s.id === academyId);
         if (store) {
           setSelectedStore(store);
         }
@@ -187,22 +186,6 @@ export default function PlatformAcademiesPage() {
     }
   }, [academyId, stores, user]);
 
-  // Redirect if not platform-level admin/support
-  if (!userLoading && user && !canAccessSupportOps(user)) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>{t('platform.overview.accessDenied')}</CardTitle>
-            <CardDescription>
-              {t('platform.overview.accessDeniedDescription')}
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
   const filteredStores = stores.filter(
     (store) =>
       store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -219,6 +202,21 @@ export default function PlatformAcademiesPage() {
     settlementRows.forEach((row) => map.set(row.academy_id, row));
     return map;
   }, [settlementRows]);
+
+  if (!userLoading && user && !canAccessSupportOps(user)) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>{t('platform.overview.accessDenied')}</CardTitle>
+            <CardDescription>
+              {t('platform.overview.accessDeniedDescription')}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   if (userLoading || isLoading) {
     return (

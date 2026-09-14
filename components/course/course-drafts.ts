@@ -243,8 +243,3 @@ export const emptySeason = (): SeasonDraft => ({
   title: '',
   clientKey: newKey()
 });
-
-function extractId(resp: unknown): string | undefined {
-  const r = resp as Record<string, unknown>;
-  return (r?.data as any)?.data?.id ?? (r?.data as any)?.id ?? (r as any)?.id;
-}

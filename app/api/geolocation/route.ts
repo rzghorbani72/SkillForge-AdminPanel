@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { detectUserCountry } from '@/lib/geo-location';
 import { getDefaultLanguageForCountry } from '@/lib/i18n/config';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const country = await detectUserCountry();
     const language = getDefaultLanguageForCountry(country.code);

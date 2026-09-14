@@ -7,8 +7,7 @@ import {
   DEFAULT_LANGUAGE,
   getLanguageConfig,
   getDefaultLanguageForCountry,
-  isRTL,
-  getTextDirection
+  isRTL
 } from './config';
 import { applyZodErrorMap } from './zod-error-map';
 

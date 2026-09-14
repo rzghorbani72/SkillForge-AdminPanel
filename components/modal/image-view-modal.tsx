@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Download, X } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 interface ImageViewModalProps {
   /** Whether the dialog is open */

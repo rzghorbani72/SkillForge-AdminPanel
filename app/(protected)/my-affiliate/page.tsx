@@ -19,10 +19,9 @@ import {
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
-import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -315,7 +314,6 @@ function LinkCard({
 
 export default function MyAffiliatePage() {
   const { t } = useTranslation();
-  const { isRTL } = useLanguage();
   const formatCurrency = useFormatCurrency();
 
   const [links, setLinks] = useState<AffiliateLink[]>([]);

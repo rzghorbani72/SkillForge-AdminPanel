@@ -13,9 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   CreditCard,
-  DollarSign,
   Download,
-  Filter,
   Search,
   RefreshCw
 } from 'lucide-react';

@@ -17,7 +17,6 @@ export default function ProductsPage() {
   const { selectedAcademy } = useStore();
   const {
     products,
-    totalProducts,
     isLoading,
     searchTerm,
     setSearchTerm,

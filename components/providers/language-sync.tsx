@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/provider';
 import { getDefaultLanguageForCountry } from '@/lib/i18n/config';
 import { authService } from '@/lib/auth';
-import type { LanguageCode } from '@/lib/i18n/config';
 
 export function LanguageSync() {
   const { setLanguage, language } = useI18n();

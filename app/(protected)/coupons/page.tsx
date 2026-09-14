@@ -74,8 +74,7 @@ import {
   COUPON_STATUS_LABEL_KEY,
   couponStatusOf,
   couponTypeOf,
-  normalizeDiscountCode,
-  type CouponType
+  normalizeDiscountCode
 } from '@/lib/coupons';
 import { useCouponCodeAvailability } from '@/hooks/useCouponCodeAvailability';
 import { apiErrorMessage } from '@/lib/api-error-message';

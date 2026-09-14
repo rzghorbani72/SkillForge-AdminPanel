@@ -53,7 +53,6 @@ import {
 } from '@/lib/subscription-status';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { PlansTabScopeHeader } from '@/components/plans/plans-tab-scope-header';
-import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoices-list';
 import { useUpgradeQuotes } from '@/hooks/use-upgrade-quotes';
 import { TrialMoveCard } from '@/components/plans/trial-move-card';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -803,10 +802,6 @@ export default function PlansPage() {
     if (selectedCardSlug || plans.length === 0) return;
     setSelectedCardSlug(currentPlanSlug ?? recommendedSlug);
   }, [selectedCardSlug, plans.length, currentPlanSlug, recommendedSlug]);
-  const newestPaidInvoiceId =
-    (currentSub?.invoices ?? []).find((invoice) => invoice.status === 'PAID')
-      ?.id ?? null;
-
   // On a paid plan the manager does not pay the target plan's full price — they
   // pay the prorated difference for the days left. Quote every higher tier up
   // front so each card can show that number instead of a price they never pay.

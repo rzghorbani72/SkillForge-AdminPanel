@@ -2,29 +2,6 @@
 
 import { cn } from '@/lib/utils';
 
-type Status =
-  | 'success'
-  | 'pending'
-  | 'failed'
-  | 'active'
-  | 'inactive'
-  | 'draft'
-  | 'published'
-  | 'paid'
-  | 'approved'
-  | 'rejected'
-  | 'completed'
-  | 'cancelled'
-  | 'refunded'
-  | 'free'
-  | 'one_time'
-  | 'payment_plan'
-  | 'subscription'
-  | 'percent'
-  | 'fixed'
-  | 'free_trial'
-  | 'full_discount';
-
 interface StatusBadgeProps {
   status: string;
   label?: string;

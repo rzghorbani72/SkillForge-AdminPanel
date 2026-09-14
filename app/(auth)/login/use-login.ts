@@ -163,7 +163,7 @@ export function useLogin() {
     setRegistrationRequired(false);
     try {
       const phoneE164 = toE164Iran(phone);
-      const response = await apiClient.sendPhoneOtp(
+      await apiClient.sendPhoneOtp(
         phoneE164,
         OtpType.LOGIN_BY_PHONE
       );
@@ -476,7 +476,7 @@ export function useLogin() {
       // 'verify' the account's phone is unconfirmed by definition, so asking for
       // a LOGIN_BY_PHONE code is rejected as "not registered" — and even if it
       // were sent, confirm-phone only ever matches REGISTER_PHONE_VERIFICATION.
-      const response = await apiClient.sendPhoneOtp(
+      await apiClient.sendPhoneOtp(
         otpFullPhone || otpPhone,
         otpMode === 'verify'
           ? OtpType.REGISTER_PHONE_VERIFICATION

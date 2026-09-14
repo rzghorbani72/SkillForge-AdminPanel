@@ -117,7 +117,7 @@ export function useAdminLogin() {
   const handleSendOtp = async () => {
     setIsLoading(true);
     try {
-      const response = await apiClient.sendAdminLoginOtp(
+      await apiClient.sendAdminLoginOtp(
         formData.email,
         formData.fullPhoneNumber || formData.phone
       );
