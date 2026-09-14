@@ -57,6 +57,10 @@ export default [
     rules: { 'max-lines': 'off', 'max-lines-per-function': 'off' },
   },
   {
+    files: ['e2e/**', 'tests/**'],
+    rules: { '@typescript-eslint/no-explicit-any': 'warn', '@typescript-eslint/no-non-null-assertion': 'warn' },
+  },
+  {
     files: ['scripts/**', 'tools/**', 'lib/logging/**', 'app/api/log/**'],
     rules: { 'no-console': 'off' },
   },
