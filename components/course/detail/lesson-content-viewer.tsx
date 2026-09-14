@@ -41,11 +41,7 @@ export function LessonContentViewer({ lesson }: LessonContentViewerProps) {
 
   const hasMedia = !!(videoId || audioUrl || documentPreviewUrl);
   if (!description && !hasMedia) {
-    return (
-      <p className="text-xs text-muted-foreground">
-        {t('courseDetail.noLessonContent')}
-      </p>
-    );
+    return <p className="text-xs text-muted-foreground">{t('courseDetail.noLessonContent')}</p>;
   }
 
   return (
@@ -68,9 +64,7 @@ export function LessonContentViewer({ lesson }: LessonContentViewerProps) {
       {audioUrl && (
         <div className="rounded-lg border bg-muted/40 p-3">
           {lesson.Audio?.title && (
-            <p className="mb-2 truncate text-xs font-medium">
-              {lesson.Audio.title}
-            </p>
+            <p className="mb-2 truncate text-xs font-medium">{lesson.Audio.title}</p>
           )}
           <audio key={audioUrl} src={audioUrl} controls className="w-full" />
         </div>

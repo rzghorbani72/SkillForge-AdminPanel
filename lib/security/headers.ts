@@ -1,7 +1,7 @@
 import {
   buildProductionCspConnectSrc,
   buildProductionCspFrameSrc,
-  buildProductionCspImgSrc
+  buildProductionCspImgSrc,
 } from './config';
 
 export function buildContentSecurityPolicy(isDevelopment: boolean): string {
@@ -16,7 +16,7 @@ export function buildContentSecurityPolicy(isDevelopment: boolean): string {
       "media-src 'self' http://localhost:* https: blob: data:",
       "worker-src 'self' blob:",
       "frame-src 'self' http://localhost:* https:",
-      "frame-ancestors 'none'"
+      "frame-ancestors 'none'",
     ].join('; ');
   }
 
@@ -32,7 +32,7 @@ export function buildContentSecurityPolicy(isDevelopment: boolean): string {
     `frame-src ${buildProductionCspFrameSrc()}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
-    "form-action 'self'"
+    "form-action 'self'",
   ].join('; ');
 }
 
@@ -40,20 +40,20 @@ export function buildSecurityHeaders(isDevelopment: boolean) {
   return [
     {
       key: 'Strict-Transport-Security',
-      value: 'max-age=63072000; includeSubDomains; preload'
+      value: 'max-age=63072000; includeSubDomains; preload',
     },
     { key: 'X-DNS-Prefetch-Control', value: 'on' },
     { key: 'X-Frame-Options', value: 'DENY' },
     {
       key: 'Permissions-Policy',
-      value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()'
+      value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
     },
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
     { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
     {
       key: 'Content-Security-Policy',
-      value: buildContentSecurityPolicy(isDevelopment)
-    }
+      value: buildContentSecurityPolicy(isDevelopment),
+    },
   ];
 }

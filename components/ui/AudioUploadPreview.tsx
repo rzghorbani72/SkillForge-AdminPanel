@@ -55,7 +55,7 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
   onSuccess,
   onClear,
   disabled = false,
-  className
+  className,
 }) => {
   const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
@@ -92,7 +92,7 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
     try {
       const res = await apiClient.uploadAudio(file, {
         title: lessonTitle?.trim() || file.name,
-        description: descriptionFallback ?? file.name
+        description: descriptionFallback ?? file.name,
       });
       const audio = parseAudioFromUploadResponse(res);
       const id = audio?.id;
@@ -117,8 +117,7 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
   };
 
   const hasAudio =
-    Boolean(selectedAudioId && String(selectedAudioId).trim() !== '') ||
-    Boolean(playUrl);
+    Boolean(selectedAudioId && String(selectedAudioId).trim() !== '') || Boolean(playUrl);
 
   return (
     <MediaDropzone
@@ -137,13 +136,9 @@ const AudioUploadPreview: React.FC<AudioUploadPreviewProps> = ({
             {playUrl ? (
               <audio key={playUrl} controls className="w-full" src={playUrl} />
             ) : (
-              <p className="text-sm text-muted-foreground">
-                {t('media.audioFile')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t('media.audioFile')}</p>
             )}
-            <p className="text-xs text-muted-foreground">
-              {t('media.audioFileHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('media.audioFileHint')}</p>
           </div>
         ) : null
       }

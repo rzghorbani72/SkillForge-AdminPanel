@@ -23,25 +23,20 @@ export default function SortableTopicRow({
   index,
   title,
   onChange,
-  onRemove
+  onRemove,
 }: SortableTopicRowProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: rowKey });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: rowKey,
+  });
 
   return (
     <div
       ref={setNodeRef}
       style={{
         transform: CSS.Transform.toString(transform) ?? undefined,
-        transition: transition ?? undefined
+        transition: transition ?? undefined,
       }}
       className={isDragging ? 'relative z-10 opacity-80' : undefined}
     >

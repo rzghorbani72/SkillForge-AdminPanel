@@ -15,7 +15,7 @@ export function SettingsSectionHeader({
   title,
   subtitle,
   scope,
-  scopeDescription
+  scopeDescription,
 }: SettingsSectionHeaderProps) {
   const { t } = useTranslation();
 
@@ -29,9 +29,7 @@ export function SettingsSectionHeader({
       {scope && scopeDescription ? (
         <p className="text-sm text-muted-foreground">{scopeDescription}</p>
       ) : scope ? (
-        <p className="text-sm text-muted-foreground">
-          {t(`settings.scope.${scope}Description`)}
-        </p>
+        <p className="text-sm text-muted-foreground">{t(`settings.scope.${scope}Description`)}</p>
       ) : null}
     </div>
   );

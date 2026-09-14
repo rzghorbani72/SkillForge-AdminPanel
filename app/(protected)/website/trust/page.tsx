@@ -1,13 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ShieldAlert } from 'lucide-react';
@@ -65,7 +59,7 @@ export default function AcademyCompliancePage() {
     setSaving(true);
     try {
       const next = await apiClient.updateEnamadHosting({
-        enamad_title_verify: enabled
+        enamad_title_verify: enabled,
       });
       setState(next);
     } catch (error) {
@@ -80,7 +74,7 @@ export default function AcademyCompliancePage() {
     setSaving(true);
     try {
       const next = await apiClient.updateEnamadHosting({
-        enamad_seal_id: sealId.trim()
+        enamad_seal_id: sealId.trim(),
       });
       setState(next);
       setSealId(next.seal_id ?? '');
@@ -109,9 +103,7 @@ export default function AcademyCompliancePage() {
         />
         <Alert>
           <ShieldAlert className="h-4 w-4" />
-          <AlertDescription>
-            {t('compliance.enamad.subdomainNotice')}
-          </AlertDescription>
+          <AlertDescription>{t('compliance.enamad.subdomainNotice')}</AlertDescription>
         </Alert>
       </div>
     );
@@ -128,9 +120,7 @@ export default function AcademyCompliancePage() {
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-base">
-                {t('compliance.enamad.statusTitle')}
-              </CardTitle>
+              <CardTitle className="text-base">{t('compliance.enamad.statusTitle')}</CardTitle>
               <CardDescription>{state.custom_domain}</CardDescription>
             </div>
             <EnamadStatusBadge status={state.status} />
@@ -145,17 +135,13 @@ export default function AcademyCompliancePage() {
           ) : null}
           {state.status === ENAMAD_STATUS.PENDING ? (
             <Alert>
-              <AlertDescription>
-                {t('compliance.enamad.pendingNotice')}
-              </AlertDescription>
+              <AlertDescription>{t('compliance.enamad.pendingNotice')}</AlertDescription>
             </Alert>
           ) : null}
           {state.status !== ENAMAD_STATUS.VERIFIED ? (
             <Alert>
               <ShieldAlert className="h-4 w-4" />
-              <AlertDescription>
-                {t('compliance.enamad.requiredNotice')}
-              </AlertDescription>
+              <AlertDescription>{t('compliance.enamad.requiredNotice')}</AlertDescription>
             </Alert>
           ) : null}
           <EnamadHostingForm
@@ -175,12 +161,8 @@ export default function AcademyCompliancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            {t('compliance.enamad.stepsTitle')}
-          </CardTitle>
-          <CardDescription>
-            {t('compliance.enamad.stepsDescription')}
-          </CardDescription>
+          <CardTitle className="text-base">{t('compliance.enamad.stepsTitle')}</CardTitle>
+          <CardDescription>{t('compliance.enamad.stepsDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <EnamadSteps domain={state.custom_domain} />

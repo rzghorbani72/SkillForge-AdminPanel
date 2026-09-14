@@ -7,11 +7,7 @@ import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { authService } from '@/lib/auth';
-import {
-  checkoutQueryFromSearch,
-  homeRouteFor,
-  resolveSessionRole
-} from '@/lib/auth-routing';
+import { checkoutQueryFromSearch, homeRouteFor, resolveSessionRole } from '@/lib/auth-routing';
 import { OtpType } from '@/constants/data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toE164Iran } from '@/lib/phone-utils';
@@ -30,12 +26,9 @@ import {
   validateFullName,
   validateNewPassword,
   validatePhone,
-  type Translate
+  type Translate,
 } from '@/lib/auth-validation';
-import {
-  RegisterDetailsForm,
-  type RegisterValues
-} from './_components/register-details-form';
+import { RegisterDetailsForm, type RegisterValues } from './_components/register-details-form';
 import { AnonymousAuthGate } from '@/components/auth/anonymous-auth-gate';
 
 const useRegisterSchema = (t: Translate) =>
@@ -44,18 +37,15 @@ const useRegisterSchema = (t: Translate) =>
       name: authField(validateFullName, t),
       phone: authField(validatePhone, t),
       password: authField(validateNewPassword, t),
-      confirmPassword: z.string()
+      confirmPassword: z.string(),
     })
     .superRefine((values, ctx) => {
-      const key = validateConfirmPassword(
-        values.password,
-        values.confirmPassword
-      );
+      const key = validateConfirmPassword(values.password, values.confirmPassword);
       if (key) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: t(key),
-          path: ['confirmPassword']
+          path: ['confirmPassword'],
         });
       }
     });
@@ -98,7 +88,7 @@ function RegisterPageBody() {
         const list = Array.isArray(res.data) ? res.data : [];
         setLegalVersions({
           terms: list.find((d) => d.type === 'TERMS')?.version ?? null,
-          privacy: list.find((d) => d.type === 'PRIVACY')?.version ?? null
+          privacy: list.find((d) => d.type === 'PRIVACY')?.version ?? null,
         });
       })
       .catch(() => {
@@ -112,8 +102,8 @@ function RegisterPageBody() {
       name: '',
       phone: phoneParam,
       password: '',
-      confirmPassword: ''
-    }
+      confirmPassword: '',
+    },
   });
 
   // The notice belongs to the phone that was checked, so editing it clears it.
@@ -139,17 +129,14 @@ function RegisterPageBody() {
 
       const response = await apiClient.sendPhoneOtp(
         toE164Iran(values.phone),
-        OtpType.REGISTER_PHONE_VERIFICATION
+        OtpType.REGISTER_PHONE_VERIFICATION,
       );
       setStep('verify');
       setOtpCode('');
-      notifyOtpSent(
-        response?.data?.message ?? t('auth.sendVerificationCode'),
-        'register-otp-sent'
-      );
+      notifyOtpSent(response?.data?.message ?? t('auth.sendVerificationCode'), 'register-otp-sent');
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, t('common.error')), {
-        toastId: 'register-otp-error'
+        toastId: 'register-otp-error',
       });
     } finally {
       setOtpLoading(false);
@@ -186,7 +173,7 @@ function RegisterPageBody() {
       const verifyResult = (await apiClient.verifyPhoneOtp(
         e164Phone,
         otpCode,
-        OtpType.REGISTER_PHONE_VERIFICATION
+        OtpType.REGISTER_PHONE_VERIFICATION,
       )) as {
         data?: { success?: boolean; message?: string };
         success?: boolean;
@@ -203,8 +190,7 @@ function RegisterPageBody() {
         const docsRes = await apiClient.getLegalDocuments();
         const list = Array.isArray(docsRes.data) ? docsRes.data : [];
         termsVersion = list.find((d) => d.type === 'TERMS')?.version ?? null;
-        privacyVersion =
-          list.find((d) => d.type === 'PRIVACY')?.version ?? null;
+        privacyVersion = list.find((d) => d.type === 'PRIVACY')?.version ?? null;
         setLegalVersions({ terms: termsVersion, privacy: privacyVersion });
       } catch {
         termsVersion = null;
@@ -214,7 +200,7 @@ function RegisterPageBody() {
 
       if (!termsVersion || !privacyVersion) {
         toast.error(t('legal.documentsUnavailable'), {
-          toastId: 'register-legal-unavailable'
+          toastId: 'register-legal-unavailable',
         });
         return;
       }
@@ -227,12 +213,12 @@ function RegisterPageBody() {
         role: 'MANAGER',
         display_name: values.name,
         accepted_terms_version: termsVersion,
-        accepted_privacy_version: privacyVersion
+        accepted_privacy_version: privacyVersion,
       });
       await signInNewAccount(e164Phone, values.password);
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, t('common.error')), {
-        toastId: 'register-error'
+        toastId: 'register-error',
       });
     } finally {
       setVerifying(false);
@@ -244,14 +230,11 @@ function RegisterPageBody() {
     setOtpLoading(true);
     setOtpCode('');
     try {
-      await apiClient.sendPhoneOtp(
-        phone,
-        OtpType.REGISTER_PHONE_VERIFICATION
-      );
+      await apiClient.sendPhoneOtp(phone, OtpType.REGISTER_PHONE_VERIFICATION);
       notifyOtpSent(t('auth.resendCode'), 'register-otp-resent');
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, t('common.error')), {
-        toastId: 'register-otp-error'
+        toastId: 'register-otp-error',
       });
     } finally {
       setOtpLoading(false);

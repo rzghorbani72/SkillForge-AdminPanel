@@ -16,12 +16,12 @@ export function AuthGuard({
   requireAuth = true,
   requireStaff = false,
   redirectTo = '/login',
-  fallback
+  fallback,
 }: AuthGuardProps) {
   const { isLoading, isAuthenticated, isStaff } = useAuthRedirect({
     redirectTo,
     requireAuth,
-    requireStaff
+    requireStaff,
   });
 
   // Show loading state
@@ -46,12 +46,8 @@ export function AuthGuard({
       fallback || (
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-foreground">
-              Access Denied
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              This page is for staff members only.
-            </p>
+            <h2 className="text-xl font-semibold text-foreground">Access Denied</h2>
+            <p className="mt-2 text-muted-foreground">This page is for staff members only.</p>
           </div>
         </div>
       )

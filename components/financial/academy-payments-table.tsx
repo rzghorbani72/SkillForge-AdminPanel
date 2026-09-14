@@ -9,7 +9,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { AcademyPaymentTableRow } from '@/components/financial/academy-payment-table-row';
 import { apiClient } from '@/lib/api';
@@ -18,17 +18,14 @@ import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
-import type {
-  AcademyPaymentRow,
-  SettledPaymentStatus
-} from '@/types/financial';
+import type { AcademyPaymentRow, SettledPaymentStatus } from '@/types/financial';
 
 const PAGE_SIZE = 20;
 const TABLE_COLUMNS = 9;
 
 const STATUS_TABS: { value: SettledPaymentStatus; labelKey: string }[] = [
   { value: 'PAID', labelKey: 'financial.store.overview.successTab' },
-  { value: 'FAILED', labelKey: 'financial.store.overview.failedTab' }
+  { value: 'FAILED', labelKey: 'financial.store.overview.failedTab' },
 ];
 
 interface AcademyPaymentsTableProps {
@@ -40,7 +37,7 @@ interface AcademyPaymentsTableProps {
 export function AcademyPaymentsTable({
   startDate,
   endDate,
-  formatDate
+  formatDate,
 }: AcademyPaymentsTableProps) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
@@ -60,7 +57,7 @@ export function AcademyPaymentsTable({
         page,
         limit: PAGE_SIZE,
         start_date: startDate,
-        end_date: endDate
+        end_date: endDate,
       });
       const list = Array.isArray(data)
         ? (data as AcademyPaymentRow[])
@@ -90,7 +87,7 @@ export function AcademyPaymentsTable({
     t(
       value === 'PAID'
         ? 'financial.store.overview.statusPaid'
-        : 'financial.store.overview.statusFailed'
+        : 'financial.store.overview.statusFailed',
     );
 
   return (
@@ -108,7 +105,7 @@ export function AcademyPaymentsTable({
               'rounded-md px-3 py-1.5 text-sm font-medium transition-all',
               status === tab.value
                 ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                : 'text-muted-foreground hover:text-foreground',
             )}
           >
             {t(tab.labelKey)}
@@ -123,18 +120,10 @@ export function AcademyPaymentsTable({
               <TableRow className="bg-muted/30">
                 <TableHead>{t('financial.store.overview.student')}</TableHead>
                 <TableHead>{t('financial.store.overview.course')}</TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.overview.discount')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.overview.vat')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.overview.paid')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.overview.net')}
-                </TableHead>
+                <TableHead className="text-end">{t('financial.store.overview.discount')}</TableHead>
+                <TableHead className="text-end">{t('financial.store.overview.vat')}</TableHead>
+                <TableHead className="text-end">{t('financial.store.overview.paid')}</TableHead>
+                <TableHead className="text-end">{t('financial.store.overview.net')}</TableHead>
                 <TableHead>{t('financial.store.overview.gateway')}</TableHead>
                 <TableHead>{t('financial.store.overview.date')}</TableHead>
                 <TableHead>{t('financial.store.overview.status')}</TableHead>
@@ -182,7 +171,7 @@ export function AcademyPaymentsTable({
           <span className="text-xs text-muted-foreground">
             {t('financial.store.overview.pageOf', {
               page: formatNumber(page),
-              total: formatNumber(totalPages)
+              total: formatNumber(totalPages),
             })}
           </span>
           <div className="flex gap-2">

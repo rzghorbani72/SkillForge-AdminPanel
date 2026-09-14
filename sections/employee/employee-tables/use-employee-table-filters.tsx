@@ -6,26 +6,21 @@ import { useCallback, useMemo } from 'react';
 
 export const GENDER_OPTIONS = [
   { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' }
+  { value: 'female', label: 'Female' },
 ];
 
 export function useEmployeeTableFilters() {
   const [searchQuery, setSearchQuery] = useQueryState(
     'q',
-    searchParams.q
-      .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault('')
+    searchParams.q.withOptions({ shallow: false, throttleMs: 1000 }).withDefault(''),
   );
 
   const [genderFilter, setGenderFilter] = useQueryState(
     'gender',
-    searchParams.gender.withOptions({ shallow: false }).withDefault('')
+    searchParams.gender.withOptions({ shallow: false }).withDefault(''),
   );
 
-  const [page, setPage] = useQueryState(
-    'page',
-    searchParams.page.withDefault(1)
-  );
+  const [page, setPage] = useQueryState('page', searchParams.page.withDefault(1));
 
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
@@ -46,6 +41,6 @@ export function useEmployeeTableFilters() {
     page,
     setPage,
     resetFilters,
-    isAnyFilterActive
+    isAnyFilterActive,
   };
 }

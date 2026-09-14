@@ -7,7 +7,7 @@ import {
   appendPreviewCacheBuster,
   buildEmbedPreviewUrl,
   buildFullPreviewUrl,
-  resolveStorefrontBaseUrl
+  resolveStorefrontBaseUrl,
 } from '@/lib/ui-template/preview-url';
 import type { ThemeDraftPayload } from '@/lib/ui-template/theme-draft-payload';
 import type { UIBlockConfig } from '@/types/api';
@@ -33,7 +33,7 @@ export function useUiTemplatePreview({
   setIsDirty,
   buildThemePayload,
   onDraftSaved,
-  debounceMs = 900
+  debounceMs = 900,
 }: UseUiTemplatePreviewOptions) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [siteUrl, setSiteUrl] = useState<string | undefined>(undefined);
@@ -42,27 +42,24 @@ export function useUiTemplatePreview({
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isPreviewReady, setIsPreviewReady] = useState(false);
 
-  const persistDraft = useCallback(
-    async () => {
-      const templatePayload = {
-        blocks,
-        template_preset: null,
-        is_active: isActive
-      };
-      const colorPayload = buildThemePayload();
+  const persistDraft = useCallback(async () => {
+    const templatePayload = {
+      blocks,
+      template_preset: null,
+      is_active: isActive,
+    };
+    const colorPayload = buildThemePayload();
 
-      await Promise.all([
-        hasTemplate
-          ? apiClient.saveUITemplateDraft(templatePayload)
-          : apiClient.createUITemplate({ blocks, is_active: isActive }),
-        apiClient.saveThemeDraft(colorPayload)
-      ]);
+    await Promise.all([
+      hasTemplate
+        ? apiClient.saveUITemplateDraft(templatePayload)
+        : apiClient.createUITemplate({ blocks, is_active: isActive }),
+      apiClient.saveThemeDraft(colorPayload),
+    ]);
 
-      onDraftSaved?.();
-      return colorPayload;
-    },
-    [blocks, buildThemePayload, hasTemplate, isActive, onDraftSaved]
-  );
+    onDraftSaved?.();
+    return colorPayload;
+  }, [blocks, buildThemePayload, hasTemplate, isActive, onDraftSaved]);
 
   const bumpPreview = useCallback(() => {
     setPreviewRefreshKey((key) => key + 1);
@@ -88,15 +85,9 @@ export function useUiTemplatePreview({
         if (!cancelled) {
           const base = resolveStorefrontBaseUrl(session.storefrontBaseUrl);
           setPreviewUrl(
-            buildEmbedPreviewUrl(
-              session.token,
-              session.previewPath,
-              session.storefrontBaseUrl
-            )
+            buildEmbedPreviewUrl(session.token, session.previewPath, session.storefrontBaseUrl),
           );
-          setSiteUrl(
-            base ? `${base}${session.previewPath}` : session.previewPath
-          );
+          setSiteUrl(base ? `${base}${session.previewPath}` : session.previewPath);
           setIsPreviewReady(true);
         }
       } catch (error) {
@@ -139,16 +130,10 @@ export function useUiTemplatePreview({
     if (!previewUrl) return;
     await persistDraft();
     bumpPreview();
-    window.open(
-      buildFullPreviewUrl(previewUrl),
-      '_blank',
-      'noopener,noreferrer'
-    );
+    window.open(buildFullPreviewUrl(previewUrl), '_blank', 'noopener,noreferrer');
   }, [previewUrl, persistDraft, bumpPreview]);
 
-  const iframeSrc = previewUrl
-    ? appendPreviewCacheBuster(previewUrl, previewRefreshKey)
-    : null;
+  const iframeSrc = previewUrl ? appendPreviewCacheBuster(previewUrl, previewRefreshKey) : null;
 
   return {
     previewUrl,
@@ -159,6 +144,6 @@ export function useUiTemplatePreview({
     isPreviewReady,
     persistDraft,
     bumpPreview,
-    openFullPreview
+    openFullPreview,
   };
 }

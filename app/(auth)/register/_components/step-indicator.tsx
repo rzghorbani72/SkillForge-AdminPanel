@@ -20,15 +20,13 @@ export function StepIndicator({ totalSteps, current }: StepIndicatorProps) {
                   ? 'bg-primary text-primary-foreground'
                   : isActive
                     ? 'border-2 border-primary text-primary'
-                    : 'border-2 border-muted-foreground/30 text-muted-foreground/40'
+                    : 'border-2 border-muted-foreground/30 text-muted-foreground/40',
               )}
             >
               {isDone ? '✓' : idx + 1}
             </div>
             {idx < totalSteps - 1 && (
-              <div
-                className={cn('h-px w-10', isDone ? 'bg-primary' : 'bg-border')}
-              />
+              <div className={cn('h-px w-10', isDone ? 'bg-primary' : 'bg-border')} />
             )}
           </div>
         );

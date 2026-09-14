@@ -28,8 +28,8 @@ export function useDashboardHeroBanners() {
         setBanners(
           data.banners.map((banner) => ({
             url: dashboardBannerSrc(banner.image_id),
-            linkUrl: banner.link_url
-          }))
+            linkUrl: banner.link_url,
+          })),
         );
         setActive(0);
       } catch {
@@ -61,6 +61,6 @@ export function useDashboardHeroBanners() {
     banners,
     active: banners.length > 0 ? active % banners.length : 0,
     select,
-    setPaused
+    setPaused,
   };
 }

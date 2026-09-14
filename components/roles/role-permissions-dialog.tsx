@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,15 +45,16 @@ export function RolePermissionsDialog({
   onClose,
   onSaved,
   readOnly = false,
-  readOnlyReasonKey
+  readOnlyReasonKey,
 }: Props) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const [saving, setSaving] = useState(false);
   const [label, setLabel] = useState(role.label);
   const [description, setDescription] = useState(role.description ?? '');
-  const { granted, toggle, toggleResource, replace, permissions } =
-    usePermissionSelection(role.permissions);
+  const { granted, toggle, toggleResource, replace, permissions } = usePermissionSelection(
+    role.permissions,
+  );
 
   const levelLabel = getAccessLevelLabel(role.hierarchy_level, t);
   const labelValid = label.trim().length >= 2;
@@ -64,7 +65,7 @@ export function RolePermissionsDialog({
       setSaving(true);
       await apiClient.updatePlatformRole(role.id, {
         label: label.trim(),
-        description: description.trim() || undefined
+        description: description.trim() || undefined,
       });
       await apiClient.setPlatformRolePermissions(role.id, permissions);
       ErrorHandler.showSuccess(t('roles.roleUpdated'));
@@ -82,12 +83,9 @@ export function RolePermissionsDialog({
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>
-            {t(
-              readOnly
-                ? 'roles.viewPermissionsFor'
-                : 'roles.editPermissionsFor',
-              { role: getRoleMeta(role, t, formatNumber).label }
-            )}
+            {t(readOnly ? 'roles.viewPermissionsFor' : 'roles.editPermissionsFor', {
+              role: getRoleMeta(role, t, formatNumber).label,
+            })}
           </DialogTitle>
           <DialogDescription>
             {readOnly
@@ -112,15 +110,11 @@ export function RolePermissionsDialog({
                   onChange={(e) => setLabel(e.target.value)}
                 />
                 {label && !labelValid && (
-                  <p className="text-xs text-destructive">
-                    {t('roles.labelInvalid')}
-                  </p>
+                  <p className="text-xs text-destructive">{t('roles.labelInvalid')}</p>
                 )}
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="role-edit-desc">
-                  {t('roles.descriptionLabel')}
-                </Label>
+                <Label htmlFor="role-edit-desc">{t('roles.descriptionLabel')}</Label>
                 <Textarea
                   id="role-edit-desc"
                   className="min-h-[38px]"
@@ -136,9 +130,7 @@ export function RolePermissionsDialog({
               variant="outline"
               size="sm"
               className="rounded-lg"
-              onClick={() =>
-                replace(defaultsFor(catalog, role.hierarchy_level))
-              }
+              onClick={() => replace(defaultsFor(catalog, role.hierarchy_level))}
             >
               <RotateCcw className="me-1.5 h-3.5 w-3.5" />
               {t('roles.applyLevelDefaults', { level: levelLabel })}

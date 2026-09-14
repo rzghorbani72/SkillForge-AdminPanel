@@ -15,8 +15,7 @@ import { useLiveCourse } from '@/app/(protected)/courses/[course_id]/live/hooks/
  * run their class.
  */
 export function StepClassroom({ courseId }: { courseId: string }) {
-  const { course, topics, offers, groups, isLoading, reload, patch } =
-    useLiveCourse(courseId);
+  const { course, topics, offers, groups, isLoading, reload, patch } = useLiveCourse(courseId);
 
   const groupOffer = offers.find((offer) => offer.kind === 'GROUP');
 

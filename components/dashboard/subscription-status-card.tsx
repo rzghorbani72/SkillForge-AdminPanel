@@ -1,13 +1,7 @@
 'use client';
 
 import Link from '@/components/ui/link';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight, Zap } from 'lucide-react';
@@ -23,15 +17,8 @@ export function SubscriptionStatusCard() {
   const formatNumber = useNumberFormat();
   const { user } = useAuthUser();
   const isManager = user?.role === 'MANAGER';
-  const {
-    planName,
-    status,
-    daysRemaining,
-    planSlug,
-    isTopPlan,
-    shouldShowUpgrade,
-    isLoading
-  } = useAcademySubscription(isManager);
+  const { planName, status, daysRemaining, planSlug, isTopPlan, shouldShowUpgrade, isLoading } =
+    useAcademySubscription(isManager);
 
   if (!isManager) return null;
 
@@ -45,12 +32,8 @@ export function SubscriptionStatusCard() {
     return null;
   }
 
-  const title = isTopPlan
-    ? t('dashboard.renewPlanTitle')
-    : t('dashboard.upgradePlanTitle');
-  const description = isTopPlan
-    ? t('dashboard.renewPlanDesc')
-    : t('dashboard.upgradePlanDesc');
+  const title = isTopPlan ? t('dashboard.renewPlanTitle') : t('dashboard.upgradePlanTitle');
+  const description = isTopPlan ? t('dashboard.renewPlanDesc') : t('dashboard.upgradePlanDesc');
 
   return (
     <Card className="border-violet-200/70 bg-gradient-to-r from-violet-50/80 to-background dark:border-violet-900/50 dark:from-violet-950/30">

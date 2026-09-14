@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 export function AccordionSection({
   title,
   defaultOpen = false,
-  children
+  children,
 }: {
   title: string;
   defaultOpen?: boolean;

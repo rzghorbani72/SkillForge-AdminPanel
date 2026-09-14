@@ -13,11 +13,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 import NoAcademyState from '../NoAcademyState';
-import {
-  courseFormSchema,
-  parseAccessDurationDays,
-  type CourseFormData
-} from '../schema';
+import { courseFormSchema, parseAccessDurationDays, type CourseFormData } from '../schema';
 import type { CourseType } from '../course-drafts';
 import { StepBasics } from './step-basics';
 import { WizardHeader } from './wizard-header';
@@ -67,8 +63,8 @@ export default function CourseCreateWizard() {
       is_featured: false,
       base_price_active: true,
       allow_downloads: false,
-      apply_downloads_to_lessons: false
-    }
+      apply_downloads_to_lessons: false,
+    },
   });
 
   /**
@@ -93,13 +89,12 @@ export default function CourseCreateWizard() {
         requirements: values.requirements.trim() || undefined,
         difficulty: values.difficulty,
         is_certificate: values.is_certificate,
-        access_duration_days:
-          parseAccessDurationDays(values.access_duration_days) ?? undefined,
+        access_duration_days: parseAccessDurationDays(values.access_duration_days) ?? undefined,
         course_type: courseType,
         cover_id: values.cover_id || undefined,
         primary_price: 0,
         secondary_price: 0,
-        published: false
+        published: false,
       });
       const id = newCourseId(response);
       if (!id) throw new Error('Course creation returned no id');
@@ -129,9 +124,7 @@ export default function CourseCreateWizard() {
       />
 
       <div className="mx-auto w-full max-w-[1200px] p-4 sm:p-6">
-        <p className="mb-6 text-sm text-muted-foreground">
-          {t('courses.wizard.stepBasicsHint')}
-        </p>
+        <p className="mb-6 text-sm text-muted-foreground">{t('courses.wizard.stepBasicsHint')}</p>
 
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} noValidate>
@@ -147,11 +140,7 @@ export default function CourseCreateWizard() {
             />
 
             <div className="mt-6 flex items-center justify-end gap-3 rounded-lg border bg-muted/30 px-4 py-3">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => router.push('/courses')}
-              >
+              <Button type="button" variant="ghost" onClick={() => router.push('/courses')}>
                 {t('common.cancel')}
               </Button>
               <Button

@@ -10,7 +10,7 @@ const DEVICE_VIRTUAL_W: Record<DeviceMode, number> = {
   widescreen: 1920,
   desktop: 1280,
   tablet: 768,
-  mobile: 375
+  mobile: 375,
 };
 
 interface EduspherePreviewFrameProps {
@@ -32,7 +32,7 @@ export function EduspherePreviewFrame({
   isInitializing = false,
   isReady = true,
   emptyMessage,
-  unavailableMessage
+  unavailableMessage,
 }: EduspherePreviewFrameProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,10 +75,7 @@ export function EduspherePreviewFrame({
         </div>
       </div>
 
-      <div
-        ref={containerRef}
-        className="relative flex-1 overflow-hidden bg-white"
-      >
+      <div ref={containerRef} className="relative flex-1 overflow-hidden bg-white">
         {!showIframe ? (
           <div className="flex h-full items-center justify-center p-8 text-center text-sm text-muted-foreground">
             {!isReady ? placeholderMessage : statusMessage}
@@ -89,7 +86,7 @@ export function EduspherePreviewFrame({
             style={{
               width: virtualW,
               height: `${100 / zoom}%`,
-              transform: `scale(${zoom})`
+              transform: `scale(${zoom})`,
             }}
           >
             <iframe

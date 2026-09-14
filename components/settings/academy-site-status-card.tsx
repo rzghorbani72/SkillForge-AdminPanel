@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Power } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -17,11 +11,7 @@ import { apiClient } from '@/lib/api';
 import { useStore } from '@/hooks/useStore';
 import { ErrorHandler } from '@/lib/error-handler';
 
-export function AcademySiteStatusCard({
-  academyName
-}: {
-  academyName: string;
-}) {
+export function AcademySiteStatusCard({ academyName }: { academyName: string }) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const { refreshAcademies } = useStore();
@@ -54,20 +44,13 @@ export function AcademySiteStatusCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Power className="h-4 w-4" />
-          {disabled
-            ? t('stores.siteStatusTitleEnable')
-            : t('stores.siteStatusTitle')}
+          {disabled ? t('stores.siteStatusTitleEnable') : t('stores.siteStatusTitle')}
         </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button
-          variant={disabled ? 'default' : 'outline'}
-          onClick={() => setOpen(true)}
-        >
-          {disabled
-            ? t('stores.siteStatusEnableShort')
-            : t('stores.siteStatusManage')}
+        <Button variant={disabled ? 'default' : 'outline'} onClick={() => setOpen(true)}>
+          {disabled ? t('stores.siteStatusEnableShort') : t('stores.siteStatusManage')}
         </Button>
       </CardContent>
 
@@ -78,11 +61,7 @@ export function AcademySiteStatusCard({
         onChanged={(nowDisabled) => {
           setDisabled(nowDisabled);
           ErrorHandler.showSuccess(
-            t(
-              nowDisabled
-                ? 'stores.siteDisabledToast'
-                : 'stores.siteEnabledToast'
-            )
+            t(nowDisabled ? 'stores.siteDisabledToast' : 'stores.siteEnabledToast'),
           );
           void loadStatus();
           // The switcher badge reads the cached academy list, so it stays on the

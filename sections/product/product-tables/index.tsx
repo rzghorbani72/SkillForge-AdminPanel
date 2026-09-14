@@ -5,19 +5,10 @@ import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box'
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { Product } from '@/constants/data';
-import {
-  CATEGORY_OPTIONS,
-  useProductTableFilters
-} from './use-product-table-filters';
+import { CATEGORY_OPTIONS, useProductTableFilters } from './use-product-table-filters';
 import { columns } from './columns';
 
-export default function ProductTable({
-  data,
-  totalData
-}: {
-  data: Product[];
-  totalData: number;
-}) {
+export default function ProductTable({ data, totalData }: { data: Product[]; totalData: number }) {
   const {
     categoriesFilter,
     setCategoriesFilter,
@@ -25,7 +16,7 @@ export default function ProductTable({
     resetFilters,
     searchQuery,
     setPage,
-    setSearchQuery
+    setSearchQuery,
   } = useProductTableFilters();
 
   return (
@@ -44,10 +35,7 @@ export default function ProductTable({
           setFilterValue={setCategoriesFilter}
           filterValue={categoriesFilter}
         />
-        <DataTableResetFilter
-          isFilterActive={isAnyFilterActive}
-          onReset={resetFilters}
-        />
+        <DataTableResetFilter isFilterActive={isAnyFilterActive} onReset={resetFilters} />
       </div>
       <DataTable columns={columns} data={data} totalItems={totalData} />
     </div>

@@ -42,50 +42,30 @@ interface UseLiveSessionFormInput {
   readonly onSaved?: () => void;
 }
 
-export function useLiveSessionForm({
-  lessonId,
-  initial,
-  onSaved
-}: UseLiveSessionFormInput) {
+export function useLiveSessionForm({ lessonId, initial, onSaved }: UseLiveSessionFormInput) {
   const [meetingUrl, setMeetingUrl] = useState(initial?.meeting_url ?? '');
-  const [meetingUrlSource, setMeetingUrlSource] = useState(
-    initial?.meeting_url_source ?? null
-  );
+  const [meetingUrlSource, setMeetingUrlSource] = useState(initial?.meeting_url_source ?? null);
   const [manualEntry, setManualEntry] = useState(
-    Boolean(initial?.meeting_url) &&
-      initial?.meeting_url_source !== 'AUTO_JITSI'
+    Boolean(initial?.meeting_url) && initial?.meeting_url_source !== 'AUTO_JITSI',
   );
   const [label, setLabel] = useState(initial?.provider_label ?? '');
-  const [startsAt, setStartsAt] = useState(
-    toDatetimeLocalValue(initial?.starts_at)
-  );
+  const [startsAt, setStartsAt] = useState(toDatetimeLocalValue(initial?.starts_at));
   const [durationMinutes, setDurationMinutes] = useState(
-    initial?.duration_minutes != null ? String(initial.duration_minutes) : '60'
+    initial?.duration_minutes != null ? String(initial.duration_minutes) : '60',
   );
   const [repeats, setRepeats] = useState(Boolean(initial?.recurrence_rule));
-  const [repeatDays, setRepeatDays] = useState<number[]>(
-    parseWeeklyRule(initial?.recurrence_rule)
-  );
-  const [repeatUntil, setRepeatUntil] = useState(
-    toDateValue(initial?.recurrence_until)
-  );
+  const [repeatDays, setRepeatDays] = useState<number[]>(parseWeeklyRule(initial?.recurrence_rule));
+  const [repeatUntil, setRepeatUntil] = useState(toDateValue(initial?.recurrence_until));
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
 
   useEffect(() => {
     setMeetingUrl(initial?.meeting_url ?? '');
     setMeetingUrlSource(initial?.meeting_url_source ?? null);
-    setManualEntry(
-      Boolean(initial?.meeting_url) &&
-        initial?.meeting_url_source !== 'AUTO_JITSI'
-    );
+    setManualEntry(Boolean(initial?.meeting_url) && initial?.meeting_url_source !== 'AUTO_JITSI');
     setLabel(initial?.provider_label ?? '');
     setStartsAt(toDatetimeLocalValue(initial?.starts_at));
-    setDurationMinutes(
-      initial?.duration_minutes != null
-        ? String(initial.duration_minutes)
-        : '60'
-    );
+    setDurationMinutes(initial?.duration_minutes != null ? String(initial.duration_minutes) : '60');
     setRepeats(Boolean(initial?.recurrence_rule));
     setRepeatDays(parseWeeklyRule(initial?.recurrence_rule));
     setRepeatUntil(toDateValue(initial?.recurrence_until));
@@ -112,11 +92,7 @@ export function useLiveSessionForm({
       return;
     }
 
-    const days = repeats
-      ? repeatDays.length
-        ? repeatDays
-        : weekdayOf(startsAt)
-      : [];
+    const days = repeats ? (repeatDays.length ? repeatDays : weekdayOf(startsAt)) : [];
     const until = repeats ? untilFromDateValue(repeatUntil) : null;
     if (until && new Date(until) <= new Date(startsAt)) {
       toast.error(tNow('toasts.liveRepeatUntilAfterStart'));
@@ -136,12 +112,11 @@ export function useLiveSessionForm({
         recurrence_rule: buildWeeklyRule(days),
         recurrence_until: until,
         provider_label: label.trim() || null,
-        notes: null
+        notes: null,
       });
       const saved = (result as { data?: LiveSession })?.data;
       if (saved?.meeting_url) setMeetingUrl(saved.meeting_url);
-      if (saved?.meeting_url_source)
-        setMeetingUrlSource(saved.meeting_url_source);
+      if (saved?.meeting_url_source) setMeetingUrlSource(saved.meeting_url_source);
       toast.success(tNow('toasts.liveSaved'));
       onSaved?.();
     } catch (e) {
@@ -198,6 +173,6 @@ export function useLiveSessionForm({
     removing,
     save,
     regenerate,
-    remove
+    remove,
   };
 }

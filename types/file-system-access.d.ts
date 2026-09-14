@@ -19,7 +19,5 @@ interface OpenFilePickerOptions {
 }
 
 interface Window {
-  showOpenFilePicker?: (
-    options?: OpenFilePickerOptions
-  ) => Promise<FileSystemFileHandle[]>;
+  showOpenFilePicker?: (options?: OpenFilePickerOptions) => Promise<FileSystemFileHandle[]>;
 }

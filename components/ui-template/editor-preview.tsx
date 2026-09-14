@@ -4,21 +4,18 @@ import type { Ref } from 'react';
 import { Loader2 } from 'lucide-react';
 import type { ViewportMode } from './sidebar-types';
 
-const VIEWPORT: Record<
-  ViewportMode,
-  { width: string; frame: string; notch: boolean }
-> = {
+const VIEWPORT: Record<ViewportMode, { width: string; frame: string; notch: boolean }> = {
   mobile: {
     width: 'max-w-[390px]',
     frame: 'rounded-[32px] ring-4 ring-zinc-300 shadow-2xl',
-    notch: true
+    notch: true,
   },
   tablet: {
     width: 'max-w-[768px]',
     frame: 'rounded-[16px] ring-2 ring-zinc-300 shadow-xl',
-    notch: false
+    notch: false,
   },
-  desktop: { width: 'w-full', frame: '', notch: false }
+  desktop: { width: 'w-full', frame: '', notch: false },
 };
 
 export function EditorPreview({
@@ -28,7 +25,7 @@ export function EditorPreview({
   isSaving,
   title,
   iframeRef,
-  onIframeLoad
+  onIframeLoad,
 }: {
   viewport: ViewportMode;
   iframeSrc: string | null;
@@ -47,9 +44,7 @@ export function EditorPreview({
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-100">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-zinc-600" />
-            <p className="text-sm text-zinc-500">
-              در حال بارگذاری پیش‌نمایش...
-            </p>
+            <p className="text-sm text-zinc-500">در حال بارگذاری پیش‌نمایش...</p>
           </div>
         </div>
       )}

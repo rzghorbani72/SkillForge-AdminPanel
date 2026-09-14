@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight } from 'lucide-react';
@@ -21,7 +15,7 @@ const SUBSCRIPTION_STATUS_LABEL_KEYS: Record<string, string> = {
   ACTIVE: 'settings.statusActive',
   GRACE: 'settings.statusGrace',
   EXPIRED: 'settings.statusExpired',
-  INACTIVE: 'settings.statusInactive'
+  INACTIVE: 'settings.statusInactive',
 };
 
 export function AcademySubscriptionSummary() {
@@ -35,9 +29,7 @@ export function AcademySubscriptionSummary() {
         <CardTitle className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {t('settings.subscriptionTitle')}
         </CardTitle>
-        <CardDescription>
-          {t('settings.subscriptionReadOnlyHint')}
-        </CardDescription>
+        <CardDescription>{t('settings.subscriptionReadOnlyHint')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 text-sm text-muted-foreground">
         {isLoading ? (
@@ -54,20 +46,14 @@ export function AcademySubscriptionSummary() {
             <div className="flex justify-between">
               <span>{t('settings.subscriptionStatus')}</span>
               <span className="font-medium text-foreground">
-                {t(
-                  SUBSCRIPTION_STATUS_LABEL_KEYS[
-                    subscription?.status ?? 'INACTIVE'
-                  ]
-                )}
+                {t(SUBSCRIPTION_STATUS_LABEL_KEYS[subscription?.status ?? 'INACTIVE'])}
               </span>
             </div>
             <div className="flex justify-between">
               <span>{t('settings.subscriptionExpires')}</span>
               <span className="font-medium text-foreground">
                 {subscription?.academy?.subscription_expires
-                  ? new Date(
-                      subscription.academy.subscription_expires
-                    ).toLocaleDateString(locale)
+                  ? new Date(subscription.academy.subscription_expires).toLocaleDateString(locale)
                   : '—'}
               </span>
             </div>
@@ -82,9 +68,7 @@ export function AcademySubscriptionSummary() {
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t('settings.recentInvoices')}
                 </p>
-                <SubscriptionInvoicesList
-                  invoices={subscription.invoices.slice(0, 5)}
-                />
+                <SubscriptionInvoicesList invoices={subscription.invoices.slice(0, 5)} />
               </div>
             ) : null}
           </>

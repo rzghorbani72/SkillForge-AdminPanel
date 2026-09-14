@@ -10,8 +10,8 @@ export async function call<T>(path: string, init?: RequestInit): Promise<T> {
     headers: {
       'Content-Type': 'application/json',
       ...browserRequestHeaders(method),
-      ...(init?.headers ?? {})
-    }
+      ...(init?.headers ?? {}),
+    },
   });
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;

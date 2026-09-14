@@ -17,15 +17,14 @@ interface PermissionGridProps {
   readOnly?: boolean;
 }
 
-export const permissionKey = (resource: string, action: string) =>
-  `${resource}:${action}`;
+export const permissionKey = (resource: string, action: string) => `${resource}:${action}`;
 
 export function PermissionGrid({
   resources,
   granted,
   onToggle,
   onToggleResource,
-  readOnly = false
+  readOnly = false,
 }: PermissionGridProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
@@ -36,7 +35,7 @@ export function PermissionGrid({
     return resources.filter(
       (entry) =>
         entry.resource.includes(needle) ||
-        t(`roles.resource.${entry.resource}`).toLowerCase().includes(needle)
+        t(`roles.resource.${entry.resource}`).toLowerCase().includes(needle),
     );
   }, [resources, query, t]);
 
@@ -55,7 +54,7 @@ export function PermissionGrid({
       <div className="space-y-2">
         {visible.map((entry) => {
           const grantedCount = entry.actions.filter((action) =>
-            granted.has(permissionKey(entry.resource, action))
+            granted.has(permissionKey(entry.resource, action)),
           ).length;
           const allGranted = grantedCount === entry.actions.length;
 
@@ -64,9 +63,7 @@ export function PermissionGrid({
               key={entry.resource}
               className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-3"
             >
-              <span className="text-sm font-medium">
-                {t(`roles.resource.${entry.resource}`)}
-              </span>
+              <span className="text-sm font-medium">{t(`roles.resource.${entry.resource}`)}</span>
               <div className="flex items-center gap-4">
                 {entry.actions.map((action) => {
                   const key = permissionKey(entry.resource, action);
@@ -90,9 +87,7 @@ export function PermissionGrid({
                     variant="ghost"
                     size="sm"
                     className="h-7 px-2 text-xs"
-                    onClick={() =>
-                      onToggleResource(entry.resource, !allGranted)
-                    }
+                    onClick={() => onToggleResource(entry.resource, !allGranted)}
                   >
                     {allGranted ? t('roles.selectNone') : t('roles.selectAll')}
                   </Button>

@@ -10,7 +10,7 @@ import {
   Volume2,
   FileText,
   LifeBuoy,
-  LucideIcon
+  LucideIcon,
 } from 'lucide-react';
 
 type Submenu = {
@@ -42,9 +42,9 @@ export function getMenuList(pathname: string): Group[] {
           label: 'Dashboard',
           active: pathname.includes('/dashboard'),
           icon: LayoutGrid,
-          submenus: []
-        }
-      ]
+          submenus: [],
+        },
+      ],
     },
     {
       groupLabel: 'Contents',
@@ -57,27 +57,27 @@ export function getMenuList(pathname: string): Group[] {
           submenus: [
             {
               href: '/posts',
-              label: 'All Posts'
+              label: 'All Posts',
             },
             {
               href: '/posts/new',
-              label: 'New Post'
-            }
-          ]
+              label: 'New Post',
+            },
+          ],
         },
         {
           href: '/categories',
           label: 'Categories',
           active: pathname.includes('/categories'),
-          icon: Bookmark
+          icon: Bookmark,
         },
         {
           href: '/tags',
           label: 'Tags',
           active: pathname.includes('/tags'),
-          icon: Tag
-        }
-      ]
+          icon: Tag,
+        },
+      ],
     },
     {
       groupLabel: 'Media Library',
@@ -86,27 +86,27 @@ export function getMenuList(pathname: string): Group[] {
           href: '/videos',
           label: 'Videos',
           active: pathname.includes('/videos'),
-          icon: Video
+          icon: Video,
         },
         {
           href: '/images',
           label: 'Images',
           active: pathname.includes('/images'),
-          icon: Image
+          icon: Image,
         },
         {
           href: '/audios',
           label: 'Audios',
           active: pathname.includes('/audios'),
-          icon: Volume2
+          icon: Volume2,
         },
         {
           href: '/documents',
           label: 'Documents',
           active: pathname.includes('/documents'),
-          icon: FileText
-        }
-      ]
+          icon: FileText,
+        },
+      ],
     },
     {
       groupLabel: 'Settings',
@@ -114,10 +114,8 @@ export function getMenuList(pathname: string): Group[] {
         {
           href: '/support',
           label: 'Support',
-          active:
-            pathname.includes('/support') &&
-            !pathname.includes('/support-access-logs'),
-          icon: LifeBuoy
+          active: pathname.includes('/support') && !pathname.includes('/support-access-logs'),
+          icon: LifeBuoy,
         },
         {
           href: '/users',
@@ -128,37 +126,37 @@ export function getMenuList(pathname: string): Group[] {
             {
               href: '/users',
               label: 'All Users',
-              active: pathname === '/users'
+              active: pathname === '/users',
             },
             {
               href: '/users/students',
               label: 'Students',
-              active: pathname.startsWith('/users/students')
+              active: pathname.startsWith('/users/students'),
             },
             {
               href: '/users/teachers',
               label: 'Teachers',
-              active: pathname.startsWith('/users/teachers')
+              active: pathname.startsWith('/users/teachers'),
             },
             {
               href: '/users/managers',
               label: 'Managers',
-              active: pathname.startsWith('/users/managers')
+              active: pathname.startsWith('/users/managers'),
             },
             {
               href: '/users/teacher-requests',
               label: 'Teacher Requests',
-              active: pathname.startsWith('/users/teacher-requests')
-            }
-          ]
+              active: pathname.startsWith('/users/teacher-requests'),
+            },
+          ],
         },
         {
           href: '/account',
           label: 'Account',
           active: pathname.includes('/account'),
-          icon: Settings
-        }
-      ]
-    }
+          icon: Settings,
+        },
+      ],
+    },
   ];
 }

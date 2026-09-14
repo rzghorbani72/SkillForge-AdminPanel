@@ -24,7 +24,7 @@ export function useAcademySite(): AcademySiteData {
     try {
       const [nextPages, nextLinks] = await Promise.all([
         apiClient.getAcademyPages(),
-        apiClient.getAcademyContactLinks()
+        apiClient.getAcademyContactLinks(),
       ]);
       setPages(nextPages);
       setLinks(nextLinks);

@@ -7,27 +7,18 @@ import { apiClient } from '@/lib/api';
 import { OtpType } from '@/constants/data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
-import {
-  checkoutQueryFromSearch,
-  homeRouteFor,
-  resolveSessionRole
-} from '@/lib/auth-routing';
+import { checkoutQueryFromSearch, homeRouteFor, resolveSessionRole } from '@/lib/auth-routing';
 import {
   isUserNotRegisteredError,
   isCaptchaRequiredError,
-  isPanelAccessBlockedError
+  isPanelAccessBlockedError,
 } from '@/lib/auth-login-errors';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { notifyOtpSent } from '@/lib/otp-notify';
 import { setSelectedAcademyId } from '@/lib/store-utils';
 import type { AccountIdentity } from '@/types/auth';
 import { nextStepFor } from '@/lib/auth-identify';
-import {
-  collectErrors,
-  validateOtp,
-  validatePassword,
-  validatePhone
-} from '@/lib/auth-validation';
+import { collectErrors, validateOtp, validatePassword, validatePhone } from '@/lib/auth-validation';
 
 type Academy = { id: string; name: string; slug: string };
 
@@ -57,14 +48,12 @@ function goToUnauthorized() {
 function resolveLoginError(
   error: unknown,
   fallback: string,
-  notRegisteredMessage: string
+  notRegisteredMessage: string,
 ): { message: string; registrationRequired: boolean } {
   const registrationRequired = isUserNotRegisteredError(error);
   return {
-    message: registrationRequired
-      ? notRegisteredMessage
-      : apiErrorMessage(error, fallback),
-    registrationRequired
+    message: registrationRequired ? notRegisteredMessage : apiErrorMessage(error, fallback),
+    registrationRequired,
   };
 }
 
@@ -82,9 +71,7 @@ export function useLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [unauthorizedError, setUnauthorizedError] = useState<string | null>(
-    null
-  );
+  const [unauthorizedError, setUnauthorizedError] = useState<string | null>(null);
 
   const [academyPickerOpen, setAcademyPickerOpen] = useState(false);
   const [availableAcademies, setAvailableAcademies] = useState<Academy[]>([]);
@@ -131,9 +118,9 @@ export function useLogin() {
     const e = collectErrors(
       {
         phone: validatePhone(phone),
-        ...(step === 'password' ? { password: validatePassword(password) } : {})
+        ...(step === 'password' ? { password: validatePassword(password) } : {}),
       },
-      t
+      t,
     );
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -154,7 +141,7 @@ export function useLogin() {
       title: t('success.loginSuccess'),
       message: href.startsWith('/my-affiliate')
         ? t('auth.redirectingToAffiliate')
-        : t('auth.redirectingToDashboard')
+        : t('auth.redirectingToDashboard'),
     });
   }
 
@@ -163,10 +150,7 @@ export function useLogin() {
     setRegistrationRequired(false);
     try {
       const phoneE164 = toE164Iran(phone);
-      await apiClient.sendPhoneOtp(
-        phoneE164,
-        OtpType.LOGIN_BY_PHONE
-      );
+      await apiClient.sendPhoneOtp(phoneE164, OtpType.LOGIN_BY_PHONE);
       setOtpPhone(phoneE164);
       setOtpFullPhone(phoneE164);
       setOtpMode('login');
@@ -177,12 +161,11 @@ export function useLogin() {
         goToUnauthorized();
         return;
       }
-      const { message, registrationRequired: needsRegistration } =
-        resolveLoginError(
-          error,
-          t('error.authenticationFailed'),
-          t('auth.accountNotRegisteredForLogin')
-        );
+      const { message, registrationRequired: needsRegistration } = resolveLoginError(
+        error,
+        t('error.authenticationFailed'),
+        t('auth.accountNotRegisteredForLogin'),
+      );
       setRegistrationRequired(needsRegistration);
       if (needsRegistration) {
         // Fall back to step 1 so the signup hint is visible where it belongs.
@@ -208,7 +191,7 @@ export function useLogin() {
     try {
       const { data } = await apiClient.identifyStaff(
         toE164Iran(phone),
-        captchaRequired ? captchaToken : undefined
+        captchaRequired ? captchaToken : undefined,
       );
       setCaptchaRequired(data.captcha_required);
       setCaptchaToken('');
@@ -234,7 +217,7 @@ export function useLogin() {
       }
       if (next === 'blocked') {
         toast.error(t('auth.noSignInMethodAvailable'), {
-          toastId: 'login-no-method'
+          toastId: 'login-no-method',
         });
       }
     } catch (error: unknown) {
@@ -246,7 +229,7 @@ export function useLogin() {
         return;
       }
       toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
-        toastId: 'login-error'
+        toastId: 'login-error',
       });
     } finally {
       setIsLoading(false);
@@ -257,8 +240,7 @@ export function useLogin() {
   // login and after the OTP/reset gates finish, so all three paths land the
   // user the same way (single academy, academy picker, or straight in).
   async function finishLogin(response: LoginResponse) {
-    const academies =
-      response.availableAcademies || response.available_academies || [];
+    const academies = response.availableAcademies || response.available_academies || [];
 
     if (academies.length === 1) {
       await handleAcademySelect(academies[0].id);
@@ -285,7 +267,7 @@ export function useLogin() {
       const response = (await authService.login({
         identifier: toE164Iran(phone),
         password,
-        ...(captchaRequired ? { captcha_token: captchaToken } : {})
+        ...(captchaRequired ? { captcha_token: captchaToken } : {}),
       })) as LoginResponse | null;
       if (!response) return;
 
@@ -315,7 +297,7 @@ export function useLogin() {
         setCaptchaRequired(true);
         setCaptchaToken('');
         toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
-          toastId: 'login-captcha-required'
+          toastId: 'login-captcha-required',
         });
         return;
       }
@@ -324,7 +306,7 @@ export function useLogin() {
         return;
       }
       toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
-        toastId: 'login-error'
+        toastId: 'login-error',
       });
     } finally {
       setIsLoading(false);
@@ -350,11 +332,9 @@ export function useLogin() {
         // /unauthorized, and never to no redirect at all.
         const session = switched?.data?.data ?? switched?.data ?? {};
         scheduleRedirect({
-          href:
-            homeRouteFor(resolveSessionRole(session), { planQuery }) ??
-            '/dashboard',
+          href: homeRouteFor(resolveSessionRole(session), { planQuery }) ?? '/dashboard',
           title: t('success.loginSuccess'),
-          message: t('auth.redirectingToDashboard')
+          message: t('auth.redirectingToDashboard'),
         });
         return;
       }
@@ -362,7 +342,7 @@ export function useLogin() {
       const response = (await authService.login({
         identifier: toE164Iran(phone),
         password,
-        academy_id: academyId
+        academy_id: academyId,
       })) as LoginResponse | null;
       if (response) {
         toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
@@ -374,7 +354,7 @@ export function useLogin() {
         return;
       }
       toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
-        toastId: 'login-error'
+        toastId: 'login-error',
       });
     } finally {
       setPickingAcademy(false);
@@ -393,7 +373,7 @@ export function useLogin() {
       if (otpMode === 'login') {
         const response = (await authService.loginPhoneByOtp({
           phone_number: otpFullPhone || otpPhone,
-          otp: otp.trim()
+          otp: otp.trim(),
         })) as LoginResponse;
 
         // OTP login always creates the session, so a user with several academies
@@ -408,7 +388,7 @@ export function useLogin() {
 
       const result = (await apiClient.confirmPhoneOtp(
         otpTempToken,
-        otp.trim()
+        otp.trim(),
       )) as LoginResponse & { redirect_to?: string };
 
       if (result.password_reset_required) {
@@ -423,19 +403,18 @@ export function useLogin() {
       scheduleRedirect({
         href: result.redirect_to ?? '/my-affiliate',
         title: t('success.otpVerified'),
-        message: t('auth.redirectingToAffiliate')
+        message: t('auth.redirectingToAffiliate'),
       });
     } catch (error: unknown) {
       if (isPanelAccessBlockedError(error)) {
         goToUnauthorized();
         return;
       }
-      const { message, registrationRequired: needsRegistration } =
-        resolveLoginError(
-          error,
-          t('error.authenticationFailed'),
-          t('auth.accountNotRegisteredForLogin')
-        );
+      const { message, registrationRequired: needsRegistration } = resolveLoginError(
+        error,
+        t('error.authenticationFailed'),
+        t('auth.accountNotRegisteredForLogin'),
+      );
       setRegistrationRequired(needsRegistration);
       setOtpError(message);
     } finally {
@@ -449,7 +428,7 @@ export function useLogin() {
     try {
       const response = (await apiClient.setNewPassword(
         resetTempToken,
-        newPassword
+        newPassword,
       )) as LoginResponse;
       // The new password created a session; the one still in state is the spent
       // one-time password and must never be replayed by the academy picker.
@@ -478,9 +457,7 @@ export function useLogin() {
       // were sent, confirm-phone only ever matches REGISTER_PHONE_VERIFICATION.
       await apiClient.sendPhoneOtp(
         otpFullPhone || otpPhone,
-        otpMode === 'verify'
-          ? OtpType.REGISTER_PHONE_VERIFICATION
-          : OtpType.LOGIN_BY_PHONE
+        otpMode === 'verify' ? OtpType.REGISTER_PHONE_VERIFICATION : OtpType.LOGIN_BY_PHONE,
       );
       notifyOtpSent(t('success.otpSent'), 'otp-resent');
     } catch (error: unknown) {
@@ -488,12 +465,11 @@ export function useLogin() {
         goToUnauthorized();
         return;
       }
-      const { message, registrationRequired: needsRegistration } =
-        resolveLoginError(
-          error,
-          t('error.authenticationFailed'),
-          t('auth.accountNotRegisteredForLogin')
-        );
+      const { message, registrationRequired: needsRegistration } = resolveLoginError(
+        error,
+        t('error.authenticationFailed'),
+        t('auth.accountNotRegisteredForLogin'),
+      );
       setRegistrationRequired(needsRegistration);
       setOtpError(needsRegistration ? message : '');
       if (!needsRegistration) {
@@ -578,6 +554,6 @@ export function useLogin() {
     passwordResetRequired,
     resetLoading,
     resetError,
-    handleSetNewPasswordSubmit
+    handleSetNewPasswordSubmit,
   };
 }

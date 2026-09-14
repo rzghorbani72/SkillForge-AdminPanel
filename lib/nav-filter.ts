@@ -27,9 +27,7 @@ const ACADEMY_LESS_HREFS = ['/academies', '/dashboard'];
 
 function isAcademyLessHref(href: string | undefined): boolean {
   if (!href) return false;
-  return ACADEMY_LESS_HREFS.some(
-    (path) => href === path || href.startsWith(`${path}/`)
-  );
+  return ACADEMY_LESS_HREFS.some((path) => href === path || href.startsWith(`${path}/`));
 }
 
 function asPreview(item: NavItem): NavItem {
@@ -37,7 +35,7 @@ function asPreview(item: NavItem): NavItem {
   return {
     ...item,
     disabled: true,
-    children: item.children?.map(asPreview)
+    children: item.children?.map(asPreview),
   };
 }
 
@@ -49,7 +47,7 @@ const ACADEMY_CAPABILITY_ROLES: Role[] = [
   'ADMIN',
   'SUPPORT',
   'FINANCE',
-  'PLATFORM_OWNER'
+  'PLATFORM_OWNER',
 ];
 
 /**
@@ -59,17 +57,11 @@ const ACADEMY_CAPABILITY_ROLES: Role[] = [
 export function isPlatformMode(role: Role | null, hasStore?: boolean): boolean {
   if (!role) return false;
   const isPlatformRole =
-    role === 'PLATFORM_OWNER' ||
-    role === 'ADMIN' ||
-    role === 'FINANCE' ||
-    role === 'SUPPORT';
+    role === 'PLATFORM_OWNER' || role === 'ADMIN' || role === 'FINANCE' || role === 'SUPPORT';
   return isPlatformRole && hasStore === false;
 }
 
-export function shouldApplyLearningNavGating(
-  userRole: Role,
-  hasStore?: boolean
-): boolean {
+export function shouldApplyLearningNavGating(userRole: Role, hasStore?: boolean): boolean {
   if (!ACADEMY_CAPABILITY_ROLES.includes(userRole)) return false;
   if (isPlatformMode(userRole, hasStore)) return false;
   if (userRole === 'TEACHER' || userRole === 'MANAGER') return true;
@@ -80,7 +72,7 @@ function passesRoleFilters(
   item: NavItem,
   userRole: Role,
   hasStore?: boolean,
-  platformMode?: boolean
+  platformMode?: boolean,
 ): boolean {
   if (item.paymentGated && !paymentEnabled) return false;
   if (item.roles && item.roles.length > 0) {
@@ -91,20 +83,12 @@ function passesRoleFilters(
     if (hasStore === true) return false;
   }
   if (item.financeOnly) {
-    if (
-      userRole !== 'PLATFORM_OWNER' &&
-      userRole !== 'ADMIN' &&
-      userRole !== 'FINANCE'
-    ) {
+    if (userRole !== 'PLATFORM_OWNER' && userRole !== 'ADMIN' && userRole !== 'FINANCE') {
       return false;
     }
   }
   if (item.supportOnly) {
-    if (
-      userRole !== 'PLATFORM_OWNER' &&
-      userRole !== 'ADMIN' &&
-      userRole !== 'SUPPORT'
-    ) {
+    if (userRole !== 'PLATFORM_OWNER' && userRole !== 'ADMIN' && userRole !== 'SUPPORT') {
       return false;
     }
   }
@@ -117,7 +101,7 @@ function passesLearningCapability(
   item: NavItem,
   userRole: Role,
   hasStore: boolean | undefined,
-  learningVisibility: LearningNavVisibility | null | undefined
+  learningVisibility: LearningNavVisibility | null | undefined,
 ): boolean {
   if (!item.requiresLearningCapability) return true;
   if (!shouldApplyLearningNavGating(userRole, hasStore)) return true;
@@ -128,7 +112,7 @@ function passesLearningCapability(
 function filterItem(
   item: NavItem,
   options: FilterNavOptions,
-  platformMode: boolean
+  platformMode: boolean,
 ): NavItem | null {
   const { role, hasStore, learningVisibility } = options;
   if (!role) {
@@ -159,10 +143,7 @@ function filterItem(
  * Filter sidebar items by role, platform/academy mode, payment gate,
  * and learning capabilities from course selling types.
  */
-export function filterNavItems(
-  items: NavItem[],
-  options: FilterNavOptions
-): NavItem[] {
+export function filterNavItems(items: NavItem[], options: FilterNavOptions): NavItem[] {
   const { role, hasStore } = options;
   if (!role) {
     return items.filter((item) => !item.roles || item.roles.length === 0);
@@ -185,7 +166,7 @@ export function filterNavItems(
 export function filterNavItemsByRole(
   items: NavItem[],
   userRole: Role | null,
-  hasStore?: boolean
+  hasStore?: boolean,
 ): NavItem[] {
   return filterNavItems(items, { role: userRole, hasStore });
 }

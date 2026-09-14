@@ -6,12 +6,9 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent
+  DragEndEvent,
 } from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy
-} from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { ChevronsDownUp, ChevronsUpDown, Clock, Plus } from 'lucide-react';
 import { useMemo, useState, useCallback } from 'react';
@@ -30,21 +27,14 @@ interface SeasonsSectionProps {
   onAddSeason: () => void;
   onRemoveSeason: (key: string) => void;
   onClearSeason: (key: string) => void;
-  onUpdateSeason: (
-    key: string,
-    patch: Partial<Pick<SeasonDraft, 'title'>>
-  ) => void;
+  onUpdateSeason: (key: string, patch: Partial<Pick<SeasonDraft, 'title'>>) => void;
   onReorderSeasons: (from: number, to: number) => void;
   onAddLesson: (seasonClientKey: string, title: string) => void;
   onRemoveLesson: (lessonKey: string) => void;
   onClearLesson: (lessonKey: string) => void;
   onUpdateLesson: (lessonKey: string, patch: Partial<LessonDraft>) => void;
   onAssignLesson: (lessonKey: string, seasonClientKey: string) => void;
-  onReorderLessons: (
-    sectionKey: string | undefined,
-    from: number,
-    to: number
-  ) => void;
+  onReorderLessons: (sectionKey: string | undefined, from: number, to: number) => void;
 }
 
 export function SeasonsSection({
@@ -60,7 +50,7 @@ export function SeasonsSection({
   onClearLesson,
   onUpdateLesson,
   onAssignLesson,
-  onReorderLessons
+  onReorderLessons,
 }: SeasonsSectionProps) {
   const { t, language } = useTranslation();
   const seasonSensors = useSensors(useSensor(PointerSensor));
@@ -71,7 +61,7 @@ export function SeasonsSection({
 
   const isOpen = useCallback(
     (key: string) => openMap[key] !== false, // default open
-    [openMap]
+    [openMap],
   );
 
   function toggle(key: string) {
@@ -89,8 +79,7 @@ export function SeasonsSection({
   // Blocking here stops a wall of empty seasons that can never be published.
   const lastSeason = seasons[seasons.length - 1];
   const lastSeasonIsEmpty =
-    lastSeason !== undefined &&
-    !lessons.some((l) => l.seasonClientKey === lastSeason.clientKey);
+    lastSeason !== undefined && !lessons.some((l) => l.seasonClientKey === lastSeason.clientKey);
 
   function handleSeasonDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -108,12 +97,10 @@ export function SeasonsSection({
           <p
             className={cn(
               'mt-0.5 text-xs',
-              lastSeasonIsEmpty ? 'text-amber-600' : 'text-muted-foreground'
+              lastSeasonIsEmpty ? 'text-amber-600' : 'text-muted-foreground',
             )}
           >
-            {lastSeasonIsEmpty
-              ? t('courses.addSeasonBlocked')
-              : t('courses.seasonsHint')}
+            {lastSeasonIsEmpty ? t('courses.addSeasonBlocked') : t('courses.seasonsHint')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -153,9 +140,7 @@ export function SeasonsSection({
             variant="outline"
             size="sm"
             disabled={lastSeasonIsEmpty}
-            title={
-              lastSeasonIsEmpty ? t('courses.addSeasonBlocked') : undefined
-            }
+            title={lastSeasonIsEmpty ? t('courses.addSeasonBlocked') : undefined}
             onClick={onAddSeason}
           >
             <Plus className="me-1.5 h-4 w-4" />
@@ -182,7 +167,7 @@ export function SeasonsSection({
               <div className="space-y-3">
                 {seasons.map((season, si) => {
                   const seasonLessons = lessons.filter(
-                    (l) => l.seasonClientKey === season.clientKey
+                    (l) => l.seasonClientKey === season.clientKey,
                   );
                   return (
                     <SortableSeasonAccordion
@@ -194,21 +179,15 @@ export function SeasonsSection({
                       allSeasons={seasons}
                       open={isOpen(season.clientKey)}
                       onToggle={() => toggle(season.clientKey)}
-                      onUpdate={(patch) =>
-                        onUpdateSeason(season.clientKey, patch)
-                      }
+                      onUpdate={(patch) => onUpdateSeason(season.clientKey, patch)}
                       onRemove={() => onRemoveSeason(season.clientKey)}
                       onClear={() => onClearSeason(season.clientKey)}
-                      onAddLesson={(title) =>
-                        onAddLesson(season.clientKey, title)
-                      }
+                      onAddLesson={(title) => onAddLesson(season.clientKey, title)}
                       onRemoveLesson={onRemoveLesson}
                       onClearLesson={onClearLesson}
                       onUpdateLesson={onUpdateLesson}
                       onAssignLesson={onAssignLesson}
-                      onReorderLessons={(from, to) =>
-                        onReorderLessons(season.clientKey, from, to)
-                      }
+                      onReorderLessons={(from, to) => onReorderLessons(season.clientKey, from, to)}
                     />
                   );
                 })}

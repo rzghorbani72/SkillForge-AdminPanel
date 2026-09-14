@@ -19,18 +19,13 @@ export const EMPTY_ADD_USER_FORM: AddUserForm = {
   email: '',
   password: '',
   confirmPassword: '',
-  role: ''
+  role: '',
 };
 
 /** A number worth asking the server about — see README for why phone comes first. */
 export const COMPLETE_PHONE = /^\+\d{11,15}$/;
 
 /** Rank 1 and below is a learner, not staff — see SYSTEM_ROLE_DEFINITIONS. */
-export function isStudentRankRole(
-  roles: readonly AssignableRole[],
-  roleName: string
-): boolean {
-  return (
-    (roles.find((role) => role.name === roleName)?.hierarchy_level ?? 99) <= 1
-  );
+export function isStudentRankRole(roles: readonly AssignableRole[], roleName: string): boolean {
+  return (roles.find((role) => role.name === roleName)?.hierarchy_level ?? 99) <= 1;
 }

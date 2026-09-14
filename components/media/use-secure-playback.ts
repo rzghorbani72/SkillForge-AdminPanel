@@ -29,7 +29,7 @@ type Status = 'idle' | 'loading' | 'ready' | 'error';
 
 export function useSecurePlayback(
   videoId: string | null | undefined,
-  videoRef: React.RefObject<HTMLVideoElement | null>
+  videoRef: React.RefObject<HTMLVideoElement | null>,
 ) {
   const [session, setSession] = useState<PlaybackSession | null>(null);
   const [status, setStatus] = useState<Status>('idle');
@@ -45,14 +45,13 @@ export function useSecurePlayback(
 
     (async () => {
       try {
-        const next = await call<PlaybackSession>(
-          `/videos/hls/session/${videoId}`,
-          { method: 'POST' }
-        );
+        const next = await call<PlaybackSession>(`/videos/hls/session/${videoId}`, {
+          method: 'POST',
+        });
         if (cancelled) return;
         const playable = {
           ...next,
-          playlistUrl: toPlayableMediaUrl(next.playlistUrl)
+          playlistUrl: toPlayableMediaUrl(next.playlistUrl),
         };
         setSession(playable);
         await attach(playable);
@@ -61,7 +60,7 @@ export function useSecurePlayback(
         setStatus('error');
         logger.error('Media', 'PlaybackSessionFailed', {
           video_id: videoId,
-          error_name: error instanceof Error ? error.name : 'unknown'
+          error_name: error instanceof Error ? error.name : 'unknown',
         });
       }
     })();
@@ -102,7 +101,7 @@ export function useSecurePlayback(
         fragLoadingTimeOut: 120_000,
         manifestLoadingMaxRetry: 4,
         levelLoadingMaxRetry: 4,
-        fragLoadingMaxRetry: 6
+        fragLoadingMaxRetry: 6,
       });
       hls.loadSource(next.playlistUrl);
       hls.attachMedia(element);
@@ -128,7 +127,7 @@ export function useSecurePlayback(
         logger.error('Media', 'PlayerError', {
           video_id: videoId ?? 'unknown',
           error_type: data.type,
-          error_details: data.details
+          error_details: data.details,
         });
       });
 

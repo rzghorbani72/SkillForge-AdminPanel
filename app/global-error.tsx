@@ -6,7 +6,7 @@ import { tNow } from '@/lib/i18n/t-now';
 
 export default function GlobalError({
   error,
-  reset
+  reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
@@ -19,12 +19,8 @@ export default function GlobalError({
     <html lang="fa" dir="rtl">
       <body className="flex min-h-screen items-center justify-center bg-background p-6 text-foreground">
         <div className="flex flex-col items-center gap-4 text-center">
-          <h1 className="text-xl font-semibold">
-            {tNow('common.somethingWentWrong')}
-          </h1>
-          <p className="text-muted-foreground">
-            {tNow('common.errorLoadingPage')}
-          </p>
+          <h1 className="text-xl font-semibold">{tNow('common.somethingWentWrong')}</h1>
+          <p className="text-muted-foreground">{tNow('common.errorLoadingPage')}</p>
           <button
             type="button"
             onClick={reset}

@@ -24,12 +24,8 @@ export type Affiliate = {
 export const addAffiliateSchema = z.object({
   affiliate_name: z.string().min(2, 'validation.nameRequired'),
   phone: z.string().min(7, 'validation.phoneRequired'),
-  password: z
-    .string()
-    .min(6, 'validation.passwordMin6')
-    .optional()
-    .or(z.literal('')),
-  commission_pct: z.coerce.number().min(1).max(100)
+  password: z.string().min(6, 'validation.passwordMin6').optional().or(z.literal('')),
+  commission_pct: z.coerce.number().min(1).max(100),
 });
 
 export type AddAffiliateForm = z.infer<typeof addAffiliateSchema>;

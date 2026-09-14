@@ -9,7 +9,7 @@ import {
   Lock,
   ShoppingCart,
   TrendingUp,
-  Wallet
+  Wallet,
 } from 'lucide-react';
 import {
   Area,
@@ -18,21 +18,15 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
 } from 'recharts';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatNumber } from '@/components/course/courseUtils';
@@ -44,7 +38,7 @@ import {
   buildRevenueSeries,
   paymentsInLastDays,
   sumAmount,
-  type RangeOption
+  type RangeOption,
 } from './revenue';
 import type { CoursePayment } from './types';
 
@@ -60,22 +54,18 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
 
   const periodPayments = useMemo(
     () => paymentsInLastDays(payments, range.days),
-    [payments, range.days]
+    [payments, range.days],
   );
   const grossAllTime = useMemo(() => sumAmount(payments), [payments]);
-  const grossPeriod = useMemo(
-    () => sumAmount(periodPayments),
-    [periodPayments]
-  );
+  const grossPeriod = useMemo(() => sumAmount(periodPayments), [periodPayments]);
   const series = useMemo(
     () => buildRevenueSeries(periodPayments, range.days, locale),
-    [periodPayments, range.days, locale]
+    [periodPayments, range.days, locale],
   );
 
   const rangeLabel = t(range.labelKey);
   const toman = t('common.toman');
-  const avgSale =
-    payments.length > 0 ? Math.round(grossAllTime / payments.length) : null;
+  const avgSale = payments.length > 0 ? Math.round(grossAllTime / payments.length) : null;
 
   return (
     <Card>
@@ -103,9 +93,7 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
               <DropdownMenuItem
                 key={option.days}
                 onClick={() => setRange(option)}
-                className={cn(
-                  range.days === option.days && 'font-semibold text-primary'
-                )}
+                className={cn(range.days === option.days && 'font-semibold text-primary')}
               >
                 {t(option.labelKey)}
               </DropdownMenuItem>
@@ -128,7 +116,7 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
             label={t('courseDetail.revenuePeriod', { period: rangeLabel })}
             value={loading ? null : `${formatNumber(grossPeriod)} ${toman}`}
             sub={t('courseDetail.sales', {
-              count: formatNumber(periodPayments.length)
+              count: formatNumber(periodPayments.length),
             })}
             color="blue"
           />
@@ -142,13 +130,7 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
           <StatTile
             icon={<BarChart3 className="h-4 w-4" />}
             label={t('courseDetail.avgSalePrice')}
-            value={
-              loading
-                ? null
-                : avgSale
-                  ? `${formatNumber(avgSale)} ${toman}`
-                  : '—'
-            }
+            value={loading ? null : avgSale ? `${formatNumber(avgSale)} ${toman}` : '—'}
             sub={t('courseDetail.perPayment')}
             color="amber"
           />
@@ -163,29 +145,14 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart
-              data={series}
-              margin={{ top: 4, right: 4, bottom: 0, left: 4 }}
-            >
+            <AreaChart data={series} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
               <defs>
                 <linearGradient id="courseRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="hsl(var(--primary))"
-                    stopOpacity={0.25}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="hsl(var(--primary))"
-                    stopOpacity={0}
-                  />
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                className="stroke-border"
-                vertical={false}
-              />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
               <XAxis
                 dataKey="label"
                 tick={{ fontSize: 10 }}
@@ -201,20 +168,20 @@ export function CourseMoneyBand({ payments, loading }: CourseMoneyBandProps) {
                 tickFormatter={(value: number) =>
                   value.toLocaleString(locale, {
                     notation: 'compact',
-                    maximumFractionDigits: 1
+                    maximumFractionDigits: 1,
                   })
                 }
               />
               <Tooltip
                 formatter={(value: number) => [
                   `${formatNumber(value)} ${toman}`,
-                  t('dashboard.revenue')
+                  t('dashboard.revenue'),
                 ]}
                 contentStyle={{
                   borderRadius: 8,
                   border: '1px solid hsl(var(--border))',
                   background: 'hsl(var(--popover))',
-                  color: 'hsl(var(--popover-foreground))'
+                  color: 'hsl(var(--popover-foreground))',
                 }}
               />
               <Area

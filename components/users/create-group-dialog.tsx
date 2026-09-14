@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,11 +25,7 @@ type CreateGroupDialogProps = {
   onCreated: () => void;
 };
 
-export function CreateGroupDialog({
-  open,
-  onOpenChange,
-  onCreated
-}: CreateGroupDialogProps) {
+export function CreateGroupDialog({ open, onOpenChange, onCreated }: CreateGroupDialogProps) {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -65,7 +61,7 @@ export function CreateGroupDialog({
     try {
       const created = await studentGroupsApi.create({
         name: trimmedName,
-        description: description.trim() || undefined
+        description: description.trim() || undefined,
       });
 
       // Members are a second call by design: the group must exist before it can
@@ -90,9 +86,7 @@ export function CreateGroupDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>{t('users.newGroup')}</DialogTitle>
-          <DialogDescription>
-            {t('users.newGroupDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('users.newGroupDescription')}</DialogDescription>
         </DialogHeader>
 
         <form className="space-y-4" onSubmit={handleSubmit}>

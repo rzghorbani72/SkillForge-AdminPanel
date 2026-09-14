@@ -26,7 +26,7 @@ export function useCourseOffers(courseId: string | undefined) {
   const { data, isLoading } = useApiQuery<Offer[]>({
     queryKey,
     queryFn: (signal) => apiClient.getCourseOffers(courseId ?? '', { signal }),
-    enabled: Boolean(courseId)
+    enabled: Boolean(courseId),
   });
 
   const refresh = useCallback(
@@ -34,7 +34,7 @@ export function useCourseOffers(courseId: string | undefined) {
       await queryClient.invalidateQueries({ queryKey });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queryClient, academyId, courseId]
+    [queryClient, academyId, courseId],
   );
 
   const runMutation = useCallback(
@@ -49,7 +49,7 @@ export function useCourseOffers(courseId: string | undefined) {
         setIsSaving(false);
       }
     },
-    [refresh]
+    [refresh],
   );
 
   const create = useCallback(
@@ -57,35 +57,29 @@ export function useCourseOffers(courseId: string | undefined) {
       if (!courseId) return;
       await runMutation(
         () => apiClient.createOffer({ ...input, course_ids: [courseId] }),
-        'toasts.offerAddFailed'
+        'toasts.offerAddFailed',
       );
     },
-    [courseId, runMutation]
+    [courseId, runMutation],
   );
 
   const update = useCallback(
     async (id: string, patch: Partial<OfferInput>) => {
-      await runMutation(
-        () => apiClient.updateOffer(id, patch),
-        'toasts.offerUpdateFailed'
-      );
+      await runMutation(() => apiClient.updateOffer(id, patch), 'toasts.offerUpdateFailed');
     },
-    [runMutation]
+    [runMutation],
   );
 
   const toggleActive = useCallback(
     async (offer: Offer) => update(offer.id, { is_active: !offer.is_active }),
-    [update]
+    [update],
   );
 
   const remove = useCallback(
     async (id: string) => {
-      await runMutation(
-        () => apiClient.deleteOffer(id),
-        'toasts.offerDeleteFailed'
-      );
+      await runMutation(() => apiClient.deleteOffer(id), 'toasts.offerDeleteFailed');
     },
-    [runMutation]
+    [runMutation],
   );
 
   return {
@@ -96,6 +90,6 @@ export function useCourseOffers(courseId: string | undefined) {
     create,
     update,
     toggleActive,
-    remove
+    remove,
   };
 }

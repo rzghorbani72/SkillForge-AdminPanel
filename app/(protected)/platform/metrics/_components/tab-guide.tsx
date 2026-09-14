@@ -11,7 +11,7 @@ export const METRICS_TABS = [
   'users',
   'catalog',
   'economics',
-  'reconciliation'
+  'reconciliation',
 ] as const;
 
 export type MetricsTab = (typeof METRICS_TABS)[number];
@@ -41,28 +41,19 @@ export const METRIC_TERM_KEYS: Readonly<Record<string, string>> = {
   quick_ratio: 'quickRatio',
   logo_retention: 'logoRetention',
   monthly_logo_churn: 'churn',
-  learning_records: 'learningRecord'
+  learning_records: 'learningRecord',
 };
 
 const TAB_TERMS: Record<MetricsTab, readonly string[]> = {
   overview: ['mrr', 'arr', 'arpa', 'nrr', 'gmv'],
-  revenue: [
-    'mrr',
-    'arr',
-    'arpa',
-    'nrr',
-    'grr',
-    'expansion',
-    'contraction',
-    'churn'
-  ],
+  revenue: ['mrr', 'arr', 'arpa', 'nrr', 'grr', 'expansion', 'contraction', 'churn'],
   cohorts: ['cohort', 'nrr', 'grr', 'logoRetention'],
   subscriptions: ['ttv', 'arpa'],
   transactions: ['gmv'],
   users: ['dau', 'wau', 'mau', 'stickiness'],
   catalog: ['learningRecord'],
   economics: ['cac', 'ltv', 'ltvCac', 'ruleOf40', 'quickRatio'],
-  reconciliation: ['orphan']
+  reconciliation: ['orphan'],
 };
 
 interface Props {
@@ -91,9 +82,7 @@ export function TabGuide({ tab }: Props) {
             return (
               <li key={term} className="text-xs leading-relaxed">
                 <span className="font-semibold text-foreground">{abbr}</span>
-                {showFull ? (
-                  <span className="text-foreground">{` (${full})`}</span>
-                ) : null}
+                {showFull ? <span className="text-foreground">{` (${full})`}</span> : null}
                 <span className="text-muted-foreground">
                   {' — '}
                   {t(`platformMetrics.terms.${term}.hint`)}

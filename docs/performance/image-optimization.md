@@ -45,14 +45,14 @@ Consequences worth knowing:
 
 ## The pieces
 
-| File | Role |
-| --- | --- |
-| `edusphere/components/ui/app-image.tsx` | The component every image goes through. |
-| `edusphere/lib/images/image-presets.ts` | The size/quality/priority table. |
-| `edusphere/lib/images/image-loader.ts` | Rewrites `src` to `?w=&q=`. Wired in via `images.loaderFile`. |
-| `edusphere/lib/images/sized-image-url.ts` | Escape hatch for CSS backgrounds and the few `<img>` tags that must stay. |
-| `Backend/src/common/utils/image-variant.util.ts` | The width ladder, the variant key, the sharp render. |
-| `Backend/src/images/images.service.ts` | `fetchImageById` — variant cache, conditional GET, cache headers. |
+| File                                             | Role                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------- |
+| `edusphere/components/ui/app-image.tsx`          | The component every image goes through.                                   |
+| `edusphere/lib/images/image-presets.ts`          | The size/quality/priority table.                                          |
+| `edusphere/lib/images/image-loader.ts`           | Rewrites `src` to `?w=&q=`. Wired in via `images.loaderFile`.             |
+| `edusphere/lib/images/sized-image-url.ts`        | Escape hatch for CSS backgrounds and the few `<img>` tags that must stay. |
+| `Backend/src/common/utils/image-variant.util.ts` | The width ladder, the variant key, the sharp render.                      |
+| `Backend/src/images/images.service.ts`           | `fetchImageById` — variant cache, conditional GET, cache headers.         |
 
 ## Using it
 
@@ -97,17 +97,17 @@ downloads the right number of pixels.
 of** `IMAGE_VARIANT_WIDTHS` in
 `Backend/src/common/utils/image-variant.util.ts`.
 
-A width outside the ladder is snapped *up* by the backend, so nothing errors —
+A width outside the ladder is snapped _up_ by the backend, so nothing errors —
 the page just silently downloads more pixels than it asked for. There is no test
 that can catch this across two repos; it is a review check.
 
 ## Cache headers
 
-| Request | `Cache-Control` |
-| --- | --- |
+| Request                        | `Cache-Control`                                                                                                               |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
 | Public image, `?w=` derivative | `public, max-age=31536000, immutable` — the URL is content-addressed by id + width + quality, so those bytes can never change |
-| Public image, original | `public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400` |
-| Lesson-gated image | `private, no-store` |
+| Public image, original         | `public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400`                                                        |
+| Lesson-gated image             | `private, no-store`                                                                                                           |
 
 `fetchImageById` also answers `If-None-Match` with a `304` **before** touching
 object storage, so a repeat view costs one database read and no bytes. The old

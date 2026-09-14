@@ -121,7 +121,6 @@ input placeholders next to whatever is live.
 
 > Iran v1: published monthly prices are fixed in the catalog (`price_monthly_toman`). Quarterly is **3× monthly × 0.95**, then **floored to 500,000 Toman**, so every tier shows a **5% discount**. Sell as **pay once / fewer renewals**. Yearly prepaid is not offered. Already-paid periods are never repriced.
 
-
 > The student cap counts **distinct active private-tutoring students**, not public
 > learners — see the seat rule below.
 
@@ -151,7 +150,7 @@ affects future renewals/purchases, never an already-paid period. Toman figures r
   `ends_at` (semester end) the student is graduated: they immediately lose tutor content access
   (`LessonAccessService`) **and** stop consuming a seat (`countTutoringStudents` filters on
   `ends_at > now`), even before the `tutoring-lifecycle` tick flips the status to `COMPLETED`. The
-  cap therefore prices the *live* teaching relationship, never a historical roster.
+  cap therefore prices the _live_ teaching relationship, never a historical roster.
 - **Egress is the number that decides the model.** Bandwidth is ~3x storage cost at these usage
   levels and every tier breaks above roughly 500 T/GB. Measure it before scaling.
 - Upgrade triggers are the **plan limits enforced in code** (teachers, courses, storage GB), not a revenue share.

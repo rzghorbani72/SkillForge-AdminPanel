@@ -52,12 +52,12 @@ export const ar = {
     uptimeNote:
       'تعرض هذه الصفحة مؤشرات الصحة، لا نسبة التشغيل: الخادم المتوقف لا يمكنه الإبلاغ عن نفسه.',
     loadFailed: 'تعذر تحميل صحة الأكاديمية',
-    retry: 'إعادة المحاولة'
+    retry: 'إعادة المحاولة',
   },
   meta: {
     title: 'لوحة تحكم منتوما',
     titleTemplate: '%s | لوحة منتوما',
-    description: 'لوحة إدارة منتوما — إدارة الأكاديميات والدورات والطلاب'
+    description: 'لوحة إدارة منتوما — إدارة الأكاديميات والدورات والطلاب',
   },
   pageTitles: {
     home: 'الرئيسية',
@@ -92,11 +92,11 @@ export const ar = {
     websitePages: 'صفحات الموقع',
     websiteSeo: 'تحسين محركات البحث',
     websiteDomain: 'نطاق الموقع',
-    websiteTrust: 'شارات الثقة'
+    websiteTrust: 'شارات الثقة',
   },
   panelFooter: {
     poweredBy: 'مدعوم بواسطة',
-    brand: 'منتوما'
+    brand: 'منتوما',
   },
   validation: {
     required: 'هذا الحقل مطلوب',
@@ -130,13 +130,12 @@ export const ar = {
     originalPriceWholeNumber: 'يجب أن يكون السعر الأصلي رقمًا صحيحًا',
     nameRequired: 'الاسم مطلوب',
     phoneRequired: 'رقم الهاتف مطلوب',
-    passwordMin6: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل'
+    passwordMin6: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
   },
   blog: {
     academyTitle: 'المدونة',
     platformTitle: 'مدونة المنصة',
-    description:
-      'اكتب مقالات لموقعك العام. المسودة تبقى مرئية هنا فقط حتى يتم نشرها.',
+    description: 'اكتب مقالات لموقعك العام. المسودة تبقى مرئية هنا فقط حتى يتم نشرها.',
     newArticle: 'مقال جديد',
     editArticle: 'تعديل المقال',
     saved: 'تم حفظ المقال',
@@ -147,14 +146,14 @@ export const ar = {
       DRAFT: 'مسودة',
       IN_REVIEW: 'قيد المراجعة',
       PUBLISHED: 'منشور',
-      ARCHIVED: 'مؤرشف'
+      ARCHIVED: 'مؤرشف',
     },
     actions: {
       submit: 'إرسال للمراجعة',
       approve: 'نشر',
       reject: 'إعادة للكاتب',
       archive: 'إلغاء النشر',
-      uploadCover: 'رفع صورة الغلاف'
+      uploadCover: 'رفع صورة الغلاف',
     },
     fields: {
       title: 'العنوان',
@@ -168,17 +167,16 @@ export const ar = {
       content: 'المقال',
       contentPlaceholder: 'اكتب مقالك هنا...',
       metaTitle: 'عنوان البحث',
-      metaDescription: 'وصف البحث'
+      metaDescription: 'وصف البحث',
     },
     seo: {
       title: 'البحث والمشاركة',
-      description:
-        'ما تعرضه جوجل والشبكات الاجتماعية. اتركه فارغًا لاستخدام العنوان والملخص.'
+      description: 'ما تعرضه جوجل والشبكات الاجتماعية. اتركه فارغًا لاستخدام العنوان والملخص.',
     },
     empty: {
       title: 'لا توجد مقالات بعد',
-      description: 'اكتب مقالك الأول لتبدأ مدونتك.'
-    }
+      description: 'اكتب مقالك الأول لتبدأ مدونتك.',
+    },
   },
   editor: {
     quote: 'اقتباس',
@@ -200,7 +198,7 @@ export const ar = {
     link: 'رابط',
     linkPrompt: 'أدخل عنوان الرابط',
     formattingHint: 'يُطبَّق التنسيق أثناء الكتابة، واتجاه كل سطر تلقائي.',
-    charactersRemaining: 'بقي {{count}} حرف'
+    charactersRemaining: 'بقي {{count}} حرف',
   },
   toasts: {
     imageNoneSelected: 'لم يتم اختيار صورة',
@@ -216,16 +214,14 @@ export const ar = {
     videoUnreadable: 'تعذّرت قراءة ملف الفيديو. جرّب ملفًا آخر.',
     videoInvalidFormat: 'يرجى اختيار ملف فيديو بصيغة MP4',
     videoTooLarge: 'حجم الفيديو ({{size}}) أكبر من 700 ميغابايت. اضغطه أولًا.',
-    videoTooLong:
-      'مدة الفيديو ({{duration}}) أطول من 30 دقيقة. قسّمه إلى أجزاء أقصر.',
+    videoTooLong: 'مدة الفيديو ({{duration}}) أطول من 30 دقيقة. قسّمه إلى أجزاء أقصر.',
     videoSelected: 'تم اختيار الفيديو: {{size}}',
     posterInvalidFormat: 'يرجى اختيار صورة PNG أو JPG أو JPEG أو WebP',
     fileSelected: 'تم الاختيار: {{name}}',
     singleFileOnly: 'يمكنك رفع ملف واحد فقط في كل مرة',
     maxFiles: 'يمكنك رفع {{count}} ملفات كحد أقصى',
     fileRejected: 'تم رفض الملف {{name}}',
-    fileTooLarge:
-      'حجم هذا الملف أكبر من الحد المسموح ({{size}}). يرجى اختيار ملف أصغر.',
+    fileTooLarge: 'حجم هذا الملف أكبر من الحد المسموح ({{size}}). يرجى اختيار ملف أصغر.',
     audioChooseFile: 'يرجى اختيار ملف صوتي',
     audioChooseFirst: 'اختر ملفًا صوتيًا أولًا',
     audioBadResponse: 'تم رفع الملف الصوتي لكن الخادم لم يُرجع معرفًا',
@@ -271,7 +267,7 @@ export const ar = {
     gatewayUpdated: 'تم تحديث {{name}}',
     gatewayLoadFailed: 'تعذّر تحميل بوابات الدفع',
     gatewayUpdateFailed: 'تعذّر تحديث بوابة الدفع',
-    withdrawalMarked: 'تم تعليم الطلب بحالة {{status}}'
+    withdrawalMarked: 'تم تعليم الطلب بحالة {{status}}',
   },
   selectSchool: {
     title: 'اختر أكاديميتك',
@@ -294,7 +290,7 @@ export const ar = {
     needHelp: 'تحتاج مساعدة؟',
     needHelpText:
       'إذا لم تجد أكاديميتك أو كنت بحاجة للتسجيل في واحدة جديدة، يرجى الاتصال بمسؤول أكاديميتك أو',
-    contactSupport: 'اتصل بالدعم'
+    contactSupport: 'اتصل بالدعم',
   },
   billing: {
     title: 'كل الاشتراكات',
@@ -308,15 +304,15 @@ export const ar = {
     storageColumn: 'المساحة',
     managePlan: 'إدارة الخطة',
     emptyTitle: 'لا توجد أكاديميات بعد',
-    emptyDesc: 'أنشئ أكاديميتك الأولى لبدء اشتراك'
+    emptyDesc: 'أنشئ أكاديميتك الأولى لبدء اشتراك',
   },
   scope: {
     viewingAcademy: 'تعرض الأكاديمية:',
     platformWide: 'هذه الصفحة تشمل جميع أكاديمياتك',
-    noAcademySelected: 'لم يتم اختيار أكاديمية'
+    noAcademySelected: 'لم يتم اختيار أكاديمية',
   },
   academy: {
-    visitSite: 'زيارة الموقع'
+    visitSite: 'زيارة الموقع',
   },
   common: {
     published: 'منشور',
@@ -381,8 +377,7 @@ export const ar = {
     noResults: 'لم يتم العثور على نتائج',
     tryAgain: 'حاول مرة أخرى',
     somethingWentWrong: 'حدث خطأ ما!',
-    errorLoadingPage:
-      'حدث خطأ أثناء تحميل هذه الصفحة. قد يكون السبب مشكلة في الشبكة أو في الخادم.',
+    errorLoadingPage: 'حدث خطأ أثناء تحميل هذه الصفحة. قد يكون السبب مشكلة في الشبكة أو في الخادم.',
     noDescriptionProvided: 'لم يتم تقديم وصف',
     refresh: 'تحديث',
     noStoreSelected: 'لم يتم اختيار أكاديمية',
@@ -405,7 +400,7 @@ export const ar = {
     requested: 'تم الطلب',
     addNotes: 'أضف أي ملاحظات حول قرارك...',
     validPhoneNumberFormat: '✓ رقم هاتف صالح',
-    invalidPhoneNumberFormat: '⚠ تنسيق رقم الهاتف غير صالح'
+    invalidPhoneNumberFormat: '⚠ تنسيق رقم الهاتف غير صالح',
   },
   roles: {
     title: 'الأدوار والصلاحيات',
@@ -439,7 +434,7 @@ export const ar = {
     action: {
       read: 'عرض',
       write: 'تعديل',
-      delete: 'حذف'
+      delete: 'حذف',
     },
     resource: {
       academies: 'الأكاديميات',
@@ -460,12 +455,12 @@ export const ar = {
       notifications: 'الإشعارات',
       legal: 'المستندات القانونية',
       theme: 'السمة',
-      roles: 'الأدوار والصلاحيات'
-    }
+      roles: 'الأدوار والصلاحيات',
+    },
   },
   accessControl: {
     deniedTitle: 'الوصول مرفوض',
-    deniedDescription: 'ليس لديك صلاحية لعرض هذه الصفحة.'
+    deniedDescription: 'ليس لديك صلاحية لعرض هذه الصفحة.',
   },
   navigation: {
     teacherEarnings: 'أرباحي',
@@ -587,14 +582,14 @@ export const ar = {
       templates: 'القوالب',
       configuration: 'الإعدادات',
       governance: 'الحوكمة والقانون',
-      students: 'الطلاب'
-    }
+      students: 'الطلاب',
+    },
   },
   gdpr: {
     message: 'نستخدم ملفات تعريف الارتباط لتشغيل هذه اللوحة وتحسين تجربتك.',
     learnMore: 'معرفة المزيد',
     decline: 'رفض',
-    accept: 'قبول'
+    accept: 'قبول',
   },
   legal: {
     mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.',
@@ -607,35 +602,31 @@ export const ar = {
       'تغيّرت شروطنا قليلاً منذ زيارتك الأخيرة. إليك ملخصاً قصيراً — أكّده للمتابعة.',
     acceptAndContinue: 'أوافق وأتابع',
     accepting: 'جارٍ حفظ الموافقة...',
-    notTranslatedNotice:
-      'لم تتم ترجمة هذا المستند إلى لغتك بعد. يتم عرض النسخة الإنجليزية.',
+    notTranslatedNotice: 'لم تتم ترجمة هذا المستند إلى لغتك بعد. يتم عرض النسخة الإنجليزية.',
     whatChanged: 'ما الذي تغيّر؟',
     changesAdded: 'ما أُضيف',
     changesRemoved: 'ما حُذف',
     onlyMinorChanges: 'تعديلات صياغة بسيطة فقط — لم تتغيّر القواعد نفسها.',
     firstTimeAcceptance: 'هذه أول مرة يجب فيها قبول هذا المستند.',
-    diffUnavailable:
-      'ملخص التغييرات غير متاح حالياً. يرجى قراءة المستند كاملاً.',
+    diffUnavailable: 'ملخص التغييرات غير متاح حالياً. يرجى قراءة المستند كاملاً.',
     viewFullDocument: 'عرض المستند كاملاً',
     declineAndSignOut: 'أرفض وأخرج',
-    decliningAndSigningOut: 'جارٍ تسجيل الخروج...'
+    decliningAndSigningOut: 'جارٍ تسجيل الخروج...',
   },
   onboarding: {
     bannerTitle: 'أنشئ أكاديميتك الأولى',
-    bannerDescription:
-      'تحتاج إلى أكاديمية قبل إضافة المدرّسين وإنشاء الدورات وتسجيل الطلاب.',
+    bannerDescription: 'تحتاج إلى أكاديمية قبل إضافة المدرّسين وإنشاء الدورات وتسجيل الطلاب.',
     bannerAction: 'إنشاء أكاديمية',
     noAcademyTitle: 'لم يتم ربطك بأي أكاديمية بعد',
     noAcademyDescription:
       'تم إنشاء حسابك بواسطة مدير أكاديمية. لن يظهر شيء هنا حتى يضيفك إلى أكاديميته.',
     setupBannerTitle: 'جهّز أكاديميتك',
-    setupBannerDescription:
-      '{done} من 4 خطوات مكتملة — أنهِ هذه الخطوات لتبدأ التعليم.',
+    setupBannerDescription: '{done} من 4 خطوات مكتملة — أنهِ هذه الخطوات لتبدأ التعليم.',
     setupStepWebsite: 'إنشاء أو تعديل موقع الأكاديمية',
     setupStepTemplate: 'اختيار قالب',
     setupStepCourse: 'إضافة دورة',
     setupStepVisit: 'زيارة الموقع',
-    setupDismiss: 'إخفاء قائمة الإعداد'
+    setupDismiss: 'إخفاء قائمة الإعداد',
   },
 
   auth: {
@@ -685,8 +676,7 @@ export const ar = {
     panelForStaff: 'هذه اللوحة مخصصة لـ',
     teachersManagersAdmins: 'المعلمين والمديرين والمسؤولين',
     staffOnly: 'فقط.',
-    studentsLoginThroughStore:
-      'يجب على الطلاب تسجيل الدخول من خلال موقع معهدهم.',
+    studentsLoginThroughStore: 'يجب على الطلاب تسجيل الدخول من خلال موقع معهدهم.',
     dontHaveAccount: 'ليس لديك حساب إداري؟',
     registerStore: 'سجل معهدك',
     areYouStudent: 'هل أنت طالب؟',
@@ -698,8 +688,7 @@ export const ar = {
     phoneRequired: 'رقم الهاتف مطلوب',
     emailRequired: 'البريد الإلكتروني مطلوب',
     passwordTooShort: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
-    passwordAsciiOnly:
-      'كلمة المرور قد تحتوي فقط على أحرف إنجليزية وأرقام ورموز',
+    passwordAsciiOnly: 'كلمة المرور قد تحتوي فقط على أحرف إنجليزية وأرقام ورموز',
     passwordHasSymbol: 'يحتوي على رمز',
     passwordTooWeak: 'يجب أن تحتوي كلمة المرور على حرف إنجليزي ورقم ورمز',
     passwordMinLength: 'ما لا يقل عن 6 أحرف',
@@ -728,8 +717,7 @@ export const ar = {
     passwordsDoNotMatch: 'كلمات المرور غير متطابقة',
     storeNameRequired: 'اسم المعهد مطلوب',
     storeSlugRequired: 'معرف المعهد مطلوب',
-    storeSlugInvalid:
-      'يمكن أن يحتوي معرف المعهد فقط على أحرف صغيرة وأرقام وشرطات',
+    storeSlugInvalid: 'يمكن أن يحتوي معرف المعهد فقط على أحرف صغيرة وأرقام وشرطات',
     selectStoreRequired: 'الرجاء اختيار معهد',
     teacherRequestReasonRequired: 'الرجاء شرح سبب رغبتك في أن تكون معلماً',
     registering: 'جاري تسجيل المستخدم...',
@@ -750,8 +738,7 @@ export const ar = {
     sendEmailOtp: 'إرسال رمز التحقق عبر البريد الإلكتروني',
     verifyEmailOtp: 'التحقق من رمز التحقق عبر البريد الإلكتروني',
     verifyPhoneLater: 'يمكنك التحقق من رقم هاتفك لاحقاً في إعدادات الحساب',
-    verifyEmailLater:
-      'يمكنك التحقق من عنوان بريدك الإلكتروني لاحقاً في إعدادات الحساب',
+    verifyEmailLater: 'يمكنك التحقق من عنوان بريدك الإلكتروني لاحقاً في إعدادات الحساب',
     stepVerification: 'التحقق',
     stepBaseData: 'البيانات الأساسية',
     createNewStore: 'إنشاء معهد جديد',
@@ -771,23 +758,20 @@ export const ar = {
     adminOnly: 'هذه اللوحة مخصصة لـ',
     adminsOnly: 'المديرين فقط.',
     signInAsAdmin: 'تسجيل الدخول كمدير',
-    staffRouteOnly:
-      'هذا المسار مخصص لموظفي الإدارة والدعم. يرجى استخدام تسجيل الدخول العادي.',
-    adminUnauthorizedRole:
-      'ليس لديك إذن للوصول إلى لوحة تحكم المدير. مسموح لدور المدير فقط.',
+    staffRouteOnly: 'هذا المسار مخصص لموظفي الإدارة والدعم. يرجى استخدام تسجيل الدخول العادي.',
+    adminUnauthorizedRole: 'ليس لديك إذن للوصول إلى لوحة تحكم المدير. مسموح لدور المدير فقط.',
     bySigningIn: 'بتسجيل الدخول، فإنك توافق على',
     togglePasswordVisibility: 'إظهار/إخفاء كلمة المرور',
     notAdmin: 'لست مديراً؟',
     regularLogin: 'تسجيل الدخول العادي',
-    loginTitle: 'سجّل الدخول إلى حسابك'
+    loginTitle: 'سجّل الدخول إلى حسابك',
   },
   teacherShare: {
-    note: 'في هذه الأكاديمية حصة المعلم {{teacher}} من كل عملية بيع و{{academy}} للأكاديمية؛ يحدد المدير هذه النسبة.'
+    note: 'في هذه الأكاديمية حصة المعلم {{teacher}} من كل عملية بيع و{{academy}} للأكاديمية؛ يحدد المدير هذه النسبة.',
   },
   teacherEarnings: {
     title: 'أرباحي',
-    description:
-      'حصتك من مبيعات الدورات، وما دفعته لك الأكاديمية، وما لا يزال مستحقًا.',
+    description: 'حصتك من مبيعات الدورات، وما دفعته لك الأكاديمية، وما لا يزال مستحقًا.',
     earned: 'إجمالي حصتك',
     paid: 'المدفوع لك',
     owed: 'المتبقي المستحق',
@@ -802,11 +786,10 @@ export const ar = {
     confirmDone: 'تم تأكيد الاستلام',
     rejectDone: 'تم رفض الدفعة وأصبح المبلغ مستحقًا لك مجددًا',
     confirmedAt: 'تم التأكيد في {{date}}',
-    rejectWaitHint:
-      'بسبب دورة التسوية البنكية، يمكن الرفض اعتبارًا من {{date}}',
+    rejectWaitHint: 'بسبب دورة التسوية البنكية، يمكن الرفض اعتبارًا من {{date}}',
     responseNote:
       'التأكيد أو الرفض مجرد محاسبة بينك وبين مدير الأكاديمية ولا علاقة للمنصة به. إذا لم يصل المال، يمكنك الرفض بعد ٧٢ ساعة ليعود المبلغ مستحقًا.',
-    noPayouts: 'لم تُسجَّل أي دفعة بعد'
+    noPayouts: 'لم تُسجَّل أي دفعة بعد',
   },
   dashboard: {
     limits: {
@@ -824,7 +807,7 @@ export const ar = {
       storage_gb: 'التخزين (غيغابايت)',
       monthly_traffic_gb: 'حركة البيانات الشهرية (جيجابايت)',
       dedicated_templates: 'قوالب موقع مخصصة',
-      videos: 'مقاطع الفيديو'
+      videos: 'مقاطع الفيديو',
     },
     cards: {
       courses: 'الدورات المنشأة',
@@ -834,7 +817,7 @@ export const ar = {
       completion: 'معدل إكمال الدورة',
       completionHint: 'نسبة تسجيلات {{period}} التي أكملت الدورة',
       active: 'التسجيلات النشطة',
-      activeHint: 'الطلاب الذين ما زالوا يدرسون في {{period}}'
+      activeHint: 'الطلاب الذين ما زالوا يدرسون في {{period}}',
     },
     teacherPayout: {
       title: 'تسجيل دفعة إلى {{name}}',
@@ -846,7 +829,7 @@ export const ar = {
       bankResponseHint: 'مثلاً رقم المرجع أو نص الإيصال',
       submit: 'تسجيل الدفعة',
       success: 'تم تسجيل الدفعة',
-      failed: 'تعذر تسجيل الدفعة'
+      failed: 'تعذر تسجيل الدفعة',
     },
     money: {
       academyRow: 'إيرادات الأكاديمية',
@@ -856,8 +839,7 @@ export const ar = {
       paidToAcademy: 'المدفوع للأكاديمية',
       paidToAcademyHint: 'كل ما حُوّل حتى الآن إلى الحساب البنكي للأكاديمية',
       teacherRate: 'نسبة حصة المعلم',
-      teacherRateHint:
-        'حصة كل معلم من كل عملية بيع؛ تُغيَّر من إعدادات الأكاديمية',
+      teacherRateHint: 'حصة كل معلم من كل عملية بيع؛ تُغيَّر من إعدادات الأكاديمية',
       teacherShare: 'حصة المعلمين',
       teacherPaid: 'المدفوع للمعلمين',
       teacherPaidHint: 'ما حوّلته للمعلمين وسجّلته في هذه الفترة',
@@ -893,7 +875,7 @@ export const ar = {
       sortNet: 'الصافي',
       sortStudents: 'الطلاب',
       noCourses: 'لا توجد دورة مباعة بعد',
-      noTeachers: 'لا يوجد معلم لديه مبيعات بعد'
+      noTeachers: 'لا يوجد معلم لديه مبيعات بعد',
     },
     title: 'لوحة التحكم',
     welcome: 'مرحباً بك في لوحة التحكم',
@@ -941,8 +923,7 @@ export const ar = {
     unknownUser: 'مستخدم غير معروف',
     unknownCourse: 'دورة غير معروفة',
     noRecentEnrollments: 'لا توجد تسجيلات حديثة',
-    enrollmentsWillAppear:
-      'ستظهر التسجيلات هنا بمجرد انضمام الطلاب إلى دوراتك.',
+    enrollmentsWillAppear: 'ستظهر التسجيلات هنا بمجرد انضمام الطلاب إلى دوراتك.',
     noRecentPayments: 'لا توجد مدفوعات حديثة',
     paymentsWillAppear: 'ستظهر معاملات الدفع هنا بمجرد شراء الطلاب لدوراتك.',
     published: 'منشور',
@@ -968,7 +949,7 @@ export const ar = {
     timeYearsAgoPlural: 'منذ {{count}} سنة',
     platformRevenue: 'إيرادات المنصة',
     allPlatformCourses: 'جميع دورات المنصة',
-    allPlatformStudents: 'جميع طلاب المنصة'
+    allPlatformStudents: 'جميع طلاب المنصة',
   },
   stores: {
     title: 'المعاهد',
@@ -1002,7 +983,7 @@ export const ar = {
     removeAcademyLockedManager: 'هذا المعهد فيه مدفوعات ولا يمكن حذفه.',
     removeAcademyConfirm:
       'سيختفي هذا المعهد من الموقع العام ومن هذه القائمة. سجلات الطلاب والمدفوعات تبقى محفوظة.',
-    landingScreenshots: 'لقطات الصفحة الرئيسية'
+    landingScreenshots: 'لقطات الصفحة الرئيسية',
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.
@@ -1031,8 +1012,7 @@ export const ar = {
       topicsRequired: 'اكتب محورًا واحدًا على الأقل.',
       topicsSaved: 'تم حفظ المحاور.',
       pricing: 'التسعير',
-      pricingHint:
-        'تُباع الدورة المباشرة بطريقتين: مقعد في صف جماعي، أو المعلم وحده.',
+      pricingHint: 'تُباع الدورة المباشرة بطريقتين: مقعد في صف جماعي، أو المعلم وحده.',
       groupPrice: 'سعر المقعد في الصف',
       groupPriceHint: 'ما يدفعه الطالب للانضمام إلى الصف الجماعي.',
       soloPrice: 'سعر الصف الخاص',
@@ -1045,8 +1025,7 @@ export const ar = {
       solo: 'خاص',
       group: 'جماعي',
       schedule: 'جدول الصف',
-      scheduleHint:
-        'اختر الأيام والأوقات وعدد الجلسات؛ تُنشأ التواريخ تلقائيًا.',
+      scheduleHint: 'اختر الأيام والأوقات وعدد الجلسات؛ تُنشأ التواريخ تلقائيًا.',
       sessionCount: 'عدد الجلسات',
       startDate: 'تاريخ البدء',
       startDateRequired: 'اختر تاريخ البدء.',
@@ -1099,8 +1078,7 @@ export const ar = {
       sessionChat: 'محادثة هذا اللقاء',
       uploadMaterial: 'رفع مادة',
       uploadHelperVideo: 'رفع فيديو مساعد',
-      uploadHelperVideoHint:
-        'فيديو إضافي يشاهده الطالب إلى جانب الحصة المباشرة.',
+      uploadHelperVideoHint: 'فيديو إضافي يشاهده الطالب إلى جانب الحصة المباشرة.',
       uploadMaterialHint: 'شرائح أو أوراق عمل أو ملاحظات تُشارك بعد الحصة.',
       materialAdded: 'أُضيف الملف إلى هذا اللقاء',
       allowRecordingDownload: 'السماح بتنزيل التسجيل',
@@ -1109,7 +1087,7 @@ export const ar = {
       publishNeedsTopic: 'أضف محورًا واحدًا على الأقل قبل النشر.',
       publishNeedsPrice: 'حدّد سعر الصف قبل النشر.',
       publishNeedsClass: 'أنشئ صفًا واحدًا على الأقل قبل النشر.',
-      publishNeedsSchedule: 'حدّد أيام الصف وعدد جلساته.'
+      publishNeedsSchedule: 'حدّد أيام الصف وعدد جلساته.',
     },
     title: 'الدورات',
     backToCourses: 'العودة إلى الدورات',
@@ -1128,8 +1106,7 @@ export const ar = {
     contentManagement: 'إدارة المحتوى',
     courseNotFoundDesc: 'الدورة التي تبحث عنها غير موجودة.',
     backToCourse: 'العودة إلى الدورة',
-    seasonsManagementSubtitle:
-      'الفصول والدروس المسجّلة التي يشاهدها الطالب في «{{title}}»',
+    seasonsManagementSubtitle: 'الفصول والدروس المسجّلة التي يشاهدها الطالب في «{{title}}»',
     totalSeasons: 'إجمالي المواسم',
     totalLessons: 'إجمالي الدروس',
     noSeasonsMatchSearch: 'لا توجد مواسم تطابق معايير بحثك.',
@@ -1198,8 +1175,7 @@ export const ar = {
     viewCourse: 'عرض صفحة الدورة',
     builderDraftHint:
       'هذه الدورة مسودة يراها أنت فقط. أضف الدروس ثم فعّل «منشورة» عندما تكون جاهزة.',
-    builderPublishedHint:
-      'هذه الدورة منشورة ويراها الطلاب. تُطبَّق التغييرات فور الحفظ.',
+    builderPublishedHint: 'هذه الدورة منشورة ويراها الطلاب. تُطبَّق التغييرات فور الحفظ.',
     updatedToast: 'تم تحديث الدورة',
     fixErrorsBeforeSaving: 'يرجى تصحيح الحقول المميزة قبل الحفظ',
     createdDraftToast: 'تم إنشاء الدورة كمسودة — انشرها عندما تكون جاهزة',
@@ -1219,16 +1195,14 @@ export const ar = {
       primaryPriceRange: 'يجب أن يكون السعر الأساسي بين 0 و 999,999,999',
       beforeDiscountWholeNumber: 'يجب أن يكون السعر قبل الخصم رقمًا صحيحًا',
       beforeDiscountRange: 'يجب أن يكون السعر قبل الخصم بين 0 و 999,999,999',
-      beforeDiscountTooLow: 'يجب أن يكون السعر قبل الخصم أعلى من سعر البيع'
+      beforeDiscountTooLow: 'يجب أن يكون السعر قبل الخصم أعلى من سعر البيع',
     },
     enterCourseTitle: 'أدخل عنوان الدورة (5 أحرف على الأقل)',
     titleLength: 'يجب أن يكون العنوان بين 5 و 80 حرفاً',
     enterDescription: 'أدخل وصف الدورة',
     whatYouWillLearn: 'ماذا ستتعلم في هذه الدورة',
-    whatYouWillLearnHint:
-      'اكتب كل مهارة أو نتيجة في سطر مستقل. يراها الطالب في صفحة تعريف الدورة.',
-    whatYouWillLearnPlaceholder:
-      'إجراء محادثات يومية بالإنجليزية\nتقديم عرض قصير في العمل',
+    whatYouWillLearnHint: 'اكتب كل مهارة أو نتيجة في سطر مستقل. يراها الطالب في صفحة تعريف الدورة.',
+    whatYouWillLearnPlaceholder: 'إجراء محادثات يومية بالإنجليزية\nتقديم عرض قصير في العمل',
     descriptionLength: 'يجب أن يكون الوصف أقل من 4000 حرف',
     noCourses: 'لم يتم العثور على دورات',
     createFirstCourse: 'أنشئ دورتك الأولى',
@@ -1257,8 +1231,7 @@ export const ar = {
     enterLessonTitle: 'أدخل عنوان الدرس',
     freePreview: 'معاينة مجانية',
     allowDownload: 'السماح بالتنزيل',
-    allowDownloadHint:
-      'يمكن للطالب حفظ ملف هذا الدرس — يستهلك نحو ضعف المساحة.',
+    allowDownloadHint: 'يمكن للطالب حفظ ملف هذا الدرس — يستهلك نحو ضعف المساحة.',
     optional: 'اختياري',
     lessonVideo: 'فيديو',
     lessonCover: 'صورة الغلاف',
@@ -1268,8 +1241,7 @@ export const ar = {
     secureThisVideo: 'تحويل إلى النسخة الآمنة',
     videoSecuringQueued:
       'تمت إضافة الفيديو إلى قائمة الانتظار للتحويل الآمن. يستغرق ذلك بضع دقائق.',
-    videoSecuringFailed:
-      'فشل التحويل الآمن لهذا الفيديو. يمكنك المحاولة مرة أخرى.',
+    videoSecuringFailed: 'فشل التحويل الآمن لهذا الفيديو. يمكنك المحاولة مرة أخرى.',
     videoSecuringInProgress: 'جارٍ التحويل إلى النسخة الآمنة…',
     cancelUpload: 'إلغاء',
     uploadVideo: 'رفع فيديو',
@@ -1305,8 +1277,7 @@ export const ar = {
     clearSeason: 'إفراغ هذا الفصل',
     confirmClearSeason: 'هذا هو الفصل الوحيد — إفراغه يحذف دروسه ويمسح عنوانه.',
     clearLesson: 'إفراغ هذا الدرس',
-    confirmClearLesson:
-      'هذا هو الدرس الوحيد في الفصل — إفراغه يمسح عنوانه ووسائطه.',
+    confirmClearLesson: 'هذا هو الدرس الوحيد في الفصل — إفراغه يمسح عنوانه ووسائطه.',
     addSeasonBlocked: 'أضف درساً إلى الفصل الأخير قبل إضافة فصل جديد.',
     addLessonBlocked: 'سمِّ الدرس بلا عنوان قبل إضافة درس جديد.',
     seasonNumber: 'الفصل {{n}}',
@@ -1320,7 +1291,7 @@ export const ar = {
     liveScheduleHint: 'يُقدَّم هذا الدرس مباشرة.',
     liveScheduleLink: 'حدد موعد الجلسة',
     lessonSettingsLink: 'الاختبار وموعد البث وقاعدة التنزيل',
-    liveSaveFirst: 'احفظ الدرس أولاً، ثم أعدّ رابط الاجتماع في صفحة التعديل.'
+    liveSaveFirst: 'احفظ الدرس أولاً، ثم أعدّ رابط الاجتماع في صفحة التعديل.',
   },
   students: {
     title: 'الطلاب',
@@ -1333,11 +1304,9 @@ export const ar = {
     noStudents: 'لم يتم العثور على طلاب',
     enrollments: 'التسجيل في الدورة',
     studentEnrollments: 'تسجيل الطلاب في الدورات',
-    enrollmentsDescription:
-      'قائمة طالب × دورة: حالة التسجيل، والفلاتر، وتفاصيل الوصول لكل دورة.',
+    enrollmentsDescription: 'قائمة طالب × دورة: حالة التسجيل، والفلاتر، وتفاصيل الوصول لكل دورة.',
     zeroResults: '0 نتائج',
-    useSearchAndFilters:
-      'استخدم البحث والفلاتر أدناه لتضييق نطاق السجلات المحددة.',
+    useSearchAndFilters: 'استخدم البحث والفلاتر أدناه لتضييق نطاق السجلات المحددة.',
     searchByStudentOrCourse: 'البحث حسب الطالب أو الدورة...',
     filterByStatus: 'تصفية حسب الحالة',
     resultsCount: 'نتائج',
@@ -1356,23 +1325,19 @@ export const ar = {
     totalRecords: 'إجمالي السجلات',
     showingEnrollmentsOnPage: 'عرض {{count}} تسجيل في هذه الصفحة',
     progressBreakdown: 'تفصيل التقدم',
-    progressBreakdownDescription:
-      'اجمع الفلاتر للتركيز على مجموعات ومسارات دورات محددة.',
-    searchByStudentEmailCourse:
-      'البحث حسب الطالب أو البريد الإلكتروني أو الدورة...',
+    progressBreakdownDescription: 'اجمع الفلاتر للتركيز على مجموعات ومسارات دورات محددة.',
+    searchByStudentEmailCourse: 'البحث حسب الطالب أو البريد الإلكتروني أو الدورة...',
     filterByProgress: 'تصفية حسب التقدم',
     allProgressLevels: 'جميع مستويات التقدم',
     onTrack: 'على المسار (50-99٪)',
     lagging: 'متأخر (< 50٪)',
     fetchingProgressData: 'جاري جلب بيانات التقدم...',
     noProgressForFilters: 'لا توجد بيانات تقدم للفلاتر المحددة.',
-    tryAdjustingFilters:
-      'حاول تعديل فلاتر الحالة أو مستوى التقدم لتوسيع النطاق.',
+    tryAdjustingFilters: 'حاول تعديل فلاتر الحالة أو مستوى التقدم لتوسيع النطاق.',
     allUsers: 'جميع المستخدمين',
     manageAllUsers: 'إدارة جميع المستخدمين عبر الأدوار المختلفة',
     addUser: 'إضافة مستخدم',
-    searchUsersByNameEmailPhone:
-      'البحث عن المستخدمين حسب الاسم أو البريد أو الهاتف...',
+    searchUsersByNameEmailPhone: 'البحث عن المستخدمين حسب الاسم أو البريد أو الهاتف...',
     totalUsersCard: 'إجمالي المستخدمين',
     allRegisteredUsers: 'جميع المستخدمين المسجلين',
     managers: 'المديرون',
@@ -1393,15 +1358,13 @@ export const ar = {
     noGeneralUsersFound: 'لم يتم العثور على مستخدمين عامين في النظام',
     lessonAccess: {
       title: 'وصول الطالب للدرس',
-      description:
-        'قفل أو فتح دروس محددة للطلاب الأفراد، بشكل مستقل عن حالة نشر الدورة',
+      description: 'قفل أو فتح دروس محددة للطلاب الأفراد، بشكل مستقل عن حالة نشر الدورة',
       addOverride: 'إضافة استثناء',
       accessOverrides: 'استثناءات الوصول',
       accessOverridesDescription:
         'هذه القواعد تتجاوز الحالة الافتراضية المنشورة/غير المنشورة للدرس لطلاب محددين',
       filterByProfileId: 'تصفية بمعرف الملف الشخصي...',
-      noOverridesYet:
-        'لا توجد استثناءات وصول بعد. جميع الطلاب يتبعون حالة نشر الدرس الافتراضية.',
+      noOverridesYet: 'لا توجد استثناءات وصول بعد. جميع الطلاب يتبعون حالة نشر الدرس الافتراضية.',
       student: 'الطالب',
       lesson: 'الدرس',
       access: 'الوصول',
@@ -1420,12 +1383,11 @@ export const ar = {
       internalNote: 'ملاحظة داخلية (اختيارية)',
       saveOverride: 'حفظ الاستثناء',
       saving: 'جاري الحفظ...',
-      removeConfirm: 'إزالة هذا الاستثناء؟'
+      removeConfirm: 'إزالة هذا الاستثناء؟',
     },
     manualEnroll: {
       title: 'التسجيل اليدوي',
-      description:
-        'تسجيل الطلاب الذين دفعوا خارج المنصة (نقداً أو بتحويل بنكي أو طرق أخرى)',
+      description: 'تسجيل الطلاب الذين دفعوا خارج المنصة (نقداً أو بتحويل بنكي أو طرق أخرى)',
       enrollStudent: 'تسجيل طالب',
       enrollStudentDescription: 'ينشئ تسجيلاً نشطاً ويسجل دفعة يدوية',
       courseId: 'معرف الدورة *',
@@ -1435,8 +1397,7 @@ export const ar = {
       leaveEmptyIfFree: 'اتركه فارغاً إذا كان مجانياً',
       manualPaymentNote: 'هذا ينشئ سجل دفع يدوي/تحويل بنكي لسجلاتك',
       recentEnrollments: 'التسجيلات الأخيرة',
-      recentEnrollmentsDescription:
-        'جميع التسجيلات في أكاديميتك (بما فيها اليدوية)',
+      recentEnrollmentsDescription: 'جميع التسجيلات في أكاديميتك (بما فيها اليدوية)',
       noEnrollmentsFound: 'لم يتم العثور على تسجيلات',
       enrolling: 'جاري التسجيل...',
       enrollStudentBtn: 'تسجيل الطالب',
@@ -1447,8 +1408,8 @@ export const ar = {
       student: 'الطالب',
       course: 'الدورة',
       payment: 'الدفع',
-      enrolled: 'مسجل'
-    }
+      enrolled: 'مسجل',
+    },
   },
   teachers: {
     title: 'المعلمون',
@@ -1458,7 +1419,7 @@ export const ar = {
     courses: 'الدورات',
     status: 'الحالة',
     allTeachers: 'جميع المعلمين',
-    noTeachers: 'لم يتم العثور على معلمين'
+    noTeachers: 'لم يتم العثور على معلمين',
   },
   settings: {
     title: 'الإعدادات',
@@ -1470,7 +1431,7 @@ export const ar = {
       single: 'لديك أكاديمية واحدة فقط — لا حاجة لاختيار أكاديمية افتراضية.',
       pickOne: 'اختر واحدة',
       noDefault: '— بدون افتراضي —',
-      saved: 'تم حفظ الأكاديمية الافتراضية'
+      saved: 'تم حفظ الأكاديمية الافتراضية',
     },
     subscriptionTitle: 'الاشتراك',
     loadingSubscription: 'جارٍ تحميل الاشتراك...',
@@ -1487,8 +1448,7 @@ export const ar = {
     renewSubscription: 'تجديد الاشتراك',
     recentInvoices: 'الفواتير الأخيرة',
     subscriptionRenewedSuccess: 'تم تجديد الاشتراك بنجاح',
-    description:
-      'إدارة ملفك الشخصي وإعدادات المعهد والعلامة التجارية وتفضيلات الأمان.',
+    description: 'إدارة ملفك الشخصي وإعدادات المعهد والعلامة التجارية وتفضيلات الأمان.',
     refreshData: 'تحديث البيانات',
     accountSummary: 'ملخص الحساب',
     accountSummaryDescription: 'معلومات أساسية لحساب المدير الخاص بك.',
@@ -1503,8 +1463,7 @@ export const ar = {
     students: 'الطلاب',
     created: 'تم الإنشاء',
     profileSettings: 'إعدادات الملف الشخصي',
-    profileSettingsDescription:
-      'تحديث تفاصيلك الشخصية والصورة الرمزية ومعلومات الاتصال.',
+    profileSettingsDescription: 'تحديث تفاصيلك الشخصية والصورة الرمزية ومعلومات الاتصال.',
     storeSettings: 'بيانات المعهد',
     storeSettingsDescription: 'إدارة اسم معهدك ووصفه وإعدادات النطاق.',
     themeBranding: 'المظهر والعلامة التجارية',
@@ -1513,12 +1472,10 @@ export const ar = {
     uiTemplateBuilderDescription:
       'تخصيص التخطيط والرؤية وإعدادات كتل واجهة المستخدم على موقع مدرستك.',
     security: 'الأمان',
-    securityDescription:
-      'تغيير كلمات المرور وتمكين المصادقة الثنائية وإدارة الإشعارات.',
+    securityDescription: 'تغيير كلمات المرور وتمكين المصادقة الثنائية وإدارة الإشعارات.',
     openSettings: 'فتح الإعدادات',
     uiTemplateBuilderTitle: 'قالب الموقع',
-    uiTemplateBuilderSubtitle:
-      'تخصيص التخطيط والرؤية وإعدادات كتل واجهة المستخدم على موقع مدرستك.',
+    uiTemplateBuilderSubtitle: 'تخصيص التخطيط والرؤية وإعدادات كتل واجهة المستخدم على موقع مدرستك.',
     basedOn: 'بناءً على',
     chooseTemplate: 'اختر القالب',
     chooseTemplateLayout: 'اختر تخطيط القالب',
@@ -1550,18 +1507,15 @@ export const ar = {
     store: 'المعهد',
     profile: 'الملف الشخصي',
     profileSettingsTitle: 'إعدادات الملف الشخصي',
-    profileSettingsSubtitle:
-      'قم بتحديث المعلومات الشخصية التي يراها المسؤولون الآخرون.',
+    profileSettingsSubtitle: 'قم بتحديث المعلومات الشخصية التي يراها المسؤولون الآخرون.',
     profileInformation: 'معلومات الملف الشخصي',
-    profileInformationDescription:
-      'إدارة الصورة الرمزية ومعلومات الاتصال والسيرة الذاتية.',
+    profileInformationDescription: 'إدارة الصورة الرمزية ومعلومات الاتصال والسيرة الذاتية.',
     uploadPhoto: 'تحميل صورة',
     photoFormatHint: 'JPG أو PNG أو GIF بحد أقصى 2 ميجابايت.',
     photoDropHint: 'أفلت صورة هنا أو انقر لاختيار واحدة.',
     photoTooLarge: 'حجم الصورة أكبر من 2 ميجابايت.',
     photoInvalidType: 'يُقبل فقط JPG أو PNG أو GIF أو WebP.',
-    passwordSessionNote:
-      'كلمة المرور الجديدة تحل محل القديمة فورًا وتبقى مسجّل الدخول.',
+    passwordSessionNote: 'كلمة المرور الجديدة تحل محل القديمة فورًا وتبقى مسجّل الدخول.',
     fullName: 'الاسم الكامل',
     fullNamePlaceholder: 'الاسم الكامل',
     emailPlaceholder: 'example@skillforge.com',
@@ -1574,13 +1528,11 @@ export const ar = {
     pricingCmsSubtitle: 'عدّل محتوى صفحة التسعير العامة دون تغييرات برمجية.',
     pricingCmsCardDescription: 'إدارة نص صفحة التسعير العامة',
     publicPricingContentTitle: 'محتوى التسعير العام',
-    publicPricingContentDescription:
-      'يظهر هذا المحتوى في صفحة التسعير على مستوى المنصة.',
+    publicPricingContentDescription: 'يظهر هذا المحتوى في صفحة التسعير على مستوى المنصة.',
     pricingPageTitleLabel: 'عنوان الصفحة',
     pricingPageTitlePlaceholder: 'خطط التسعير',
     pricingSubtitleLabel: 'العنوان الفرعي',
-    pricingSubtitlePlaceholder:
-      'تسعير واضح لصنّاع المحتوى والمرشدين والأعمال التعليمية...',
+    pricingSubtitlePlaceholder: 'تسعير واضح لصنّاع المحتوى والمرشدين والأعمال التعليمية...',
     pricingCtaLabel: 'نص زر الدعوة',
     pricingCtaPlaceholder: 'ابدأ بخطتك',
     pricingUpdatedSuccess: 'تم تحديث محتوى التسعير بنجاح',
@@ -1608,11 +1560,9 @@ export const ar = {
     showcaseDescription:
       'صورتان للصفحة التعريفية: البطاقة المربعة وشاشة الهاتف. لمديري المنصة فقط.',
     showcaseDesktop: 'صورة البطاقة',
-    showcaseDesktopHint:
-      'صورة مربعة لبطاقة الصفحة الرئيسية — المقاس المفضل ١٠٨٠ × ١٠٨٠ بكسل',
+    showcaseDesktopHint: 'صورة مربعة لبطاقة الصفحة الرئيسية — المقاس المفضل ١٠٨٠ × ١٠٨٠ بكسل',
     showcaseMobile: 'لقطة داخل الهاتف',
-    showcaseMobileHint:
-      'لقطة لموقع الجوال داخل إطار الهاتف — المقاس المفضل ٣٩٠ × ٨٤٤ بكسل',
+    showcaseMobileHint: 'لقطة لموقع الجوال داخل إطار الهاتف — المقاس المفضل ٣٩٠ × ٨٤٤ بكسل',
     showcaseSaved: 'تم حفظ صور العرض',
     storeSettingsSubtitle: 'إدارة كيفية ظهور معهدك عبر نظام آکادمی.',
     generalInformation: 'المعلومات العامة',
@@ -1628,8 +1578,7 @@ export const ar = {
     domainTips: 'نصائح النطاق',
     domainTipsText1:
       'استخدم نطاقًا فرعيًا تتحكم فيه (مثل academy.yourstore.com) للحصول على أفضل تجربة للعلامة التجارية.',
-    domainTipsText2:
-      'يمكنك طلب شهادات SSL ودعم DNS المخصص عن طريق الاتصال بدعم آکادمی.',
+    domainTipsText2: 'يمكنك طلب شهادات SSL ودعم DNS المخصص عن طريق الاتصال بدعم آکادمی.',
     needHelp: 'تحتاج مساعدة؟',
     needHelpText:
       'قم بزيارة الوثائق لمعرفة كيفية تكوين تسجيل الدخول الموحد والنطاقات المخصصة والمزيد.',
@@ -1662,8 +1611,7 @@ export const ar = {
       'تحميل الشعارات وتعيين موارد العلامة التجارية للشهادات والبريد الإلكتروني.',
     logoUrl: 'رابط الشعار',
     logoUrlPlaceholder: 'https://cdn.yourstore.com/logo.png',
-    logoUrlHint:
-      'قدم رابط صورة متاح للعموم. يُوصى بـ SVG للحصول على نتائج واضحة.',
+    logoUrlHint: 'قدم رابط صورة متاح للعموم. يُوصى بـ SVG للحصول على نتائج واضحة.',
     preview: 'معاينة',
     storeLogoPreview: 'معاينة شعار المعهد',
     noLogoProvided: 'لم يتم توفير شعار',
@@ -1677,8 +1625,7 @@ export const ar = {
     backgroundAnimationHelp: 'اختر تأثير خلفية متحرك لموقعك',
     svgPatternOptional: 'نمط SVG (اختياري)',
     svgPatternPlaceholder: 'pattern-dots, pattern-grid, pattern-waves، إلخ',
-    svgPatternHelper:
-      'أدخل معرف النمط لاستخدامه كغطاء خلفية (اتركه فارغًا لعدم الاستخدام)',
+    svgPatternHelper: 'أدخل معرف النمط لاستخدامه كغطاء خلفية (اتركه فارغًا لعدم الاستخدام)',
     elementAnimationStyle: 'نمط رسوم متحركة للعنصر',
     elementAnimationSubtle: 'خفيف',
     elementAnimationHelp: 'تحكم في كيفية ظهور العناصر المتحركة على الصفحة',
@@ -1752,7 +1699,7 @@ export const ar = {
     styleDescription: 'تحكم في انحناء الحواف والظلال وكثافة حركة العناصر',
     borderRadius: 'انحناء الحواف',
     elementAnimation: 'حركة العناصر',
-    configSummary: 'ملخص الإعدادات'
+    configSummary: 'ملخص الإعدادات',
   },
   products: {
     title: 'المنتجات',
@@ -1766,7 +1713,7 @@ export const ar = {
     shortDescriptionLength: 'وصف مختصر (400 حرف كحد أقصى)',
     allProducts: 'جميع المنتجات',
     noProducts: 'لم يتم العثور على منتجات',
-    createFirstProduct: 'أنشئ منتجك الأول'
+    createFirstProduct: 'أنشئ منتجك الأول',
   },
   categories: {
     title: 'الفئات',
@@ -1789,8 +1736,7 @@ export const ar = {
     updateFailed: 'فشل تحديث الفئة',
     deleteSuccess: 'تم حذف الفئة بنجاح',
     deleteFailed: 'فشل حذف الفئة',
-    deleteConfirm:
-      'هل أنت متأكد من حذف هذه الفئة؟ لا يمكن التراجع عن هذا الإجراء.'
+    deleteConfirm: 'هل أنت متأكد من حذف هذه الفئة؟ لا يمكن التراجع عن هذا الإجراء.',
   },
   modal: {
     confirmDelete: 'هل أنت متأكد؟',
@@ -1798,7 +1744,7 @@ export const ar = {
     deleteItem: 'حذف',
     cancel: 'إلغاء',
     confirm: 'تأكيد',
-    deleting: 'جاري الحذف...'
+    deleting: 'جاري الحذف...',
   },
   errors: {
     required: 'هذا الحقل مطلوب',
@@ -1808,7 +1754,7 @@ export const ar = {
     passwordsDoNotMatch: 'كلمات المرور غير متطابقة',
     somethingWentWrong: 'حدث خطأ ما',
     tryAgain: 'الرجاء المحاولة مرة أخرى',
-    networkError: 'خطأ في الشبكة. يرجى التحقق من اتصالك.'
+    networkError: 'خطأ في الشبكة. يرجى التحقق من اتصالك.',
   },
   success: {
     saved: 'تم الحفظ بنجاح',
@@ -1826,7 +1772,7 @@ export const ar = {
     exported: 'تم التصدير بنجاح',
     refreshed: 'تم التحديث بنجاح',
     uploaded: 'تم الرفع بنجاح',
-    operationCompleted: 'تمت العملية بنجاح'
+    operationCompleted: 'تمت العملية بنجاح',
   },
   error: {
     unexpected: 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.',
@@ -1849,29 +1795,26 @@ export const ar = {
     requiredFields: 'يرجى ملء جميع الحقول المطلوبة',
     noDataToExport: 'لا توجد بيانات للتصدير',
     accessDenied: 'ليس لديك إذن للوصول إلى هذا المورد',
-    roleRequired: 'ليس لديك الدور المطلوب للوصول إلى هذا المورد'
+    roleRequired: 'ليس لديك الدور المطلوب للوصول إلى هذا المورد',
   },
   unauthorized: {
     title: 'Account blocked',
     description:
       'This admin panel account has been banned or deactivated. You cannot sign in until an academy manager restores access.',
     note: 'Note:',
-    contactAdmin:
-      'If you believe this is a mistake, contact your academy manager.',
+    contactAdmin: 'If you believe this is a mistake, contact your academy manager.',
     whatYouCanDo: 'What you can do:',
     accessStudentDashboard: "Access your academy's student dashboard",
     contactStoreAdmin: 'Contact your academy manager to restore access',
-    joinAsTeacher:
-      "Join a academy and request teacher role if you're an educator",
+    joinAsTeacher: "Join a academy and request teacher role if you're an educator",
     needHelp: 'Need help?',
-    contactSupport:
-      'If you believe this is a mistake, contact Mentoma support.',
-    redirectingIn: 'Returning to the login page in {{seconds}} seconds.'
+    contactSupport: 'If you believe this is a mistake, contact Mentoma support.',
+    redirectingIn: 'Returning to the login page in {{seconds}} seconds.',
   },
   notFound: {
     title: 'الصفحة غير موجودة',
     description: 'الصفحة التي تبحث عنها غير موجودة.',
-    backHome: 'العودة إلى الرئيسية'
+    backHome: 'العودة إلى الرئيسية',
   },
   content: {
     course: 'دورة',
@@ -1888,12 +1831,11 @@ export const ar = {
     uploadVideoDescription: 'رفع محتوى فيديو للدروس',
     selectStoreFirst: 'اختر المعهد أولاً',
     createContent: 'إنشاء محتوى',
-    createNewContent: 'إنشاء محتوى جديد'
+    createNewContent: 'إنشاء محتوى جديد',
   },
   forgotPassword: {
     title: 'إعادة تعيين كلمة المرور',
-    enterIdentifier:
-      'أدخل بريدك الإلكتروني أو رقم هاتفك واختر المعهد (إن وجد) لتلقي رمز التحقق',
+    enterIdentifier: 'أدخل بريدك الإلكتروني أو رقم هاتفك واختر المعهد (إن وجد) لتلقي رمز التحقق',
     enterOtp: 'أدخل رمز التحقق المرسل إلى جهازك',
     enterNewPassword: 'أدخل كلمة المرور الجديدة',
     passwordResetSuccess: 'تم إعادة تعيين كلمة المرور بنجاح',
@@ -1912,8 +1854,7 @@ export const ar = {
     resetPassword: 'إعادة تعيين كلمة المرور',
     backToLogin: 'العودة إلى تسجيل الدخول',
     tryAgain: 'حاول مرة أخرى',
-    selectStoreDescription:
-      'اختر معهدك إذا كنت طالباً، أو اتركه فارغاً للمدير/المعلم',
+    selectStoreDescription: 'اختر معهدك إذا كنت طالباً، أو اتركه فارغاً للمدير/المعلم',
     checkDeviceForCode: 'تحقق من جهازك للحصول على رمز التحقق',
     createNewPassword: 'قم بإنشاء كلمة مرور آمنة جديدة',
     canLoginNow: 'يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة',
@@ -1925,7 +1866,7 @@ export const ar = {
     passwordResetSuccessMessage:
       'تم إعادة تعيين كلمة المرور الخاصة بك. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.',
     resetAnotherPassword: 'إعادة تعيين كلمة مرور أخرى',
-    goToLogin: 'الذهاب إلى تسجيل الدخول'
+    goToLogin: 'الذهاب إلى تسجيل الدخول',
   },
   media: {
     videoLoading: 'جارٍ تجهيز التشغيل الآمن…',
@@ -2010,8 +1951,7 @@ export const ar = {
     noDocumentsMatch: 'لا توجد مستندات تطابق معايير البحث.',
     uploadFirstDocument: 'ارفع مستندك الأول للبدء.',
     documentPreview: 'معاينة المستند',
-    previewNotAvailable:
-      'المعاينة غير متاحة لهذا النوع من المستندات. يرجى التحميل للعرض.',
+    previewNotAvailable: 'المعاينة غير متاحة لهذا النوع من المستندات. يرجى التحميل للعرض.',
     loadingPreview: 'جاري تحميل المعاينة...',
     audioLibrary: 'مكتبة الصوت',
     manageAudio: 'إدارة المحتوى الصوتي',
@@ -2044,8 +1984,7 @@ export const ar = {
     categoryCreated: 'تم إنشاء الفئة بنجاح',
     categoryUpdated: 'تم تحديث الفئة بنجاح',
     categoryDeleted: 'تم حذف الفئة بنجاح',
-    confirmDeleteCategory:
-      'هل أنت متأكد أنك تريد حذف هذه الفئة؟ لا يمكن التراجع عن هذا الإجراء.',
+    confirmDeleteCategory: 'هل أنت متأكد أنك تريد حذف هذه الفئة؟ لا يمكن التراجع عن هذا الإجراء.',
     categoryNameRequired: 'اسم الفئة مطلوب',
     organize: 'تنظيم',
     manageCategoriesDescription: 'إدارة الفئات للدورات والمحتوى',
@@ -2055,7 +1994,7 @@ export const ar = {
     allVideoContent: 'جميع محتوى الفيديو',
     defaultCourseVideos: 'فيديوهات الدورة الافتراضية',
     courseContentVideos: 'فيديوهات محتوى الدورة',
-    combinedVideoLength: 'المدة الإجمالية للفيديوهات'
+    combinedVideoLength: 'المدة الإجمالية للفيديوهات',
   },
   users: {
     allUsers: 'جميع المستخدمين',
@@ -2077,8 +2016,7 @@ export const ar = {
     colPhone: 'الهاتف',
     colActions: 'الإجراءات',
     joinDate: 'تاريخ الانضمام',
-    detailSheetDescription:
-      'تفاصيل المستخدم وسجل الشراء وأدوار الأكاديمية وإجراءات الدعم',
+    detailSheetDescription: 'تفاصيل المستخدم وسجل الشراء وأدوار الأكاديمية وإجراءات الدعم',
     loadingDetails: 'جارٍ تحميل التفاصيل...',
     detailName: 'الاسم',
     resetPassword: 'إعادة تعيين كلمة المرور',
@@ -2086,8 +2024,7 @@ export const ar = {
     newPasswordDescription:
       'شارك كلمة المرور هذه مع المستخدم. يجب عليه تعيين كلمة مروره الخاصة عند أول تسجيل دخول.',
     deleteUserTitle: 'حذف المستخدم',
-    confirmDeleteUser:
-      'هل أنت متأكد أنك تريد حذف {{name}}؟ لا يمكن التراجع عن هذا الإجراء.',
+    confirmDeleteUser: 'هل أنت متأكد أنك تريد حذف {{name}}؟ لا يمكن التراجع عن هذا الإجراء.',
     userDeleted: 'تم حذف المستخدم',
     grantCourse: 'منح الدورة',
     assignVoucher: 'تعيين قسيمة',
@@ -2098,8 +2035,7 @@ export const ar = {
     manageAllUsersDescription: 'إدارة جميع المستخدمين عبر الأدوار المختلفة',
     manageUsersInStore: 'إدارة المستخدمين في متجرك',
     addUser: 'إضافة مستخدم',
-    searchUsersPlaceholder:
-      'البحث عن المستخدمين حسب الاسم أو البريد أو الهاتف...',
+    searchUsersPlaceholder: 'البحث عن المستخدمين حسب الاسم أو البريد أو الهاتف...',
     totalUsers: 'إجمالي المستخدمين',
     allRegisteredUsers: 'جميع المستخدمين المسجلين',
     managers: 'المديرون',
@@ -2109,14 +2045,13 @@ export const ar = {
     students: 'الطلاب',
     courseLearners: 'متعلمو الدورات',
     generalUsersNoRoles: 'مستخدمون عامون بدون أدوار محددة',
-    users: 'المستخدمون'
+    users: 'المستخدمون',
   },
   admins: {
     title: 'مستخدمو الإدارة',
     description: 'إدارة مديري المنصة',
     addAdminUser: 'إضافة مستخدم إداري',
-    searchAdminsPlaceholder:
-      'البحث عن الإداريين حسب الاسم أو البريد أو الهاتف...',
+    searchAdminsPlaceholder: 'البحث عن الإداريين حسب الاسم أو البريد أو الهاتف...',
     administrators: 'المديرون',
     adminFound: 'تم العثور على {{count}} إداري',
     adminsFound: 'تم العثور على {{count}} إداري',
@@ -2143,7 +2078,7 @@ export const ar = {
     cannotModifyOlderAdmin: 'لا يمكنك تعديل الإداري الأقدم',
     statusUpdatedToActive: 'تم تحديث حالة الإداري إلى نشط',
     statusUpdatedToInactive: 'تم تحديث حالة الإداري إلى غير نشط',
-    failedToUpdateStatus: 'فشل تحديث حالة الإداري'
+    failedToUpdateStatus: 'فشل تحديث حالة الإداري',
   },
   createAdminUser: {
     title: 'إنشاء مستخدم إداري',
@@ -2173,10 +2108,9 @@ export const ar = {
     emailRequired: 'البريد الإلكتروني مطلوب',
     pleaseEnterPhoneOtp: 'الرجاء إدخال رمز OTP للهاتف',
     pleaseEnterEmailOtp: 'الرجاء إدخال رمز OTP للبريد الإلكتروني',
-    pleaseVerifyBothOtps:
-      'الرجاء التحقق من كل من OTP الهاتف والبريد الإلكتروني',
+    pleaseVerifyBothOtps: 'الرجاء التحقق من كل من OTP الهاتف والبريد الإلكتروني',
     passwordsDoNotMatch: 'كلمات المرور غير متطابقة',
-    adminUserCreatedSuccess: 'تم إنشاء المستخدم الإداري بنجاح'
+    adminUserCreatedSuccess: 'تم إنشاء المستخدم الإداري بنجاح',
   },
   changeUserRole: {
     title: 'تغيير دور المستخدم',
@@ -2185,7 +2119,7 @@ export const ar = {
     newRole: 'الدور الجديد',
     selectRole: 'اختر دورًا',
     noRole: 'بدون دور',
-    changeRole: 'تغيير الدور'
+    changeRole: 'تغيير الدور',
   },
   teacherRequests: {
     title: 'طلبات المعلمين',
@@ -2199,7 +2133,7 @@ export const ar = {
     reject: 'رفض',
     pending: 'معلق',
     approved: 'تمت الموافقة',
-    rejected: 'مرفوض'
+    rejected: 'مرفوض',
   },
   analytics: {
     overview: 'نظرة عامة على التحليلات',
@@ -2239,8 +2173,7 @@ export const ar = {
     enrollmentValueByCourse: 'قيمة التسجيل حسب الدورة',
     enrollmentValueDescription: 'تجميع المدفوعات المسجلة لكل تسجيل.',
     coursePerformance: 'أداء الدورة',
-    coursePerformanceDescription:
-      'فهم الدورات التي تجذب أكبر عدد من الطلاب وتحقق أعلى إيرادات.',
+    coursePerformanceDescription: 'فهم الدورات التي تجذب أكبر عدد من الطلاب وتحقق أعلى إيرادات.',
     activeVsCompleted: 'التسجيلات النشطة مقابل المكتملة',
     activeVsCompletedDescription: 'اتجاه نشاط المتعلمين عبر الأشهر الأخيرة.',
     topCoursesByEnrollments: 'أفضل الدورات حسب التسجيلات',
@@ -2261,8 +2194,7 @@ export const ar = {
     coursesByEngagement: 'الدورات حسب التفاعل',
     coursesByEngagementDescription: 'الحالة النشطة مقابل المكتملة لكل دورة.',
     paymentDetails: 'تفاصيل الدفع',
-    paymentDetailsDescription:
-      'مبالغ البنك والبوابة بالريال كما سجلها مزود الدفع.',
+    paymentDetailsDescription: 'مبالغ البنك والبوابة بالريال كما سجلها مزود الدفع.',
     bankAmount: 'مبلغ البنك (ريال)',
     gateway: 'البوابة',
     noPaymentDetails: 'لا توجد مدفوعات مسجلة بعد.',
@@ -2274,8 +2206,8 @@ export const ar = {
       PAID: 'مدفوع',
       FAILED: 'فشل',
       CANCELLED: 'ملغى',
-      REFUNDED: 'مسترد'
-    }
+      REFUNDED: 'مسترد',
+    },
   },
   payments: {
     transactions: 'المعاملات',
@@ -2312,8 +2244,7 @@ export const ar = {
     failed: 'فشل',
     requiresFollowUp: 'يتطلب متابعة',
     searchPayments: 'البحث في المدفوعات',
-    searchPaymentsDescription:
-      'تصفية حسب الطالب أو الدورة أو الفاتورة أو الحالة.',
+    searchPaymentsDescription: 'تصفية حسب الطالب أو الدورة أو الفاتورة أو الحالة.',
     searchPaymentsPlaceholder: 'البحث في المدفوعات...',
     showingPayments: 'عرض {{count}} من {{total}} دفعة',
     recentTransactions: 'المعاملات الأخيرة',
@@ -2341,20 +2272,16 @@ export const ar = {
     noPaymentsProcessed:
       'لم تتم معالجة أي مدفوعات بعد. بمجرد حدوث المعاملات، سترى مقاييس مستوى الطريقة هنا.',
     creditDebitCards: 'بطاقات الائتمان والخصم',
-    creditDebitCardsDescription:
-      'قبول المدفوعات من جميع شبكات البطاقات الرئيسية عبر Stripe.',
+    creditDebitCardsDescription: 'قبول المدفوعات من جميع شبكات البطاقات الرئيسية عبر Stripe.',
     bankTransfer: 'التحويل البنكي',
-    bankTransferDescription:
-      'دعم مدفوعات ACH والتحويلات البنكية للعملاء المؤسسيين.',
+    bankTransferDescription: 'دعم مدفوعات ACH والتحويلات البنكية للعملاء المؤسسيين.',
     digitalWallets: 'المحافظ الرقمية',
-    digitalWalletsDescription:
-      'السماح للطلاب بالدفع عبر PayPal أو Google Pay أو المحافظ المحلية.',
+    digitalWalletsDescription: 'السماح للطلاب بالدفع عبر PayPal أو Google Pay أو المحافظ المحلية.',
     manageAccess: 'إدارة الوصول',
     configure: 'تكوين',
     ofRevenue: '% من الإيرادات',
     invoices: 'الفواتير',
-    invoicesDescription:
-      'إنشاء ومراقبة وتنزيل الفواتير المتعلقة بمشتريات الدورة.',
+    invoicesDescription: 'إنشاء ومراقبة وتنزيل الفواتير المتعلقة بمشتريات الدورة.',
     filters: 'الفلاتر',
     createInvoice: 'إنشاء فاتورة',
     issued: 'صادرة',
@@ -2366,15 +2293,14 @@ export const ar = {
     refunded: 'مستردة',
     refundedDescription: 'الفواتير المستردة للطلاب.',
     findInvoice: 'البحث عن فاتورة',
-    findInvoiceDescription:
-      'البحث حسب الطالب أو الدورة أو رقم الفاتورة أو الحالة.',
+    findInvoiceDescription: 'البحث حسب الطالب أو الدورة أو رقم الفاتورة أو الحالة.',
     searchInvoicesPlaceholder: 'البحث في الفواتير...',
     showingInvoices: 'عرض {{count}} من {{total}}',
     invoiceLedger: 'سجل الفواتير',
     invoiceLedgerDescription: 'قائمة تفصيلية بالفواتير المولدة مؤخرًا.',
     noInvoices: 'لا توجد فواتير للعرض الآن.',
     createOrAdjust: 'أنشئ فاتورة جديدة أو قم بتعديل الفلاتر.',
-    download: 'تنزيل'
+    download: 'تنزيل',
   },
   vouchers: {
     title: 'القسائم',
@@ -2422,7 +2348,7 @@ export const ar = {
     updatedSuccess: 'تم تحديث القسيمة بنجاح',
     updateFailed: 'فشل تحديث القسيمة',
     deletedSuccess: 'تم حذف القسيمة بنجاح',
-    deleteFailed: 'فشل حذف القسيمة'
+    deleteFailed: 'فشل حذف القسيمة',
   },
   financial: {
     store: {
@@ -2460,7 +2386,7 @@ export const ar = {
         paid: 'المدفوع',
         net: 'حصة الأكاديمية',
         coupon: 'كوبون',
-        refunded: 'مسترد'
+        refunded: 'مسترد',
       },
       revenue: {
         title: 'الإيرادات والفوائد',
@@ -2476,8 +2402,7 @@ export const ar = {
         teacherRevenue: 'إيراد المدرس',
         teacher: 'مدرس',
         teacherRevenueBreakdown: 'تفصيل إيراد المدرسين',
-        teacherRevenueBreakdownDescription:
-          'توزيع عائد الإيراد لكل مدرس في هذا المتجر',
+        teacherRevenueBreakdownDescription: 'توزيع عائد الإيراد لكل مدرس في هذا المتجر',
         visibility: 'إمكانية العرض',
         showAmount: 'إظهار المبلغ',
         hideAmount: 'إخفاء المبلغ',
@@ -2513,7 +2438,7 @@ export const ar = {
         student: 'الطالب',
         course: 'الدورة',
         amount: 'المبلغ',
-        noPayments: 'لم يتم العثور على مدفوعات'
+        noPayments: 'لم يتم العثور على مدفوعات',
       },
       costs: {
         title: 'تكاليف المتجر',
@@ -2542,7 +2467,7 @@ export const ar = {
         revenue: 'الإيرادات',
         cost: 'التكلفة',
         profit: 'الربح',
-        uncategorized: 'غير مصنف'
+        uncategorized: 'غير مصنف',
       },
       payments: {
         title: 'مدفوعات الطلاب',
@@ -2574,7 +2499,7 @@ export const ar = {
         course: 'الدورة',
         method: 'الطريقة',
         status: 'الحالة',
-        amount: 'المبلغ'
+        amount: 'المبلغ',
       },
       reports: {
         title: 'التقارير المالية',
@@ -2615,13 +2540,12 @@ export const ar = {
         period: 'الفترة',
         category: 'الفئة',
         finalProfit: 'الربح النهائي',
-        uncategorized: 'غير مصنف'
-      }
+        uncategorized: 'غير مصنف',
+      },
     },
     platform: {
       title: 'إدارة الشؤون المالية للمنصة',
-      description:
-        'نظرة عامة مالية على مستوى المنصة وإدارة التدفق النقدي للأعمال',
+      description: 'نظرة عامة مالية على مستوى المنصة وإدارة التدفق النقدي للأعمال',
       loading: 'جاري تحميل البيانات المالية...',
       filters: 'الفلاتر',
       year: 'السنة',
@@ -2642,7 +2566,7 @@ export const ar = {
       tabs: {
         platformRecords: 'سجلات المنصة',
         allStores: 'جميع الأكاديميات',
-        storeRecords: 'سجلات المتجر'
+        storeRecords: 'سجلات المتجر',
       },
       platformRecords: {
         title: 'السجلات المالية للمنصة',
@@ -2658,14 +2582,13 @@ export const ar = {
         noRecords: 'لم يتم العثور على سجلات مالية للمنصة',
         deleteConfirm: 'هل أنت متأكد من أنك تريد حذف هذا السجل؟',
         deleteSuccess: 'تم حذف السجل بنجاح',
-        deleteError: 'فشل في حذف السجل'
+        deleteError: 'فشل في حذف السجل',
       },
       storeRecords: {
         title: 'السجلات المالية للأكاديمية',
         description: 'سجلات التكاليف والإيرادات لكل متجر',
         allStoresTitle: 'السجلات المالية لجميع الأكاديميات',
-        allStoresDescription:
-          'سجلات التكاليف والإيرادات لكل متجر عبر جميع الأكاديميات',
+        allStoresDescription: 'سجلات التكاليف والإيرادات لكل متجر عبر جميع الأكاديميات',
         addRecord: 'إضافة سجل',
         store: 'المتجر',
         period: 'الفترة',
@@ -2676,16 +2599,14 @@ export const ar = {
         margin: 'الهامش',
         actions: 'الإجراءات',
         view: 'عرض',
-        noRecords: 'لم يتم العثور على سجلات مالية للمتجر'
-      }
+        noRecords: 'لم يتم العثور على سجلات مالية للمتجر',
+      },
     },
     desk: {
       title: 'المالية',
-      description:
-        'مدفوعات الأكاديمية والمنصة الحقيقية، حصة كل طرف، والمبلغ الذي يجب إيداعه.',
+      description: 'مدفوعات الأكاديمية والمنصة الحقيقية، حصة كل طرف، والمبلغ الذي يجب إيداعه.',
       toDeposit: 'للإيداع',
-      toDepositHint:
-        'أموال الطلاب التي ما زالت لدى منتوما وتستحقها الأكاديميات',
+      toDepositHint: 'أموال الطلاب التي ما زالت لدى منتوما وتستحقها الأكاديميات',
       pending: 'طلبات معلقة',
       pendingHint: 'طلبات سحب تنتظر التحويل البنكي',
       academyShare: 'حصة الأكاديمية',
@@ -2720,21 +2641,18 @@ export const ar = {
       notifyOk: 'تم إبلاغ منشئ الأكاديمية بالرسالة والبريد',
       notifyFailed: 'تعذر إبلاغ منشئ الأكاديمية',
       monthlyGross: 'الإجمالي الشهري',
-      monthlyGrossHint:
-        'مبيعات الأكاديميات ومدفوعات خطط المنصة في كل شهر (تومان)',
+      monthlyGrossHint: 'مبيعات الأكاديميات ومدفوعات خطط المنصة في كل شهر (تومان)',
       cumulativeGross: 'الإجمالي عبر الزمن',
-      cumulativeGrossHint:
-        'المجموع التراكمي لمبيعات الأكاديميات ومدفوعات خطط المنصة (تومان)',
+      cumulativeGrossHint: 'المجموع التراكمي لمبيعات الأكاديميات ومدفوعات خطط المنصة (تومان)',
       academyGross: 'الأكاديميات',
       platformGross: 'المنصة',
-      noTrend: 'لا مدفوعات ناجحة للرسم بعد'
-    }
+      noTrend: 'لا مدفوعات ناجحة للرسم بعد',
+    },
   },
   platform: {
     overview: {
       pendingSettlements: '{{count}} طلبات تسوية بانتظار المراجعة',
-      pendingSettlementsHint:
-        'مدراء الأكاديميات بانتظار التحويل؛ انقر للمراجعة',
+      pendingSettlementsHint: 'مدراء الأكاديميات بانتظار التحويل؛ انقر للمراجعة',
       noPendingSettlements: 'لا يوجد طلب تسوية بانتظار',
       title: 'نظرة عامة على المنصة',
       description: 'إدارة ومراقبة جميع المدارس وإحصائيات المنصة',
@@ -2752,8 +2670,7 @@ export const ar = {
       allSchoolsAccess: 'الوصول إلى أدوات إدارة المدرسة الشاملة',
       platformUsers: 'مستخدمو المنصة',
       platformUsersDescription: 'إدارة جميع المستخدمين عبر المنصة',
-      platformUsersAccess:
-        'عرض وإدارة المديرين والمديرين التنفيذيين والمعلمين والطلاب',
+      platformUsersAccess: 'عرض وإدارة المديرين والمديرين التنفيذيين والمعلمين والطلاب',
       platformAnalytics: 'تحليلات المنصة',
       platformAnalyticsDescription: 'عرض التحليلات والرؤى على مستوى المنصة',
       platformAnalyticsAccess: 'مراقبة أداء المنصة ومقاييس النمو',
@@ -2764,7 +2681,7 @@ export const ar = {
       allUsers: 'جميع المستخدمين',
       platformAnalyticsLink: 'تحليلات المنصة',
       accessDenied: 'تم رفض الوصول',
-      accessDeniedDescription: 'هذه الصفحة متاحة فقط لمديري مستوى المنصة.'
+      accessDeniedDescription: 'هذه الصفحة متاحة فقط لمديري مستوى المنصة.',
     },
     stores: {
       title: 'جميع الأكاديميات',
@@ -2784,8 +2701,7 @@ export const ar = {
       private: 'خاص',
       storeDetails: 'تفاصيل المتجر',
       financialOverview: 'نظرة عامة مالية',
-      financialOverviewDescription:
-        'إحصائيات مالية على مستوى المنصة لهذا المتجر',
+      financialOverviewDescription: 'إحصائيات مالية على مستوى المنصة لهذا المتجر',
       payments: 'المدفوعات',
       recentPayments: 'المدفوعات الأخيرة',
       recentPaymentsDescription: 'أحدث معاملات الدفع لهذا المتجر',
@@ -2800,11 +2716,9 @@ export const ar = {
       customPlan: {
         tab: 'خطة مخصصة',
         title: 'الخطة المخصصة لهذه الأكاديمية',
-        description:
-          'حدد قيودًا وميزات مخصصة للأكاديميات الكبيرة — تحل محل الخطة القياسية.',
+        description: 'حدد قيودًا وميزات مخصصة للأكاديميات الكبيرة — تحل محل الخطة القياسية.',
         enabledBadge: 'الخطة المخصصة مفعّلة',
-        disabledHint:
-          'لا تملك هذه الأكاديمية خطة مخصصة بعد — تستخدم خطتها القياسية.',
+        disabledHint: 'لا تملك هذه الأكاديمية خطة مخصصة بعد — تستخدم خطتها القياسية.',
         nameLabel: 'اسم الخطة',
         namePlaceholder: 'مثال: خطة مؤسسية — أكاديمية رها',
         limitsTitle: 'الحدود',
@@ -2834,9 +2748,9 @@ export const ar = {
         clearing: 'جارٍ الإلغاء...',
         assignedAt: 'تاريخ التعيين',
         saveSuccess: 'تم حفظ الخطة المخصصة',
-        clearSuccess: 'تم إلغاء الخطة المخصصة'
-      }
-    }
+        clearSuccess: 'تم إلغاء الخطة المخصصة',
+      },
+    },
   },
   settlement: {
     eyebrow: 'Finance',
@@ -2845,25 +2759,25 @@ export const ar = {
       'See where your money came from, how much of it Mentoma is still holding, and request a transfer to your academy bank account.',
     custody: {
       PLATFORM: 'Held by Mentoma',
-      ACADEMY: 'Held by you'
+      ACADEMY: 'Held by you',
     },
     balance: {
       available: {
         title: 'Available to settle',
-        hint: 'The amount you can request right now.'
+        hint: 'The amount you can request right now.',
       },
       pending: {
         title: 'In progress',
-        hint: 'Requested but not yet transferred to your bank account.'
+        hint: 'Requested but not yet transferred to your bank account.',
       },
       withdrawn: {
         title: 'Settled to date',
-        hint: 'Everything transferred to your academy account so far.'
+        hint: 'Everything transferred to your academy account so far.',
       },
       direct: {
         title: 'Collected by you',
-        hint: 'Cash, POS and card-to-card. You already have this money; it is never settled.'
-      }
+        hint: 'Cash, POS and card-to-card. You already have this money; it is never settled.',
+      },
     },
     channels: {
       title: 'Earnings by payment channel',
@@ -2873,7 +2787,7 @@ export const ar = {
       custody: 'Who holds it',
       count: 'Transactions',
       gross: 'Total amount',
-      share: 'Share'
+      share: 'Share',
     },
     bank: {
       title: 'Settlement bank account',
@@ -2896,37 +2810,35 @@ export const ar = {
       status: {
         PENDING: 'Awaiting verification',
         APPROVED: 'Verified',
-        REJECTED: 'Rejected'
-      }
+        REJECTED: 'Rejected',
+      },
     },
     request: {
       title: 'Request a settlement',
-      description:
-        'Enter the amount to be transferred to your verified account.',
+      description: 'Enter the amount to be transferred to your verified account.',
       amountLabel: 'Requested amount',
       notesLabel: 'Note (optional)',
       useMax: 'Full balance: {{amount}}',
       submit: 'Submit settlement request',
       submitted: 'Settlement request submitted',
       manualHint:
-        'Transfers are made manually during banking hours; the bank reference appears here once it is done.'
+        'Transfers are made manually during banking hours; the bank reference appears here once it is done.',
     },
     blockers: {
       NO_BANK_ACCOUNT: 'You have not added a Sheba number yet.',
       BANK_ACCOUNT_PENDING: 'Your Sheba number is being reviewed.',
-      BANK_ACCOUNT_REJECTED:
-        'Your Sheba number was rejected; please correct it.',
+      BANK_ACCOUNT_REJECTED: 'Your Sheba number was rejected; please correct it.',
       NO_BALANCE: 'There is nothing available to settle.',
       BELOW_MINIMUM: 'The minimum request amount is {{amount}}.',
       REQUEST_IN_PROGRESS: 'A settlement request is already being processed.',
       COOLDOWN_UNTIL: 'You can submit the next request from {{date}}.',
-      COOLDOWN: 'The waiting period before the next request has not passed yet.'
+      COOLDOWN: 'The waiting period before the next request has not passed yet.',
     },
     status: {
       PENDING: 'Pending review',
       APPROVED: 'Approved',
       REJECTED: 'Rejected',
-      PAID: 'Transferred'
+      PAID: 'Transferred',
     },
     history: {
       title: 'Settlement history',
@@ -2934,8 +2846,8 @@ export const ar = {
       requestedAt: 'Requested at',
       amount: 'Amount',
       destination: 'Destination account',
-      bankRef: 'Bank reference'
-    }
+      bankRef: 'Bank reference',
+    },
   },
   affiliates: {
     title: 'التسويق بالعمولة',
@@ -2953,13 +2865,11 @@ export const ar = {
     payoutHistory: 'سجل السحب',
     myDashSubtitle: 'تتبع روابط الإحالة والمشاهدات والأرباح الخاصة بك.',
     noLinksYet: 'لا توجد روابط تسويق بعد',
-    noLinksDesc:
-      'تواصل مع الأكاديمية لإضافتك كمسوّق بالعمولة والحصول على رابط الإحالة الخاص بك.',
+    noLinksDesc: 'تواصل مع الأكاديمية لإضافتك كمسوّق بالعمولة والحصول على رابط الإحالة الخاص بك.',
     totalSales: 'إجمالي المبيعات',
     available: 'المتاح',
     requestPayoutTitle: 'طلب سحب',
-    payoutDialogDesc:
-      'الرصيد المتاح: {{amount}}. ستراجع الأكاديمية طلبك وتعالجه.',
+    payoutDialogDesc: 'الرصيد المتاح: {{amount}}. ستراجع الأكاديمية طلبك وتعالجه.',
     amount: 'المبلغ',
     max: 'الحد الأقصى',
     submitRequest: 'إرسال الطلب',
@@ -3049,7 +2959,7 @@ export const ar = {
     previewStatTotal: 'إجمالي الدخل',
     previewStatBalance: 'الرصيد',
     previewStatClicks: 'النقرات',
-    previewStatSales: 'المبيعات'
+    previewStatSales: 'المبيعات',
   },
   sitePreview: {
     blockHeader: 'التنقل',
@@ -3067,8 +2977,7 @@ export const ar = {
     blockMembership: 'العضوية',
     blockSlideshow: 'عرض الشرائح',
     heroVideoTitle: 'فيديو البانر',
-    heroVideoHint:
-      'ارفع الفيديو على اللافتة نفسها أو اختر واحدًا من مكتبة الوسائط.',
+    heroVideoHint: 'ارفع الفيديو على اللافتة نفسها أو اختر واحدًا من مكتبة الوسائط.',
     heroVideoPick: 'اختر فيديو',
     heroVideoSelected: 'الفيديو المختار',
     heroVideoAutoplay: 'تشغيل تلقائي وصامت',
@@ -3089,8 +2998,7 @@ export const ar = {
     videosEditorTitle: 'فيديوهات هذا القسم',
     videosAdd: 'إضافة فيديو',
     videosEmpty: 'لم يتم اختيار أي فيديو بعد.',
-    videosCaption:
-      'تُختار الفيديوهات من مكتبة وسائط الأكاديمية. ارفع فيديو جديدًا من قسم المحتوى.',
+    videosCaption: 'تُختار الفيديوهات من مكتبة وسائط الأكاديمية. ارفع فيديو جديدًا من قسم المحتوى.',
     videosLibraryEmpty: 'لا توجد فيديوهات في مكتبتك بعد.',
     videoCustomTitle: 'عنوان العرض (اختياري)',
     videoCustomDescription: 'وصف قصير (اختياري)',
@@ -3134,16 +3042,14 @@ export const ar = {
     panelSectionVisible: 'إظهار هذا القسم',
     sidebarTitle: 'تخصيص القالب',
     sidebarTitleAdmin: 'تحرير القالب العام',
-    sidebarMasterNotice:
-      'هذا هو القالب الأساسي؛ الحفظ يحدّث النسخة الأساسية لجميع المديرين',
+    sidebarMasterNotice: 'هذا هو القالب الأساسي؛ الحفظ يحدّث النسخة الأساسية لجميع المديرين',
     tabSections: 'الأقسام',
     saveSiteChanges: 'حفظ',
     saveCopyDone: 'تم حفظ نسختك الخاصة',
     saveOriginalDone: 'تم حفظ القالب الأصلي',
     resetDone: 'عدت إلى القالب الأصلي',
     resetConfirmTitle: 'العودة إلى القالب الأصلي؟',
-    resetConfirmBody:
-      'سيتم حذف نسختك المخصصة ويعود القالب الأصلي. لا يمكن التراجع عن ذلك.',
+    resetConfirmBody: 'سيتم حذف نسختك المخصصة ويعود القالب الأصلي. لا يمكن التراجع عن ذلك.',
     resetConfirmAction: 'حذف نسختي',
     originalLockedBadge: 'قالب أصلي — للعرض فقط',
     customizedBadge: 'مخصص',
@@ -3238,7 +3144,7 @@ export const ar = {
     sectionChangeDesign: 'تغيير تصميم هذا القسم',
     sectionHide: 'إخفاء القسم',
     sectionShow: 'إظهار القسم',
-    sectionDrag: 'السحب لإعادة الترتيب'
+    sectionDrag: 'السحب لإعادة الترتيب',
   },
   learningOperations: {
     workspace: 'مساحة العمل',
@@ -3272,26 +3178,24 @@ export const ar = {
       QUIZ_ATTEMPTED: 'محاولة اختبار',
       QUIZ_GRADED: 'تقييم اختبار',
       ATTENDANCE_MARKED: 'تسجيل حضور',
-      ENROLLMENT_ACTIVATED: 'تفعيل التسجيل'
+      ENROLLMENT_ACTIVATED: 'تفعيل التسجيل',
     },
     status: {
       DRAFT: 'مسودة',
       SUBMITTED: 'مُسلَّم',
       GRADED: 'مُقيَّم',
-      REJECTED: 'مرفوض'
-    }
+      REJECTED: 'مرفوض',
+    },
   },
   opsQueue: {
     title: 'قائمة التدخل',
     description:
       'تقييم متأخر، متعلمون غير نشطين، درجات منخفضة، حصص تدريس خاصة فائتة، ومحادثات بلا رد.',
     filters: 'مرشحات القائمة',
-    filtersDescription:
-      'كل مرشح يؤثر على قوائم تدخل محددة. غيّر القيم ثم حدّث القائمة.',
+    filtersDescription: 'كل مرشح يؤثر على قوائم تدخل محددة. غيّر القيم ثم حدّث القائمة.',
     courseId: 'الدورة',
     courseIdPlaceholder: 'كل الدورات (اختياري)',
-    courseFilterHint:
-      'يحدّ كل القوائم بدورة واحدة. اتركه فارغاً ليشمل كل دورات الأكاديمية.',
+    courseFilterHint: 'يحدّ كل القوائم بدورة واحدة. اتركه فارغاً ليشمل كل دورات الأكاديمية.',
     filterAppliesAll: 'كل القوائم',
     inactiveDays: 'أيام بدون دخول للدورة',
     inactiveDaysHint:
@@ -3325,7 +3229,7 @@ export const ar = {
     savingNote: 'جارٍ الحفظ…',
     noteSaved: 'تم حفظ ملاحظة التدخل',
     noteRequired: 'معرّف الملف والملاحظة مطلوبان',
-    useForNote: 'استخدم للملاحظة'
+    useForNote: 'استخدم للملاحظة',
   },
   tutoring: {
     groups: {
@@ -3341,14 +3245,12 @@ export const ar = {
       create: 'Create class',
       offer: 'Price to sell it at',
       offerPlaceholder: 'Choose a tutoring offer',
-      offerHint:
-        'The price comes from the offer; the class only sets the times.',
+      offerHint: 'The price comes from the offer; the class only sets the times.',
       name: 'Class name',
       description_: 'Description',
       capacity: 'Capacity',
       minStudents: 'Minimum students',
-      minStudentsHint:
-        'The class waits until this many seats are booked, then starts by itself.',
+      minStudentsHint: 'The class waits until this many seats are booked, then starts by itself.',
       ageMin: 'Minimum age',
       ageMax: 'Maximum age',
       termWeeks: 'Term length (weeks)',
@@ -3360,8 +3262,7 @@ export const ar = {
         'If the minimum is not reached by then, the class is cancelled and everyone is refunded.',
       meetingUrl: 'Meeting link',
       timetable: 'Weekly times',
-      timetableHint:
-        'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
+      timetableHint: 'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
       slotRow: 'Weekly meeting',
       slotStart: 'Start time',
       slotDuration: 'Length (minutes)',
@@ -3395,11 +3296,9 @@ export const ar = {
       announceSms: 'Also send an SMS (costs money per student)',
       announceSend: 'Send',
       startNow: 'Start now anyway',
-      startNowHint:
-        'Start the class even though the minimum is not reached yet.',
+      startNowHint: 'Start the class even though the minimum is not reached yet.',
       cancelLabel: 'Reason for cancelling',
-      cancelHint:
-        'Cancelling opens a refund request for every student who paid.',
+      cancelHint: 'Cancelling opens a refund request for every student who paid.',
       cancel: 'Cancel class and refund',
       sessionsTitle: 'Meetings',
       sessionsEmpty: 'Meetings appear once the class starts.',
@@ -3409,28 +3308,27 @@ export const ar = {
         CONFIRMED: 'Confirmed',
         RUNNING: 'Running',
         COMPLETED: 'Finished',
-        CANCELLED: 'Cancelled'
+        CANCELLED: 'Cancelled',
       },
       memberStatus: {
         PENDING: 'Waiting',
         ACTIVE: 'Active',
         PAUSED: 'Paused',
         COMPLETED: 'Finished',
-        CANCELLED: 'Cancelled'
+        CANCELLED: 'Cancelled',
       },
       sessionStatus: {
         SCHEDULED: 'Scheduled',
         COMPLETED: 'Held',
         CANCELLED: 'Cancelled',
         RESCHEDULED: 'Moved',
-        NO_SHOW: 'No show'
-      }
+        NO_SHOW: 'No show',
+      },
     },
     title: 'التدريس الخاص',
     description: 'إدارة الارتباطات الفردية والجلسات والحضور.',
     offers: 'عروض الاشتراك الخاص',
-    offersDescription:
-      'ما يشتريه الطالب للاشتراك مع مدرّس. يُحصّل السعر لكل فترة.',
+    offersDescription: 'ما يشتريه الطالب للاشتراك مع مدرّس. يُحصّل السعر لكل فترة.',
     noOffers: 'لا توجد عروض بعد. أنشئ عرضًا ليتمكن الطلاب من الاشتراك.',
     createOffer: 'إنشاء عرض',
     offerTitle: 'عنوان العرض',
@@ -3494,8 +3392,8 @@ export const ar = {
     status: {
       PRESENT: 'حاضر',
       JOINED: 'انضم',
-      ABSENT: 'غائب'
-    }
+      ABSENT: 'غائب',
+    },
   },
   downloadPolicy: {
     title: 'سياسة التنزيل',
@@ -3505,7 +3403,7 @@ export const ar = {
     subscription: 'السماح بالتنزيل لوصول الاشتراك',
     tutoring: 'السماح بالتنزيل لوصول التدريس الخاص',
     save: 'حفظ سياسة التنزيل',
-    saved: 'تم حفظ سياسة التنزيل.'
+    saved: 'تم حفظ سياسة التنزيل.',
   },
   quiz: {
     manager: 'إدارة الاختبار',
@@ -3545,8 +3443,8 @@ export const ar = {
     type: {
       MULTIPLE_CHOICE: 'اختيار من متعدد',
       TRUE_FALSE: 'صح / خطأ',
-      SHORT_TEXT: 'نص قصير'
-    }
+      SHORT_TEXT: 'نص قصير',
+    },
   },
   discussion: {
     title: 'نقاش تعليمي',
@@ -3558,32 +3456,30 @@ export const ar = {
     attachFile: 'Attach file',
     removeAttachment: 'Remove attachment',
     uploadFailed: 'The file could not be uploaded.',
-    openAttachment: 'Open file'
+    openAttachment: 'Open file',
   },
   pricing: {
     planLimits: {
       keys: {
-        monthly_traffic_gb: 'الترافيك الشهري (GB)'
+        monthly_traffic_gb: 'الترافيك الشهري (GB)',
       },
       costDriver: {
         storage: 'التخزين',
         egress: 'الترافيك',
         compute: 'المعالجة',
         sms: 'الرسائل القصيرة',
-        gateway: 'بوابة الدفع'
-      }
+        gateway: 'بوابة الدفع',
+      },
     },
     calculator: {
       title: 'حاسبة أسعار الخطط',
       description:
         'أدخل تكاليف البنية التحتية المقاسة وهامش الربح المستهدف. تُوصي الحاسبة بسعر شهري وربع سنوي لكل خطة مدمجة عند امتلاء السقف بنسبة 100% — نفس القاعدة التي يفرضها فحص الهامش قبل حفظ الخطة.',
       targetMargin: 'هامش الربح المستهدف (%)',
-      targetMarginHint:
-        'الافتراضي 70% — يجب أن يبقى COGS النظامي عند 30% أو أقل.',
+      targetMarginHint: 'الافتراضي 70% — يجب أن يبقى COGS النظامي عند 30% أو أقل.',
       gatewayFee: 'عمولة البوابة على الاشتراك (%)',
       smsPerStudent: 'رسائل SMS لكل طالب خصوصي / شهر',
-      smsPerStudentHint:
-        'تذكيرات الحصة المباشرة قد ترسل أكثر من رسالة. اعرض أسوأ شهر، لا المتوسط.',
+      smsPerStudentHint: 'تذكيرات الحصة المباشرة قد ترسل أكثر من رسالة. اعرض أسوأ شهر، لا المتوسط.',
       formula:
         'السعر ≥ COGS المتغير ÷ (1 − عمولة البوابة − الحد الأقصى لحصة COGS). COGS المتغير = التخزين + الترافيك المُسلَّم + المعالجة + SMS عند سقف الخطة الكامل. يُقرب الناتج للأعلى إلى 500,000 تومان.',
       noPlans: 'لا توجد خطط نشطة للتسعير.',
@@ -3594,7 +3490,7 @@ export const ar = {
       colLive: 'الحالي / شهر',
       colDelta: 'الفرق',
       colMargin: 'الهامش @ الموصى به',
-      colBreakEven: 'أكاديميات حتى التعادل'
+      colBreakEven: 'أكاديميات حتى التعادل',
     },
     costs: {
       title: 'افتراضات التكلفة وحِزم الإضافات',
@@ -3616,9 +3512,9 @@ export const ar = {
         storage_addon_gb: 'حزمة التخزين (GB)',
         storage_addon_price_toman: 'سعر حزمة التخزين (تومان)',
         traffic_addon_gb: 'حزمة الترافيك (GB)',
-        traffic_addon_price_toman: 'سعر حزمة الترافيك (تومان)'
-      }
-    }
+        traffic_addon_price_toman: 'سعر حزمة الترافيك (تومان)',
+      },
+    },
   },
   userNav: {
     profile: 'الملف الشخصي',
@@ -3631,8 +3527,8 @@ export const ar = {
       MANAGER: 'مدير الأكاديمية',
       TEACHER: 'مدرس',
       STUDENT: 'طالب',
-      USER: 'مستخدم'
-    }
+      USER: 'مستخدم',
+    },
   },
 
   /**
@@ -3657,8 +3553,7 @@ export const ar = {
       'You must verify your phone number before signing up. Request and enter the verification code first.',
     AUTH_MUST_VERIFY_EMAIL:
       'You must verify your email before signing up. Request and enter the verification code first.',
-    AUTH_IDENTIFIER_REQUIRED:
-      'Please enter your phone number or email to continue.',
+    AUTH_IDENTIFIER_REQUIRED: 'Please enter your phone number or email to continue.',
     AUTH_ACADEMY_ID_REQUIRED: 'Please select your academy to sign in.',
     AUTH_ACADEMY_ACCESS_DENIED:
       'You do not have access to this academy. Contact the academy manager if you should.',
@@ -3668,36 +3563,26 @@ export const ar = {
       'The password and its confirmation do not match. Please re-enter both fields.',
     AUTH_CURRENT_PASSWORD_INCORRECT:
       'The current password you entered is not correct. Please try again.',
-    AUTH_ADMIN_ROLE_NOT_ALLOWED:
-      'An admin account cannot be created through this route.',
+    AUTH_ADMIN_ROLE_NOT_ALLOWED: 'An admin account cannot be created through this route.',
     AUTH_ADMIN_ONLY: 'Only system admins can perform this action.',
     AUTH_NOT_AUTHENTICATED: 'Your session is not valid. Please sign in again.',
-    AUTH_SESSION_EXPIRED:
-      'Your session has ended. Please sign in again to continue.',
-    AUTH_REFRESH_TOKEN_MISSING:
-      'Your session could not be found. Please sign in again.',
+    AUTH_SESSION_EXPIRED: 'Your session has ended. Please sign in again to continue.',
+    AUTH_REFRESH_TOKEN_MISSING: 'Your session could not be found. Please sign in again.',
     AUTH_REFRESH_TOKEN_INVALID:
       'Your session is no longer valid. Please sign in again to continue.',
-    AUTH_TEMP_TOKEN_INVALID:
-      'This step has expired. Please start signing in again.',
-    AUTH_SESSION_NOT_FOUND:
-      'That session was not found, or it has already been closed.',
-    OTP_INVALID:
-      'That verification code is not correct. Please check it, or request a new code.',
-    OTP_EXPIRED:
-      'This verification code has expired. Tap "Resend" to get a new one.',
-    OTP_ALREADY_USED:
-      'This verification code has already been used. Please request a new one.',
+    AUTH_TEMP_TOKEN_INVALID: 'This step has expired. Please start signing in again.',
+    AUTH_SESSION_NOT_FOUND: 'That session was not found, or it has already been closed.',
+    OTP_INVALID: 'That verification code is not correct. Please check it, or request a new code.',
+    OTP_EXPIRED: 'This verification code has expired. Tap "Resend" to get a new one.',
+    OTP_ALREADY_USED: 'This verification code has already been used. Please request a new one.',
     OTP_COOLDOWN:
       'A code was just sent to you. Please wait {seconds} seconds before requesting another.',
     OTP_RATE_LIMITED:
       'You have requested too many verification codes. Please try again a little later.',
-    OTP_PHONE_REQUIRED:
-      'Please enter your phone number to receive a verification code.',
+    OTP_PHONE_REQUIRED: 'Please enter your phone number to receive a verification code.',
     OTP_PHONE_INVALID:
       'That phone number is not valid. Enter it with the country code, for example +989121234567.',
-    OTP_TYPE_REQUIRED:
-      'The verification code type was not specified. Please try again.',
+    OTP_TYPE_REQUIRED: 'The verification code type was not specified. Please try again.',
     OTP_SEND_FAILED:
       'We could not send the verification code. Please try again shortly; contact support if it keeps happening.',
     VALIDATION_FAILED:
@@ -3705,10 +3590,8 @@ export const ar = {
     VALIDATION_REQUIRED: '{field} is required.',
     VALIDATION_MIN_LENGTH: '{field} must be at least {min} characters.',
     VALIDATION_MAX_LENGTH: '{field} must be no longer than {max} characters.',
-    VALIDATION_EMAIL:
-      '{field} is not a valid email address. Example: name@example.com',
-    VALIDATION_PHONE:
-      '{field} is not a valid phone number. Enter it with the country code.',
+    VALIDATION_EMAIL: '{field} is not a valid email address. Example: name@example.com',
+    VALIDATION_PHONE: '{field} is not a valid phone number. Enter it with the country code.',
     VALIDATION_PATTERN:
       'The format of {field} is not correct. Please enter it as the field describes.',
     VALIDATION_STRING: '{field} must be text.',
@@ -3724,15 +3607,12 @@ export const ar = {
     VALIDATION_INVALID: 'The value entered for {field} is not valid.',
     CONFLICT_DUPLICATE:
       'An item with this name or details already exists. Please choose a different one.',
-    RESOURCE_NOT_FOUND:
-      'What you were looking for was not found. It may have been deleted.',
+    RESOURCE_NOT_FOUND: 'What you were looking for was not found. It may have been deleted.',
     PERMISSION_DENIED:
       'You do not have permission to do this. Contact your academy manager for access.',
     TENANT_MISMATCH: 'This item does not belong to your academy.',
-    FILE_TOO_LARGE:
-      'The file is larger than allowed. Please choose a smaller file.',
-    FILE_TYPE_NOT_ALLOWED:
-      'This file type is not allowed. Please choose a supported format.',
+    FILE_TOO_LARGE: 'The file is larger than allowed. Please choose a smaller file.',
+    FILE_TYPE_NOT_ALLOWED: 'This file type is not allowed. Please choose a supported format.',
     EXTERNAL_SERVICE_FAILED:
       'We could not reach an external service. Please try again in a moment.',
     SUBSCRIPTION_EXPIRED:
@@ -3745,15 +3625,13 @@ export const ar = {
       'No payment gateway is currently enabled. Contact the platform administrator.',
     PAYMENT_GATEWAY_NOT_CONFIGURED:
       'The payment gateway is on, but no API key is saved. Open Token & details and paste the BitPay key.',
-    PAYMENT_GATEWAY_REJECTED:
-      'The payment gateway rejected this checkout. {reason}',
+    PAYMENT_GATEWAY_REJECTED: 'The payment gateway rejected this checkout. {reason}',
     HTTP_400:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     BAD_REQUEST:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     HTTP_401: 'You need to be signed in to do this. Please sign in again.',
-    UNAUTHENTICATED:
-      'You need to be signed in to do this. Please sign in again.',
+    UNAUTHENTICATED: 'You need to be signed in to do this. Please sign in again.',
     HTTP_403:
       'You do not have permission to do this. If you think this is a mistake, contact your academy manager.',
     FORBIDDEN:
@@ -3762,32 +3640,23 @@ export const ar = {
       'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
     NOT_FOUND:
       'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
-    HTTP_409:
-      'This item already exists. Please choose a different name or value.',
-    CONFLICT:
-      'This item already exists. Please choose a different name or value.',
-    HTTP_413:
-      'The uploaded file is larger than allowed. Please choose a smaller file.',
-    PAYLOAD_TOO_LARGE:
-      'The uploaded file is larger than allowed. Please choose a smaller file.',
-    HTTP_415:
-      'That file type is not supported. Please choose a file in an allowed format.',
+    HTTP_409: 'This item already exists. Please choose a different name or value.',
+    CONFLICT: 'This item already exists. Please choose a different name or value.',
+    HTTP_413: 'The uploaded file is larger than allowed. Please choose a smaller file.',
+    PAYLOAD_TOO_LARGE: 'The uploaded file is larger than allowed. Please choose a smaller file.',
+    HTTP_415: 'That file type is not supported. Please choose a file in an allowed format.',
     UNSUPPORTED_MEDIA_TYPE:
       'That file type is not supported. Please choose a file in an allowed format.',
-    HTTP_422:
-      'The submitted data could not be processed. Please review the values and try again.',
+    HTTP_422: 'The submitted data could not be processed. Please review the values and try again.',
     UNPROCESSABLE:
       'The submitted data could not be processed. Please review the values and try again.',
-    HTTP_429:
-      'You have made too many attempts. Please wait a little and try again.',
-    RATE_LIMITED:
-      'You have made too many attempts. Please wait a little and try again.',
+    HTTP_429: 'You have made too many attempts. Please wait a little and try again.',
+    RATE_LIMITED: 'You have made too many attempts. Please wait a little and try again.',
     HTTP_500:
       'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
     INTERNAL_ERROR:
       'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
-    HTTP_502:
-      'We could not reach one of our external services. Please try again in a moment.',
+    HTTP_502: 'We could not reach one of our external services. Please try again in a moment.',
     UPSTREAM_ERROR:
       'We could not reach one of our external services. Please try again in a moment.',
     HTTP_503:
@@ -3795,10 +3664,8 @@ export const ar = {
     SERVICE_UNAVAILABLE:
       'The service is temporarily unavailable, likely for maintenance. Please try again in a few minutes.',
     HTTP_504: 'An external service took too long to respond. Please try again.',
-    UPSTREAM_TIMEOUT:
-      'An external service took too long to respond. Please try again.',
-    NETWORK_ERROR:
-      'We could not reach the server. Check your internet connection and try again.',
+    UPSTREAM_TIMEOUT: 'An external service took too long to respond. Please try again.',
+    NETWORK_ERROR: 'We could not reach the server. Check your internet connection and try again.',
     UNKNOWN:
       'An unexpected error occurred and has been logged. Please try again; contact support if it keeps happening.',
     fields: {
@@ -3830,8 +3697,8 @@ export const ar = {
       starts_at: 'Start date',
       ends_at: 'End date',
       file: 'File',
-      image_id: 'Image'
-    }
+      image_id: 'Image',
+    },
   },
   platformCosts: {
     title: 'Platform costs',
@@ -3851,7 +3718,7 @@ export const ar = {
       infrastructure: 'Infrastructure',
       people: 'People',
       operations: 'Operations',
-      other: 'Other'
+      other: 'Other',
     },
     subcategories: {
       social: 'Social ads',
@@ -3871,8 +3738,8 @@ export const ar = {
       accounting: 'Accounting',
       tools: 'Software tools',
       office: 'Office',
-      other: 'Other'
-    }
+      other: 'Other',
+    },
   },
   platformMetrics: {
     title: 'Investor report',
@@ -3886,7 +3753,7 @@ export const ar = {
       users: 'Users & activity',
       catalog: 'Courses & learning record',
       economics: 'Unit economics',
-      reconciliation: 'Reconciliation'
+      reconciliation: 'Reconciliation',
     },
     currency: { label: 'Currency', toman: 'Toman', eur: 'EUR' },
     source: { label: 'Source', live: 'Live', snapshot: 'Monthly snapshot' },
@@ -3972,7 +3839,7 @@ export const ar = {
       invoiced_amount: 'Invoiced amount',
       invoice_count: 'Paid invoices',
       manual_invoice_count: 'Manual invoices',
-      manual_invoice_amount: 'Manual invoice amount'
+      manual_invoice_amount: 'Manual invoice amount',
     },
     bridge: {
       title: 'Monthly MRR bridge',
@@ -3981,7 +3848,7 @@ export const ar = {
       expansion: 'Expansion',
       contraction: 'Contraction',
       churned: 'Churned',
-      ending: 'Ending'
+      ending: 'Ending',
     },
     columns: {
       month: 'Month',
@@ -4011,7 +3878,7 @@ export const ar = {
       churnedAcademies: 'Churned',
       measured: 'Academies measured',
       medianDays: 'Median days',
-      p75Days: 'P75 days'
+      p75Days: 'P75 days',
     },
     sections: {
       byStatus: 'By status',
@@ -4028,12 +3895,12 @@ export const ar = {
       timeToValue: 'Time to first value',
       learningRecord: 'Learning record',
       activity: 'Login activity',
-      registrations: 'Registrations'
+      registrations: 'Registrations',
     },
     ttv: {
       first_course_created: 'First course created',
       first_enrollment: 'First student enrolled',
-      first_paid_invoice: 'First paid invoice'
+      first_paid_invoice: 'First paid invoice',
     },
     reconciliation: {
       title: 'Invoice, payment and gateway tie-out',
@@ -4044,26 +3911,22 @@ export const ar = {
       orphan: 'Orphan',
       manual: 'Settled manually',
       invoiceToPayment: 'Invoice → Payment',
-      paymentToGateway: 'Payment → Gateway'
+      paymentToGateway: 'Payment → Gateway',
     },
     caveats: {
       title: 'Data limits',
-      loginHistory:
-        'Login and retention series start from the day this table went live.',
-      marketingSpend:
-        'Marketing spend is entered by hand; without it CAC cannot be computed.',
-      runway:
-        'Cash balance is not stored in the platform, so runway cannot be computed.',
-      financialRecords:
-        'No platform financial records in this window, so gross margin is unknown.',
-      zeroChurn: 'Observed churn is zero, so LTV is undefined.'
+      loginHistory: 'Login and retention series start from the day this table went live.',
+      marketingSpend: 'Marketing spend is entered by hand; without it CAC cannot be computed.',
+      runway: 'Cash balance is not stored in the platform, so runway cannot be computed.',
+      financialRecords: 'No platform financial records in this window, so gross margin is unknown.',
+      zeroChurn: 'Observed churn is zero, so LTV is undefined.',
     },
     spend: {
       title: 'Marketing spend',
       channel: 'Channel',
       amount: 'Amount',
       add: 'Record spend',
-      saved: 'Saved'
+      saved: 'Saved',
     },
     guides: {
       overview:
@@ -4083,124 +3946,124 @@ export const ar = {
       economics:
         'Unit economics from marketing spend and cost records you enter. CAC, LTV and runway stay blank until those inputs exist.',
       reconciliation:
-        'Three-way check that every paid invoice has a payment, and every payment has a gateway confirmation. A gap is a money-path defect, not a reporting artefact.'
+        'Three-way check that every paid invoice has a payment, and every payment has a gateway confirmation. A gap is a money-path defect, not a reporting artefact.',
     },
     terms: {
       mrr: {
         abbr: 'MRR',
         full: 'Monthly Recurring Revenue',
-        hint: 'Invoice amount spread evenly across each month of the plan term.'
+        hint: 'Invoice amount spread evenly across each month of the plan term.',
       },
       arr: {
         abbr: 'ARR',
         full: 'Annual Recurring Revenue',
-        hint: 'MRR × 12.'
+        hint: 'MRR × 12.',
       },
       arpa: {
         abbr: 'ARPA',
         full: 'Average Revenue Per Account',
-        hint: 'MRR ÷ paying academies.'
+        hint: 'MRR ÷ paying academies.',
       },
       nrr: {
         abbr: 'NRR',
         full: 'Net Revenue Retention',
-        hint: 'Last-month MRR of the opening cohort ÷ first-month MRR. Can exceed 100% when academies upgrade.'
+        hint: 'Last-month MRR of the opening cohort ÷ first-month MRR. Can exceed 100% when academies upgrade.',
       },
       grr: {
         abbr: 'GRR',
         full: 'Gross Revenue Retention',
-        hint: 'Like NRR but upgrades are excluded, so it never exceeds 100%.'
+        hint: 'Like NRR but upgrades are excluded, so it never exceeds 100%.',
       },
       cohort: {
         abbr: 'Cohort',
         full: 'Cohort',
-        hint: 'A group that started in the same month, followed together in later months.'
+        hint: 'A group that started in the same month, followed together in later months.',
       },
       logoRetention: {
         abbr: 'Logo retention',
         full: 'Logo Retention',
-        hint: 'Share of the opening cohort still paying anything this month.'
+        hint: 'Share of the opening cohort still paying anything this month.',
       },
       gmv: {
         abbr: 'GMV',
         full: 'Gross Merchandise Value',
-        hint: 'Student payments to academies. Not Mentoma income (0% commission).'
+        hint: 'Student payments to academies. Not Mentoma income (0% commission).',
       },
       dau: {
         abbr: 'DAU',
         full: 'Daily Active Users',
-        hint: 'Distinct users who logged in in the last 1 day.'
+        hint: 'Distinct users who logged in in the last 1 day.',
       },
       wau: {
         abbr: 'WAU',
         full: 'Weekly Active Users',
-        hint: 'Distinct users who logged in in the last 7 days.'
+        hint: 'Distinct users who logged in in the last 7 days.',
       },
       mau: {
         abbr: 'MAU',
         full: 'Monthly Active Users',
-        hint: 'Distinct users who logged in in the last 30 days.'
+        hint: 'Distinct users who logged in in the last 30 days.',
       },
       stickiness: {
         abbr: 'Stickiness',
         full: 'DAU / MAU',
-        hint: 'How often monthly users come back on a given day.'
+        hint: 'How often monthly users come back on a given day.',
       },
       cac: {
         abbr: 'CAC',
         full: 'Customer Acquisition Cost',
-        hint: 'Marketing spend ÷ new paying academies.'
+        hint: 'Marketing spend ÷ new paying academies.',
       },
       ltv: {
         abbr: 'LTV',
         full: 'Lifetime Value',
-        hint: '(ARPA × gross margin) ÷ monthly logo churn.'
+        hint: '(ARPA × gross margin) ÷ monthly logo churn.',
       },
       ltvCac: {
         abbr: 'LTV : CAC',
         full: 'Lifetime Value to Customer Acquisition Cost',
-        hint: 'How many times lifetime value covers acquisition cost. Above 3 is a common healthy bar.'
+        hint: 'How many times lifetime value covers acquisition cost. Above 3 is a common healthy bar.',
       },
       ttv: {
         abbr: 'TTV',
         full: 'Time To Value',
-        hint: 'Days from academy creation to first course, first enrollment, or first paid invoice.'
+        hint: 'Days from academy creation to first course, first enrollment, or first paid invoice.',
       },
       ruleOf40: {
         abbr: 'Rule of 40',
         full: 'Rule of 40',
-        hint: 'Annualised MRR growth % + gross margin %. Healthy SaaS is at or above 40.'
+        hint: 'Annualised MRR growth % + gross margin %. Healthy SaaS is at or above 40.',
       },
       quickRatio: {
         abbr: 'Quick ratio',
         full: 'Quick Ratio',
-        hint: '(New + expansion MRR) ÷ (contraction + churned MRR). Above 4 is strong.'
+        hint: '(New + expansion MRR) ÷ (contraction + churned MRR). Above 4 is strong.',
       },
       expansion: {
         abbr: 'Expansion',
         full: 'Expansion MRR',
-        hint: 'Extra MRR from academies that already paid last month and pay more this month.'
+        hint: 'Extra MRR from academies that already paid last month and pay more this month.',
       },
       contraction: {
         abbr: 'Contraction',
         full: 'Contraction MRR',
-        hint: 'Lost MRR from academies that still pay, but less than last month.'
+        hint: 'Lost MRR from academies that still pay, but less than last month.',
       },
       churn: {
         abbr: 'Churn',
         full: 'Churned MRR',
-        hint: 'MRR (or academies) that paid last month and pay nothing this month.'
+        hint: 'MRR (or academies) that paid last month and pay nothing this month.',
       },
       learningRecord: {
         abbr: 'Learning record',
         full: 'Learning Record',
-        hint: 'Quizzes, submissions, grades, discussions, attendance, and certificates. The switching-cost metric.'
+        hint: 'Quizzes, submissions, grades, discussions, attendance, and certificates. The switching-cost metric.',
       },
       orphan: {
         abbr: 'Orphan',
         full: 'Orphan payment',
-        hint: 'A paid payment with no matching invoice — investigate.'
-      }
-    }
-  }
+        hint: 'A paid payment with no matching invoice — investigate.',
+      },
+    },
+  },
 };

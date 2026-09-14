@@ -9,11 +9,7 @@ type AuthStatusScreenProps = {
   embedded?: boolean;
 };
 
-export function AuthStatusScreen({
-  title,
-  message,
-  embedded = false
-}: AuthStatusScreenProps) {
+export function AuthStatusScreen({ title, message, embedded = false }: AuthStatusScreenProps) {
   const content = (
     <div className="fade-in-up space-y-3 text-center">
       <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-500" />

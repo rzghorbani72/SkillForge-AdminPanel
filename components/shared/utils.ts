@@ -59,7 +59,7 @@ const localeDigits = (value: number, minimumIntegerDigits = 1) =>
   new Intl.NumberFormat(getLocaleForLanguage(currentLanguage()), {
     minimumIntegerDigits,
     maximumFractionDigits: 1,
-    useGrouping: false
+    useGrouping: false,
   }).format(value);
 
 const SIZE_UNIT_KEYS = [
@@ -67,7 +67,7 @@ const SIZE_UNIT_KEYS = [
   'media.unitKb',
   'media.unitMb',
   'media.unitGb',
-  'media.unitTb'
+  'media.unitTb',
 ];
 
 /**
@@ -104,8 +104,7 @@ export const formatFileSizeFloor = (bytes?: number | null) => {
   if (bytes == null || bytes <= 0) return '';
   const exponent = sizeExponent(bytes);
   const rawValue = bytes / Math.pow(1024, exponent);
-  const value =
-    exponent === 0 ? Math.floor(rawValue) : Math.round(rawValue * 10) / 10;
+  const value = exponent === 0 ? Math.floor(rawValue) : Math.round(rawValue * 10) / 10;
   const amount = localeDigits(value);
   return `${amount} ${tNow(SIZE_UNIT_KEYS[exponent])}`;
 };

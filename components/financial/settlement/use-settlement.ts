@@ -1,11 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  settlementApi,
-  type SettlementSummary,
-  type WithdrawalRecord
-} from '@/lib/api-settlement';
+import { settlementApi, type SettlementSummary, type WithdrawalRecord } from '@/lib/api-settlement';
 
 interface UseSettlementResult {
   summary: SettlementSummary | null;
@@ -29,7 +25,7 @@ export function useSettlement(academyId: string | null): UseSettlementResult {
     try {
       const [nextSummary, nextHistory] = await Promise.all([
         settlementApi.getSummary(academyId),
-        settlementApi.getHistory()
+        settlementApi.getHistory(),
       ]);
       setSummary(nextSummary);
       setHistory(Array.isArray(nextHistory) ? nextHistory : []);

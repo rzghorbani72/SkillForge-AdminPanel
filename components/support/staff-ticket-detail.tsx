@@ -7,10 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import Link from '@/components/ui/link';
 import { Crown } from 'lucide-react';
-import {
-  Responsible,
-  StaffTicketDetail as StaffTicketDetailData
-} from './staff-support-types';
+import { Responsible, StaffTicketDetail as StaffTicketDetailData } from './staff-support-types';
 import { TicketStaffControls } from './ticket-staff-controls';
 import { TicketCallPanel } from './ticket-call-panel';
 import { TicketMessageThread } from './ticket-message-thread';
@@ -61,7 +58,7 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
     act(async () => {
       await apiClient.replySupportTicket(ticketId, {
         body,
-        internal_note: internal
+        internal_note: internal,
       });
       setBody('');
       setInternal(false);
@@ -70,11 +67,7 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
   // Capabilities decide what renders below, so a payload without them is not
   // a usable ticket — never a half-rendered one.
   if (!ticket?.capabilities) {
-    return (
-      <p className="p-4 text-sm text-muted-foreground">
-        {t('support.loading')}
-      </p>
-    );
+    return <p className="p-4 text-sm text-muted-foreground">{t('support.loading')}</p>;
   }
 
   const caps = ticket.capabilities;
@@ -123,19 +116,12 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
           {'★'.repeat(ticket.Rating.score)}
           {'☆'.repeat(5 - ticket.Rating.score)}
           {ticket.Rating.comment && (
-            <p className="mt-1 text-muted-foreground">
-              {ticket.Rating.comment}
-            </p>
+            <p className="mt-1 text-muted-foreground">{ticket.Rating.comment}</p>
           )}
         </div>
       )}
 
-      <TicketStaffControls
-        ticket={ticket}
-        responsibles={responsibles}
-        busy={busy}
-        onAct={act}
-      />
+      <TicketStaffControls ticket={ticket} responsibles={responsibles} busy={busy} onAct={act} />
 
       <TicketMessageThread ticket={ticket} />
       <TicketCallPanel ticket={ticket} busy={busy} onAct={act} />
@@ -162,11 +148,7 @@ export function StaffTicketDetail({ ticketId, onChanged }: Props) {
             ) : (
               <span />
             )}
-            <Button
-              size="sm"
-              disabled={busy || !body.trim()}
-              onClick={sendReply}
-            >
+            <Button size="sm" disabled={busy || !body.trim()} onClick={sendReply}>
               {t('support.send')}
             </Button>
           </div>

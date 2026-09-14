@@ -6,13 +6,7 @@ import { ShieldCheck } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useStore } from '@/hooks/useStore';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 type LogRow = {
@@ -32,8 +26,7 @@ export default function SupportAccessLogsPage() {
   const { user, isLoading: userLoading } = useAuthUser();
   const { academies } = useStore();
 
-  const isAdmin =
-    (user as any)?.isAdminProfile || (user as any)?.role === 'ADMIN';
+  const isAdmin = (user as any)?.isAdminProfile || (user as any)?.role === 'ADMIN';
 
   const [rows, setRows] = useState<LogRow[]>([]);
   const [total, setTotal] = useState(0);
@@ -49,7 +42,7 @@ export default function SupportAccessLogsPage() {
 
   const academyName = useCallback(
     (id: string) => academies.find((a) => String(a.id) === id)?.name ?? id,
-    [academies]
+    [academies],
   );
 
   const load = useCallback(async () => {
@@ -58,7 +51,7 @@ export default function SupportAccessLogsPage() {
       const res = await apiClient.getSupportAccessLogs({
         page,
         limit: PAGE_SIZE,
-        academy_id: academyId || undefined
+        academy_id: academyId || undefined,
       });
       setRows(res.data);
       setTotal(res.total);
@@ -77,7 +70,7 @@ export default function SupportAccessLogsPage() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const academyOptions = useMemo(
     () => [...academies].sort((a, b) => a.name.localeCompare(b.name)),
-    [academies]
+    [academies],
   );
 
   if (!isAdmin) return null;
@@ -125,9 +118,7 @@ export default function SupportAccessLogsPage() {
                 <tr className="border-b text-start text-muted-foreground">
                   <th className="py-2 pe-4 text-start font-medium">Time</th>
                   <th className="py-2 pe-4 text-start font-medium">Academy</th>
-                  <th className="py-2 pe-4 text-start font-medium">
-                    Support agent
-                  </th>
+                  <th className="py-2 pe-4 text-start font-medium">Support agent</th>
                   <th className="py-2 pe-4 text-start font-medium">Method</th>
                   <th className="py-2 text-start font-medium">Path</th>
                 </tr>
@@ -135,19 +126,13 @@ export default function SupportAccessLogsPage() {
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="py-6 text-center text-muted-foreground"
-                    >
+                    <td colSpan={5} className="py-6 text-center text-muted-foreground">
                       Loading…
                     </td>
                   </tr>
                 ) : rows.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="py-6 text-center text-muted-foreground"
-                    >
+                    <td colSpan={5} className="py-6 text-center text-muted-foreground">
                       No access records
                     </td>
                   </tr>
@@ -158,9 +143,7 @@ export default function SupportAccessLogsPage() {
                         {new Date(r.created_at).toLocaleString()}
                       </td>
                       <td className="py-2 pe-4">{academyName(r.academy_id)}</td>
-                      <td className="py-2 pe-4 font-mono text-xs">
-                        {r.actor_user_id}
-                      </td>
+                      <td className="py-2 pe-4 font-mono text-xs">{r.actor_user_id}</td>
                       <td className="py-2 pe-4">{r.method}</td>
                       <td className="py-2 font-mono text-xs">{r.path}</td>
                     </tr>

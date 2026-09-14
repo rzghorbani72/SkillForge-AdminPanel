@@ -17,7 +17,7 @@ export function PlanMarginPreviewCard({ revenueToman, limits, costs }: Props) {
   const { t } = useTranslation();
   const preview = useMemo(
     () => previewPlanMargin(revenueToman, limits, costs),
-    [revenueToman, limits, costs]
+    [revenueToman, limits, costs],
   );
 
   if (revenueToman <= 0) return null;
@@ -40,18 +40,16 @@ export function PlanMarginPreviewCard({ revenueToman, limits, costs }: Props) {
           <p className="font-semibold">
             {preview.ok
               ? t('pricing.planLimits.marginOk', {
-                  margin: preview.grossMarginPercent
+                  margin: preview.grossMarginPercent,
                 })
               : t('pricing.planLimits.marginLow', {
-                  margin: preview.grossMarginPercent
+                  margin: preview.grossMarginPercent,
                 })}
           </p>
           <p className="text-xs text-muted-foreground">
             {t('pricing.planLimits.marginDetail', {
               cogs: preview.cogsPercent,
-              driver: t(
-                `pricing.planLimits.costDriver.${preview.topCostDriver}`
-              )
+              driver: t(`pricing.planLimits.costDriver.${preview.topCostDriver}`),
             })}
           </p>
         </div>

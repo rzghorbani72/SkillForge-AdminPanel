@@ -22,8 +22,7 @@ import { apiErrorMessage } from '@/lib/api-error-message';
 export default function CategoriesPage() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
-  const { categories, isLoading, error, clearError, fetchCategories } =
-    useCategoriesStore();
+  const { categories, isLoading, error, clearError, fetchCategories } = useCategoriesStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<FilterType>('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -33,7 +32,7 @@ export default function CategoriesPage() {
     name: '',
     description: '',
     type: 'COURSE' as CategoryType,
-    is_active: true
+    is_active: true,
   });
 
   const hasFetched = useRef(false);
@@ -59,7 +58,7 @@ export default function CategoriesPage() {
   }, [searchParams]);
 
   const safeCategories = (Array.isArray(categories) ? categories : []).filter(
-    (category) => category?.name
+    (category) => category?.name,
   );
 
   const filteredCategories = safeCategories.filter((category) => {
@@ -67,8 +66,7 @@ export default function CategoriesPage() {
     const matchesSearch =
       category.name.toLowerCase().includes(query) ||
       (category.description?.toLowerCase().includes(query) ?? false);
-    const matchesType =
-      selectedType === 'all' || category.type === selectedType;
+    const matchesType = selectedType === 'all' || category.type === selectedType;
 
     return matchesSearch && matchesType;
   });
@@ -78,7 +76,7 @@ export default function CategoriesPage() {
       name: '',
       description: '',
       type: 'COURSE' as CategoryType,
-      is_active: true
+      is_active: true,
     });
   };
 
@@ -92,7 +90,7 @@ export default function CategoriesPage() {
       const response = await apiClient.createCategory({
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
-        type: formData.type
+        type: formData.type,
       });
 
       const payload = response?.data as
@@ -128,7 +126,7 @@ export default function CategoriesPage() {
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
         type: formData.type,
-        is_active: formData.is_active
+        is_active: formData.is_active,
       };
 
       await apiClient.updateCategory(editingCategory.id, updateData);
@@ -142,14 +140,8 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleCreateCategory = useDebouncedCallback(
-    handleCreateCategoryHandler,
-    500
-  );
-  const handleEditCategory = useDebouncedCallback(
-    handleEditCategoryHandler,
-    500
-  );
+  const handleCreateCategory = useDebouncedCallback(handleCreateCategoryHandler, 500);
+  const handleEditCategory = useDebouncedCallback(handleEditCategoryHandler, 500);
 
   const handleDeleteCategory = async (categoryId: number) => {
     if (!confirm(t('categories.deleteConfirm'))) {
@@ -171,7 +163,7 @@ export default function CategoriesPage() {
       name: category.name,
       description: category.description || '',
       type: category.type as CategoryType,
-      is_active: category.is_active
+      is_active: category.is_active,
     });
     setIsEditDialogOpen(true);
   };
@@ -213,9 +205,7 @@ export default function CategoriesPage() {
                 <Folder className="h-10 w-10" />
               </div>
             </div>
-            <h3 className="text-xl font-semibold tracking-tight">
-              {t('media.noCategoriesFound')}
-            </h3>
+            <h3 className="text-xl font-semibold tracking-tight">{t('media.noCategoriesFound')}</h3>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               {searchTerm || selectedType !== 'all'
                 ? t('media.noCategoriesMatch')
@@ -235,10 +225,7 @@ export default function CategoriesPage() {
       ) : (
         <div className="stagger-children grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filteredCategories.map((category, index) => (
-            <div
-              key={category.id}
-              style={{ animationDelay: `${0.05 * (index + 1)}s` }}
-            >
+            <div key={category.id} style={{ animationDelay: `${0.05 * (index + 1)}s` }}>
               <CategoryCard
                 category={category}
                 onEdit={openEditDialog}

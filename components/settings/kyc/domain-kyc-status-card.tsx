@@ -1,13 +1,7 @@
 'use client';
 
 import Link from '@/components/ui/link';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ShieldCheck } from 'lucide-react';
@@ -40,23 +34,16 @@ export function DomainKycStatusCard() {
               {t('settings.kyc.title')}
             </CardTitle>
             <CardDescription>
-              {ready
-                ? t('settings.kyc.domainReady')
-                : t('settings.kyc.domainBlocked')}
+              {ready ? t('settings.kyc.domainReady') : t('settings.kyc.domainBlocked')}
             </CardDescription>
           </div>
-          <KycStatusBadge
-            status={state.status}
-            complete={state.settlement_eligible}
-          />
+          <KycStatusBadge status={state.status} complete={state.settlement_eligible} />
         </div>
       </CardHeader>
       {!ready ? (
         <CardContent>
           <Button asChild size="sm">
-            <Link href={KYC_IDENTITY_PATH}>
-              {t('settings.kyc.goToIdentity')}
-            </Link>
+            <Link href={KYC_IDENTITY_PATH}>{t('settings.kyc.goToIdentity')}</Link>
           </Button>
         </CardContent>
       ) : null}

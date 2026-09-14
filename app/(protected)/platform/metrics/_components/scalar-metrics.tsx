@@ -1,11 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import {
-  DataPanel,
-  DataList,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataPanel, DataList, type DataColumn } from '@/components/shared/data-list';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { useMetricFormat } from './metric-format';
@@ -38,7 +34,7 @@ export function ScalarMetrics({
   metrics,
   currency,
   loading = false,
-  footer
+  footer,
 }: ScalarMetricsProps) {
   const { t } = useTranslation();
   const format = useMetricFormat(currency);
@@ -54,28 +50,23 @@ export function ScalarMetrics({
         const term = METRIC_TERM_KEYS[row.key];
         const full = term ? t(`platformMetrics.terms.${term}.full`) : '';
         const visible = label === path ? row.key : label;
-        const showFull =
-          Boolean(term) && full.toLowerCase() !== visible.toLowerCase();
+        const showFull = Boolean(term) && full.toLowerCase() !== visible.toLowerCase();
         return (
           <span className="inline-flex flex-wrap items-center gap-x-1">
             {visible}
-            {showFull ? (
-              <span className="font-normal text-muted-foreground">
-                ({full})
-              </span>
-            ) : null}
+            {showFull ? <span className="font-normal text-muted-foreground">({full})</span> : null}
             {term ? <InfoTooltip text={termFullHint(t, term)} /> : null}
           </span>
         );
-      }
+      },
     },
     {
       id: 'value',
       header: t('platformMetrics.columns.value'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => format(row.key, row.value)
-    }
+      cell: (row) => format(row.key, row.value),
+    },
   ];
 
   return (

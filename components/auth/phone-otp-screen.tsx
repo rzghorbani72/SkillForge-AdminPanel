@@ -47,7 +47,7 @@ export function PhoneOtpScreen({
   verified = false,
   onResend,
   resending = false,
-  children
+  children,
 }: PhoneOtpScreenProps) {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -59,16 +59,11 @@ export function PhoneOtpScreen({
   }, []);
 
   return (
-    <AuthShell
-      activeTab={activeTab}
-      title={title ?? t('auth.verifyYourContact')}
-    >
+    <AuthShell activeTab={activeTab} title={title ?? t('auth.verifyYourContact')}>
       <div className="flex items-start justify-between gap-3 px-4">
         <p className="text-start text-base text-[#616579]">
           {t('auth.otpSentTo')}{' '}
-          <strong dir="ltr">
-            {formatIdentifierDisplay(otpPhone, language)}
-          </strong>
+          <strong dir="ltr">{formatIdentifierDisplay(otpPhone, language)}</strong>
         </p>
         <button
           type="button"
@@ -96,9 +91,7 @@ export function PhoneOtpScreen({
               if (!verified && !otpLoading) onSubmit();
             }}
           />
-          {otpError && (
-            <p className="text-center text-xs text-destructive">{otpError}</p>
-          )}
+          {otpError && <p className="text-center text-xs text-destructive">{otpError}</p>}
         </div>
 
         {onResend && (

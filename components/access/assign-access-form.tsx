@@ -51,7 +51,7 @@ export function AssignAccessForm({
   enabled = true,
   disabled = false,
   disabledHint,
-  hasExternalTarget = false
+  hasExternalTarget = false,
 }: AssignAccessFormProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
@@ -64,13 +64,12 @@ export function AssignAccessForm({
   const [groupIds, setGroupIds] = useState<string[]>([]);
   const [duration, setDuration] = useState<AccessDuration>({
     mode: 'days',
-    days: 365
+    days: 365,
   });
   const [pricing, setPricing] = useState<GrantPricing>({ mode: 'FREE' });
   const [note, setNote] = useState('');
 
-  const hasTarget =
-    hasExternalTarget || profileIds.length > 0 || groupIds.length > 0;
+  const hasTarget = hasExternalTarget || profileIds.length > 0 || groupIds.length > 0;
 
   // Held in a ref so an inline callback cannot re-fire the effect every render.
   const emitRef = useRef(onSelectionChange);
@@ -84,9 +83,9 @@ export function AssignAccessForm({
             group_ids: groupIds,
             duration,
             pricing,
-            note: note.trim() || undefined
+            note: note.trim() || undefined,
           }
-        : null
+        : null,
     );
   }, [hasTarget, profileIds, groupIds, duration, pricing, note]);
 
@@ -98,7 +97,7 @@ export function AssignAccessForm({
       group_ids: groupIds,
       duration,
       pricing,
-      note: note.trim() || undefined
+      note: note.trim() || undefined,
     });
     setProfileIds([]);
     setGroupIds([]);
@@ -119,9 +118,7 @@ export function AssignAccessForm({
         step={1}
         title={t('accessGrants.stepTargets')}
         hint={
-          isTeacher
-            ? t('accessGrants.stepTargetsTeacherHint')
-            : t('accessGrants.stepTargetsHint')
+          isTeacher ? t('accessGrants.stepTargetsTeacherHint') : t('accessGrants.stepTargetsHint')
         }
       >
         <div className="grid gap-4 md:grid-cols-2">
@@ -137,7 +134,7 @@ export function AssignAccessForm({
                 selected: t('accessGrants.students'),
                 search: t('common.search'),
                 empty: t('accessGrants.noStudents'),
-                remove: t('common.remove')
+                remove: t('common.remove'),
               }}
             />
           </div>
@@ -154,12 +151,10 @@ export function AssignAccessForm({
                 selected: t('accessGrants.groups'),
                 search: t('common.search'),
                 empty: t('accessGrants.noGroups'),
-                remove: t('common.remove')
+                remove: t('common.remove'),
               }}
             />
-            <p className="text-xs text-muted-foreground">
-              {t('accessGrants.groupsHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('accessGrants.groupsHint')}</p>
           </div>
         </div>
       </AccessFormStep>
@@ -169,11 +164,7 @@ export function AssignAccessForm({
         title={t('accessGrants.stepDuration')}
         hint={t('accessGrants.stepDurationHint')}
       >
-        <AccessDurationPicker
-          value={duration}
-          onChange={setDuration}
-          disabled={isSaving}
-        />
+        <AccessDurationPicker value={duration} onChange={setDuration} disabled={isSaving} />
       </AccessFormStep>
 
       {!isTeacher && (
@@ -182,11 +173,7 @@ export function AssignAccessForm({
           title={t('accessGrants.stepPricing')}
           hint={t('accessGrants.stepPricingHint')}
         >
-          <AccessPricingPicker
-            value={pricing}
-            onChange={setPricing}
-            disabled={isSaving}
-          />
+          <AccessPricingPicker value={pricing} onChange={setPricing} disabled={isSaving} />
 
           {pricing.mode !== 'FREE' && groupIds.length > 0 && (
             <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-700 dark:text-amber-400">
@@ -213,7 +200,7 @@ export function AssignAccessForm({
           <p className="text-xs text-muted-foreground">
             {t('accessGrants.savedWithCourseHint', {
               students: String(profileIds.length),
-              groups: String(groupIds.length)
+              groups: String(groupIds.length),
             })}
           </p>
         ) : null
@@ -225,7 +212,7 @@ export function AssignAccessForm({
             selectedCount > 0
               ? t('accessGrants.readyHint', {
                   students: String(profileIds.length),
-                  groups: String(groupIds.length)
+                  groups: String(groupIds.length),
                 })
               : undefined
           }

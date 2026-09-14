@@ -11,9 +11,7 @@ export function useTutorLedFeature() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const isManager =
-    user?.role === 'MANAGER' ||
-    user?.role === 'ADMIN' ||
-    user?.role === 'PLATFORM_OWNER';
+    user?.role === 'MANAGER' || user?.role === 'ADMIN' || user?.role === 'PLATFORM_OWNER';
   const [featureEnabled, setFeatureEnabled] = useState<boolean | null>(null);
   const [checkingFeature, setCheckingFeature] = useState(true);
   const [enablingFeature, setEnablingFeature] = useState(false);
@@ -51,7 +49,7 @@ export function useTutorLedFeature() {
     setEnablingFeature(true);
     try {
       const updated = await apiClient.updateCurrentAcademyFeatures({
-        tutor_led_learning_enabled: true
+        tutor_led_learning_enabled: true,
       });
       setFeatureEnabled(updated.tutor_led_learning_enabled);
       toast.success(t('opsQueue.featureEnabledSuccess'));
@@ -67,6 +65,6 @@ export function useTutorLedFeature() {
     checkingFeature,
     enablingFeature,
     isManager,
-    enableLearningFollowUp
+    enableLearningFollowUp,
   };
 }

@@ -78,10 +78,7 @@ class AuthService {
       user.currentAcademy?.id ??
       null;
     if (academyId) {
-      window.localStorage.setItem(
-        'skillforge_selected_academy_id',
-        String(academyId)
-      );
+      window.localStorage.setItem('skillforge_selected_academy_id', String(academyId));
     }
   }
 
@@ -184,10 +181,7 @@ class AuthService {
     }
   }
 
-  async selectAcademy(data: {
-    temp_token: string;
-    academy_id: string;
-  }): Promise<AuthUser> {
+  async selectAcademy(data: { temp_token: string; academy_id: string }): Promise<AuthUser> {
     try {
       const response = await apiClient.selectAcademy(data);
 
@@ -266,9 +260,7 @@ class AuthService {
 
   // Get user's role in current store
   getCurrentRole(user: AuthUser): string {
-    return (
-      user.currentProfile?.Role?.name || user.currentProfile?.role?.name || ''
-    );
+    return user.currentProfile?.Role?.name || user.currentProfile?.role?.name || '';
   }
 
   getCurrentAcademy(user?: AuthUser): Academy | null {
@@ -313,9 +305,7 @@ class AuthService {
     const raw = response?.data as unknown;
     const profiles = Array.isArray(raw)
       ? raw
-      : raw &&
-          typeof raw === 'object' &&
-          Array.isArray((raw as { data?: unknown[] }).data)
+      : raw && typeof raw === 'object' && Array.isArray((raw as { data?: unknown[] }).data)
         ? (raw as { data: UserProfile[] }).data
         : ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'TEACHER');
@@ -327,9 +317,7 @@ class AuthService {
     const raw = response?.data as unknown;
     const profiles = Array.isArray(raw)
       ? raw
-      : raw &&
-          typeof raw === 'object' &&
-          Array.isArray((raw as { data?: unknown[] }).data)
+      : raw && typeof raw === 'object' && Array.isArray((raw as { data?: unknown[] }).data)
         ? (raw as { data: UserProfile[] }).data
         : ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'MANAGER');
@@ -341,9 +329,7 @@ class AuthService {
     const raw = response?.data as unknown;
     const profiles = Array.isArray(raw)
       ? raw
-      : raw &&
-          typeof raw === 'object' &&
-          Array.isArray((raw as { data?: unknown[] }).data)
+      : raw && typeof raw === 'object' && Array.isArray((raw as { data?: unknown[] }).data)
         ? (raw as { data: UserProfile[] }).data
         : ([] as UserProfile[]);
     return profiles.some((profile: UserProfile) => profile.role === 'ADMIN');
@@ -355,14 +341,10 @@ class AuthService {
     const raw = response?.data as unknown;
     const profiles = Array.isArray(raw)
       ? raw
-      : raw &&
-          typeof raw === 'object' &&
-          Array.isArray((raw as { data?: unknown[] }).data)
+      : raw && typeof raw === 'object' && Array.isArray((raw as { data?: unknown[] }).data)
         ? (raw as { data: UserProfile[] }).data
         : ([] as UserProfile[]);
-    const profile = profiles.find(
-      (p: UserProfile) => p.academyId === academyId
-    );
+    const profile = profiles.find((p: UserProfile) => p.academyId === academyId);
     return profile?.role || null;
   }
 

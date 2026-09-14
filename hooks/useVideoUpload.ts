@@ -26,14 +26,11 @@ export interface VideoUploadState {
 
 export const useVideoUpload = (options: VideoUploadOptions = {}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedPosterFile, setSelectedPosterFile] = useState<File | null>(
-    null
-  );
+  const [selectedPosterFile, setSelectedPosterFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [posterPreview, setPosterPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadAbortController, setUploadAbortController] =
-    useState<AbortController | null>(null);
+  const [uploadAbortController, setUploadAbortController] = useState<AbortController | null>(null);
   const [uploadedVideoId, setUploadedVideoId] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -43,37 +40,27 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
 
     setSelectedFile(file);
     setPreview(URL.createObjectURL(file));
-    toast.success(
-      tNow('toasts.videoSelected', { size: formatFileSize(file.size) })
-    );
+    toast.success(tNow('toasts.videoSelected', { size: formatFileSize(file.size) }));
     return true;
   }, []);
 
   // Handle poster file selection
-  const handlePosterFileChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        // Validate file type
-        const validTypes = [
-          'image/png',
-          'image/jpeg',
-          'image/jpg',
-          'image/webp'
-        ];
-        if (!validTypes.includes(file.type)) {
-          toast.error(tNow('toasts.posterInvalidFormat'));
-          return;
-        }
-
-        setSelectedPosterFile(file);
-        // Create preview URL
-        const previewUrl = URL.createObjectURL(file);
-        setPosterPreview(previewUrl);
+  const handlePosterFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        toast.error(tNow('toasts.posterInvalidFormat'));
+        return;
       }
-    },
-    []
-  );
+
+      setSelectedPosterFile(file);
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setPosterPreview(previewUrl);
+    }
+  }, []);
 
   // Remove selected files and previews
   const removeFiles = useCallback(() => {
@@ -131,7 +118,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
           file,
           {
             title: options.title || file.name,
-            description: options.description || 'Uploaded video'
+            description: options.description || 'Uploaded video',
           },
           selectedPosterFile || undefined,
           (progress) => {
@@ -148,7 +135,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
               console.log('Upload progress reached 100% - upload complete');
             }
           },
-          abortController
+          abortController,
         );
 
         if (uploadResponse && (uploadResponse as any).id) {
@@ -197,7 +184,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
         setTimeout(() => setUploadProgress(0), 1000);
       }
     },
-    [selectedFile, selectedPosterFile, options]
+    [selectedFile, selectedPosterFile, options],
   );
 
   // Pick a file and upload it immediately (click-to-browse / drag-drop)
@@ -205,7 +192,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
     async (file: File) => {
       if (await acceptVideoFile(file)) await uploadVideo(file);
     },
-    [acceptVideoFile, uploadVideo]
+    [acceptVideoFile, uploadVideo],
   );
 
   // Cancel ongoing upload
@@ -267,6 +254,6 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
     hasFiles: !!selectedFile || !!selectedPosterFile,
     isUploaded: !!uploadedVideoId,
     canUpload: !!selectedFile && !isUploading,
-    canCancel: isUploading
+    canCancel: isUploading,
   };
 };

@@ -23,7 +23,7 @@ export default function EditProductPage() {
     uploadCoverImage,
     cancelUpload,
     onSubmit,
-    handleBack
+    handleBack,
   } = useProductEdit();
 
   if (!selectedAcademy) {
@@ -36,9 +36,7 @@ export default function EditProductPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Loading product...
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">Loading product...</p>
           </div>
         </div>
       </div>
@@ -50,9 +48,7 @@ export default function EditProductPage() {
       <div className="flex-1 space-y-6 p-4 sm:p-6">
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-muted-foreground">
-              Product Not Found
-            </h2>
+            <h2 className="text-2xl font-semibold text-muted-foreground">Product Not Found</h2>
             <p className="text-muted-foreground">
               The product you&apos;re looking for doesn&apos;t exist or you don&apos;t have
               permission to edit it.

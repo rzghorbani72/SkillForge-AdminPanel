@@ -30,7 +30,7 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
   selectedVideoId,
   disabled = false,
   className,
-  posterUrl
+  posterUrl,
 }) => {
   const { t } = useTranslation();
 
@@ -38,13 +38,12 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
     title: title ?? t('media.videoFile'),
     description: description ?? t('media.videoFile'),
     onSuccess: (videoId) => onSuccess?.({ id: parseInt(videoId, 10), url: '' }),
-    onError
+    onError,
   });
 
   const attachedId = videoUpload.uploadedVideoId ?? selectedVideoId ?? null;
   const playableUrl =
-    videoUpload.preview ??
-    (attachedId ? apiClient.getVideoStreamUrl(String(attachedId)) : null);
+    videoUpload.preview ?? (attachedId ? apiClient.getVideoStreamUrl(String(attachedId)) : null);
 
   const handleRemove = () => {
     videoUpload.removeFiles();
@@ -80,17 +79,10 @@ const VideoUploadPreview: React.FC<VideoUploadPreviewProps> = ({
         }
       />
 
-      <p className="text-xs text-muted-foreground">
-        {t('media.videoFormatsHint')}
-      </p>
+      <p className="text-xs text-muted-foreground">{t('media.videoFormatsHint')}</p>
 
       {videoUpload.canCancel && (
-        <Button
-          type="button"
-          variant="destructive"
-          size="sm"
-          onClick={videoUpload.cancelUpload}
-        >
+        <Button type="button" variant="destructive" size="sm" onClick={videoUpload.cancelUpload}>
           <X className="me-2 h-4 w-4" />
           {t('common.cancel')}
         </Button>

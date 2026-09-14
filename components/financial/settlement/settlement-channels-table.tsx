@@ -7,7 +7,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { formatPaymentMethodLabel } from '@/lib/format-payment-method-label';
@@ -28,7 +28,7 @@ interface SettlementChannelsTableProps {
  */
 export function SettlementChannelsTable({
   channels,
-  collectedTotal
+  collectedTotal,
 }: SettlementChannelsTableProps) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
@@ -41,9 +41,7 @@ export function SettlementChannelsTable({
     <Card>
       <CardHeader>
         <CardTitle>{t('settlement.channels.title')}</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {t('settlement.channels.description')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('settlement.channels.description')}</p>
       </CardHeader>
       <CardContent>
         <div className="table-h-scroll">
@@ -52,32 +50,21 @@ export function SettlementChannelsTable({
               <TableRow>
                 <TableHead>{t('settlement.channels.method')}</TableHead>
                 <TableHead>{t('settlement.channels.custody')}</TableHead>
-                <TableHead className="text-end">
-                  {t('settlement.channels.count')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('settlement.channels.gross')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('settlement.channels.share')}
-                </TableHead>
+                <TableHead className="text-end">{t('settlement.channels.count')}</TableHead>
+                <TableHead className="text-end">{t('settlement.channels.gross')}</TableHead>
+                <TableHead className="text-end">{t('settlement.channels.share')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.map((row) => {
-                const share =
-                  collectedTotal > 0 ? (row.gross / collectedTotal) * 100 : 0;
+                const share = collectedTotal > 0 ? (row.gross / collectedTotal) * 100 : 0;
                 return (
                   <TableRow key={row.method}>
                     <TableCell className="font-medium">
                       {formatPaymentMethodLabel(row.method, t)}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          row.custody === 'PLATFORM' ? 'default' : 'secondary'
-                        }
-                      >
+                      <Badge variant={row.custody === 'PLATFORM' ? 'default' : 'secondary'}>
                         {t(`settlement.custody.${row.custody}`)}
                       </Badge>
                     </TableCell>

@@ -31,13 +31,9 @@ export function BlogScreen({ scope, basePath }: BlogScreenProps) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight">
-            {scope === 'platform'
-              ? t('blog.platformTitle')
-              : t('blog.academyTitle')}
+            {scope === 'platform' ? t('blog.platformTitle') : t('blog.academyTitle')}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {t('blog.description')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('blog.description')}</p>
         </div>
         <Button onClick={() => router.push(`${basePath}/new`)}>
           <Plus className="me-2 h-4 w-4" />

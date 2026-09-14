@@ -29,7 +29,7 @@ export const LEGAL_ADMIN_DOC_TYPES: LegalDocType[] = [
   'TERMS',
   'PRIVACY',
   'REFUND',
-  'ACADEMY_AGREEMENT'
+  'ACADEMY_AGREEMENT',
 ];
 
 export const LEGAL_ADMIN_LOCALES = ['fa', 'en'] as const;

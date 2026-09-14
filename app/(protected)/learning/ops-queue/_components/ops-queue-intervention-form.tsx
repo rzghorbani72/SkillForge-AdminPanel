@@ -1,13 +1,7 @@
 'use client';
 
 import { StickyNote } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,7 +28,7 @@ export function OpsQueueInterventionForm({
   noteText,
   onNoteTextChange,
   savingNote,
-  onSave
+  onSave,
 }: OpsQueueInterventionFormProps) {
   const { t } = useTranslation();
 
@@ -45,9 +39,7 @@ export function OpsQueueInterventionForm({
           <StickyNote className="h-4 w-4" />
           {t('opsQueue.interventionNote')}
         </CardTitle>
-        <CardDescription>
-          {t('opsQueue.interventionNoteDescription')}
-        </CardDescription>
+        <CardDescription>{t('opsQueue.interventionNoteDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">

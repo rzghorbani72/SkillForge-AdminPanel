@@ -26,7 +26,7 @@ export function AnimatedHoverIcon({
   icon: Icon,
   playing,
   className,
-  size = 18
+  size = 18,
 }: AnimatedHoverIconProps) {
   const ref = useRef<IconHandle>(null);
 

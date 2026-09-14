@@ -1,12 +1,4 @@
-import {
-  BookOpen,
-  FileText,
-  Folder,
-  Video,
-  Volume2,
-  Image,
-  Newspaper
-} from 'lucide-react';
+import { BookOpen, FileText, Folder, Video, Volume2, Image, Newspaper } from 'lucide-react';
 import { ReactElement } from 'react';
 
 export const getCategoryTypeIcon = (type: string): ReactElement => {
@@ -68,7 +60,7 @@ export enum CategoryType {
   AUDIO = 'AUDIO',
   DOCUMENT = 'DOCUMENT',
   IMAGE = 'IMAGE',
-  ROOT = 'ROOT'
+  ROOT = 'ROOT',
 }
 export const getCategoryTypeLabel = (type: string): string => {
   switch (type) {

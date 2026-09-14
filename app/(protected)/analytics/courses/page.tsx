@@ -1,13 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   BarChart,
   Bar,
@@ -17,7 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   AreaChart,
-  Area
+  Area,
 } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -40,23 +34,23 @@ export default function CoursePerformancePage() {
     enrollments: course.totalEnrollments,
     revenue: course.totalRevenue,
     completion: course.completionRate,
-    activeLearners: course.activeEnrollments
+    activeLearners: course.activeEnrollments,
   }));
 
   const topByEnrollment = useMemo(
     () => [...courseMetrics].sort((a, b) => b.enrollments - a.enrollments),
-    [courseMetrics]
+    [courseMetrics],
   );
 
   const topByRevenue = useMemo(
     () => [...courseMetrics].sort((a, b) => b.revenue - a.revenue),
-    [courseMetrics]
+    [courseMetrics],
   );
 
   const aggregateTrend = overview.revenueTrend.map((point) => ({
     month: formatTrendPeriod(point.period, language),
     active: point.active,
-    completed: point.completed
+    completed: point.completed,
   }));
 
   if (isLoading) return <AnalyticsLoading />;
@@ -64,33 +58,22 @@ export default function CoursePerformancePage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('analytics.coursePerformance')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('analytics.coursePerformanceDescription')}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('analytics.coursePerformance')}</h1>
+        <p className="text-muted-foreground">{t('analytics.coursePerformanceDescription')}</p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>{t('analytics.activeVsCompleted')}</CardTitle>
-          <CardDescription>
-            {t('analytics.activeVsCompletedDescription')}
-          </CardDescription>
+          <CardDescription>{t('analytics.activeVsCompletedDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={320}>
             <AreaChart data={aggregateTrend}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis
-                allowDecimals={false}
-                tickFormatter={(value: number) => formatNumber(value)}
-              />
-              <Tooltip
-                formatter={(value: number) => [formatNumber(value), '']}
-              />
+              <YAxis allowDecimals={false} tickFormatter={(value: number) => formatNumber(value)} />
+              <Tooltip formatter={(value: number) => [formatNumber(value), '']} />
               <Area
                 type="monotone"
                 dataKey="active"
@@ -116,9 +99,7 @@ export default function CoursePerformancePage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('analytics.topCoursesByEnrollments')}</CardTitle>
-            <CardDescription>
-              {t('analytics.topCoursesByEnrollmentsDescription')}
-            </CardDescription>
+            <CardDescription>{t('analytics.topCoursesByEnrollmentsDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={320}>
@@ -132,7 +113,7 @@ export default function CoursePerformancePage() {
                 <Tooltip
                   formatter={(value: number) => [
                     formatNumber(value),
-                    t('analytics.totalEnrollments')
+                    t('analytics.totalEnrollments'),
                   ]}
                 />
                 <Bar dataKey="enrollments" fill="#818cf8" />
@@ -140,10 +121,7 @@ export default function CoursePerformancePage() {
             </ResponsiveContainer>
             <div className="mt-4 space-y-2 text-sm">
               {topByEnrollment.slice(0, 8).map((course) => (
-                <div
-                  key={course.name}
-                  className="flex items-center justify-between"
-                >
+                <div key={course.name} className="flex items-center justify-between">
                   <span className="truncate">{course.name}</span>
                   <Badge variant="outline">
                     {formatNumber(course.enrollments)} {t('users.students')}
@@ -157,25 +135,21 @@ export default function CoursePerformancePage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('analytics.revenueLeaderboard')}</CardTitle>
-            <CardDescription>
-              {t('analytics.revenueLeaderboardDescription')}
-            </CardDescription>
+            <CardDescription>{t('analytics.revenueLeaderboardDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={320}>
               <BarChart
                 data={topByRevenue.slice(0, 8).map((course) => ({
                   ...course,
-                  revenueToman: course.revenue
+                  revenueToman: course.revenue,
                 }))}
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
                 <YAxis tickFormatter={(value: number) => formatNumber(value)} />
                 <Tooltip
-                  formatter={(value: number) =>
-                    `${formatNumber(value)} ${t('common.toman')}`
-                  }
+                  formatter={(value: number) => `${formatNumber(value)} ${t('common.toman')}`}
                 />
                 <Bar dataKey="revenueToman" fill="#34d399" />
               </BarChart>
@@ -185,9 +159,7 @@ export default function CoursePerformancePage() {
                 <div key={course.name} className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="truncate">{course.name}</span>
-                    <Badge variant="secondary">
-                      {formatToman(course.revenue)}
-                    </Badge>
+                    <Badge variant="secondary">{formatToman(course.revenue)}</Badge>
                   </div>
                   <Progress value={course.completion} className="h-2" />
                 </div>

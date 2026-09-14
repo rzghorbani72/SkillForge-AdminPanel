@@ -8,7 +8,7 @@ import {
   getAcademyHealthSignals,
   type HealthRange,
   type HealthSeries,
-  type HealthSignals
+  type HealthSignals,
 } from '@/lib/api-academy-health';
 
 const SIGNALS_REFETCH_MS = 60_000;
@@ -21,7 +21,7 @@ export function useHealthSignals() {
   return useApiQuery<HealthSignals>({
     queryKey: queryKeys.academyHealthSignals(academyId),
     queryFn: (signal) => getAcademyHealthSignals(signal),
-    refetchInterval: SIGNALS_REFETCH_MS
+    refetchInterval: SIGNALS_REFETCH_MS,
   });
 }
 
@@ -33,6 +33,6 @@ export function useHealthSeries(days: HealthRange) {
     queryKey: queryKeys.academyHealthSeries(academyId, days),
     queryFn: (signal) => getAcademyHealthSeries(days, signal),
     staleTime: SERIES_STALE_MS,
-    keepPrevious: true
+    keepPrevious: true,
   });
 }

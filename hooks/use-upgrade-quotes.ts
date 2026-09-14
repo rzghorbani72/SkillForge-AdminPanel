@@ -25,26 +25,22 @@ export function useUpgradeQuotes(slugs: readonly string[], enabled = true) {
       const entries = await Promise.all(
         slugs.map(async (slug) => {
           try {
-            return [
-              slug,
-              await apiClient.getAcademyUpgradeQuote(slug)
-            ] as const;
+            return [slug, await apiClient.getAcademyUpgradeQuote(slug)] as const;
           } catch {
             return [slug, null] as const;
           }
-        })
+        }),
       );
       return Object.fromEntries(
         entries.filter(
-          (entry): entry is readonly [string, AcademyUpgradeQuote] =>
-            entry[1] !== null
-        )
+          (entry): entry is readonly [string, AcademyUpgradeQuote] => entry[1] !== null,
+        ),
       );
     },
     enabled: enabled && slugs.length > 0,
     // The diff shrinks as the paid period runs down, so it is fresh for a
     // minute, not for the session.
-    staleTime: 60_000
+    staleTime: 60_000,
   });
 
   return { quotes: data ?? {}, isLoading };

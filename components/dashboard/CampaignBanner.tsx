@@ -1,14 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  CheckCircle2,
-  Eye,
-  Users,
-  CreditCard,
-  ArrowLeft,
-  X
-} from 'lucide-react';
+import { CheckCircle2, Eye, Users, CreditCard, ArrowLeft, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CampaignBannerProps {
@@ -27,7 +20,7 @@ export default function CampaignBanner({ onDismiss }: CampaignBannerProps) {
         'relative overflow-hidden rounded-2xl border p-5 transition-all duration-500',
         active
           ? 'border-emerald-200 bg-gradient-to-l from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card'
-          : 'border-border bg-card'
+          : 'border-border bg-card',
       )}
     >
       <button
@@ -61,8 +54,7 @@ function InactiveState({ onActivate }: { onActivate: () => void }) {
           ۳۰٪ تخفیف ویژه روی تمام دوره‌ها برای دانشجویان شما
         </h2>
         <p className="text-sm text-muted-foreground">
-          بنر تبلیغاتی را در همه‌ی آکادمی‌های خود فعال کنید و فروش نوروزی را
-          آغاز کنید.
+          بنر تبلیغاتی را در همه‌ی آکادمی‌های خود فعال کنید و فروش نوروزی را آغاز کنید.
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -100,28 +92,17 @@ function ActiveState({ onPause }: { onPause: () => void }) {
         <div className="flex items-center gap-5 text-[13px] text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Eye className="h-3.5 w-3.5" />
-            <strong className="font-mono font-semibold text-foreground">
-              ۱۲٬۸۴۲
-            </strong>{' '}
-            بازدید
+            <strong className="font-mono font-semibold text-foreground">۱۲٬۸۴۲</strong> بازدید
           </span>
           <span className="flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5" />
-            <strong className="font-mono font-semibold text-foreground">
-              ۴۸۰
-            </strong>{' '}
-            کلیک
+            <strong className="font-mono font-semibold text-foreground">۴۸۰</strong> کلیک
           </span>
           <span className="flex items-center gap-1.5">
             <CreditCard className="h-3.5 w-3.5" />
-            <strong className="font-mono font-semibold text-foreground">
-              ۲۸
-            </strong>{' '}
-            خرید
+            <strong className="font-mono font-semibold text-foreground">۲۸</strong> خرید
           </span>
-          <span className="mr-auto text-muted-foreground/70">
-            پایان: ۱۳ فروردین
-          </span>
+          <span className="mr-auto text-muted-foreground/70">پایان: ۱۳ فروردین</span>
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2">

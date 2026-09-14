@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -30,8 +30,7 @@ export default function ThemeToggle() {
     async (nextTheme: ThemeChoice) => {
       setTheme(nextTheme);
 
-      const darkModeValue: boolean | null =
-        nextTheme === 'system' ? null : nextTheme === 'dark';
+      const darkModeValue: boolean | null = nextTheme === 'system' ? null : nextTheme === 'dark';
 
       // Avoid duplicate updates if nothing changes
       if (darkModeValue === persistDarkPreference) {
@@ -41,7 +40,7 @@ export default function ThemeToggle() {
       setIsUpdating(true);
       try {
         await apiClient.updateCurrentThemeConfig({
-          dark_mode: darkModeValue
+          dark_mode: darkModeValue,
         });
       } catch (error) {
         ErrorHandler.handleApiError(error);
@@ -49,7 +48,7 @@ export default function ThemeToggle() {
         setIsUpdating(false);
       }
     },
-    [persistDarkPreference, setTheme]
+    [persistDarkPreference, setTheme],
   );
 
   return (
@@ -62,22 +61,13 @@ export default function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() => handleThemeChange('light')}
-          disabled={isUpdating}
-        >
+        <DropdownMenuItem onClick={() => handleThemeChange('light')} disabled={isUpdating}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleThemeChange('dark')}
-          disabled={isUpdating}
-        >
+        <DropdownMenuItem onClick={() => handleThemeChange('dark')} disabled={isUpdating}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleThemeChange('system')}
-          disabled={isUpdating}
-        >
+        <DropdownMenuItem onClick={() => handleThemeChange('system')} disabled={isUpdating}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>

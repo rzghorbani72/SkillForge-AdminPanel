@@ -31,10 +31,7 @@ export default function MonitoringPage() {
   return (
     <PageContainer scrollable>
       <div className="space-y-6">
-        <PageHeader
-          title={t('monitoring.title')}
-          description={t('monitoring.subtitle')}
-        >
+        <PageHeader title={t('monitoring.title')} description={t('monitoring.subtitle')}>
           <Button
             variant="outline"
             size="sm"
@@ -43,12 +40,7 @@ export default function MonitoringPage() {
               void series.refresh();
             }}
           >
-            <RefreshCw
-              className={cn(
-                'me-2 h-4 w-4',
-                signals.isFetching && 'animate-spin'
-              )}
-            />
+            <RefreshCw className={cn('me-2 h-4 w-4', signals.isFetching && 'animate-spin')} />
             {t('monitoring.retry')}
           </Button>
         </PageHeader>
@@ -56,9 +48,7 @@ export default function MonitoringPage() {
         {isFirstLoad ? (
           <LoadingSpinner variant="minimal" />
         ) : signals.error ? (
-          <p className="text-sm text-destructive">
-            {t('monitoring.loadFailed')}
-          </p>
+          <p className="text-sm text-destructive">{t('monitoring.loadFailed')}</p>
         ) : signals.data ? (
           <>
             <HealthStatusBanner status={signals.data.status} />

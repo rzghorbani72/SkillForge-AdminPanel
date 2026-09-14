@@ -2,11 +2,7 @@
 
 import { ExternalLink, GraduationCap } from 'lucide-react';
 import { AuthShell } from '@/components/auth/auth-shell';
-import {
-  AuthSubmit,
-  AuthSecondaryButton,
-  AuthSecondaryLink
-} from '@/components/auth/auth-fields';
+import { AuthSubmit, AuthSecondaryButton, AuthSecondaryLink } from '@/components/auth/auth-fields';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -29,13 +25,8 @@ function AcademyLink({ academy }: { academy: MemberAcademy }) {
         <GraduationCap className="h-5 w-5 text-primary" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate font-medium text-foreground">
-          {academy.name}
-        </span>
-        <span
-          className="block truncate text-xs text-muted-foreground"
-          dir="ltr"
-        >
+        <span className="block truncate font-medium text-foreground">{academy.name}</span>
+        <span className="block truncate text-xs text-muted-foreground" dir="ltr">
           {academy.login_url}
         </span>
       </span>
@@ -53,7 +44,7 @@ function AcademyLink({ academy }: { academy: MemberAcademy }) {
 export function MemberAcademiesScreen({
   phoneE164,
   registerHref,
-  onChangeIdentifier
+  onChangeIdentifier,
 }: MemberAcademiesScreenProps) {
   const { t } = useTranslation();
   const lookup = useMemberAcademies(phoneE164);
@@ -86,14 +77,10 @@ export function MemberAcademiesScreen({
         <div className="space-y-2 px-1">
           {lookup.academies.length === 0 ? (
             <Alert>
-              <AlertDescription>
-                {t('auth.memberAcademiesEmpty')}
-              </AlertDescription>
+              <AlertDescription>{t('auth.memberAcademiesEmpty')}</AlertDescription>
             </Alert>
           ) : (
-            lookup.academies.map((academy) => (
-              <AcademyLink key={academy.id} academy={academy} />
-            ))
+            lookup.academies.map((academy) => <AcademyLink key={academy.id} academy={academy} />)
           )}
         </div>
 

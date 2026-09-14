@@ -19,17 +19,12 @@ interface SetNewPasswordScreenProps {
  * password the admin generated. The account only gets a real session once
  * this step replaces it with a password only the user knows.
  */
-export function SetNewPasswordScreen({
-  loading,
-  error,
-  onSubmit
-}: SetNewPasswordScreenProps) {
+export function SetNewPasswordScreen({ loading, error, onSubmit }: SetNewPasswordScreenProps) {
   const { t } = useTranslation();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const isConfirmReady =
-    password === confirmPassword && confirmPassword.length > 0;
+  const isConfirmReady = password === confirmPassword && confirmPassword.length > 0;
   const canSubmit = isPasswordValid(password) && isConfirmReady && !loading;
 
   function handleSubmit(e: React.FormEvent) {
@@ -63,25 +58,15 @@ export function SetNewPasswordScreen({
           type="password"
           autoComplete="new-password"
           value={confirmPassword}
-          onChange={(e) =>
-            setConfirmPassword(sanitizePasswordInput(e.target.value))
-          }
-          error={
-            confirmPassword && !isConfirmReady
-              ? t('auth.passwordsDoNotMatch')
-              : undefined
-          }
+          onChange={(e) => setConfirmPassword(sanitizePasswordInput(e.target.value))}
+          error={confirmPassword && !isConfirmReady ? t('auth.passwordsDoNotMatch') : undefined}
           disabled={loading}
         />
 
-        {error && (
-          <p className="text-center text-sm text-destructive">{error}</p>
-        )}
+        {error && <p className="text-center text-sm text-destructive">{error}</p>}
 
         <AuthSubmit loading={loading} disabled={!canSubmit}>
-          {loading
-            ? t('auth.settingPassword')
-            : t('auth.setPasswordAndContinue')}
+          {loading ? t('auth.settingPassword') : t('auth.setPasswordAndContinue')}
         </AuthSubmit>
       </form>
     </AuthShell>

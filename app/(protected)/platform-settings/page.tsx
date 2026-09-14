@@ -10,13 +10,7 @@ import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -24,7 +18,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
@@ -38,7 +32,7 @@ const settingsSchema = z.object({
   legal_entity_name: z.string().optional(),
   vat_registration_no: z.string().optional(),
   economic_code: z.string().optional(),
-  owner_notify_phone: z.string().optional()
+  owner_notify_phone: z.string().optional(),
 });
 type SettingsValues = z.infer<typeof settingsSchema>;
 
@@ -56,8 +50,8 @@ export default function PlatformSettingsPage() {
       legal_entity_name: '',
       vat_registration_no: '',
       economic_code: '',
-      owner_notify_phone: ''
-    }
+      owner_notify_phone: '',
+    },
   });
 
   useEffect(() => {
@@ -72,7 +66,7 @@ export default function PlatformSettingsPage() {
             legal_entity_name: data.legal_entity_name ?? '',
             vat_registration_no: data.vat_registration_no ?? '',
             economic_code: data.economic_code ?? '',
-            owner_notify_phone: data.owner_notify_phone ?? ''
+            owner_notify_phone: data.owner_notify_phone ?? '',
           });
         }
       } catch (error) {
@@ -95,7 +89,7 @@ export default function PlatformSettingsPage() {
         legal_entity_name: values.legal_entity_name || null,
         vat_registration_no: values.vat_registration_no || null,
         economic_code: values.economic_code || null,
-        owner_notify_phone: values.owner_notify_phone || null
+        owner_notify_phone: values.owner_notify_phone || null,
       });
       toast.success(t('common.success'));
     } catch (err: any) {
@@ -119,12 +113,8 @@ export default function PlatformSettingsPage() {
       <div className="flex items-center gap-3">
         <Settings className="h-6 w-6 text-muted-foreground" />
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {t('platformSettings.title')}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t('platformSettings.description')}
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('platformSettings.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('platformSettings.description')}</p>
         </div>
       </div>
 
@@ -133,9 +123,7 @@ export default function PlatformSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>{t('platformSettings.financialRates')}</CardTitle>
-              <CardDescription>
-                {t('platformSettings.financialRatesDesc')}
-              </CardDescription>
+              <CardDescription>{t('platformSettings.financialRatesDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6 sm:grid-cols-3">
               <FormField
@@ -150,14 +138,10 @@ export default function PlatformSettingsPage() {
                         name={field.name}
                         ref={field.ref}
                         value={field.value ?? ''}
-                        onChange={(raw) =>
-                          field.onChange(raw === '' ? '' : Number(raw))
-                        }
+                        onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                       />
                     </FormControl>
-                    <FormDescription>
-                      {t('platformSettings.vatRateHint')}
-                    </FormDescription>
+                    <FormDescription>{t('platformSettings.vatRateHint')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -168,9 +152,7 @@ export default function PlatformSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>{t('platformSettings.subscriptionPolicy')}</CardTitle>
-              <CardDescription>
-                {t('platformSettings.subscriptionPolicyDesc')}
-              </CardDescription>
+              <CardDescription>{t('platformSettings.subscriptionPolicyDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6 sm:grid-cols-2">
               <FormField
@@ -184,14 +166,10 @@ export default function PlatformSettingsPage() {
                         name={field.name}
                         ref={field.ref}
                         value={field.value ?? ''}
-                        onChange={(raw) =>
-                          field.onChange(raw === '' ? '' : Number(raw))
-                        }
+                        onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                       />
                     </FormControl>
-                    <FormDescription>
-                      {t('platformSettings.graceDaysHint')}
-                    </FormDescription>
+                    <FormDescription>{t('platformSettings.graceDaysHint')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -207,14 +185,10 @@ export default function PlatformSettingsPage() {
                         name={field.name}
                         ref={field.ref}
                         value={field.value ?? ''}
-                        onChange={(raw) =>
-                          field.onChange(raw === '' ? '' : Number(raw))
-                        }
+                        onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                       />
                     </FormControl>
-                    <FormDescription>
-                      {t('platformSettings.reminderDaysHint')}
-                    </FormDescription>
+                    <FormDescription>{t('platformSettings.reminderDaysHint')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -225,9 +199,7 @@ export default function PlatformSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>{t('platformSettings.ownerAlerts')}</CardTitle>
-              <CardDescription>
-                {t('platformSettings.ownerAlertsDesc')}
-              </CardDescription>
+              <CardDescription>{t('platformSettings.ownerAlertsDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <FormField
@@ -235,9 +207,7 @@ export default function PlatformSettingsPage() {
                 name="owner_notify_phone"
                 render={({ field }) => (
                   <FormItem className="max-w-sm">
-                    <FormLabel>
-                      {t('platformSettings.ownerNotifyPhone')}
-                    </FormLabel>
+                    <FormLabel>{t('platformSettings.ownerNotifyPhone')}</FormLabel>
                     <FormControl>
                       <Input
                         dir="ltr"
@@ -247,9 +217,7 @@ export default function PlatformSettingsPage() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      {t('platformSettings.ownerNotifyPhoneHint')}
-                    </FormDescription>
+                    <FormDescription>{t('platformSettings.ownerNotifyPhoneHint')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -260,9 +228,7 @@ export default function PlatformSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>{t('platformSettings.legalInfo')}</CardTitle>
-              <CardDescription>
-                {t('platformSettings.legalInfoDesc')}
-              </CardDescription>
+              <CardDescription>{t('platformSettings.legalInfoDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6 sm:grid-cols-3">
               <FormField
@@ -270,9 +236,7 @@ export default function PlatformSettingsPage() {
                 name="legal_entity_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t('platformSettings.legalEntityName')}
-                    </FormLabel>
+                    <FormLabel>{t('platformSettings.legalEntityName')}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>

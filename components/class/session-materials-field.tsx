@@ -28,7 +28,7 @@ const DOCUMENT_ACCEPT = '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip';
 export function SessionMaterialsField({
   sessionId,
   materials,
-  onChanged
+  onChanged,
 }: SessionMaterialsFieldProps) {
   const { t } = useTranslation();
   const [progress, setProgress] = useState(0);
@@ -40,16 +40,8 @@ export function SessionMaterialsField({
     try {
       const added =
         kind === 'VIDEO'
-          ? await apiClient.addSessionMaterialVideo(
-              sessionId,
-              file,
-              setProgress
-            )
-          : await apiClient.addSessionMaterialFile(
-              sessionId,
-              file,
-              setProgress
-            );
+          ? await apiClient.addSessionMaterialVideo(sessionId, file, setProgress)
+          : await apiClient.addSessionMaterialFile(sessionId, file, setProgress);
       onChanged([...materials, added]);
       toast.success(t('courses.live.materialAdded'));
     } catch (err) {
@@ -80,9 +72,7 @@ export function SessionMaterialsField({
                 className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
               >
                 <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                <span className="min-w-0 flex-1 truncate">
-                  {material.title}
-                </span>
+                <span className="min-w-0 flex-1 truncate">{material.title}</span>
                 <Button
                   type="button"
                   variant="ghost"

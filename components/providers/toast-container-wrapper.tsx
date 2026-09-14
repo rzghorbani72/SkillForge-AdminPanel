@@ -25,14 +25,14 @@ export function ToastContainerWrapper() {
       style={{
         bottom: '12px',
         width: `min(${TOAST_WIDTH}px, calc(100vw - 32px))`,
-        zIndex: 9999
+        zIndex: 9999,
       }}
       toastStyle={{
         fontSize: '15px',
         lineHeight: '1.7',
         minHeight: '72px',
         padding: '14px 16px',
-        borderRadius: '12px'
+        borderRadius: '12px',
       }}
     />
   );

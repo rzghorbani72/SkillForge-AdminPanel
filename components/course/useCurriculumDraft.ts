@@ -1,10 +1,5 @@
 import { useCallback, useState } from 'react';
-import {
-  emptyLesson,
-  emptySeason,
-  type LessonDraft,
-  type SeasonDraft
-} from './course-drafts';
+import { emptyLesson, emptySeason, type LessonDraft, type SeasonDraft } from './course-drafts';
 
 /**
  * The editable curriculum of one course: seasons, lessons and the ids deleted
@@ -19,10 +14,7 @@ export function useCurriculumDraft() {
 
   // ── Season mutations ──────────────────────────────────────────────────────
 
-  const addSeason = useCallback(
-    () => setSeasons((s) => [...s, emptySeason()]),
-    []
-  );
+  const addSeason = useCallback(() => setSeasons((s) => [...s, emptySeason()]), []);
 
   const removeSeason = useCallback((key: string) => {
     setSeasons((prev) => {
@@ -36,9 +28,7 @@ export function useCurriculumDraft() {
       const fallback = remaining[0]?.clientKey;
       if (fallback) {
         setLessons((ls) =>
-          ls.map((l) =>
-            l.seasonClientKey === key ? { ...l, seasonClientKey: fallback } : l
-          )
+          ls.map((l) => (l.seasonClientKey === key ? { ...l, seasonClientKey: fallback } : l)),
         );
       }
       return remaining;
@@ -60,17 +50,13 @@ export function useCurriculumDraft() {
       }
       return prev.filter((l) => l.seasonClientKey !== seasonKey);
     });
-    setSeasons((prev) =>
-      prev.map((s) => (s.clientKey === seasonKey ? { ...s, title: '' } : s))
-    );
+    setSeasons((prev) => prev.map((s) => (s.clientKey === seasonKey ? { ...s, title: '' } : s)));
   }, []);
 
   const updateSeason = useCallback(
     (key: string, patch: Partial<Pick<SeasonDraft, 'title'>>) =>
-      setSeasons((s) =>
-        s.map((x) => (x.clientKey === key ? { ...x, ...patch } : x))
-      ),
-    []
+      setSeasons((s) => s.map((x) => (x.clientKey === key ? { ...x, ...patch } : x))),
+    [],
   );
 
   const reorderSeasons = useCallback((from: number, to: number) => {
@@ -110,49 +96,40 @@ export function useCurriculumDraft() {
         if (l.clientKey !== lessonKey) return l;
         if (l.id) setDeletedLessonIds((ids) => [...ids, l.id!]);
         return emptyLesson(l.seasonClientKey);
-      })
+      }),
     );
   }, []);
 
   const updateLesson = useCallback(
     (lessonKey: string, patch: Partial<LessonDraft>) =>
-      setLessons((prev) =>
-        prev.map((l) => (l.clientKey === lessonKey ? { ...l, ...patch } : l))
-      ),
-    []
+      setLessons((prev) => prev.map((l) => (l.clientKey === lessonKey ? { ...l, ...patch } : l))),
+    [],
   );
 
   /** Move a lesson to another season. Every lesson always belongs to one. */
   const assignLesson = useCallback(
     (lessonKey: string, seasonClientKey: string) =>
       setLessons((prev) =>
-        prev.map((l) =>
-          l.clientKey === lessonKey ? { ...l, seasonClientKey } : l
-        )
+        prev.map((l) => (l.clientKey === lessonKey ? { ...l, seasonClientKey } : l)),
       ),
-    []
+    [],
   );
 
   /** Reorder lessons within a section (unassigned or a specific season) */
-  const reorderLessons = useCallback(
-    (sectionKey: string | undefined, from: number, to: number) => {
-      setLessons((prev) => {
-        const inSection = prev.filter((l) => l.seasonClientKey === sectionKey);
-        if (from >= inSection.length || to >= inSection.length) return prev;
+  const reorderLessons = useCallback((sectionKey: string | undefined, from: number, to: number) => {
+    setLessons((prev) => {
+      const inSection = prev.filter((l) => l.seasonClientKey === sectionKey);
+      if (from >= inSection.length || to >= inSection.length) return prev;
 
-        const reordered = [...inSection];
-        const [moved] = reordered.splice(from, 1);
-        reordered.splice(to, 0, moved);
+      const reordered = [...inSection];
+      const [moved] = reordered.splice(from, 1);
+      reordered.splice(to, 0, moved);
 
-        // Rebuild full array: replace section slots in original order
-        let sectionIdx = 0;
-        return prev.map((l) =>
-          l.seasonClientKey === sectionKey ? reordered[sectionIdx++] : l
-        );
-      });
-    },
-    []
-  );
+      // Rebuild full array: replace section slots in original order
+      let sectionIdx = 0;
+      return prev.map((l) => (l.seasonClientKey === sectionKey ? reordered[sectionIdx++] : l));
+    });
+  }, []);
 
   const clearDeleted = useCallback(() => {
     setDeletedSeasonIds([]);
@@ -177,6 +154,6 @@ export function useCurriculumDraft() {
     clearLesson,
     updateLesson,
     assignLesson,
-    reorderLessons
+    reorderLessons,
   };
 }

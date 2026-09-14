@@ -6,7 +6,7 @@ import { CharacterCounter } from '@/components/ui/character-counter';
 import {
   RichTextToolbar,
   type BlockTag,
-  type InlineCommand
+  type InlineCommand,
 } from '@/components/ui/rich-text-toolbar';
 import { htmlToMarkdown } from '@/lib/html-to-markdown';
 import { renderMarkdown } from '@/lib/markdown';
@@ -18,13 +18,13 @@ const TRACKED_COMMANDS: ReadonlyArray<InlineCommand> = [
   'underline',
   'strikeThrough',
   'insertUnorderedList',
-  'insertOrderedList'
+  'insertOrderedList',
 ];
 
 const BLOCK_TAG_BY_NAME: Readonly<Record<string, BlockTag>> = {
   H1: 'h1',
   H2: 'h2',
-  H3: 'h3'
+  H3: 'h3',
 };
 
 type MarkdownEditorProps = {
@@ -51,14 +51,12 @@ export function MarkdownEditor({
   placeholder,
   maxLength,
   disabled,
-  minRows = 4
+  minRows = 4,
 }: MarkdownEditorProps) {
   const { t } = useTranslation();
   const editorRef = React.useRef<HTMLDivElement>(null);
   const emittedRef = React.useRef<string | null>(null);
-  const [activeCommands, setActiveCommands] = React.useState<
-    ReadonlySet<InlineCommand>
-  >(new Set());
+  const [activeCommands, setActiveCommands] = React.useState<ReadonlySet<InlineCommand>>(new Set());
   const [activeBlock, setActiveBlock] = React.useState<BlockTag>('p');
 
   React.useEffect(() => {
@@ -79,11 +77,7 @@ export function MarkdownEditor({
       return;
     }
     setActiveCommands(
-      new Set(
-        TRACKED_COMMANDS.filter((command) =>
-          document.queryCommandState(command)
-        )
-      )
+      new Set(TRACKED_COMMANDS.filter((command) => document.queryCommandState(command))),
     );
     const block = (
       selection.anchorNode instanceof HTMLElement
@@ -158,9 +152,7 @@ export function MarkdownEditor({
 
       <div className="flex items-center justify-between gap-2 text-sm">
         <p className="text-muted-foreground">{t('editor.formattingHint')}</p>
-        {maxLength != null && (
-          <CharacterCounter length={length} maxLength={maxLength} />
-        )}
+        {maxLength != null && <CharacterCounter length={length} maxLength={maxLength} />}
       </div>
     </div>
   );

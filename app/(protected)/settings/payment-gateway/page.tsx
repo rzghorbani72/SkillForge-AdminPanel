@@ -2,28 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Save,
-  Eye,
-  EyeOff,
-  CheckCircle,
-  XCircle,
-  RefreshCw,
-  ShieldCheck
-} from 'lucide-react';
+import { Save, Eye, EyeOff, CheckCircle, XCircle, RefreshCw, ShieldCheck } from 'lucide-react';
 import { apiClient, GatewayConfigData, GatewayRegistryStatus } from '@/lib/api';
 import { toast } from 'react-toastify';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -59,8 +45,7 @@ export default function PaymentGatewaySettingsPage() {
   const [registry, setRegistry] = useState<GatewayRegistryStatus[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const normalizeName = (name: string) =>
-    name.replace(/[^a-z0-9]/gi, '').toLowerCase();
+  const normalizeName = (name: string) => name.replace(/[^a-z0-9]/gi, '').toLowerCase();
 
   const load = async () => {
     setIsLoading(true);
@@ -89,8 +74,8 @@ export default function PaymentGatewaySettingsPage() {
           initialToken: '',
           initialTerminalId: String(g.config_schema?.terminal_id ?? ''),
           initialMerchantId: String(g.config_schema?.merchant_id ?? ''),
-          initialCallbackUrl: String(g.config_schema?.callback_url ?? '')
-        }))
+          initialCallbackUrl: String(g.config_schema?.callback_url ?? ''),
+        })),
       );
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, tNow('toasts.gatewayLoadFailed')));
@@ -130,9 +115,7 @@ export default function PaymentGatewaySettingsPage() {
       return;
     }
 
-    setGateways((prev) =>
-      prev.map((g) => (g.id === gw.id ? { ...g, isSaving: true } : g))
-    );
+    setGateways((prev) => prev.map((g) => (g.id === gw.id ? { ...g, isSaving: true } : g)));
 
     try {
       await apiClient.updateGatewayConfig(gw.id, {
@@ -140,31 +123,21 @@ export default function PaymentGatewaySettingsPage() {
         is_active: gw.is_active,
         is_sandbox: gw.is_sandbox,
         extra: {
-          ...(gw.terminalId.trim()
-            ? { terminal_id: gw.terminalId.trim() }
-            : {}),
-          ...(gw.merchantId.trim()
-            ? { merchant_id: gw.merchantId.trim() }
-            : {}),
-          ...(gw.callbackUrl.trim()
-            ? { callback_url: gw.callbackUrl.trim() }
-            : {})
-        }
+          ...(gw.terminalId.trim() ? { terminal_id: gw.terminalId.trim() } : {}),
+          ...(gw.merchantId.trim() ? { merchant_id: gw.merchantId.trim() } : {}),
+          ...(gw.callbackUrl.trim() ? { callback_url: gw.callbackUrl.trim() } : {}),
+        },
       });
       toast.success(tNow('toasts.gatewayUpdated', { name: gw.display_name }));
       await load();
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, tNow('toasts.gatewayUpdateFailed')));
-      setGateways((prev) =>
-        prev.map((g) => (g.id === gw.id ? { ...g, isSaving: false } : g))
-      );
+      setGateways((prev) => prev.map((g) => (g.id === gw.id ? { ...g, isSaving: false } : g)));
     }
   };
 
   const updateGateway = (id: string, patch: Partial<GatewayState>) => {
-    setGateways((prev) =>
-      prev.map((g) => (g.id === id ? { ...g, ...patch } : g))
-    );
+    setGateways((prev) => prev.map((g) => (g.id === id ? { ...g, ...patch } : g)));
   };
 
   const getRegistryStatus = (name: string) =>
@@ -177,9 +150,7 @@ export default function PaymentGatewaySettingsPage() {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t('settings.paymentGatewayTitle')}
           </h1>
-          <p className="text-muted-foreground">
-            {t('settings.gateway.subtitle')}
-          </p>
+          <p className="text-muted-foreground">{t('settings.gateway.subtitle')}</p>
         </div>
         <Button
           variant="outline"
@@ -195,12 +166,8 @@ export default function PaymentGatewaySettingsPage() {
       {registry.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">
-              {t('settings.gateway.adapterStatusTitle')}
-            </CardTitle>
-            <CardDescription>
-              {t('settings.gateway.adapterStatusDescription')}
-            </CardDescription>
+            <CardTitle className="text-base">{t('settings.gateway.adapterStatusTitle')}</CardTitle>
+            <CardDescription>{t('settings.gateway.adapterStatusDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
@@ -216,9 +183,7 @@ export default function PaymentGatewaySettingsPage() {
                       : t('settings.gateway.notConfigured')}
                   </Badge>
                   <Badge variant={r.implemented ? 'default' : 'outline'}>
-                    {r.implemented
-                      ? t('settings.gateway.implemented')
-                      : t('settings.gateway.stub')}
+                    {r.implemented ? t('settings.gateway.implemented') : t('settings.gateway.stub')}
                   </Badge>
                 </div>
               ))}
@@ -236,9 +201,7 @@ export default function PaymentGatewaySettingsPage() {
       ) : gateways.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-4 py-12">
-            <p className="text-muted-foreground">
-              {t('settings.gateway.noRecords')}
-            </p>
+            <p className="text-muted-foreground">{t('settings.gateway.noRecords')}</p>
             <Button onClick={load}>{t('settings.gateway.reload')}</Button>
           </CardContent>
         </Card>
@@ -283,9 +246,7 @@ export default function PaymentGatewaySettingsPage() {
                     <Switch
                       id={`active-${gw.id}`}
                       checked={gw.is_active}
-                      onCheckedChange={(v) =>
-                        updateGateway(gw.id, { is_active: v })
-                      }
+                      onCheckedChange={(v) => updateGateway(gw.id, { is_active: v })}
                     />
                     <Label htmlFor={`active-${gw.id}`}>
                       {gw.is_active
@@ -298,9 +259,7 @@ export default function PaymentGatewaySettingsPage() {
                     <Switch
                       id={`sandbox-${gw.id}`}
                       checked={gw.is_sandbox}
-                      onCheckedChange={(v) =>
-                        updateGateway(gw.id, { is_sandbox: v })
-                      }
+                      onCheckedChange={(v) => updateGateway(gw.id, { is_sandbox: v })}
                     />
                     <Label htmlFor={`sandbox-${gw.id}`}>
                       {gw.is_sandbox
@@ -328,17 +287,13 @@ export default function PaymentGatewaySettingsPage() {
                             : t('settings.gateway.tokenPlaceholderPaste')
                         }
                         value={gw.newToken}
-                        onChange={(e) =>
-                          updateGateway(gw.id, { newToken: e.target.value })
-                        }
+                        onChange={(e) => updateGateway(gw.id, { newToken: e.target.value })}
                         className="font-mono text-sm"
                       />
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() =>
-                          updateGateway(gw.id, { showToken: !gw.showToken })
-                        }
+                        onClick={() => updateGateway(gw.id, { showToken: !gw.showToken })}
                         title={
                           gw.showToken
                             ? t('settings.gateway.hideToken')
@@ -365,13 +320,9 @@ export default function PaymentGatewaySettingsPage() {
                         </Label>
                         <Input
                           id={`terminal-${gw.id}`}
-                          placeholder={t(
-                            'settings.gateway.terminalIdPlaceholder'
-                          )}
+                          placeholder={t('settings.gateway.terminalIdPlaceholder')}
                           value={gw.terminalId}
-                          onChange={(e) =>
-                            updateGateway(gw.id, { terminalId: e.target.value })
-                          }
+                          onChange={(e) => updateGateway(gw.id, { terminalId: e.target.value })}
                         />
                       </div>
                       <div className="space-y-2">
@@ -380,13 +331,9 @@ export default function PaymentGatewaySettingsPage() {
                         </Label>
                         <Input
                           id={`merchant-${gw.id}`}
-                          placeholder={t(
-                            'settings.gateway.merchantIdPlaceholder'
-                          )}
+                          placeholder={t('settings.gateway.merchantIdPlaceholder')}
                           value={gw.merchantId}
-                          onChange={(e) =>
-                            updateGateway(gw.id, { merchantId: e.target.value })
-                          }
+                          onChange={(e) => updateGateway(gw.id, { merchantId: e.target.value })}
                         />
                       </div>
                       <div className="space-y-2 md:col-span-2">
@@ -399,7 +346,7 @@ export default function PaymentGatewaySettingsPage() {
                           value={gw.callbackUrl}
                           onChange={(e) =>
                             updateGateway(gw.id, {
-                              callbackUrl: e.target.value
+                              callbackUrl: e.target.value,
                             })
                           }
                         />
@@ -408,14 +355,9 @@ export default function PaymentGatewaySettingsPage() {
                   )}
 
                   <div className="flex justify-end">
-                    <Button
-                      onClick={() => handleSave(gw)}
-                      disabled={gw.isSaving}
-                    >
+                    <Button onClick={() => handleSave(gw)} disabled={gw.isSaving}>
                       <Save className="me-2 h-4 w-4" />
-                      {gw.isSaving
-                        ? t('common.saving')
-                        : t('common.saveChanges')}
+                      {gw.isSaving ? t('common.saving') : t('common.saveChanges')}
                     </Button>
                   </div>
                 </CardContent>
@@ -447,8 +389,8 @@ export default function PaymentGatewaySettingsPage() {
           </h3>
           <ul className="list-inside list-disc space-y-1 text-sm text-blue-700 dark:text-blue-400">
             <li>
-              {t('settings.gateway.samanRequired')} <code>TerminalId</code>,{' '}
-              <code>ResNum</code>, <code>RedirectURL</code>.
+              {t('settings.gateway.samanRequired')} <code>TerminalId</code>, <code>ResNum</code>,{' '}
+              <code>RedirectURL</code>.
             </li>
             <li>{t('settings.gateway.samanWhitelist')}</li>
             <li>{t('settings.gateway.samanKeepDisabled')}</li>

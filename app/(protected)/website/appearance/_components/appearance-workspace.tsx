@@ -14,7 +14,7 @@ import {
   Monitor,
   Undo2,
   Redo2,
-  Database
+  Database,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,48 +24,36 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import type { TemplatePreset, UIBlockConfig, UITemplate } from '@/types/api';
-import {
-  presetSourceKey,
-  formatPresetDisplayName
-} from '@/lib/ui-template/preset-source';
+import { presetSourceKey, formatPresetDisplayName } from '@/lib/ui-template/preset-source';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import {
   buildTemplatePreviewUrl,
   appendPreviewCacheBuster,
-  resolveStorefrontBaseUrl
+  resolveStorefrontBaseUrl,
 } from '@/lib/ui-template/preview-url';
-import {
-  getPreviewPostMessageTarget,
-  isTrustedPreviewOrigin
-} from '@/lib/trusted-preview-origin';
+import { getPreviewPostMessageTarget, isTrustedPreviewOrigin } from '@/lib/trusted-preview-origin';
 import { uploadCanvasMedia } from '@/lib/ui-template/canvas-media-upload';
 import type { HeroPreviewContext } from '@/components/ui-template/hero-variant-picker';
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
-import {
-  buildFullThemePayload,
-  type ThemeSyncState
-} from '@/lib/ui-template/theme-sync';
+import { buildFullThemePayload, type ThemeSyncState } from '@/lib/ui-template/theme-sync';
 import { useRelativeTime } from '@/lib/ui-template/use-relative-time';
 import {
   TemplateCustomizationSidebar,
-  type SaveMode
+  type SaveMode,
 } from '@/components/ui-template/template-customization-sidebar';
 import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
 import { TemplateConfirmDialog } from '@/components/ui-template/template-confirm-dialog';
 import { EditorPreview } from '@/components/ui-template/editor-preview';
 import {
   TemplateMediaPicker,
-  type TemplateMediaPickerHandle
+  type TemplateMediaPickerHandle,
 } from '@/components/ui-template/template-media-picker';
 import {
   TemplateSection,
   resolveTemplateColors,
-  getTemplateCategory
+  getTemplateCategory,
 } from '@/components/ui-template/gallery-cards';
-import {
-  CATEGORY_LABELS,
-  type TemplateCategory
-} from '@/constants/template-names';
+import { CATEGORY_LABELS, type TemplateCategory } from '@/constants/template-names';
 import type {
   BorderRadius,
   ElementAnimation,
@@ -75,7 +63,7 @@ import type {
   HeadingScale,
   FontFamily,
   TextDirection,
-  ViewportMode
+  ViewportMode,
 } from '@/components/ui-template/sidebar-types';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -111,9 +99,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const [presets, setPresets] = useState<TemplatePreset[]>([]);
   const [activePresetId, setActivePresetId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedPreset, setSelectedPreset] = useState<TemplatePreset | null>(
-    null
-  );
+  const [selectedPreset, setSelectedPreset] = useState<TemplatePreset | null>(null);
   const [baseIframeSrc, setBaseIframeSrc] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
@@ -121,9 +107,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   // it, so the publish button only rests while live and draft are identical.
   const [isApplied, setIsApplied] = useState(false);
   const hasUnpublishedRef = useRef(false);
-  const [categoryFilter, setCategoryFilter] = useState<
-    TemplateCategory | 'all'
-  >('all');
+  const [categoryFilter, setCategoryFilter] = useState<TemplateCategory | 'all'>('all');
 
   // Customizer state
   const [showCustomizer, setShowCustomizer] = useState(false);
@@ -132,14 +116,11 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const [fontFamily, setFontFamily] = useState<FontFamily>('vazirmatn');
   const [borderRadius, setBorderRadius] = useState<BorderRadius>('soft');
   const [shadow, setShadow] = useState<Shadow>('medium');
-  const [elementAnimation, setElementAnimation] =
-    useState<ElementAnimation>('subtle');
+  const [elementAnimation, setElementAnimation] = useState<ElementAnimation>('subtle');
   const [darkMode, setDarkMode] = useState<boolean | null>(null);
   const [textDirection, setTextDirection] = useState<TextDirection>('rtl');
-  const [sectionSpacing, setSectionSpacing] =
-    useState<SectionSpacing>('comfortable');
-  const [containerWidth, setContainerWidth] =
-    useState<ContainerWidth>('standard');
+  const [sectionSpacing, setSectionSpacing] = useState<SectionSpacing>('comfortable');
+  const [containerWidth, setContainerWidth] = useState<ContainerWidth>('standard');
   const [headingScale, setHeadingScale] = useState<HeadingScale>('standard');
   const [draftBlocks, setDraftBlocks] = useState<UIBlockConfig[]>([]);
   const [history, setHistory] = useState<UIBlockConfig[][]>([]);
@@ -162,18 +143,14 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   // Only a customized (dedicated) card renders a live iframe — it is the one
   // case a static banner can't represent, since it's this academy's own
   // edited copy. Public catalog cards never need this session.
-  const [galleryPreviewToken, setGalleryPreviewToken] = useState<string | null>(
-    null
-  );
-  const [galleryStorefrontUrl, setGalleryStorefrontUrl] = useState<
-    string | null
-  >(null);
+  const [galleryPreviewToken, setGalleryPreviewToken] = useState<string | null>(null);
+  const [galleryStorefrontUrl, setGalleryStorefrontUrl] = useState<string | null>(null);
   const [pendingSave, setPendingSave] = useState<PendingSave | null>(null);
   // Preview data source: false = placeholder/sample design, true = the academy's
   // real backend records (courses, stats) so the manager sees the live site view.
   // Persisted in localStorage so the preference survives editor close/reopen.
   const [useRealData, setUseRealData] = useState(
-    () => localStorage.getItem('preview_real_data') === '1'
+    () => localStorage.getItem('preview_real_data') === '1',
   );
 
   // A typing burst captures the pre-burst block state once; it is committed to
@@ -197,21 +174,13 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   // Ref for handleBlockConfigChange — initialised to a no-op and patched after
   // the function is declared further below (avoids "used before declaration").
   const handleBlockConfigChangeRef = useRef<
-    (
-      blockId: string,
-      config: Record<string, unknown>,
-      options?: { syncPreview?: boolean }
-    ) => void
+    (blockId: string, config: Record<string, unknown>, options?: { syncPreview?: boolean }) => void
   >(() => {
     /* patched after declaration */
   });
   const handleBlockDeleteRef = useRef<(blockId: string) => void>(() => {});
-  const handleBlockToggleVisibleRef = useRef<
-    (blockId: string, visible: boolean) => void
-  >(() => {});
-  const handleBlockMoveRef = useRef<
-    (blockId: string, dir: 'up' | 'down') => void
-  >(() => {});
+  const handleBlockToggleVisibleRef = useRef<(blockId: string, visible: boolean) => void>(() => {});
+  const handleBlockMoveRef = useRef<(blockId: string, dir: 'up' | 'down') => void>(() => {});
   // The canvas offers "undo" right after a hide/remove, so it needs the same
   // history step the toolbar's undo button uses.
   const undoRef = useRef<() => void>(() => {});
@@ -227,15 +196,12 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   // Tell the in-canvas preview which section is selected, so it shows the dashed
   // outline. `scroll` is true only when the user picked a section — a reload
   // re-paints the ring in place so the canvas never jumps.
-  const postHighlight = useCallback(
-    (blockId: string | null, scroll: boolean) => {
-      previewIframeRef.current?.contentWindow?.postMessage(
-        { source: 'template-admin', type: 'highlight', blockId, scroll },
-        getPreviewPostMessageTarget(storefrontBaseRef.current)
-      );
-    },
-    []
-  );
+  const postHighlight = useCallback((blockId: string | null, scroll: boolean) => {
+    previewIframeRef.current?.contentWindow?.postMessage(
+      { source: 'template-admin', type: 'highlight', blockId, scroll },
+      getPreviewPostMessageTarget(storefrontBaseRef.current),
+    );
+  }, []);
   // Read by the 'ready' handshake, which fires outside React's render cycle.
   const selectedBlockIdRef = useRef(selectedBlockId);
   useEffect(() => {
@@ -305,7 +271,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
 
       if (data.type === 'field-update' && data.blockId && data.fieldKey) {
         handleBlockConfigChangeRef.current(data.blockId, {
-          [data.fieldKey]: data.value ?? ''
+          [data.fieldKey]: data.value ?? '',
         });
       }
 
@@ -320,14 +286,14 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         handleBlockConfigChangeRef.current(
           data.blockId,
           { [data.listKey]: data.items },
-          { syncPreview: false }
+          { syncPreview: false },
         );
       }
 
       if (data.type === 'open-media-picker' && data.blockId && data.fieldKey) {
         mediaPickerRef.current?.open({
           blockId: data.blockId,
-          fieldKey: data.fieldKey
+          fieldKey: data.fieldKey,
         });
       }
 
@@ -337,12 +303,8 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         data.fieldKey &&
         data.buffer instanceof ArrayBuffer
       ) {
-        const fileName =
-          typeof data.fileName === 'string'
-            ? data.fileName
-            : 'section-media.jpg';
-        const mimeType =
-          typeof data.mimeType === 'string' ? data.mimeType : 'image/jpeg';
+        const fileName = typeof data.fileName === 'string' ? data.fileName : 'section-media.jpg';
+        const mimeType = typeof data.mimeType === 'string' ? data.mimeType : 'image/jpeg';
         const file = new File([data.buffer], fileName, { type: mimeType });
         // The upload button lives in the canvas, so the canvas is where the
         // progress belongs — the panel only knows the percentages.
@@ -354,9 +316,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               blockId: data.blockId,
               fieldKey: data.fieldKey,
               uploading,
-              percent
+              percent,
             },
-            getPreviewPostMessageTarget(storefrontBaseRef.current)
+            getPreviewPostMessageTarget(storefrontBaseRef.current),
           );
         void (async () => {
           try {
@@ -365,14 +327,14 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               data.kind ?? 'image',
               file,
               data.fieldKey!,
-              (percent) => postUploadState(true, percent)
+              (percent) => postUploadState(true, percent),
             );
             if (!patch) return;
             // "Restore with photo": land the visibility flag and the uploaded
             // URL in the same patch, so this is the slot's only reload.
             handleBlockConfigChangeRef.current(data.blockId!, {
               ...patch,
-              ...(data.restoreKey ? { [data.restoreKey]: true } : {})
+              ...(data.restoreKey ? { [data.restoreKey]: true } : {}),
             });
           } catch (error) {
             ErrorHandler.handleApiError(error);
@@ -382,20 +344,15 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         })();
       }
 
-      if (
-        data.type === 'accent-color-update' &&
-        data.blockId &&
-        data.fieldKey &&
-        data.value
-      ) {
+      if (data.type === 'accent-color-update' && data.blockId && data.fieldKey && data.value) {
         handleBlockConfigChangeRef.current(data.blockId, {
-          [data.fieldKey]: data.value
+          [data.fieldKey]: data.value,
         });
       }
 
       if (data.type === 'toggle-removable' && data.blockId && data.fieldKey) {
         handleBlockConfigChangeRef.current(data.blockId, {
-          [data.fieldKey]: data.restore === true
+          [data.fieldKey]: data.restore === true,
         });
       }
 
@@ -433,9 +390,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
 
   const savedAgo = useRelativeTime(lastSavedAt);
 
-  const iframeSrc = baseIframeSrc
-    ? appendPreviewCacheBuster(baseIframeSrc, refreshKey)
-    : null;
+  const iframeSrc = baseIframeSrc ? appendPreviewCacheBuster(baseIframeSrc, refreshKey) : null;
 
   useEffect(() => {
     (async () => {
@@ -444,19 +399,18 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         const [templateData, presetsData, previewSession] = await Promise.all([
           apiClient.getCurrentUITemplate().catch(() => null),
           apiClient.getAvailableTemplatePresets().catch(() => []),
-          apiClient.getTemplatePreviewSession().catch(() => null)
+          apiClient.getTemplatePreviewSession().catch(() => null),
         ]);
         setPresets(presetsData as TemplatePreset[]);
         setActivePresetId(
-          ((templateData as Record<string, unknown>)
-            ?.template_preset as string) ?? ''
+          ((templateData as Record<string, unknown>)?.template_preset as string) ?? '',
         );
         hasUnpublishedRef.current =
           (templateData as UITemplate | null)?.has_unpublished_changes ?? false;
         if (previewSession?.token) {
           setGalleryPreviewToken(previewSession.token);
           setGalleryStorefrontUrl(
-            resolveStorefrontBaseUrl(previewSession.storefrontBaseUrl) ?? null
+            resolveStorefrontBaseUrl(previewSession.storefrontBaseUrl) ?? null,
           );
         }
       } catch (error) {
@@ -498,7 +452,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         token: string;
         storefrontBaseUrl: string | null;
       } | null;
-    }
+    },
   ) => {
     setSelectedPreset(preset);
     setBaseIframeSrc(null);
@@ -543,33 +497,28 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         await apiClient.saveThemeDraft(themeSeed);
       }
 
-      const themeRaw = await apiClient
-        .getCurrentThemeConfig()
-        .catch(() => null);
+      const themeRaw = await apiClient.getCurrentThemeConfig().catch(() => null);
       const cfg = ((themeRaw as Record<string, any> | null)?.data?.configs ??
         (themeRaw as Record<string, any> | null)?.configs ??
         {}) as Record<string, string | boolean | null>;
 
       if (isDedicated) {
         if (cfg.primary_color) setPrimaryColor(cfg.primary_color as string);
-        if (cfg.border_radius_style)
-          setBorderRadius(cfg.border_radius_style as BorderRadius);
+        if (cfg.border_radius_style) setBorderRadius(cfg.border_radius_style as BorderRadius);
         if (cfg.shadow_style) setShadow(cfg.shadow_style as Shadow);
         setDarkMode(
           cfg.dark_mode === 'true' || cfg.dark_mode === true
             ? true
             : cfg.dark_mode === 'false' || cfg.dark_mode === false
               ? false
-              : null
+              : null,
         );
       }
       if (cfg.font_family) setFontFamily(cfg.font_family as FontFamily);
       if (cfg.element_animation_style)
         setElementAnimation(cfg.element_animation_style as ElementAnimation);
-      if (cfg.section_spacing)
-        setSectionSpacing(cfg.section_spacing as SectionSpacing);
-      if (cfg.container_width)
-        setContainerWidth(cfg.container_width as ContainerWidth);
+      if (cfg.section_spacing) setSectionSpacing(cfg.section_spacing as SectionSpacing);
+      if (cfg.container_width) setContainerWidth(cfg.container_width as ContainerWidth);
       if (cfg.heading_scale) setHeadingScale(cfg.heading_scale as HeadingScale);
       if (cfg.text_direction === 'ltr' || cfg.text_direction === 'rtl')
         setTextDirection(cfg.text_direction);
@@ -592,12 +541,12 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               draft: true,
               edit: true,
               token,
-              realData: useRealData
+              realData: useRealData,
             })
           : buildTemplatePreviewUrl(preset.id, storefront, {
               sample: !isDedicated,
-              realData: useRealData
-            })
+              realData: useRealData,
+            }),
       );
       setActivePresetId(preset.id);
     } catch (error) {
@@ -613,9 +562,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const handleRate = async (preset: TemplatePreset, stars: number | null) => {
     // Optimistic: the star fills immediately, the reorder lands on refetch.
     setPresets((current) =>
-      current.map((item) =>
-        item.id === preset.id ? { ...item, myRating: stars } : item
-      )
+      current.map((item) => (item.id === preset.id ? { ...item, myRating: stars } : item)),
     );
     try {
       if (stars === null) await apiClient.clearTemplateRating(preset.id);
@@ -678,12 +625,12 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
             draft: true,
             edit: true,
             token: previewToken,
-            realData: next
+            realData: next,
           })
         : buildTemplatePreviewUrl(selectedPreset.id, storefrontBase, {
             sample: !isDedicated,
-            realData: next
-          })
+            realData: next,
+          }),
     );
   };
 
@@ -707,8 +654,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const academyName = user?.currentAcademy?.name ?? '';
   // Managers always save to their own copy; only platform admins editing a
   // public preset write the original.
-  const saveMode: SaveMode =
-    isAdmin && isPublicPreset ? 'admin-override' : 'copy';
+  const saveMode: SaveMode = isAdmin && isPublicPreset ? 'admin-override' : 'copy';
 
   // Committing (fork/override) snapshots whatever the draft holds server-side.
   // Colour edits are debounced by 800ms, so a save clicked right after picking a
@@ -724,7 +670,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     textDirection,
     sectionSpacing,
     containerWidth,
-    headingScale
+    headingScale,
   };
 
   const flushStyleDraft = async () => {
@@ -742,14 +688,11 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
       if (isAdmin && isPublicPreset) {
         await apiClient.overridePublicTemplate(selectedPreset.id, {
-          blocks: draftBlocks
+          blocks: draftBlocks,
         });
         ErrorHandler.showSuccess(t('sitePreview.saveOriginalDone'));
       } else {
-        const saved = (await apiClient.saveDraftAsTemplate()) as
-          | TemplatePreset
-          | null
-          | undefined;
+        const saved = (await apiClient.saveDraftAsTemplate()) as TemplatePreset | null | undefined;
         if (saved) setSelectedPreset(saved);
         ErrorHandler.showSuccess(t('sitePreview.saveCopyDone'));
       }
@@ -773,7 +716,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         const payload = buildThemeDraftFromPrimary(color, {
           borderRadius: br,
           shadow: sh,
-          backgroundSvgPattern: ''
+          backgroundSvgPattern: '',
         });
         await apiClient.saveThemeDraft({ ...payload, dark_mode: dm });
         markDraftSaved();
@@ -783,7 +726,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         setIsSaving(false);
       }
     },
-    []
+    [],
   );
 
   // Content and ordering are already mirrored into the live preview by the
@@ -859,7 +802,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       setDraftBlocks(next);
       debouncedSaveBlocks(next);
     },
-    [draftBlocks, flushPendingHistory, pushHistory, debouncedSaveBlocks]
+    [draftBlocks, flushPendingHistory, pushHistory, debouncedSaveBlocks],
   );
 
   // Continuous content edit (typing) — coalesced into one undo step.
@@ -872,7 +815,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       debouncedSaveBlocks(next);
       debouncedFlushHistory();
     },
-    [draftBlocks, debouncedSaveBlocks, debouncedFlushHistory]
+    [draftBlocks, debouncedSaveBlocks, debouncedFlushHistory],
   );
 
   // Undo/redo can reverse any kind of edit at once, so the preview is rebuilt
@@ -883,7 +826,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       await saveBlocksDraft(blocks);
       rebuildPreview();
     },
-    [saveBlocksDraft, rebuildPreview]
+    [saveBlocksDraft, rebuildPreview],
   );
 
   const undo = useCallback(() => {
@@ -944,9 +887,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         source: 'template-admin',
         type: 'sync-theme',
         theme: payload,
-        direction: next.textDirection
+        direction: next.textDirection,
       },
-      getPreviewPostMessageTarget(storefrontBaseRef.current)
+      getPreviewPostMessageTarget(storefrontBaseRef.current),
     );
     return payload;
   };
@@ -954,10 +897,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   // The preview needs the whole theme to derive its variables, but the API only
   // needs what changed — sending everything would let one rejected field fail a
   // save that has nothing to do with it.
-  const persistStyle = (
-    patch: Partial<ThemeSyncState>,
-    apiPatch: Record<string, unknown>
-  ) => {
+  const persistStyle = (patch: Partial<ThemeSyncState>, apiPatch: Record<string, unknown>) => {
     applyStyle(patch);
     setIsSaving(true);
     apiClient
@@ -1016,15 +956,11 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     if (patch.heading_scale) setHeadingScale(patch.heading_scale);
     persistStyle(
       {
-        ...(patch.section_spacing
-          ? { sectionSpacing: patch.section_spacing }
-          : {}),
-        ...(patch.container_width
-          ? { containerWidth: patch.container_width }
-          : {}),
-        ...(patch.heading_scale ? { headingScale: patch.heading_scale } : {})
+        ...(patch.section_spacing ? { sectionSpacing: patch.section_spacing } : {}),
+        ...(patch.container_width ? { containerWidth: patch.container_width } : {}),
+        ...(patch.heading_scale ? { headingScale: patch.heading_scale } : {}),
       },
-      patch
+      patch,
     );
   };
 
@@ -1035,9 +971,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       {
         source: 'template-admin',
         type: 'sync-order',
-        order: [...blocks].sort((a, b) => a.order - b.order).map((b) => b.id)
+        order: [...blocks].sort((a, b) => a.order - b.order).map((b) => b.id),
       },
-      getPreviewPostMessageTarget(storefrontBaseRef.current)
+      getPreviewPostMessageTarget(storefrontBaseRef.current),
     );
   };
 
@@ -1051,7 +987,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     patch: Record<string, unknown>,
     // The canvas already shows an edit it made itself; pushing it back would
     // miss the marked-up node and make the preview reload on every keystroke.
-    options?: { syncPreview?: boolean }
+    options?: { syncPreview?: boolean },
   ) => {
     // Merge onto the latest draft config so a stale sidebar snapshot cannot
     // wipe `style` (gallery → classic fallback) or other concurrent edits.
@@ -1063,9 +999,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
 
     // Push each changed field to the preview instantly so the live text updates
     // without waiting for the full debounced save + iframe reload cycle.
-    for (const [fieldKey, value] of Object.entries(
-      options?.syncPreview === false ? {} : patch
-    )) {
+    for (const [fieldKey, value] of Object.entries(options?.syncPreview === false ? {} : patch)) {
       if (prev[fieldKey] !== value) {
         previewIframeRef.current?.contentWindow?.postMessage(
           {
@@ -1073,9 +1007,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
             type: 'sync-field',
             blockId,
             fieldKey,
-            value
+            value,
           },
-          getPreviewPostMessageTarget(storefrontBaseRef.current)
+          getPreviewPostMessageTarget(storefrontBaseRef.current),
         );
       }
     }
@@ -1120,15 +1054,15 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
             type: 'placeholder' as const,
             order: b.order,
             isVisible: true,
-            config: { previousType: b.type }
+            config: { previousType: b.type },
           }
-        : b
+        : b,
     );
     setSelectedBlockId(blockId);
     setShowCustomizer(true);
     previewIframeRef.current?.contentWindow?.postMessage(
       { source: 'template-admin', type: 'sync-placeholder', blockId },
-      getPreviewPostMessageTarget(storefrontBaseRef.current)
+      getPreviewPostMessageTarget(storefrontBaseRef.current),
     );
     commitBlocks(next);
   };
@@ -1143,22 +1077,16 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     // full save + iframe reload cycle — gives immediate visual feedback.
     previewIframeRef.current?.contentWindow?.postMessage(
       { source: 'template-admin', type: 'toggle-visible', blockId, visible },
-      getPreviewPostMessageTarget(storefrontBaseRef.current)
+      getPreviewPostMessageTarget(storefrontBaseRef.current),
     );
-    commitBlocks(
-      draftBlocks.map((b) =>
-        b.id === blockId ? { ...b, isVisible: visible } : b
-      )
-    );
+    commitBlocks(draftBlocks.map((b) => (b.id === blockId ? { ...b, isVisible: visible } : b)));
   };
 
   const handleBlockMove = (blockId: string, dir: 'up' | 'down') => {
     const sorted = [...draftBlocks].sort((a, b) => a.order - b.order);
     const header = sorted.find((b) => b.type === 'header') ?? null;
     const footer = sorted.find((b) => b.type === 'footer') ?? null;
-    const middle = sorted.filter(
-      (b) => b.type !== 'header' && b.type !== 'footer'
-    );
+    const middle = sorted.filter((b) => b.type !== 'header' && b.type !== 'footer');
     const midIndex = middle.findIndex((b) => b.id === blockId);
     if (midIndex === -1) return;
     const target = midIndex + (dir === 'up' ? -1 : 1);
@@ -1166,11 +1094,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     const nextMiddle = middle.slice();
     const [item] = nextMiddle.splice(midIndex, 1);
     nextMiddle.splice(target, 0, item);
-    const ordered = [
-      ...(header ? [header] : []),
-      ...nextMiddle,
-      ...(footer ? [footer] : [])
-    ].map((block, index) => ({ ...block, order: index + 1 }));
+    const ordered = [...(header ? [header] : []), ...nextMiddle, ...(footer ? [footer] : [])].map(
+      (block, index) => ({ ...block, order: index + 1 }),
+    );
     postOrder(ordered);
     commitBlocks(ordered);
   };
@@ -1180,11 +1106,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   handleBlockToggleVisibleRef.current = handleBlockToggleVisible;
   handleBlockMoveRef.current = handleBlockMove;
 
-  const handleMediaUploaded = (
-    blockId: string,
-    fieldKey: string,
-    url: string
-  ) => {
+  const handleMediaUploaded = (blockId: string, fieldKey: string, url: string) => {
     handleBlockConfigChange(blockId, { [fieldKey]: url });
   };
 
@@ -1195,13 +1117,8 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
 
   const handleSectionPicked = async () => {
     try {
-      const data = (await apiClient.getCurrentUITemplate()) as Record<
-        string,
-        unknown
-      > | null;
-      const blocks = (data?.draft_blocks ?? data?.blocks) as
-        | UIBlockConfig[]
-        | undefined;
+      const data = (await apiClient.getCurrentUITemplate()) as Record<string, unknown> | null;
+      const blocks = (data?.draft_blocks ?? data?.blocks) as UIBlockConfig[] | undefined;
       if (blocks) setDraftBlocks(blocks);
       rebuildPreview();
     } catch (error) {
@@ -1329,7 +1246,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         ? {
             baseUrl: storefrontBaseUrl,
             templateKey: selectedPreset.id,
-            token: previewToken
+            token: previewToken,
           }
         : null;
 
@@ -1340,7 +1257,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     }[] = [
       { mode: 'mobile', icon: Smartphone, label: 'موبایل' },
       { mode: 'tablet', icon: Tablet, label: 'تبلت' },
-      { mode: 'desktop', icon: Monitor, label: 'دسکتاپ' }
+      { mode: 'desktop', icon: Monitor, label: 'دسکتاپ' },
     ];
 
     return (
@@ -1420,9 +1337,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
             <button
               type="button"
               onClick={handleToggleRealData}
-              title={
-                useRealData ? 'نمایش داده واقعی آکادمی' : 'نمایش داده نمونه'
-              }
+              title={useRealData ? 'نمایش داده واقعی آکادمی' : 'نمایش داده نمونه'}
               className={`flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors ${
                 useRealData
                   ? 'bg-emerald-500 text-white hover:bg-emerald-600'
@@ -1558,10 +1473,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
             onImported={handleSectionPicked}
           />
 
-          <TemplateMediaPicker
-            ref={mediaPickerRef}
-            onUploaded={handleMediaUploaded}
-          />
+          <TemplateMediaPicker ref={mediaPickerRef} onUploaded={handleMediaUploaded} />
 
           <EditorPreview
             viewport={viewport}
@@ -1589,9 +1501,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   const filteredPlatform =
     categoryFilter === 'all'
       ? platformPresets
-      : platformPresets.filter(
-          (p) => getTemplateCategory(p) === categoryFilter
-        );
+      : platformPresets.filter((p) => getTemplateCategory(p) === categoryFilter);
   const activePreset = presets.find((p) => p.id === activePresetId) ?? null;
   // While a customized template's live iframe loads, the card shows the base
   // template's own banner instead of a blank/gradient placeholder.
@@ -1604,12 +1514,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
 
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            قالب‌های آماده
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">قالب‌های آماده</h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            یک قالب کامل فارسی انتخاب کنید تا پیش‌نمایش کامل ببینید — مستقیم روی
-            آن کلیک کنید
+            یک قالب کامل فارسی انتخاب کنید تا پیش‌نمایش کامل ببینید — مستقیم روی آن کلیک کنید
           </p>
         </div>
       </div>
@@ -1661,12 +1568,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       {presets.length === 0 ? (
         <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-background/60 px-6 text-center">
           <LayoutTemplate className="mb-4 h-10 w-10 text-muted-foreground/60" />
-          <h2 className="text-lg font-semibold text-foreground">
-            هنوز قالبی تعریف نشده
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground">هنوز قالبی تعریف نشده</h2>
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
-            کاتالوگ قالب‌های آماده خالی است. پس از افزودن قالب‌های جدید، اینجا
-            نمایش داده می‌شوند.
+            کاتالوگ قالب‌های آماده خالی است. پس از افزودن قالب‌های جدید، اینجا نمایش داده می‌شوند.
           </p>
         </div>
       ) : (
@@ -1698,9 +1602,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               onRate={handleRate}
               onCoverUploaded={(preset, url) =>
                 setPresets((current) =>
-                  current.map((p) =>
-                    p.id === preset.id ? { ...p, preview: url } : p
-                  )
+                  current.map((p) => (p.id === preset.id ? { ...p, preview: url } : p)),
                 )
               }
             />

@@ -2,13 +2,7 @@
 
 import { useState } from 'react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -35,9 +29,7 @@ export function AcademyPageEditor({ page, onSaved }: AcademyPageEditorProps) {
   const [isSaving, setIsSaving] = useState(false);
 
   const heading =
-    page.slug === 'about'
-      ? t('settings.sitePages.pageAbout')
-      : t('settings.sitePages.pageContact');
+    page.slug === 'about' ? t('settings.sitePages.pageAbout') : t('settings.sitePages.pageContact');
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -49,7 +41,7 @@ export function AcademyPageEditor({ page, onSaved }: AcademyPageEditorProps) {
       await apiClient.updateAcademyPage(page.slug, {
         title: title.trim(),
         body,
-        is_published: isPublished
+        is_published: isPublished,
       });
       ErrorHandler.showSuccess(t('settings.sitePages.pageSaved'));
       onSaved();
@@ -68,9 +60,7 @@ export function AcademyPageEditor({ page, onSaved }: AcademyPageEditorProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor={`title-${page.slug}`}>
-            {t('settings.sitePages.pageTitleLabel')}
-          </Label>
+          <Label htmlFor={`title-${page.slug}`}>{t('settings.sitePages.pageTitleLabel')}</Label>
           <Input
             id={`title-${page.slug}`}
             value={title}
@@ -92,12 +82,8 @@ export function AcademyPageEditor({ page, onSaved }: AcademyPageEditorProps) {
 
         <div className="flex items-start justify-between gap-4 rounded-lg border p-3">
           <div className="space-y-0.5">
-            <Label htmlFor={`publish-${page.slug}`}>
-              {t('settings.sitePages.publishLabel')}
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              {t('settings.sitePages.publishHint')}
-            </p>
+            <Label htmlFor={`publish-${page.slug}`}>{t('settings.sitePages.publishLabel')}</Label>
+            <p className="text-xs text-muted-foreground">{t('settings.sitePages.publishHint')}</p>
           </div>
           <Switch
             id={`publish-${page.slug}`}

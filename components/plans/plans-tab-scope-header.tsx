@@ -9,11 +9,7 @@ type PlansTabScopeHeaderProps = {
   description: string;
 };
 
-export function PlansTabScopeHeader({
-  scope,
-  title,
-  description
-}: PlansTabScopeHeaderProps) {
+export function PlansTabScopeHeader({ scope, title, description }: PlansTabScopeHeaderProps) {
   return (
     <div className="mb-4 space-y-1 rounded-xl border bg-muted/30 p-4">
       <div className="flex flex-wrap items-center gap-2">

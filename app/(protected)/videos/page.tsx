@@ -6,7 +6,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Video, Film } from 'lucide-react';
 import { apiClient } from '@/lib/api';
@@ -26,7 +26,7 @@ import { useStore } from '@/hooks/useStore';
 const FILTER_OPTIONS = [
   { value: 'all', labelKey: 'media.allVideos' },
   { value: 'attached', labelKey: 'media.attachedToLessons' },
-  { value: 'standalone', labelKey: 'media.standaloneVideos' }
+  { value: 'standalone', labelKey: 'media.standaloneVideos' },
 ] as const;
 
 type FilterValue = (typeof FILTER_OPTIONS)[number]['value'];
@@ -72,8 +72,7 @@ export default function VideosPage() {
         video.title.toLowerCase().includes(term) ||
         (video.description ?? '').toLowerCase().includes(term);
       const matchesFilter =
-        filter === 'all' ||
-        (filter === 'attached' ? isAttached(video) : !isAttached(video));
+        filter === 'all' || (filter === 'attached' ? isAttached(video) : !isAttached(video));
       return matchesSearch && matchesFilter;
     });
   }, [videos, searchTerm, filter]);
@@ -84,11 +83,11 @@ export default function VideosPage() {
         (acc, video) => ({
           attached: acc.attached + (isAttached(video) ? 1 : 0),
           size: acc.size + (video.size ?? 0),
-          duration: acc.duration + (video.duration ?? 0)
+          duration: acc.duration + (video.duration ?? 0),
         }),
-        { attached: 0, size: 0, duration: 0 }
+        { attached: 0, size: 0, duration: 0 },
       ),
-    [videos]
+    [videos],
   );
 
   if (!selectedAcademy) {
@@ -137,10 +136,7 @@ export default function VideosPage() {
           onChange={setSearchTerm}
           className="w-full max-w-none flex-1"
         />
-        <Select
-          value={filter}
-          onValueChange={(value) => setFilter(value as FilterValue)}
-        >
+        <Select value={filter} onValueChange={(value) => setFilter(value as FilterValue)}>
           <SelectTrigger className="h-10 w-full rounded-xl border-border/50 bg-background/50 sm:w-56">
             <SelectValue />
           </SelectTrigger>

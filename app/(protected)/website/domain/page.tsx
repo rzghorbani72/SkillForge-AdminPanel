@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe } from 'lucide-react';
 import { SettingsSectionHeader } from '@/components/settings/settings-section-header';
 import { DomainConnectionWizard } from '@/components/settings/domain-connection-wizard';
@@ -20,8 +14,7 @@ import { DomainKycStatusCard } from '@/components/settings/kyc/domain-kyc-status
 export default function DomainDnsSettingsPage() {
   const { t } = useTranslation();
   const { academy } = useSettingsData();
-  const publicDomain =
-    academy?.domain?.public_address ?? academy?.Domain?.public_address ?? null;
+  const publicDomain = academy?.domain?.public_address ?? academy?.Domain?.public_address ?? null;
   const exampleDomain = publicDomain?.trim() || 'maral.ir';
 
   return (
@@ -40,9 +33,7 @@ export default function DomainDnsSettingsPage() {
                 <Globe className="h-4 w-4" />
                 {t('settings.domainDns.targetTitle')}
               </CardTitle>
-              <CardDescription>
-                {t('settings.domainDns.targetDescription')}
-              </CardDescription>
+              <CardDescription>{t('settings.domainDns.targetDescription')}</CardDescription>
             </div>
             <div
               className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2 font-mono text-sm"
@@ -59,12 +50,8 @@ export default function DomainDnsSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            {t('settings.domainDns.checklistTitle')}
-          </CardTitle>
-          <CardDescription>
-            {t('settings.domainDns.checklistDescription')}
-          </CardDescription>
+          <CardTitle className="text-base">{t('settings.domainDns.checklistTitle')}</CardTitle>
+          <CardDescription>{t('settings.domainDns.checklistDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <DomainConnectionWizard />
@@ -73,12 +60,8 @@ export default function DomainDnsSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            {t('settings.domainDns.referenceTitle')}
-          </CardTitle>
-          <CardDescription>
-            {t('settings.domainDns.stepsDescription')}
-          </CardDescription>
+          <CardTitle className="text-base">{t('settings.domainDns.referenceTitle')}</CardTitle>
+          <CardDescription>{t('settings.domainDns.stepsDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <DomainDnsGuide exampleDomain={exampleDomain} />

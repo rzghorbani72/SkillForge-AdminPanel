@@ -11,11 +11,7 @@ import { useDateFormat } from '@/lib/i18n/use-date-format';
 import type { TutoringEngagement } from '@/types/learning-operations';
 
 /** Who is being taught, by whom, and until when. */
-export function EngagementSummaryCard({
-  engagement
-}: {
-  engagement: TutoringEngagement;
-}) {
+export function EngagementSummaryCard({ engagement }: { engagement: TutoringEngagement }) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const formatCurrency = useFormatCurrency();
@@ -23,18 +19,16 @@ export function EngagementSummaryCard({
   const facts = [
     {
       label: t('tutoring.student'),
-      value: engagement.Student?.display_name ?? t('users.unnamedUser')
+      value: engagement.Student?.display_name ?? t('users.unnamedUser'),
     },
     {
       label: t('tutoring.tutor'),
-      value: engagement.Tutor?.display_name ?? t('users.unnamedUser')
+      value: engagement.Tutor?.display_name ?? t('users.unnamedUser'),
     },
     {
       label: t('tutoring.endsAt'),
-      value: engagement.ends_at
-        ? formatDate(engagement.ends_at)
-        : t('tutoring.openEnded')
-    }
+      value: engagement.ends_at ? formatDate(engagement.ends_at) : t('tutoring.openEnded'),
+    },
   ];
 
   return (
@@ -57,7 +51,7 @@ export function EngagementSummaryCard({
           <span>
             {t('tutoring.movedBanner', {
               title: engagement.Group?.title ?? '',
-              amount: formatCurrency(engagement.credit_granted ?? 0)
+              amount: formatCurrency(engagement.credit_granted ?? 0),
             })}{' '}
             <Link
               href={`/courses/${engagement.course_id}/live/${engagement.moved_to_group_id}`}

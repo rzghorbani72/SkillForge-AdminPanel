@@ -56,9 +56,7 @@ test.describe('nav scoping', () => {
 
   test('a teacher sees fewer items than a manager', () => {
     const manager = flatten(filterNavItems(navItems, MANAGER));
-    const teacher = flatten(
-      filterNavItems(navItems, { role: 'TEACHER', hasStore: true })
-    );
+    const teacher = flatten(filterNavItems(navItems, { role: 'TEACHER', hasStore: true }));
     expect(teacher.length).toBeLessThan(manager.length);
   });
 
@@ -78,14 +76,9 @@ test.describe('nav scoping', () => {
 
 test.describe('academy-less nav', () => {
   test('a manager with no academy can only reach the academy-less pages', () => {
-    const items = flatten(
-      filterNavItems(navItems, { ...MANAGER, hasAcademy: false })
-    );
+    const items = flatten(filterNavItems(navItems, { ...MANAGER, hasAcademy: false }));
     const enabled = items.filter((item) => !item.disabled);
-    expect(enabled.map((item) => item.href).sort()).toEqual([
-      '/academies',
-      '/dashboard'
-    ]);
+    expect(enabled.map((item) => item.href).sort()).toEqual(['/academies', '/dashboard']);
   });
 
   test('a teacher with no academy can only reach the academy-less pages', () => {
@@ -93,20 +86,15 @@ test.describe('academy-less nav', () => {
       filterNavItems(navItems, {
         role: 'TEACHER',
         hasStore: true,
-        hasAcademy: false
-      })
+        hasAcademy: false,
+      }),
     );
     const enabled = items.filter((item) => !item.disabled);
-    expect(enabled.map((item) => item.href).sort()).toEqual([
-      '/academies',
-      '/dashboard'
-    ]);
+    expect(enabled.map((item) => item.href).sort()).toEqual(['/academies', '/dashboard']);
   });
 
   test('no plan or billing route is live before the first academy', () => {
-    const items = flatten(
-      filterNavItems(navItems, { ...MANAGER, hasAcademy: false })
-    );
+    const items = flatten(filterNavItems(navItems, { ...MANAGER, hasAcademy: false }));
     const plans = items.find((item) => item.title === 'Academy Subscription');
     expect(plans?.disabled ?? true).toBe(true);
   });
@@ -114,7 +102,7 @@ test.describe('academy-less nav', () => {
   test('platform staff are not gated on having an academy', () => {
     const items = filterNavItems(navItems, {
       ...PLATFORM_STAFF,
-      hasAcademy: undefined
+      hasAcademy: undefined,
     });
     expect(items.length).toBeGreaterThan(1);
   });
@@ -131,8 +119,8 @@ test.describe('sidebar shape', () => {
         students: true,
         assignments: true,
         ops_queue: true,
-        tutoring: true
-      }
+        tutoring: true,
+      },
     });
     expect(items.length).toBeLessThanOrEqual(10);
   });
@@ -143,7 +131,7 @@ test.describe('sidebar shape', () => {
     for (const href of ['/dashboard', '/courses', '/users']) {
       expect(
         items.some((item) => item.href === href),
-        href
+        href,
       ).toBe(true);
     }
     expect(items.some((item) => item.title === 'Website')).toBe(true);
@@ -159,7 +147,7 @@ test.describe('sidebar shape', () => {
       '/website/pages',
       '/website/seo',
       '/website/trust',
-      '/website/domain'
+      '/website/domain',
     ]);
   });
 
@@ -172,27 +160,19 @@ test.describe('sidebar shape', () => {
       '/support/email',
       '/support/faq',
       '/support/phone',
-      '/support/suggestion'
+      '/support/suggestion',
     ]);
   });
 
   test('every group holds at least two children, unless keepGrouped', () => {
-    for (const options of [
-      MANAGER,
-      { role: 'TEACHER' as const, hasStore: true }
-    ]) {
+    for (const options of [MANAGER, { role: 'TEACHER' as const, hasStore: true }]) {
       for (const item of flatten(filterNavItems(navItems, options))) {
         if (!item.children) continue;
         if (item.keepGrouped) {
-          expect(
-            item.children.length,
-            `keepGrouped "${item.title}"`
-          ).toBeGreaterThan(0);
+          expect(item.children.length, `keepGrouped "${item.title}"`).toBeGreaterThan(0);
           continue;
         }
-        expect(item.children.length, `group "${item.title}"`).toBeGreaterThan(
-          1
-        );
+        expect(item.children.length, `group "${item.title}"`).toBeGreaterThan(1);
       }
     }
   });
@@ -201,21 +181,14 @@ test.describe('sidebar shape', () => {
     const items = filterNavItems(navItems, MANAGER);
     const hub = items.find((item) => item.label === 'platformFinanceHub');
     expect(hub?.keepGrouped).toBe(true);
-    expect(
-      hub?.children?.some((c) => c.href === '/coupons/plan-vouchers')
-    ).toBe(true);
-    expect(items.some((item) => item.href === '/coupons/plan-vouchers')).toBe(
-      false
-    );
+    expect(hub?.children?.some((c) => c.href === '/coupons/plan-vouchers')).toBe(true);
+    expect(items.some((item) => item.href === '/coupons/plan-vouchers')).toBe(false);
   });
 
   test('the nesting never goes deeper than one level', () => {
     for (const item of filterNavItems(navItems, MANAGER)) {
       for (const child of item.children ?? []) {
-        expect(
-          child.children,
-          `${item.title} > ${child.title}`
-        ).toBeUndefined();
+        expect(child.children, `${item.title} > ${child.title}`).toBeUndefined();
       }
     }
   });
@@ -239,7 +212,7 @@ test.describe('sidebar shape', () => {
       PLATFORM_STAFF,
       { role: 'PLATFORM_OWNER' as const, hasStore: false },
       { role: 'FINANCE' as const, hasStore: false },
-      { role: 'SUPPORT' as const, hasStore: false }
+      { role: 'SUPPORT' as const, hasStore: false },
     ]) {
       const items = filterNavItems(navItems, options);
       expect(items.length, options.role).toBeLessThanOrEqual(9);
@@ -249,7 +222,7 @@ test.describe('sidebar shape', () => {
   test('no section header is left behind now that groups replace them', () => {
     const items = flatten([
       ...filterNavItems(navItems, MANAGER),
-      ...filterNavItems(navItems, PLATFORM_STAFF)
+      ...filterNavItems(navItems, PLATFORM_STAFF),
     ]);
     expect(items.some((item) => item.section)).toBe(false);
   });
@@ -259,10 +232,7 @@ test.describe('route scope honesty', () => {
   test("a manager's items never point at a platform route", () => {
     const items = flatten(filterNavItems(navItems, MANAGER));
     for (const item of items) {
-      expect(
-        item.href?.startsWith('/platform'),
-        `${item.title} -> ${item.href}`
-      ).toBeFalsy();
+      expect(item.href?.startsWith('/platform'), `${item.title} -> ${item.href}`).toBeFalsy();
     }
   });
 

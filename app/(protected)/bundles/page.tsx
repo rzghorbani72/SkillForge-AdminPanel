@@ -14,7 +14,7 @@ import {
   ToggleLeft,
   ToggleRight,
   Pencil,
-  KeyRound
+  KeyRound,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
@@ -34,7 +34,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -42,7 +42,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ const schema = z.object({
     .min(2)
     .regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
   price: z.coerce.number().min(0),
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -81,7 +81,7 @@ function CourseMultiSelect({
   selected,
   onChange,
   t,
-  formatCurrency
+  formatCurrency,
 }: {
   courses: Course[];
   selected: string[];
@@ -98,15 +98,13 @@ function CourseMultiSelect({
         items={courses.map((c) => ({ id: c.id, title: c.title }))}
         selected={selected}
         onChange={onChange}
-        renderMeta={(item) =>
-          formatCurrency(courses.find((c) => c.id === item.id)?.price ?? 0)
-        }
+        renderMeta={(item) => formatCurrency(courses.find((c) => c.id === item.id)?.price ?? 0)}
         labels={{
           placeholder: t('bundles.selectCourses'),
           selected: t('bundles.selectedCourses'),
           search: t('bundles.searchCourses'),
           empty: t('bundles.noCourses'),
-          remove: t('bundles.removeCourse')
+          remove: t('bundles.removeCourse'),
         }}
       />
 
@@ -128,7 +126,7 @@ function BundleCard({
   onToggle,
   onAssign,
   formatCurrency,
-  t
+  t,
 }: {
   bundle: Bundle;
   onEdit: () => void;
@@ -137,8 +135,7 @@ function BundleCard({
   formatCurrency: (n: number) => string;
   t: (k: string) => string;
 }) {
-  const courses =
-    bundle.Courses?.map((bc) => bc.Course) ?? bundle.courses ?? [];
+  const courses = bundle.Courses?.map((bc) => bc.Course) ?? bundle.courses ?? [];
 
   return (
     <div className="flex flex-col rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
@@ -150,9 +147,7 @@ function BundleCard({
           </div>
           <div className="min-w-0">
             <h3 className="truncate font-semibold">{bundle.title}</h3>
-            <p className="font-mono text-xs text-muted-foreground">
-              {bundle.slug}
-            </p>
+            <p className="font-mono text-xs text-muted-foreground">{bundle.slug}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
@@ -174,9 +169,7 @@ function BundleCard({
           </button>
           <button
             type="button"
-            aria-label={
-              bundle.is_active ? t('bundles.inactive') : t('bundles.active')
-            }
+            aria-label={bundle.is_active ? t('bundles.inactive') : t('bundles.active')}
             onClick={onToggle}
             className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent"
           >
@@ -191,9 +184,7 @@ function BundleCard({
 
       {/* Description */}
       {bundle.description && (
-        <p className="mx-4 mb-2 line-clamp-2 text-sm text-muted-foreground">
-          {bundle.description}
-        </p>
+        <p className="mx-4 mb-2 line-clamp-2 text-sm text-muted-foreground">{bundle.description}</p>
       )}
 
       {/* Included courses */}
@@ -222,10 +213,7 @@ function BundleCard({
             <BookOpen className="h-3 w-3" />
             {courses.length} {t('bundles.courseCount')}
           </span>
-          <Badge
-            variant={bundle.is_active ? 'default' : 'secondary'}
-            className="text-xs"
-          >
+          <Badge variant={bundle.is_active ? 'default' : 'secondary'} className="text-xs">
             {bundle.is_active ? t('bundles.active') : t('bundles.inactive')}
           </Badge>
         </div>
@@ -253,7 +241,7 @@ export default function BundlesPage() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { title: '', slug: '', price: 0, description: '' }
+    defaultValues: { title: '', slug: '', price: 0, description: '' },
   });
 
   const watchedTitle = form.watch('title');
@@ -284,9 +272,7 @@ export default function BundlesPage() {
     setLoadingCourses(true);
     try {
       const data: any = await apiClient.getCourses({ limit: 200 });
-      const list = Array.isArray(data)
-        ? data
-        : (data?.courses ?? data?.data ?? []);
+      const list = Array.isArray(data) ? data : (data?.courses ?? data?.data ?? []);
       setCourses(list);
     } catch {
       // non-fatal
@@ -312,15 +298,13 @@ export default function BundlesPage() {
   function openEdit(bundle: Bundle) {
     setEditTarget(bundle);
     const existing =
-      bundle.Courses?.map((bc) => bc.Course.id) ??
-      bundle.courses?.map((c) => c.id) ??
-      [];
+      bundle.Courses?.map((bc) => bc.Course.id) ?? bundle.courses?.map((c) => c.id) ?? [];
     setSelectedCourseIds(existing);
     form.reset({
       title: bundle.title ?? '',
       slug: bundle.slug ?? '',
       price: bundle.price,
-      description: bundle.description ?? ''
+      description: bundle.description ?? '',
     });
     setDialogOpen(true);
   }
@@ -341,7 +325,7 @@ export default function BundlesPage() {
         slug: values.slug,
         description: values.description,
         price: values.price,
-        course_ids: selectedCourseIds
+        course_ids: selectedCourseIds,
       };
       if (editTarget) {
         await apiClient.updateOffer(editTarget.id, payload);
@@ -369,12 +353,9 @@ export default function BundlesPage() {
 
   const selectedCoursesForHint = useMemo(
     () => courses.filter((c) => selectedCourseIds.includes(c.id)),
-    [courses, selectedCourseIds]
+    [courses, selectedCourseIds],
   );
-  const originalTotal = selectedCoursesForHint.reduce(
-    (s, c) => s + (c.price ?? 0),
-    0
-  );
+  const originalTotal = selectedCoursesForHint.reduce((s, c) => s + (c.price ?? 0), 0);
   const bundlePrice = form.watch('price');
   const savings = originalTotal - bundlePrice;
 
@@ -383,12 +364,8 @@ export default function BundlesPage() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {t('bundles.title')}
-          </h1>
-          <p className="mt-1 max-w-md text-sm text-muted-foreground">
-            {t('bundles.description')}
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('bundles.title')}</h1>
+          <p className="mt-1 max-w-md text-sm text-muted-foreground">{t('bundles.description')}</p>
         </div>
         {academyId && (
           <Button onClick={openCreate} className="shrink-0">
@@ -409,10 +386,7 @@ export default function BundlesPage() {
       {loadingBundles ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {[...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className="h-44 animate-pulse rounded-xl border bg-muted"
-            />
+            <div key={i} className="h-44 animate-pulse rounded-xl border bg-muted" />
           ))}
         </div>
       ) : bundles.length === 0 ? (
@@ -422,9 +396,7 @@ export default function BundlesPage() {
             <Package className="h-8 w-8 text-muted-foreground" />
           </div>
           <h2 className="text-lg font-semibold">{t('bundles.noBundle')}</h2>
-          <p className="mt-1 max-w-xs text-sm text-muted-foreground">
-            {t('bundles.noBundleDesc')}
-          </p>
+          <p className="mt-1 max-w-xs text-sm text-muted-foreground">{t('bundles.noBundleDesc')}</p>
           {academyId && (
             <Button className="mt-6" onClick={openCreate}>
               <Plus className="me-2 h-4 w-4" />
@@ -477,14 +449,9 @@ export default function BundlesPage() {
                   <FormItem>
                     <FormLabel>{t('bundles.bundleTitle')}</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder={t('bundles.titlePlaceholder')}
-                        {...field}
-                      />
+                      <Input placeholder={t('bundles.titlePlaceholder')} {...field} />
                     </FormControl>
-                    <p className="text-xs text-muted-foreground">
-                      {t('bundles.titleHelp')}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{t('bundles.titleHelp')}</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -498,15 +465,9 @@ export default function BundlesPage() {
                   <FormItem>
                     <FormLabel>{t('bundles.slug')}</FormLabel>
                     <FormControl>
-                      <Input
-                        dir="rtl"
-                        className="font-mono text-sm"
-                        {...field}
-                      />
+                      <Input dir="rtl" className="font-mono text-sm" {...field} />
                     </FormControl>
-                    <p className="text-xs text-muted-foreground">
-                      {t('bundles.slugHelp')}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{t('bundles.slugHelp')}</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -524,14 +485,10 @@ export default function BundlesPage() {
                         name={field.name}
                         ref={field.ref}
                         value={field.value ?? ''}
-                        onChange={(raw) =>
-                          field.onChange(raw === '' ? '' : Number(raw))
-                        }
+                        onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                       />
                     </FormControl>
-                    <p className="text-xs text-muted-foreground">
-                      {t('bundles.priceHelp')}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{t('bundles.priceHelp')}</p>
                     {savings > 0 && (
                       <p className="text-xs font-medium text-emerald-600">
                         {t('bundles.savings')}: {formatCurrency(savings)}
@@ -544,9 +501,7 @@ export default function BundlesPage() {
 
               {/* Course picker */}
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">
-                  {t('bundles.selectCourses')}
-                </label>
+                <label className="text-sm font-medium">{t('bundles.selectCourses')}</label>
                 {loadingCourses ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -561,9 +516,7 @@ export default function BundlesPage() {
                     formatCurrency={formatCurrency}
                   />
                 )}
-                <p className="text-xs text-muted-foreground">
-                  {t('bundles.coursesHelp')}
-                </p>
+                <p className="text-xs text-muted-foreground">{t('bundles.coursesHelp')}</p>
               </div>
 
               {/* Description */}
@@ -586,11 +539,7 @@ export default function BundlesPage() {
 
               {/* Footer */}
               <div className="flex justify-end gap-2 pt-1">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={saving}>

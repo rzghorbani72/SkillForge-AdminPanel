@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { MetricsPageClient } from './_components/metrics-page-client';
 
 export const metadata: Metadata = {
-  title: 'Investor report'
+  title: 'Investor report',
 };
 
 /**

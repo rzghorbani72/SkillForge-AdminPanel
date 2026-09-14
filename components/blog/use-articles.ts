@@ -10,11 +10,7 @@ interface UseArticlesResult {
   articles: Article[];
   isLoading: boolean;
   refresh: () => Promise<void>;
-  runTransition: (
-    id: string,
-    transition: ArticleTransition,
-    reviewNote?: string
-  ) => Promise<void>;
+  runTransition: (id: string, transition: ArticleTransition, reviewNote?: string) => Promise<void>;
   remove: (id: string) => Promise<void>;
 }
 
@@ -41,18 +37,13 @@ export function useArticles(scope: BlogScope): UseArticlesResult {
   const runTransition = useCallback(
     async (id: string, transition: ArticleTransition, reviewNote?: string) => {
       try {
-        await apiClient.transitionBlogArticle(
-          scope,
-          id,
-          transition,
-          reviewNote
-        );
+        await apiClient.transitionBlogArticle(scope, id, transition, reviewNote);
         await refresh();
       } catch (error) {
         ErrorHandler.handleApiError(error);
       }
     },
-    [scope, refresh]
+    [scope, refresh],
   );
 
   const remove = useCallback(
@@ -64,7 +55,7 @@ export function useArticles(scope: BlogScope): UseArticlesResult {
         ErrorHandler.handleApiError(error);
       }
     },
-    [scope, refresh]
+    [scope, refresh],
   );
 
   return { articles, isLoading, refresh, runTransition, remove };

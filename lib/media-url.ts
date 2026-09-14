@@ -4,7 +4,5 @@
  */
 export function resolveMediaUrl(url: string | null | undefined): string {
   if (!url) return '';
-  return url.startsWith('/')
-    ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${url}`
-    : url;
+  return url.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${url}` : url;
 }

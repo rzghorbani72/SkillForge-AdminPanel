@@ -2,27 +2,14 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { KeyRound } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'react-toastify';
-import {
-  accessGrantsApi,
-  type GroupAccessGrant,
-  type StudentAccessGrant
-} from '@/lib/api-extra';
+import { accessGrantsApi, type GroupAccessGrant, type StudentAccessGrant } from '@/lib/api-extra';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { AccessGrantList } from './access-grant-list';
-import {
-  AssignAccessForm,
-  type AssignAccessSelection
-} from './assign-access-form';
+import { AssignAccessForm, type AssignAccessSelection } from './assign-access-form';
 
 type CourseAccessSectionProps = {
   courseId: string;
@@ -37,10 +24,7 @@ type CourseAccessSectionProps = {
  * The "give access to students" box on a saved course: hand the course to
  * students or groups for a chosen term, and see/undo who already holds it.
  */
-export function CourseAccessSection({
-  courseId,
-  onPendingChange
-}: CourseAccessSectionProps) {
+export function CourseAccessSection({ courseId, onPendingChange }: CourseAccessSectionProps) {
   const { t } = useTranslation();
   const [students, setStudents] = useState<StudentAccessGrant[]>([]);
   const [groups, setGroups] = useState<GroupAccessGrant[]>([]);
@@ -66,12 +50,12 @@ export function CourseAccessSection({
     try {
       const summary = await accessGrantsApi.create({
         course_ids: [courseId],
-        ...selection
+        ...selection,
       });
       toast.success(
         t('accessGrants.granted', {
-          count: summary.student_grants + summary.group_grants
-        })
+          count: summary.student_grants + summary.group_grants,
+        }),
       );
       await refresh();
     } catch (error) {
@@ -81,10 +65,7 @@ export function CourseAccessSection({
     }
   }
 
-  async function handleRevoke(target: {
-    profile_id?: string;
-    group_id?: string;
-  }) {
+  async function handleRevoke(target: { profile_id?: string; group_id?: string }) {
     setIsSaving(true);
     try {
       await accessGrantsApi.revoke({ course_id: courseId, ...target });
@@ -105,9 +86,7 @@ export function CourseAccessSection({
           {t('accessGrants.title')}
         </CardTitle>
         <CardDescription>
-          {onPendingChange
-            ? t('accessGrants.stagedDescription')
-            : t('accessGrants.description')}
+          {onPendingChange ? t('accessGrants.stagedDescription') : t('accessGrants.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">

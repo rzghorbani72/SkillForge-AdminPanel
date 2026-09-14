@@ -1,20 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { TrendingDown, TrendingUp, DollarSign, Tag } from 'lucide-react';
 import { apiClient } from '@/lib/api';
@@ -41,14 +35,8 @@ export default function StoreCostsPage() {
   const formatNumber = useNumberFormat();
   const currentAcademy = useCurrentAcademy();
   const formatCurrency = useFormatCurrency();
-  const {
-    selectedYear,
-    selectedMonth,
-    setSelectedYear,
-    setSelectedMonth,
-    years,
-    formatDate
-  } = useFinancialFilters();
+  const { selectedYear, selectedMonth, setSelectedYear, setSelectedMonth, years, formatDate } =
+    useFinancialFilters();
 
   const [loading, setLoading] = useState(true);
   const [records, setRecords] = useState<StoreFinancialRecord[]>([]);
@@ -61,7 +49,7 @@ export default function StoreCostsPage() {
       const data = await apiClient.getAcademyFinancialRecords({
         academy_id: currentAcademy.id,
         year: selectedYear,
-        ...(selectedMonth ? { month: selectedMonth } : {})
+        ...(selectedMonth ? { month: selectedMonth } : {}),
       });
       setRecords(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -82,11 +70,11 @@ export default function StoreCostsPage() {
           cost: acc.cost + r.cost,
           revenue: acc.revenue + r.revenue,
           profit: acc.profit + r.profit,
-          currency: r.currency
+          currency: r.currency,
         }),
-        { cost: 0, revenue: 0, profit: 0, currency: 'IRR' }
+        { cost: 0, revenue: 0, profit: 0, currency: 'IRR' },
       ),
-    [records]
+    [records],
   );
 
   const recordsByCategory = useMemo((): CategoryBucket[] => {
@@ -94,29 +82,24 @@ export default function StoreCostsPage() {
     for (const r of records) {
       const key = r.costCategory?.id?.toString() ?? 'uncategorized';
       const existing = grouped.get(key) ?? {
-        category:
-          r.costCategory?.name ?? t('financial.store.costs.uncategorized'),
+        category: r.costCategory?.name ?? t('financial.store.costs.uncategorized'),
         count: 0,
         totalCost: 0,
-        currency: r.currency
+        currency: r.currency,
       };
       grouped.set(key, {
         ...existing,
         count: existing.count + 1,
-        totalCost: existing.totalCost + r.cost
+        totalCost: existing.totalCost + r.cost,
       });
     }
-    return Array.from(grouped.values()).sort(
-      (a, b) => b.totalCost - a.totalCost
-    );
+    return Array.from(grouped.values()).sort((a, b) => b.totalCost - a.totalCost);
   }, [records, t]);
 
   if (!currentAcademy) {
     return (
       <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
-        <p className="text-muted-foreground">
-          {t('financial.store.costs.noStore')}
-        </p>
+        <p className="text-muted-foreground">{t('financial.store.costs.noStore')}</p>
       </div>
     );
   }
@@ -167,9 +150,7 @@ export default function StoreCostsPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrency(totals.revenue, totals.currency)}
-            </p>
+            <p className="text-2xl font-bold">{formatCurrency(totals.revenue, totals.currency)}</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {t('financial.store.costs.totalIncome')}
             </p>
@@ -208,9 +189,7 @@ export default function StoreCostsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('financial.store.costs.category')}</TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.store.costs.records')}
-                  </TableHead>
+                  <TableHead className="text-end">{t('financial.store.costs.records')}</TableHead>
                   <TableHead className="text-end">
                     {t('financial.store.costs.totalCostLabel')}
                   </TableHead>
@@ -225,9 +204,7 @@ export default function StoreCostsPage() {
                         {cat.category}
                       </div>
                     </TableCell>
-                    <TableCell className="text-end">
-                      {formatNumber(cat.count)}
-                    </TableCell>
+                    <TableCell className="text-end">{formatNumber(cat.count)}</TableCell>
                     <TableCell className="text-end font-medium">
                       {formatCurrency(cat.totalCost, cat.currency)}
                     </TableCell>
@@ -243,9 +220,7 @@ export default function StoreCostsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('financial.store.costs.allCostRecords')}</CardTitle>
-          <CardDescription>
-            {t('financial.store.costs.allCostRecordsDescription')}
-          </CardDescription>
+          <CardDescription>{t('financial.store.costs.allCostRecordsDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -253,24 +228,15 @@ export default function StoreCostsPage() {
               <TableRow>
                 <TableHead>{t('financial.store.costs.period')}</TableHead>
                 <TableHead>{t('financial.store.costs.category')}</TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.costs.revenue')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.costs.cost')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.costs.profit')}
-                </TableHead>
+                <TableHead className="text-end">{t('financial.store.costs.revenue')}</TableHead>
+                <TableHead className="text-end">{t('financial.store.costs.cost')}</TableHead>
+                <TableHead className="text-end">{t('financial.store.costs.profit')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {records.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="py-6 text-center text-muted-foreground"
-                  >
+                  <TableCell colSpan={5} className="py-6 text-center text-muted-foreground">
                     {t('financial.store.costs.noCostRecords')}
                   </TableCell>
                 </TableRow>
@@ -283,8 +249,7 @@ export default function StoreCostsPage() {
                       <span>{formatDate(r.period_end)}</span>
                     </TableCell>
                     <TableCell>
-                      {r.costCategory?.name ??
-                        t('financial.store.costs.uncategorized')}
+                      {r.costCategory?.name ?? t('financial.store.costs.uncategorized')}
                     </TableCell>
                     <TableCell className="text-end">
                       {formatCurrency(r.revenue, r.currency)}

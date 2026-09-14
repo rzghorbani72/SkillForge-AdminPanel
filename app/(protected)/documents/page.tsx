@@ -1,13 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Eye, Download, File, Files, HardDrive } from 'lucide-react';
@@ -16,10 +10,7 @@ import { Media } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { UploadMediaDialog } from '@/components/content/upload-media-dialog';
-import {
-  AccessControlBadge,
-  type AccessControl
-} from '@/components/ui/access-control-badge';
+import { AccessControlBadge, type AccessControl } from '@/components/ui/access-control-badge';
 import { toast } from 'react-toastify';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -34,7 +25,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
@@ -59,9 +50,7 @@ export default function DocumentsPage() {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [previewDocument, setPreviewDocument] = useState<DocumentItem | null>(
-    null
-  );
+  const [previewDocument, setPreviewDocument] = useState<DocumentItem | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -93,13 +82,13 @@ export default function DocumentsPage() {
     return documents.filter(
       (doc) =>
         doc.title.toLowerCase().includes(term) ||
-        (doc.description ?? '').toLowerCase().includes(term)
+        (doc.description ?? '').toLowerCase().includes(term),
     );
   }, [documents, searchTerm]);
 
   const totalSize = useMemo(
     () => documents.reduce((total, doc) => total + (doc.size ?? 0), 0),
-    [documents]
+    [documents],
   );
 
   const handleViewDocument = (doc: DocumentItem) => {
@@ -218,11 +207,7 @@ export default function DocumentsPage() {
           className="fade-in-up"
           icon={<FileText className="h-10 w-10" />}
           title={t('media.noDocumentsFound')}
-          description={
-            searchTerm
-              ? t('media.noDocumentsMatch')
-              : t('media.uploadFirstDocument')
-          }
+          description={searchTerm ? t('media.noDocumentsMatch') : t('media.uploadFirstDocument')}
         />
       ) : (
         <div className="stagger-children grid gap-5 sm:grid-cols-2">
@@ -231,7 +216,7 @@ export default function DocumentsPage() {
               key={doc.id}
               className={cn(
                 'group overflow-hidden border-border/50 transition-all duration-300',
-                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5'
+                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
               )}
               style={{ animationDelay: `${0.05 * (index + 1)}s` }}
             >
@@ -297,16 +282,12 @@ export default function DocumentsPage() {
 
       {/* Preview Modal */}
       {previewDocument && (
-        <Dialog
-          open
-          onOpenChange={(open) => (!open ? handleClosePreview() : null)}
-        >
+        <Dialog open onOpenChange={(open) => (!open ? handleClosePreview() : null)}>
           <DialogContent className="max-w-5xl">
             <DialogHeader className="text-start">
               <DialogTitle>{previewDocument.title}</DialogTitle>
               <DialogDescription>
-                {previewDocument.description ||
-                  t('media.documentPreviewFallback')}
+                {previewDocument.description || t('media.documentPreviewFallback')}
               </DialogDescription>
             </DialogHeader>
             <div className="mt-4 space-y-3">
@@ -345,11 +326,7 @@ export default function DocumentsPage() {
               </div>
             </div>
             <DialogFooter className="mt-4 flex items-center justify-between">
-              <Button
-                variant="outline"
-                onClick={handleClosePreview}
-                className="rounded-xl"
-              >
+              <Button variant="outline" onClick={handleClosePreview} className="rounded-xl">
                 {t('media.close')}
               </Button>
               <Button

@@ -17,9 +17,7 @@ export function usePaymentsData(): PaymentsSnapshot {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [monetizationSummary, setMonetizationSummary] = useState<any | null>(
-    null
-  );
+  const [monetizationSummary, setMonetizationSummary] = useState<any | null>(null);
   const [refreshToken, setRefreshToken] = useState<number>(0);
 
   const refresh = useCallback(() => {
@@ -37,7 +35,7 @@ export function usePaymentsData(): PaymentsSnapshot {
           await Promise.allSettled([
             apiClient.getPayments({ page: 1, limit: 20 }),
             apiClient.getTransactionTracking({ page: 1, limit: 20 }),
-            apiClient.getMonetizationSummary()
+            apiClient.getMonetizationSummary(),
           ]);
 
         if (!isMounted) return;
@@ -76,10 +74,7 @@ export function usePaymentsData(): PaymentsSnapshot {
                       : [];
           setTransactions(list);
         } else {
-          console.error(
-            'Failed to fetch transactions:',
-            transactionsResponse.reason
-          );
+          console.error('Failed to fetch transactions:', transactionsResponse.reason);
           setTransactions([]);
         }
         if (monetizationResponse?.status === 'fulfilled') {
@@ -116,8 +111,8 @@ export function usePaymentsData(): PaymentsSnapshot {
       transactions,
       monetizationSummary,
       isLoading,
-      refresh
+      refresh,
     }),
-    [payments, transactions, monetizationSummary, isLoading, refresh]
+    [payments, transactions, monetizationSummary, isLoading, refresh],
   );
 }

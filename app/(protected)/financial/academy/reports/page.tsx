@@ -1,27 +1,15 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  Calendar
-} from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Users, Calendar } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { formatCurrencyWithStore } from '@/lib/utils';
 import { toast } from 'react-toastify';
@@ -36,7 +24,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -79,14 +67,14 @@ export default function StoreReportsPage() {
         apiClient.getAcademyFinancialOverview(
           currentAcademy.id,
           startDate.toISOString(),
-          endDate.toISOString()
+          endDate.toISOString(),
         ),
         apiClient.getAcademyFinancialSummary(currentAcademy.id),
         apiClient.getAcademyFinancialRecords({
           academy_id: currentAcademy.id,
           year: selectedYear,
-          month: selectedMonth || undefined
-        })
+          month: selectedMonth || undefined,
+        }),
       ]);
 
       setOverview(overviewData);
@@ -108,10 +96,10 @@ export default function StoreReportsPage() {
       {
         currency: currency as any,
         currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-        currency_position: 'after'
+        currency_position: 'after',
       },
       undefined,
-      language
+      language,
     );
   };
 
@@ -128,7 +116,7 @@ export default function StoreReportsPage() {
           revenue: 0,
           cost: 0,
           profit: 0,
-          currency: record.currency
+          currency: record.currency,
         };
       }
 
@@ -141,9 +129,9 @@ export default function StoreReportsPage() {
       .map(([month, data]) => ({
         month: parseInt(month),
         monthName: new Date(2000, parseInt(month) - 1).toLocaleString(locale, {
-          month: 'long'
+          month: 'long',
         }),
-        ...data
+        ...data,
       }))
       .sort((a, b) => a.month - b.month);
   }, [records]);
@@ -153,9 +141,7 @@ export default function StoreReportsPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">
-            {t('financial.store.reports.loading')}
-          </p>
+          <p className="mt-4 text-muted-foreground">{t('financial.store.reports.loading')}</p>
         </div>
       </div>
     );
@@ -164,9 +150,7 @@ export default function StoreReportsPage() {
   if (!currentAcademy) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">
-          {t('financial.store.reports.noStore')}
-        </p>
+        <p className="text-muted-foreground">{t('financial.store.reports.noStore')}</p>
       </div>
     );
   }
@@ -175,9 +159,7 @@ export default function StoreReportsPage() {
     <div className="space-y-6 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">
-            {t('financial.store.reports.title')}
-          </h1>
+          <h1 className="text-3xl font-bold">{t('financial.store.reports.title')}</h1>
           <p className="mt-1 text-muted-foreground">
             {currentAcademy.name} - {t('financial.store.reports.description')}
           </p>
@@ -225,13 +207,11 @@ export default function StoreReportsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">
-                    {t('financial.store.reports.allMonths')}
-                  </SelectItem>
+                  <SelectItem value="all">{t('financial.store.reports.allMonths')}</SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <SelectItem key={month} value={month.toString()}>
                       {new Date(2000, month - 1).toLocaleString(locale, {
-                        month: 'long'
+                        month: 'long',
                       })}
                     </SelectItem>
                   ))}
@@ -254,14 +234,11 @@ export default function StoreReportsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {formatCurrency(
-                  overview.revenue.total,
-                  overview.revenue.currency
-                )}
+                {formatCurrency(overview.revenue.total, overview.revenue.currency)}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.reports.fromPayments', {
-                  count: overview.revenue.from_payments
+                  count: overview.revenue.from_payments,
                 })}
               </p>
             </CardContent>
@@ -293,14 +270,11 @@ export default function StoreReportsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">
-                {formatCurrency(
-                  overview.profit.total,
-                  overview.revenue.currency
-                )}
+                {formatCurrency(overview.profit.total, overview.revenue.currency)}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.reports.profitMargin', {
-                  margin: overview.profit.margin
+                  margin: overview.profit.margin,
                 })}
               </p>
             </CardContent>
@@ -314,12 +288,10 @@ export default function StoreReportsPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {overview.statistics.enrollments}
-              </div>
+              <div className="text-2xl font-bold">{overview.statistics.enrollments}</div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.reports.courses', {
-                  count: overview.statistics.courses
+                  count: overview.statistics.courses,
                 })}
               </p>
             </CardContent>
@@ -330,23 +302,15 @@ export default function StoreReportsPage() {
       {/* Detailed Reports */}
       <Tabs defaultValue="summary" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="summary">
-            {t('financial.store.reports.summary')}
-          </TabsTrigger>
-          <TabsTrigger value="monthly">
-            {t('financial.store.reports.monthly')}
-          </TabsTrigger>
-          <TabsTrigger value="records">
-            {t('financial.store.reports.records')}
-          </TabsTrigger>
+          <TabsTrigger value="summary">{t('financial.store.reports.summary')}</TabsTrigger>
+          <TabsTrigger value="monthly">{t('financial.store.reports.monthly')}</TabsTrigger>
+          <TabsTrigger value="records">{t('financial.store.reports.records')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="summary" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>
-                {t('financial.store.reports.financialSummary')}
-              </CardTitle>
+              <CardTitle>{t('financial.store.reports.financialSummary')}</CardTitle>
               <CardDescription>
                 {t('financial.store.reports.financialSummaryDescription')}
               </CardDescription>
@@ -360,10 +324,7 @@ export default function StoreReportsPage() {
                         {t('financial.store.reports.totalRevenueLabel')}
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatCurrency(
-                          summary.total_revenue || 0,
-                          summary.currency || 'IRR'
-                        )}
+                        {formatCurrency(summary.total_revenue || 0, summary.currency || 'IRR')}
                       </p>
                     </div>
                     <div>
@@ -371,10 +332,7 @@ export default function StoreReportsPage() {
                         {t('financial.store.reports.totalCostLabel')}
                       </p>
                       <p className="text-2xl font-bold text-red-600">
-                        {formatCurrency(
-                          summary.total_cost || 0,
-                          summary.currency || 'IRR'
-                        )}
+                        {formatCurrency(summary.total_cost || 0, summary.currency || 'IRR')}
                       </p>
                     </div>
                     <div>
@@ -382,10 +340,7 @@ export default function StoreReportsPage() {
                         {t('financial.store.reports.netProfit')}
                       </p>
                       <p className="text-2xl font-bold text-green-600">
-                        {formatCurrency(
-                          summary.total_profit || 0,
-                          summary.currency || 'IRR'
-                        )}
+                        {formatCurrency(summary.total_profit || 0, summary.currency || 'IRR')}
                       </p>
                     </div>
                   </div>
@@ -394,9 +349,7 @@ export default function StoreReportsPage() {
                       <p className="text-sm text-muted-foreground">
                         {t('financial.store.reports.totalRecords')}
                       </p>
-                      <p className="text-xl font-semibold">
-                        {formatNumber(summary.record_count)}
-                      </p>
+                      <p className="text-xl font-semibold">{formatNumber(summary.record_count)}</p>
                     </div>
                   )}
                 </div>
@@ -412,9 +365,7 @@ export default function StoreReportsPage() {
         <TabsContent value="monthly" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>
-                {t('financial.store.reports.monthlyBreakdown')}
-              </CardTitle>
+              <CardTitle>{t('financial.store.reports.monthlyBreakdown')}</CardTitle>
               <CardDescription>
                 {t('financial.store.reports.monthlyBreakdownDescription')}
               </CardDescription>
@@ -427,9 +378,7 @@ export default function StoreReportsPage() {
                     <TableHead className="text-end">
                       {t('financial.store.reports.revenue')}
                     </TableHead>
-                    <TableHead className="text-end">
-                      {t('financial.store.reports.cost')}
-                    </TableHead>
+                    <TableHead className="text-end">{t('financial.store.reports.cost')}</TableHead>
                     <TableHead className="text-end">
                       {t('financial.store.reports.profit')}
                     </TableHead>
@@ -438,19 +387,14 @@ export default function StoreReportsPage() {
                 <TableBody>
                   {monthlyBreakdown.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="text-center text-muted-foreground"
-                      >
+                      <TableCell colSpan={4} className="text-center text-muted-foreground">
                         {t('financial.store.reports.noMonthlyData')}
                       </TableCell>
                     </TableRow>
                   ) : (
                     monthlyBreakdown.map((month) => (
                       <TableRow key={month.month}>
-                        <TableCell className="font-medium">
-                          {month.monthName}
-                        </TableCell>
+                        <TableCell className="font-medium">{month.monthName}</TableCell>
                         <TableCell className="text-end">
                           {formatCurrency(month.revenue, month.currency)}
                         </TableCell>
@@ -472,9 +416,7 @@ export default function StoreReportsPage() {
         <TabsContent value="records" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>
-                {t('financial.store.reports.allFinancialRecords')}
-              </CardTitle>
+              <CardTitle>{t('financial.store.reports.allFinancialRecords')}</CardTitle>
               <CardDescription>
                 {t('financial.store.reports.allFinancialRecordsDescription')}
               </CardDescription>
@@ -484,15 +426,11 @@ export default function StoreReportsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('financial.store.reports.period')}</TableHead>
-                    <TableHead>
-                      {t('financial.store.reports.category')}
-                    </TableHead>
+                    <TableHead>{t('financial.store.reports.category')}</TableHead>
                     <TableHead className="text-end">
                       {t('financial.store.reports.revenue')}
                     </TableHead>
-                    <TableHead className="text-end">
-                      {t('financial.store.reports.cost')}
-                    </TableHead>
+                    <TableHead className="text-end">{t('financial.store.reports.cost')}</TableHead>
                     <TableHead className="text-end">
                       {t('financial.store.reports.profit')}
                     </TableHead>
@@ -504,10 +442,7 @@ export default function StoreReportsPage() {
                 <TableBody>
                   {records.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={6}
-                        className="text-center text-muted-foreground"
-                      >
+                      <TableCell colSpan={6} className="text-center text-muted-foreground">
                         {t('financial.store.reports.noRecords')}
                       </TableCell>
                     </TableRow>
@@ -518,23 +453,15 @@ export default function StoreReportsPage() {
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-muted-foreground" />
                             <div>
-                              <div>
-                                {new Date(
-                                  record.period_start
-                                ).toLocaleDateString()}
-                              </div>
+                              <div>{new Date(record.period_start).toLocaleDateString()}</div>
                               <div className="text-xs text-muted-foreground">
-                                to{' '}
-                                {new Date(
-                                  record.period_end
-                                ).toLocaleDateString()}
+                                to {new Date(record.period_end).toLocaleDateString()}
                               </div>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          {record.costCategory?.name ||
-                            t('financial.store.reports.uncategorized')}
+                          {record.costCategory?.name || t('financial.store.reports.uncategorized')}
                         </TableCell>
                         <TableCell className="text-end">
                           {formatCurrency(record.revenue, record.currency)}

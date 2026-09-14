@@ -14,7 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,7 +24,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 
 // Order follows how often academy staff pick them, not the enum order.
@@ -38,15 +38,11 @@ const CATEGORIES = [
   'COURSE_ACCESS',
   'LIVE_CLASS',
   'CONTENT',
-  'OTHER'
+  'OTHER',
 ] as const;
 
 /** Lets academy staff raise a ticket to the platform from the support inbox. */
-export function NewPlatformTicketDialog({
-  onCreated
-}: {
-  onCreated: () => void;
-}) {
+export function NewPlatformTicketDialog({ onCreated }: { onCreated: () => void }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState('');
@@ -61,7 +57,7 @@ export function NewPlatformTicketDialog({
       await apiClient.createPlatformTicket({
         subject: subject.trim(),
         category,
-        body: body.trim()
+        body: body.trim(),
       });
       toast.success(t('support.ticketCreated'));
       setOpen(false);
@@ -125,10 +121,7 @@ export function NewPlatformTicketDialog({
         </div>
 
         <DialogFooter>
-          <Button
-            onClick={submit}
-            disabled={saving || !subject.trim() || !body.trim()}
-          >
+          <Button onClick={submit} disabled={saving || !subject.trim() || !body.trim()}>
             {saving ? t('common.saving') : t('support.send')}
           </Button>
         </DialogFooter>

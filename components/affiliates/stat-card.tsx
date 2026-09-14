@@ -3,7 +3,7 @@ import { ArrowUp } from 'lucide-react';
 export function StatCard({
   label,
   value,
-  delta
+  delta,
 }: {
   label: string;
   value: string;
@@ -20,9 +20,7 @@ export function StatCard({
           </span>
         )}
       </div>
-      <div className="mt-2 font-mono text-2xl font-bold tracking-tight">
-        {value}
-      </div>
+      <div className="mt-2 font-mono text-2xl font-bold tracking-tight">{value}</div>
     </div>
   );
 }

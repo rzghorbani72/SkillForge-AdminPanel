@@ -7,7 +7,7 @@ const WEEKDAY_KEYS = [
   'weekdays.wednesday',
   'weekdays.thursday',
   'weekdays.friday',
-  'weekdays.saturday'
+  'weekdays.saturday',
 ];
 
 const minuteLabel = (minute: number) =>
@@ -16,11 +16,11 @@ const minuteLabel = (minute: number) =>
 /** "Saturday 16:00–18:00 · Monday 10:00–12:00" in the panel's language. */
 export const formatRequestWindows = (
   windows: readonly ClassRequestWindow[],
-  t: (key: string) => string
+  t: (key: string) => string,
 ): string =>
   windows
     .map(
       (w) =>
-        `${t(WEEKDAY_KEYS[w.weekday])} ${minuteLabel(w.start_minute)}–${minuteLabel(w.end_minute)}`
+        `${t(WEEKDAY_KEYS[w.weekday])} ${minuteLabel(w.start_minute)}–${minuteLabel(w.end_minute)}`,
     )
     .join(' · ');

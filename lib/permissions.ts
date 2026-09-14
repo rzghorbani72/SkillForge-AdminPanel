@@ -11,7 +11,7 @@ export interface PermissionUser {
 export function hasPermission(
   user: PermissionUser | null | undefined,
   resource: string,
-  action: string
+  action: string,
 ): boolean {
   if (!user) return false;
   if (user.role === 'PLATFORM_OWNER') return true;

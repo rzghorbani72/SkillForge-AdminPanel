@@ -1,11 +1,6 @@
 import { call } from './api-call';
 
-export type PaymentChannel =
-  | 'ONLINE'
-  | 'WALLET'
-  | 'BANK_TRANSFER'
-  | 'CASH'
-  | 'POS';
+export type PaymentChannel = 'ONLINE' | 'WALLET' | 'BANK_TRANSFER' | 'CASH' | 'POS';
 
 export type MoneyCustody = 'PLATFORM' | 'ACADEMY';
 
@@ -81,24 +76,21 @@ export const settlementApi = {
   requestOtp: (academyId: string) =>
     call<{ data: { channel: 'phone' | 'email' } }>(
       `${base}/academies/${academyId}/bank-account/request-otp`,
-      { method: 'POST' }
+      { method: 'POST' },
     ),
 
   submitBankAccount: (
     academyId: string,
-    body: { sheba_number: string; account_holder_name: string; otp: string }
+    body: { sheba_number: string; account_holder_name: string; otp: string },
   ) =>
     call<unknown>(`${base}/academies/${academyId}/bank-account`, {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     }),
 
-  requestSettlement: (
-    academyId: string,
-    body: { amount: number; notes?: string }
-  ) =>
+  requestSettlement: (academyId: string, body: { amount: number; notes?: string }) =>
     call<WithdrawalRecord>(`/financial/academies/${academyId}/withdrawals`, {
       method: 'POST',
-      body: JSON.stringify(body)
-    })
+      body: JSON.stringify(body),
+    }),
 };

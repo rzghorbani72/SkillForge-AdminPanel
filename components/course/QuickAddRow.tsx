@@ -17,12 +17,7 @@ interface QuickAddRowProps {
  * typing. Adding a blank row and naming it later is what leaves untitled
  * records behind — and untitled records are dropped on save.
  */
-export function QuickAddRow({
-  placeholder,
-  onAdd,
-  blockedReason,
-  className
-}: QuickAddRowProps) {
+export function QuickAddRow({ placeholder, onAdd, blockedReason, className }: QuickAddRowProps) {
   const [value, setValue] = useState('');
   const blocked = Boolean(blockedReason);
 
@@ -49,7 +44,7 @@ export function QuickAddRow({
         blocked
           ? 'cursor-not-allowed opacity-60'
           : 'focus-within:border-primary/50 focus-within:bg-muted/30',
-        className
+        className,
       )}
     >
       <Plus className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

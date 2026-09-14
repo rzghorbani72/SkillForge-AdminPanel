@@ -9,7 +9,7 @@ import {
   Sparkles,
   Star,
   Users,
-  Video
+  Video,
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
@@ -26,7 +26,7 @@ const TYPE_ICONS: Record<string, typeof Sparkles> = {
   projects: Layers,
   marquee: Play,
   'course-grid': LayoutGrid,
-  membership: Users
+  membership: Users,
 };
 
 interface BlockTypePickerProps {
@@ -52,9 +52,7 @@ export function BlockTypePicker({ onSelect }: BlockTypePickerProps) {
 
   return (
     <div className="mt-4 space-y-3">
-      <p className="text-xs font-medium text-zinc-700">
-        {t('sitePreview.chooseBlockType')}
-      </p>
+      <p className="text-xs font-medium text-zinc-700">{t('sitePreview.chooseBlockType')}</p>
       <div className="grid grid-cols-2 gap-2">
         {ADDABLE_SECTION_TYPES.map((type) => {
           const Icon = TYPE_ICONS[type] ?? Layers;

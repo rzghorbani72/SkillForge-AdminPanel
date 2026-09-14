@@ -23,7 +23,7 @@ interface AccessControlBadgeProps {
 export function AccessControlBadge({
   accessControl,
   className,
-  showDetails = false
+  showDetails = false,
 }: AccessControlBadgeProps) {
   const { t } = useTranslation();
   const { is_owner, can_modify, can_delete } = accessControl;
@@ -36,7 +36,7 @@ export function AccessControlBadge({
         className: 'bg-green-100 text-green-800 border-green-200',
         icon: <User className="h-3 w-3" />,
         text: t('accessControl.ownerBadge'),
-        tooltip: t('accessControl.ownerHint')
+        tooltip: t('accessControl.ownerHint'),
       };
     }
 
@@ -46,7 +46,7 @@ export function AccessControlBadge({
         className: 'bg-blue-100 text-blue-800 border-blue-200',
         icon: <Shield className="h-3 w-3" />,
         text: t('accessControl.managerBadge'),
-        tooltip: t('accessControl.managerHint')
+        tooltip: t('accessControl.managerHint'),
       };
     }
 
@@ -56,7 +56,7 @@ export function AccessControlBadge({
         className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
         icon: <Edit className="h-3 w-3" />,
         text: t('accessControl.canEditBadge'),
-        tooltip: t('accessControl.canEditHint')
+        tooltip: t('accessControl.canEditHint'),
       };
     }
 
@@ -65,7 +65,7 @@ export function AccessControlBadge({
       className: 'bg-muted text-muted-foreground border-border',
       icon: <Eye className="h-3 w-3" />,
       text: t('accessControl.viewOnlyBadge'),
-      tooltip: t('accessControl.viewOnlyHint')
+      tooltip: t('accessControl.viewOnlyHint'),
     };
   };
 
@@ -85,10 +85,7 @@ export function AccessControlBadge({
       {showDetails && (
         <div className="flex items-center gap-1">
           {can_modify && (
-            <Badge
-              variant="outline"
-              className="bg-green-50 text-xs text-green-700"
-            >
+            <Badge variant="outline" className="bg-green-50 text-xs text-green-700">
               <Edit className="me-1 h-2 w-2" />
               {t('common.edit')}
             </Badge>
@@ -100,10 +97,7 @@ export function AccessControlBadge({
             </Badge>
           )}
           {!can_modify && !can_delete && (
-            <Badge
-              variant="outline"
-              className="bg-muted/50 text-xs text-muted-foreground"
-            >
+            <Badge variant="outline" className="bg-muted/50 text-xs text-muted-foreground">
               <Lock className="me-1 h-2 w-2" />
               {t('accessControl.readOnly')}
             </Badge>
@@ -128,7 +122,7 @@ export function AccessControlActions({
   onEdit,
   onDelete,
   onView,
-  className
+  className,
 }: AccessControlActionsProps) {
   const { can_modify, can_delete, can_view } = accessControl;
 

@@ -28,37 +28,23 @@ export function CourseIdentityCard({ course }: { course: CourseDetail }) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
-  const notSet = (
-    <span className="text-muted-foreground">{t('courseDetail.notSet')}</span>
-  );
+  const notSet = <span className="text-muted-foreground">{t('courseDetail.notSet')}</span>;
 
   return (
     <SpecCard title={t('courses.courseDetails')}>
       <Fact label={t('courses.courseTypeLabel')}>
-        {t(
-          course.course_type === 'LIVE'
-            ? 'courses.typeLiveTitle'
-            : 'courses.typeOfflineTitle'
-        )}
+        {t(course.course_type === 'LIVE' ? 'courses.typeLiveTitle' : 'courses.typeOfflineTitle')}
       </Fact>
-      <Fact label={t('courses.category')}>
-        {course.Category?.name ?? notSet}
-      </Fact>
-      <Fact label={t('courses.instructor')}>
-        {course.Profile?.display_name ?? notSet}
-      </Fact>
+      <Fact label={t('courses.category')}>{course.Category?.name ?? notSet}</Fact>
+      <Fact label={t('courses.instructor')}>{course.Profile?.display_name ?? notSet}</Fact>
       <Fact label={t('courseDetail.totalStudents')}>
         {formatNumber(course.active_enrollment_count ?? 0)}
       </Fact>
       <Fact label={t('courses.featured')}>
         {t(course.is_featured ? 'common.yes' : 'common.no')}
       </Fact>
-      <Fact label={t('courseDetail.createdAt')}>
-        {formatDate(course.created_at)}
-      </Fact>
-      <Fact label={t('courseDetail.updatedAt')}>
-        {formatDate(course.updated_at)}
-      </Fact>
+      <Fact label={t('courseDetail.createdAt')}>{formatDate(course.created_at)}</Fact>
+      <Fact label={t('courseDetail.updatedAt')}>{formatDate(course.updated_at)}</Fact>
     </SpecCard>
   );
 }
@@ -78,7 +64,7 @@ export function CourseAccessCard({ course }: { course: CourseDetail }) {
         <Fact label={t('courseDetail.accessDuration')}>
           {course.access_duration_days
             ? t('courseDetail.daysCount', {
-                count: formatNumber(course.access_duration_days)
+                count: formatNumber(course.access_duration_days),
               })
             : t('courseDetail.lifetimeAccess')}
         </Fact>
@@ -102,24 +88,14 @@ export function CourseAccessCard({ course }: { course: CourseDetail }) {
 export function CourseSearchCard({ course }: { course: CourseDetail }) {
   const { t } = useTranslation();
   const keywords = course.keywords ?? [];
-  const fallback = (
-    <span className="text-muted-foreground">
-      {t('courseDetail.seoFallback')}
-    </span>
-  );
+  const fallback = <span className="text-muted-foreground">{t('courseDetail.seoFallback')}</span>;
 
   return (
     <SpecCard title={t('courses.seo.title')}>
-      <Fact label={t('courses.seo.metaTitle')}>
-        {course.meta_title?.trim() || fallback}
-      </Fact>
+      <Fact label={t('courses.seo.metaTitle')}>{course.meta_title?.trim() || fallback}</Fact>
       <div className="py-2">
-        <p className="text-muted-foreground">
-          {t('courses.seo.metaDescription')}
-        </p>
-        <p className="mt-1 line-clamp-3 text-sm">
-          {course.meta_description?.trim() || fallback}
-        </p>
+        <p className="text-muted-foreground">{t('courses.seo.metaDescription')}</p>
+        <p className="mt-1 line-clamp-3 text-sm">{course.meta_description?.trim() || fallback}</p>
       </div>
       <div className="py-2">
         <p className="text-muted-foreground">{t('courses.seo.keywords')}</p>

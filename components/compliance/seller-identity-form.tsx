@@ -10,7 +10,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import type {
   SellerIdentity,
   SellerIdentityField,
-  UpdateSellerIdentityPayload
+  UpdateSellerIdentityPayload,
 } from '@/types/seller-identity';
 
 type SellerIdentityFormProps = {
@@ -24,7 +24,7 @@ export function SellerIdentityForm({
   identity,
   saving,
   highlightMissing = [],
-  onSubmit
+  onSubmit,
 }: SellerIdentityFormProps) {
   const { t } = useTranslation();
   const [legalEntityName, setLegalEntityName] = useState('');
@@ -56,16 +56,14 @@ export function SellerIdentityForm({
       contact_address: contactAddress.trim(),
       economic_code: economicCode.trim() || undefined,
       vat_registration_no: vatRegistrationNo.trim() || undefined,
-      permit_declared: permitDeclared
+      permit_declared: permitDeclared,
     });
   };
 
   return (
     <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="seller-legal-name">
-          {t('compliance.sellerIdentity.legalEntityName')}
-        </Label>
+        <Label htmlFor="seller-legal-name">{t('compliance.sellerIdentity.legalEntityName')}</Label>
         <Input
           id="seller-legal-name"
           value={legalEntityName}
@@ -76,9 +74,7 @@ export function SellerIdentityForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="seller-national-id">
-          {t('compliance.sellerIdentity.nationalId')}
-        </Label>
+        <Label htmlFor="seller-national-id">{t('compliance.sellerIdentity.nationalId')}</Label>
         <Input
           id="seller-national-id"
           value={nationalId}
@@ -118,9 +114,7 @@ export function SellerIdentityForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="seller-vat-no">
-            {t('compliance.sellerIdentity.vatRegistrationNo')}
-          </Label>
+          <Label htmlFor="seller-vat-no">{t('compliance.sellerIdentity.vatRegistrationNo')}</Label>
           <Input
             id="seller-vat-no"
             value={vatRegistrationNo}

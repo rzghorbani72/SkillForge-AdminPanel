@@ -12,7 +12,7 @@ import type {
   HeadingScale,
   FontFamily,
   TextDirection,
-  SaveMode
+  SaveMode,
 } from './sidebar-types';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { SidebarStyleTab } from './sidebar-style-tab';
@@ -104,7 +104,7 @@ export function TemplateCustomizationSidebar({
   selectedBlockId,
   onSelectBlock,
   preview,
-  academyName
+  academyName,
 }: TemplateCustomizationSidebarProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('sections');
@@ -124,7 +124,7 @@ export function TemplateCustomizationSidebar({
 
   const TABS: { id: Tab; label: string; icon: typeof Layers }[] = [
     { id: 'sections', label: t('sitePreview.tabSections'), icon: Layers },
-    { id: 'style', label: t('sitePreview.panelTabStyle'), icon: Palette }
+    { id: 'style', label: t('sitePreview.panelTabStyle'), icon: Palette },
   ];
 
   return (
@@ -137,9 +137,7 @@ export function TemplateCustomizationSidebar({
         <div className="flex items-center gap-2">
           <span className="text-base">{isAdminEditing ? '🌐' : '🤖'}</span>
           <span className="text-sm font-semibold text-zinc-900">
-            {isAdminEditing
-              ? t('sitePreview.sidebarTitleAdmin')
-              : t('sitePreview.sidebarTitle')}
+            {isAdminEditing ? t('sitePreview.sidebarTitleAdmin') : t('sitePreview.sidebarTitle')}
           </span>
         </div>
         <button

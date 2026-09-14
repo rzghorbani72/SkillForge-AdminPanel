@@ -1,13 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,10 +13,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import type { ActiveSession } from '@/types/api';
 
-type PendingAction =
-  | { kind: 'one'; session: ActiveSession }
-  | { kind: 'others' }
-  | null;
+type PendingAction = { kind: 'one'; session: ActiveSession } | { kind: 'others' } | null;
 
 export function ActiveSessionsCard() {
   const { t } = useTranslation();
@@ -74,12 +65,9 @@ export function ActiveSessionsCard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MonitorSmartphone className="h-5 w-5" />{' '}
-            {t('settings.activeSessions')}
+            <MonitorSmartphone className="h-5 w-5" /> {t('settings.activeSessions')}
           </CardTitle>
-          <CardDescription>
-            {t('settings.activeSessionsDescription')}
-          </CardDescription>
+          <CardDescription>{t('settings.activeSessionsDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {isLoading ? (
@@ -88,9 +76,7 @@ export function ActiveSessionsCard() {
               <Skeleton className="h-16" />
             </>
           ) : sessions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('settings.noActiveSessions')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('settings.noActiveSessions')}</p>
           ) : (
             sessions.map((session) => (
               <div
@@ -105,9 +91,7 @@ export function ActiveSessionsCard() {
                     <div className="flex items-center gap-2 text-sm font-medium">
                       {session.device_info}
                       {session.is_current && (
-                        <Badge variant="secondary">
-                          {t('settings.thisDevice')}
-                        </Badge>
+                        <Badge variant="secondary">{t('settings.thisDevice')}</Badge>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">
@@ -115,8 +99,8 @@ export function ActiveSessionsCard() {
                       {t('settings.sessionLastActive', {
                         date: formatDate(session.last_used_at, {
                           hour: '2-digit',
-                          minute: '2-digit'
-                        })
+                          minute: '2-digit',
+                        }),
                       })}
                     </p>
                   </div>
@@ -158,11 +142,10 @@ export function ActiveSessionsCard() {
         description={
           pending?.kind === 'others'
             ? t('settings.terminateOtherSessionsConfirm', {
-                count: otherCount
+                count: otherCount,
               })
             : t('settings.terminateSessionConfirm', {
-                device:
-                  pending?.kind === 'one' ? pending.session.device_info : ''
+                device: pending?.kind === 'one' ? pending.session.device_info : '',
               })
         }
         confirmLabel={t('settings.terminateSession')}

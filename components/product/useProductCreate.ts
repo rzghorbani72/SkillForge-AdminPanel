@@ -12,18 +12,12 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 
 export const productFormSchema = z.object({
-  title: z
-    .string()
-    .min(5, 'validation.titleMin5')
-    .max(80, 'validation.titleMax80'),
+  title: z.string().min(5, 'validation.titleMin5').max(80, 'validation.titleMax80'),
   description: z
     .string()
     .min(1, 'validation.descriptionRequired')
     .max(2000, 'validation.descriptionMax2000'),
-  short_description: z
-    .string()
-    .max(400, 'validation.shortDescriptionMax400')
-    .optional(),
+  short_description: z.string().max(400, 'validation.shortDescriptionMax400').optional(),
   price: z
     .string()
     .min(1, 'validation.priceRequired')
@@ -35,10 +29,7 @@ export const productFormSchema = z.object({
   original_price: z
     .string()
     .optional()
-    .refine(
-      (val) => !val || /^\d+$/.test(val.trim()),
-      'validation.originalPriceWholeNumber'
-    ),
+    .refine((val) => !val || /^\d+$/.test(val.trim()), 'validation.originalPriceWholeNumber'),
   product_type: z.enum(['DIGITAL', 'PHYSICAL']),
   stock_quantity: z.string().optional(),
   sku: z.string().optional(),
@@ -48,7 +39,7 @@ export const productFormSchema = z.object({
   is_featured: z.boolean().default(false),
   weight: z.string().optional(),
   dimensions: z.string().optional(),
-  course_ids: z.array(z.string()).optional()
+  course_ids: z.array(z.string()).optional(),
 });
 
 export type ProductCreateFormData = z.infer<typeof productFormSchema>;
@@ -75,8 +66,8 @@ export const useProductCreate = () => {
       is_featured: false,
       weight: '',
       dimensions: '',
-      course_ids: []
-    }
+      course_ids: [],
+    },
   });
 
   const imageUpload = useImageUpload({
@@ -84,7 +75,7 @@ export const useProductCreate = () => {
     description: form.watch('description') || 'Product cover image',
     onSuccess: (image) => {
       form.setValue('cover_id', image.id.toString());
-    }
+    },
   });
 
   const onSubmitHandler = async (data: ProductCreateFormData) => {
@@ -107,15 +98,8 @@ export const useProductCreate = () => {
       }
 
       const price = Number(data.price);
-      if (
-        isNaN(price) ||
-        !Number.isInteger(price) ||
-        price < 0 ||
-        price > 999999999
-      ) {
-        toast.error(
-          'Price must be a valid whole number between 0 and 999,999,999'
-        );
+      if (isNaN(price) || !Number.isInteger(price) || price < 0 || price > 999999999) {
+        toast.error('Price must be a valid whole number between 0 and 999,999,999');
         return;
       }
 
@@ -125,7 +109,7 @@ export const useProductCreate = () => {
         price: price,
         product_type: data.product_type,
         published: !!data.published,
-        is_featured: !!data.is_featured
+        is_featured: !!data.is_featured,
       };
 
       if (data.short_description?.trim()) {
@@ -134,11 +118,7 @@ export const useProductCreate = () => {
 
       if (data.original_price && data.original_price.trim()) {
         const originalPrice = Number(data.original_price);
-        if (
-          !isNaN(originalPrice) &&
-          Number.isInteger(originalPrice) &&
-          originalPrice >= price
-        ) {
+        if (!isNaN(originalPrice) && Number.isInteger(originalPrice) && originalPrice >= price) {
           productData.original_price = originalPrice;
         }
       }
@@ -210,6 +190,6 @@ export const useProductCreate = () => {
     uploadCoverImage: imageUpload.uploadImage,
     cancelUpload: imageUpload.cancelUpload,
     onSubmit,
-    handleBack
+    handleBack,
   };
 };

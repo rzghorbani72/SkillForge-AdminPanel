@@ -6,20 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Search, X, SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-const SearchBar = ({
-  value,
-  onChange
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) => {
+const SearchBar = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
   const { t } = useTranslation();
 
   return (
-    <div
-      className="fade-in-up flex items-center gap-3"
-      style={{ animationDelay: '0.1s' }}
-    >
+    <div className="fade-in-up flex items-center gap-3" style={{ animationDelay: '0.1s' }}>
       <div className="relative max-w-md flex-1">
         <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input

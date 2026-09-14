@@ -9,14 +9,9 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CopyableValue } from '@/components/shared/copyable-value';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -34,13 +29,7 @@ const iconBtnClass =
 const iconBtnDestructiveClass =
   'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:pointer-events-none disabled:opacity-50';
 
-function ActionTooltip({
-  label,
-  children
-}: {
-  label: string;
-  children: ReactElement;
-}) {
+function ActionTooltip({ label, children }: { label: string; children: ReactElement }) {
   return (
     <Tooltip delayDuration={200}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
@@ -52,7 +41,7 @@ function ActionTooltip({
 export function AcademyMembersTable({
   rows,
   canModerate = false,
-  onChanged
+  onChanged,
 }: {
   rows: User[];
   canModerate?: boolean;
@@ -101,29 +90,20 @@ export function AcademyMembersTable({
               <TableRow key={row.id}>
                 <TableCell className="font-medium">
                   <span className="flex items-center gap-2">
-                    {row.display_name ||
-                      row.full_name ||
-                      t('users.unnamedUser')}
+                    {row.display_name || row.full_name || t('users.unnamedUser')}
                     {row.user_banned_at && (
-                      <Badge variant="destructive">
-                        {t('accountActions.banned')}
-                      </Badge>
+                      <Badge variant="destructive">{t('accountActions.banned')}</Badge>
                     )}
                   </span>
                 </TableCell>
                 <TableCell>
                   <Badge variant="secondary">
                     {row.role_name
-                      ? getRoleDisplayLabel(
-                          { name: row.role_name, label: row.role_label },
-                          t
-                        )
+                      ? getRoleDisplayLabel({ name: row.role_name, label: row.role_label }, t)
                       : '—'}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {row.academy_name || '—'}
-                </TableCell>
+                <TableCell className="text-muted-foreground">{row.academy_name || '—'}</TableCell>
                 <TableCell>
                   {row.phone_number ? (
                     <CopyableValue

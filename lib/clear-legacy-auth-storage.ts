@@ -10,7 +10,7 @@ const LEGACY_AUTH_KEYS = [
   'jwt',
   'token',
   'user_state',
-  'user-store'
+  'user-store',
 ] as const;
 
 export function clearLegacyAuthStorage(): void {

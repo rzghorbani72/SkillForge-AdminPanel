@@ -17,9 +17,7 @@ test.describe('AdminPanel manager register — validation (no backend)', () => {
     await page.locator('button[type="submit"]').click();
 
     // shadcn FormMessage renders an element ending in "-form-item-message".
-    await expect(
-      page.locator('[id$="form-item-message"]').first()
-    ).toBeVisible();
+    await expect(page.locator('[id$="form-item-message"]').first()).toBeVisible();
     // Still on the details step (no OTP step / backend call happened).
     await expect(page.locator('input[name="confirmPassword"]')).toBeVisible();
   });
@@ -34,8 +32,6 @@ test.describe('AdminPanel manager register — validation (no backend)', () => {
     await page.locator('input[name="confirmPassword"]').fill('123');
     await page.locator('button[type="submit"]').click();
 
-    await expect(
-      page.locator('[id$="form-item-message"]').first()
-    ).toBeVisible();
+    await expect(page.locator('[id$="form-item-message"]').first()).toBeVisible();
   });
 });

@@ -17,10 +17,7 @@ interface RequestedTimesCardProps {
 }
 
 /** The times a paid private student said they can meet, shown beside the scheduler. */
-export function RequestedTimesCard({
-  engagementId,
-  refreshKey
-}: RequestedTimesCardProps) {
+export function RequestedTimesCard({ engagementId, refreshKey }: RequestedTimesCardProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const [request, setRequest] = useState<ClassRequest | null>(null);
@@ -51,15 +48,11 @@ export function RequestedTimesCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
-        <p className="font-medium">
-          {formatRequestWindows(request.windows, t)}
-        </p>
-        {request.note ? (
-          <p className="text-muted-foreground">{request.note}</p>
-        ) : null}
+        <p className="font-medium">{formatRequestWindows(request.windows, t)}</p>
+        {request.note ? <p className="text-muted-foreground">{request.note}</p> : null}
         <p className="text-xs text-muted-foreground">
           {t('tutoring.requestedTimesHint', {
-            date: formatDate(request.created_at)
+            date: formatDate(request.created_at),
           })}
         </p>
       </CardContent>

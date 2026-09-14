@@ -6,16 +6,10 @@ import type { Enrollment } from '@/types/api';
 import type {
   AssignmentSubmission,
   LearningActivity,
-  LearningSummaryEnrollment
+  LearningSummaryEnrollment,
 } from '@/types/learning-operations';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
@@ -38,10 +32,7 @@ function enrollmentCourseTitle(enrollment: Enrollment): string | undefined {
   return enrollment.course?.title ?? enrollment.Course?.title;
 }
 
-function formatDate(
-  value: string | null | undefined,
-  language: string
-): string {
+function formatDate(value: string | null | undefined, language: string): string {
   if (!value) return '—';
   return new Date(value).toLocaleString(language);
 }
@@ -52,21 +43,18 @@ export function StudentLearningPanel({
   submissions,
   summaryEnrollments,
   timeline,
-  learningUnavailable
+  learningUnavailable,
 }: StudentLearningPanelProps) {
   const { t, language } = useTranslation();
-  const completedCount = enrollments.filter(
-    (item) => item.status === 'COMPLETED'
-  ).length;
-  const progressSource =
-    summaryEnrollments.length > 0 ? 'summary' : 'enrollments';
+  const completedCount = enrollments.filter((item) => item.status === 'COMPLETED').length;
+  const progressSource = summaryEnrollments.length > 0 ? 'summary' : 'enrollments';
 
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="outline">
           {t('learningOperations.enrollmentCount', {
-            count: enrollments.length
+            count: enrollments.length,
           })}
         </Badge>
         <Badge variant="secondary">
@@ -77,18 +65,11 @@ export function StudentLearningPanel({
       <Tabs defaultValue="progress">
         <TabsList className="h-auto w-full justify-start overflow-x-auto">
           <TabsTrigger value="progress">{t('navigation.progress')}</TabsTrigger>
-          <TabsTrigger value="timeline">
-            {t('learningOperations.timeline')}
-          </TabsTrigger>
-          <TabsTrigger value="assignments">
-            {t('navigation.assignments')}
-          </TabsTrigger>
+          <TabsTrigger value="timeline">{t('learningOperations.timeline')}</TabsTrigger>
+          <TabsTrigger value="assignments">{t('navigation.assignments')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent
-          value="progress"
-          className="grid gap-4 pt-4 lg:grid-cols-2"
-        >
+        <TabsContent value="progress" className="grid gap-4 pt-4 lg:grid-cols-2">
           {progressSource === 'summary' ? (
             summaryEnrollments.map((enrollment) => {
               const value =
@@ -119,8 +100,7 @@ export function StudentLearningPanel({
                       {formatDate(enrollment.last_accessed, language)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {t('learningOperations.videoHeartbeats')}:{' '}
-                      {enrollment.video_heartbeats}
+                      {t('learningOperations.videoHeartbeats')}: {enrollment.video_heartbeats}
                     </p>
                   </CardContent>
                 </Card>
@@ -135,8 +115,7 @@ export function StudentLearningPanel({
                 <Card key={enrollment.id}>
                   <CardHeader>
                     <CardTitle className="text-base">
-                      {enrollmentCourseTitle(enrollment) ??
-                        t('students.unknownCourse')}
+                      {enrollmentCourseTitle(enrollment) ?? t('students.unknownCourse')}
                     </CardTitle>
                     <CardDescription>{enrollment.status}</CardDescription>
                   </CardHeader>
@@ -184,9 +163,7 @@ export function StudentLearningPanel({
                       return label === key ? activity.activity_type : label;
                     })()}
                   </CardTitle>
-                  <CardDescription>
-                    {formatDate(activity.created_at, language)}
-                  </CardDescription>
+                  <CardDescription>{formatDate(activity.created_at, language)}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-1 text-xs text-muted-foreground">
                   {activity.course_id && (
@@ -201,8 +178,7 @@ export function StudentLearningPanel({
                   )}
                   {activity.enrollment_id && (
                     <p>
-                      {t('learningOperations.enrollmentId')}:{' '}
-                      {activity.enrollment_id}
+                      {t('learningOperations.enrollmentId')}: {activity.enrollment_id}
                     </p>
                   )}
                 </CardContent>
@@ -219,8 +195,7 @@ export function StudentLearningPanel({
               <Card key={submission.id}>
                 <CardHeader>
                   <CardTitle className="text-base">
-                    {submission.Assignment?.title ??
-                      t('assignmentsPage.notAvailable')}
+                    {submission.Assignment?.title ?? t('assignmentsPage.notAvailable')}
                   </CardTitle>
                   <CardDescription>
                     {t(`learningOperations.status.${submission.status}`)}

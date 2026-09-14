@@ -38,7 +38,7 @@ export default function AccessControlGuard({
   action = 'view',
   fallbackPath = '/dashboard',
   showFallback = true,
-  fallbackMessage
+  fallbackMessage,
 }: AccessControlGuardProps) {
   const {
     userState,
@@ -49,7 +49,7 @@ export default function AccessControlGuard({
     checkResourceAccess,
     requirePermission,
     requireRole,
-    requireResourceAccess
+    requireResourceAccess,
   } = useAccessControl();
 
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
@@ -78,15 +78,14 @@ export default function AccessControlGuard({
               canView: resource.access_control.can_view,
               isOwner: resource.access_control.is_owner,
               userRole: resource.access_control.user_role,
-              userPermissions: resource.access_control.user_permissions || []
+              userPermissions: resource.access_control.user_permissions || [],
             }
           : checkResourceAccess(resource)
         : null;
 
       const isOwner =
         resourceAccess?.isOwner ||
-        (ownerIdFromResource !== null &&
-          userState?.user_id === String(ownerIdFromResource)) ||
+        (ownerIdFromResource !== null && userState?.user_id === String(ownerIdFromResource)) ||
         false;
 
       // Normalize role to uppercase for comparison
@@ -122,45 +121,29 @@ export default function AccessControlGuard({
       // Check permission requirement
       if (requiredPermission && !hasPermission(requiredPermission)) {
         access = false;
-        setAccessError(
-          `You need the "${requiredPermission}" permission to access this resource.`
-        );
+        setAccessError(`You need the "${requiredPermission}" permission to access this resource.`);
       }
 
       // Check role requirement
       if (requiredRole && !hasRole(requiredRole)) {
         access = false;
-        setAccessError(
-          `You need the "${requiredRole}" role to access this resource.`
-        );
+        setAccessError(`You need the "${requiredRole}" role to access this resource.`);
       }
 
       // For modify/delete actions without specific permissions, check if user can manage courses
-      if (
-        (action === 'modify' || action === 'delete') &&
-        !requiredPermission &&
-        !requiredRole
-      ) {
+      if ((action === 'modify' || action === 'delete') && !requiredPermission && !requiredRole) {
         if (resourceAccess) {
           const canPerform =
             action === 'modify'
-              ? resourceAccess.canModify ||
-                isOwner ||
-                roleAllowsCourseManagement
-              : resourceAccess.canDelete ||
-                isOwner ||
-                roleAllowsCourseManagement;
+              ? resourceAccess.canModify || isOwner || roleAllowsCourseManagement
+              : resourceAccess.canDelete || isOwner || roleAllowsCourseManagement;
           if (!canPerform) {
             access = false;
-            setAccessError(
-              `You do not have permission to ${action} this resource.`
-            );
+            setAccessError(`You do not have permission to ${action} this resource.`);
           }
         } else if (!canManageCourses()) {
           access = false;
-          setAccessError(
-            'You need course management permissions to perform this action.'
-          );
+          setAccessError('You need course management permissions to perform this action.');
         }
       }
 
@@ -168,39 +151,21 @@ export default function AccessControlGuard({
       if (resourceAccess) {
         switch (action) {
           case 'view':
-            if (
-              !resourceAccess.canView &&
-              !isOwner &&
-              !roleAllowsCourseManagement
-            ) {
+            if (!resourceAccess.canView && !isOwner && !roleAllowsCourseManagement) {
               access = false;
-              setAccessError(
-                'You do not have permission to view this resource.'
-              );
+              setAccessError('You do not have permission to view this resource.');
             }
             break;
           case 'modify':
-            if (
-              !resourceAccess.canModify &&
-              !isOwner &&
-              !roleAllowsCourseManagement
-            ) {
+            if (!resourceAccess.canModify && !isOwner && !roleAllowsCourseManagement) {
               access = false;
-              setAccessError(
-                'You do not have permission to modify this resource.'
-              );
+              setAccessError('You do not have permission to modify this resource.');
             }
             break;
           case 'delete':
-            if (
-              !resourceAccess.canDelete &&
-              !isOwner &&
-              !roleAllowsCourseManagement
-            ) {
+            if (!resourceAccess.canDelete && !isOwner && !roleAllowsCourseManagement) {
               access = false;
-              setAccessError(
-                'You do not have permission to delete this resource.'
-              );
+              setAccessError('You do not have permission to delete this resource.');
             }
             break;
         }
@@ -218,16 +183,14 @@ export default function AccessControlGuard({
           requireResourceAccess(resource, action, fallbackPath);
         } else {
           ErrorHandler.showWarning(
-            accessError || 'You do not have permission to access this resource.'
+            accessError || 'You do not have permission to access this resource.',
           );
         }
       }
     } catch (error) {
       console.error('Access control check failed:', error);
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Failed to verify access permissions.';
+        error instanceof Error ? error.message : 'Failed to verify access permissions.';
       ErrorHandler.showWarning(errorMessage);
       setAccessError(errorMessage);
       setHasAccess(false);
@@ -247,7 +210,7 @@ export default function AccessControlGuard({
     requireResourceAccess,
     showFallback,
     fallbackPath,
-    router
+    router,
   ]);
 
   // Show loading state
@@ -256,9 +219,7 @@ export default function AccessControlGuard({
       <div className="flex h-64 items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Checking permissions...
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Checking permissions...</p>
         </div>
       </div>
     );
@@ -286,10 +247,7 @@ export default function AccessControlGuard({
                 'You do not have permission to access this resource.'}
             </p>
             <div className="flex flex-col space-y-2">
-              <Button
-                onClick={() => router.push(fallbackPath)}
-                className="w-full"
-              >
+              <Button onClick={() => router.push(fallbackPath)} className="w-full">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Go Back
               </Button>
@@ -314,10 +272,7 @@ export default function AccessControlGuard({
 
   // Default loading state
   return (
-    <div
-      id="access-control-guard"
-      className="flex h-64 items-center justify-center"
-    >
+    <div id="access-control-guard" className="flex h-64 items-center justify-center">
       <div className="text-center">
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
         <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
@@ -329,7 +284,7 @@ export default function AccessControlGuard({
 // Higher-order component for easier usage
 export function withAccessControl<P extends object>(
   Component: React.ComponentType<P>,
-  accessControlProps: Omit<AccessControlGuardProps, 'children'>
+  accessControlProps: Omit<AccessControlGuardProps, 'children'>,
 ) {
   return function AccessControlledComponent(props: P) {
     return (

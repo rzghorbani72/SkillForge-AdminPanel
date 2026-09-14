@@ -14,12 +14,8 @@ const CreateProductHeader = ({ storeName, onBack }: Props) => {
         <ArrowLeft className="h-4 w-4" />
       </Button>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {MESSAGES.product.createProduct}
-        </h1>
-        <p className="text-muted-foreground">
-          {MESSAGES.product.addNewProductTo(storeName)}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{MESSAGES.product.createProduct}</h1>
+        <p className="text-muted-foreground">{MESSAGES.product.addNewProductTo(storeName)}</p>
       </div>
     </div>
   );

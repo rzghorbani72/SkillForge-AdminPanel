@@ -28,16 +28,14 @@ export function PayoutResponseActions({ payout, onChanged }: Props) {
     return (
       <span className="text-xs text-emerald-600 dark:text-emerald-400">
         {t('teacherEarnings.confirmedAt', {
-          date: formatDateTime(payout.teacher_confirmed_at, language)
+          date: formatDateTime(payout.teacher_confirmed_at, language),
         })}
       </span>
     );
   }
 
   const paidAt = new Date(payout.processed_at ?? payout.requested_at);
-  const rejectOpensAt = new Date(
-    paidAt.getTime() + REJECT_WAIT_HOURS * 3_600_000
-  );
+  const rejectOpensAt = new Date(paidAt.getTime() + REJECT_WAIT_HOURS * 3_600_000);
   const canReject = Date.now() >= rejectOpensAt.getTime();
 
   const run = async (action: 'confirm' | 'reject') => {
@@ -76,7 +74,7 @@ export function PayoutResponseActions({ payout, onChanged }: Props) {
       {!canReject ? (
         <span className="text-[11px] text-muted-foreground">
           {t('teacherEarnings.rejectWaitHint', {
-            date: formatDateTime(rejectOpensAt, language)
+            date: formatDateTime(rejectOpensAt, language),
           })}
         </span>
       ) : null}

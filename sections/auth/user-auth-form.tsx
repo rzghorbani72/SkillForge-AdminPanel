@@ -8,12 +8,8 @@ import { Input } from '@/components/ui/input';
 import Link from '@/components/ui/link';
 
 const formSchema = z.object({
-  identifier: z
-    .string()
-    .min(9, { message: 'Enter a valid email or phone number' }),
-  password: z
-    .string()
-    .min(8, { message: 'Password must be at least 8 characters' })
+  identifier: z.string().min(9, { message: 'Enter a valid email or phone number' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
@@ -22,7 +18,7 @@ export default function UserAuthForm() {
   const { login, loading, error } = useLogin();
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
-    defaultValues: { identifier: '', password: '' }
+    defaultValues: { identifier: '', password: '' },
   });
 
   const onSubmit = (data: UserFormValue) => {
@@ -53,16 +49,10 @@ export default function UserAuthForm() {
       </div>
       {error && <p className="text-red-500">{error}</p>}
       <div className="flex items-center justify-between">
-        <Link
-          href="/forgot-password"
-          className="text-sm text-blue-600 hover:underline"
-        >
+        <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
           Forgot Password?
         </Link>
-        <Link
-          href="/profile-passwords"
-          className="text-sm text-blue-600 hover:underline"
-        >
+        <Link href="/profile-passwords" className="text-sm text-blue-600 hover:underline">
           Manage Profile Passwords
         </Link>
       </div>

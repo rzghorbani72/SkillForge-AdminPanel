@@ -9,7 +9,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { ClassSellingFields } from '@/components/class/class-selling-fields';
 import { ClassSizeBadge } from '@/components/class/class-size-badge';
@@ -28,16 +28,9 @@ type Props = {
   onSubmit: () => void;
 };
 
-export const CreateGroupCard = ({
-  offers,
-  form,
-  saving,
-  onChange,
-  onSubmit
-}: Props) => {
+export const CreateGroupCard = ({ offers, form, saving, onChange, onSubmit }: Props) => {
   const { t } = useTranslation();
-  const patch = (next: Partial<GroupFormState>) =>
-    onChange({ ...form, ...next });
+  const patch = (next: Partial<GroupFormState>) => onChange({ ...form, ...next });
 
   const canSubmit =
     Boolean(form.offer_id) &&
@@ -60,14 +53,9 @@ export const CreateGroupCard = ({
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="group-offer">{t('tutoring.groups.offer')}</Label>
-            <Select
-              value={form.offer_id}
-              onValueChange={(offer_id) => patch({ offer_id })}
-            >
+            <Select value={form.offer_id} onValueChange={(offer_id) => patch({ offer_id })}>
               <SelectTrigger id="group-offer">
-                <SelectValue
-                  placeholder={t('tutoring.groups.offerPlaceholder')}
-                />
+                <SelectValue placeholder={t('tutoring.groups.offerPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {offers.map((offer) => (
@@ -77,9 +65,7 @@ export const CreateGroupCard = ({
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.offerHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('tutoring.groups.offerHint')}</p>
           </div>
 
           <div className="space-y-1.5">
@@ -93,9 +79,7 @@ export const CreateGroupCard = ({
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="group-capacity">
-                {t('tutoring.groups.capacity')}
-              </Label>
+              <Label htmlFor="group-capacity">{t('tutoring.groups.capacity')}</Label>
               <ClassSizeBadge capacity={Number(form.capacity) || 1} />
             </div>
             <Input
@@ -109,9 +93,7 @@ export const CreateGroupCard = ({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="group-min">
-              {t('tutoring.groups.minStudents')}
-            </Label>
+            <Label htmlFor="group-min">{t('tutoring.groups.minStudents')}</Label>
             <Input
               id="group-min"
               type="number"
@@ -120,9 +102,7 @@ export const CreateGroupCard = ({
               value={form.min_students}
               onChange={(e) => patch({ min_students: e.target.value })}
             />
-            <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.minStudentsHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('tutoring.groups.minStudentsHint')}</p>
           </div>
 
           <div className="space-y-1.5">
@@ -162,9 +142,7 @@ export const CreateGroupCard = ({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="group-visibility">
-              {t('tutoring.groups.visibility')}
-            </Label>
+            <Label htmlFor="group-visibility">{t('tutoring.groups.visibility')}</Label>
             <Select
               value={form.visibility}
               onValueChange={(value) =>
@@ -175,36 +153,24 @@ export const CreateGroupCard = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="PUBLIC">
-                  {t('tutoring.groups.visibilityPublic')}
-                </SelectItem>
-                <SelectItem value="PRIVATE">
-                  {t('tutoring.groups.visibilityPrivate')}
-                </SelectItem>
+                <SelectItem value="PUBLIC">{t('tutoring.groups.visibilityPublic')}</SelectItem>
+                <SelectItem value="PRIVATE">{t('tutoring.groups.visibilityPrivate')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="group-deadline">
-              {t('tutoring.groups.joinDeadline')}
-            </Label>
+            <Label htmlFor="group-deadline">{t('tutoring.groups.joinDeadline')}</Label>
             <DatePicker
               id="group-deadline"
               value={form.join_deadline}
-              onChange={(pickedValue: string) =>
-                patch({ join_deadline: pickedValue })
-              }
+              onChange={(pickedValue: string) => patch({ join_deadline: pickedValue })}
             />
-            <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.joinDeadlineHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('tutoring.groups.joinDeadlineHint')}</p>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="group-link">
-              {t('tutoring.groups.meetingUrl')}
-            </Label>
+            <Label htmlFor="group-link">{t('tutoring.groups.meetingUrl')}</Label>
             <Input
               id="group-link"
               type="url"
@@ -220,20 +186,14 @@ export const CreateGroupCard = ({
           idPrefix="group"
           capacity={Number(form.capacity) || 1}
           seatPrice={form.seat_price}
-          offerPrice={
-            offers.find((offer) => offer.id === form.offer_id)?.price ?? null
-          }
+          offerPrice={offers.find((offer) => offer.id === form.offer_id)?.price ?? null}
           wholeClassBooking={form.whole_class_booking}
           onSeatPriceChange={(seat_price) => patch({ seat_price })}
-          onWholeClassBookingChange={(whole_class_booking) =>
-            patch({ whole_class_booking })
-          }
+          onWholeClassBookingChange={(whole_class_booking) => patch({ whole_class_booking })}
         />
 
         <div className="space-y-1.5">
-          <Label htmlFor="group-description">
-            {t('tutoring.groups.description')}
-          </Label>
+          <Label htmlFor="group-description">{t('tutoring.groups.description')}</Label>
           <Textarea
             id="group-description"
             value={form.description}
@@ -243,13 +203,8 @@ export const CreateGroupCard = ({
 
         <div className="space-y-2">
           <Label>{t('tutoring.groups.timetable')}</Label>
-          <p className="text-xs text-muted-foreground">
-            {t('tutoring.groups.timetableHint')}
-          </p>
-          <GroupSlotEditor
-            slots={form.slots}
-            onChange={(slots) => patch({ slots })}
-          />
+          <p className="text-xs text-muted-foreground">{t('tutoring.groups.timetableHint')}</p>
+          <GroupSlotEditor slots={form.slots} onChange={(slots) => patch({ slots })} />
         </div>
 
         <Button type="submit" disabled={!canSubmit || saving}>

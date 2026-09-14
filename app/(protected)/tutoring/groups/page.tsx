@@ -14,13 +14,8 @@ export default function TutoringGroupsPage() {
   const isRtl = language === 'fa' || language === 'ar';
   const offers = useTutoringOffers();
   const groups = useTutoringGroups();
-  const {
-    featureEnabled,
-    checkingFeature,
-    enablingFeature,
-    isManager,
-    enableLearningFollowUp
-  } = useTutorLedFeature();
+  const { featureEnabled, checkingFeature, enablingFeature, isManager, enableLearningFollowUp } =
+    useTutorLedFeature();
 
   const showGroups = !checkingFeature && featureEnabled !== false;
   const waiting = groups.groups.filter((group) => group.status === 'WAITING');
@@ -33,15 +28,10 @@ export default function TutoringGroupsPage() {
         aria-labelledby="tutoring-groups-title"
       >
         <div>
-          <h1
-            id="tutoring-groups-title"
-            className="text-3xl font-bold tracking-tight"
-          >
+          <h1 id="tutoring-groups-title" className="text-3xl font-bold tracking-tight">
             {t('tutoring.groups.title')}
           </h1>
-          <p className="text-muted-foreground">
-            {t('tutoring.groups.description')}
-          </p>
+          <p className="text-muted-foreground">{t('tutoring.groups.description')}</p>
         </div>
 
         {!showGroups ? (

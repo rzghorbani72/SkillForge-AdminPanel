@@ -17,45 +17,45 @@ export const FONT_OPTIONS = [
     slug: 'vazirmatn',
     label: 'وزیرمتن',
     script: 'arabic' as const,
-    preview: "'Vazirmatn', sans-serif"
+    preview: "'Vazirmatn', sans-serif",
   },
   {
     slug: 'markazi',
     label: 'مرکزی',
     script: 'arabic' as const,
-    preview: "'Markazi Text', serif"
+    preview: "'Markazi Text', serif",
   },
   {
     slug: 'noto-naskh',
     label: 'نسخ',
     script: 'arabic' as const,
-    preview: "'Noto Naskh Arabic', serif"
+    preview: "'Noto Naskh Arabic', serif",
   },
   {
     slug: 'lalezar',
     label: 'لاله‌زار',
     script: 'arabic' as const,
-    preview: "'Lalezar', cursive"
+    preview: "'Lalezar', cursive",
   },
   // Latin / English
   {
     slug: 'inter',
     label: 'Inter',
     script: 'latin' as const,
-    preview: "'Inter', sans-serif"
+    preview: "'Inter', sans-serif",
   },
   {
     slug: 'poppins',
     label: 'Poppins',
     script: 'latin' as const,
-    preview: "'Poppins', sans-serif"
+    preview: "'Poppins', sans-serif",
   },
   {
     slug: 'playfair',
     label: 'Playfair',
     script: 'latin' as const,
-    preview: "'Playfair Display', serif"
-  }
+    preview: "'Playfair Display', serif",
+  },
 ] as const;
 export type FontFamily = (typeof FONT_OPTIONS)[number]['slug'];
 

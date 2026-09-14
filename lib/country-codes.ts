@@ -63,7 +63,7 @@ export const COUNTRY_CODES: CountryCode[] = [
   { code: 'PH', name: 'Philippines', flag: '🇵🇭', dialCode: '+63' },
   { code: 'TW', name: 'Taiwan', flag: '🇹🇼', dialCode: '+886' },
   { code: 'HK', name: 'Hong Kong', flag: '🇭🇰', dialCode: '+852' },
-  { code: 'NZ', name: 'New Zealand', flag: '🇳🇿', dialCode: '+64' }
+  { code: 'NZ', name: 'New Zealand', flag: '🇳🇿', dialCode: '+64' },
 ];
 
 export const getCountryByCode = (code: string): CountryCode | undefined => {
@@ -80,7 +80,7 @@ export const getDefaultCountryByLanguage = (language?: string): CountryCode => {
     fa: 'IR', // Farsi → Iran
     tr: 'TR', // Turkish → Turkey
     en: 'US', // English → United States
-    ar: 'SA' // Arabic → Saudi Arabia
+    ar: 'SA', // Arabic → Saudi Arabia
   };
 
   if (language && languageCountryMap[language]) {
@@ -93,7 +93,6 @@ export const getDefaultCountryByLanguage = (language?: string): CountryCode => {
   return getDefaultCountry();
 };
 
-const IRAN_COUNTRY =
-  COUNTRY_CODES.find((country) => country.code === 'IR') ?? COUNTRY_CODES[0];
+const IRAN_COUNTRY = COUNTRY_CODES.find((country) => country.code === 'IR') ?? COUNTRY_CODES[0];
 
 export const getDefaultCountry = (): CountryCode => IRAN_COUNTRY;

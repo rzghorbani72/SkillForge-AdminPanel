@@ -27,7 +27,7 @@ export function SuggestionForm() {
       await apiClient.createPlatformTicket({
         subject: `${t('support.help.suggestionPrefix')} ${subject.trim()}`,
         category: 'OTHER',
-        body: body.trim()
+        body: body.trim(),
       });
       toast.success(t('support.help.suggestionSent'));
       setSubject('');

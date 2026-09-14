@@ -62,16 +62,12 @@ export default function ClassPage() {
         {detail.loading ? (
           <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
         ) : !group ? (
-          <p className="text-sm text-muted-foreground">
-            {t('tutoring.groups.notFound')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('tutoring.groups.notFound')}</p>
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-tight">
-                  {group.title}
-                </h1>
+                <h1 className="text-2xl font-bold tracking-tight">{group.title}</h1>
                 <GroupStatusBadge status={group.status} />
               </div>
               {group.status === 'DRAFT' && (
@@ -81,19 +77,14 @@ export default function ClassPage() {
                   disabled={detail.busy}
                   onClick={() => void publish()}
                 >
-                  {detail.busy
-                    ? t('common.saving')
-                    : t('courses.live.publishClass')}
+                  {detail.busy ? t('common.saving') : t('courses.live.publishClass')}
                 </Button>
               )}
             </div>
 
             <ClassSummaryCard group={group} />
 
-            <NextSessionCard
-              sessions={timetable.sessions}
-              classMeetingUrl={group.meeting_url}
-            />
+            <NextSessionCard sessions={timetable.sessions} classMeetingUrl={group.meeting_url} />
 
             <GroupRosterCard
               members={group.members ?? []}
@@ -119,10 +110,7 @@ export default function ClassPage() {
               onSessionChanged={timetable.replace}
             />
 
-            <ClassHomeworkCard
-              groupId={group.id}
-              sessions={timetable.sessions}
-            />
+            <ClassHomeworkCard groupId={group.id} sessions={timetable.sessions} />
           </>
         )}
       </main>

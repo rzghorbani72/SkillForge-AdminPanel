@@ -5,14 +5,10 @@ import { AuthStorageReset } from '@/components/auth/auth-storage-reset';
 
 /** Auth flows are private — block indexing even if a link leaks. */
 export const metadata: Metadata = {
-  robots: PANEL_NOINDEX_ROBOTS
+  robots: PANEL_NOINDEX_ROBOTS,
 };
 
-export default function AuthLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AuthStorageReset />

@@ -22,12 +22,10 @@ export function EmptyState({
   action,
   actionLabel,
   onAction,
-  className
+  className,
 }: EmptyStateProps) {
   return (
-    <div
-      className={cn('flex flex-1 items-center justify-center p-6', className)}
-    >
+    <div className={cn('flex flex-1 items-center justify-center p-6', className)}>
       <div className="fade-in-up text-center">
         {/* Decorative background */}
         <div className="relative mx-auto mb-6">
@@ -38,9 +36,7 @@ export function EmptyState({
         </div>
 
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-        <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-          {description}
-        </p>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">{description}</p>
 
         {(action || (actionLabel && onAction)) && (
           <div className="mt-6">

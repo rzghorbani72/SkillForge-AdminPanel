@@ -1,28 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Check,
-  Sparkles,
-  Layout,
-  Minimize2,
-  Type,
-  Lock,
-  Trash2
-} from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Check, Sparkles, Layout, Minimize2, Type, Lock, Trash2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { TemplatePreview } from './template-preview';
 import type { TemplatePreset } from '@/types/api';
-import {
-  presetSourceKey,
-  formatPresetDisplayName
-} from '@/lib/ui-template/preset-source';
+import { presetSourceKey, formatPresetDisplayName } from '@/lib/ui-template/preset-source';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getDesignSystem } from '@/lib/design-systems';
 
@@ -36,14 +20,7 @@ interface TemplateSelectModalProps {
   isApplying: boolean;
 }
 
-type Category =
-  | 'all'
-  | 'featured'
-  | 'dedicated'
-  | 'creator'
-  | 'academy'
-  | 'community'
-  | 'classic';
+type Category = 'all' | 'featured' | 'dedicated' | 'creator' | 'academy' | 'community' | 'classic';
 
 interface PresetCategory {
   id: Category;
@@ -65,7 +42,7 @@ function featuredIds(presets: TemplatePreset[]): Set<string> {
       .filter((p) => (p.ratingCount ?? 0) >= MIN_VOTES_TO_FEATURE)
       .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
       .slice(0, FEATURED_LIMIT)
-      .map((p) => p.id)
+      .map((p) => p.id),
   );
 }
 
@@ -73,27 +50,27 @@ const CATEGORIES: PresetCategory[] = [
   { id: 'all', label: 'همه', icon: Layout },
   { id: 'featured', label: 'ویژه', icon: Sparkles },
   { id: 'dedicated', label: 'اختصاصی', icon: Lock },
-  { id: 'classic', label: 'کلاسیک', icon: Minimize2 }
+  { id: 'classic', label: 'کلاسیک', icon: Minimize2 },
 ];
 
 const RADIUS_LABEL: Record<string, string> = {
   sharp: 'تیز',
   soft: 'نرم',
-  rounded: 'گرد'
+  rounded: 'گرد',
 };
 
 const SHADOW_LABEL: Record<string, string> = {
   none: 'بدون سایه',
   subtle: 'سایه ظریف',
   medium: 'سایه متوسط',
-  strong: 'سایه قوی'
+  strong: 'سایه قوی',
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
   all: 'همه',
   featured: 'ویژه',
   dedicated: 'اختصاصی',
-  classic: 'کلاسیک'
+  classic: 'کلاسیک',
 };
 
 export function TemplateSelectModal({
@@ -103,7 +80,7 @@ export function TemplateSelectModal({
   activePresetId,
   onApply,
   onDelete,
-  isApplying
+  isApplying,
 }: TemplateSelectModalProps) {
   const { t } = useTranslation();
   const [selectedId, setSelectedId] = useState(activePresetId);
@@ -150,7 +127,7 @@ export function TemplateSelectModal({
                   selectedDs.colors.primary,
                   selectedDs.colors.secondary,
                   selectedDs.colors.accent,
-                  selectedDs.colors.background
+                  selectedDs.colors.background,
                 ].map((c, i) => (
                   <span
                     key={i}
@@ -160,12 +137,8 @@ export function TemplateSelectModal({
                 ))}
               </div>
               <div className="text-right">
-                <p className="text-xs font-semibold leading-none">
-                  {selectedDs.name}
-                </p>
-                <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  {selectedDs.tagline}
-                </p>
+                <p className="text-xs font-semibold leading-none">{selectedDs.name}</p>
+                <p className="mt-0.5 text-[10px] text-muted-foreground">{selectedDs.tagline}</p>
               </div>
             </div>
           )}
@@ -272,7 +245,7 @@ export function TemplateSelectModal({
                 { label: 'اصلی', color: selectedDs.colors.primary },
                 { label: 'ثانوی', color: selectedDs.colors.secondary },
                 { label: 'تأکیدی', color: selectedDs.colors.accent },
-                { label: 'پس‌زمینه', color: selectedDs.colors.background }
+                { label: 'پس‌زمینه', color: selectedDs.colors.background },
               ].map(({ label, color }) => (
                 <div key={label} className="flex items-center gap-1.5">
                   <span
@@ -280,12 +253,8 @@ export function TemplateSelectModal({
                     style={{ background: color }}
                   />
                   <div>
-                    <p className="text-[9px] leading-none text-muted-foreground">
-                      {label}
-                    </p>
-                    <p className="font-mono text-[10px] font-medium leading-snug">
-                      {color}
-                    </p>
+                    <p className="text-[9px] leading-none text-muted-foreground">{label}</p>
+                    <p className="font-mono text-[10px] font-medium leading-snug">{color}</p>
                   </div>
                 </div>
               ))}
@@ -299,8 +268,7 @@ export function TemplateSelectModal({
                 {RADIUS_LABEL[selectedDs.shape.borderRadius]}
               </span>
               <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium">
-                {SHADOW_LABEL[selectedDs.shape.shadow] ??
-                  selectedDs.shape.shadow}
+                {SHADOW_LABEL[selectedDs.shape.shadow] ?? selectedDs.shape.shadow}
               </span>
             </div>
           </div>
@@ -323,9 +291,7 @@ export function TemplateSelectModal({
               onClick={handleApply}
               disabled={isApplying || selectedId === activePresetId}
             >
-              {isApplying
-                ? t('settings.applying')
-                : t('settings.applyTemplate')}
+              {isApplying ? t('settings.applying') : t('settings.applyTemplate')}
             </Button>
           </div>
         </div>
@@ -351,7 +317,7 @@ function TemplateCard({
   isSelected,
   onSelect,
   onDelete,
-  large
+  large,
 }: TemplateCardProps) {
   const ds = getDesignSystem(presetSourceKey(preset));
   const isDedicated = preset.visibility === 'DEDICATED';
@@ -373,10 +339,7 @@ function TemplateCard({
       }`}
     >
       {/* Primary color accent strip */}
-      <div
-        className="h-1 w-full"
-        style={{ background: ds?.colors.primary ?? '#6b7280' }}
-      />
+      <div className="h-1 w-full" style={{ background: ds?.colors.primary ?? '#6b7280' }} />
 
       {/* Radio indicator + badges */}
       <div className="absolute end-3 top-3 z-10 flex flex-col items-end gap-1.5">
@@ -409,9 +372,7 @@ function TemplateCard({
               : 'border-muted-foreground/40 bg-background group-hover:border-foreground/60'
           }`}
         >
-          {isSelected && (
-            <Check className="h-3 w-3 text-background" strokeWidth={3} />
-          )}
+          {isSelected && <Check className="h-3 w-3 text-background" strokeWidth={3} />}
         </div>
       </div>
 
@@ -436,7 +397,7 @@ function TemplateCard({
               className="mt-0.5 inline-block rounded-sm px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider"
               style={{
                 background: ds ? `${ds.colors.primary}15` : '#f3f4f6',
-                color: ds?.colors.primary ?? '#6b7280'
+                color: ds?.colors.primary ?? '#6b7280',
               }}
             >
               {CATEGORY_LABEL[category] ?? category}
@@ -454,18 +415,15 @@ function TemplateCard({
           <div className="flex items-center justify-between border-t border-border/40 pt-0.5">
             {/* Color dots */}
             <div className="flex items-center gap-1">
-              {[
-                ds.colors.primary,
-                ds.colors.secondary,
-                ds.colors.accent,
-                ds.colors.background
-              ].map((color, i) => (
-                <span
-                  key={i}
-                  className="ring-black/8 h-3.5 w-3.5 rounded-full border border-white shadow-sm ring-1"
-                  style={{ background: color }}
-                />
-              ))}
+              {[ds.colors.primary, ds.colors.secondary, ds.colors.accent, ds.colors.background].map(
+                (color, i) => (
+                  <span
+                    key={i}
+                    className="ring-black/8 h-3.5 w-3.5 rounded-full border border-white shadow-sm ring-1"
+                    style={{ background: color }}
+                  />
+                ),
+              )}
             </div>
             {/* Font + radius */}
             <div className="flex items-center gap-1.5">

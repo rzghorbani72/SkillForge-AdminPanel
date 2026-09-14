@@ -8,7 +8,7 @@ import {
   List,
   ListOrdered,
   Strikethrough,
-  Underline
+  Underline,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -42,21 +42,21 @@ const BUTTONS: ReadonlyArray<{
   {
     command: 'strikeThrough',
     icon: Strikethrough,
-    labelKey: 'editor.strikethrough'
+    labelKey: 'editor.strikethrough',
   },
   { command: 'insertUnorderedList', icon: List, labelKey: 'editor.bulletList' },
   {
     command: 'insertOrderedList',
     icon: ListOrdered,
-    labelKey: 'editor.numberedList'
-  }
+    labelKey: 'editor.numberedList',
+  },
 ];
 
 const BLOCK_TAGS: ReadonlyArray<{ tag: BlockTag; labelKey: string }> = [
   { tag: 'p', labelKey: 'editor.sizeNormal' },
   { tag: 'h1', labelKey: 'editor.sizeLarge' },
   { tag: 'h2', labelKey: 'editor.sizeMedium' },
-  { tag: 'h3', labelKey: 'editor.sizeSmall' }
+  { tag: 'h3', labelKey: 'editor.sizeSmall' },
 ];
 
 type RichTextToolbarProps = {
@@ -74,7 +74,7 @@ export function RichTextToolbar({
   activeBlock,
   onCommand,
   onBlockTag,
-  onLink
+  onLink,
 }: RichTextToolbarProps) {
   const { t } = useTranslation();
 

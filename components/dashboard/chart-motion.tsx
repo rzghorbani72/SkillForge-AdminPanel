@@ -30,18 +30,6 @@ export function useChartReveal(isLoading: boolean): boolean {
   return ready;
 }
 
-export function ChartLoading({
-  className,
-  label
-}: {
-  className?: string;
-  label: string;
-}) {
-  return (
-    <div
-      className={cn('shimmer rounded-2xl', className)}
-      aria-label={label}
-      role="status"
-    />
-  );
+export function ChartLoading({ className, label }: { className?: string; label: string }) {
+  return <div className={cn('shimmer rounded-2xl', className)} aria-label={label} role="status" />;
 }

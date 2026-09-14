@@ -5,10 +5,7 @@ import { apiClient } from '@/lib/api';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
 import { resolveMediaUrl } from '@/lib/media-url';
-import {
-  isSlugBlocking,
-  useSlugAvailability
-} from '@/hooks/use-slug-availability';
+import { isSlugBlocking, useSlugAvailability } from '@/hooks/use-slug-availability';
 import { DEFAULT_BRAND_COLOR } from '@/components/academies/brand-color-picker';
 import type { Academy } from '@/types/api';
 import type { AcademyEditPayload } from './academy-edit-types';
@@ -34,7 +31,7 @@ export function useAcademyEditState(academy: Academy) {
   const {
     status: slugStatus,
     check: checkSlug,
-    reset: resetSlug
+    reset: resetSlug,
   } = useSlugAvailability({ ownSlug });
   const logo = useImageUpload();
   const favicon = useImageUpload();
@@ -47,9 +44,7 @@ export function useAcademyEditState(academy: Academy) {
     setSlug(currentSlug);
     setOwnSlug(currentSlug);
     resetSlug();
-    setPublicAddress(
-      academy.domain?.public_address ?? academy.Domain?.public_address ?? ''
-    );
+    setPublicAddress(academy.domain?.public_address ?? academy.Domain?.public_address ?? '');
     setDescription(academy.description ?? '');
     logo.reset(resolveMediaUrl(academy.logo?.publicUrl));
     favicon.reset(resolveMediaUrl(academy.favicon?.publicUrl));
@@ -58,8 +53,7 @@ export function useAcademyEditState(academy: Academy) {
     void apiClient
       .getCurrentThemeConfig()
       .then((themeConfig) => {
-        const saved = (themeConfig as { primary_color?: string })
-          ?.primary_color;
+        const saved = (themeConfig as { primary_color?: string })?.primary_color;
         if (saved) setPrimaryColor(saved);
       })
       .catch(() => {});
@@ -72,7 +66,7 @@ export function useAcademyEditState(academy: Academy) {
       setSlug(normalized);
       checkSlug(normalized);
     },
-    [checkSlug]
+    [checkSlug],
   );
 
   const buildPayload = useCallback((): AcademyEditPayload | null => {
@@ -85,24 +79,12 @@ export function useAcademyEditState(academy: Academy) {
       description,
       logoId: logo.id ?? undefined,
       faviconId: favicon.id ?? undefined,
-      primaryColor
+      primaryColor,
     };
-  }, [
-    name,
-    slug,
-    publicAddress,
-    description,
-    logo.id,
-    favicon.id,
-    primaryColor,
-    slugStatus
-  ]);
+  }, [name, slug, publicAddress, description, logo.id, favicon.id, primaryColor, slugStatus]);
 
   const canSave =
-    !saving &&
-    Boolean(name.trim()) &&
-    Boolean(slug.trim()) &&
-    !isSlugBlocking(slugStatus);
+    !saving && Boolean(name.trim()) && Boolean(slug.trim()) && !isSlugBlocking(slugStatus);
 
   return {
     step,
@@ -123,6 +105,6 @@ export function useAcademyEditState(academy: Academy) {
     primaryColor,
     setPrimaryColor,
     buildPayload,
-    canSave
+    canSave,
   };
 }

@@ -47,11 +47,7 @@ export function StorageFileUsageCell({ usages }: StorageFileUsageCellProps) {
         return (
           <div key={`${usage.area}-${index}`} className="text-xs">
             {usage.href ? (
-              <Link
-                href={usage.href}
-                className="hover:underline"
-                title={t('storage.openLocation')}
-              >
+              <Link href={usage.href} className="hover:underline" title={t('storage.openLocation')}>
                 {body}
               </Link>
             ) : (

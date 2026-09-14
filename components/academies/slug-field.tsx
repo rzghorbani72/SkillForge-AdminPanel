@@ -14,7 +14,7 @@ type SlugFieldProps = {
 const MESSAGE_BY_STATUS: Partial<Record<SlugStatus, string>> = {
   invalid: 'stores.slugInvalid',
   taken: 'stores.slugTaken',
-  available: 'stores.slugAvailable'
+  available: 'stores.slugAvailable',
 };
 
 export function SlugField({ value, status, onChange, t }: SlugFieldProps) {
@@ -22,24 +22,18 @@ export function SlugField({ value, status, onChange, t }: SlugFieldProps) {
 
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium">
-        {t('stores.subdomain')}
-      </label>
+      <label className="mb-1 block text-sm font-medium">{t('stores.subdomain')}</label>
       <div
         className={cn(
           'flex items-center overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring',
           (status === 'taken' || status === 'invalid') && 'border-destructive',
-          status === 'available' && 'border-green-500'
+          status === 'available' && 'border-green-500',
         )}
       >
         <span className="flex shrink-0 items-center gap-1 border-r bg-muted px-3 py-2 text-xs text-muted-foreground">
           {ACADEMY_DOMAIN}
-          {status === 'checking' && (
-            <CircleDashed className="h-3 w-3 animate-spin" />
-          )}
-          {status === 'available' && (
-            <Check className="h-3 w-3 text-green-500" />
-          )}
+          {status === 'checking' && <CircleDashed className="h-3 w-3 animate-spin" />}
+          {status === 'available' && <Check className="h-3 w-3 text-green-500" />}
           {status === 'taken' && <X className="h-3 w-3 text-destructive" />}.
         </span>
         <input
@@ -55,7 +49,7 @@ export function SlugField({ value, status, onChange, t }: SlugFieldProps) {
         <p
           className={cn(
             'mt-1 text-xs',
-            status === 'available' ? 'text-green-600' : 'text-destructive'
+            status === 'available' ? 'text-green-600' : 'text-destructive',
           )}
         >
           {t(messageKey)}

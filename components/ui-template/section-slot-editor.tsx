@@ -8,20 +8,20 @@ import {
   SLOT_VISIBILITY,
   type SlotConfig,
   type SlotStyle,
-  type SlotVisibility
+  type SlotVisibility,
 } from './slot-constants';
 
 const SLIDER_LABEL_KEYS: Record<string, string> = {
   'Card width': 'sitePreview.panelCardWidth',
   'Card height': 'sitePreview.panelCardHeight',
   'Card padding': 'sitePreview.panelCardPadding',
-  'Grid gap': 'sitePreview.panelGridGap'
+  'Grid gap': 'sitePreview.panelGridGap',
 };
 
 const SLOT_VISIBILITY_KEYS: Record<string, string> = {
   live: 'sitePreview.panelSlotLive',
   placeholder: 'sitePreview.panelSlotPlaceholder',
-  hidden: 'sitePreview.panelSlotHidden'
+  hidden: 'sitePreview.panelSlotHidden',
 };
 
 interface SectionSlotEditorProps {
@@ -30,11 +30,7 @@ interface SectionSlotEditorProps {
   set: (key: string, value: unknown) => void;
 }
 
-export function SectionSlotEditor({
-  blockType,
-  cfg,
-  set
-}: SectionSlotEditorProps) {
+export function SectionSlotEditor({ blockType, cfg, set }: SectionSlotEditorProps) {
   const { t } = useTranslation();
   const count = GRID_SLOT_COUNTS[blockType];
   if (!count) return null;
@@ -48,7 +44,7 @@ export function SectionSlotEditor({
   const setSlot = (index: number, patch: Partial<SlotConfig>) => {
     const next: SlotConfig[] = Array.from(
       { length: count },
-      (_, i) => slots[i] ?? { visibility: 'live' }
+      (_, i) => slots[i] ?? { visibility: 'live' },
     );
     next[index] = { ...next[index], ...patch };
     set('slots', next);
@@ -63,11 +59,8 @@ export function SectionSlotEditor({
       {/* Section-wide size sliders */}
       <div className="space-y-2">
         {SLOT_STYLE_SLIDERS.map(({ key, label, min, max, step }) => {
-          const sliderLabel = SLIDER_LABEL_KEYS[label]
-            ? t(SLIDER_LABEL_KEYS[label])
-            : label;
-          const value =
-            typeof style[key] === 'number' ? (style[key] as number) : undefined;
+          const sliderLabel = SLIDER_LABEL_KEYS[label] ? t(SLIDER_LABEL_KEYS[label]) : label;
+          const value = typeof style[key] === 'number' ? (style[key] as number) : undefined;
           return (
             <div key={key} className="space-y-1">
               <div className="flex items-center justify-between">
@@ -101,14 +94,9 @@ export function SectionSlotEditor({
         {Array.from({ length: count }, (_, i) => {
           const slot = slots[i] ?? { visibility: 'live' as SlotVisibility };
           return (
-            <div
-              key={i}
-              className="space-y-1 rounded border border-zinc-200 p-1.5"
-            >
+            <div key={i} className="space-y-1 rounded border border-zinc-200 p-1.5">
               <div className="flex items-center gap-1.5">
-                <span className="w-5 shrink-0 text-[10px] font-medium text-zinc-600">
-                  #{i + 1}
-                </span>
+                <span className="w-5 shrink-0 text-[10px] font-medium text-zinc-600">#{i + 1}</span>
                 <div className="flex flex-1 gap-1">
                   {SLOT_VISIBILITY.map((v) => (
                     <button
@@ -129,9 +117,7 @@ export function SectionSlotEditor({
               {slot.visibility === 'placeholder' && (
                 <Input
                   value={slot.placeholderText ?? ''}
-                  onChange={(e) =>
-                    setSlot(i, { placeholderText: e.target.value })
-                  }
+                  onChange={(e) => setSlot(i, { placeholderText: e.target.value })}
                   placeholder={t('sitePreview.panelPlaceholderTextHint')}
                   className="h-7 border-zinc-300 bg-zinc-100 text-xs text-zinc-900 placeholder:text-zinc-600"
                 />

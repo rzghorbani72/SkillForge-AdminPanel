@@ -7,14 +7,14 @@ const DEFAULT_PANEL_HOSTS = [
   'admin.mentoma.ir',
   'admin.mentoma.ir',
   'panel-academy.darkube.ir',
-  ...LOCAL_HOSTS
+  ...LOCAL_HOSTS,
 ] as const;
 
 const DEFAULT_BACKEND_HOSTS = [
   'api.mentoma.ir',
   'api.mentoma.ir',
   'api-academy.darkube.ir',
-  ...LOCAL_HOSTS
+  ...LOCAL_HOSTS,
 ] as const;
 
 /**
@@ -26,22 +26,15 @@ const DEFAULT_BACKEND_HOSTS = [
  */
 const DEFAULT_STORAGE_HOSTS = ['hs3.ir', '*.hs3.ir'] as const;
 
-const DEFAULT_MENTOMA_BASE_DOMAINS = [
-  'mentoma.ir',
-  'mentoma.ir',
-  'darkube.ir'
-] as const;
+const DEFAULT_MENTOMA_BASE_DOMAINS = ['mentoma.ir', 'mentoma.ir', 'darkube.ir'] as const;
 
 export const DEFAULT_GEO_SERVICE_URLS = [
   'https://ipapi.co/json/',
   'https://ip-api.com/json/',
-  'https://api.country.is/'
+  'https://api.country.is/',
 ] as const;
 
-function parseEnvHosts(
-  raw: string | undefined,
-  fallback: readonly string[]
-): string[] {
+function parseEnvHosts(raw: string | undefined, fallback: readonly string[]): string[] {
   if (!raw?.trim()) return [...fallback];
   return raw
     .split(',')
@@ -50,31 +43,19 @@ function parseEnvHosts(
 }
 
 export function getAllowedPanelHosts(): string[] {
-  return parseEnvHosts(
-    process.env.SECURITY_ALLOWED_PANEL_HOSTS,
-    DEFAULT_PANEL_HOSTS
-  );
+  return parseEnvHosts(process.env.SECURITY_ALLOWED_PANEL_HOSTS, DEFAULT_PANEL_HOSTS);
 }
 
 export function getAllowedBackendHosts(): string[] {
-  return parseEnvHosts(
-    process.env.SECURITY_ALLOWED_BACKEND_HOSTS,
-    DEFAULT_BACKEND_HOSTS
-  );
+  return parseEnvHosts(process.env.SECURITY_ALLOWED_BACKEND_HOSTS, DEFAULT_BACKEND_HOSTS);
 }
 
 export function getAllowedStorageHosts(): string[] {
-  return parseEnvHosts(
-    process.env.SECURITY_ALLOWED_STORAGE_HOSTS,
-    DEFAULT_STORAGE_HOSTS
-  );
+  return parseEnvHosts(process.env.SECURITY_ALLOWED_STORAGE_HOSTS, DEFAULT_STORAGE_HOSTS);
 }
 
 export function getMentomaBaseDomains(): string[] {
-  return parseEnvHosts(
-    process.env.SECURITY_MENTOMA_BASE_DOMAINS,
-    DEFAULT_MENTOMA_BASE_DOMAINS
-  );
+  return parseEnvHosts(process.env.SECURITY_MENTOMA_BASE_DOMAINS, DEFAULT_MENTOMA_BASE_DOMAINS);
 }
 
 export function normalizeHostname(host: string): string {
@@ -98,10 +79,7 @@ export function isClusterOrLoopbackHost(hostname: string): boolean {
   return host.endsWith('.cluster.local') || host.endsWith('.svc');
 }
 
-export function isHostAllowed(
-  hostname: string,
-  allowlist: readonly string[]
-): boolean {
+export function isHostAllowed(hostname: string, allowlist: readonly string[]): boolean {
   const host = normalizeHostname(hostname);
   if (!host) return false;
 
@@ -118,9 +96,7 @@ export function isHostAllowed(
 
 export function isHostUnderMentomaDomains(hostname: string): boolean {
   const host = normalizeHostname(hostname);
-  return getMentomaBaseDomains().some(
-    (base) => host === base || host.endsWith(`.${base}`)
-  );
+  return getMentomaBaseDomains().some((base) => host === base || host.endsWith(`.${base}`));
 }
 
 export function getServerActionAllowedOrigins(): string[] {
@@ -135,7 +111,7 @@ export function getServerActionAllowedOrigins(): string[] {
     'https://admin.mentoma.ir',
     'https://panel-academy.darkube.ir',
     'http://localhost:4000',
-    'http://127.0.0.1:4000'
+    'http://127.0.0.1:4000',
   ];
 }
 
@@ -143,7 +119,7 @@ export function getAllowedImageRemotePatterns(): RemotePattern[] {
   const hosts = [
     ...getAllowedPanelHosts(),
     ...getAllowedBackendHosts(),
-    ...getMentomaBaseDomains().map((d) => `*.${d}`)
+    ...getMentomaBaseDomains().map((d) => `*.${d}`),
   ];
 
   const unique = Array.from(new Set(hosts));
@@ -152,7 +128,7 @@ export function getAllowedImageRemotePatterns(): RemotePattern[] {
     { protocol: 'https' as const, hostname, pathname: '/**' },
     ...(LOCAL_HOSTS.includes(hostname as (typeof LOCAL_HOSTS)[number])
       ? [{ protocol: 'http' as const, hostname, pathname: '/**' }]
-      : [])
+      : []),
   ]);
 }
 
@@ -169,10 +145,7 @@ function hostToCspOrigin(hostname: string): string {
  * storefront is served from the bare domain — so every directive needs both.
  */
 function baseDomainOrigins(): string[] {
-  return getMentomaBaseDomains().flatMap((d) => [
-    `https://${d}`,
-    `https://*.${d}`
-  ]);
+  return getMentomaBaseDomains().flatMap((d) => [`https://${d}`, `https://*.${d}`]);
 }
 
 export function buildProductionCspConnectSrc(): string {
@@ -182,7 +155,7 @@ export function buildProductionCspConnectSrc(): string {
     ...getAllowedStorageHosts().map(hostToCspOrigin),
     ...baseDomainOrigins(),
     ...getMentomaBaseDomains().map((d) => `wss://*.${d}`),
-    'wss:'
+    'wss:',
   ];
   return Array.from(new Set(hosts)).join(' ');
 }
@@ -193,7 +166,7 @@ export function buildProductionCspImgSrc(): string {
     'data:',
     'blob:',
     ...getAllowedBackendHosts().map((h) => `https://${h}`),
-    ...baseDomainOrigins()
+    ...baseDomainOrigins(),
   ];
   return Array.from(new Set(hosts)).join(' ');
 }

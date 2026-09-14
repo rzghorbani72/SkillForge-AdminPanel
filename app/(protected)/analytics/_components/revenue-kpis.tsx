@@ -9,7 +9,7 @@ export function RevenueKpis({
   totalRevenue,
   averageTicket,
   totalRefunds,
-  monthOverMonth
+  monthOverMonth,
 }: {
   totalRevenue: number;
   averageTicket: number;
@@ -24,50 +24,34 @@ export function RevenueKpis({
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.totalRevenue')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.totalRevenue')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-bold">{formatToman(totalRevenue)}</p>
-          <p className="text-xs text-muted-foreground">
-            {t('analytics.acrossAllPayments')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('analytics.acrossAllPayments')}</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.averageTicket')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.averageTicket')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-bold">{formatToman(averageTicket)}</p>
-          <p className="text-xs text-muted-foreground">
-            {t('analytics.perSuccessfulPayment')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('analytics.perSuccessfulPayment')}</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.refunds')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.refunds')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold text-red-500">
-            {formatToman(totalRefunds)}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {t('analytics.processedRefunds')}
-          </p>
+          <p className="text-2xl font-bold text-red-500">{formatToman(totalRefunds)}</p>
+          <p className="text-xs text-muted-foreground">{t('analytics.processedRefunds')}</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.monthOverMonth')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.monthOverMonth')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p
@@ -78,9 +62,7 @@ export function RevenueKpis({
             {monthOverMonth >= 0 ? '+' : ''}
             {formatPercent(monthOverMonth)}
           </p>
-          <p className="text-xs text-muted-foreground">
-            {t('analytics.changeComparedPrevious')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('analytics.changeComparedPrevious')}</p>
         </CardContent>
       </Card>
     </div>

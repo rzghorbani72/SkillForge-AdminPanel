@@ -11,12 +11,7 @@ export const COURSE_META_DESCRIPTION_MAX = 160;
 export const COURSE_KEYWORDS_MAX = 10;
 export const COURSE_KEYWORD_MAX = 40;
 export const COURSE_ACCESS_DAYS_MAX = 1825;
-export const COURSE_DIFFICULTIES = [
-  'BEGINNER',
-  'INTERMEDIATE',
-  'ADVANCED',
-  'EXPERT'
-] as const;
+export const COURSE_DIFFICULTIES = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT'] as const;
 export type CourseDifficultyLevel = (typeof COURSE_DIFFICULTIES)[number];
 
 export function parseAccessDurationDays(value: string): number | null {
@@ -26,10 +21,7 @@ export function parseAccessDurationDays(value: string): number | null {
 }
 
 export function parseCourseDifficulty(value: unknown): CourseDifficultyLevel {
-  if (
-    typeof value === 'string' &&
-    (COURSE_DIFFICULTIES as readonly string[]).includes(value)
-  ) {
+  if (typeof value === 'string' && (COURSE_DIFFICULTIES as readonly string[]).includes(value)) {
     return value as CourseDifficultyLevel;
   }
   return 'BEGINNER';
@@ -61,7 +53,7 @@ export const courseFormFields = z.object({
     .string()
     .refine(
       (val) => val.trim() === '' || /^\d+$/.test(val.trim()),
-      'courses.errors.accessDurationWholeNumber'
+      'courses.errors.accessDurationWholeNumber',
     )
     .refine((val) => {
       if (val.trim() === '') return true;
@@ -72,10 +64,7 @@ export const courseFormFields = z.object({
   primary_price: z
     .string()
     .min(1, 'courses.errors.primaryPriceRequired')
-    .refine(
-      (val) => /^\d+$/.test(val.trim()),
-      'courses.errors.primaryPriceWholeNumber'
-    )
+    .refine((val) => /^\d+$/.test(val.trim()), 'courses.errors.primaryPriceWholeNumber')
     .refine((val) => {
       const num = Number(val);
       return !isNaN(num) && num >= 0 && num <= 999999999;
@@ -85,7 +74,7 @@ export const courseFormFields = z.object({
     .string()
     .refine(
       (val) => val.trim() === '' || /^\d+$/.test(val.trim()),
-      'courses.errors.beforeDiscountWholeNumber'
+      'courses.errors.beforeDiscountWholeNumber',
     )
     .refine((val) => {
       if (val.trim() === '') return true;
@@ -95,10 +84,7 @@ export const courseFormFields = z.object({
   // Search metadata. Empty = fall back to the course title/description.
   meta_title: z.string().max(COURSE_META_TITLE_MAX).default(''),
   meta_description: z.string().max(COURSE_META_DESCRIPTION_MAX).default(''),
-  keywords: z
-    .array(z.string().max(COURSE_KEYWORD_MAX))
-    .max(COURSE_KEYWORDS_MAX)
-    .default([]),
+  keywords: z.array(z.string().max(COURSE_KEYWORD_MAX)).max(COURSE_KEYWORDS_MAX).default([]),
   category_id: z.string().optional(),
   season_id: z.string().optional(),
   audio_id: z.string().optional(),
@@ -112,7 +98,7 @@ export const courseFormFields = z.object({
   allow_downloads: z.boolean().default(false),
   // Not a course field: asks the server to push allow_downloads onto every
   // existing lesson, replacing per-lesson choices.
-  apply_downloads_to_lessons: z.boolean().default(false)
+  apply_downloads_to_lessons: z.boolean().default(false),
 });
 
 // A "before discount" price must sit above the price actually charged, or it
@@ -125,7 +111,7 @@ export const courseFormSchema = courseFormFields.superRefine((data, ctx) => {
     ctx.addIssue({
       code: 'custom',
       path: ['secondary_price'],
-      message: 'courses.errors.beforeDiscountTooLow'
+      message: 'courses.errors.beforeDiscountTooLow',
     });
   }
 });

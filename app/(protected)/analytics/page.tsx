@@ -1,13 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Area,
@@ -19,7 +13,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
 } from 'recharts';
 import { Progress } from '@/components/ui/progress';
 import { useAnalyticsData } from './_hooks/use-analytics-data';
@@ -41,27 +35,27 @@ export default function AnalyticsPage() {
       overview.revenueTrend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
         revenue: point.revenue,
-        enrollments: point.enrollments
+        enrollments: point.enrollments,
       })),
-    [overview.revenueTrend, language]
+    [overview.revenueTrend, language],
   );
 
   const engagementSlices = [
     {
       name: t('common.active'),
       value: overview.activeEnrollments,
-      color: '#10b981'
+      color: '#10b981',
     },
     {
       name: t('students.completed'),
       value: overview.completedEnrollments,
-      color: '#3b82f6'
+      color: '#3b82f6',
     },
     {
       name: t('students.cancelled'),
       value: overview.cancelledEnrollments,
-      color: '#ef4444'
-    }
+      color: '#ef4444',
+    },
   ].filter((slice) => slice.value > 0);
 
   const slices =
@@ -79,12 +73,8 @@ export default function AnalyticsPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('analytics.overview')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('analytics.overviewDescription')}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('analytics.overview')}</h1>
+        <p className="text-muted-foreground">{t('analytics.overviewDescription')}</p>
       </div>
 
       <OverviewKpis overview={overview} />
@@ -93,32 +83,21 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('analytics.revenueTrend')}</CardTitle>
-            <CardDescription>
-              {t('analytics.revenueTrendDescription')}
-            </CardDescription>
+            <CardDescription>{t('analytics.revenueTrendDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={320}>
               <AreaChart data={revenueTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis
-                  tickFormatter={(value: number) =>
-                    formatNumber(Math.round(value))
-                  }
-                />
+                <YAxis tickFormatter={(value: number) => formatNumber(Math.round(value))} />
                 <Tooltip
                   formatter={(value: number) => [
                     `${formatNumber(value)} ${t('common.toman')}`,
-                    t('analytics.totalRevenue')
+                    t('analytics.totalRevenue'),
                   ]}
                 />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#10b981"
-                  fill="#10b98155"
-                />
+                <Area type="monotone" dataKey="revenue" stroke="#10b981" fill="#10b98155" />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
@@ -127,9 +106,7 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('analytics.engagementBreakdown')}</CardTitle>
-            <CardDescription>
-              {t('analytics.engagementBreakdownDescription')}
-            </CardDescription>
+            <CardDescription>{t('analytics.engagementBreakdownDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={320}>
@@ -143,7 +120,7 @@ export default function AnalyticsPage() {
                 <Tooltip
                   formatter={(value: number) => [
                     formatNumber(value),
-                    t('analytics.engagementBreakdown')
+                    t('analytics.engagementBreakdown'),
                   ]}
                 />
                 <Bar dataKey="value">
@@ -160,15 +137,11 @@ export default function AnalyticsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('analytics.topPerformingCourses')}</CardTitle>
-          <CardDescription>
-            {t('analytics.topPerformingCoursesDescription')}
-          </CardDescription>
+          <CardDescription>{t('analytics.topPerformingCoursesDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {overview.topCourses.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('analytics.noCourseRevenueData')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('analytics.noCourseRevenueData')}</p>
           ) : (
             overview.topCourses.map((course, index) => (
               <div
@@ -189,9 +162,7 @@ export default function AnalyticsPage() {
                 <div className="flex w-full flex-col gap-2 md:w-64">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{t('analytics.totalEnrollments')}</span>
-                    <Badge variant="outline">
-                      {formatNumber(course.students)}
-                    </Badge>
+                    <Badge variant="outline">{formatNumber(course.students)}</Badge>
                   </div>
                   <Progress
                     value={

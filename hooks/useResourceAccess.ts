@@ -17,7 +17,7 @@ export function useResourceAccess({
   resourceType,
   action = 'view',
   redirectOnDeny = true,
-  fallbackPath = '/dashboard'
+  fallbackPath = '/dashboard',
 }: ResourceAccessOptions) {
   const [resource, setResource] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,18 +77,12 @@ export function useResourceAccess({
       setHasAccess(canAccess);
 
       if (!canAccess && redirectOnDeny) {
-        ErrorHandler.showWarning(
-          `You do not have permission to ${action} this ${resourceType}`
-        );
+        ErrorHandler.showWarning(`You do not have permission to ${action} this ${resourceType}`);
         requireResourceAccess(response, action, fallbackPath);
       }
     } catch (error) {
       console.error(`Error fetching ${resourceType}:`, error);
-      setAccessError(
-        error instanceof Error
-          ? error.message
-          : `Failed to fetch ${resourceType}`
-      );
+      setAccessError(error instanceof Error ? error.message : `Failed to fetch ${resourceType}`);
       setHasAccess(false);
 
       if (redirectOnDeny) {
@@ -132,6 +126,6 @@ export function useResourceAccess({
     accessError,
     checkAccess,
     requireAccess,
-    refetch: fetchResource
+    refetch: fetchResource,
   };
 }

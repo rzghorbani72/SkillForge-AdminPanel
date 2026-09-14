@@ -2,11 +2,10 @@ export const ARTICLE_STATUS = {
   DRAFT: 'DRAFT',
   IN_REVIEW: 'IN_REVIEW',
   PUBLISHED: 'PUBLISHED',
-  ARCHIVED: 'ARCHIVED'
+  ARCHIVED: 'ARCHIVED',
 } as const;
 
-export type ArticleStatus =
-  (typeof ARTICLE_STATUS)[keyof typeof ARTICLE_STATUS];
+export type ArticleStatus = (typeof ARTICLE_STATUS)[keyof typeof ARTICLE_STATUS];
 
 /** Which blog a screen is editing. Decides the API prefix and nothing else. */
 export type BlogScope = 'academy' | 'platform';

@@ -12,7 +12,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -52,7 +52,7 @@ export function TrialMoveCard({
   academyName,
   trial,
   hasPaid = false,
-  onMoved
+  onMoved,
 }: TrialMoveCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -92,7 +92,7 @@ export function TrialMoveCard({
             {isMove
               ? t('plans.trial.moveDescription', {
                   academy: trial.holder_academy_name ?? '',
-                  days: formatNumber(remaining)
+                  days: formatNumber(remaining),
                 })
               : t('plans.trial.claimDescription')}
           </p>
@@ -106,24 +106,20 @@ export function TrialMoveCard({
         <AlertDialogContent className="max-w-md rounded-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {isMove
-                ? t('plans.trial.moveTitle')
-                : t('plans.trial.claimTitle')}
+              {isMove ? t('plans.trial.moveTitle') : t('plans.trial.claimTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {isMove
                 ? t('plans.trial.moveConfirm', {
                     from: trial.holder_academy_name ?? '',
                     to: academyName,
-                    days: formatNumber(remaining)
+                    days: formatNumber(remaining),
                   })
                 : t('plans.trial.claimConfirm', { academy: academyName })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={saving}>
-              {t('common.cancel')}
-            </AlertDialogCancel>
+            <AlertDialogCancel disabled={saving}>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(event) => {
                 event.preventDefault();

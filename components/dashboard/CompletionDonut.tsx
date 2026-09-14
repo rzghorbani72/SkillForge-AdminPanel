@@ -6,7 +6,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig
+  type ChartConfig,
 } from '@/components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
 import type { StatusSegment } from './dashboard-metrics';
@@ -16,21 +16,21 @@ const COLORS: Record<StatusSegment['key'], string> = {
   completed: 'hsl(var(--viz-accent))',
   inProgress: 'hsl(var(--viz-1))',
   notStarted: 'hsl(var(--viz-2))',
-  ended: 'hsl(var(--viz-4))'
+  ended: 'hsl(var(--viz-4))',
 };
 
 const LABELS: Record<StatusSegment['key'], { fa: string; en: string }> = {
   completed: { fa: 'تکمیل شده', en: 'Completed' },
   inProgress: { fa: 'در حال یادگیری', en: 'In progress' },
   notStarted: { fa: 'شروع نشده', en: 'Not started' },
-  ended: { fa: 'پایان‌یافته', en: 'Ended' }
+  ended: { fa: 'پایان‌یافته', en: 'Ended' },
 };
 
 const chartConfig: ChartConfig = {
   completed: { label: 'Completed', color: 'hsl(var(--viz-accent))' },
   inProgress: { label: 'In progress', color: 'hsl(var(--viz-1))' },
   notStarted: { label: 'Not started', color: 'hsl(var(--viz-2))' },
-  ended: { label: 'Ended', color: 'hsl(var(--viz-4))' }
+  ended: { label: 'Ended', color: 'hsl(var(--viz-4))' },
 };
 
 type Props = {
@@ -40,12 +40,7 @@ type Props = {
   isLoading: boolean;
 };
 
-export default function CompletionDonut({
-  segments,
-  completion,
-  period,
-  isLoading
-}: Props) {
+export default function CompletionDonut({ segments, completion, period, isLoading }: Props) {
   const { t: translate, language } = useTranslation();
   const t = language === 'fa';
   const fmt = (n: number) => (t ? n.toLocaleString('fa-IR') : String(n));
@@ -77,27 +72,17 @@ export default function CompletionDonut({
                 <span className="flex-1 text-[13px] text-muted-foreground">
                   {LABELS[seg.key][t ? 'fa' : 'en']}
                 </span>
-                <span className="text-[13px] font-semibold tabular-nums">
-                  {fmt(seg.value)}٪
-                </span>
+                <span className="text-[13px] font-semibold tabular-nums">{fmt(seg.value)}٪</span>
               </div>
             ))}
           </div>
           <div className="relative shrink-0">
             {!showChart ? (
-              <ChartLoading
-                className="h-[180px] w-[180px] rounded-full"
-                label={loadingLabel}
-              />
+              <ChartLoading className="h-[180px] w-[180px] rounded-full" label={loadingLabel} />
             ) : (
-              <ChartContainer
-                config={chartConfig}
-                className="h-[180px] w-[180px]"
-              >
+              <ChartContainer config={chartConfig} className="h-[180px] w-[180px]">
                 <PieChart>
-                  <ChartTooltip
-                    content={<ChartTooltipContent nameKey="key" />}
-                  />
+                  <ChartTooltip content={<ChartTooltipContent nameKey="key" />} />
                   <Pie
                     key={period}
                     data={pieData}
@@ -117,9 +102,7 @@ export default function CompletionDonut({
                       <Cell
                         key={seg.key}
                         fill={
-                          isEmpty
-                            ? 'hsl(var(--viz-grid))'
-                            : COLORS[seg.key as StatusSegment['key']]
+                          isEmpty ? 'hsl(var(--viz-grid))' : COLORS[seg.key as StatusSegment['key']]
                         }
                       />
                     ))}

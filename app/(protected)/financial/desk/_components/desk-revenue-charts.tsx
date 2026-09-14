@@ -1,29 +1,15 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis
-} from 'recharts';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent
+  ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTrendPeriod } from '@/app/(protected)/analytics/_components/format-trend-period';
@@ -44,12 +30,12 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
   const chartConfig: ChartConfig = {
     academy: {
       label: t('financial.desk.academyGross'),
-      color: 'hsl(var(--chart-1))'
+      color: 'hsl(var(--chart-1))',
     },
     platform: {
       label: t('financial.desk.platformGross'),
-      color: 'hsl(var(--chart-2))'
-    }
+      color: 'hsl(var(--chart-2))',
+    },
   };
 
   const monthly = useMemo(
@@ -57,9 +43,9 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
       trend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
         academy: point.academy_gross,
-        platform: point.platform_gross
+        platform: point.platform_gross,
       })),
-    [trend, language]
+    [trend, language],
   );
 
   const cumulative = useMemo(
@@ -67,9 +53,9 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
       trend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
         academy: point.academy_cumulative,
-        platform: point.platform_cumulative
+        platform: point.platform_cumulative,
       })),
-    [trend, language]
+    [trend, language],
   );
 
   const tomanTick = (value: number) => formatNumber(value);
@@ -84,11 +70,7 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
   }
 
   if (trend.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        {t('financial.desk.noTrend')}
-      </p>
-    );
+    return <p className="text-sm text-muted-foreground">{t('financial.desk.noTrend')}</p>;
   }
 
   return (
@@ -96,16 +78,11 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
       <Card>
         <CardHeader>
           <CardTitle>{t('financial.desk.monthlyGross')}</CardTitle>
-          <CardDescription>
-            {t('financial.desk.monthlyGrossHint')}
-          </CardDescription>
+          <CardDescription>{t('financial.desk.monthlyGrossHint')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[260px] w-full">
-            <BarChart
-              data={monthly}
-              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
-            >
+            <BarChart data={monthly} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} className="stroke-muted/30" />
               <XAxis
                 dataKey="month"
@@ -114,12 +91,7 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
                 tickMargin={8}
                 reversed={isRtl}
               />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                width={56}
-                tickFormatter={tomanTick}
-              />
+              <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={tomanTick} />
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar dataKey="academy" fill="var(--color-academy)" radius={4} />
@@ -132,16 +104,11 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
       <Card>
         <CardHeader>
           <CardTitle>{t('financial.desk.cumulativeGross')}</CardTitle>
-          <CardDescription>
-            {t('financial.desk.cumulativeGrossHint')}
-          </CardDescription>
+          <CardDescription>{t('financial.desk.cumulativeGrossHint')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[260px] w-full">
-            <AreaChart
-              data={cumulative}
-              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
-            >
+            <AreaChart data={cumulative} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} className="stroke-muted/30" />
               <XAxis
                 dataKey="month"
@@ -150,12 +117,7 @@ export function DeskRevenueCharts({ trend, loading }: DeskRevenueChartsProps) {
                 tickMargin={8}
                 reversed={isRtl}
               />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                width={56}
-                tickFormatter={tomanTick}
-              />
+              <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={tomanTick} />
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Area

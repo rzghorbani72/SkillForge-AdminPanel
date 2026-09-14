@@ -3,11 +3,11 @@
 import { useCallback } from 'react';
 import {
   EntitySearchCombobox,
-  type EntitySearchComboboxProps
+  type EntitySearchComboboxProps,
 } from '@/components/entity-search/entity-search-combobox';
 import {
   fetchStudentOptions,
-  resolveUserOption
+  resolveUserOption,
 } from '@/components/entity-search/entity-search-utils';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
@@ -16,16 +16,13 @@ type StudentProfileSearchComboboxProps = Omit<
   'fetchOptions' | 'resolveOption'
 >;
 
-export function StudentProfileSearchCombobox(
-  props: StudentProfileSearchComboboxProps
-) {
+export function StudentProfileSearchCombobox(props: StudentProfileSearchComboboxProps) {
   const { user } = useAuthUser();
   const selfId = user?.id;
 
   const fetchOptions = useCallback(
-    (query: string, signal?: AbortSignal) =>
-      fetchStudentOptions(query, selfId, signal),
-    [selfId]
+    (query: string, signal?: AbortSignal) => fetchStudentOptions(query, selfId, signal),
+    [selfId],
   );
 
   return (

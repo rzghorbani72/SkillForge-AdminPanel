@@ -10,12 +10,7 @@ interface ListChipsProps {
   overflowTitle?: string;
 }
 
-export function ListChips({
-  labels,
-  max = 3,
-  className,
-  overflowTitle
-}: ListChipsProps) {
+export function ListChips({ labels, max = 3, className, overflowTitle }: ListChipsProps) {
   const visible = labels.slice(0, max);
   const hidden = labels.length - visible.length;
 

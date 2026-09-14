@@ -11,9 +11,7 @@ type SubscriptionManageableUser =
  * Only the academy manager (or an academy-scoped ADMIN, not a platform admin)
  * may view or change the academy subscription.
  */
-export function canManageSubscription(
-  user: SubscriptionManageableUser
-): boolean {
+export function canManageSubscription(user: SubscriptionManageableUser): boolean {
   if (!user) return false;
   return (
     user.role === 'MANAGER' ||

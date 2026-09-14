@@ -54,7 +54,7 @@ export function useSeoFormState() {
       await apiClient.updateAcademy({
         meta_title: toPayloadValue(metaTitle),
         meta_description: toPayloadValue(metaDescription),
-        ...(shareImage.id ? { og_image_id: shareImage.id } : {})
+        ...(shareImage.id ? { og_image_id: shareImage.id } : {}),
       });
       ErrorHandler.showSuccess('website.seo.saved', true);
       await load();
@@ -68,8 +68,7 @@ export function useSeoFormState() {
   }, [metaTitle, metaDescription, shareImage.id, load]);
 
   const tooLong =
-    metaTitle.length > META_TITLE_MAX ||
-    metaDescription.length > META_DESCRIPTION_MAX;
+    metaTitle.length > META_TITLE_MAX || metaDescription.length > META_DESCRIPTION_MAX;
 
   return {
     academy,
@@ -81,6 +80,6 @@ export function useSeoFormState() {
     loading,
     saving,
     canSave: !loading && !saving && !shareImage.uploading && !tooLong,
-    save
+    save,
   };
 }

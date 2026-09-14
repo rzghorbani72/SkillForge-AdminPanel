@@ -12,17 +12,10 @@ import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onb
  * academy context — so the rest of the panel shows the "create your first
  * academy" call to action in place of the page.
  */
-const ACADEMY_LESS_PATHS = [
-  '/dashboard',
-  '/academies',
-  '/settings/profile',
-  '/settings/security'
-];
+const ACADEMY_LESS_PATHS = ['/dashboard', '/academies', '/settings/profile', '/settings/security'];
 
 function isAcademyLessPath(pathname: string): boolean {
-  return ACADEMY_LESS_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`)
-  );
+  return ACADEMY_LESS_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 }
 
 /**
@@ -30,11 +23,7 @@ function isAcademyLessPath(pathname: string): boolean {
  * tenant. Platform staff are exempt: they work in platform mode and are meant to
  * have no academy of their own.
  */
-export function AcademyRequiredGate({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export function AcademyRequiredGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { academies, isLoading } = useStore();
   const { user } = useAuthUser();

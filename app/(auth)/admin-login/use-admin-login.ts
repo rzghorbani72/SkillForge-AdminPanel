@@ -13,7 +13,7 @@ import {
   validateEmail,
   validateOtp,
   validatePassword,
-  validatePhone
+  validatePhone,
 } from '@/lib/auth-validation';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { isPlatformStaff } from '@/lib/roles';
@@ -42,12 +42,10 @@ export function useAdminLogin() {
     email: '',
     phone: '',
     fullPhoneNumber: '',
-    password: ''
+    password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [unauthorizedError, setUnauthorizedError] = useState<string | null>(
-    null
-  );
+  const [unauthorizedError, setUnauthorizedError] = useState<string | null>(null);
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -65,11 +63,9 @@ export function useAdminLogin() {
       {
         email: validateEmail(formData.email),
         phone: validatePhone(formData.phone),
-        ...(loginMethod === 'password'
-          ? { password: validatePassword(formData.password) }
-          : {})
+        ...(loginMethod === 'password' ? { password: validatePassword(formData.password) } : {}),
       },
-      t
+      t,
     );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -99,7 +95,7 @@ export function useAdminLogin() {
       const response = await authService.adminLogin({
         email: formData.email,
         phone_number: formData.fullPhoneNumber || formData.phone,
-        password: formData.password
+        password: formData.password,
       });
       if (response) routeAfterLogin(response);
     } catch (error: unknown) {
@@ -117,10 +113,7 @@ export function useAdminLogin() {
   const handleSendOtp = async () => {
     setIsLoading(true);
     try {
-      await apiClient.sendAdminLoginOtp(
-        formData.email,
-        formData.fullPhoneNumber || formData.phone
-      );
+      await apiClient.sendAdminLoginOtp(formData.email, formData.fullPhoneNumber || formData.phone);
       setOtpSent(true);
       notifyOtpSent(t('success.otpSent'), 'admin-otp-sent');
     } catch (error: unknown) {
@@ -140,7 +133,7 @@ export function useAdminLogin() {
     try {
       const response = await authService.loginPhoneByOtp({
         phone_number: formData.fullPhoneNumber || formData.phone,
-        otp: otp.trim()
+        otp: otp.trim(),
       });
       if (response) routeAfterLogin(response);
     } catch {
@@ -159,10 +152,7 @@ export function useAdminLogin() {
   };
 
   const handleInputChange = (field: keyof AdminLoginFields, value: string) => {
-    const next =
-      field === 'password'
-        ? sanitizePasswordInput(value)
-        : toEnglishDigits(value);
+    const next = field === 'password' ? sanitizePasswordInput(value) : toEnglishDigits(value);
     setFormData((prev) => ({ ...prev, [field]: next }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
   };
@@ -194,6 +184,6 @@ export function useAdminLogin() {
     handleVerifyOtp,
     handleInputChange,
     changeMethod,
-    resetOtp
+    resetOtp,
   };
 }

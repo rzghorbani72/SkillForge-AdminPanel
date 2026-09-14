@@ -27,13 +27,7 @@ const TIME_ANCHOR = new Date(2024, 0, 1);
  * a Persian panel could still show "09:00 AM"; this always reads 24-hour, with
  * Persian digits when the panel is Persian.
  */
-export function TimePicker({
-  id,
-  value,
-  onChange,
-  disabled,
-  className
-}: TimePickerProps) {
+export function TimePicker({ id, value, onChange, disabled, className }: TimePickerProps) {
   const { language } = useTranslation();
   const isPersian = language === 'fa';
 
@@ -66,7 +60,7 @@ export function TimePicker({
         'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors',
         'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        className
+        className,
       )}
       containerClassName="w-full"
       editable={false}

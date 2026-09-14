@@ -15,25 +15,19 @@ import { buildPanelMetadata } from '@/lib/seo/panel-metadata';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  viewportFit: 'cover'
+  viewportFit: 'cover',
 };
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();
-  const languagePreference =
-    cookieStore.get('preferred_language')?.value || null;
+  const languagePreference = cookieStore.get('preferred_language')?.value || null;
   const language = getAdminLanguage(languagePreference, null);
   return buildPanelMetadata(language);
 }
 
-export default async function RootLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
-  const languagePreference =
-    cookieStore.get('preferred_language')?.value || null;
+  const languagePreference = cookieStore.get('preferred_language')?.value || null;
 
   const language = getAdminLanguage(languagePreference, null);
   const direction = getAdminDirection(languagePreference, null);
@@ -65,9 +59,7 @@ export default async function RootLayout({
               <PageTitleSync />
               {children}
               <ToastContainerWrapper />
-              {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
-                <GdprConsentBanner />
-              )}
+              {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && <GdprConsentBanner />}
             </I18nProvider>
           </ThemeProviderWrapper>
         </QueryProvider>

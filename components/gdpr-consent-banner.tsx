@@ -63,12 +63,7 @@ export function GdprConsentBanner() {
           </a>
         </p>
         <div className="flex w-full shrink-0 gap-2 sm:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 sm:flex-none"
-            onClick={decline}
-          >
+          <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={decline}>
             {t('gdpr.decline')}
           </Button>
           <Button size="sm" className="flex-1 sm:flex-none" onClick={accept}>

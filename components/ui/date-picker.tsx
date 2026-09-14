@@ -14,7 +14,7 @@ import {
   fromDateTimeInputValue,
   fromInputValue,
   toDateTimeInputValue,
-  toInputValue
+  toInputValue,
 } from '@/lib/i18n/calendar-date';
 
 /** RMDP hands back a DateObject (or a list of them); only `toDate` is needed. */
@@ -48,14 +48,14 @@ export function DatePicker({
   placeholder,
   className,
   minDate,
-  maxDate
+  maxDate,
 }: DatePickerProps) {
   const { language } = useTranslation();
   const isPersian = language === 'fa';
 
   const selected = useMemo(
     () => (withTime ? fromDateTimeInputValue(value) : fromInputValue(value)),
-    [value, withTime]
+    [value, withTime],
   );
 
   const emit = (picked: PickedDate | null) => {
@@ -73,11 +73,7 @@ export function DatePicker({
       locale={isPersian ? persian_fa : gregorian_en}
       calendarPosition={isPersian ? 'bottom-right' : 'bottom-left'}
       format={withTime ? 'YYYY/MM/DD HH:mm' : 'YYYY/MM/DD'}
-      plugins={
-        withTime
-          ? [<TimePickerPlugin key="time" position="bottom" hideSeconds />]
-          : []
-      }
+      plugins={withTime ? [<TimePickerPlugin key="time" position="bottom" hideSeconds />] : []}
       minDate={minDate}
       maxDate={maxDate}
       disabled={disabled}
@@ -86,7 +82,7 @@ export function DatePicker({
         'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors',
         'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        className
+        className,
       )}
       containerClassName="w-full"
       editable={false}

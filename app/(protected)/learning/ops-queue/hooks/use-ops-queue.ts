@@ -12,7 +12,7 @@ const EMPTY_QUEUE: OpsQueueResponse = {
   inactivity: [],
   low_scores: [],
   missed_classes: [],
-  unanswered_threads: []
+  unanswered_threads: [],
 };
 
 export function useOpsQueue(featureEnabled: boolean | null) {
@@ -36,12 +36,12 @@ export function useOpsQueue(featureEnabled: boolean | null) {
       const data = await apiClient.getLearningOpsQueue({
         course_id: courseId.trim() || undefined,
         inactive_days: Number(inactiveDays) || undefined,
-        low_score_threshold: Number(lowScoreThreshold) || undefined
+        low_score_threshold: Number(lowScoreThreshold) || undefined,
       });
       setQueue({
         ...EMPTY_QUEUE,
         ...data,
-        unanswered_threads: data.unanswered_threads ?? []
+        unanswered_threads: data.unanswered_threads ?? [],
       });
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -68,10 +68,8 @@ export function useOpsQueue(featureEnabled: boolean | null) {
       await apiClient.createInterventionNote({
         profile_id: noteProfileId.trim(),
         note: noteText.trim(),
-        follow_up_at: followUpAt
-          ? new Date(followUpAt).toISOString()
-          : undefined,
-        course_id: courseId.trim() || undefined
+        follow_up_at: followUpAt ? new Date(followUpAt).toISOString() : undefined,
+        course_id: courseId.trim() || undefined,
       });
       toast.success(t('opsQueue.noteSaved'));
       setNoteText('');
@@ -101,6 +99,6 @@ export function useOpsQueue(featureEnabled: boolean | null) {
     setFollowUpAt,
     savingNote,
     loadQueue,
-    saveInterventionNote
+    saveInterventionNote,
   };
 }

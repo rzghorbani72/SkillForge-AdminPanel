@@ -1,22 +1,13 @@
 'use client';
 
 import { KeyRound } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'react-toastify';
 import { accessGrantsApi } from '@/lib/api-extra';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { tNow } from '@/lib/i18n/t-now';
-import {
-  AssignAccessForm,
-  type AssignAccessSelection
-} from './assign-access-form';
+import { AssignAccessForm, type AssignAccessSelection } from './assign-access-form';
 
 type StagedAccessSectionProps = {
   onChange: (selection: AssignAccessSelection | null) => void;
@@ -52,7 +43,7 @@ export function StagedAccessSection({ onChange }: StagedAccessSectionProps) {
  */
 export async function applyAccessSelection(
   courseId: string,
-  selection: AssignAccessSelection | null
+  selection: AssignAccessSelection | null,
 ): Promise<void> {
   if (!selection) return;
   try {

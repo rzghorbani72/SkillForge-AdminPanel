@@ -7,7 +7,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
@@ -46,7 +46,7 @@ interface DataListProps<T> {
 const ALIGN_CLASS: Record<ColumnAlign, string> = {
   start: 'text-start',
   center: 'text-center',
-  end: 'text-end'
+  end: 'text-end',
 };
 
 export function DataList<T>({
@@ -60,10 +60,9 @@ export function DataList<T>({
   onRowClick,
   emptyState,
   isLoading = false,
-  loadingRows = 6
+  loadingRows = 6,
 }: DataListProps<T>) {
-  const showCards =
-    Boolean(renderCard) && (alwaysCards || items.length <= CARD_VIEW_MAX_ITEMS);
+  const showCards = Boolean(renderCard) && (alwaysCards || items.length <= CARD_VIEW_MAX_ITEMS);
 
   if (isLoading) {
     return alwaysCards ? (
@@ -82,12 +81,7 @@ export function DataList<T>({
 
   if (renderCard && showCards) {
     return (
-      <div
-        className={cn(
-          'grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3',
-          cardGridClassName
-        )}
-      >
+      <div className={cn('grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3', cardGridClassName)}>
         {items.map((item) => (
           <div key={rowKey(item)}>{renderCard(item)}</div>
         ))}
@@ -106,7 +100,7 @@ export function DataList<T>({
               className={cn(
                 'h-11 bg-primary/10 px-4 text-xs font-medium text-muted-foreground',
                 ALIGN_CLASS[column.align ?? 'start'],
-                column.className
+                column.className,
               )}
             >
               {column.header}
@@ -120,7 +114,7 @@ export function DataList<T>({
             key={rowKey(item)}
             className={cn(
               'group border-border/50 hover:bg-transparent',
-              onRowClick && 'cursor-pointer'
+              onRowClick && 'cursor-pointer',
             )}
             onClick={onRowClick ? () => onRowClick(item) : undefined}
           >
@@ -132,7 +126,7 @@ export function DataList<T>({
                   rowIndex % 2 === 1 ? 'bg-primary/10' : 'bg-card',
                   'group-hover:bg-transparent group-hover:font-semibold group-hover:text-primary',
                   ALIGN_CLASS[column.align ?? 'start'],
-                  column.className
+                  column.className,
                 )}
               >
                 {column.cell(item)}
@@ -145,17 +139,9 @@ export function DataList<T>({
   );
 }
 
-function CardGridSkeleton({
-  rows,
-  className
-}: {
-  rows: number;
-  className?: string;
-}) {
+function CardGridSkeleton({ rows, className }: { rows: number; className?: string }) {
   return (
-    <div
-      className={cn('grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3', className)}
-    >
+    <div className={cn('grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3', className)}>
       {Array.from({ length: rows }).map((_, card) => (
         <div
           key={card}
@@ -166,28 +152,16 @@ function CardGridSkeleton({
   );
 }
 
-function DataListSkeleton({
-  columns,
-  rows
-}: {
-  columns: number;
-  rows: number;
-}) {
+function DataListSkeleton({ columns, rows }: { columns: number; rows: number }) {
   return (
     <div className="divide-y divide-border/50">
       {Array.from({ length: rows }).map((_, row) => (
         <div
           key={row}
-          className={cn(
-            'flex items-center gap-4 px-4 py-3.5',
-            row % 2 === 1 && 'bg-primary/10'
-          )}
+          className={cn('flex items-center gap-4 px-4 py-3.5', row % 2 === 1 && 'bg-primary/10')}
         >
           {Array.from({ length: columns }).map((_, column) => (
-            <div
-              key={column}
-              className="h-3.5 flex-1 animate-pulse rounded bg-muted"
-            />
+            <div key={column} className="h-3.5 flex-1 animate-pulse rounded bg-muted" />
           ))}
         </div>
       ))}

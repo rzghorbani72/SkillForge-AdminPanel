@@ -7,11 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ExternalLink, Info } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { EnamadStatusBadge } from './review-status-badge';
-import {
-  ENAMAD_STATUS,
-  type EnamadStatus,
-  type ReviewQueueItem
-} from '@/types/compliance';
+import { ENAMAD_STATUS, type EnamadStatus, type ReviewQueueItem } from '@/types/compliance';
 
 type Props = {
   item: ReviewQueueItem;
@@ -26,12 +22,7 @@ type Props = {
  * do not auto-verify, because the check that matters is that the seal belongs to
  * the same legal entity that registered here.
  */
-export function EnamadReviewPanel({
-  item,
-  status,
-  submitting,
-  onReview
-}: Props) {
+export function EnamadReviewPanel({ item, status, submitting, onReview }: Props) {
   const { t } = useTranslation();
   const [note, setNote] = useState('');
 
@@ -39,15 +30,12 @@ export function EnamadReviewPanel({
     return (
       <Alert>
         <Info className="h-4 w-4" />
-        <AlertDescription>
-          {t('compliance.enamadReview.notApplicable')}
-        </AlertDescription>
+        <AlertDescription>{t('compliance.enamadReview.notApplicable')}</AlertDescription>
       </Alert>
     );
   }
 
-  const decidable =
-    status === ENAMAD_STATUS.PENDING || status === ENAMAD_STATUS.REJECTED;
+  const decidable = status === ENAMAD_STATUS.PENDING || status === ENAMAD_STATUS.REJECTED;
 
   return (
     <div className="space-y-3">
@@ -70,9 +58,7 @@ export function EnamadReviewPanel({
       {status === ENAMAD_STATUS.REQUIRED ? (
         <Alert>
           <Info className="h-4 w-4" />
-          <AlertDescription>
-            {t('compliance.enamadReview.awaitingSubmission')}
-          </AlertDescription>
+          <AlertDescription>{t('compliance.enamadReview.awaitingSubmission')}</AlertDescription>
         </Alert>
       ) : null}
 
@@ -85,11 +71,7 @@ export function EnamadReviewPanel({
             placeholder={t('compliance.enamadReview.notePlaceholder')}
           />
           <div className="flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              disabled={submitting}
-              onClick={() => onReview(true, note.trim())}
-            >
+            <Button size="sm" disabled={submitting} onClick={() => onReview(true, note.trim())}>
               {t('compliance.enamadReview.approve')}
             </Button>
             <Button

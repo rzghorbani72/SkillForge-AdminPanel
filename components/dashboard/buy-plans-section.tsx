@@ -14,7 +14,7 @@ import {
   periodPrice,
   planFeatureList,
   priceWithVat,
-  vatAmount
+  vatAmount,
 } from '@/components/plans/plan-types';
 
 export function BuyPlansSection() {
@@ -25,9 +25,7 @@ export function BuyPlansSection() {
   const [period, setPeriod] = useState<BillingPeriod>('monthly');
   const currentSlug = planSlug?.trim().toLowerCase() ?? '';
   const hasActivePlan =
-    (status === 'ACTIVE' || status === 'GRACE') &&
-    currentSlug.length > 0 &&
-    currentSlug !== 'none';
+    (status === 'ACTIVE' || status === 'GRACE') && currentSlug.length > 0 && currentSlug !== 'none';
 
   useEffect(() => {
     let cancelled = false;
@@ -52,12 +50,8 @@ export function BuyPlansSection() {
   return (
     <section className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold tracking-tight">
-          {t('dashboard.buyPlanTitle')}
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('dashboard.buyPlanDesc')}
-        </p>
+        <h2 className="text-xl font-bold tracking-tight">{t('dashboard.buyPlanTitle')}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t('dashboard.buyPlanDesc')}</p>
       </div>
 
       <div className="flex justify-center">
@@ -71,7 +65,7 @@ export function BuyPlansSection() {
                 'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
                 period === p
                   ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {t(`plans.${p}`)}
@@ -89,32 +83,23 @@ export function BuyPlansSection() {
           {t('plans.noPlanConfigured')}
         </div>
       ) : (
-        <div
-          dir="rtl"
-          className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3"
-        >
+        <div dir="rtl" className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan, i) => {
-            const isCurrent =
-              hasActivePlan && plan.slug.toLowerCase() === currentSlug;
-            const isPopular =
-              !isCurrent && i === popularIndex && plans.length >= 2;
+            const isCurrent = hasActivePlan && plan.slug.toLowerCase() === currentSlug;
+            const isPopular = !isCurrent && i === popularIndex && plans.length >= 2;
             const price = periodPrice(plan, period);
             const vatRate = plan.vat_rate ?? 0;
             const vat = vatAmount(price, vatRate);
             const total = priceWithVat(price, vatRate);
-            const features = planFeatureList(plan.slug, plan.features).slice(
-              0,
-              4
-            );
+            const features = planFeatureList(plan.slug, plan.features).slice(0, 4);
             return (
               <Link
                 key={plan.slug}
                 href={`/plans?plan=${encodeURIComponent(plan.slug)}`}
                 className={cn(
                   'relative flex flex-col rounded-2xl border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md',
-                  isCurrent &&
-                    'border-success/45 bg-success/[0.04] ring-1 ring-success/25',
-                  isPopular && 'border-primary ring-2 ring-primary/30'
+                  isCurrent && 'border-success/45 bg-success/[0.04] ring-1 ring-success/25',
+                  isPopular && 'border-primary ring-2 ring-primary/30',
                 )}
               >
                 {isCurrent ? (
@@ -131,13 +116,9 @@ export function BuyPlansSection() {
                 )}
                 <h3 className="text-lg font-bold">{plan.name}</h3>
                 <p className="mt-4">
-                  <span className="text-3xl font-black">
-                    {formatPrice(total)}
-                  </span>
+                  <span className="text-3xl font-black">{formatPrice(total)}</span>
                   <span className="ms-2 text-sm text-muted-foreground">
-                    {period === 'quarterly'
-                      ? t('plans.pricePerQuarter')
-                      : t('plans.pricePerMonth')}
+                    {period === 'quarterly' ? t('plans.pricePerQuarter') : t('plans.pricePerMonth')}
                   </span>
                 </p>
                 {vat > 0 && (
@@ -145,7 +126,7 @@ export function BuyPlansSection() {
                     {t('plans.priceBeforeVat', { price: formatPrice(price) })}
                     {' + '}
                     {t('plans.vatIncluded', {
-                      percent: Math.round(vatRate * 100)
+                      percent: Math.round(vatRate * 100),
                     })}
                   </p>
                 )}
@@ -162,9 +143,7 @@ export function BuyPlansSection() {
                 <span
                   className={cn(
                     'mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold',
-                    isCurrent
-                      ? 'bg-success/10 text-success'
-                      : 'bg-primary text-primary-foreground'
+                    isCurrent ? 'bg-success/10 text-success' : 'bg-primary text-primary-foreground',
                   )}
                 >
                   {isCurrent ? (

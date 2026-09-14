@@ -6,7 +6,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import type {
   TutoringGroup,
   TutoringGroupSlot,
-  UpdateTutoringGroupPayload
+  UpdateTutoringGroupPayload,
 } from '@/types/learning-operations';
 
 export function useClassDetail(groupId: string) {
@@ -45,7 +45,7 @@ export function useClassDetail(groupId: string) {
         setBusy(false);
       }
     },
-    [load]
+    [load],
   );
 
   return {
@@ -59,20 +59,12 @@ export function useClassDetail(groupId: string) {
       run(() => apiClient.replaceTutoringGroupSlots(groupId, slots)),
     publish: () => run(() => apiClient.publishTutoringGroup(groupId)),
     confirm: () => run(() => apiClient.confirmTutoringGroup(groupId)),
-    cancel: (reason: string) =>
-      run(() => apiClient.cancelTutoringGroup(groupId, reason)),
+    cancel: (reason: string) => run(() => apiClient.cancelTutoringGroup(groupId, reason)),
     updateLink: (url: string | null, notify: boolean, regenerate?: boolean) =>
-      run(() =>
-        apiClient.updateTutoringGroupMeetingLink(
-          groupId,
-          url,
-          notify,
-          regenerate
-        )
-      ),
+      run(() => apiClient.updateTutoringGroupMeetingLink(groupId, url, notify, regenerate)),
     removeMember: (profileId: string) =>
       run(() => apiClient.removeTutoringGroupMember(groupId, profileId)),
     announce: (body: string, sendSms: boolean) =>
-      run(() => apiClient.announceToTutoringGroup(groupId, body, sendSms))
+      run(() => apiClient.announceToTutoringGroup(groupId, body, sendSms)),
   };
 }

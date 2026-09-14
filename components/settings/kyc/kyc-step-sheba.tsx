@@ -50,9 +50,7 @@ export function KycStepSheba({ values, disabled = false, onChange }: Props) {
           required
           disabled={disabled}
         />
-        <p className="text-xs text-muted-foreground">
-          {t('settings.kyc.shebaHelp')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('settings.kyc.shebaHelp')}</p>
       </div>
     </div>
   );

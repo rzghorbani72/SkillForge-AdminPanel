@@ -32,7 +32,7 @@ export function useEnrollments({
   page,
   limit,
   status,
-  search
+  search,
 }: UseEnrollmentsParams): UseEnrollmentsResult {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [pagination, setPagination] = useState<ApiPagination | null>(null);
@@ -45,7 +45,7 @@ export function useEnrollments({
         page,
         limit,
         status: status === 'all' ? undefined : status,
-        search: search || undefined
+        search: search || undefined,
       });
       setEnrollments(response.enrollments ?? []);
       setPagination(response.pagination ?? null);
@@ -69,16 +69,13 @@ export function useEnrollments({
  * Totals per status, each asked of the server as a one-row page. Counting the
  * loaded page instead would report "3 active" when the academy has hundreds.
  */
-export function useEnrollmentTotals(): Record<
-  'all' | EnrollmentStatus,
-  number
-> {
+export function useEnrollmentTotals(): Record<'all' | EnrollmentStatus, number> {
   const [totals, setTotals] = useState({
     all: 0,
     ACTIVE: 0,
     COMPLETED: 0,
     CANCELLED: 0,
-    EXPIRED: 0
+    EXPIRED: 0,
   });
 
   useEffect(() => {
@@ -93,14 +90,14 @@ export function useEnrollmentTotals(): Record<
           totalOf('ACTIVE'),
           totalOf('COMPLETED'),
           totalOf('CANCELLED'),
-          totalOf('EXPIRED')
+          totalOf('EXPIRED'),
         ]);
         setTotals({
           all,
           ACTIVE: active,
           COMPLETED: completed,
           CANCELLED: cancelled,
-          EXPIRED: expired
+          EXPIRED: expired,
         });
       } catch {
         // Non-critical: the list still renders without the header counts.

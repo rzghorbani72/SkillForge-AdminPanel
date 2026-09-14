@@ -13,9 +13,7 @@ export function SuccessStep({ fp }: { fp: Fp }) {
   return (
     <div className="space-y-5 text-center">
       <CheckCircle className="mx-auto h-12 w-12 text-success" />
-      <h3 className="text-lg font-semibold">
-        {t('forgotPassword.passwordResetSuccessTitle')}
-      </h3>
+      <h3 className="text-lg font-semibold">{t('forgotPassword.passwordResetSuccessTitle')}</h3>
       <p className="text-sm text-muted-foreground">
         {t('forgotPassword.passwordResetSuccessMessage')}
       </p>

@@ -1,7 +1,4 @@
-import {
-  derivePaletteFromPrimary,
-  paletteToThemeColors
-} from '@/lib/design-system-palette';
+import { derivePaletteFromPrimary, paletteToThemeColors } from '@/lib/design-system-palette';
 
 export interface ThemeColorsState {
   primaryLight: string;
@@ -38,7 +35,7 @@ export interface ThemeDraftPayload {
 
 export function buildThemeDraftPayload(
   colors: ThemeColorsState,
-  style: ThemeStyleState
+  style: ThemeStyleState,
 ): ThemeDraftPayload {
   return {
     primary_color: colors.primaryLight,
@@ -54,13 +51,13 @@ export function buildThemeDraftPayload(
     dark_mode: null,
     border_radius_style: style.borderRadius,
     shadow_style: style.shadow,
-    background_svg_pattern: style.backgroundSvgPattern
+    background_svg_pattern: style.backgroundSvgPattern,
   };
 }
 
 export function buildThemeDraftFromPrimary(
   primaryHex: string,
-  style: ThemeStyleState
+  style: ThemeStyleState,
 ): ThemeDraftPayload {
   const palette = derivePaletteFromPrimary(primaryHex);
   return buildThemeDraftPayload(paletteToThemeColors(palette), style);

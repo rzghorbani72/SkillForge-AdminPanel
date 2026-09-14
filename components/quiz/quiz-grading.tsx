@@ -82,9 +82,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
     }
   };
 
-  const shortAnswers = (selected?.Answer ?? []).filter(
-    (a) => a.Question?.type === 'SHORT_TEXT'
-  );
+  const shortAnswers = (selected?.Answer ?? []).filter((a) => a.Question?.type === 'SHORT_TEXT');
 
   const finalize = async () => {
     if (!selected) return;
@@ -102,24 +100,15 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
   };
 
   return (
-    <div
-      className="grid gap-6 md:grid-cols-[280px_1fr]"
-      dir={isRtl ? 'rtl' : 'ltr'}
-    >
+    <div className="grid gap-6 md:grid-cols-[280px_1fr]" dir={isRtl ? 'rtl' : 'ltr'}>
       <Card>
         <CardHeader>
           <CardTitle>{t('quiz.attempts')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {loading && (
-            <p className="text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
-          )}
+          {loading && <p className="text-sm text-muted-foreground">{t('common.loading')}</p>}
           {!loading && attempts.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              {t('quiz.noAttempts')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('quiz.noAttempts')}</p>
           )}
           {attempts.map((a) => (
             <button
@@ -127,9 +116,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
               onClick={() => openAttempt(a.id)}
               className={`flex w-full items-center justify-between rounded-md border p-2 text-left text-sm ${selected?.id === a.id ? 'border-primary' : ''}`}
             >
-              <span>
-                {a.Profile?.display_name ?? t('students.unknownStudent')}
-              </span>
+              <span>{a.Profile?.display_name ?? t('students.unknownStudent')}</span>
               <Badge variant={statusVariant(a.status)}>
                 {a.status === 'PENDING_REVIEW'
                   ? t('quiz.review')
@@ -144,19 +131,14 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
 
       <div className="space-y-6">
         {error && <p className="text-sm text-destructive">{error}</p>}
-        {!selected && (
-          <p className="text-sm text-muted-foreground">
-            {t('quiz.selectAttempt')}
-          </p>
-        )}
+        {!selected && <p className="text-sm text-muted-foreground">{t('quiz.selectAttempt')}</p>}
 
         {selected && (
           <>
             <Card>
               <CardHeader className="flex-row items-center justify-between">
                 <CardTitle>
-                  {selected.Profile?.display_name ??
-                    t('students.unknownStudent')}
+                  {selected.Profile?.display_name ?? t('students.unknownStudent')}
                 </CardTitle>
                 <Badge variant={statusVariant(selected.status)}>
                   {selected.score} / {selected.max_score}
@@ -164,9 +146,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 {shortAnswers.length === 0 && (
-                  <p className="text-sm text-muted-foreground">
-                    {t('quiz.autoGraded')}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{t('quiz.autoGraded')}</p>
                 )}
                 {shortAnswers.map((a) => (
                   <div key={a.id} className="space-y-2 rounded-md border p-3">
@@ -177,7 +157,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
                         {t('quiz.scoreMax', {
-                          max: a.Question?.points ?? 0
+                          max: a.Question?.points ?? 0,
                         })}
                       </span>
                       <NumberInput
@@ -186,7 +166,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
                         onChange={(raw) =>
                           setScores((prev) => ({
                             ...prev,
-                            [a.id]: raw === '' ? 0 : Number(raw)
+                            [a.id]: raw === '' ? 0 : Number(raw),
                           }))
                         }
                       />
@@ -203,9 +183,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
                       placeholder={t('quiz.feedbackPlaceholder')}
                       maxLength={2000}
                     />
-                    <Button onClick={finalize}>
-                      {t('quiz.finalizeGrade')}
-                    </Button>
+                    <Button onClick={finalize}>{t('quiz.finalizeGrade')}</Button>
                   </div>
                 )}
               </CardContent>
@@ -213,10 +191,7 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
 
             <Card>
               <CardContent className="pt-6">
-                <DiscussionThread
-                  attemptId={selected.id}
-                  currentProfileId={currentProfileId}
-                />
+                <DiscussionThread attemptId={selected.id} currentProfileId={currentProfileId} />
               </CardContent>
             </Card>
           </>

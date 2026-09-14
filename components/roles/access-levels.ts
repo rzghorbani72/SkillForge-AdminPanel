@@ -15,7 +15,7 @@ export const ACCESS_LEVELS = [
   { level: 3, labelKey: 'roles.level3' },
   { level: 2, labelKey: 'roles.level2' },
   { level: 1, labelKey: 'roles.level1' },
-  { level: 0, labelKey: 'roles.level0' }
+  { level: 0, labelKey: 'roles.level0' },
 ] as const;
 
 export function getAccessLevelLabel(level: number, t: TranslateFn): string {

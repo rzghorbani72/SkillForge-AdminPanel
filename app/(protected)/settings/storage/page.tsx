@@ -14,7 +14,7 @@ import {
   apiClient,
   type AcademyStorageUsage,
   type StorageFilesPage,
-  type StorageMediaType
+  type StorageMediaType,
 } from '@/lib/api';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
@@ -36,13 +36,13 @@ export default function StoragePage() {
 
   const { data, isLoading, refresh } = useApiQuery<AcademyStorageUsage>({
     queryKey: queryKeys.storageUsage(academyId),
-    queryFn: (signal) => apiClient.getCurrentAcademyStorageUsage({ signal })
+    queryFn: (signal) => apiClient.getCurrentAcademyStorageUsage({ signal }),
   });
 
   const {
     data: files,
     isLoading: isFilesLoading,
-    refresh: refreshFiles
+    refresh: refreshFiles,
   } = useApiQuery<StorageFilesPage>({
     queryKey: queryKeys.storageFiles(academyId, kind, page),
     queryFn: (signal) =>
@@ -50,10 +50,10 @@ export default function StoragePage() {
         {
           kind: kind === 'all' ? undefined : kind,
           page,
-          limit: PAGE_SIZE
+          limit: PAGE_SIZE,
         },
-        { signal }
-      )
+        { signal },
+      ),
   });
 
   // A delete changes both the quota bar and the list, so refresh the pair.
@@ -114,12 +114,12 @@ export default function StoragePage() {
                   className={cn(
                     'h-2',
                     data.warn_level === 'full' && '[&>div]:bg-destructive',
-                    data.warn_level === 'warning' && '[&>div]:bg-amber-500'
+                    data.warn_level === 'warning' && '[&>div]:bg-amber-500',
                   )}
                 />
                 <p className="text-xs text-muted-foreground">
                   {t('storage.percentOfPlanUsed', {
-                    percent: percentLabel(data.percent_used)
+                    percent: percentLabel(data.percent_used),
                   })}
                 </p>
               </div>
@@ -130,7 +130,7 @@ export default function StoragePage() {
                     'flex flex-col gap-2 rounded-xl px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between',
                     data.warn_level === 'full'
                       ? 'bg-destructive/10 text-destructive'
-                      : 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                      : 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -138,15 +138,13 @@ export default function StoragePage() {
                     {t(
                       data.warn_level === 'full'
                         ? 'storage.fullWarning'
-                        : 'storage.nearFullWarning'
+                        : 'storage.nearFullWarning',
                     )}
                   </span>
                   <Button
                     asChild
                     size="sm"
-                    variant={
-                      data.warn_level === 'full' ? 'destructive' : 'outline'
-                    }
+                    variant={data.warn_level === 'full' ? 'destructive' : 'outline'}
                   >
                     <Link href="/plans">{t('storage.addStorage')}</Link>
                   </Button>
@@ -157,17 +155,10 @@ export default function StoragePage() {
 
           <div className="space-y-3">
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold">
-                {t('storage.breakdownTitle')}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {t('storage.breakdownDescription')}
-              </p>
+              <h2 className="text-lg font-semibold">{t('storage.breakdownTitle')}</h2>
+              <p className="text-sm text-muted-foreground">{t('storage.breakdownDescription')}</p>
             </div>
-            <StorageTypeCards
-              items={data.by_type}
-              totalBytes={data.total_bytes}
-            />
+            <StorageTypeCards items={data.by_type} totalBytes={data.total_bytes} />
           </div>
 
           <StorageFilesPanel

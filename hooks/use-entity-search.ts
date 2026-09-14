@@ -11,17 +11,11 @@ interface UseEntitySearchParams {
    * component unmounts. Fetchers that ignore it still work, they just keep
    * running to completion.
    */
-  fetchOptions: (
-    query: string,
-    signal?: AbortSignal
-  ) => Promise<EntitySearchOption[]>;
+  fetchOptions: (query: string, signal?: AbortSignal) => Promise<EntitySearchOption[]>;
   enabled?: boolean;
 }
 
-export function useEntitySearch({
-  fetchOptions,
-  enabled = true
-}: UseEntitySearchParams) {
+export function useEntitySearch({ fetchOptions, enabled = true }: UseEntitySearchParams) {
   const [options, setOptions] = useState<EntitySearchOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
@@ -50,7 +44,7 @@ export function useEntitySearch({
         if (!controller.signal.aborted) setLoading(false);
       }
     },
-    [enabled, fetchOptions]
+    [enabled, fetchOptions],
   );
 
   useEffect(() => {
@@ -80,6 +74,6 @@ export function useEntitySearch({
     loading,
     query,
     setQuery,
-    refresh
+    refresh,
   };
 }

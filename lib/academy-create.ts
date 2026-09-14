@@ -30,7 +30,7 @@ function buildTheme(hex: string) {
   return {
     primary_color: hex,
     primary_color_light: `#${shift(r, 60)}${shift(g, 60)}${shift(b, 60)}`,
-    primary_color_dark: `#${shift(r, -40)}${shift(g, -40)}${shift(b, -40)}`
+    primary_color_dark: `#${shift(r, -40)}${shift(g, -40)}${shift(b, -40)}`,
   };
 }
 
@@ -54,15 +54,13 @@ function readResponse(response: unknown): {
  * failed creation, so reporting either as an error would tell the manager their
  * academy does not exist while it sits in their list.
  */
-export async function createAcademy(
-  data: AcademyCreateInput
-): Promise<AcademyCreateResult> {
+export async function createAcademy(data: AcademyCreateInput): Promise<AcademyCreateResult> {
   const response = await apiClient.createAcademy({
     name: data.name,
     private_domain: data.slug,
     description: data.description || undefined,
     logo_id: data.logoId,
-    favicon_id: data.faviconId
+    favicon_id: data.faviconId,
   });
 
   const { id, switched: switchedByServer } = readResponse(response);

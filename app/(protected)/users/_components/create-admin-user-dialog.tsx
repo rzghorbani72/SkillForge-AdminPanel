@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { PhoneInputWithCountry } from '@/components/ui/phone-input-with-country';
 import { apiClient } from '@/lib/api';
@@ -40,14 +40,14 @@ interface CreateAdminUserDialogProps {
 export function CreateAdminUserDialog({
   open,
   onOpenChange,
-  onSuccess
+  onSuccess,
 }: CreateAdminUserDialogProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const showPlatformRoles = isPlatformAdmin(user);
   const canAssignAdmin = isPlatformOwner(user);
   const [platformRole, setPlatformRole] = useState<PlatformStaffRole>(
-    canAssignAdmin ? 'ADMIN' : 'FINANCE'
+    canAssignAdmin ? 'ADMIN' : 'FINANCE',
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -60,22 +60,22 @@ export function CreateAdminUserDialog({
     password: '',
     confirmPassword: '',
     autoConfirmEmail: false,
-    autoConfirmPhone: false
+    autoConfirmPhone: false,
   });
 
   const [otpData, setOtpData] = useState({
     phoneOtp: '',
-    emailOtp: ''
+    emailOtp: '',
   });
 
   const [otpSent, setOtpSent] = useState({
     phone: false,
-    email: false
+    email: false,
   });
 
   const [otpVerified, setOtpVerified] = useState({
     phone: false,
-    email: false
+    email: false,
   });
 
   const handleSendPhoneOtp = async () => {
@@ -87,10 +87,7 @@ export function CreateAdminUserDialog({
     try {
       setIsSendingOtp(true);
       const fullPhone = `${formData.countryCode}${formData.phone.replace(/^\+/, '')}`;
-      await apiClient.sendPhoneOtp(
-        fullPhone,
-        OtpType.REGISTER_PHONE_VERIFICATION
-      );
+      await apiClient.sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
       setOtpSent((prev) => ({ ...prev, phone: true }));
       ErrorHandler.showSuccess(t('createAdminUser.phoneOtpSent'));
     } catch (error) {
@@ -108,10 +105,7 @@ export function CreateAdminUserDialog({
 
     try {
       setIsSendingOtp(true);
-      await apiClient.sendEmailOtp(
-        formData.email,
-        OtpType.REGISTER_EMAIL_VERIFICATION
-      );
+      await apiClient.sendEmailOtp(formData.email, OtpType.REGISTER_EMAIL_VERIFICATION);
       setOtpSent((prev) => ({ ...prev, email: true }));
       ErrorHandler.showSuccess(t('createAdminUser.emailOtpSent'));
     } catch (error) {
@@ -133,7 +127,7 @@ export function CreateAdminUserDialog({
       await apiClient.verifyPhoneOtp(
         fullPhone,
         otpData.phoneOtp,
-        OtpType.REGISTER_PHONE_VERIFICATION
+        OtpType.REGISTER_PHONE_VERIFICATION,
       );
       setOtpVerified((prev) => ({ ...prev, phone: true }));
       ErrorHandler.showSuccess(t('createAdminUser.phoneOtpVerified'));
@@ -155,7 +149,7 @@ export function CreateAdminUserDialog({
       await apiClient.verifyEmailOtp(
         formData.email,
         otpData.emailOtp,
-        OtpType.REGISTER_EMAIL_VERIFICATION
+        OtpType.REGISTER_EMAIL_VERIFICATION,
       );
       setOtpVerified((prev) => ({ ...prev, email: true }));
       ErrorHandler.showSuccess(t('createAdminUser.emailOtpVerified'));
@@ -198,7 +192,7 @@ export function CreateAdminUserDialog({
         email_otp: formData.autoConfirmEmail ? '' : otpData.emailOtp,
         auto_confirm_email: formData.autoConfirmEmail,
         auto_confirm_phone: formData.autoConfirmPhone,
-        ...(showPlatformRoles ? { platform_role: platformRole } : {})
+        ...(showPlatformRoles ? { platform_role: platformRole } : {}),
       });
 
       ErrorHandler.showSuccess(t('createAdminUser.adminUserCreatedSuccess'));
@@ -221,11 +215,11 @@ export function CreateAdminUserDialog({
       password: '',
       confirmPassword: '',
       autoConfirmEmail: false,
-      autoConfirmPhone: false
+      autoConfirmPhone: false,
     });
     setOtpData({
       phoneOtp: '',
-      emailOtp: ''
+      emailOtp: '',
     });
     setOtpSent({ phone: false, email: false });
     setOtpVerified({ phone: false, email: false });
@@ -244,27 +238,19 @@ export function CreateAdminUserDialog({
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>{t('createAdminUser.title')}</DialogTitle>
-          <DialogDescription>
-            {t('createAdminUser.description')}
-          </DialogDescription>
+          <DialogDescription>{t('createAdminUser.description')}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Phone and e-mail verify side by side — stacked, their OTP rows
               made this panel twice the height of the screen. */}
           <div className="grid gap-4 sm:grid-cols-2">
-            <div
-              className={
-                showPlatformRoles ? 'space-y-2' : 'space-y-2 sm:col-span-2'
-              }
-            >
+            <div className={showPlatformRoles ? 'space-y-2' : 'space-y-2 sm:col-span-2'}>
               <Label htmlFor="name">{t('createAdminUser.name')} *</Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, name: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder={t('createAdminUser.namePlaceholder')}
                 required
                 disabled={isLoading}
@@ -273,9 +259,7 @@ export function CreateAdminUserDialog({
 
             {showPlatformRoles && (
               <div className="space-y-2">
-                <Label htmlFor="platformRole">
-                  {t('createAdminUser.platformRole')}
-                </Label>
+                <Label htmlFor="platformRole">{t('createAdminUser.platformRole')}</Label>
                 <Select
                   value={platformRole}
                   onValueChange={(v) => setPlatformRole(v as PlatformStaffRole)}
@@ -286,16 +270,10 @@ export function CreateAdminUserDialog({
                   </SelectTrigger>
                   <SelectContent>
                     {canAssignAdmin && (
-                      <SelectItem value="ADMIN">
-                        {t('admins.platformStaff.ADMIN')}
-                      </SelectItem>
+                      <SelectItem value="ADMIN">{t('admins.platformStaff.ADMIN')}</SelectItem>
                     )}
-                    <SelectItem value="FINANCE">
-                      {t('admins.platformStaff.FINANCE')}
-                    </SelectItem>
-                    <SelectItem value="SUPPORT">
-                      {t('admins.platformStaff.SUPPORT')}
-                    </SelectItem>
+                    <SelectItem value="FINANCE">{t('admins.platformStaff.FINANCE')}</SelectItem>
+                    <SelectItem value="SUPPORT">{t('admins.platformStaff.SUPPORT')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -303,9 +281,7 @@ export function CreateAdminUserDialog({
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="phone">
-                  {t('createAdminUser.phoneNumber')} *
-                </Label>
+                <Label htmlFor="phone">{t('createAdminUser.phoneNumber')} *</Label>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="autoConfirmPhone"
@@ -313,15 +289,12 @@ export function CreateAdminUserDialog({
                     onCheckedChange={(checked) =>
                       setFormData((prev) => ({
                         ...prev,
-                        autoConfirmPhone: checked === true
+                        autoConfirmPhone: checked === true,
                       }))
                     }
                     disabled={isLoading}
                   />
-                  <Label
-                    htmlFor="autoConfirmPhone"
-                    className="cursor-pointer text-sm font-normal"
-                  >
+                  <Label htmlFor="autoConfirmPhone" className="cursor-pointer text-sm font-normal">
                     {t('createAdminUser.autoConfirmPhone')}
                   </Label>
                 </div>
@@ -330,15 +303,9 @@ export function CreateAdminUserDialog({
                 id="phone"
                 label=""
                 value={formData.phone}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, phone: value }))
-                }
-                onCountryChange={(code) =>
-                  setFormData((prev) => ({ ...prev, countryCode: code }))
-                }
-                disabled={
-                  isLoading || (otpVerified.phone && !formData.autoConfirmPhone)
-                }
+                onChange={(value) => setFormData((prev) => ({ ...prev, phone: value }))}
+                onCountryChange={(code) => setFormData((prev) => ({ ...prev, countryCode: code }))}
+                disabled={isLoading || (otpVerified.phone && !formData.autoConfirmPhone)}
               />
               <div className="flex gap-2">
                 <Button
@@ -358,38 +325,34 @@ export function CreateAdminUserDialog({
                   ) : (
                     <Phone className="h-4 w-4" />
                   )}
-                  {otpSent.phone
-                    ? t('createAdminUser.resendOtp')
-                    : t('createAdminUser.sendOtp')}
+                  {otpSent.phone ? t('createAdminUser.resendOtp') : t('createAdminUser.sendOtp')}
                 </Button>
-                {otpSent.phone &&
-                  !otpVerified.phone &&
-                  !formData.autoConfirmPhone && (
-                    <>
-                      <Input
-                        placeholder={t('createAdminUser.enterPhoneOtp')}
-                        value={otpData.phoneOtp}
-                        onChange={(e) =>
-                          setOtpData((prev) => ({
-                            ...prev,
-                            phoneOtp: e.target.value
-                          }))
-                        }
-                        className="max-w-[150px]"
-                        maxLength={6}
-                        disabled={isLoading}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleVerifyPhoneOtp}
-                        disabled={isLoading || !otpData.phoneOtp}
-                        size="sm"
-                      >
-                        {t('createAdminUser.verify')}
-                      </Button>
-                    </>
-                  )}
+                {otpSent.phone && !otpVerified.phone && !formData.autoConfirmPhone && (
+                  <>
+                    <Input
+                      placeholder={t('createAdminUser.enterPhoneOtp')}
+                      value={otpData.phoneOtp}
+                      onChange={(e) =>
+                        setOtpData((prev) => ({
+                          ...prev,
+                          phoneOtp: e.target.value,
+                        }))
+                      }
+                      className="max-w-[150px]"
+                      maxLength={6}
+                      disabled={isLoading}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleVerifyPhoneOtp}
+                      disabled={isLoading || !otpData.phoneOtp}
+                      size="sm"
+                    >
+                      {t('createAdminUser.verify')}
+                    </Button>
+                  </>
+                )}
                 {(otpVerified.phone || formData.autoConfirmPhone) && (
                   <span className="flex items-center gap-1 text-sm text-green-600">
                     <Phone className="h-4 w-4" />
@@ -411,15 +374,12 @@ export function CreateAdminUserDialog({
                     onCheckedChange={(checked) =>
                       setFormData((prev) => ({
                         ...prev,
-                        autoConfirmEmail: checked === true
+                        autoConfirmEmail: checked === true,
                       }))
                     }
                     disabled={isLoading}
                   />
-                  <Label
-                    htmlFor="autoConfirmEmail"
-                    className="cursor-pointer text-sm font-normal"
-                  >
+                  <Label htmlFor="autoConfirmEmail" className="cursor-pointer text-sm font-normal">
                     {t('createAdminUser.autoConfirmEmail')}
                   </Label>
                 </div>
@@ -429,14 +389,10 @@ export function CreateAdminUserDialog({
                 type="email"
                 dir="ltr"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, email: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                 placeholder={t('createAdminUser.emailPlaceholder')}
                 required
-                disabled={
-                  isLoading || (otpVerified.email && !formData.autoConfirmEmail)
-                }
+                disabled={isLoading || (otpVerified.email && !formData.autoConfirmEmail)}
               />
               <div className="flex gap-2">
                 <Button
@@ -456,38 +412,34 @@ export function CreateAdminUserDialog({
                   ) : (
                     <Mail className="h-4 w-4" />
                   )}
-                  {otpSent.email
-                    ? t('createAdminUser.resendOtp')
-                    : t('createAdminUser.sendOtp')}
+                  {otpSent.email ? t('createAdminUser.resendOtp') : t('createAdminUser.sendOtp')}
                 </Button>
-                {otpSent.email &&
-                  !otpVerified.email &&
-                  !formData.autoConfirmEmail && (
-                    <>
-                      <Input
-                        placeholder={t('createAdminUser.enterEmailOtp')}
-                        value={otpData.emailOtp}
-                        onChange={(e) =>
-                          setOtpData((prev) => ({
-                            ...prev,
-                            emailOtp: e.target.value
-                          }))
-                        }
-                        className="max-w-[150px]"
-                        maxLength={6}
-                        disabled={isLoading}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleVerifyEmailOtp}
-                        disabled={isLoading || !otpData.emailOtp}
-                        size="sm"
-                      >
-                        {t('createAdminUser.verify')}
-                      </Button>
-                    </>
-                  )}
+                {otpSent.email && !otpVerified.email && !formData.autoConfirmEmail && (
+                  <>
+                    <Input
+                      placeholder={t('createAdminUser.enterEmailOtp')}
+                      value={otpData.emailOtp}
+                      onChange={(e) =>
+                        setOtpData((prev) => ({
+                          ...prev,
+                          emailOtp: e.target.value,
+                        }))
+                      }
+                      className="max-w-[150px]"
+                      maxLength={6}
+                      disabled={isLoading}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleVerifyEmailOtp}
+                      disabled={isLoading || !otpData.emailOtp}
+                      size="sm"
+                    >
+                      {t('createAdminUser.verify')}
+                    </Button>
+                  </>
+                )}
                 {(otpVerified.email || formData.autoConfirmEmail) && (
                   <span className="flex items-center gap-1 text-sm text-green-600">
                     <Mail className="h-4 w-4" />
@@ -500,17 +452,13 @@ export function CreateAdminUserDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">
-                {t('createAdminUser.password')} *
-              </Label>
+              <Label htmlFor="password">{t('createAdminUser.password')} *</Label>
               <Input
                 id="password"
                 type="password"
                 dir="ltr"
                 value={formData.password}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, password: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
                 placeholder={t('createAdminUser.passwordPlaceholder')}
                 required
                 minLength={6}
@@ -519,9 +467,7 @@ export function CreateAdminUserDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">
-                {t('createAdminUser.confirmPassword')} *
-              </Label>
+              <Label htmlFor="confirmPassword">{t('createAdminUser.confirmPassword')} *</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -530,7 +476,7 @@ export function CreateAdminUserDialog({
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    confirmPassword: e.target.value
+                    confirmPassword: e.target.value,
                   }))
                 }
                 placeholder={t('createAdminUser.confirmPasswordPlaceholder')}

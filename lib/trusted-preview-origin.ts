@@ -9,14 +9,14 @@ function normalizeOrigin(raw: string): string | null {
 }
 
 function resolvePreviewOriginBase(
-  previewBaseUrl: string | null | undefined
+  previewBaseUrl: string | null | undefined,
 ): string | null | undefined {
   return resolveStorefrontBaseUrl(previewBaseUrl) ?? previewBaseUrl;
 }
 
 export function isTrustedPreviewOrigin(
   origin: string,
-  previewBaseUrl: string | null | undefined
+  previewBaseUrl: string | null | undefined,
 ): boolean {
   const resolved = resolvePreviewOriginBase(previewBaseUrl);
   if (!resolved) return false;
@@ -25,9 +25,7 @@ export function isTrustedPreviewOrigin(
 }
 
 /** Target origin for postMessage into the preview iframe (edusphere). */
-export function getPreviewPostMessageTarget(
-  previewBaseUrl: string | null | undefined
-): string {
+export function getPreviewPostMessageTarget(previewBaseUrl: string | null | undefined): string {
   const resolved = resolvePreviewOriginBase(previewBaseUrl);
   const expected = resolved ? normalizeOrigin(resolved) : null;
   return expected ?? '*';

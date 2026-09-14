@@ -4,13 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2, Save, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,7 +18,7 @@ import {
   LEGAL_ADMIN_DOC_TYPES,
   LEGAL_ADMIN_LOCALES,
   type LegalAdminLocale,
-  type LegalAdminOverview
+  type LegalAdminOverview,
 } from '@/lib/legal/admin-types';
 import type { LegalDocType } from '@/lib/legal/types';
 
@@ -108,7 +102,7 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
       }
       await apiClient.publishLegalDocument(docType, {
         version: publishVersion.trim(),
-        locale
+        locale,
       });
       toast.success(t('legalAdmin.published'));
       await loadOverview();
@@ -179,16 +173,10 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="legal-title">{t('legalAdmin.docTitle')}</Label>
-                <Input
-                  id="legal-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
+                <Input id="legal-title" value={title} onChange={(e) => setTitle(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="legal-body">
-                  {t('legalAdmin.markdownBody')}
-                </Label>
+                <Label htmlFor="legal-body">{t('legalAdmin.markdownBody')}</Label>
                 <Textarea
                   id="legal-body"
                   value={body}
@@ -213,9 +201,7 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
                 </Button>
                 <div className="flex flex-1 flex-wrap items-end gap-2">
                   <div className="min-w-[120px] space-y-2">
-                    <Label htmlFor="legal-version">
-                      {t('legalAdmin.publishVersion')}
-                    </Label>
+                    <Label htmlFor="legal-version">{t('legalAdmin.publishVersion')}</Label>
                     <Input
                       id="legal-version"
                       value={publishVersion}
@@ -223,11 +209,7 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
                       placeholder="1.2"
                     />
                   </div>
-                  <Button
-                    type="button"
-                    disabled={publishing}
-                    onClick={() => void handlePublish()}
-                  >
+                  <Button type="button" disabled={publishing} onClick={() => void handlePublish()}>
                     {publishing ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : (
@@ -264,14 +246,10 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
             <ul className="space-y-2 text-sm text-muted-foreground">
               {overview.history.map((item) => (
                 <li key={item.id} className="flex flex-wrap gap-2">
-                  <span className="font-medium text-foreground">
-                    v{item.version}
-                  </span>
+                  <span className="font-medium text-foreground">v{item.version}</span>
                   <span>{item.title}</span>
                   {item.published_at && (
-                    <span>
-                      {new Date(item.published_at).toLocaleDateString()}
-                    </span>
+                    <span>{new Date(item.published_at).toLocaleDateString()}</span>
                   )}
                 </li>
               ))}

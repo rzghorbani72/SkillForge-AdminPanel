@@ -1,18 +1,12 @@
 'use client';
 
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent
+  ChartTooltipContent,
 } from '@/components/ui/chart';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -30,8 +24,8 @@ export function ErrorRateChart({ points }: { points: HealthDailyPoint[] }) {
   const config: ChartConfig = {
     error_rate_pct: {
       label: t('monitoring.errorRateSeries'),
-      color: 'hsl(var(--destructive))'
-    }
+      color: 'hsl(var(--destructive))',
+    },
   };
 
   const shortDay = (day: string) =>
@@ -40,12 +34,8 @@ export function ErrorRateChart({ points }: { points: HealthDailyPoint[] }) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">
-          {t('monitoring.errorRateChartTitle')}
-        </CardTitle>
-        <CardDescription>
-          {t('monitoring.errorRateChartSubtitle')}
-        </CardDescription>
+        <CardTitle className="text-base">{t('monitoring.errorRateChartTitle')}</CardTitle>
+        <CardDescription>{t('monitoring.errorRateChartSubtitle')}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={config} className="h-[220px] w-full">
@@ -59,19 +49,9 @@ export function ErrorRateChart({ points }: { points: HealthDailyPoint[] }) {
               minTickGap={24}
               tickFormatter={shortDay}
             />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              width={40}
-              unit="%"
-              domain={[0, 'auto']}
-            />
+            <YAxis tickLine={false} axisLine={false} width={40} unit="%" domain={[0, 'auto']} />
             <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(v) => shortDay(String(v))}
-                />
-              }
+              content={<ChartTooltipContent labelFormatter={(v) => shortDay(String(v))} />}
             />
             {/* Days too quiet to rate stay as gaps rather than a misleading zero. */}
             <Line

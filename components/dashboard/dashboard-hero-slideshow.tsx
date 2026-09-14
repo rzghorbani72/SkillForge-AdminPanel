@@ -33,7 +33,7 @@ export function DashboardHeroSlideshow({ children }: Props) {
             style={{
               opacity: index === active ? 1 : 0,
               transform: index === active ? 'scale(1)' : 'scale(1.04)',
-              transitionDuration: '1200ms'
+              transitionDuration: '1200ms',
             }}
           />
         );
@@ -64,7 +64,7 @@ export function DashboardHeroSlideshow({ children }: Props) {
                 key={banner.url}
                 type="button"
                 aria-label={t('dashboardBanners.goToSlide', {
-                  number: index + 1
+                  number: index + 1,
                 })}
                 aria-current={index === active}
                 onClick={() => select(index)}

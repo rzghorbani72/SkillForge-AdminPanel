@@ -1,12 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
@@ -33,10 +27,7 @@ const CreateProductBasicInfo = ({ form }: Props) => {
             <FormItem>
               <FormLabel>{t('products.productTitle')} *</FormLabel>
               <FormControl>
-                <Input
-                  placeholder={t('products.enterProductTitle')}
-                  {...field}
-                />
+                <Input placeholder={t('products.enterProductTitle')} {...field} />
               </FormControl>
               <FormMessage />
               <p
@@ -55,16 +46,11 @@ const CreateProductBasicInfo = ({ form }: Props) => {
             <FormItem>
               <FormLabel>{t('products.shortDescription')}</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder={t('products.briefDescription')}
-                  {...field}
-                  rows={2}
-                />
+                <Textarea placeholder={t('products.briefDescription')} {...field} rows={2} />
               </FormControl>
               <FormMessage />
               <p className="text-sm text-muted-foreground">
-                {t('products.shortDescriptionLength')} -{' '}
-                {field.value?.length || 0}/400
+                {t('products.shortDescriptionLength')} - {field.value?.length || 0}/400
               </p>
             </FormItem>
           )}
@@ -77,18 +63,13 @@ const CreateProductBasicInfo = ({ form }: Props) => {
             <FormItem>
               <FormLabel>Full Description *</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Enter detailed product description"
-                  {...field}
-                  rows={6}
-                />
+                <Textarea placeholder="Enter detailed product description" {...field} rows={6} />
               </FormControl>
               <FormMessage />
               <p
                 className={`text-sm ${(field.value?.length || 0) >= 1800 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
-                Description must be less than 2000 characters (
-                {field.value?.length || 0}/2000)
+                Description must be less than 2000 characters ({field.value?.length || 0}/2000)
               </p>
             </FormItem>
           )}

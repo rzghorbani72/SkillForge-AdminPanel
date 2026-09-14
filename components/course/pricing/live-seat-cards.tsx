@@ -38,9 +38,7 @@ export function LiveSeatCards({ courseId, offers, termLabel }: Props) {
           <Radio className="h-4 w-4 text-muted-foreground" />
           <p className="text-sm font-medium">{t('courses.seatPricing')}</p>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          {t('courses.seatPricingEmpty')}
-        </p>
+        <p className="mt-2 text-xs text-muted-foreground">{t('courses.seatPricingEmpty')}</p>
         {openClassPage}
       </div>
     );
@@ -51,9 +49,7 @@ export function LiveSeatCards({ courseId, offers, termLabel }: Props) {
       {offers.map((offer) => (
         <SellingWayCard
           key={offer.id}
-          label={t(
-            offer.kind === 'SOLO' ? 'courses.live.solo' : 'courses.live.group'
-          )}
+          label={t(offer.kind === 'SOLO' ? 'courses.live.solo' : 'courses.live.group')}
           note={t('courses.seatPricedOnClassPage')}
           price={offer.price}
           beforeDiscount={null}

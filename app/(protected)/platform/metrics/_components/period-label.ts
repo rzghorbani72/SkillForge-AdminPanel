@@ -23,10 +23,10 @@ export function usePeriodLabel() {
         month: 'short',
         timeZone: 'UTC',
         ...(day ? { day: 'numeric' } : { year: 'numeric' }),
-        ...(language === 'fa' ? { calendar: 'persian' as const } : {})
+        ...(language === 'fa' ? { calendar: 'persian' as const } : {}),
       }).format(date);
     },
-    [locale, language]
+    [locale, language],
   );
 }
 

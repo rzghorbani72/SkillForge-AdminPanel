@@ -2,13 +2,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
-const SearchBar = ({
-  value,
-  onChange
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) => {
+const SearchBar = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
   return (
     <div className="flex items-center space-x-2">
       <div className="relative max-w-sm flex-1">

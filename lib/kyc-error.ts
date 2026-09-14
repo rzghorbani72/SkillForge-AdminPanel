@@ -14,23 +14,17 @@ export type KycIncompleteError = Error & {
   missing: KycMissingField[];
 };
 
-const ALLOWED_MISSING = new Set<KycMissingField>([
-  'national_id',
-  'birth_date',
-  'sheba'
-]);
+const ALLOWED_MISSING = new Set<KycMissingField>(['national_id', 'birth_date', 'sheba']);
 
 function parseMissing(value: unknown): KycMissingField[] {
   if (!Array.isArray(value)) return [];
   return value.filter(
     (item): item is KycMissingField =>
-      typeof item === 'string' && ALLOWED_MISSING.has(item as KycMissingField)
+      typeof item === 'string' && ALLOWED_MISSING.has(item as KycMissingField),
   );
 }
 
-export function isKycIncompleteError(
-  value: unknown
-): value is KycIncompleteError {
+export function isKycIncompleteError(value: unknown): value is KycIncompleteError {
   if (value instanceof Error && 'code' in value) {
     return (value as { code?: string }).code === KYC_INCOMPLETE;
   }
@@ -44,9 +38,7 @@ export function missingFromKycError(value: unknown): KycMissingField[] {
   return [];
 }
 
-export function createKycIncompleteError(
-  missing: KycMissingField[]
-): KycIncompleteError {
+export function createKycIncompleteError(missing: KycMissingField[]): KycIncompleteError {
   const error = new Error(KYC_INCOMPLETE) as KycIncompleteError;
   error.code = KYC_INCOMPLETE;
   error.missing = missing;

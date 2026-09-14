@@ -1,22 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-  CreditCard,
-  Download,
-  Search,
-  RefreshCw
-} from 'lucide-react';
+import { CreditCard, Download, Search, RefreshCw } from 'lucide-react';
 import { usePaymentsData } from './_hooks/use-payments-data';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -31,7 +20,7 @@ import {
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle
+  SheetTitle,
 } from '@/components/ui/sheet';
 import { apiClient } from '@/lib/api';
 import {
@@ -40,7 +29,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 
 const STATUS_BADGES: Record<string, string> = {
@@ -48,13 +37,10 @@ const STATUS_BADGES: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800',
   FAILED: 'bg-red-100 text-red-800',
   REFUNDED: 'bg-blue-100 text-blue-800',
-  CANCELLED: 'bg-muted text-foreground'
+  CANCELLED: 'bg-muted text-foreground',
 };
 
-function paymentStatusLabel(
-  status: string | undefined,
-  t: (key: string) => string
-): string {
+function paymentStatusLabel(status: string | undefined, t: (key: string) => string): string {
   switch (status?.toUpperCase()) {
     case 'PAID':
       return t('financial.store.overview.statusPaid');
@@ -103,15 +89,14 @@ export default function PaymentsPage() {
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
   const formatCurrency = useFormatCurrency();
-  const { payments, transactions, monetizationSummary, isLoading, refresh } =
-    usePaymentsData();
+  const { payments, transactions, monetizationSummary, isLoading, refresh } = usePaymentsData();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
   const selectedPaymentNotes = useMemo(
     () => parsePaymentNotes(selectedPayment?.notes),
-    [selectedPayment]
+    [selectedPayment],
   );
 
   const filteredPayments = useMemo(() => {
@@ -124,14 +109,9 @@ export default function PaymentsPage() {
         payment.Profile?.display_name?.toLowerCase() ??
         '';
       const course =
-        payment.course?.title?.toLowerCase() ??
-        payment.Course?.title?.toLowerCase() ??
-        '';
+        payment.course?.title?.toLowerCase() ?? payment.Course?.title?.toLowerCase() ?? '';
       const status = payment.status?.toLowerCase() ?? '';
-      const method =
-        payment.method?.toLowerCase() ??
-        payment.payment_method?.toLowerCase() ??
-        '';
+      const method = payment.method?.toLowerCase() ?? payment.payment_method?.toLowerCase() ?? '';
       const gateway = payment.gateway?.toLowerCase() ?? '';
       const provider = payment.provider?.toLowerCase() ?? '';
 
@@ -152,25 +132,13 @@ export default function PaymentsPage() {
     return filteredPayments.slice(start, start + itemsPerPage);
   }, [filteredPayments, currentPage]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredPayments.length / itemsPerPage)
-  );
+  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / itemsPerPage));
 
   const totals = useMemo(() => {
-    const revenue = payments.reduce(
-      (sum, payment) => sum + (payment.amount ?? 0),
-      0
-    );
-    const completed = payments.filter(
-      (payment) => payment.status === 'PAID'
-    ).length;
-    const pending = payments.filter(
-      (payment) => payment.status === 'PENDING'
-    ).length;
-    const failed = payments.filter(
-      (payment) => payment.status === 'FAILED'
-    ).length;
+    const revenue = payments.reduce((sum, payment) => sum + (payment.amount ?? 0), 0);
+    const completed = payments.filter((payment) => payment.status === 'PAID').length;
+    const pending = payments.filter((payment) => payment.status === 'PENDING').length;
+    const failed = payments.filter((payment) => payment.status === 'FAILED').length;
 
     return { revenue, completed, pending, failed };
   }, [payments]);
@@ -191,7 +159,7 @@ export default function PaymentsPage() {
     return Array.from(counts.entries()).map(([method, data]) => ({
       method,
       count: data.count,
-      total: data.total
+      total: data.total,
     }));
   }, [payments]);
 
@@ -201,9 +169,7 @@ export default function PaymentsPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -214,12 +180,8 @@ export default function PaymentsPage() {
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('payments.transactions')}
-          </h1>
-          <p className="text-muted-foreground">
-            {t('payments.transactionsDescription')}
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('payments.transactions')}</h1>
+          <p className="text-muted-foreground">{t('payments.transactionsDescription')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={refresh}>
@@ -234,19 +196,13 @@ export default function PaymentsPage() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('analytics.totalRevenue')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">{t('analytics.totalRevenue')}</CardTitle>
           </CardHeader>
           <CardContent>
             {monetizationSummary?.visibility?.can_view_store_revenue ? (
-              <p className="text-2xl font-bold">
-                {formatCurrency(totals.revenue)}
-              </p>
+              <p className="text-2xl font-bold">{formatCurrency(totals.revenue)}</p>
             ) : (
-              <p className="text-2xl font-bold">
-                {t('financial.store.revenue.hidden')}
-              </p>
+              <p className="text-2xl font-bold">{t('financial.store.revenue.hidden')}</p>
             )}
             <p className="text-xs text-muted-foreground">
               {monetizationSummary?.visibility?.can_view_store_revenue
@@ -257,43 +213,29 @@ export default function PaymentsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.completed')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">{t('payments.completed')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {formatNumber(totals.completed)}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {t('payments.successfulPayments')}
-            </p>
+            <p className="text-2xl font-bold">{formatNumber(totals.completed)}</p>
+            <p className="text-xs text-muted-foreground">{t('payments.successfulPayments')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.pending')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">{t('payments.pending')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{formatNumber(totals.pending)}</p>
-            <p className="text-xs text-muted-foreground">
-              {t('payments.awaitingConfirmation')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('payments.awaitingConfirmation')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.failed')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">{t('payments.failed')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{formatNumber(totals.failed)}</p>
-            <p className="text-xs text-muted-foreground">
-              {t('payments.requiresFollowUp')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('payments.requiresFollowUp')}</p>
           </CardContent>
         </Card>
       </div>
@@ -301,9 +243,7 @@ export default function PaymentsPage() {
       <Card>
         <CardHeader className="space-y-1">
           <CardTitle>{t('payments.searchPayments')}</CardTitle>
-          <CardDescription>
-            {t('payments.searchPaymentsDescription')}
-          </CardDescription>
+          <CardDescription>{t('payments.searchPaymentsDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
@@ -321,7 +261,7 @@ export default function PaymentsPage() {
           <div className="text-sm text-muted-foreground">
             {t('payments.showingPayments', {
               count: filteredPayments.length,
-              total: payments.length
+              total: payments.length,
             })}
           </div>
         </CardContent>
@@ -330,20 +270,14 @@ export default function PaymentsPage() {
       <Card>
         <CardHeader className="space-y-1">
           <CardTitle>{t('payments.recentTransactions')}</CardTitle>
-          <CardDescription>
-            {t('payments.recentTransactionsDescription')}
-          </CardDescription>
+          <CardDescription>{t('payments.recentTransactionsDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {filteredPayments.length === 0 ? (
             <div className="py-12 text-center">
               <CreditCard className="mx-auto h-12 w-12 text-muted-foreground" />
-              <p className="mt-3 text-sm font-medium">
-                {t('payments.noTransactionsMatch')}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('payments.adjustFilters')}
-              </p>
+              <p className="mt-3 text-sm font-medium">{t('payments.noTransactionsMatch')}</p>
+              <p className="text-xs text-muted-foreground">{t('payments.adjustFilters')}</p>
             </div>
           ) : (
             <Table>
@@ -365,10 +299,7 @@ export default function PaymentsPage() {
                     className="cursor-pointer"
                     onClick={async () => {
                       try {
-                        const detail =
-                          await apiClient.getTransactionTrackingById(
-                            payment.id
-                          );
+                        const detail = await apiClient.getTransactionTrackingById(payment.id);
                         setSelectedPayment(detail ?? payment);
                       } catch {
                         setSelectedPayment(payment);
@@ -392,22 +323,16 @@ export default function PaymentsPage() {
                     <TableCell>
                       <Badge
                         className={cn(
-                          STATUS_BADGES[payment.status] ??
-                            'bg-muted text-muted-foreground'
+                          STATUS_BADGES[payment.status] ?? 'bg-muted text-muted-foreground',
                         )}
                       >
                         {paymentStatusLabel(payment.status, t)}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      {(payment.gateway_id || payment.authority || '-') as any}
-                    </TableCell>
+                    <TableCell>{(payment.gateway_id || payment.authority || '-') as any}</TableCell>
                     <TableCell>
                       {(() => {
-                        const date =
-                          payment.paid_at ??
-                          payment.payment_date ??
-                          payment.created_at;
+                        const date = payment.paid_at ?? payment.payment_date ?? payment.created_at;
                         return date ? formatDate(date) : '—';
                       })()}
                     </TableCell>
@@ -444,42 +369,35 @@ export default function PaymentsPage() {
                 student:
                   selectedPayment?.user?.display_name ??
                   selectedPayment?.Profile?.display_name ??
-                  t('payments.unknownStudent')
+                  t('payments.unknownStudent'),
               })}
             </SheetTitle>
-            <SheetDescription>
-              {t('payments.detailDescription')}
-            </SheetDescription>
+            <SheetDescription>{t('payments.detailDescription')}</SheetDescription>
           </SheetHeader>
           <div className="space-y-2 py-4 text-sm">
             <div>
-              {t('payments.colUuid')}:{' '}
-              {formatDisplayUuid(selectedPayment?.uuid, language)}
+              {t('payments.colUuid')}: {formatDisplayUuid(selectedPayment?.uuid, language)}
             </div>
             <div>
-              {t('payments.colStatus')}:{' '}
-              {paymentStatusLabel(selectedPayment?.status, t)}
+              {t('payments.colStatus')}: {paymentStatusLabel(selectedPayment?.status, t)}
             </div>
             <div>
-              {t('payments.colGatewayRef')}:{' '}
-              {selectedPayment?.gateway_id || '-'}
+              {t('payments.colGatewayRef')}: {selectedPayment?.gateway_id || '-'}
             </div>
             <div>
-              {t('payments.detailAuthority')}:{' '}
-              {selectedPayment?.authority || '-'}
+              {t('payments.detailAuthority')}: {selectedPayment?.authority || '-'}
             </div>
             <div>
               {t('payments.detailPlatformCommission')}:{' '}
               {formatCurrency(
                 selectedPayment?.financials?.platform_commission ??
                   selectedPayment?.platform_fee ??
-                  0
+                  0,
               )}
             </div>
             {selectedPayment?.credit_amount ? (
               <div>
-                {t('payments.creditApplied')}:{' '}
-                {formatCurrency(selectedPayment.credit_amount)}
+                {t('payments.creditApplied')}: {formatCurrency(selectedPayment.credit_amount)}
               </div>
             ) : null}
             <div>
@@ -488,9 +406,7 @@ export default function PaymentsPage() {
             </div>
             <div>
               {t('payments.detailAcademyRevenue')}:{' '}
-              {formatCurrency(
-                selectedPayment?.financials?.academy_revenue ?? 0
-              )}
+              {formatCurrency(selectedPayment?.financials?.academy_revenue ?? 0)}
             </div>
             {selectedPaymentNotes ? (
               <>
@@ -498,19 +414,16 @@ export default function PaymentsPage() {
                   {t('payments.detailFlow')}: {selectedPaymentNotes.s || '-'}
                 </div>
                 <div>
-                  {t('payments.detailPricingProfile')}:{' '}
-                  {selectedPaymentNotes.p || '-'}
+                  {t('payments.detailPricingProfile')}: {selectedPaymentNotes.p || '-'}
                 </div>
                 <div>
                   {t('payments.detailMarket')}: {selectedPaymentNotes.m || '-'}
                 </div>
                 <div>
-                  {t('payments.detailAffiliateFee')}:{' '}
-                  {formatCurrency(selectedPaymentNotes.a ?? 0)}
+                  {t('payments.detailAffiliateFee')}: {formatCurrency(selectedPaymentNotes.a ?? 0)}
                 </div>
                 <div>
-                  {t('payments.detailPlatformFee')}:{' '}
-                  {formatCurrency(selectedPaymentNotes.pf ?? 0)}
+                  {t('payments.detailPlatformFee')}: {formatCurrency(selectedPaymentNotes.pf ?? 0)}
                 </div>
                 <div>
                   {t('payments.detailInstructorShare')}:{' '}
@@ -529,15 +442,11 @@ export default function PaymentsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('payments.paymentMethods')}</CardTitle>
-          <CardDescription>
-            {t('payments.paymentMethodsDescription')}
-          </CardDescription>
+          <CardDescription>{t('payments.paymentMethodsDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {methodBreakdown.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('payments.noPaymentMethodInfo')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('payments.noPaymentMethodInfo')}</p>
           ) : (
             methodBreakdown.map((item) => (
               <div
@@ -545,17 +454,12 @@ export default function PaymentsPage() {
                 className="flex items-center justify-between rounded-lg border p-4"
               >
                 <div>
-                  <p className="text-sm font-medium">
-                    {formatPaymentMethodLabel(item.method, t)}
-                  </p>
+                  <p className="text-sm font-medium">{formatPaymentMethodLabel(item.method, t)}</p>
                   <p className="text-xs text-muted-foreground">
-                    {formatNumber(item.count)}{' '}
-                    {t('financial.store.payments.payments')}
+                    {formatNumber(item.count)} {t('financial.store.payments.payments')}
                   </p>
                 </div>
-                <p className="text-sm font-semibold">
-                  {formatCurrency(item.total)}
-                </p>
+                <p className="text-sm font-semibold">{formatCurrency(item.total)}</p>
               </div>
             ))
           )}
@@ -565,15 +469,11 @@ export default function PaymentsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('payments.latestLedgerEntries')}</CardTitle>
-          <CardDescription>
-            {t('payments.latestLedgerDescription')}
-          </CardDescription>
+          <CardDescription>{t('payments.latestLedgerDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {transactions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('payments.noLedgerEntries')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('payments.noLedgerEntries')}</p>
           ) : (
             transactions.slice(0, 10).map((transaction) => (
               <div
@@ -584,14 +484,10 @@ export default function PaymentsPage() {
                   <p className="text-sm font-medium">
                     {t('payments.transactions')} #{formatNumber(transaction.id)}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {transaction.type}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{transaction.type}</p>
                 </div>
                 <div className="text-end text-sm">
-                  <p className="font-semibold">
-                    {formatCurrency(transaction.amount ?? 0)}
-                  </p>
+                  <p className="font-semibold">{formatCurrency(transaction.amount ?? 0)}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatDate(transaction.created_at)}
                   </p>

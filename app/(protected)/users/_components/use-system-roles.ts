@@ -15,8 +15,8 @@ export function useSystemRoles(): RoleConfig[] {
       permissions: [
         t('users.permViewCourses'),
         t('users.permAccessContent'),
-        t('users.permSubmitQuestion')
-      ]
+        t('users.permSubmitQuestion'),
+      ],
     },
     {
       id: 'TEACHER',
@@ -26,8 +26,8 @@ export function useSystemRoles(): RoleConfig[] {
       permissions: [
         t('users.permAddEditCourse'),
         t('users.permAnswerQuestions'),
-        t('users.permWithdrawEarnings')
-      ]
+        t('users.permWithdrawEarnings'),
+      ],
     },
     {
       id: 'MANAGER',
@@ -37,8 +37,8 @@ export function useSystemRoles(): RoleConfig[] {
       permissions: [
         t('users.permManageUsers'),
         t('users.permFinancialReports'),
-        t('users.permManagePlans')
-      ]
-    }
+        t('users.permManagePlans'),
+      ],
+    },
   ];
 }

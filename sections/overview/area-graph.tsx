@@ -9,13 +9,13 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card';
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent
+  ChartTooltipContent,
 } from '@/components/ui/chart';
 const chartData = [
   { month: 'January', desktop: 186, mobile: 80 },
@@ -23,18 +23,18 @@ const chartData = [
   { month: 'March', desktop: 237, mobile: 120 },
   { month: 'April', desktop: 73, mobile: 190 },
   { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 }
+  { month: 'June', desktop: 214, mobile: 140 },
 ];
 
 const chartConfig = {
   desktop: {
     label: 'Desktop',
-    color: 'hsl(var(--chart-1))'
+    color: 'hsl(var(--chart-1))',
   },
   mobile: {
     label: 'Mobile',
-    color: 'hsl(var(--chart-2))'
-  }
+    color: 'hsl(var(--chart-2))',
+  },
 } satisfies ChartConfig;
 
 export function AreaGraph() {
@@ -42,21 +42,16 @@ export function AreaGraph() {
     <Card>
       <CardHeader>
         <CardTitle>Area Chart - Stacked</CardTitle>
-        <CardDescription>
-          Showing total visitors for the last 6 months
-        </CardDescription>
+        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto h-[310px] w-full"
-        >
+        <ChartContainer config={chartConfig} className="aspect-auto h-[310px] w-full">
           <AreaChart
             accessibilityLayer
             data={chartData}
             margin={{
               left: 12,
-              right: 12
+              right: 12,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -67,10 +62,7 @@ export function AreaGraph() {
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dot" />}
-            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
             <Area
               dataKey="mobile"
               type="natural"

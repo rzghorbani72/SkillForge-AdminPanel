@@ -25,13 +25,13 @@ export function DomainSetupStepCard({
   actor,
   done,
   actorLabel,
-  children
+  children,
 }: DomainSetupStepCardProps) {
   return (
     <li
       className={cn(
         'rounded-xl border p-4',
-        done ? 'border-green-500/40 bg-green-500/5' : 'bg-card'
+        done ? 'border-green-500/40 bg-green-500/5' : 'bg-card',
       )}
     >
       <div className="flex flex-wrap items-start gap-3">
@@ -45,9 +45,7 @@ export function DomainSetupStepCard({
         <div className="min-w-0 flex-1 space-y-3">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium text-muted-foreground">
-                {index}.
-              </span>
+              <span className="text-xs font-medium text-muted-foreground">{index}.</span>
               <p className="text-sm font-semibold">{title}</p>
               <Badge
                 variant={actor === 'platform' ? 'default' : 'secondary'}
@@ -56,10 +54,7 @@ export function DomainSetupStepCard({
                 {actorLabel}
               </Badge>
               {done ? (
-                <Badge
-                  variant="outline"
-                  className="border-green-600 text-green-700"
-                >
+                <Badge variant="outline" className="border-green-600 text-green-700">
                   ✓
                 </Badge>
               ) : null}
@@ -79,7 +74,7 @@ export function DomainSetupBlank({
   value,
   onChange,
   placeholder,
-  dir = 'ltr'
+  dir = 'ltr',
 }: {
   id: string;
   label: string;
@@ -108,7 +103,7 @@ export function DomainSetupCheckButton({
   loading,
   disabled,
   onClick,
-  done
+  done,
 }: {
   label: string;
   loading?: boolean;

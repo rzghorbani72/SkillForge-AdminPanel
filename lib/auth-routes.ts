@@ -3,7 +3,7 @@ const AUTH_PAGE_PREFIXES = [
   '/register',
   '/forget-password',
   '/admin-login',
-  '/admin-forget-password'
+  '/admin-forget-password',
 ] as const;
 
 export function isAuthPagePath(path: string): boolean {

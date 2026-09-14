@@ -37,15 +37,9 @@ const useProducts = (): UseProductsReturn => {
     return products.filter((product) => {
       const titleMatch = product.title?.toLowerCase().includes(term);
       const slugMatch = product.slug?.toLowerCase().includes(term);
-      const descriptionMatch = product.description
-        ?.toLowerCase()
-        .includes(term);
-      const shortDescriptionMatch = product.short_description
-        ?.toLowerCase()
-        .includes(term);
-      const categoryMatch = (product as any)?.category?.name
-        ?.toLowerCase()
-        .includes(term);
+      const descriptionMatch = product.description?.toLowerCase().includes(term);
+      const shortDescriptionMatch = product.short_description?.toLowerCase().includes(term);
+      const categoryMatch = (product as any)?.category?.name?.toLowerCase().includes(term);
       const skuMatch = product.sku?.toLowerCase().includes(term);
 
       return (
@@ -80,9 +74,7 @@ const useProducts = (): UseProductsReturn => {
 
       if (selectedAcademy && nextProducts.length > 0) {
         nextProducts = nextProducts.filter((p) =>
-          (p as any).academy_id
-            ? (p as any).academy_id === selectedAcademy.id
-            : true
+          (p as any).academy_id ? (p as any).academy_id === selectedAcademy.id : true,
         );
       }
 
@@ -108,9 +100,7 @@ const useProducts = (): UseProductsReturn => {
     try {
       const response = await apiClient.deleteProduct(product.id);
       if (response && response.status === 200) {
-        toast.success(
-          (response.data as any).message || 'Product deleted successfully'
-        );
+        toast.success((response.data as any).message || 'Product deleted successfully');
         fetchProducts();
       } else {
         toast.error(tNow('toasts.productDeleteFailed'));
@@ -121,10 +111,7 @@ const useProducts = (): UseProductsReturn => {
     }
   };
 
-  const handleDeleteProduct = useDebouncedCallback(
-    handleDeleteProductHandler,
-    500
-  );
+  const handleDeleteProduct = useDebouncedCallback(handleDeleteProductHandler, 500);
 
   return {
     products: filteredProducts,
@@ -134,7 +121,7 @@ const useProducts = (): UseProductsReturn => {
     setSearchTerm,
     handleViewProduct,
     handleEditProduct,
-    handleDeleteProduct
+    handleDeleteProduct,
   };
 };
 

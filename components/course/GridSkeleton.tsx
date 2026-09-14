@@ -2,10 +2,7 @@ import { COURSE_CARD_GRID_COLUMNS } from './courseUtils';
 
 export function GridSkeleton() {
   return (
-    <div
-      className="grid gap-5"
-      style={{ gridTemplateColumns: COURSE_CARD_GRID_COLUMNS }}
-    >
+    <div className="grid gap-5" style={{ gridTemplateColumns: COURSE_CARD_GRID_COLUMNS }}>
       {[...Array(6)].map((_, i) => (
         <div
           key={i}

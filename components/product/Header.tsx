@@ -18,9 +18,7 @@ export default function Header() {
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              {t('products.title')}
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('products.title')}</h1>
             <Badge
               variant="secondary"
               className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"

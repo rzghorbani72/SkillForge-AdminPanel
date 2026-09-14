@@ -33,15 +33,11 @@ export interface ResourceAccessControl {
   userPermissions: string[];
 }
 
-function buildUserState(
-  user: NonNullable<ReturnType<typeof useAuthUser>['user']>
-): UserState {
+function buildUserState(user: NonNullable<ReturnType<typeof useAuthUser>['user']>): UserState {
   const normalizedRole = user.role.toUpperCase();
   const permissions = [
     ...user.granularPermissions,
-    ...(user.profile?.role === 'MANAGER'
-      ? ['manage_courses', 'manage_content']
-      : [])
+    ...(user.profile?.role === 'MANAGER' ? ['manage_courses', 'manage_content'] : []),
   ];
 
   return {
@@ -52,7 +48,7 @@ function buildUserState(
     is_manager: normalizedRole === 'MANAGER',
     is_teacher: normalizedRole === 'TEACHER',
     is_student: normalizedRole === 'STUDENT',
-    permissions
+    permissions,
   };
 }
 
@@ -67,7 +63,7 @@ export function useAccessControl() {
       if (userState.is_admin) return true;
       return userState.permissions.includes(permission);
     },
-    [userState]
+    [userState],
   );
 
   const hasRole = useCallback(
@@ -75,34 +71,22 @@ export function useAccessControl() {
       if (!userState) return false;
       return userState.role === role.toUpperCase();
     },
-    [userState]
+    [userState],
   );
 
-  const isAdmin = useCallback(
-    (): boolean => userState?.is_admin ?? false,
-    [userState]
-  );
-  const isManager = useCallback(
-    (): boolean => userState?.is_manager ?? false,
-    [userState]
-  );
-  const isTeacher = useCallback(
-    (): boolean => userState?.is_teacher ?? false,
-    [userState]
-  );
-  const isStudent = useCallback(
-    (): boolean => userState?.is_student ?? false,
-    [userState]
-  );
+  const isAdmin = useCallback((): boolean => userState?.is_admin ?? false, [userState]);
+  const isManager = useCallback((): boolean => userState?.is_manager ?? false, [userState]);
+  const isTeacher = useCallback((): boolean => userState?.is_teacher ?? false, [userState]);
+  const isStudent = useCallback((): boolean => userState?.is_student ?? false, [userState]);
 
   const canManageCourses = useCallback(
     (): boolean => hasPermission('manage_courses') || isAdmin() || isManager(),
-    [hasPermission, isAdmin, isManager]
+    [hasPermission, isAdmin, isManager],
   );
 
   const canManageContent = useCallback(
     (): boolean => hasPermission('manage_content') || isAdmin() || isManager(),
-    [hasPermission, isAdmin, isManager]
+    [hasPermission, isAdmin, isManager],
   );
 
   const canModifyResource = useCallback(
@@ -113,28 +97,25 @@ export function useAccessControl() {
       if (isTeacher() && resourceOwnerId === userState.user_id) return true;
       return false;
     },
-    [userState, isAdmin, isManager, isTeacher]
+    [userState, isAdmin, isManager, isTeacher],
   );
 
   const canDeleteResource = useCallback(
     (resourceOwnerId: string, resourceStoreId?: string): boolean =>
       canModifyResource(resourceOwnerId, resourceStoreId),
-    [canModifyResource]
+    [canModifyResource],
   );
 
   const canViewResource = useCallback(
     (resourceStoreId?: string): boolean => {
       if (!userState) return false;
       if (isAdmin()) return true;
-      if (
-        (isManager() || isTeacher()) &&
-        resourceStoreId === userState.academy_id
-      ) {
+      if ((isManager() || isTeacher()) && resourceStoreId === userState.academy_id) {
         return true;
       }
       return false;
     },
-    [userState, isAdmin, isManager, isTeacher]
+    [userState, isAdmin, isManager, isTeacher],
   );
 
   const checkResourceAccess = useCallback(
@@ -150,7 +131,7 @@ export function useAccessControl() {
           canView: resource.access_control.can_view,
           isOwner: resource.access_control.is_owner,
           userRole: resource.access_control.user_role,
-          userPermissions: resource.access_control.user_permissions
+          userPermissions: resource.access_control.user_permissions,
         };
       }
 
@@ -163,10 +144,10 @@ export function useAccessControl() {
         canView: canViewResource(academyId),
         isOwner: ownerId === userState?.user_id,
         userRole: userState?.role || '',
-        userPermissions: userState?.permissions || []
+        userPermissions: userState?.permissions || [],
       };
     },
-    [canModifyResource, canDeleteResource, canViewResource, userState]
+    [canModifyResource, canDeleteResource, canViewResource, userState],
   );
 
   const requirePermission = useCallback(
@@ -178,7 +159,7 @@ export function useAccessControl() {
       }
       return true;
     },
-    [hasPermission, router]
+    [hasPermission, router],
   );
 
   const requireRole = useCallback(
@@ -190,7 +171,7 @@ export function useAccessControl() {
       }
       return true;
     },
-    [hasRole, router]
+    [hasRole, router],
   );
 
   const requireResourceAccess = useCallback(
@@ -201,7 +182,7 @@ export function useAccessControl() {
         access_control?: AccessControl;
       },
       action: 'view' | 'modify' | 'delete' = 'view',
-      redirectTo: string = '/dashboard'
+      redirectTo: string = '/dashboard',
     ) => {
       const access = checkResourceAccess(resource);
       const allowed =
@@ -218,7 +199,7 @@ export function useAccessControl() {
       }
       return true;
     },
-    [checkResourceAccess, router]
+    [checkResourceAccess, router],
   );
 
   return {
@@ -240,6 +221,6 @@ export function useAccessControl() {
     requirePermission,
     requireRole,
     requireResourceAccess,
-    refetch
+    refetch,
   };
 }

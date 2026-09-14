@@ -11,14 +11,14 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { apiClient } from '@/lib/api';
@@ -38,20 +38,14 @@ type PromoteStaffDialogProps = {
   onSuccess?: () => void;
 };
 
-export function PromoteStaffDialog({
-  open,
-  onOpenChange,
-  onSuccess
-}: PromoteStaffDialogProps) {
+export function PromoteStaffDialog({ open, onOpenChange, onSuccess }: PromoteStaffDialogProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const canAssignAdmin = isPlatformOwner(user);
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<StaffRole>(
-    canAssignAdmin ? 'ADMIN' : 'SUPPORT'
-  );
+  const [role, setRole] = useState<StaffRole>(canAssignAdmin ? 'ADMIN' : 'SUPPORT');
   const [lookup, setLookup] = useState<PlatformStaffLookup | null>(null);
   const [saving, setSaving] = useState(false);
   const debouncedPhone = useDebouncedValue(phone, 400);
@@ -65,8 +59,7 @@ export function PromoteStaffDialog({
     let active = true;
     void (async () => {
       try {
-        const data =
-          await apiClient.lookupPlatformStaffCandidate(debouncedPhone);
+        const data = await apiClient.lookupPlatformStaffCandidate(debouncedPhone);
         if (active) {
           setLookup(data);
           if (data.found && data.full_name) setName(data.full_name);
@@ -102,7 +95,7 @@ export function PromoteStaffDialog({
         phone_number: phone,
         platform_role: role,
         password,
-        name: name.trim() || undefined
+        name: name.trim() || undefined,
       });
       ErrorHandler.showSuccess(t('platformUsers.promoted'));
       reset();
@@ -126,9 +119,7 @@ export function PromoteStaffDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{t('platformUsers.promoteTitle')}</DialogTitle>
-          <DialogDescription>
-            {t('platformUsers.promoteDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('platformUsers.promoteDescription')}</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <PhoneInput
@@ -138,44 +129,27 @@ export function PromoteStaffDialog({
             onChange={setPhone}
           />
           {lookup && !lookup.found && (
-            <p className="text-xs text-destructive">
-              {t('platformUsers.notRegistered')}
-            </p>
+            <p className="text-xs text-destructive">{t('platformUsers.notRegistered')}</p>
           )}
           {lookup?.already_staff && (
-            <p className="text-xs text-destructive">
-              {t('platformUsers.alreadyStaff')}
-            </p>
+            <p className="text-xs text-destructive">{t('platformUsers.alreadyStaff')}</p>
           )}
           <div className="space-y-1.5">
             <Label htmlFor="promote-name">{t('admins.name')}</Label>
-            <Input
-              id="promote-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input id="promote-name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-1.5">
             <Label>{t('admins.platformRole')}</Label>
-            <Select
-              value={role}
-              onValueChange={(value) => setRole(value as StaffRole)}
-            >
+            <Select value={role} onValueChange={(value) => setRole(value as StaffRole)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {canAssignAdmin && (
-                  <SelectItem value="ADMIN">
-                    {t('admins.platformStaff.ADMIN')}
-                  </SelectItem>
+                  <SelectItem value="ADMIN">{t('admins.platformStaff.ADMIN')}</SelectItem>
                 )}
-                <SelectItem value="FINANCE">
-                  {t('admins.platformStaff.FINANCE')}
-                </SelectItem>
-                <SelectItem value="SUPPORT">
-                  {t('admins.platformStaff.SUPPORT')}
-                </SelectItem>
+                <SelectItem value="FINANCE">{t('admins.platformStaff.FINANCE')}</SelectItem>
+                <SelectItem value="SUPPORT">{t('admins.platformStaff.SUPPORT')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

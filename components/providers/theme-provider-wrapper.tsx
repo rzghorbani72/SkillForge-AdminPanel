@@ -3,11 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 
-export function ThemeProviderWrapper({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export function ThemeProviderWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

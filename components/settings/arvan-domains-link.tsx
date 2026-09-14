@@ -8,11 +8,7 @@ const ARVAN_LINK_LABEL = 'panel.arvancloud.ir/cdn/domains';
 /**
  * Clickable Arvan domains panel address (opens in a new tab).
  */
-export function ArvanDomainsLink({
-  className
-}: {
-  className?: string;
-}) {
+export function ArvanDomainsLink({ className }: { className?: string }) {
   return (
     <a
       href={ARVAN_DOMAINS_PANEL_URL}
@@ -21,7 +17,7 @@ export function ArvanDomainsLink({
       dir="ltr"
       className={cn(
         'font-mono text-primary underline underline-offset-2 hover:text-primary/80',
-        className
+        className,
       )}
     >
       {ARVAN_LINK_LABEL}

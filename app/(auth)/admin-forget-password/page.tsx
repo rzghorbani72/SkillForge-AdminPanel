@@ -54,11 +54,7 @@ function AdminForgetPasswordBody() {
   }
 
   return (
-    <AuthShell
-      activeTab="forgot"
-      title={t('forgotPassword.title')}
-      subtitle={subtitle}
-    >
+    <AuthShell activeTab="forgot" title={t('forgotPassword.title')} subtitle={subtitle}>
       {step === 'identifier' && <IdentifierStep fp={fp} />}
 
       {step === 'password' && <PasswordStep fp={fp} />}
@@ -73,10 +69,7 @@ function AdminForgetPasswordBody() {
 
       {step !== 'success' && (
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          <Link
-            href="/admin-login"
-            className="font-semibold text-primary hover:underline"
-          >
+          <Link href="/admin-login" className="font-semibold text-primary hover:underline">
             {t('forgotPassword.backToLogin')}
           </Link>
         </p>

@@ -12,30 +12,26 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { User, UserResetMode } from '@/types/api';
 
-const MODES: readonly UserResetMode[] = [
-  'CREDENTIALS',
-  'LEARNING_RECORD',
-  'ERASE'
-];
+const MODES: readonly UserResetMode[] = ['CREDENTIALS', 'LEARNING_RECORD', 'ERASE'];
 
 const MODE_KEY: Record<UserResetMode, string> = {
   CREDENTIALS: 'Credentials',
   LEARNING_RECORD: 'LearningRecord',
-  ERASE: 'Erase'
+  ERASE: 'Erase',
 };
 
 export function ResetUserDialog({
   open,
   onOpenChange,
   target,
-  onDone
+  onDone,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -67,7 +63,7 @@ export function ResetUserDialog({
     try {
       await apiClient.resetPlatformUser(userId, {
         mode,
-        ...(destructive ? { confirm_identifier: confirmIdentifier.trim() } : {})
+        ...(destructive ? { confirm_identifier: confirmIdentifier.trim() } : {}),
       });
       ErrorHandler.showSuccess(t('accountActions.reset_ok'));
       onOpenChange(false);
@@ -84,9 +80,7 @@ export function ResetUserDialog({
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t('accountActions.resetTitle')}</DialogTitle>
-          <DialogDescription>
-            {t('accountActions.resetDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('accountActions.resetDescription')}</DialogDescription>
         </DialogHeader>
 
         <p className="rounded-lg bg-muted px-3 py-2 text-sm font-medium">
@@ -104,11 +98,7 @@ export function ResetUserDialog({
               htmlFor={`reset-${value}`}
               className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[:checked]:border-primary"
             >
-              <RadioGroupItem
-                id={`reset-${value}`}
-                value={value}
-                className="mt-1"
-              />
+              <RadioGroupItem id={`reset-${value}`} value={value} className="mt-1" />
               <span className="space-y-1">
                 <span className="block text-sm font-medium">
                   {t(`accountActions.mode${MODE_KEY[value]}`)}
@@ -127,9 +117,7 @@ export function ResetUserDialog({
               <AlertTriangle className="h-4 w-4" />
               {t('accountActions.irreversible')}
             </p>
-            <Label htmlFor="reset-confirm">
-              {t('accountActions.confirmIdentifierLabel')}
-            </Label>
+            <Label htmlFor="reset-confirm">{t('accountActions.confirmIdentifierLabel')}</Label>
             <Input
               id="reset-confirm"
               dir="ltr"

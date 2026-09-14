@@ -14,14 +14,12 @@ const PROTECTED = [
   '/platform/academies',
   '/platform/costs',
   '/support-access-logs',
-  '/settings'
+  '/settings',
 ];
 
 test.describe('AdminPanel auth guard (smoke)', () => {
   for (const route of PROTECTED) {
-    test(`unauthenticated ${route} → redirected to /login`, async ({
-      page
-    }) => {
+    test(`unauthenticated ${route} → redirected to /login`, async ({ page }) => {
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       await expect(page).toHaveURL(/\/login/, { timeout: 10_000 });
     });

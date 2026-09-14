@@ -18,8 +18,7 @@ type DocMeta = {
   mime_type?: string | null;
 };
 
-const DOCUMENT_ACCEPT =
-  '.pdf,.epub,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.zip,.rar,.tar,.gz,.7z';
+const DOCUMENT_ACCEPT = '.pdf,.epub,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.zip,.rar,.tar,.gz,.7z';
 
 function previewUrlForDocumentId(id: number): string {
   return `${getBrowserApiBaseUrl()}/files/preview/${id}`;
@@ -51,7 +50,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
   onSuccess,
   onClear,
   disabled = false,
-  className
+  className,
 }) => {
   const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
@@ -84,7 +83,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
     try {
       const res = await apiClient.uploadDocument(file, {
         title: lessonTitle?.trim() || file.name,
-        description: descriptionFallback ?? file.name
+        description: descriptionFallback ?? file.name,
       });
       const doc = parseDocumentFromUploadResponse(res);
       const id = doc?.id;
@@ -96,7 +95,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
       setMeta({
         id,
         title: doc?.title ?? file.name,
-        mime_type: doc?.mime_type
+        mime_type: doc?.mime_type,
       });
       toast.success(tNow('toasts.documentUploaded'));
     } catch (err) {
@@ -133,9 +132,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
           <div className="flex flex-col gap-2 text-sm">
             <div className="flex items-center gap-2 font-medium">
               <FileText className="h-4 w-4 shrink-0" />
-              <span className="truncate">
-                {meta?.title ?? t('media.documentPreviewFallback')}
-              </span>
+              <span className="truncate">{meta?.title ?? t('media.documentPreviewFallback')}</span>
             </div>
             <Link
               href={previewUrlForDocumentId(idNum)}
@@ -146,9 +143,7 @@ const DocumentUploadPreview: React.FC<DocumentUploadPreviewProps> = ({
             >
               {t('media.openPreview')}
             </Link>
-            <p className="text-xs text-muted-foreground">
-              {t('media.documentFileHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('media.documentFileHint')}</p>
           </div>
         ) : null
       }

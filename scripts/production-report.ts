@@ -28,7 +28,7 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[36m',
   bold: '\x1b[1m',
-  dim: '\x1b[2m'
+  dim: '\x1b[2m',
 };
 
 interface AspectScore {
@@ -73,50 +73,48 @@ class AdminPanelProductionReport {
       {
         name: 'Security',
         score: this.checkSecurityScore(),
-        status: this.getStatus(this.checkSecurityScore())
+        status: this.getStatus(this.checkSecurityScore()),
       },
       {
         name: 'Code Quality',
         score: this.checkCodeQualityScore(),
-        status: this.getStatus(this.checkCodeQualityScore())
+        status: this.getStatus(this.checkCodeQualityScore()),
       },
       {
         name: 'Testing',
         score: this.checkTestingScore(),
-        status: this.getStatus(this.checkTestingScore())
+        status: this.getStatus(this.checkTestingScore()),
       },
       {
         name: 'Performance',
         score: this.checkPerformanceScore(),
-        status: this.getStatus(this.checkPerformanceScore())
+        status: this.getStatus(this.checkPerformanceScore()),
       },
       {
         name: 'State Management',
         score: this.checkStateManagementScore(),
-        status: this.getStatus(this.checkStateManagementScore())
+        status: this.getStatus(this.checkStateManagementScore()),
       },
       {
         name: 'Error Handling',
         score: this.checkErrorHandlingScore(),
-        status: this.getStatus(this.checkErrorHandlingScore())
+        status: this.getStatus(this.checkErrorHandlingScore()),
       },
       {
         name: 'Logging',
         score: this.checkLoggingScore(),
-        status: this.getStatus(this.checkLoggingScore())
-      }
+        status: this.getStatus(this.checkLoggingScore()),
+      },
     ];
 
-    const overallScore = Math.round(
-      aspects.reduce((sum, a) => sum + a.score, 0) / aspects.length
-    );
+    const overallScore = Math.round(aspects.reduce((sum, a) => sum + a.score, 0) / aspects.length);
 
     return {
       name: 'AdminPanel (Next.js Frontend)',
       path: 'AdminPanel/',
       overallScore,
       aspects,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -246,10 +244,7 @@ class AdminPanelProductionReport {
     const nextConfigPath = path.join(this.rootDir, 'next.config.js');
     if (fs.existsSync(nextConfigPath)) {
       const config = fs.readFileSync(nextConfigPath, 'utf-8');
-      if (
-        config.includes('Strict-Transport-Security') ||
-        config.includes('HSTS')
-      ) {
+      if (config.includes('Strict-Transport-Security') || config.includes('HSTS')) {
         score += 0.2;
       }
     }
@@ -317,9 +312,7 @@ class AdminPanelProductionReport {
     let score = 0.2;
 
     // Check 1: Security requirements in design
-    const hasSecurityDocs = fs.existsSync(
-      path.join(this.rootDir, 'docs', 'security.md')
-    );
+    const hasSecurityDocs = fs.existsSync(path.join(this.rootDir, 'docs', 'security.md'));
     if (hasSecurityDocs) score += 0.2;
 
     // Check 2: Threat modeling (evidence in code structure)
@@ -328,9 +321,7 @@ class AdminPanelProductionReport {
       const dirCount = fs
         .readdirSync(appDir)
         .filter(
-          (f) =>
-            !f.startsWith('.') &&
-            fs.statSync(path.join(appDir, f)).isDirectory()
+          (f) => !f.startsWith('.') && fs.statSync(path.join(appDir, f)).isDirectory(),
         ).length;
       if (dirCount > 3) score += 0.2; // Well-organized security domains
     }
@@ -404,9 +395,7 @@ class AdminPanelProductionReport {
     // Check 2: Output encoding
     const appDir = path.join(this.rootDir, 'app');
     if (fs.existsSync(appDir)) {
-      const files = this.getFilesRecursive(appDir).filter((f) =>
-        f.endsWith('.tsx')
-      );
+      const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
       let safeRendering = 0;
       for (const file of files.slice(0, 10)) {
         const content = fs.readFileSync(file, 'utf-8');
@@ -449,19 +438,14 @@ class AdminPanelProductionReport {
     }
 
     // Check 3: Secure CI/CD
-    const hasGitHubActions = fs.existsSync(
-      path.join(this.rootDir, '.github', 'workflows')
-    );
+    const hasGitHubActions = fs.existsSync(path.join(this.rootDir, '.github', 'workflows'));
     if (hasGitHubActions) {
       score += 0.25;
     }
 
     // Check 4: Version control security
     if (fs.existsSync(path.join(this.rootDir, '.gitignore'))) {
-      const gitignore = fs.readFileSync(
-        path.join(this.rootDir, '.gitignore'),
-        'utf-8'
-      );
+      const gitignore = fs.readFileSync(path.join(this.rootDir, '.gitignore'), 'utf-8');
       if (gitignore.includes('.env')) {
         score += 0.25;
       }
@@ -479,10 +463,7 @@ class AdminPanelProductionReport {
 
     // Check 2: Error monitoring (Sentry, etc.)
     const packageJson = this.readPackageJson();
-    if (
-      packageJson.dependencies['@sentry/react'] ||
-      packageJson.dependencies['@sentry/nextjs']
-    ) {
+    if (packageJson.dependencies['@sentry/react'] || packageJson.dependencies['@sentry/nextjs']) {
       score += 0.25;
     }
 
@@ -542,9 +523,7 @@ class AdminPanelProductionReport {
     if (fs.existsSync(proxyPath)) {
       const content = fs.readFileSync(proxyPath, 'utf-8');
       return (
-        content.includes('auth') ||
-        content.includes('protected') ||
-        content.includes('matcher')
+        content.includes('auth') || content.includes('protected') || content.includes('matcher')
       );
     }
 
@@ -553,17 +532,14 @@ class AdminPanelProductionReport {
 
   private checkEnvironmentVariableManagement(): boolean {
     // Check 1: .env.example exists (documentation of required vars)
-    const envExampleExists = fs.existsSync(
-      path.join(this.rootDir, '.env.example')
-    );
+    const envExampleExists = fs.existsSync(path.join(this.rootDir, '.env.example'));
 
     // Check 2: .env.local in .gitignore
     const gitignorePath = path.join(this.rootDir, '.gitignore');
     let envProtected = false;
     if (fs.existsSync(gitignorePath)) {
       const gitignore = fs.readFileSync(gitignorePath, 'utf-8');
-      envProtected =
-        gitignore.includes('.env') || gitignore.includes('.env.local');
+      envProtected = gitignore.includes('.env') || gitignore.includes('.env.local');
     }
 
     // Check 3: Environment validation (using zod or similar)
@@ -601,9 +577,7 @@ class AdminPanelProductionReport {
     // Check usage in components/pages
     const appDir = path.join(this.rootDir, 'app');
     if (fs.existsSync(appDir)) {
-      const files = this.getFilesRecursive(appDir).filter((f) =>
-        f.endsWith('.tsx')
-      );
+      const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
       for (const file of files.slice(0, 15)) {
         const content = fs.readFileSync(file, 'utf-8');
         if (
@@ -665,13 +639,10 @@ class AdminPanelProductionReport {
 
     // Check for DOMPurify or similar
     const hasSanitizer =
-      packageJson.dependencies['dompurify'] ||
-      packageJson.dependencies['sanitize-html'];
+      packageJson.dependencies['dompurify'] || packageJson.dependencies['sanitize-html'];
 
     let usesNext = false;
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     for (const file of files.slice(0, 10)) {
       const content = fs.readFileSync(file, 'utf-8');
       // Next.js auto-escapes JSX, check for dangerouslySetInnerHTML (should be avoided)
@@ -688,15 +659,12 @@ class AdminPanelProductionReport {
     const appDir = path.join(this.rootDir, 'app');
     if (!fs.existsSync(appDir)) return false;
 
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let dangerousCount = 0;
 
     for (const file of files.slice(0, 15)) {
       const content = fs.readFileSync(file, 'utf-8');
-      dangerousCount += (content.match(/dangerouslySetInnerHTML/g) || [])
-        .length;
+      dangerousCount += (content.match(/dangerouslySetInnerHTML/g) || []).length;
     }
 
     return dangerousCount > 3;
@@ -715,15 +683,10 @@ class AdminPanelProductionReport {
       packageJson.dependencies['rate-limiter'];
 
     let hasMethodValidation = false;
-    const files = this.getFilesRecursive(apiDir).filter((f) =>
-      f.endsWith('.ts')
-    );
+    const files = this.getFilesRecursive(apiDir).filter((f) => f.endsWith('.ts'));
     for (const file of files.slice(0, 10)) {
       const content = fs.readFileSync(file, 'utf-8');
-      if (
-        content.includes('req.method') ||
-        content.includes('if (req.method ===')
-      ) {
+      if (content.includes('req.method') || content.includes('if (req.method ===')) {
         hasMethodValidation = true;
         break;
       }
@@ -739,11 +702,11 @@ class AdminPanelProductionReport {
     const secretPatterns = [
       /api[_-]?key\s*=\s*['"][^'"]{10,}['"]/gi,
       /password\s*=\s*['"][^'"]{1,}['"]/gi,
-      /token\s*=\s*['"][^'"]{20,}['"]/gi
+      /token\s*=\s*['"][^'"]{20,}['"]/gi,
     ];
 
     const files = this.getFilesRecursive(appDir).filter(
-      (f) => f.endsWith('.tsx') || f.endsWith('.ts')
+      (f) => f.endsWith('.tsx') || f.endsWith('.ts'),
     );
     for (const file of files.slice(0, 20)) {
       const content = fs.readFileSync(file, 'utf-8');
@@ -813,9 +776,7 @@ class AdminPanelProductionReport {
     // Check for 'any' usage in app code
     const appDir = path.join(this.rootDir, 'app');
     if (fs.existsSync(appDir)) {
-      const files = this.getFilesRecursive(appDir).filter((f) =>
-        f.endsWith('.tsx')
-      );
+      const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
       let anyCount = 0;
       for (const file of files.slice(0, 20)) {
         const content = fs.readFileSync(file, 'utf-8');
@@ -832,9 +793,7 @@ class AdminPanelProductionReport {
     const appDir = path.join(this.rootDir, 'app');
     if (!fs.existsSync(appDir)) return 0;
 
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let violations = 0;
     let totalChecks = 0;
 
@@ -863,15 +822,7 @@ class AdminPanelProductionReport {
   }
 
   private checkCodeOrganization(): number {
-    const rootDirs = [
-      'app',
-      'components',
-      'hooks',
-      'lib',
-      'types',
-      'utils',
-      'styles'
-    ];
+    const rootDirs = ['app', 'components', 'hooks', 'lib', 'types', 'utils', 'styles'];
 
     let existingDirs = 0;
     for (const dir of rootDirs) {
@@ -898,9 +849,7 @@ class AdminPanelProductionReport {
     const appDir = path.join(this.rootDir, 'app');
     if (!fs.existsSync(appDir)) return 0;
 
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let complexFunctions = 0;
     let totalFunctions = 0;
 
@@ -908,8 +857,7 @@ class AdminPanelProductionReport {
       const content = fs.readFileSync(file, 'utf-8');
 
       // Count functions
-      const functionMatches =
-        content.match(/function\s+\w+|const\s+\w+\s*=\s*\(/g) || [];
+      const functionMatches = content.match(/function\s+\w+|const\s+\w+\s*=\s*\(/g) || [];
       totalFunctions += functionMatches.length;
 
       // Count cyclomatic complexity indicators
@@ -987,9 +935,7 @@ class AdminPanelProductionReport {
     let solidScore = 0;
 
     // S - Single Responsibility: One component per file (check file size)
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let appropriateSize = 0;
     for (const file of files.slice(0, 15)) {
       const stats = fs.statSync(file);
@@ -1012,10 +958,7 @@ class AdminPanelProductionReport {
     let hasTypedProps = 0;
     for (const file of files.slice(0, 10)) {
       const content = fs.readFileSync(file, 'utf-8');
-      if (
-        content.match(/interface\s+\w+Props/) ||
-        content.match(/type\s+\w+Props/)
-      ) {
+      if (content.match(/interface\s+\w+Props/) || content.match(/type\s+\w+Props/)) {
         hasTypedProps++;
       }
     }
@@ -1024,14 +967,9 @@ class AdminPanelProductionReport {
     // I - Interface Segregation: Small focused components
     const avgComponentSize =
       files.length > 0
-        ? files.reduce((sum, f) => sum + fs.statSync(f).size, 0) /
-          files.length /
-          1024
+        ? files.reduce((sum, f) => sum + fs.statSync(f).size, 0) / files.length / 1024
         : 5;
-    solidScore +=
-      avgComponentSize < 8
-        ? 0.2
-        : Math.max(0, 0.2 - (avgComponentSize - 8) * 0.02);
+    solidScore += avgComponentSize < 8 ? 0.2 : Math.max(0, 0.2 - (avgComponentSize - 8) * 0.02);
 
     // D - Dependency Inversion: Using hooks and composition
     let usesDI = 0;
@@ -1089,19 +1027,15 @@ class AdminPanelProductionReport {
     if (!hasTestFramework) return 0.2;
 
     // Count test files
-    const testCount = this.countFilesMatching(
-      /\.test\.(tsx?|jsx?)$|__tests__\/.*\.(tsx?|jsx?)$/
-    );
+    const testCount = this.countFilesMatching(/\.test\.(tsx?|jsx?)$|__tests__\/.*\.(tsx?|jsx?)$/);
 
     // Rough estimation: expect ~1 test file per 2-3 source files
     const appDir = path.join(this.rootDir, 'app');
     const componentsDir = path.join(this.rootDir, 'components');
 
     let sourceFiles = 0;
-    if (fs.existsSync(appDir))
-      sourceFiles += this.getFilesRecursive(appDir).length;
-    if (fs.existsSync(componentsDir))
-      sourceFiles += this.getFilesRecursive(componentsDir).length;
+    if (fs.existsSync(appDir)) sourceFiles += this.getFilesRecursive(appDir).length;
+    if (fs.existsSync(componentsDir)) sourceFiles += this.getFilesRecursive(componentsDir).length;
 
     const expectedTests = sourceFiles / 2.5;
     const coverage = Math.min(testCount / expectedTests, 1);
@@ -1115,8 +1049,7 @@ class AdminPanelProductionReport {
     // Check for primary framework
     const hasJest = packageJson.devDependencies?.jest;
     const hasVitest = packageJson.devDependencies?.vitest;
-    const hasTestingLibrary =
-      packageJson.devDependencies?.['@testing-library/react'];
+    const hasTestingLibrary = packageJson.devDependencies?.['@testing-library/react'];
 
     if (!hasJest && !hasVitest) return 0;
 
@@ -1159,8 +1092,7 @@ class AdminPanelProductionReport {
     // If only 'test' script, assume all tests in one
     if (
       packageJson.scripts?.test &&
-      Object.keys(packageJson.scripts).filter((k) => k.includes('test'))
-        .length === 1
+      Object.keys(packageJson.scripts).filter((k) => k.includes('test')).length === 1
     ) {
       score += 0.15;
     }
@@ -1169,9 +1101,9 @@ class AdminPanelProductionReport {
   }
 
   private checkTestQuality(): number {
-    const testFiles = this.getFilesRecursive(
-      path.join(this.rootDir, 'app')
-    ).filter((f) => f.endsWith('.test.tsx') || f.endsWith('.test.ts'));
+    const testFiles = this.getFilesRecursive(path.join(this.rootDir, 'app')).filter(
+      (f) => f.endsWith('.test.tsx') || f.endsWith('.test.ts'),
+    );
 
     if (testFiles.length === 0) return 0.1;
 
@@ -1184,13 +1116,10 @@ class AdminPanelProductionReport {
 
       // Good practices
       if (content.includes('describe')) qualityScore += 0.1;
-      if (content.includes('it(') || content.includes('test('))
-        qualityScore += 0.1;
+      if (content.includes('it(') || content.includes('test(')) qualityScore += 0.1;
       if (content.match(/expect\(/g)) qualityScore += 0.1;
-      if (content.includes('beforeEach') || content.includes('beforeAll'))
-        qualityScore += 0.1;
-      if (content.includes('jest.mock') || content.includes('vi.mock'))
-        qualityScore += 0.1;
+      if (content.includes('beforeEach') || content.includes('beforeAll')) qualityScore += 0.1;
+      if (content.includes('jest.mock') || content.includes('vi.mock')) qualityScore += 0.1;
     }
 
     if (totalTests === 0) return 0.1;
@@ -1202,8 +1131,7 @@ class AdminPanelProductionReport {
     const githubActionsPath = path.join(this.rootDir, '.github', 'workflows');
     if (fs.existsSync(githubActionsPath)) {
       const workflows = fs.readdirSync(githubActionsPath);
-      if (workflows.some((w) => w.includes('test') || w.includes('ci')))
-        return 1;
+      if (workflows.some((w) => w.includes('test') || w.includes('ci'))) return 1;
     }
 
     // Check for other CI configs
@@ -1264,13 +1192,8 @@ class AdminPanelProductionReport {
     const appLayoutPath = path.join(this.rootDir, 'app', 'layout.tsx');
     if (fs.existsSync(appLayoutPath)) {
       const content = fs.readFileSync(appLayoutPath, 'utf-8');
-      if (content.includes('preload') || content.includes('prefetch'))
-        score += 0.3;
-      if (
-        content.includes('<script') &&
-        !content.includes('async') &&
-        !content.includes('defer')
-      ) {
+      if (content.includes('preload') || content.includes('prefetch')) score += 0.3;
+      if (content.includes('<script') && !content.includes('async') && !content.includes('defer')) {
         // Render-blocking script found
         score -= 0.2;
       }
@@ -1279,9 +1202,7 @@ class AdminPanelProductionReport {
     // Check for next/font usage (optimized fonts)
     const appDir = path.join(this.rootDir, 'app');
     if (fs.existsSync(appDir)) {
-      const files = this.getFilesRecursive(appDir).filter((f) =>
-        f.endsWith('.tsx')
-      );
+      const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
       for (const file of files.slice(0, 5)) {
         const content = fs.readFileSync(file, 'utf-8');
         if (content.includes('next/font')) score += 0.4;
@@ -1299,9 +1220,7 @@ class AdminPanelProductionReport {
     const appDir = path.join(this.rootDir, 'app');
     if (!fs.existsSync(appDir)) return score;
 
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
 
     // Check for useMemo/useCallback (performance optimization)
     let hasPerformanceOptimizations = 0;
@@ -1338,9 +1257,7 @@ class AdminPanelProductionReport {
     if (!fs.existsSync(appDir)) return score;
 
     // Check for proper image dimensions
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let imagesWithDimensions = 0;
 
     for (const file of files.slice(0, 15)) {
@@ -1369,18 +1286,13 @@ class AdminPanelProductionReport {
     if (!fs.existsSync(appDir)) return 0;
 
     let score = 0;
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
 
     // Check for next/image usage
     let nextImageUsage = 0;
     for (const file of files.slice(0, 15)) {
       const content = fs.readFileSync(file, 'utf-8');
-      if (
-        content.includes('from "next/image"') ||
-        content.includes("from 'next/image'")
-      ) {
+      if (content.includes('from "next/image"') || content.includes("from 'next/image'")) {
         nextImageUsage++;
       }
     }
@@ -1398,10 +1310,7 @@ class AdminPanelProductionReport {
     // Check for lazy loading
     for (const file of files.slice(0, 15)) {
       const content = fs.readFileSync(file, 'utf-8');
-      if (
-        content.includes('loading="lazy"') ||
-        content.includes('priority={false}')
-      ) {
+      if (content.includes('loading="lazy"') || content.includes('priority={false}')) {
         score += 0.15;
         break;
       }
@@ -1424,9 +1333,7 @@ class AdminPanelProductionReport {
     if (!fs.existsSync(appDir)) return 0;
 
     let score = 0;
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
 
     // Check for dynamic imports
     let dynamicImports = 0;
@@ -1446,8 +1353,7 @@ class AdminPanelProductionReport {
     const nextConfigPath = path.join(this.rootDir, 'next.config.js');
     if (fs.existsSync(nextConfigPath)) {
       const config = fs.readFileSync(nextConfigPath, 'utf-8');
-      if (config.includes('swcMinify') || config.includes('compress'))
-        score += 0.2;
+      if (config.includes('swcMinify') || config.includes('compress')) score += 0.2;
       if (config.includes('experimental')) score += 0.1;
     }
 
@@ -1455,10 +1361,7 @@ class AdminPanelProductionReport {
     const tsconfigPath = path.join(this.rootDir, 'tsconfig.json');
     if (fs.existsSync(tsconfigPath)) {
       const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8'));
-      if (
-        tsconfig.compilerOptions?.baseUrl ||
-        tsconfig.compilerOptions?.paths
-      ) {
+      if (tsconfig.compilerOptions?.baseUrl || tsconfig.compilerOptions?.paths) {
         score += 0.15;
       }
     }
@@ -1473,10 +1376,7 @@ class AdminPanelProductionReport {
 
     // Check for build optimization dependencies
     if (packageJson.dependencies.sharp) score += 0.2;
-    if (
-      packageJson.dependencies['next-seo'] ||
-      packageJson.dependencies['react-helmet-async']
-    ) {
+    if (packageJson.dependencies['next-seo'] || packageJson.dependencies['react-helmet-async']) {
       score += 0.15;
     }
 
@@ -1490,10 +1390,7 @@ class AdminPanelProductionReport {
     }
 
     // Check for environmental monitoring
-    if (
-      packageJson.dependencies['@sentry/react'] ||
-      packageJson.dependencies['@sentry/nextjs']
-    ) {
+    if (packageJson.dependencies['@sentry/react'] || packageJson.dependencies['@sentry/nextjs']) {
       score += 0.15;
     }
 
@@ -1548,9 +1445,7 @@ class AdminPanelProductionReport {
     const appDir = path.join(this.rootDir, 'app');
     if (!fs.existsSync(appDir)) return 0;
 
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let contextUsage = 0;
 
     for (const file of files.slice(0, 15)) {
@@ -1580,9 +1475,7 @@ class AdminPanelProductionReport {
     // Fetch with useEffect (not recommended)
     const appDir = path.join(this.rootDir, 'app');
     if (fs.existsSync(appDir)) {
-      const files = this.getFilesRecursive(appDir).filter((f) =>
-        f.endsWith('.tsx')
-      );
+      const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
       let fetchInUseEffect = 0;
 
       for (const file of files.slice(0, 15)) {
@@ -1603,9 +1496,7 @@ class AdminPanelProductionReport {
     let score = 0;
 
     // Check for hooks directory
-    const hooksDir =
-      path.join(this.rootDir, 'hooks') ||
-      path.join(this.rootDir, 'app', 'hooks');
+    const hooksDir = path.join(this.rootDir, 'hooks') || path.join(this.rootDir, 'app', 'hooks');
     if (fs.existsSync(hooksDir)) score += 0.3;
 
     // Check for store/context directory
@@ -1613,21 +1504,14 @@ class AdminPanelProductionReport {
     if (fs.existsSync(libDir)) {
       const files = fs.readdirSync(libDir);
       if (
-        files.some(
-          (f) =>
-            f.includes('store') ||
-            f.includes('provider') ||
-            f.includes('context')
-        )
+        files.some((f) => f.includes('store') || f.includes('provider') || f.includes('context'))
       ) {
         score += 0.35;
       }
     }
 
     // Check for proper state separation
-    const storeDir =
-      path.join(this.rootDir, 'store') ||
-      path.join(this.rootDir, 'lib', 'store');
+    const storeDir = path.join(this.rootDir, 'store') || path.join(this.rootDir, 'lib', 'store');
     if (fs.existsSync(storeDir)) score += 0.35;
 
     return Math.min(score, 1);
@@ -1637,9 +1521,7 @@ class AdminPanelProductionReport {
     const appDir = path.join(this.rootDir, 'app');
     if (!fs.existsSync(appDir)) return 0;
 
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let immutablePatterns = 0;
 
     for (const file of files.slice(0, 15)) {
@@ -1712,9 +1594,7 @@ class AdminPanelProductionReport {
     if (!fs.existsSync(appDir)) return 0;
 
     let score = 0;
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
 
     // Next.js error.tsx are built-in error boundaries
     if (fs.existsSync(path.join(this.rootDir, 'app', 'error.tsx'))) {
@@ -1748,7 +1628,7 @@ class AdminPanelProductionReport {
     if (!fs.existsSync(appDir)) return 0.2;
 
     const files = this.getFilesRecursive(appDir).filter(
-      (f) => f.endsWith('.tsx') || f.endsWith('.ts')
+      (f) => f.endsWith('.tsx') || f.endsWith('.ts'),
     );
     let tryCatchCount = 0;
     let totalChecks = 0;
@@ -1771,10 +1651,7 @@ class AdminPanelProductionReport {
     const packageJson = this.readPackageJson();
 
     // Sentry for error tracking
-    if (
-      packageJson.dependencies['@sentry/react'] ||
-      packageJson.dependencies['@sentry/nextjs']
-    ) {
+    if (packageJson.dependencies['@sentry/react'] || packageJson.dependencies['@sentry/nextjs']) {
       return 0.8;
     }
 
@@ -1816,9 +1693,7 @@ class AdminPanelProductionReport {
     }
 
     // Check for user-facing error messages in components
-    const files = this.getFilesRecursive(appDir).filter((f) =>
-      f.endsWith('.tsx')
-    );
+    const files = this.getFilesRecursive(appDir).filter((f) => f.endsWith('.tsx'));
     let componentsWithErrorMsg = 0;
 
     for (const file of files.slice(0, 10)) {
@@ -1872,10 +1747,7 @@ class AdminPanelProductionReport {
     if (packageJson.dependencies.bunyan) return 0.9;
 
     // Other logging libraries
-    if (
-      packageJson.dependencies['log4js'] ||
-      packageJson.dependencies['loglevel']
-    ) {
+    if (packageJson.dependencies['log4js'] || packageJson.dependencies['loglevel']) {
       return 0.7;
     }
 
@@ -1899,17 +1771,14 @@ class AdminPanelProductionReport {
 
     // Check for structured logging patterns
     const files = this.getFilesRecursive(appDir).filter(
-      (f) => f.endsWith('.tsx') || f.endsWith('.ts')
+      (f) => f.endsWith('.tsx') || f.endsWith('.ts'),
     );
     let structuredLogs = 0;
 
     for (const file of files.slice(0, 15)) {
       const content = fs.readFileSync(file, 'utf-8');
       // Check for object-based logging
-      if (
-        content.match(/logger\.\w+\s*\(\s*\{/) ||
-        content.match(/console\.\w+\s*\(\s*\{/)
-      ) {
+      if (content.match(/logger\.\w+\s*\(\s*\{/) || content.match(/console\.\w+\s*\(\s*\{/)) {
         structuredLogs++;
       }
     }
@@ -1924,7 +1793,7 @@ class AdminPanelProductionReport {
     if (!fs.existsSync(appDir)) return 0.3;
 
     const files = this.getFilesRecursive(appDir).filter(
-      (f) => f.endsWith('.tsx') || f.endsWith('.ts')
+      (f) => f.endsWith('.tsx') || f.endsWith('.ts'),
     );
     let logLevelUsage = 0;
     const logLevels = ['debug', 'info', 'warn', 'error', 'fatal'];
@@ -1939,20 +1808,14 @@ class AdminPanelProductionReport {
       }
     }
 
-    return Math.min(
-      (logLevelUsage / Math.min(15, files.length)) * 0.8 + 0.2,
-      1
-    );
+    return Math.min((logLevelUsage / Math.min(15, files.length)) * 0.8 + 0.2, 1);
   }
 
   private checkLogAggregation(): number {
     const packageJson = this.readPackageJson();
 
     // Sentry includes logging
-    if (
-      packageJson.dependencies['@sentry/react'] ||
-      packageJson.dependencies['@sentry/nextjs']
-    ) {
+    if (packageJson.dependencies['@sentry/react'] || packageJson.dependencies['@sentry/nextjs']) {
       return 0.7;
     }
 
@@ -1965,10 +1828,7 @@ class AdminPanelProductionReport {
     }
 
     // Datadog or similar services
-    if (
-      packageJson.dependencies['dd-trace'] ||
-      packageJson.dependencies['@datadog/browser-rum']
-    ) {
+    if (packageJson.dependencies['dd-trace'] || packageJson.dependencies['@datadog/browser-rum']) {
       return 0.7;
     }
 
@@ -1981,10 +1841,7 @@ class AdminPanelProductionReport {
 
     if (fs.existsSync(nextConfigPath)) {
       const content = fs.readFileSync(nextConfigPath, 'utf-8');
-      if (
-        content.includes('process.env.NODE_ENV') ||
-        content.includes('NODE_ENV')
-      ) {
+      if (content.includes('process.env.NODE_ENV') || content.includes('NODE_ENV')) {
         score += 0.5;
       }
     }
@@ -2011,10 +1868,7 @@ class AdminPanelProductionReport {
     this.log(`\n${'═'.repeat(80)}`, colors.blue);
     this.log(`\n${report.name}`, colors.bold);
     this.log(`Path: ${report.path}`, colors.dim);
-    this.log(
-      `Generated: ${new Date(report.timestamp).toLocaleString()}`,
-      colors.dim
-    );
+    this.log(`Generated: ${new Date(report.timestamp).toLocaleString()}`, colors.dim);
 
     this.log(`\n${'─'.repeat(80)}`, colors.blue);
     this.log('\nProduction Readiness by Aspect:\n', colors.bold);
@@ -2025,12 +1879,11 @@ class AdminPanelProductionReport {
       const color = this.getStatusColor(aspect.score);
       const barLength = 30;
       const filledLength = Math.round((aspect.score / 100) * barLength);
-      const bar =
-        '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
+      const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
 
       this.log(
         `  ${aspect.name.padEnd(20)} ${String(aspect.score).padStart(3)}% ${icon} ${color}${bar}${colors.reset}`,
-        ''
+        '',
       );
     });
 
@@ -2038,18 +1891,12 @@ class AdminPanelProductionReport {
     const overallIcon = this.getStatusIcon(report.overallScore);
     const overallColor = this.getStatusColor(report.overallScore);
     const overallBarLength = 40;
-    const overallFilledLength = Math.round(
-      (report.overallScore / 100) * overallBarLength
-    );
+    const overallFilledLength = Math.round((report.overallScore / 100) * overallBarLength);
     const overallBar =
-      '█'.repeat(overallFilledLength) +
-      '░'.repeat(overallBarLength - overallFilledLength);
+      '█'.repeat(overallFilledLength) + '░'.repeat(overallBarLength - overallFilledLength);
 
     this.log(`\n${'─'.repeat(80)}`, colors.blue);
-    this.log(
-      `\nOVERALL SCORE: ${report.overallScore}% ${overallIcon}`,
-      colors.bold + overallColor
-    );
+    this.log(`\nOVERALL SCORE: ${report.overallScore}% ${overallIcon}`, colors.bold + overallColor);
     this.log(`${overallColor}${overallBar}${colors.reset}\n`, '');
   }
 
@@ -2075,10 +1922,7 @@ class AdminPanelProductionReport {
     console.clear();
 
     this.log(`\n${'═'.repeat(80)}`, colors.blue);
-    this.log(
-      `📊 ADMINPANEL PRODUCTION READINESS REPORT`,
-      colors.bold + colors.blue
-    );
+    this.log(`📊 ADMINPANEL PRODUCTION READINESS REPORT`, colors.bold + colors.blue);
     this.log(`Generated: ${new Date().toLocaleString()}`, colors.dim);
     this.log(`${'═'.repeat(80)}\n`, colors.blue);
 

@@ -1,13 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,7 +14,7 @@ import {
   CONTENT_KIND_VALUES,
   MODERATION_POLICY,
   type ContentKind,
-  type ModerationPolicyMap
+  type ModerationPolicyMap,
 } from '@/types/compliance';
 
 /**
@@ -53,9 +47,7 @@ export function ModerationDefaultsCard() {
     setSaving(kind);
     try {
       const next = await apiClient.updateModerationDefaults({
-        [kind]: hold
-          ? MODERATION_POLICY.HOLD_FOR_REVIEW
-          : MODERATION_POLICY.PUBLISH_IMMEDIATELY
+        [kind]: hold ? MODERATION_POLICY.HOLD_FOR_REVIEW : MODERATION_POLICY.PUBLISH_IMMEDIATELY,
       });
       setDefaults(next);
     } catch (error) {
@@ -67,19 +59,13 @@ export function ModerationDefaultsCard() {
 
   const anyHeld =
     defaults &&
-    CONTENT_KIND_VALUES.some(
-      (kind) => defaults[kind] === MODERATION_POLICY.HOLD_FOR_REVIEW
-    );
+    CONTENT_KIND_VALUES.some((kind) => defaults[kind] === MODERATION_POLICY.HOLD_FOR_REVIEW);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          {t('compliance.moderation.title')}
-        </CardTitle>
-        <CardDescription>
-          {t('compliance.moderation.description')}
-        </CardDescription>
+        <CardTitle className="text-base">{t('compliance.moderation.title')}</CardTitle>
+        <CardDescription>{t('compliance.moderation.description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {loading || !defaults ? (
@@ -93,9 +79,7 @@ export function ModerationDefaultsCard() {
             {anyHeld ? (
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  {t('compliance.moderation.holdWarning')}
-                </AlertDescription>
+                <AlertDescription>{t('compliance.moderation.holdWarning')}</AlertDescription>
               </Alert>
             ) : null}
 

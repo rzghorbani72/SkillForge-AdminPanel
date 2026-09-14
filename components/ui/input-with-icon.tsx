@@ -31,7 +31,7 @@ export function InputWithIcon({
   error,
   disabled = false,
   className,
-  maxLength
+  maxLength,
 }: InputWithIconProps) {
   const { isRTL } = useLanguage();
 
@@ -52,7 +52,7 @@ export function InputWithIcon({
             isRTL ? 'pe-10 pr-10' : 'pl-10 ps-10',
             'text-center',
             error && 'border-red-500',
-            className
+            className,
           )}
           disabled={disabled}
           maxLength={maxLength}

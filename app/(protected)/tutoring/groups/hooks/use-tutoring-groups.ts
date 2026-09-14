@@ -6,7 +6,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import type {
   CreateTutoringGroupPayload,
   TutoringGroup,
-  TutoringGroupSlot
+  TutoringGroupSlot,
 } from '@/types/learning-operations';
 import { defaultTimezone } from '@/lib/class-slot-time';
 
@@ -42,7 +42,7 @@ export const EMPTY_GROUP_FORM: GroupFormState = {
   join_deadline: '',
   meeting_url: '',
   // Saturday 09:00 is the ordinary first guess for a Persian week.
-  slots: [{ weekday: 6, start_minute: 9 * 60, duration_minutes: 90 }]
+  slots: [{ weekday: 6, start_minute: 9 * 60, duration_minutes: 90 }],
 };
 
 const optionalNumber = (value: string): number | undefined => {
@@ -84,16 +84,13 @@ export function useTutoringGroups() {
         min_students: Number(form.min_students),
         age_min: optionalNumber(form.age_min),
         age_max: optionalNumber(form.age_max),
-        seat_price:
-          form.seat_price === '' ? undefined : Number(form.seat_price),
+        seat_price: form.seat_price === '' ? undefined : Number(form.seat_price),
         whole_class_booking: form.whole_class_booking,
         visibility: form.visibility,
         term_weeks: Number(form.term_weeks),
-        join_deadline: form.join_deadline
-          ? new Date(form.join_deadline).toISOString()
-          : undefined,
+        join_deadline: form.join_deadline ? new Date(form.join_deadline).toISOString() : undefined,
         meeting_url: form.meeting_url.trim() || undefined,
-        slots: form.slots
+        slots: form.slots,
       };
       const created = await apiClient.createTutoringGroup(payload);
       setForm(EMPTY_GROUP_FORM);
@@ -119,7 +116,7 @@ export function useTutoringGroups() {
         setSaving(false);
       }
     },
-    [load]
+    [load],
   );
 
   return { groups, loading, saving, form, setForm, load, create, publish };

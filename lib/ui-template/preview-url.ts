@@ -1,7 +1,4 @@
-import {
-  API_DEVELOPMENT_DEFAULTS,
-  API_PRODUCTION_DEFAULTS
-} from '../api-config';
+import { API_DEVELOPMENT_DEFAULTS, API_PRODUCTION_DEFAULTS } from '../api-config';
 
 export interface TemplatePreviewSession {
   token: string;
@@ -15,9 +12,7 @@ export interface TemplatePreviewSession {
  * backend-supplied URL to fall back on. Without a production default the cards
  * silently degrade to plain gradients whenever the build env is missing.
  */
-export function resolveStorefrontBaseUrl(
-  storefrontBaseUrl?: string | null
-): string | undefined {
+export function resolveStorefrontBaseUrl(storefrontBaseUrl?: string | null): string | undefined {
   const fromEnv = process.env.NEXT_PUBLIC_STOREFRONT_URL?.replace(/\/$/, '');
   if (fromEnv) return fromEnv;
 
@@ -25,17 +20,14 @@ export function resolveStorefrontBaseUrl(
     return API_DEVELOPMENT_DEFAULTS.storefrontUrl;
   }
 
-  return (
-    storefrontBaseUrl?.replace(/\/$/, '') ||
-    API_PRODUCTION_DEFAULTS.storefrontUrl
-  );
+  return storefrontBaseUrl?.replace(/\/$/, '') || API_PRODUCTION_DEFAULTS.storefrontUrl;
 }
 
 export function buildEmbedPreviewUrl(
   token: string,
   previewPath: string,
   storefrontBaseUrl?: string | null,
-  options?: { sample?: boolean }
+  options?: { sample?: boolean },
 ): string {
   const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
   let query = `preview=${encodeURIComponent(token)}&embed=1`;
@@ -44,10 +36,7 @@ export function buildEmbedPreviewUrl(
 }
 
 export function buildFullPreviewUrl(embedPreviewUrl: string): string {
-  return embedPreviewUrl
-    .replace('&embed=1', '')
-    .replace('?embed=1&', '?')
-    .replace('?embed=1', '');
+  return embedPreviewUrl.replace('&embed=1', '').replace('?embed=1&', '?').replace('?embed=1', '');
 }
 
 export function buildTemplatePreviewUrl(
@@ -59,7 +48,7 @@ export function buildTemplatePreviewUrl(
     edit?: boolean;
     token?: string;
     realData?: boolean;
-  }
+  },
 ): string {
   const base = resolveStorefrontBaseUrl(storefrontBaseUrl);
   let query = `template=${encodeURIComponent(templateId)}&embed=1`;
@@ -76,10 +65,7 @@ export function buildTemplatePreviewUrl(
   return base ? `${base}/preview/blocks?${query}` : `/preview/blocks?${query}`;
 }
 
-export function appendPreviewCacheBuster(
-  url: string,
-  refreshKey: number
-): string {
+export function appendPreviewCacheBuster(url: string, refreshKey: number): string {
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}_v=${refreshKey}`;
 }

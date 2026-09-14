@@ -1,14 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Building2,
-  Check,
-  ChevronDown,
-  GraduationCap,
-  Loader2,
-  Search
-} from 'lucide-react';
+import { Building2, Check, ChevronDown, GraduationCap, Loader2, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/hooks/useStore';
 import { AcademyStatusPill } from '@/components/academies/academy-helpers';
@@ -18,17 +11,8 @@ import { apiClient } from '@/lib/api';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { colorIndexForId } from '@/lib/id-color';
 import { isPlatformStaff } from '@/lib/roles';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Academy } from '@/types/api';
 
 const AVATAR_COLORS = [
@@ -39,7 +23,7 @@ const AVATAR_COLORS = [
   'bg-rose-500',
   'bg-cyan-500',
   'bg-indigo-500',
-  'bg-teal-500'
+  'bg-teal-500',
 ];
 
 const HIDDEN_ROLES = ['STUDENT', 'USER'];
@@ -62,9 +46,7 @@ function TruncatedAcademyName({ name }: { name: string }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <p className="cursor-default text-sm font-semibold leading-tight">
-          {display}
-        </p>
+        <p className="cursor-default text-sm font-semibold leading-tight">{display}</p>
       </TooltipTrigger>
       <TooltipContent side="bottom">{name}</TooltipContent>
     </Tooltip>
@@ -78,7 +60,7 @@ function academyColor(id: string) {
 function AcademyAvatar({
   name,
   id,
-  logo
+  logo,
 }: {
   name: string;
   id: string;
@@ -90,19 +72,13 @@ function AcademyAvatar({
       : logo.publicUrl
     : null;
   if (logoUrl) {
-    return (
-      <img
-        src={logoUrl}
-        alt={name}
-        className="h-8 w-8 shrink-0 rounded-lg object-cover"
-      />
-    );
+    return <img src={logoUrl} alt={name} className="h-8 w-8 shrink-0 rounded-lg object-cover" />;
   }
   return (
     <div
       className={cn(
         'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
-        academyColor(id)
+        academyColor(id),
       )}
     >
       <GraduationCap className="h-4 w-4 text-white" />
@@ -110,30 +86,19 @@ function AcademyAvatar({
   );
 }
 
-function AcademyStatusBadge({
-  academy,
-  dotOnly = false
-}: {
-  academy: Academy;
-  dotOnly?: boolean;
-}) {
+function AcademyStatusBadge({ academy, dotOnly = false }: { academy: Academy; dotOnly?: boolean }) {
   const { t } = useTranslation();
   return <AcademyStatusPill academy={academy} dotOnly={dotOnly} t={t} />;
 }
 
 function getAcademyDomain(academy: any): string {
-  return (
-    academy?.domain?.private_address ??
-    academy?.slug ??
-    academy?.domain?.domain ??
-    ''
-  );
+  return academy?.domain?.private_address ?? academy?.slug ?? academy?.domain?.domain ?? '';
 }
 
 function resolveAcademyRole(
   academy: { id: string; userRole?: string },
   currentAcademyId: string | null | undefined,
-  currentRole: string
+  currentRole: string,
 ): string {
   if (academy.userRole) return academy.userRole;
   if (academy.id === currentAcademyId) return currentRole;
@@ -194,7 +159,7 @@ export function AcademySelector() {
     ? academies.filter(
         (a) =>
           a.name.toLowerCase().includes(query.toLowerCase()) ||
-          getAcademyDomain(a).toLowerCase().includes(query.toLowerCase())
+          getAcademyDomain(a).toLowerCase().includes(query.toLowerCase()),
       )
     : academies;
 
@@ -212,15 +177,13 @@ export function AcademySelector() {
         <ChevronDown
           className={cn(
             'ms-1 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200',
-            open && 'rotate-180'
+            open && 'rotate-180',
           )}
         />
       )}
     </div>
   ) : (
-    <span className="text-sm text-muted-foreground">
-      {t('stores.selectStore')}
-    </span>
+    <span className="text-sm text-muted-foreground">{t('stores.selectStore')}</span>
   );
 
   return (
@@ -237,11 +200,7 @@ export function AcademySelector() {
                 {selectorContent}
               </button>
             </PopoverTrigger>
-            <PopoverContent
-              align="start"
-              className="w-72 p-0 shadow-xl"
-              sideOffset={6}
-            >
+            <PopoverContent align="start" className="w-72 p-0 shadow-xl" sideOffset={6}>
               <div className="flex items-center gap-2 border-b px-3 py-2">
                 <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <input
@@ -260,34 +219,24 @@ export function AcademySelector() {
                 ) : (
                   filtered.map((academy) => {
                     const isActive = selectedAcademy?.id === academy.id;
-                    const role = resolveAcademyRole(
-                      academy,
-                      user?.academyId,
-                      user?.role ?? ''
-                    );
-                    const roleLabel = role
-                      ? t(`userNav.roles.${role}`) || role
-                      : '';
+                    const role = resolveAcademyRole(academy, user?.academyId, user?.role ?? '');
+                    const roleLabel = role ? t(`userNav.roles.${role}`) || role : '';
                     return (
                       <button
                         key={academy.id}
                         type="button"
                         className={cn(
                           'flex w-full items-center gap-3 px-3 py-2.5 transition-colors hover:bg-accent',
-                          isActive && 'bg-primary/5'
+                          isActive && 'bg-primary/5',
                         )}
                         onClick={() => handleSelectAcademy(academy.id)}
                       >
-                        <AcademyAvatar
-                          name={academy.name}
-                          id={academy.id}
-                          logo={academy.logo}
-                        />
+                        <AcademyAvatar name={academy.name} id={academy.id} logo={academy.logo} />
                         <div className="min-w-0 flex-1 text-start">
                           <p
                             className={cn(
                               'truncate text-sm font-medium',
-                              isActive && 'text-primary'
+                              isActive && 'text-primary',
                             )}
                           >
                             {academy.name}
@@ -304,9 +253,7 @@ export function AcademySelector() {
                             <AcademyStatusBadge academy={academy} />
                           </div>
                         </div>
-                        {isActive && (
-                          <Check className="h-4 w-4 shrink-0 text-primary" />
-                        )}
+                        {isActive && <Check className="h-4 w-4 shrink-0 text-primary" />}
                       </button>
                     );
                   })
@@ -368,7 +315,7 @@ function AdminModeSwitcher() {
       <ChevronDown
         className={cn(
           'ms-1 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200',
-          open && 'rotate-180'
+          open && 'rotate-180',
         )}
       />
     </div>
@@ -377,13 +324,11 @@ function AdminModeSwitcher() {
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/90">
         <Building2 className="h-4 w-4 text-background" />
       </div>
-      <p className="hidden text-sm font-semibold leading-tight sm:block">
-        {platformLabel}
-      </p>
+      <p className="hidden text-sm font-semibold leading-tight sm:block">{platformLabel}</p>
       <ChevronDown
         className={cn(
           'ms-1 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200',
-          open && 'rotate-180'
+          open && 'rotate-180',
         )}
       />
     </div>
@@ -393,7 +338,7 @@ function AdminModeSwitcher() {
     ? academies.filter(
         (a) =>
           a.name.toLowerCase().includes(query.toLowerCase()) ||
-          getAcademyDomain(a).toLowerCase().includes(query.toLowerCase())
+          getAcademyDomain(a).toLowerCase().includes(query.toLowerCase()),
       )
     : academies;
 
@@ -408,39 +353,28 @@ function AdminModeSwitcher() {
             {trigger}
           </button>
         </PopoverTrigger>
-        <PopoverContent
-          align="start"
-          className="w-72 p-0 shadow-xl"
-          sideOffset={6}
-        >
+        <PopoverContent align="start" className="w-72 p-0 shadow-xl" sideOffset={6}>
           {/* Platform mode entry */}
           <button
             type="button"
             onClick={enterPlatformMode}
             className={cn(
               'flex w-full items-center gap-3 border-b px-3 py-2.5 transition-colors hover:bg-accent',
-              !selectedAcademy && 'bg-primary/5'
+              !selectedAcademy && 'bg-primary/5',
             )}
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/90">
               <Building2 className="h-4 w-4 text-background" />
             </div>
             <div className="min-w-0 flex-1 text-start">
-              <p
-                className={cn(
-                  'truncate text-sm font-medium',
-                  !selectedAcademy && 'text-primary'
-                )}
-              >
+              <p className={cn('truncate text-sm font-medium', !selectedAcademy && 'text-primary')}>
                 {platformLabel}
               </p>
               <p className="truncate text-xs text-muted-foreground">
                 {t('stores.platformLevel') || 'Platform level'}
               </p>
             </div>
-            {!selectedAcademy && (
-              <Check className="h-4 w-4 shrink-0 text-primary" />
-            )}
+            {!selectedAcademy && <Check className="h-4 w-4 shrink-0 text-primary" />}
           </button>
 
           <div className="flex items-center gap-2 border-b px-3 py-2">
@@ -460,9 +394,7 @@ function AdminModeSwitcher() {
                 <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
               </div>
             ) : filtered.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-muted-foreground">
-                {t('stores.noStoresFound')}
-              </p>
+              <p className="px-4 py-3 text-sm text-muted-foreground">{t('stores.noStoresFound')}</p>
             ) : (
               filtered.map((academy) => {
                 const isActive = selectedAcademy?.id === academy.id;
@@ -473,21 +405,12 @@ function AdminModeSwitcher() {
                     onClick={() => enterAcademyMode(academy.id)}
                     className={cn(
                       'flex w-full items-center gap-3 px-3 py-2.5 transition-colors hover:bg-accent',
-                      isActive && 'bg-primary/5'
+                      isActive && 'bg-primary/5',
                     )}
                   >
-                    <AcademyAvatar
-                      name={academy.name}
-                      id={academy.id}
-                      logo={academy.logo}
-                    />
+                    <AcademyAvatar name={academy.name} id={academy.id} logo={academy.logo} />
                     <div className="min-w-0 flex-1 text-start">
-                      <p
-                        className={cn(
-                          'truncate text-sm font-medium',
-                          isActive && 'text-primary'
-                        )}
-                      >
+                      <p className={cn('truncate text-sm font-medium', isActive && 'text-primary')}>
                         {academy.name}
                       </p>
                       <div className="flex items-center gap-1.5">
@@ -497,9 +420,7 @@ function AdminModeSwitcher() {
                         <AcademyStatusBadge academy={academy} />
                       </div>
                     </div>
-                    {isActive && (
-                      <Check className="h-4 w-4 shrink-0 text-primary" />
-                    )}
+                    {isActive && <Check className="h-4 w-4 shrink-0 text-primary" />}
                   </button>
                 );
               })

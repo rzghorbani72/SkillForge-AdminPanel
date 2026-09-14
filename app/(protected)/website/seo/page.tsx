@@ -17,9 +17,7 @@ export default function WebsiteSeoPage() {
   // chain the public site does when a field is left empty.
   const previewTitle = metaTitle.trim() || academy?.name || '';
   const previewDescription =
-    metaDescription.trim() ||
-    academy?.description ||
-    t('website.seo.previewEmptyDescription');
+    metaDescription.trim() || academy?.description || t('website.seo.previewEmptyDescription');
   const siteUrl = buildAcademySiteUrl(academy) ?? '';
 
   return (

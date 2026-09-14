@@ -9,7 +9,7 @@ import {
   MessageSquare,
   Pencil,
   RotateCcw,
-  Video
+  Video,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -20,7 +20,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
@@ -28,19 +28,16 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import {
-  fromDateTimeInputValue,
-  toDateTimeInputValue
-} from '@/lib/i18n/calendar-date';
+import { fromDateTimeInputValue, toDateTimeInputValue } from '@/lib/i18n/calendar-date';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type {
   ClassSession,
   ClassSessionCancelResolution,
-  CourseTopic
+  CourseTopic,
 } from '@/types/learning-operations';
 import { SessionRecordingField } from './session-recording-field';
 import { SessionMaterialsField } from './session-materials-field';
@@ -70,7 +67,7 @@ export function SessionRow({
   topics,
   isNext = false,
   onChanged,
-  onCancel
+  onCancel,
 }: SessionRowProps) {
   const { t, language } = useTranslation();
   const [title, setTitle] = useState(session.title ?? '');
@@ -80,7 +77,7 @@ export function SessionRow({
   const [showChat, setShowChat] = useState(false);
   const [isEditingTime, setIsEditingTime] = useState(false);
   const [timeValue, setTimeValue] = useState(() =>
-    toDateTimeInputValue(new Date(session.starts_at))
+    toDateTimeInputValue(new Date(session.starts_at)),
   );
   const [isRescheduling, setIsRescheduling] = useState(false);
 
@@ -92,7 +89,7 @@ export function SessionRow({
       const updated = await apiClient.updateClassSession(session.id, {
         title: title.trim() || null,
         topic_id: topicId === NO_TOPIC ? null : topicId,
-        meeting_url: meetingUrl.trim() || null
+        meeting_url: meetingUrl.trim() || null,
       });
       onChanged(updated);
       toast.success(t('courses.live.sessionSaved'));
@@ -109,7 +106,7 @@ export function SessionRow({
     setIsRescheduling(true);
     try {
       const updated = await apiClient.rescheduleClassSession(session.id, {
-        starts_at: startsAt.toISOString()
+        starts_at: startsAt.toISOString(),
       });
       onChanged(updated);
       setIsEditingTime(false);
@@ -128,7 +125,7 @@ export function SessionRow({
       toast.success(
         resolution === 'MAKEUP'
           ? t('courses.live.sessionCancelledMakeup')
-          : t('courses.live.sessionCancelledRefund')
+          : t('courses.live.sessionCancelledRefund'),
       );
     } catch (err) {
       ErrorHandler.handleApiError(err);
@@ -139,7 +136,7 @@ export function SessionRow({
     dateStyle: 'medium',
     timeStyle: 'short',
     hourCycle: 'h23',
-    timeZone: session.timezone
+    timeZone: session.timezone,
   }).format(new Date(session.starts_at));
 
   return (
@@ -169,12 +166,8 @@ export function SessionRow({
               <Pencil className="h-3.5 w-3.5" />
             </Button>
           )}
-          {isNext && (
-            <Badge className="gap-1">{t('courses.live.nextSession')}</Badge>
-          )}
-          {isCancelled && (
-            <Badge variant="destructive">{t('courses.live.cancelled')}</Badge>
-          )}
+          {isNext && <Badge className="gap-1">{t('courses.live.nextSession')}</Badge>}
+          {isCancelled && <Badge variant="destructive">{t('courses.live.cancelled')}</Badge>}
           {session.meeting_url && (
             <Badge variant="outline" className="gap-1">
               <Link2 className="h-3 w-3" />
@@ -189,12 +182,7 @@ export function SessionRow({
           )}
         </div>
         {!isCancelled && onCancel && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => void onCancel()}
-          >
+          <Button type="button" variant="ghost" size="sm" onClick={() => void onCancel()}>
             <Ban className="h-4 w-4" />
             {t('courses.live.cancelSession')}
           </Button>
@@ -257,18 +245,12 @@ export function SessionRow({
           placeholder={t('courses.live.sessionTitlePlaceholder')}
           disabled={isCancelled}
         />
-        <Select
-          value={topicId}
-          onValueChange={setTopicId}
-          disabled={isCancelled}
-        >
+        <Select value={topicId} onValueChange={setTopicId} disabled={isCancelled}>
           <SelectTrigger>
             <SelectValue placeholder={t('courses.live.pickTopic')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NO_TOPIC}>
-              {t('courses.live.noTopic')}
-            </SelectItem>
+            <SelectItem value={NO_TOPIC}>{t('courses.live.noTopic')}</SelectItem>
             {topics.map((topic) => (
               <SelectItem key={topic.id} value={topic.id}>
                 {topic.title}
@@ -276,12 +258,7 @@ export function SessionRow({
             ))}
           </SelectContent>
         </Select>
-        <Button
-          type="button"
-          size="sm"
-          onClick={save}
-          disabled={isSaving || isCancelled}
-        >
+        <Button type="button" size="sm" onClick={save} disabled={isSaving || isCancelled}>
           <CheckCircle2 className="h-4 w-4" />
           {isSaving ? t('common.saving') : t('common.save')}
         </Button>
@@ -297,9 +274,7 @@ export function SessionRow({
               dir="ltr"
               inputMode="url"
             />
-            <p className="text-xs text-muted-foreground">
-              {t('courses.live.meetingUrlHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('courses.live.meetingUrlHint')}</p>
           </div>
 
           <SessionRecordingField
@@ -311,7 +286,7 @@ export function SessionRow({
               onChanged({
                 ...session,
                 recording_video_id: videoId,
-                recording_allow_download: allowDownload
+                recording_allow_download: allowDownload,
               })
             }
           />
@@ -319,9 +294,7 @@ export function SessionRow({
           <SessionMaterialsField
             sessionId={session.id}
             materials={session.Materials ?? []}
-            onChanged={(materials) =>
-              onChanged({ ...session, Materials: materials })
-            }
+            onChanged={(materials) => onChanged({ ...session, Materials: materials })}
           />
 
           <Button

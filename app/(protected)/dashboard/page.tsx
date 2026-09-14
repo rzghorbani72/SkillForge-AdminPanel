@@ -23,14 +23,8 @@ import { AcademyOnboarding } from '@/components/dashboard/onboarding/academy-onb
 import { useSettlement } from '@/components/financial/settlement/use-settlement';
 import { SetupChecklistBanner } from '@/components/dashboard/onboarding/setup-checklist-banner';
 import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
-import {
-  PERIOD_OPTIONS,
-  type DashboardPeriod
-} from '@/components/dashboard/dashboard-periods';
-import {
-  DashboardGlow,
-  DashboardSkeleton
-} from '@/components/dashboard/dashboard-shell';
+import { PERIOD_OPTIONS, type DashboardPeriod } from '@/components/dashboard/dashboard-periods';
+import { DashboardGlow, DashboardSkeleton } from '@/components/dashboard/dashboard-shell';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
@@ -42,12 +36,11 @@ export default function DashboardPage() {
     selectedAcademy,
     isLoading: storeLoading,
     error: storeError,
-    refreshAcademies
+    refreshAcademies,
   } = useStore();
   const [period, setPeriod] = useState<DashboardPeriod>('30d');
   const periodLabel = t(
-    PERIOD_OPTIONS.find((option) => option.key === period)?.labelKey ??
-      PERIOD_OPTIONS[1].labelKey
+    PERIOD_OPTIONS.find((option) => option.key === period)?.labelKey ?? PERIOD_OPTIONS[1].labelKey,
   );
 
   // Platform admins with no academy selected belong in Platform mode; the
@@ -59,14 +52,8 @@ export default function DashboardPage() {
     }
   }, [storeLoading, isPlatformAdmin, selectedAcademy, router]);
 
-  const {
-    isLoading,
-    recentCourses,
-    statsCards,
-    statusData,
-    overallCompletion,
-    journeyData
-  } = useDashboard(period, periodLabel);
+  const { isLoading, recentCourses, statsCards, statusData, overallCompletion, journeyData } =
+    useDashboard(period, periodLabel);
 
   // Money, course and teacher figures are aggregated by the API so they stay
   // correct past the page caps the list endpoints impose.
@@ -77,10 +64,7 @@ export default function DashboardPage() {
   const { needsPlanPurchase, isLoading: subscriptionLoading } =
     useAcademySubscription(canManagePlan);
   const showBuyPlans =
-    canManagePlan &&
-    !subscriptionLoading &&
-    needsPlanPurchase &&
-    academies.length > 0;
+    canManagePlan && !subscriptionLoading && needsPlanPurchase && academies.length > 0;
 
   const firstName =
     (user as any)?.profile?.display_name?.split(' ')?.[0] ??
@@ -88,8 +72,7 @@ export default function DashboardPage() {
     '';
 
   const loadingLabel = t('dashboard.loadingDashboardData');
-  const storeUnresolved =
-    storeLoading && !selectedAcademy && academies.length === 0;
+  const storeUnresolved = storeLoading && !selectedAcademy && academies.length === 0;
 
   if (storeUnresolved || (canManagePlan && subscriptionLoading)) {
     return <DashboardSkeleton label={loadingLabel} />;
@@ -102,25 +85,14 @@ export default function DashboardPage() {
   // A failed academies fetch leaves the list empty, which is not the same as
   // owning none. Offering "create your first academy" there looks like the
   // platform lost the manager's academies, so a retry is shown instead.
-  if (
-    !storeLoading &&
-    !isPlatformAdmin &&
-    academies.length === 0 &&
-    storeError
-  ) {
+  if (!storeLoading && !isPlatformAdmin && academies.length === 0 && storeError) {
     return (
       <div className="dashboard-shell flex-1">
         <DashboardGlow />
         <div className="relative space-y-3 p-4 sm:p-6">
-          <h1 className="text-lg font-semibold">
-            {t('common.somethingWentWrong')}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t('common.errorLoadingPage')}
-          </p>
-          <Button onClick={() => void refreshAcademies()}>
-            {t('common.tryAgain')}
-          </Button>
+          <h1 className="text-lg font-semibold">{t('common.somethingWentWrong')}</h1>
+          <p className="text-sm text-muted-foreground">{t('common.errorLoadingPage')}</p>
+          <Button onClick={() => void refreshAcademies()}>{t('common.tryAgain')}</Button>
         </div>
       </div>
     );
@@ -142,9 +114,7 @@ export default function DashboardPage() {
       <div className="dashboard-shell flex-1">
         <DashboardGlow />
         <div className="relative space-y-5 p-4 sm:p-6">
-          {!isLoading && (
-            <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
-          )}
+          {!isLoading && <SetupChecklistBanner hasCourse={recentCourses.length > 0} />}
           <BuyPlansSection />
         </div>
       </div>
@@ -155,9 +125,7 @@ export default function DashboardPage() {
     <div className="dashboard-shell flex-1">
       <DashboardGlow />
       <div className="relative space-y-6 p-4 sm:p-6">
-        {!isLoading && (
-          <SetupChecklistBanner hasCourse={recentCourses.length > 0} />
-        )}
+        {!isLoading && <SetupChecklistBanner hasCourse={recentCourses.length > 0} />}
         {/* Page header */}
         <div className="fade-in-up flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -197,9 +165,7 @@ export default function DashboardPage() {
               className="flex items-center gap-1.5 rounded-full border border-white/80 bg-white/70 px-3.5 py-2 text-sm font-medium text-muted-foreground backdrop-blur-md transition-colors hover:bg-white hover:text-foreground"
             >
               <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">
-                {isFa ? 'خروجی گزارش' : 'Export'}
-              </span>
+              <span className="hidden sm:inline">{isFa ? 'خروجی گزارش' : 'Export'}</span>
             </button>
           </div>
         </div>
@@ -236,11 +202,7 @@ export default function DashboardPage() {
               period={period}
               isLoading={money.isLoading}
             />
-            <ConversionFunnel
-              steps={journeyData}
-              period={period}
-              isLoading={isLoading}
-            />
+            <ConversionFunnel steps={journeyData} period={period} isLoading={isLoading} />
           </div>
 
           {/* Row 4: what the plan still allows before an upgrade is needed */}

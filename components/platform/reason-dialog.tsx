@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -40,7 +40,7 @@ export function ReasonDialog({
   subject,
   confirmLabel,
   onConfirm,
-  onDone
+  onDone,
 }: ReasonDialogProps) {
   const { t } = useTranslation();
   const [reason, setReason] = useState('');
@@ -76,13 +76,9 @@ export function ReasonDialog({
         </DialogHeader>
 
         <div className="space-y-3">
-          <p className="rounded-lg bg-muted px-3 py-2 text-sm font-medium">
-            {subject}
-          </p>
+          <p className="rounded-lg bg-muted px-3 py-2 text-sm font-medium">{subject}</p>
           <div className="space-y-2">
-            <Label htmlFor="block-reason">
-              {t('accountActions.reasonLabel')}
-            </Label>
+            <Label htmlFor="block-reason">{t('accountActions.reasonLabel')}</Label>
             <Textarea
               id="block-reason"
               rows={3}
@@ -98,11 +94,7 @@ export function ReasonDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t('common.cancel')}
           </Button>
-          <Button
-            variant="destructive"
-            onClick={() => void submit()}
-            disabled={saving}
-          >
+          <Button variant="destructive" onClick={() => void submit()} disabled={saving}>
             {saving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {confirmLabel}
           </Button>

@@ -14,7 +14,7 @@ import {
   canEditAcademy,
   canEnterAcademy,
   canRemoveAcademy,
-  type AcademyRow
+  type AcademyRow,
 } from './academy-helpers';
 import { AcademyStaffActions } from './academy-staff-actions';
 import { CopyableId } from './copyable-id';
@@ -27,18 +27,17 @@ const CARD_COLORS = [
   { bg: 'bg-emerald-100', icon: 'bg-emerald-200 text-emerald-700' },
   { bg: 'bg-cyan-100', icon: 'bg-cyan-200 text-cyan-700' },
   { bg: 'bg-orange-100', icon: 'bg-orange-200 text-orange-700' },
-  { bg: 'bg-teal-100', icon: 'bg-teal-200 text-teal-700' }
+  { bg: 'bg-teal-100', icon: 'bg-teal-200 text-teal-700' },
 ];
 
-const ACTION_BUTTON =
-  'h-9 flex-1 gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-medium';
+const ACTION_BUTTON = 'h-9 flex-1 gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-medium';
 const ACTION_ICON = 'h-4 w-4 shrink-0';
 
 export function AcademyIcon({
   name,
   id,
   logo,
-  size = 40
+  size = 40,
 }: {
   name: string;
   id: string;
@@ -66,10 +65,7 @@ export function AcademyIcon({
   return (
     <div
       style={{ ...style, fontSize: size * 0.45 }}
-      className={cn(
-        'flex shrink-0 items-center justify-center rounded-xl font-bold',
-        color.icon
-      )}
+      className={cn('flex shrink-0 items-center justify-center rounded-xl font-bold', color.icon)}
     >
       {name?.[0]?.toUpperCase() ?? '?'}
     </div>
@@ -99,7 +95,7 @@ export function AcademyCard({
   switching,
   platformControls = false,
   onStaffChanged,
-  t
+  t,
 }: AcademyCardProps) {
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
@@ -113,7 +109,7 @@ export function AcademyCard({
     <div
       className={cn(
         'overflow-hidden rounded-2xl border bg-card shadow-sm',
-        isCurrent && 'border-2 border-primary shadow-md'
+        isCurrent && 'border-2 border-primary shadow-md',
       )}
     >
       {/* Colored header band */}
@@ -125,20 +121,14 @@ export function AcademyCard({
           </span>
         )}
         <div className="absolute bottom-[-20px] start-4">
-          <AcademyIcon
-            name={academy.name}
-            id={academy.id}
-            logo={academy.logo}
-          />
+          <AcademyIcon name={academy.name} id={academy.id} logo={academy.logo} />
         </div>
       </div>
 
       {/* Card body */}
       <div className="px-4 pb-4 pt-8">
         <div className="flex items-center gap-2">
-          <h3 className="truncate text-base font-bold leading-tight">
-            {academy.name}
-          </h3>
+          <h3 className="truncate text-base font-bold leading-tight">{academy.name}</h3>
           {userRole && (
             <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
               {userRole}
@@ -172,22 +162,16 @@ export function AcademyCard({
         <div className="mt-4 flex items-center justify-between text-sm">
           <div className="flex flex-col items-center gap-0.5">
             <span className="font-semibold text-foreground">
-              {formatNumber(
-                academy.student_count ?? academy.students_count ?? 0
-              )}
+              {formatNumber(academy.student_count ?? academy.students_count ?? 0)}
             </span>
-            <span className="text-xs text-muted-foreground">
-              {t('stores.students')}
-            </span>
+            <span className="text-xs text-muted-foreground">{t('stores.students')}</span>
           </div>
           <div className="h-8 w-px bg-border" />
           <div className="flex flex-col items-center gap-0.5">
             <span className="font-semibold text-foreground">
               {formatNumber(academy.course_count ?? 0)}
             </span>
-            <span className="text-xs text-muted-foreground">
-              {t('stores.courses')}
-            </span>
+            <span className="text-xs text-muted-foreground">{t('stores.courses')}</span>
           </div>
         </div>
 
@@ -259,9 +243,7 @@ export function AddAcademyCard({ onClick, t }: AddAcademyCardProps) {
         +
       </div>
       <div>
-        <p className="font-semibold text-foreground">
-          {t('stores.addNewAcademy')}
-        </p>
+        <p className="font-semibold text-foreground">{t('stores.addNewAcademy')}</p>
         <p className="mt-1 max-w-[160px] text-xs text-muted-foreground">
           {t('stores.addNewAcademyDesc')}
         </p>

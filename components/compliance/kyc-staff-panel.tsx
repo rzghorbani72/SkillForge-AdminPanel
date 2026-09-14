@@ -22,32 +22,20 @@ export function KycStaffPanel({ state }: Props) {
 
   return (
     <div className="space-y-3">
-      <KycStatusBadge
-        status={state.status}
-        complete={state.settlement_eligible}
-      />
+      <KycStatusBadge status={state.status} complete={state.settlement_eligible} />
 
       <dl className="grid gap-2 text-sm sm:grid-cols-2">
         <Row
           label={t('settings.kyc.legalEntityName')}
           value={state.iban_info?.name ?? state.legal_entity_name}
         />
-        <Row
-          label={t('settings.kyc.nationalId')}
-          value={digits(state.national_id)}
-        />
+        <Row label={t('settings.kyc.nationalId')} value={digits(state.national_id)} />
         <Row
           label={t('settings.kyc.birthDate')}
           value={state.birth_date ? formatDate(state.birth_date) : '—'}
         />
-        <Row
-          label={t('settings.kyc.sheba')}
-          value={digits(state.sheba_number)}
-        />
-        <Row
-          label={t('settings.kyc.bankName')}
-          value={state.iban_info?.bank_name ?? null}
-        />
+        <Row label={t('settings.kyc.sheba')} value={digits(state.sheba_number)} />
+        <Row label={t('settings.kyc.bankName')} value={state.iban_info?.bank_name ?? null} />
       </dl>
     </div>
   );

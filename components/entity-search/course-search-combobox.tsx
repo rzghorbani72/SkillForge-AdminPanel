@@ -2,17 +2,14 @@
 
 import {
   EntitySearchCombobox,
-  type EntitySearchComboboxProps
+  type EntitySearchComboboxProps,
 } from '@/components/entity-search/entity-search-combobox';
 import {
   fetchCourseOptions,
-  resolveCourseOption
+  resolveCourseOption,
 } from '@/components/entity-search/entity-search-utils';
 
-type CourseSearchComboboxProps = Omit<
-  EntitySearchComboboxProps,
-  'fetchOptions' | 'resolveOption'
->;
+type CourseSearchComboboxProps = Omit<EntitySearchComboboxProps, 'fetchOptions' | 'resolveOption'>;
 
 export function CourseSearchCombobox(props: CourseSearchComboboxProps) {
   return (

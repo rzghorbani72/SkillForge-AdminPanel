@@ -27,7 +27,7 @@ export function SetupCard({
   description,
   done,
   dirty = false,
-  children
+  children,
 }: SetupCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -40,7 +40,7 @@ export function SetupCard({
             'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold',
             done
               ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-600'
-              : 'border-dashed text-muted-foreground'
+              : 'border-dashed text-muted-foreground',
           )}
         >
           {done ? <Check className="h-3.5 w-3.5" /> : formatNumber(step)}
@@ -54,9 +54,7 @@ export function SetupCard({
               </span>
             ) : null}
           </div>
-          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            {description}
-          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{description}</p>
         </div>
       </CardHeader>
       <CardContent className="flex-1">{children}</CardContent>

@@ -12,11 +12,7 @@ interface UseAuthRedirectOptions {
 }
 
 export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
-  const {
-    redirectTo = '/dashboard',
-    requireAuth = false,
-    requireStaff = false
-  } = options;
+  const { redirectTo = '/dashboard', requireAuth = false, requireStaff = false } = options;
 
   const router = useRouter();
   const pathname = usePathname();
@@ -110,8 +106,8 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
     isStaff: isPanelStaffRole(
       (user as { role?: string })?.role ??
         (user?.user as { role?: string } | undefined)?.role ??
-        user?.currentProfile?.role?.name
+        user?.currentProfile?.role?.name,
     ),
-    isStudent: user?.user?.role === 'STUDENT' || false
+    isStudent: user?.user?.role === 'STUDENT' || false,
   };
 }

@@ -13,24 +13,19 @@ export function useFormatCurrency() {
     (amount: number, currency?: string) => {
       // Prefer academy's configured currency; fall back to explicit arg or IRR
       if (currentAcademy) {
-        return formatCurrencyWithStore(
-          amount,
-          currentAcademy,
-          undefined,
-          language
-        );
+        return formatCurrencyWithStore(amount, currentAcademy, undefined, language);
       }
       return formatCurrencyWithStore(
         amount,
         {
           currency: (currency ?? 'IRR') as string,
           currency_symbol: currency === 'IRR' ? 'Toman' : (currency ?? 'IRR'),
-          currency_position: 'after'
+          currency_position: 'after',
         },
         undefined,
-        language
+        language,
       );
     },
-    [currentAcademy, language]
+    [currentAcademy, language],
   );
 }

@@ -10,7 +10,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 
 export function LanguageSwitcherSimple() {
@@ -31,11 +31,7 @@ export function LanguageSwitcherSimple() {
   return (
     <div className="flex items-center gap-2">
       <Globe className="h-4 w-4 text-muted-foreground" />
-      <Select
-        value={language}
-        onValueChange={handleLanguageChange}
-        disabled={isChanging}
-      >
+      <Select value={language} onValueChange={handleLanguageChange} disabled={isChanging}>
         <SelectTrigger className="h-8 w-[140px]">
           <SelectValue>
             <span className="flex items-center gap-2">
@@ -48,9 +44,7 @@ export function LanguageSwitcherSimple() {
             <SelectItem key={lang.code} value={lang.code}>
               <div className="flex items-center gap-2">
                 <span>{lang.nativeName}</span>
-                <span className="text-xs text-muted-foreground">
-                  ({lang.name})
-                </span>
+                <span className="text-xs text-muted-foreground">({lang.name})</span>
               </div>
             </SelectItem>
           ))}

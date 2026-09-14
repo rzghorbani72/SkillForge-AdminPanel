@@ -1,11 +1,4 @@
-export type LessonType =
-  | 'VIDEO'
-  | 'AUDIO'
-  | 'DOCUMENT'
-  | 'TEXT'
-  | 'QUIZ'
-  | 'ASSIGNMENT'
-  | 'LIVE';
+export type LessonType = 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
 
 export type CourseMedia = {
   id: string;

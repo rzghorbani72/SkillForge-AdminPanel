@@ -28,7 +28,7 @@ export async function ensureCsrfToken(force = false): Promise<string | null> {
       const response = await fetch(`${getBrowserApiBaseUrl()}/auth/csrf`, {
         method: 'GET',
         credentials: 'include',
-        cache: 'no-store'
+        cache: 'no-store',
       });
 
       if (!response.ok) {

@@ -9,7 +9,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import { NumberInput } from '@/components/ui/number-input';
 import {
@@ -17,28 +17,20 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  COURSE_DIFFICULTIES,
-  type CourseDifficultyLevel,
-  type CourseFormData
-} from './schema';
+import { COURSE_DIFFICULTIES, type CourseDifficultyLevel, type CourseFormData } from './schema';
 
 const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
   BEGINNER: 'courses.beginner',
   INTERMEDIATE: 'courses.intermediate',
   ADVANCED: 'courses.advanced',
-  EXPERT: 'courses.expert'
+  EXPERT: 'courses.expert',
 };
 
-export default function CourseFactsCard({
-  form
-}: {
-  form: UseFormReturn<CourseFormData>;
-}) {
+export default function CourseFactsCard({ form }: { form: UseFormReturn<CourseFormData> }) {
   const { t } = useTranslation();
 
   return (
@@ -87,9 +79,7 @@ export default function CourseFactsCard({
                   placeholder={t('courses.accessDurationDaysPlaceholder')}
                 />
               </FormControl>
-              <FormDescription>
-                {t('courses.accessDurationDaysHint')}
-              </FormDescription>
+              <FormDescription>{t('courses.accessDurationDaysHint')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -112,10 +102,7 @@ export default function CourseFactsCard({
                 </div>
               </div>
               <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
             </FormItem>
           )}

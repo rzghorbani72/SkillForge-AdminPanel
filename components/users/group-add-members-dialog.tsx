@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -29,7 +29,7 @@ export function GroupAddMembersDialog({
   groupId,
   existingMemberIds,
   onOpenChange,
-  onAdded
+  onAdded,
 }: GroupAddMembersDialogProps) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -76,9 +76,7 @@ export function GroupAddMembersDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{t('users.addMembers')}</DialogTitle>
-          <DialogDescription>
-            {t('users.addMembersDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('users.addMembersDescription')}</DialogDescription>
         </DialogHeader>
 
         <form className="space-y-4" onSubmit={handleSubmit}>

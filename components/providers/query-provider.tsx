@@ -32,15 +32,12 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
             staleTime: STALE_TIME_MS,
             gcTime: GARBAGE_COLLECT_MS,
             refetchOnWindowFocus: false,
-            retry: (failureCount, error) =>
-              !isClientError(error) && failureCount < MAX_RETRIES
+            retry: (failureCount, error) => !isClientError(error) && failureCount < MAX_RETRIES,
           },
-          mutations: { retry: 0 }
-        }
-      })
+          mutations: { retry: 0 },
+        },
+      }),
   );
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

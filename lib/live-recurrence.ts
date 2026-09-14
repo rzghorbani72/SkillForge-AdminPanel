@@ -4,15 +4,7 @@
  * Weekday indexes are JS `Date.getDay()` values, so 0 = Sunday.
  */
 
-export const WEEKDAY_CODES = [
-  'SU',
-  'MO',
-  'TU',
-  'WE',
-  'TH',
-  'FR',
-  'SA'
-] as const;
+export const WEEKDAY_CODES = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'] as const;
 
 export type WeekdayCode = (typeof WEEKDAY_CODES)[number];
 
@@ -26,11 +18,10 @@ export const WEEKDAY_LABEL_KEYS: Record<number, string> = {
   3: 'weekdays.wednesday',
   4: 'weekdays.thursday',
   5: 'weekdays.friday',
-  6: 'weekdays.saturday'
+  6: 'weekdays.saturday',
 };
 
-const RULE_PATTERN =
-  /^FREQ=WEEKLY(;BYDAY=(SU|MO|TU|WE|TH|FR|SA)(,(SU|MO|TU|WE|TH|FR|SA))*)?$/i;
+const RULE_PATTERN = /^FREQ=WEEKLY(;BYDAY=(SU|MO|TU|WE|TH|FR|SA)(,(SU|MO|TU|WE|TH|FR|SA))*)?$/i;
 
 /** The weekdays a stored rule repeats on; empty array means "no repeat". */
 export const parseWeeklyRule = (rule?: string | null): number[] => {

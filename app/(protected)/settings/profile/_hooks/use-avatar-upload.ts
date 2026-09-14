@@ -16,10 +16,7 @@ interface AvatarUpload {
 }
 
 /** Uploads the image, then links it to the signed-in profile as the avatar. */
-export function useAvatarUpload(
-  initialUrl: string | null,
-  onUploaded: () => void
-): AvatarUpload {
+export function useAvatarUpload(initialUrl: string | null, onUploaded: () => void): AvatarUpload {
   const { t } = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialUrl);
   const [isUploading, setIsUploading] = useState(false);
@@ -34,7 +31,7 @@ export function useAvatarUpload(
     () => () => {
       if (previewRef.current) URL.revokeObjectURL(previewRef.current);
     },
-    []
+    [],
   );
 
   const upload = useCallback(
@@ -68,7 +65,7 @@ export function useAvatarUpload(
         setIsUploading(false);
       }
     },
-    [initialUrl, onUploaded, t]
+    [initialUrl, onUploaded, t],
   );
 
   return { avatarUrl, isUploading, progress, upload };

@@ -13,6 +13,6 @@ export const useCategoriesInitializer = () => {
 
   return {
     categories: useCategoriesStore((state) => state.categories),
-    isLoading: useCategoriesStore((state) => state.isLoading)
+    isLoading: useCategoriesStore((state) => state.isLoading),
   };
 };

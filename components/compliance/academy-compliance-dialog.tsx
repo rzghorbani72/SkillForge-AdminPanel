@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,7 +21,7 @@ import type {
   EnamadStatus,
   ModerationPolicy,
   ModerationPolicyMap,
-  ReviewQueueItem
+  ReviewQueueItem,
 } from '@/types/compliance';
 import type { KycState } from '@/types/kyc';
 
@@ -49,12 +49,11 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
     if (!academyId) return;
     setLoading(true);
     try {
-      const [platformDefaults, academyOverrides, academyKyc] =
-        await Promise.all([
-          apiClient.getModerationDefaults(),
-          apiClient.getAcademyModerationPolicy(academyId),
-          apiClient.getAcademyKyc(academyId)
-        ]);
+      const [platformDefaults, academyOverrides, academyKyc] = await Promise.all([
+        apiClient.getModerationDefaults(),
+        apiClient.getAcademyModerationPolicy(academyId),
+        apiClient.getAcademyKyc(academyId),
+      ]);
       setDefaults(platformDefaults);
       setOverrides(academyOverrides);
       setKyc(academyKyc);
@@ -72,18 +71,15 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
     void load();
   }, [item, load]);
 
-  const changePolicy = async (
-    kind: ContentKind,
-    policy: ModerationPolicy | null
-  ) => {
+  const changePolicy = async (kind: ContentKind, policy: ModerationPolicy | null) => {
     if (!academyId) return;
     setSavingKind(kind);
     try {
       setOverrides(
         await apiClient.setAcademyModerationPolicy(academyId, {
           content_kind: kind,
-          policy
-        })
+          policy,
+        }),
       );
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -98,7 +94,7 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
     try {
       const next = await apiClient.reviewAcademyEnamad(academyId, {
         approved,
-        note: note || undefined
+        note: note || undefined,
       });
       setEnamadStatus(next.status);
       onChanged();
@@ -128,22 +124,14 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
         ) : (
           <div className="space-y-5">
             <section className="space-y-2">
-              <h3 className="text-sm font-semibold">
-                {t('compliance.kyc.title')}
-              </h3>
-              {kyc ? (
-                <KycStaffPanel state={kyc} />
-              ) : (
-                <Skeleton className="h-20 w-full" />
-              )}
+              <h3 className="text-sm font-semibold">{t('compliance.kyc.title')}</h3>
+              {kyc ? <KycStaffPanel state={kyc} /> : <Skeleton className="h-20 w-full" />}
             </section>
 
             <Separator />
 
             <section className="space-y-2">
-              <h3 className="text-sm font-semibold">
-                {t('compliance.enamad.title')}
-              </h3>
+              <h3 className="text-sm font-semibold">{t('compliance.enamad.title')}</h3>
               <EnamadReviewPanel
                 item={item}
                 status={enamadStatus ?? item.enamad_status}
@@ -155,9 +143,7 @@ export function AcademyComplianceDialog({ item, onClose, onChanged }: Props) {
             <Separator />
 
             <section className="space-y-2">
-              <h3 className="text-sm font-semibold">
-                {t('compliance.override.title')}
-              </h3>
+              <h3 className="text-sm font-semibold">{t('compliance.override.title')}</h3>
               <p className="text-xs text-muted-foreground">
                 {t('compliance.override.description')}
               </p>

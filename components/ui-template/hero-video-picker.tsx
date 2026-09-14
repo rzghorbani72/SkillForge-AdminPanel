@@ -7,13 +7,10 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  useAcademyVideos,
-  videoStreamPath
-} from '@/lib/ui-template/use-academy-videos';
+import { useAcademyVideos, videoStreamPath } from '@/lib/ui-template/use-academy-videos';
 
 interface HeroVideoPickerProps {
   cfg: Record<string, unknown>;
@@ -31,12 +28,11 @@ export function HeroVideoPicker({
   cfg,
   set,
   onUpdate,
-  alwaysAutoplay = false
+  alwaysAutoplay = false,
 }: HeroVideoPickerProps) {
   const { t } = useTranslation();
   const { videos, isLoading } = useAcademyVideos();
-  const currentUrl =
-    typeof cfg.heroVideoUrl === 'string' ? cfg.heroVideoUrl : null;
+  const currentUrl = typeof cfg.heroVideoUrl === 'string' ? cfg.heroVideoUrl : null;
   const current = videos.find((v) => videoStreamPath(v) === currentUrl) ?? null;
 
   const pick = (videoId: string) => {
@@ -44,7 +40,7 @@ export function HeroVideoPicker({
     if (!video) return;
     onUpdate({
       heroVideoUrl: videoStreamPath(video),
-      heroVideoPoster: video.poster_url ?? null
+      heroVideoPoster: video.poster_url ?? null,
     });
   };
 
@@ -52,7 +48,7 @@ export function HeroVideoPicker({
     onUpdate({
       heroVideoUrl: null,
       heroVideoPoster: null,
-      heroVideoAutoplay: false
+      heroVideoAutoplay: false,
     });
 
   return (
@@ -60,9 +56,7 @@ export function HeroVideoPicker({
       <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
         {t('sitePreview.heroVideoTitle')}
       </span>
-      <p className="text-[11px] leading-relaxed text-zinc-500">
-        {t('sitePreview.heroVideoHint')}
-      </p>
+      <p className="text-[11px] leading-relaxed text-zinc-500">{t('sitePreview.heroVideoHint')}</p>
 
       {currentUrl ? (
         <>
@@ -82,9 +76,7 @@ export function HeroVideoPicker({
           </div>
           {!alwaysAutoplay && (
             <div className="flex items-center justify-between rounded-lg border border-zinc-200 px-2.5 py-2">
-              <span className="text-xs text-zinc-700">
-                {t('sitePreview.heroVideoAutoplay')}
-              </span>
+              <span className="text-xs text-zinc-700">{t('sitePreview.heroVideoAutoplay')}</span>
               <Switch
                 checked={cfg.heroVideoAutoplay === true}
                 onCheckedChange={(value) => set('heroVideoAutoplay', value)}

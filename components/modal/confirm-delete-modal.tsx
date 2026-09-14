@@ -9,7 +9,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -43,7 +43,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   onConfirm,
   isLoading = false,
   confirmText,
-  cancelText
+  cancelText,
 }) => {
   const { t } = useTranslation();
   const handleConfirm = () => {
@@ -61,16 +61,14 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
           <AlertDialogDescription>
             {description || (
               <>
-                {t('common.cannotBeUndone')} {t('common.permanentlyDelete')}{' '}
-                {itemType} <strong>&quot;{title}&quot;</strong>.
+                {t('common.cannotBeUndone')} {t('common.permanentlyDelete')} {itemType}{' '}
+                <strong>&quot;{title}&quot;</strong>.
               </>
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
-            {defaultCancelText}
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>{defaultCancelText}</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isLoading}

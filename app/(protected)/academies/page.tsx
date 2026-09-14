@@ -9,7 +9,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useStore } from '@/hooks/useStore';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -25,36 +25,29 @@ import { CurrentPlanBanner } from '@/components/academies/current-plan-banner';
 import { AcademyCreateModal } from '@/components/academies/AcademyCreateModal';
 import { AcademyEditModal } from '@/components/academies/AcademyEditModal';
 import { AcademiesHealthTable } from '@/components/academies/academies-health-table';
-import {
-  academyStatus,
-  type AcademyRow
-} from '@/components/academies/academy-helpers';
+import { academyStatus, type AcademyRow } from '@/components/academies/academy-helpers';
 import type { Academy } from '@/types/api';
 
 export default function AcademiesPage() {
   const { t } = useTranslation();
-  const { academies, isLoading, refreshAcademies, selectedAcademy } =
-    useStore();
+  const { academies, isLoading, refreshAcademies, selectedAcademy } = useStore();
   const { user } = useAuthUser();
   const platformStaffView = isPlatformStaff(user);
   const [switching, setSwitching] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editAcademy, setEditAcademy] = useState<Academy | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<
-    'all' | 'active' | 'inactive'
-  >('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   const currentAcademyId = selectedAcademy?.id ?? null;
   const canCreate = Boolean(
     isPlatformAdmin(user) ||
       user?.role === 'MANAGER' ||
-      (user as { isAdminProfile?: boolean })?.isAdminProfile
+      (user as { isAdminProfile?: boolean })?.isAdminProfile,
   );
 
   function resolveUserRole(academy: { id: string; userRole?: string }): string {
-    const raw =
-      academy.userRole ?? (academy.id === currentAcademyId ? user?.role : '');
+    const raw = academy.userRole ?? (academy.id === currentAcademyId ? user?.role : '');
     return raw ? getRoleLabel(raw, t) : '';
   }
 
@@ -111,7 +104,7 @@ export default function AcademiesPage() {
     return {
       primary_color: hex,
       primary_color_light: `#${ch(r, 60)}${ch(g, 60)}${ch(b, 60)}`,
-      primary_color_dark: `#${ch(r, -40)}${ch(g, -40)}${ch(b, -40)}`
+      primary_color_dark: `#${ch(r, -40)}${ch(g, -40)}${ch(b, -40)}`,
     };
   }
 
@@ -137,7 +130,7 @@ export default function AcademiesPage() {
       logoId?: string;
       faviconId?: string;
       primaryColor?: string;
-    }
+    },
   ) {
     await apiClient.updateAcademyById(id, {
       name: data.name,
@@ -145,13 +138,11 @@ export default function AcademiesPage() {
       public_address: data.publicAddress || null,
       description: data.description || undefined,
       logo_id: data.logoId,
-      favicon_id: data.faviconId
+      favicon_id: data.faviconId,
     });
 
     if (data.primaryColor) {
-      await apiClient
-        .updateCurrentThemeConfig(buildTheme(data.primaryColor))
-        .catch(() => {});
+      await apiClient.updateCurrentThemeConfig(buildTheme(data.primaryColor)).catch(() => {});
     }
 
     toast.success(t('stores.storeUpdated'));
@@ -163,9 +154,7 @@ export default function AcademiesPage() {
     return academies
       .filter((a: Academy) => {
         const matchesSearch =
-          !q ||
-          a.name.toLowerCase().includes(q) ||
-          a.slug.toLowerCase().includes(q);
+          !q || a.name.toLowerCase().includes(q) || a.slug.toLowerCase().includes(q);
         const isActive = academyStatus(a) === 'active';
         const matchesStatus =
           statusFilter === 'all' ||
@@ -174,7 +163,7 @@ export default function AcademiesPage() {
         return matchesSearch && matchesStatus;
       })
       .sort((a: AcademyRow, b: AcademyRow) =>
-        a.id === currentAcademyId ? -1 : b.id === currentAcademyId ? 1 : 0
+        a.id === currentAcademyId ? -1 : b.id === currentAcademyId ? 1 : 0,
       );
   }, [academies, searchQuery, statusFilter, currentAcademyId]);
 

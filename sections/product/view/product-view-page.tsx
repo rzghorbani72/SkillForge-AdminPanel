@@ -6,7 +6,7 @@ import PageContainer from '@/components/layout/page-container';
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
   { title: 'Product', link: '/dashboard/product' },
-  { title: 'Create', link: '/dashboard/product/create' }
+  { title: 'Create', link: '/dashboard/product/create' },
 ];
 
 export default function ProductViewPage() {

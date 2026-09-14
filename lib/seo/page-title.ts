@@ -57,7 +57,7 @@ const EXTRA_TITLE_KEYS: Record<string, string> = {
   '/website/seo': 'pageTitles.websiteSeo',
   '/website/domain': 'pageTitles.websiteDomain',
   '/website/trust': 'pageTitles.websiteTrust',
-  '/platform/academies': 'navigation.allAcademies'
+  '/platform/academies': 'navigation.allAcademies',
 };
 
 /** Sub-routes under a dynamic id: /courses/<id>/edit, /user/<id>/learning … */
@@ -71,12 +71,12 @@ const DYNAMIC_SEGMENT_KEYS: Record<string, string> = {
   plans: 'navigation.studentPlans',
   learning: 'pageTitles.userLearning',
   create: 'pageTitles.create',
-  webhooks: 'pageTitles.webhooks'
+  webhooks: 'pageTitles.webhooks',
 };
 
 function navTitleKeys(
   items: NavItem[] = navItems,
-  keys: Record<string, string> = {}
+  keys: Record<string, string> = {},
 ): Record<string, string> {
   for (const item of items) {
     const path = item.href?.split('?')[0];
@@ -88,7 +88,7 @@ function navTitleKeys(
 
 const TITLE_KEYS: Record<string, string> = {
   ...navTitleKeys(),
-  ...EXTRA_TITLE_KEYS
+  ...EXTRA_TITLE_KEYS,
 };
 
 /**

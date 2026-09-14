@@ -10,7 +10,7 @@ export const PLAN_LIMIT_KEYS: (keyof StructuredPlanLimits)[] = [
   'storage_gb',
   'monthly_traffic_gb',
   'videos',
-  'dedicated_templates'
+  'dedicated_templates',
 ];
 
 /** Shape for a brand-new tier: Starter's envelope, which is the safe floor. */
@@ -24,14 +24,13 @@ export const DEFAULT_LIMITS: StructuredPlanLimits = {
   storage_gb: 30,
   monthly_traffic_gb: 200,
   videos: 40,
-  dedicated_templates: 1
+  dedicated_templates: 1,
 };
 
 export const irrToToman = (irr: number) => Math.round(irr / 10);
 export const tomanToIrr = (toman: number) => Math.round(toman * 10);
 
-export const formatToman = (toman: number) =>
-  toman.toLocaleString('fa-IR') + ' تومان';
+export const formatToman = (toman: number) => toman.toLocaleString('fa-IR') + ' تومان';
 
 export const formatIRR = (v: number) => v.toLocaleString('fa-IR') + ' ریال';
 
@@ -64,8 +63,8 @@ export const PLAN_DEFAULTS: Record<string, PlanDefaults> = {
       storage_gb: 30,
       monthly_traffic_gb: 200,
       videos: 40,
-      dedicated_templates: 1
-    }
+      dedicated_templates: 1,
+    },
   },
   growth: {
     price_monthly_toman: 6_500_000,
@@ -80,8 +79,8 @@ export const PLAN_DEFAULTS: Record<string, PlanDefaults> = {
       storage_gb: 100,
       monthly_traffic_gb: 700,
       videos: 250,
-      dedicated_templates: 3
-    }
+      dedicated_templates: 3,
+    },
   },
   business: {
     price_monthly_toman: 11_000_000,
@@ -96,9 +95,9 @@ export const PLAN_DEFAULTS: Record<string, PlanDefaults> = {
       storage_gb: 250,
       monthly_traffic_gb: 1500,
       videos: 1000,
-      dedicated_templates: 10
-    }
-  }
+      dedicated_templates: 10,
+    },
+  },
 };
 
 export const planDefaults = (slug: string): PlanDefaults | undefined =>
@@ -117,7 +116,7 @@ export const COST_DEFAULTS = {
   storage_addon_gb: 50,
   storage_addon_price_toman: 700_000,
   traffic_addon_gb: 200,
-  traffic_addon_price_toman: 900_000
+  traffic_addon_price_toman: 900_000,
 } as const;
 
 export type CostSettingKey = keyof typeof COST_DEFAULTS;
@@ -126,9 +125,6 @@ export type CostSettingKey = keyof typeof COST_DEFAULTS;
  * Revenue used for the margin preview. The plan row is authoritative, so the
  * price in the form is what the margin must clear — no catalog override.
  */
-export function planRevenueForMargin(
-  _slug: string,
-  formMonthlyToman: number
-): number {
+export function planRevenueForMargin(_slug: string, formMonthlyToman: number): number {
   return formMonthlyToman;
 }

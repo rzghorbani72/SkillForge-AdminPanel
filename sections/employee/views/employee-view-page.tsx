@@ -5,7 +5,7 @@ import EmployeeForm from '../employee-form';
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
   { title: 'Employee', link: '/dashboard/employee' },
-  { title: 'Create', link: '/dashboard/employee/create' }
+  { title: 'Create', link: '/dashboard/employee/create' },
 ];
 
 export default function EmployeeViewPage() {

@@ -6,24 +6,23 @@ export const MESSAGES = {
     creating: 'Creating...',
     uploading: 'Uploading...',
     unavailable: 'Unavailable',
-    watch: 'Watch'
+    watch: 'Watch',
   },
 
   category: {
     noCategoriesFound: 'No categories found',
     adjustSearch: 'Try adjusting your search or filter criteria.',
-    createFirstCategory: 'Get started by creating your first category.'
+    createFirstCategory: 'Get started by creating your first category.',
   },
 
   product: {
     createProduct: 'Create Product',
-    addNewProductTo: (storeName: string) => `Add a new product to ${storeName}`
+    addNewProductTo: (storeName: string) => `Add a new product to ${storeName}`,
   },
 
   season: {
     createNewSeason: 'Create New Season',
-    organizeContent:
-      'Organize your course content into logical modules or seasons',
+    organizeContent: 'Organize your course content into logical modules or seasons',
     createSeason: 'Create Season',
     orderDescription: 'The sequence order of this season within the course',
     seasonTitle: 'Season Title',
@@ -32,8 +31,7 @@ export const MESSAGES = {
     descriptionHint: 'Explain what students will learn in this season',
     courseRequired: 'Course',
     selectCourse: 'Select a course',
-    orderingConflict:
-      'Unable to create season due to ordering conflict. Please try again.'
+    orderingConflict: 'Unable to create season due to ordering conflict. Please try again.',
   },
 
   video: {
@@ -48,7 +46,7 @@ export const MESSAGES = {
     selectVideoFirst: 'Select a video first',
     noPosterSelected: 'No poster selected',
     posterHint: 'Upload a poster image for this video',
-    selectPosterFirst: 'Select a poster first'
+    selectPosterFirst: 'Select a poster first',
   },
 
   planForm: {
@@ -64,7 +62,7 @@ export const MESSAGES = {
     editPlan: (planName: string) => `Edit ${planName}`,
     editPlanDesc: 'Update the subscription plan details.',
     createPlanDesc: 'Add a new subscription plan to the platform.',
-    saveChanges: 'Save Changes'
+    saveChanges: 'Save Changes',
   },
 
   validation: {
@@ -73,6 +71,6 @@ export const MESSAGES = {
     videoRequired: 'Video file is required',
     courseRequired: 'Course is required',
     orderRequired: 'Order is required',
-    orderPositiveInteger: 'Order must be a positive integer'
-  }
+    orderPositiveInteger: 'Order must be a positive integer',
+  },
 } as const;

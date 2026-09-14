@@ -18,10 +18,7 @@ export function presetSourceKey(preset: TemplatePreset): string {
  * template name after it — the meaningful, platform-defined part — always
  * stays fully visible.
  */
-export function formatPresetDisplayName(
-  name: string,
-  maxAcademyChars = 20
-): string {
+export function formatPresetDisplayName(name: string, maxAcademyChars = 20): string {
   const separator = ' - ';
   const separatorIndex = name.lastIndexOf(separator);
   if (separatorIndex === -1) return name;

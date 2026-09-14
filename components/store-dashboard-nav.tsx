@@ -14,14 +14,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from './ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { useLanguage } from '@/lib/i18n/hooks';
 
 interface DashboardNavProps {
@@ -35,7 +30,7 @@ const NavItemContent = React.memo(
     item,
     isMinimized,
     isExpanded,
-    path
+    path,
   }: {
     item: NavItem;
     isMinimized: boolean;
@@ -50,19 +45,17 @@ const NavItemContent = React.memo(
         className={cn(
           'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
           path === item.href ? 'bg-accent' : 'transparent',
-          item.disabled && 'cursor-not-allowed opacity-80'
+          item.disabled && 'cursor-not-allowed opacity-80',
         )}
       >
         <Icon className="size-5 flex-none" />
         {!isMinimized && <span className="mr-2 truncate">{item.title}</span>}
         {hasChildren && !isMinimized && (
-          <ChevronRight
-            className={cn('ml-auto h-4 w-4', isExpanded && 'rotate-90')}
-          />
+          <ChevronRight className={cn('ml-auto h-4 w-4', isExpanded && 'rotate-90')} />
         )}
       </div>
     );
-  }
+  },
 );
 
 NavItemContent.displayName = 'NavItemContent';
@@ -71,7 +64,7 @@ const NavItemLink = React.memo(
   ({
     item,
     onClick,
-    children
+    children,
   }: {
     item: NavItem;
     onClick: () => void;
@@ -84,23 +77,17 @@ const NavItemLink = React.memo(
     >
       {children}
     </Link>
-  )
+  ),
 );
 
 NavItemLink.displayName = 'NavItemLink';
 
 const NavItemButton = React.memo(
-  ({
-    onClick,
-    children
-  }: {
-    onClick: () => void;
-    children: React.ReactNode;
-  }) => (
+  ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
     <button className="w-full text-right" onClick={onClick}>
       {children}
     </button>
-  )
+  ),
 );
 
 NavItemButton.displayName = 'NavItemButton';
@@ -134,12 +121,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       const isExpanded = expandedItems.has(item.title);
 
       const content = (
-        <NavItemContent
-          item={item}
-          isMinimized={isMinimized}
-          isExpanded={isExpanded}
-          path={path}
-        />
+        <NavItemContent item={item} isMinimized={isMinimized} isExpanded={isExpanded} path={path} />
       );
 
       if (hasChildren && isAboveLg && isMinimized) {
@@ -157,11 +139,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
                 item.children.map((child) => (
                   <DropdownMenuItem key={child.title} asChild>
                     {child.href && (
-                      <Link
-                        href={child.href}
-                        onClick={handleSetOpen}
-                        className="cursor-pointer"
-                      >
+                      <Link href={child.href} onClick={handleSetOpen} className="cursor-pointer">
                         {child.title}
                       </Link>
                     )}
@@ -179,28 +157,17 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
               {content}
             </NavItemLink>
           ) : (
-            <NavItemButton onClick={() => toggleExpand(item.title)}>
-              {content}
-            </NavItemButton>
+            <NavItemButton onClick={() => toggleExpand(item.title)}>{content}</NavItemButton>
           )}
           {hasChildren && !isMinimized && isExpanded && (
             <div className="ms-4 mt-1 space-y-1">
-              {item.children &&
-                item.children.map((child) => renderNavItem(child, depth + 1))}
+              {item.children && item.children.map((child) => renderNavItem(child, depth + 1))}
             </div>
           )}
         </div>
       );
     },
-    [
-      expandedItems,
-      isMinimized,
-      isAboveLg,
-      isRTL,
-      path,
-      handleSetOpen,
-      toggleExpand
-    ]
+    [expandedItems, isMinimized, isAboveLg, isRTL, path, handleSetOpen, toggleExpand],
   );
 
   const memoizedItems = useMemo(() => items, [items]);

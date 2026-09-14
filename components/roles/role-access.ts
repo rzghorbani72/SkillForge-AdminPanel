@@ -21,7 +21,7 @@ export function getRoleAbilities(
   user: PermissionUser | null,
   /** Highest level the user may create/manage; see ROLE_CREATION_CAP. */
   capLevel: number,
-  ownLevel: number
+  ownLevel: number,
 ): RoleAbilities {
   const canWrite = hasPermission(user, 'roles', 'write');
   const isOwner = user?.role === OWNER;
@@ -37,10 +37,9 @@ export function getRoleAbilities(
 
   return {
     canEdit: !reasonKey,
-    canDelete:
-      !reasonKey && !role.is_system && hasPermission(user, 'roles', 'delete'),
+    canDelete: !reasonKey && !role.is_system && hasPermission(user, 'roles', 'delete'),
     canAssign,
-    readOnlyReasonKey: reasonKey
+    readOnlyReasonKey: reasonKey,
   };
 }
 
@@ -49,7 +48,7 @@ function readOnlyReason(
   user: PermissionUser | null,
   capLevel: number,
   isOwner: boolean,
-  canWrite: boolean
+  canWrite: boolean,
 ): string | undefined {
   if (!canWrite) return 'roles.readOnlyNoPermission';
   if (role.name === user?.role) return 'roles.readOnlyOwnRole';

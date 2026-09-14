@@ -26,20 +26,14 @@ interface VideoCardProps {
   onDeactivate: () => void;
 }
 
-export function VideoCard({
-  video,
-  isActive,
-  onToggle,
-  onDeactivate
-}: VideoCardProps) {
+export function VideoCard({ video, isActive, onToggle, onDeactivate }: VideoCardProps) {
   const { t, language } = useTranslation();
 
   const posterUrl = resolvePosterUrl(video.poster_url);
   const ownerName = video.Profile?.display_name ?? t('media.unknownCreator');
   const ownerInitials = ownerName.trim().slice(0, 2).toUpperCase();
   const publishedDate = video.created_at ? new Date(video.created_at) : null;
-  const hasPublishedDate =
-    !!publishedDate && !Number.isNaN(publishedDate.getTime());
+  const hasPublishedDate = !!publishedDate && !Number.isNaN(publishedDate.getTime());
 
   const duration = formatDuration(video.duration ?? undefined);
   const fileSize = formatFileSize(video.size ?? undefined);
@@ -73,13 +67,9 @@ export function VideoCard({
               disabled={!canPlay}
               className={cn(
                 'absolute inset-0 flex items-center justify-center text-white transition',
-                canPlay ? 'hover:bg-black/20' : 'cursor-not-allowed opacity-70'
+                canPlay ? 'hover:bg-black/20' : 'cursor-not-allowed opacity-70',
               )}
-              aria-label={
-                canPlay
-                  ? t('media.playVideo')
-                  : t('media.videoSourceUnavailable')
-              }
+              aria-label={canPlay ? t('media.playVideo') : t('media.videoSourceUnavailable')}
             >
               {canPlay ? (
                 <span className="flex h-14 w-14 items-center justify-center rounded-full bg-black/60 shadow-lg transition group-hover:bg-primary">
@@ -95,9 +85,7 @@ export function VideoCard({
             {(duration || fileSize) && (
               <div className="pointer-events-none absolute bottom-3 end-3 flex items-center gap-2 rounded-full bg-black/65 px-2.5 py-1 text-xs font-medium text-white">
                 {duration && <span>{duration}</span>}
-                {duration && fileSize && (
-                  <span className="h-1 w-1 rounded-full bg-white/70" />
-                )}
+                {duration && fileSize && <span className="h-1 w-1 rounded-full bg-white/70" />}
                 {fileSize && <span>{fileSize}</span>}
               </div>
             )}
@@ -117,20 +105,15 @@ export function VideoCard({
           <p className="text-sm text-muted-foreground">{ownerName}</p>
           {hasPublishedDate && publishedDate && (
             <span className="text-xs text-muted-foreground/80">
-              {publishedDate.toLocaleDateString(
-                getLocaleForLanguage(language),
-                {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                }
-              )}
+              {publishedDate.toLocaleDateString(getLocaleForLanguage(language), {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
             </span>
           )}
           {video.description && (
-            <p className="line-clamp-2 pt-1 text-sm text-muted-foreground">
-              {video.description}
-            </p>
+            <p className="line-clamp-2 pt-1 text-sm text-muted-foreground">{video.description}</p>
           )}
           {lessonTitle && (
             <Badge

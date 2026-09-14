@@ -4,16 +4,13 @@ import {
   isClusterOrLoopbackHost,
   isHostAllowed,
   isHostUnderMentomaDomains,
-  normalizeHostname
+  normalizeHostname,
 } from './config';
 
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 /** External webhooks — no browser Origin header. */
-const CSRF_ORIGIN_SKIP_PREFIXES = [
-  '/payment/saman-callback',
-  '/payment/mellat-callback'
-] as const;
+const CSRF_ORIGIN_SKIP_PREFIXES = ['/payment/saman-callback', '/payment/mellat-callback'] as const;
 
 const RATE_LIMIT_RULES: Array<{
   prefix: string;
@@ -22,7 +19,7 @@ const RATE_LIMIT_RULES: Array<{
 }> = [
   { prefix: '/api/payment/', limit: 20, windowMs: 60_000 },
   { prefix: '/api/geolocation', limit: 30, windowMs: 60_000 },
-  { prefix: '/api/', limit: 120, windowMs: 60_000 }
+  { prefix: '/api/', limit: 120, windowMs: 60_000 },
 ];
 
 type RateBucket = { count: number; resetAt: number };
@@ -51,19 +48,14 @@ function isTrustedOrigin(origin: string): boolean {
       return false;
     }
 
-    return (
-      isHostAllowed(hostname, getAllowedPanelHosts()) ||
-      isHostUnderMentomaDomains(hostname)
-    );
+    return isHostAllowed(hostname, getAllowedPanelHosts()) || isHostUnderMentomaDomains(hostname);
   } catch {
     return false;
   }
 }
 
 function shouldSkipOriginCsrf(pathname: string): boolean {
-  return CSRF_ORIGIN_SKIP_PREFIXES.some((prefix) =>
-    pathname.startsWith(prefix)
-  );
+  return CSRF_ORIGIN_SKIP_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
 function getClientIp(request: NextRequest): string {
@@ -104,9 +96,7 @@ export function enforceTrustedHost(request: NextRequest): NextResponse | null {
   return NextResponse.json({ error: 'Host not allowed' }, { status: 403 });
 }
 
-export function enforceApiOriginCsrf(
-  request: NextRequest
-): NextResponse | null {
+export function enforceApiOriginCsrf(request: NextRequest): NextResponse | null {
   const { pathname } = request.nextUrl;
   if (!pathname.startsWith('/api/')) return null;
   if (!MUTATING_METHODS.has(request.method.toUpperCase())) return null;

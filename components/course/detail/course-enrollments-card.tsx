@@ -1,20 +1,14 @@
 'use client';
 
 import { Users } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -22,30 +16,18 @@ import { useDateFormat } from '@/lib/i18n/use-date-format';
 import type { CourseEnrollment } from './types';
 
 function studentName(enrollment: CourseEnrollment, fallback: string): string {
-  return (
-    enrollment.user?.display_name ??
-    enrollment.profile?.display_name ??
-    fallback
-  );
+  return enrollment.user?.display_name ?? enrollment.profile?.display_name ?? fallback;
 }
 
-export function CourseEnrollmentsCard({
-  enrollments
-}: {
-  enrollments: CourseEnrollment[];
-}) {
+export function CourseEnrollmentsCard({ enrollments }: { enrollments: CourseEnrollment[] }) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          {t('courseDetail.recentEnrollments')}
-        </CardTitle>
-        <CardDescription>
-          {t('courseDetail.recentEnrollmentsDesc')}
-        </CardDescription>
+        <CardTitle className="text-base">{t('courseDetail.recentEnrollments')}</CardTitle>
+        <CardDescription>{t('courseDetail.recentEnrollmentsDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         {enrollments.length === 0 ? (
@@ -64,10 +46,7 @@ export function CourseEnrollmentsCard({
             </TableHeader>
             <TableBody>
               {enrollments.slice(0, 8).map((enrollment) => {
-                const name = studentName(
-                  enrollment,
-                  t('students.unknownStudent')
-                );
+                const name = studentName(enrollment, t('students.unknownStudent'));
                 return (
                   <TableRow key={enrollment.id}>
                     <TableCell>
@@ -79,14 +58,10 @@ export function CourseEnrollmentsCard({
                       </div>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {enrollment.enrolled_at
-                        ? formatDate(enrollment.enrolled_at)
-                        : '—'}
+                      {enrollment.enrolled_at ? formatDate(enrollment.enrolled_at) : '—'}
                     </TableCell>
                     <TableCell>
-                      <StatusBadge
-                        status={enrollment.status?.toLowerCase() ?? 'active'}
-                      />
+                      <StatusBadge status={enrollment.status?.toLowerCase() ?? 'active'} />
                     </TableCell>
                   </TableRow>
                 );

@@ -11,6 +11,6 @@ export const useCategories = () => {
     getCategoryById: (id: number) => categories.find((cat) => cat.id === id),
     getCategoriesByType: (type: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS') =>
       categories.filter((cat) => cat.type === type),
-    getActiveCategories: () => categories.filter((cat) => cat.is_active)
+    getActiveCategories: () => categories.filter((cat) => cat.is_active),
   };
 };

@@ -8,11 +8,7 @@ import type { RolePermission } from '@/types/roles';
  * What a role is allowed to do, shown as plain text. A role nobody may change
  * must not be drawn as a form: no checkboxes, nothing that invites a click.
  */
-export function PermissionReadonlyList({
-  permissions
-}: {
-  permissions: RolePermission[];
-}) {
+export function PermissionReadonlyList({ permissions }: { permissions: RolePermission[] }) {
   const { t } = useTranslation();
 
   const grouped = useMemo(() => {
@@ -26,11 +22,7 @@ export function PermissionReadonlyList({
   }, [permissions]);
 
   if (grouped.length === 0) {
-    return (
-      <p className="py-6 text-center text-sm text-muted-foreground">
-        {t('roles.noAccess')}
-      </p>
-    );
+    return <p className="py-6 text-center text-sm text-muted-foreground">{t('roles.noAccess')}</p>;
   }
 
   return (
@@ -40,9 +32,7 @@ export function PermissionReadonlyList({
           key={resource}
           className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-muted/30 p-3"
         >
-          <span className="text-sm font-medium">
-            {t(`roles.resource.${resource}`)}
-          </span>
+          <span className="text-sm font-medium">{t(`roles.resource.${resource}`)}</span>
           <div className="flex flex-wrap gap-1.5">
             {actions.map((action) => (
               <span

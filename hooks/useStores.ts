@@ -57,6 +57,6 @@ export function useStores(): UseStoresReturn {
     stores,
     isLoading,
     error,
-    refetch: fetchStores
+    refetch: fetchStores,
   };
 }

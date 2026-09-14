@@ -18,9 +18,7 @@ const useCourses = () => {
 
   const [rawCourses, setRawCourses] = useState<Course[]>([]);
   const [revenueMap, setRevenueMap] = useState<Record<string, number>>({});
-  const [enrollmentMap, setEnrollmentMap] = useState<Record<string, number>>(
-    {}
-  );
+  const [enrollmentMap, setEnrollmentMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [pricingFilter, setPricingFilter] = useState('ALL');
@@ -30,11 +28,9 @@ const useCourses = () => {
       const data = (await apiClient.getPayments({
         status: 'PAID',
         limit: 500,
-        academy_id: selectedAcademy?.id
+        academy_id: selectedAcademy?.id,
       })) as any;
-      const payments: any[] = Array.isArray(data)
-        ? data
-        : (data?.payments ?? data?.data ?? []);
+      const payments: any[] = Array.isArray(data) ? data : (data?.payments ?? data?.data ?? []);
       const rMap: Record<string, number> = {};
       const eMap: Record<string, number> = {};
       for (const p of payments) {
@@ -58,16 +54,14 @@ const useCourses = () => {
       const response = await apiClient.getCourses({
         page: 1,
         limit: 100,
-        academy_id: selectedAcademy.id
+        academy_id: selectedAcademy.id,
       });
       let list: Course[] = [];
       if (Array.isArray(response)) list = response;
       else if (Array.isArray(response?.courses)) list = response.courses;
       // filter to current academy
       list = list.filter((c) =>
-        (c as any).academy_id
-          ? (c as any).academy_id === selectedAcademy.id
-          : true
+        (c as any).academy_id ? (c as any).academy_id === selectedAcademy.id : true,
       );
       setRawCourses(list);
     } catch {
@@ -97,21 +91,18 @@ const useCourses = () => {
           c.description?.toLowerCase().includes(term) ||
           (c as any).slug?.toLowerCase().includes(term) ||
           (c as any).category?.name?.toLowerCase().includes(term);
-        const matchesPricing =
-          pricingFilter === 'ALL' || (c as any).pricing_type === pricingFilter;
+        const matchesPricing = pricingFilter === 'ALL' || (c as any).pricing_type === pricingFilter;
         return matchesSearch && matchesPricing;
       })
       .map((c) => ({
         ...c,
         revenue: revenueMap[c.id] ?? 0,
-        enrollments_count: enrollmentMap[c.id] ?? (c as any).students_count ?? 0
+        enrollments_count: enrollmentMap[c.id] ?? (c as any).students_count ?? 0,
       }));
   }, [rawCourses, revenueMap, enrollmentMap, searchTerm, pricingFilter]);
 
-  const handleViewCourse = (course: CourseWithRevenue) =>
-    router.push(`/courses/${course.id}`);
-  const handleEditCourse = (course: CourseWithRevenue) =>
-    router.push(`/courses/${course.id}/edit`);
+  const handleViewCourse = (course: CourseWithRevenue) => router.push(`/courses/${course.id}`);
+  const handleEditCourse = (course: CourseWithRevenue) => router.push(`/courses/${course.id}/edit`);
 
   const handleDeleteCourse = async (course: CourseWithRevenue) => {
     try {
@@ -141,7 +132,7 @@ const useCourses = () => {
     handleEditCourse,
     handleDeleteCourse,
     refresh,
-    fetchCourses
+    fetchCourses,
   };
 };
 

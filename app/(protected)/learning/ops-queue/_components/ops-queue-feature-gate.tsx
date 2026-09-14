@@ -4,13 +4,7 @@ import Link from 'next/link';
 import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface OpsQueueFeatureGateProps {
   checkingFeature: boolean;
@@ -25,7 +19,7 @@ export function OpsQueueFeatureGate({
   featureEnabled,
   isManager,
   enablingFeature,
-  onEnable
+  onEnable,
 }: OpsQueueFeatureGateProps) {
   const { t } = useTranslation();
 
@@ -48,28 +42,20 @@ export function OpsQueueFeatureGate({
           <AlertTriangle className="h-4 w-4" />
           {t('opsQueue.featureDisabled')}
         </CardTitle>
-        <CardDescription>
-          {t('opsQueue.featureDisabledDescription')}
-        </CardDescription>
+        <CardDescription>{t('opsQueue.featureDisabledDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-3">
         {isManager ? (
           <>
             <Button onClick={() => void onEnable()} disabled={enablingFeature}>
-              {enablingFeature
-                ? t('opsQueue.enablingFeature')
-                : t('opsQueue.enableFeature')}
+              {enablingFeature ? t('opsQueue.enablingFeature') : t('opsQueue.enableFeature')}
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/settings/academy">
-                {t('settings.storeSettings')}
-              </Link>
+              <Link href="/settings/academy">{t('settings.storeSettings')}</Link>
             </Button>
           </>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            {t('opsQueue.contactManager')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('opsQueue.contactManager')}</p>
         )}
       </CardContent>
     </Card>

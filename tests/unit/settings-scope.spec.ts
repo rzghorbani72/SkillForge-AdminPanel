@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import {
   hasPaidPlanEnrollment,
   needsPlanPurchase,
-  overlayPaidEnrollment
+  overlayPaidEnrollment,
 } from '@/lib/settings-scope';
 
 test.describe('paid plan enrollment', () => {
@@ -10,8 +10,8 @@ test.describe('paid plan enrollment', () => {
     expect(
       hasPaidPlanEnrollment({
         hasPaid: false,
-        invoices: [{ status: 'PAID' }]
-      })
+        invoices: [{ status: 'PAID' }],
+      }),
     ).toBe(true);
   });
 
@@ -19,8 +19,8 @@ test.describe('paid plan enrollment', () => {
     expect(
       hasPaidPlanEnrollment({
         hasPaid: false,
-        invoices: [{ status: 'TRIAL' }]
-      })
+        invoices: [{ status: 'TRIAL' }],
+      }),
     ).toBe(false);
   });
 
@@ -32,7 +32,7 @@ test.describe('paid plan enrollment', () => {
       days_remaining: 41,
       renewal_window_days: 7,
       period_months: null,
-      invoices: [{ status: 'PAID', note: 'months=1; coupon=FULL_SUMMER' }]
+      invoices: [{ status: 'PAID', note: 'months=1; coupon=FULL_SUMMER' }],
     });
     expect(overlaid?.has_paid).toBe(true);
     expect(overlaid?.is_trial).toBe(false);
@@ -46,8 +46,8 @@ test.describe('paid plan enrollment', () => {
         hasAcademy: true,
         planSlug: 'growth',
         status: 'ACTIVE',
-        hasPaid: true
-      })
+        hasPaid: true,
+      }),
     ).toBe(false);
   });
 });

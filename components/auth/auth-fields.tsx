@@ -10,58 +10,49 @@ import { useLanguage } from '@/lib/i18n/hooks';
 const AUTH_SECONDARY_CLASS =
   'inline-flex h-12 w-full items-center justify-center rounded-2xl text-base text-[#181C20] transition-colors hover:bg-white/40';
 
-interface AuthFieldProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'> {
+interface AuthFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'> {
   label: string;
   error?: string;
 }
 
 /** Boxed 56px input matching the auth design (label is the placeholder). */
-export const AuthField = React.forwardRef<HTMLInputElement, AuthFieldProps>(
-  function AuthField({ label, error, type, placeholder, ...props }, ref) {
-    const [show, setShow] = React.useState(false);
-    const isPassword = type === 'password';
-    const inputType = isPassword && show ? 'text' : type;
+export const AuthField = React.forwardRef<HTMLInputElement, AuthFieldProps>(function AuthField(
+  { label, error, type, placeholder, ...props },
+  ref,
+) {
+  const [show, setShow] = React.useState(false);
+  const isPassword = type === 'password';
+  const inputType = isPassword && show ? 'text' : type;
 
-    return (
-      <div className="space-y-1">
-        <div className="relative">
-          <input
-            {...props}
-            ref={ref}
-            type={inputType}
-            placeholder={placeholder ?? label}
+  return (
+    <div className="space-y-1">
+      <div className="relative">
+        <input
+          {...props}
+          ref={ref}
+          type={inputType}
+          placeholder={placeholder ?? label}
+          aria-label={label}
+          className={cn('auth-input', isPassword && 'with-toggle', error && 'has-error')}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={() => setShow((v) => !v)}
+            className="absolute inset-y-0 left-3 flex items-center text-[#181C20] transition-opacity hover:opacity-70"
             aria-label={label}
-            className={cn(
-              'auth-input',
-              isPassword && 'with-toggle',
-              error && 'has-error'
-            )}
-          />
-          {isPassword && (
-            <button
-              type="button"
-              tabIndex={-1}
-              onClick={() => setShow((v) => !v)}
-              className="absolute inset-y-0 left-3 flex items-center text-[#181C20] transition-opacity hover:opacity-70"
-              aria-label={label}
-            >
-              {show ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
-          )}
-        </div>
-        {error && <p className="px-3 text-xs text-destructive">{error}</p>}
+          >
+            {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
+        )}
       </div>
-    );
-  }
-);
+      {error && <p className="px-3 text-xs text-destructive">{error}</p>}
+    </div>
+  );
+});
 
-interface AuthPhoneFieldProps
-  extends Omit<AuthFieldProps, 'value' | 'onChange' | 'type'> {
+interface AuthPhoneFieldProps extends Omit<AuthFieldProps, 'value' | 'onChange' | 'type'> {
   value: string;
   onValueChange: (value: string) => void;
 }
@@ -73,11 +64,7 @@ interface AuthPhoneFieldProps
 const PHONE_PLACEHOLDER = '0912 *** ** **';
 const IRAN_PHONE_MAX_LENGTH = 11;
 
-export function AuthPhoneField({
-  value,
-  onValueChange,
-  ...props
-}: AuthPhoneFieldProps) {
+export function AuthPhoneField({ value, onValueChange, ...props }: AuthPhoneFieldProps) {
   const { language } = useLanguage();
 
   return (
@@ -87,11 +74,7 @@ export function AuthPhoneField({
       inputMode="tel"
       dir="ltr"
       autoComplete="tel"
-      placeholder={
-        language === 'fa'
-          ? toPersianDigits(PHONE_PLACEHOLDER)
-          : PHONE_PLACEHOLDER
-      }
+      placeholder={language === 'fa' ? toPersianDigits(PHONE_PLACEHOLDER) : PHONE_PLACEHOLDER}
       maxLength={IRAN_PHONE_MAX_LENGTH}
       value={language === 'fa' ? toPersianDigits(value) : value}
       onChange={(e) => {
@@ -104,26 +87,19 @@ export function AuthPhoneField({
   );
 }
 
-interface AuthSubmitProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface AuthSubmitProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
 /** Full-width solid brand submit button. */
-export function AuthSubmit({
-  loading,
-  children,
-  className,
-  disabled,
-  ...props
-}: AuthSubmitProps) {
+export function AuthSubmit({ loading, children, className, disabled, ...props }: AuthSubmitProps) {
   return (
     <button
       {...props}
       disabled={disabled || loading}
       className={cn(
         'btn-brand inline-flex h-12 w-full items-center justify-center gap-2 rounded-[14px] text-[17px] font-medium',
-        className
+        className,
       )}
     >
       {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -139,11 +115,7 @@ export function AuthSecondaryButton({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button
-      type="button"
-      {...props}
-      className={cn(AUTH_SECONDARY_CLASS, className)}
-    >
+    <button type="button" {...props} className={cn(AUTH_SECONDARY_CLASS, className)}>
       {children}
     </button>
   );
@@ -157,11 +129,7 @@ export function AuthSecondaryLink({
   ...props
 }: React.ComponentProps<typeof Link>) {
   return (
-    <Link
-      href={href}
-      className={cn(AUTH_SECONDARY_CLASS, className)}
-      {...props}
-    >
+    <Link href={href} className={cn(AUTH_SECONDARY_CLASS, className)} {...props}>
       {children}
     </Link>
   );

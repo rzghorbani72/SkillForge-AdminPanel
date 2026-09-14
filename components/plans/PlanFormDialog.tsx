@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
@@ -38,7 +38,7 @@ export function PlanFormDialog({
   onClose,
   onChange,
   onSave,
-  t
+  t,
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -50,9 +50,7 @@ export function PlanFormDialog({
               : MESSAGES.planForm.createPlan}
           </DialogTitle>
           <DialogDescription>
-            {editingPlan
-              ? MESSAGES.planForm.editPlanDesc
-              : MESSAGES.planForm.createPlanDesc}
+            {editingPlan ? MESSAGES.planForm.editPlanDesc : MESSAGES.planForm.createPlanDesc}
             <span className="mt-2 block text-xs">
               <Link
                 href="/platform/pricing"
@@ -108,10 +106,7 @@ export function PlanFormDialog({
           </div>
           <div className="space-y-1.5">
             <Label>{t('plans.sortOrder')}</Label>
-            <NumberInput
-              value={form.sort_order}
-              onChange={(raw) => onChange('sort_order', raw)}
-            />
+            <NumberInput value={form.sort_order} onChange={(raw) => onChange('sort_order', raw)} />
           </div>
 
           <div className="space-y-1.5 sm:col-span-2">
@@ -125,15 +120,10 @@ export function PlanFormDialog({
           </div>
 
           <div className="flex items-start gap-3 self-end rounded-lg border p-3">
-            <Switch
-              checked={form.is_active}
-              onCheckedChange={(v) => onChange('is_active', v)}
-            />
+            <Switch checked={form.is_active} onCheckedChange={(v) => onChange('is_active', v)} />
             <div>
               <p className="text-sm font-medium">{t('plans.toggleActive')}</p>
-              <p className="text-xs text-muted-foreground">
-                {MESSAGES.planForm.activePlanNote}
-              </p>
+              <p className="text-xs text-muted-foreground">{MESSAGES.planForm.activePlanNote}</p>
             </div>
           </div>
         </div>
@@ -144,9 +134,7 @@ export function PlanFormDialog({
           </Button>
           <Button onClick={onSave} disabled={isSaving || !form.name}>
             {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-            {editingPlan
-              ? MESSAGES.planForm.saveChanges
-              : MESSAGES.planForm.createPlan}
+            {editingPlan ? MESSAGES.planForm.saveChanges : MESSAGES.planForm.createPlan}
           </Button>
         </DialogFooter>
       </DialogContent>

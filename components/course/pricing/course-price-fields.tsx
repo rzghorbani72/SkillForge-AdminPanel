@@ -1,13 +1,7 @@
 'use client';
 
 import { UseFormReturn } from 'react-hook-form';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PriceInput } from '@/components/ui/price-input';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { CourseFormData } from '../schema';
@@ -17,11 +11,7 @@ import type { CourseFormData } from '../schema';
  * on the course record, so it is edited through the course form and saved with
  * the rest of the page, unlike the extra offers next to it.
  */
-export function CoursePriceFields({
-  form
-}: {
-  form: UseFormReturn<CourseFormData>;
-}) {
+export function CoursePriceFields({ form }: { form: UseFormReturn<CourseFormData> }) {
   const { t } = useTranslation();
 
   return (

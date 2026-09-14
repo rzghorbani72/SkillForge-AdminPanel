@@ -10,13 +10,7 @@ import { getRoleLabel } from '@/lib/i18n/role-label';
 import { ErrorHandler } from '@/lib/error-handler';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,7 +20,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -71,23 +65,16 @@ export default function UserEditPage() {
   const { user: authUser, isLoading: isAuthLoading } = useAuthUser();
 
   const userId = typeof params.id === 'string' ? params.id : '';
-  const [targetUser, setTargetUser] = useState<EditableProfileRecord | null>(
-    null
-  );
+  const [targetUser, setTargetUser] = useState<EditableProfileRecord | null>(null);
   const [form, setForm] = useState<UserEditFormState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const fetchedUserIdRef = useRef<string | null>(null);
 
-  const currentRole = useMemo(
-    () => getPrimaryRoleName(targetUser),
-    [targetUser]
-  );
+  const currentRole = useMemo(() => getPrimaryRoleName(targetUser), [targetUser]);
 
   const managerAcademyId =
-    authUser?.academyId ??
-    (authUser?.currentAcademy as { id?: string } | null)?.id ??
-    null;
+    authUser?.academyId ?? (authUser?.currentAcademy as { id?: string } | null)?.id ?? null;
 
   const canManagerEditDirectProfile = useMemo(() => {
     if (!targetUser || authUser?.role !== 'MANAGER' || !managerAcademyId) {
@@ -130,9 +117,9 @@ export default function UserEditPage() {
         id: currentRole,
         name: currentRole,
         label: targetUser?.role_label || getRoleLabel(currentRole, t),
-        hierarchy_level: targetUser?.role_hierarchy_level ?? 0
+        hierarchy_level: targetUser?.role_hierarchy_level ?? 0,
       },
-      ...assignableRoles
+      ...assignableRoles,
     ];
   }, [assignableRoles, currentRole, targetUser, t]);
 
@@ -154,12 +141,11 @@ export default function UserEditPage() {
 
         setTargetUser(normalizedUser);
         setForm({
-          display_name:
-            normalizedUser.display_name || normalizedUser.name || '',
+          display_name: normalizedUser.display_name || normalizedUser.name || '',
           email: normalizedUser.email || '',
           phone_number: normalizedUser.phone_number || '',
           is_active: normalizedUser.is_active ?? false,
-          role
+          role,
         });
       } catch (error) {
         ErrorHandler.handleApiError(error);
@@ -185,7 +171,7 @@ export default function UserEditPage() {
         phone_number: form.phone_number.trim(),
         // Changing your own status or role is a lockout / privilege change, so
         // it is never sent — the backend rejects it too.
-        ...(isSelf ? {} : { is_active: form.is_active })
+        ...(isSelf ? {} : { is_active: form.is_active }),
       });
 
       const nextRole = assignableRoles.find((role) => role.name === form.role);
@@ -212,9 +198,7 @@ export default function UserEditPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('userEdit.accessDeniedTitle')}</CardTitle>
-            <CardDescription>
-              {t('userEdit.accessDeniedDescription')}
-            </CardDescription>
+            <CardDescription>{t('userEdit.accessDeniedDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="outline" onClick={() => router.push('/users')}>
@@ -228,10 +212,7 @@ export default function UserEditPage() {
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
-      <PageHeader
-        title={t('userEdit.title')}
-        description={t('userEdit.description')}
-      >
+      <PageHeader title={t('userEdit.title')} description={t('userEdit.description')}>
         <Button variant="outline" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           {t('common.back')}
@@ -247,16 +228,12 @@ export default function UserEditPage() {
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="display_name">
-                  {t('userEdit.displayName')}
-                </Label>
+                <Label htmlFor="display_name">{t('userEdit.displayName')}</Label>
                 <Input
                   id="display_name"
                   value={form.display_name}
                   onChange={(e) =>
-                    setForm((prev) =>
-                      prev ? { ...prev, display_name: e.target.value } : prev
-                    )
+                    setForm((prev) => (prev ? { ...prev, display_name: e.target.value } : prev))
                   }
                   required
                 />
@@ -292,9 +269,7 @@ export default function UserEditPage() {
                   dir="ltr"
                   value={form.email}
                   onChange={(e) =>
-                    setForm((prev) =>
-                      prev ? { ...prev, email: e.target.value } : prev
-                    )
+                    setForm((prev) => (prev ? { ...prev, email: e.target.value } : prev))
                   }
                 />
               </div>
@@ -306,9 +281,7 @@ export default function UserEditPage() {
                   value={form.phone_number}
                   dir="ltr"
                   onChange={(e) =>
-                    setForm((prev) =>
-                      prev ? { ...prev, phone_number: e.target.value } : prev
-                    )
+                    setForm((prev) => (prev ? { ...prev, phone_number: e.target.value } : prev))
                   }
                   required
                 />
@@ -320,9 +293,7 @@ export default function UserEditPage() {
                   <Switch
                     checked={form.is_active}
                     onCheckedChange={(checked) =>
-                      setForm((prev) =>
-                        prev ? { ...prev, is_active: checked } : prev
-                      )
+                      setForm((prev) => (prev ? { ...prev, is_active: checked } : prev))
                     }
                     disabled={isSaving || isSelf}
                   />

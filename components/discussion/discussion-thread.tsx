@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { MessageSquare, Paperclip, Send, X } from 'lucide-react';
 import {
   MessageAttachment,
-  type ThreadAttachment
+  type ThreadAttachment,
 } from '@/components/discussion/message-attachment';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -40,7 +40,7 @@ export function DiscussionThread({
   submissionId,
   tutoringSessionId,
   threadId,
-  currentProfileId
+  currentProfileId,
 }: DiscussionThreadProps) {
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
@@ -102,7 +102,7 @@ export function DiscussionThread({
       const msg = (await apiClient.postDiscussionMessage(
         parent,
         text,
-        documentId
+        documentId,
       )) as ThreadMessage;
       activeThreadId.current = msg.thread_id;
       setBody('');
@@ -124,32 +124,20 @@ export function DiscussionThread({
 
       <div className="space-y-3">
         {messages.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            {t('discussion.noMessages')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('discussion.noMessages')}</p>
         )}
         {messages.map((m) => {
           const mine = currentProfileId && m.Author?.id === currentProfileId;
           return (
-            <div
-              key={m.id}
-              className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}
-            >
+            <div key={m.id} className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
               <div
                 className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${mine ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
               >
                 <p className="mb-1 text-xs opacity-70">
                   {m.Author?.display_name ?? t('discussion.user')}
                 </p>
-                {m.body && (
-                  <p className="whitespace-pre-wrap break-words">{m.body}</p>
-                )}
-                {m.Document && (
-                  <MessageAttachment
-                    attachment={m.Document}
-                    mine={Boolean(mine)}
-                  />
-                )}
+                {m.body && <p className="whitespace-pre-wrap break-words">{m.body}</p>}
+                {m.Document && <MessageAttachment attachment={m.Document} mine={Boolean(mine)} />}
               </div>
             </div>
           );
@@ -197,11 +185,7 @@ export function DiscussionThread({
           maxLength={5000}
           className="flex-1"
         />
-        <Button
-          onClick={send}
-          disabled={sending || (!body.trim() && !file)}
-          size="sm"
-        >
+        <Button onClick={send} disabled={sending || (!body.trim() && !file)} size="sm">
           <Send className="h-4 w-4" />
           <span className="sr-only">{t('discussion.send')}</span>
         </Button>

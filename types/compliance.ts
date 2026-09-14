@@ -3,7 +3,7 @@ export const ENAMAD_STATUS = {
   REQUIRED: 'REQUIRED',
   PENDING: 'PENDING',
   VERIFIED: 'VERIFIED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
 } as const;
 
 export type EnamadStatus = (typeof ENAMAD_STATUS)[keyof typeof ENAMAD_STATUS];
@@ -12,7 +12,7 @@ export const CONTENT_REVIEW_STATUS = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   FLAGGED: 'FLAGGED',
-  SUSPENDED: 'SUSPENDED'
+  SUSPENDED: 'SUSPENDED',
 } as const;
 
 export type ContentReviewStatus =
@@ -59,27 +59,25 @@ export type ReviewQueueResponse = {
 
 export const MODERATION_POLICY = {
   PUBLISH_IMMEDIATELY: 'PUBLISH_IMMEDIATELY',
-  HOLD_FOR_REVIEW: 'HOLD_FOR_REVIEW'
+  HOLD_FOR_REVIEW: 'HOLD_FOR_REVIEW',
 } as const;
 
-export type ModerationPolicy =
-  (typeof MODERATION_POLICY)[keyof typeof MODERATION_POLICY];
+export type ModerationPolicy = (typeof MODERATION_POLICY)[keyof typeof MODERATION_POLICY];
 
 export const MODERATION_STATUS = {
   APPROVED: 'APPROVED',
   PENDING_REVIEW: 'PENDING_REVIEW',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
 } as const;
 
-export type ModerationStatus =
-  (typeof MODERATION_STATUS)[keyof typeof MODERATION_STATUS];
+export type ModerationStatus = (typeof MODERATION_STATUS)[keyof typeof MODERATION_STATUS];
 
 /** "videos, voices, files, texts" */
 export const CONTENT_KIND = {
   VIDEO: 'VIDEO',
   AUDIO: 'AUDIO',
   DOCUMENT: 'DOCUMENT',
-  ARTICLE: 'ARTICLE'
+  ARTICLE: 'ARTICLE',
 } as const;
 
 export type ContentKind = (typeof CONTENT_KIND)[keyof typeof CONTENT_KIND];
@@ -103,7 +101,7 @@ export const ABUSE_STATUS = {
   OPEN: 'OPEN',
   REVIEWING: 'REVIEWING',
   ACTIONED: 'ACTIONED',
-  DISMISSED: 'DISMISSED'
+  DISMISSED: 'DISMISSED',
 } as const;
 
 export type AbuseStatus = (typeof ABUSE_STATUS)[keyof typeof ABUSE_STATUS];

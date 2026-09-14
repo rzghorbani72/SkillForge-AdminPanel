@@ -9,7 +9,7 @@ import type { MetricsQuery } from '@/lib/api';
  */
 export function useMetricsFetch<T>(
   query: MetricsQuery,
-  load: (query: MetricsQuery) => Promise<T>
+  load: (query: MetricsQuery) => Promise<T>,
 ): { data: T | null; loading: boolean } {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);

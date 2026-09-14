@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function PageContainer({
-  children
+  children,
 }: {
   children: React.ReactNode;
   /** Kept for callers; the shell already owns vertical scroll. */

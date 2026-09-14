@@ -39,7 +39,7 @@ export function SectionPreviewFrame({
   params,
   onLoad,
   showLoading = false,
-  className = ''
+  className = '',
 }: SectionPreviewFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(0.2);
@@ -63,7 +63,7 @@ export function SectionPreviewFrame({
   const queryParams = new URLSearchParams({
     template: templateKey,
     embed: '1',
-    sample: '1'
+    sample: '1',
   });
   if (blockId) queryParams.set('only', blockId);
   if (token) queryParams.set('token', token);
@@ -78,17 +78,13 @@ export function SectionPreviewFrame({
     // dir=ltr keeps the oversized inner box anchored at the visual left edge —
     // in an RTL page it would overflow leftward and the scaled content would
     // land outside the container. The iframe document handles its own RTL.
-    <div
-      ref={containerRef}
-      dir="ltr"
-      className={`relative overflow-hidden ${className}`}
-    >
+    <div ref={containerRef} dir="ltr" className={`relative overflow-hidden ${className}`}>
       <div
         className="origin-top-left"
         style={{
           width: virtualWidth,
           height: `${100 / zoom}%`,
-          transform: `scale(${zoom})`
+          transform: `scale(${zoom})`,
         }}
       >
         <iframe
@@ -99,9 +95,7 @@ export function SectionPreviewFrame({
             setLoaded(true);
             onLoad?.();
           }}
-          className={`h-full w-full border-0 ${
-            interactive ? '' : 'pointer-events-none'
-          }`}
+          className={`h-full w-full border-0 ${interactive ? '' : 'pointer-events-none'}`}
           sandbox="allow-scripts allow-same-origin"
         />
       </div>

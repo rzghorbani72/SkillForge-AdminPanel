@@ -8,15 +8,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/shared/PageHeader';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { apiClient, type MetricsCurrency } from '@/lib/api';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { useMetricsControls } from '../_hooks/use-metrics-controls';
@@ -60,7 +55,7 @@ export function MetricsPageClient() {
         setBusy(false);
       }
     },
-    [query]
+    [query],
   );
 
   const closeMonths = useCallback(async () => {
@@ -74,17 +69,9 @@ export function MetricsPageClient() {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      <PageHeader
-        title={t('platformMetrics.title')}
-        description={t('platformMetrics.subtitle')}
-      >
+      <PageHeader title={t('platformMetrics.title')} description={t('platformMetrics.subtitle')}>
         <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={closeMonths}
-            disabled={busy}
-          >
+          <Button variant="outline" size="sm" onClick={closeMonths} disabled={busy}>
             <RefreshCcw className="me-1.5 size-4" />
             {t('platformMetrics.refreshSnapshot')}
           </Button>
@@ -116,10 +103,7 @@ export function MetricsPageClient() {
                   <TooltipTrigger asChild>
                     <span>{t(`platformMetrics.tabs.${tab}`)}</span>
                   </TooltipTrigger>
-                  <TooltipContent
-                    side="bottom"
-                    className="max-w-xs whitespace-normal text-xs"
-                  >
+                  <TooltipContent side="bottom" className="max-w-xs whitespace-normal text-xs">
                     {t(`platformMetrics.guides.${tab}`)}
                   </TooltipContent>
                 </Tooltip>

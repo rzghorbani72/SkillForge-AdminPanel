@@ -13,10 +13,9 @@ const AVATAR_COLORS = [
   'bg-emerald-500',
   'bg-amber-500',
   'bg-rose-500',
-  'bg-cyan-500'
+  'bg-cyan-500',
 ];
-const avatarColor = (id: string) =>
-  AVATAR_COLORS[colorIndexForId(id, AVATAR_COLORS.length)];
+const avatarColor = (id: string) => AVATAR_COLORS[colorIndexForId(id, AVATAR_COLORS.length)];
 
 interface Academy {
   id: string;
@@ -31,20 +30,12 @@ interface AcademyPickerProps {
   onBack: () => void;
 }
 
-export function AcademyPicker({
-  academies,
-  loading,
-  onSelect,
-  onBack
-}: AcademyPickerProps) {
+export function AcademyPicker({ academies, loading, onSelect, onBack }: AcademyPickerProps) {
   const { t } = useTranslation();
 
   return (
     <AuthLayout maxWidth="md">
-      <AuthBrand
-        title={t('auth.chooseAcademy')}
-        subtitle={t('auth.chooseAcademyDesc')}
-      />
+      <AuthBrand title={t('auth.chooseAcademy')} subtitle={t('auth.chooseAcademyDesc')} />
 
       <div className="space-y-2">
         {academies.map((academy) => (
@@ -56,24 +47,20 @@ export function AcademyPicker({
             className={cn(
               'group flex w-full items-center gap-4 rounded-xl border bg-card p-4 text-start transition-all',
               'hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm',
-              'disabled:cursor-not-allowed disabled:opacity-60'
+              'disabled:cursor-not-allowed disabled:opacity-60',
             )}
           >
             <div
               className={cn(
                 'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white',
-                avatarColor(academy.id)
+                avatarColor(academy.id),
               )}
             >
               {academy.name[0].toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold group-hover:text-primary">
-                {academy.name}
-              </p>
-              <p className="truncate text-xs text-muted-foreground">
-                {academy.slug}
-              </p>
+              <p className="truncate font-semibold group-hover:text-primary">{academy.name}</p>
+              <p className="truncate text-xs text-muted-foreground">{academy.slug}</p>
             </div>
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />

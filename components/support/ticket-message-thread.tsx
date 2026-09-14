@@ -22,9 +22,7 @@ export function TicketMessageThread({ ticket }: Props) {
         m.kind === 'SYSTEM_EVENT' ? (
           <li key={m.id} className="flex items-center gap-2 text-center">
             <span className="h-px flex-1 bg-border" />
-            <span className="text-[11px] text-muted-foreground">
-              {ticketEventText(m, t)}
-            </span>
+            <span className="text-[11px] text-muted-foreground">{ticketEventText(m, t)}</span>
             <span className="h-px flex-1 bg-border" />
           </li>
         ) : (
@@ -37,13 +35,11 @@ export function TicketMessageThread({ ticket }: Props) {
             }`}
           >
             <div className="mb-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">
-                {m.Author?.display_name ?? '—'}
-              </span>
+              <span className="font-medium text-foreground">{m.Author?.display_name ?? '—'}</span>
               <span>
                 {formatDate(m.created_at, {
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}
               </span>
               {m.kind === 'INTERNAL_NOTE' && (
@@ -56,12 +52,7 @@ export function TicketMessageThread({ ticket }: Props) {
             {m.Attachment.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {m.Attachment.map((a) => (
-                  <a
-                    key={a.id}
-                    href={imgUrl(a.id)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a key={a.id} href={imgUrl(a.id)} target="_blank" rel="noreferrer">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={imgUrl(a.id)}
@@ -73,7 +64,7 @@ export function TicketMessageThread({ ticket }: Props) {
               </div>
             )}
           </li>
-        )
+        ),
       )}
     </ul>
   );

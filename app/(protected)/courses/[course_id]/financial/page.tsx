@@ -12,14 +12,8 @@ import { CourseFactsCard } from '@/components/course/detail/course-facts-card';
 import { CourseMoneyBand } from '@/components/course/detail/course-money-band';
 import { StatTile } from '@/components/course/detail/stat-tile';
 import { TeacherShareNote } from '@/components/shared/teacher-share-note';
-import {
-  activeClassCount,
-  seatTotals
-} from '@/components/course/live/live-class-stats';
-import {
-  canViewCourseMoney,
-  countLessons
-} from '@/components/course/detail/types';
+import { activeClassCount, seatTotals } from '@/components/course/live/live-class-stats';
+import { canViewCourseMoney, countLessons } from '@/components/course/detail/types';
 import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
 import { useCourseDetail } from '@/components/course/detail/use-course-detail';
 import { useStore } from '@/hooks/useStore';
@@ -39,10 +33,7 @@ export default function CourseFinancePage() {
   const percentLabel = usePercentLabel();
   const { course, loading: courseLoading } = useCourseWorkspace();
   const isLive = course?.course_type === 'LIVE';
-  const { payments, paymentsLoading, enrollments, live } = useCourseDetail(
-    courseId,
-    isLive
-  );
+  const { payments, paymentsLoading, enrollments, live } = useCourseDetail(courseId, isLive);
 
   const seats = useMemo(() => seatTotals(live.groups), [live.groups]);
 
@@ -62,11 +53,7 @@ export default function CourseFinancePage() {
       <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <div className="text-center">
           <p className="text-muted-foreground">{t('courseDetail.notFound')}</p>
-          <Button
-            variant="outline"
-            className="mt-4"
-            onClick={() => router.push('/courses')}
-          >
+          <Button variant="outline" className="mt-4" onClick={() => router.push('/courses')}>
             {t('courseDetail.backToCourses')}
           </Button>
         </div>
@@ -91,11 +78,7 @@ export default function CourseFinancePage() {
             <StatTile
               icon={<CalendarDays className="h-4 w-4" />}
               label={t('courseDetail.activeClasses')}
-              value={
-                live.loading
-                  ? null
-                  : formatNumber(activeClassCount(live.groups))
-              }
+              value={live.loading ? null : formatNumber(activeClassCount(live.groups))}
               sub={t('courseDetail.activeClassesHint')}
               color="violet"
             />
@@ -107,7 +90,7 @@ export default function CourseFinancePage() {
                   ? null
                   : t('courseDetail.seatsOf', {
                       taken: formatNumber(seats.taken),
-                      capacity: formatNumber(seats.capacity)
+                      capacity: formatNumber(seats.capacity),
                     })
               }
               sub={t('courseDetail.seatsSoldHint')}
@@ -133,7 +116,7 @@ export default function CourseFinancePage() {
             label={t('courseDetail.lessons')}
             value={formatNumber(countLessons(seasons))}
             sub={t('courseDetail.sections', {
-              count: formatNumber(seasons.length)
+              count: formatNumber(seasons.length),
             })}
             color="violet"
           />

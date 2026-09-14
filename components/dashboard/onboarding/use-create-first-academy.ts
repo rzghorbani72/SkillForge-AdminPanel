@@ -29,7 +29,7 @@ export function useCreateFirstAcademy() {
         await refreshAcademies().catch(() => {});
         setCreated(true);
         logger.ok('Onboarding', 'FirstAcademyCreated', {
-          academy_id: result.id ?? ''
+          academy_id: result.id ?? '',
         });
         toast.success(t('auth.academyCreatedTitle'));
         setTimeout(() => {
@@ -38,14 +38,11 @@ export function useCreateFirstAcademy() {
       } catch (err: unknown) {
         // A legal-consent 403 opens its own modal and pauses every call — a second
         // toast here would blame the manager for a form that was never submitted.
-        if ((err as { code?: string })?.code === 'LEGAL_CONSENT_REQUIRED')
-          return;
-        toast.error(
-          (err as { message?: string })?.message ?? t('common.error')
-        );
+        if ((err as { code?: string })?.code === 'LEGAL_CONSENT_REQUIRED') return;
+        toast.error((err as { message?: string })?.message ?? t('common.error'));
       }
     },
-    [refreshAcademies, t]
+    [refreshAcademies, t],
   );
 
   return { submit, created };

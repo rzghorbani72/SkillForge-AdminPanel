@@ -11,12 +11,7 @@ interface SectionItemControlsProps {
 }
 
 /** Move up / move down / remove row, shared by the slides and videos editors. */
-export function SectionItemControls({
-  index,
-  count,
-  onMove,
-  onRemove
-}: SectionItemControlsProps) {
+export function SectionItemControls({ index, count, onMove, onRemove }: SectionItemControlsProps) {
   const { t } = useTranslation();
   const btn =
     'rounded border border-zinc-300 p-1 text-zinc-600 transition-colors hover:bg-zinc-100 disabled:opacity-40';

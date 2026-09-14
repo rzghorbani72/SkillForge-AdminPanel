@@ -2,19 +2,13 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
@@ -97,16 +91,16 @@ const CreateProductAssociations = ({ form }: Props) => {
     .map((category) => ({
       id: category.id,
       name: category.name,
-      type: category.type
+      type: category.type,
     }));
 
   const categoryOptions = productCategories.map((c) => ({
-    value: c.id.toString()
+    value: c.id.toString(),
   }));
   useAutoSelect(
     categoryOptions,
     (value) => form.setValue('category_id', value),
-    form.watch('category_id')
+    form.watch('category_id'),
   );
 
   const courseIds = form.watch('course_ids') || [];
@@ -118,7 +112,7 @@ const CreateProductAssociations = ({ form }: Props) => {
     if (isSelected) {
       form.setValue(
         'course_ids',
-        currentIds.filter((id: string) => id !== courseId)
+        currentIds.filter((id: string) => id !== courseId),
       );
     } else {
       form.setValue('course_ids', [...currentIds, courseId]);
@@ -150,9 +144,7 @@ const CreateProductAssociations = ({ form }: Props) => {
                     <SelectTrigger>
                       <SelectValue
                         placeholder={
-                          categoriesLoading
-                            ? t('common.loading')
-                            : t('products.selectCategory')
+                          categoriesLoading ? t('common.loading') : t('products.selectCategory')
                         }
                       />
                     </SelectTrigger>
@@ -162,10 +154,7 @@ const CreateProductAssociations = ({ form }: Props) => {
                       <>
                         <SelectItem value="none">{t('common.none')}</SelectItem>
                         {productCategories.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={category.id.toString()}
-                          >
+                          <SelectItem key={category.id} value={category.id.toString()}>
                             {category.name}
                           </SelectItem>
                         ))}
@@ -190,19 +179,13 @@ const CreateProductAssociations = ({ form }: Props) => {
           </FormLabel>
           <div className="rounded-lg border border-border p-4">
             {!selectedCategoryId ? (
-              <p className="text-sm text-muted-foreground">
-                {t('products.selectCategoryFirst')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t('products.selectCategoryFirst')}</p>
             ) : coursesLoading ? (
-              <p className="text-sm text-muted-foreground">
-                {t('common.loading')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
             ) : coursesError ? (
               <p className="text-sm text-red-500">{coursesError}</p>
             ) : courses.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                {t('products.noCoursesInCategory')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t('products.noCoursesInCategory')}</p>
             ) : (
               <div className="max-h-60 space-y-2 overflow-y-auto">
                 {courses.map((course) => {
@@ -215,14 +198,10 @@ const CreateProductAssociations = ({ form }: Props) => {
                       <input
                         type="checkbox"
                         checked={isSelected}
-                        onChange={() =>
-                          handleCourseToggle(course.id.toString())
-                        }
+                        onChange={() => handleCourseToggle(course.id.toString())}
                         className="h-4 w-4 rounded border-border text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-foreground">
-                        {course.title}
-                      </span>
+                      <span className="text-sm text-foreground">{course.title}</span>
                     </label>
                   );
                 })}
@@ -232,9 +211,7 @@ const CreateProductAssociations = ({ form }: Props) => {
           {courseIds.length > 0 && (
             <p className="text-xs text-muted-foreground">
               {courseIds.length}{' '}
-              {courseIds.length === 1
-                ? t('courses.course')
-                : t('courses.courses')}{' '}
+              {courseIds.length === 1 ? t('courses.course') : t('courses.courses')}{' '}
               {t('common.selected')}
             </p>
           )}

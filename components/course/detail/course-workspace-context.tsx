@@ -7,7 +7,7 @@ import {
   useEffect,
   useMemo,
   useState,
-  type ReactNode
+  type ReactNode,
 } from 'react';
 import { apiClient } from '@/lib/api';
 import type { CourseDetail } from './types';
@@ -39,10 +39,7 @@ type CourseWorkspaceProviderProps = {
   children: ReactNode;
 };
 
-export function CourseWorkspaceProvider({
-  courseId,
-  children
-}: CourseWorkspaceProviderProps) {
+export function CourseWorkspaceProvider({ courseId, children }: CourseWorkspaceProviderProps) {
   const [course, setCourse] = useState<CourseDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -63,12 +60,10 @@ export function CourseWorkspaceProvider({
 
   const value = useMemo(
     () => ({ courseId, course, loading, refresh }),
-    [courseId, course, loading, refresh]
+    [courseId, course, loading, refresh],
   );
 
   return (
-    <CourseWorkspaceContext.Provider value={value}>
-      {children}
-    </CourseWorkspaceContext.Provider>
+    <CourseWorkspaceContext.Provider value={value}>{children}</CourseWorkspaceContext.Provider>
   );
 }

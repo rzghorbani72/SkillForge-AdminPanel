@@ -16,7 +16,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -24,7 +24,7 @@ import { PlanMarginPreviewCard } from '@/components/platform/pricing/plan-margin
 import {
   AcademyCustomPlanFormData,
   DEFAULT_CUSTOM_PLAN_FORM,
-  StructuredPlanLimits
+  StructuredPlanLimits,
 } from './plan-types';
 
 interface Props {
@@ -45,16 +45,14 @@ const LIMIT_FIELDS: Array<{
   { key: 'storage_gb', labelKey: 'storageGb' },
   { key: 'monthly_traffic_gb', labelKey: 'monthlyTrafficGb' },
   { key: 'videos', labelKey: 'videos' },
-  { key: 'dedicated_templates', labelKey: 'dedicatedTemplates' }
+  { key: 'dedicated_templates', labelKey: 'dedicatedTemplates' },
 ];
 
 export function AcademyCustomPlanCard({ academyId, t }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [isEnabled, setIsEnabled] = useState(false);
   const [assignedAt, setAssignedAt] = useState<string | null>(null);
-  const [form, setForm] = useState<AcademyCustomPlanFormData>(
-    DEFAULT_CUSTOM_PLAN_FORM
-  );
+  const [form, setForm] = useState<AcademyCustomPlanFormData>(DEFAULT_CUSTOM_PLAN_FORM);
   const [isSaving, setIsSaving] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
@@ -70,26 +68,19 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
         limits: LIMIT_FIELDS.reduce(
           (acc, { key }) => ({
             ...acc,
-            [key]: String(
-              data?.custom_plan_limits?.[key] ??
-                DEFAULT_CUSTOM_PLAN_FORM.limits[key]
-            )
+            [key]: String(data?.custom_plan_limits?.[key] ?? DEFAULT_CUSTOM_PLAN_FORM.limits[key]),
           }),
-          {} as AcademyCustomPlanFormData['limits']
+          {} as AcademyCustomPlanFormData['limits'],
         ),
         features: Array.isArray(data?.custom_plan_features)
           ? data.custom_plan_features.join('\n')
           : '',
         price_monthly_toman:
-          data?.custom_plan_price_monthly != null
-            ? String(data.custom_plan_price_monthly)
-            : '',
+          data?.custom_plan_price_monthly != null ? String(data.custom_plan_price_monthly) : '',
         price_yearly_toman:
-          data?.custom_plan_price_yearly != null
-            ? String(data.custom_plan_price_yearly)
-            : '',
+          data?.custom_plan_price_yearly != null ? String(data.custom_plan_price_yearly) : '',
         note: data?.custom_plan_note ?? '',
-        margin_override: false
+        margin_override: false,
       });
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -111,11 +102,11 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
       LIMIT_FIELDS.reduce(
         (acc, { key }) => ({
           ...acc,
-          [key]: Number(form.limits[key]) || 0
+          [key]: Number(form.limits[key]) || 0,
         }),
-        {} as StructuredPlanLimits
+        {} as StructuredPlanLimits,
       ),
-    [form.limits]
+    [form.limits],
   );
 
   const revenueToman = Number(form.price_monthly_toman) || 0;
@@ -133,11 +124,9 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
         price_monthly_toman: form.price_monthly_toman
           ? Number(form.price_monthly_toman)
           : undefined,
-        price_yearly_toman: form.price_yearly_toman
-          ? Number(form.price_yearly_toman)
-          : undefined,
+        price_yearly_toman: form.price_yearly_toman ? Number(form.price_yearly_toman) : undefined,
         note: form.note.trim() || undefined,
-        margin_override: form.margin_override || undefined
+        margin_override: form.margin_override || undefined,
       });
       toast.success(t('platform.stores.customPlan.saveSuccess'));
       await load();
@@ -210,38 +199,28 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
         </div>
 
         <div>
-          <Label className="mb-2 block">
-            {t('platform.stores.customPlan.limitsTitle')}
-          </Label>
+          <Label className="mb-2 block">{t('platform.stores.customPlan.limitsTitle')}</Label>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {LIMIT_FIELDS.map(({ key, labelKey }) => (
               <div key={key} className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">
                   {t(`platform.stores.customPlan.${labelKey}`)}
                 </Label>
-                <NumberInput
-                  value={form.limits[key]}
-                  onChange={(raw) => onLimitChange(key, raw)}
-                />
+                <NumberInput value={form.limits[key]} onChange={(raw) => onLimitChange(key, raw)} />
               </div>
             ))}
           </div>
         </div>
 
         {revenueToman > 0 && (
-          <PlanMarginPreviewCard
-            revenueToman={revenueToman}
-            limits={parsedLimits}
-          />
+          <PlanMarginPreviewCard revenueToman={revenueToman} limits={parsedLimits} />
         )}
 
         <div className="space-y-1.5">
           <Label>{t('platform.stores.customPlan.featuresLabel')}</Label>
           <Textarea
             value={form.features}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, features: e.target.value }))
-            }
+            onChange={(e) => setForm((f) => ({ ...f, features: e.target.value }))}
             placeholder={t('platform.stores.customPlan.featuresPlaceholder')}
             rows={4}
           />
@@ -252,24 +231,18 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
             <Label>{t('platform.stores.customPlan.priceMonthlyLabel')}</Label>
             <PriceInput
               value={form.price_monthly_toman}
-              onChange={(raw) =>
-                setForm((f) => ({ ...f, price_monthly_toman: raw }))
-              }
+              onChange={(raw) => setForm((f) => ({ ...f, price_monthly_toman: raw }))}
             />
           </div>
           <div className="space-y-1.5">
             <Label>{t('platform.stores.customPlan.priceYearlyLabel')}</Label>
             <PriceInput
               value={form.price_yearly_toman}
-              onChange={(raw) =>
-                setForm((f) => ({ ...f, price_yearly_toman: raw }))
-              }
+              onChange={(raw) => setForm((f) => ({ ...f, price_yearly_toman: raw }))}
             />
           </div>
         </div>
-        <p className="text-xs text-muted-foreground">
-          {t('platform.stores.customPlan.priceHint')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('platform.stores.customPlan.priceHint')}</p>
 
         <div className="space-y-1.5">
           <Label>{t('platform.stores.customPlan.noteLabel')}</Label>
@@ -284,14 +257,10 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
         <label className="flex items-start gap-3 rounded-xl border p-3">
           <Switch
             checked={form.margin_override}
-            onCheckedChange={(v) =>
-              setForm((f) => ({ ...f, margin_override: v }))
-            }
+            onCheckedChange={(v) => setForm((f) => ({ ...f, margin_override: v }))}
           />
           <div>
-            <p className="text-sm font-medium">
-              {t('platform.stores.customPlan.marginOverride')}
-            </p>
+            <p className="text-sm font-medium">{t('platform.stores.customPlan.marginOverride')}</p>
             <p className="text-xs text-muted-foreground">
               {t('platform.stores.customPlan.marginOverrideHint')}
             </p>
@@ -328,25 +297,16 @@ export function AcademyCustomPlanCard({ academyId, t }: Props) {
       <Dialog open={isClearConfirmOpen} onOpenChange={setIsClearConfirmOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {t('platform.stores.customPlan.clearConfirmTitle')}
-            </DialogTitle>
+            <DialogTitle>{t('platform.stores.customPlan.clearConfirmTitle')}</DialogTitle>
             <DialogDescription>
               {t('platform.stores.customPlan.clearConfirmDesc')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsClearConfirmOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setIsClearConfirmOpen(false)}>
               {t('common.cancel')}
             </Button>
-            <Button
-              variant="destructive"
-              onClick={handleClear}
-              disabled={isClearing}
-            >
+            <Button variant="destructive" onClick={handleClear} disabled={isClearing}>
               {isClearing && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
               {isClearing
                 ? t('platform.stores.customPlan.clearing')

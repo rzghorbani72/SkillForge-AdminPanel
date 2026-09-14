@@ -15,14 +15,14 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle
+  SheetTitle,
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { ClassSellingFields } from '@/components/class/class-selling-fields';
@@ -36,7 +36,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import type {
   TutoringGroup,
   TutoringGroupSlot,
-  TutoringGroupVisibility
+  TutoringGroupVisibility,
 } from '@/types/learning-operations';
 
 /** The timetable is only a proposal until the class fills and is confirmed. */
@@ -58,7 +58,7 @@ export function EditClassSheet({
   courseId,
   groupId,
   onOpenChange,
-  onChanged
+  onChanged,
 }: EditClassSheetProps) {
   const { t } = useTranslation();
   const detail = useClassDetail(groupId);
@@ -85,9 +85,7 @@ export function EditClassSheet({
             </SheetTitle>
             {detail.group && <GroupStatusBadge status={detail.group.status} />}
           </div>
-          <SheetDescription>
-            {t('tutoring.groups.editSheetHint')}
-          </SheetDescription>
+          <SheetDescription>{t('tutoring.groups.editSheetHint')}</SheetDescription>
         </SheetHeader>
 
         {detail.loading || !detail.group ? (
@@ -145,7 +143,7 @@ function ClassSettingsBody({
   announce,
   confirm,
   cancel,
-  onChanged
+  onChanged,
 }: ClassSettingsBodyProps) {
   const { t } = useTranslation();
 
@@ -154,23 +152,15 @@ function ClassSettingsBody({
   const [capacity, setCapacity] = useState(String(group.capacity));
   const [minStudents, setMinStudents] = useState(String(group.min_students));
   const [seatPrice, setSeatPrice] = useState(
-    group.seat_price != null ? String(group.seat_price) : ''
+    group.seat_price != null ? String(group.seat_price) : '',
   );
-  const [wholeClassBooking, setWholeClassBooking] = useState(
-    group.whole_class_booking ?? true
-  );
-  const [ageMin, setAgeMin] = useState(
-    group.age_min ? String(group.age_min) : ''
-  );
-  const [ageMax, setAgeMax] = useState(
-    group.age_max ? String(group.age_max) : ''
-  );
+  const [wholeClassBooking, setWholeClassBooking] = useState(group.whole_class_booking ?? true);
+  const [ageMin, setAgeMin] = useState(group.age_min ? String(group.age_min) : '');
+  const [ageMax, setAgeMax] = useState(group.age_max ? String(group.age_max) : '');
   const [termWeeks, setTermWeeks] = useState(String(group.term_weeks));
-  const [visibility, setVisibility] = useState<TutoringGroupVisibility>(
-    group.visibility
-  );
+  const [visibility, setVisibility] = useState<TutoringGroupVisibility>(group.visibility);
   const [joinDeadline, setJoinDeadline] = useState(
-    group.join_deadline ? group.join_deadline.slice(0, 10) : ''
+    group.join_deadline ? group.join_deadline.slice(0, 10) : '',
   );
   const [slots, setSlots] = useState<TutoringGroupSlot[]>(group.Slots ?? []);
   const [saving, setSaving] = useState(false);
@@ -193,9 +183,7 @@ function ClassSettingsBody({
         age_max: ageMax ? Number(ageMax) : undefined,
         term_weeks: Number(termWeeks) || undefined,
         visibility,
-        join_deadline: joinDeadline
-          ? new Date(joinDeadline).toISOString()
-          : undefined
+        join_deadline: joinDeadline ? new Date(joinDeadline).toISOString() : undefined,
       });
       if (!settingsOk) return false;
       if (canEditSchedule && !(await replaceSlots(slots))) return false;
@@ -224,9 +212,7 @@ function ClassSettingsBody({
         <div className="space-y-4 rounded-lg border p-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="edit-group-title">
-                {t('tutoring.groups.name')}
-              </Label>
+              <Label htmlFor="edit-group-title">{t('tutoring.groups.name')}</Label>
               <Input
                 id="edit-group-title"
                 value={title}
@@ -235,9 +221,7 @@ function ClassSettingsBody({
             </div>
 
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="edit-group-description">
-                {t('tutoring.groups.description_')}
-              </Label>
+              <Label htmlFor="edit-group-description">{t('tutoring.groups.description_')}</Label>
               <Textarea
                 id="edit-group-description"
                 value={description}
@@ -247,9 +231,7 @@ function ClassSettingsBody({
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="edit-group-capacity">
-                  {t('tutoring.groups.capacity')}
-                </Label>
+                <Label htmlFor="edit-group-capacity">{t('tutoring.groups.capacity')}</Label>
                 <ClassSizeBadge capacity={Number(capacity) || 1} />
               </div>
               <NumberInput
@@ -261,9 +243,7 @@ function ClassSettingsBody({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="edit-group-min">
-                {t('tutoring.groups.minStudents')}
-              </Label>
+              <Label htmlFor="edit-group-min">{t('tutoring.groups.minStudents')}</Label>
               <NumberInput
                 id="edit-group-min"
                 value={minStudents}
@@ -273,69 +253,38 @@ function ClassSettingsBody({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="edit-group-age-min">
-                {t('tutoring.groups.ageMin')}
-              </Label>
-              <NumberInput
-                id="edit-group-age-min"
-                value={ageMin}
-                min={3}
-                onChange={setAgeMin}
-              />
+              <Label htmlFor="edit-group-age-min">{t('tutoring.groups.ageMin')}</Label>
+              <NumberInput id="edit-group-age-min" value={ageMin} min={3} onChange={setAgeMin} />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="edit-group-age-max">
-                {t('tutoring.groups.ageMax')}
-              </Label>
-              <NumberInput
-                id="edit-group-age-max"
-                value={ageMax}
-                min={3}
-                onChange={setAgeMax}
-              />
+              <Label htmlFor="edit-group-age-max">{t('tutoring.groups.ageMax')}</Label>
+              <NumberInput id="edit-group-age-max" value={ageMax} min={3} onChange={setAgeMax} />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="edit-group-term">
-                {t('tutoring.groups.termWeeks')}
-              </Label>
-              <NumberInput
-                id="edit-group-term"
-                value={termWeeks}
-                min={1}
-                onChange={setTermWeeks}
-              />
+              <Label htmlFor="edit-group-term">{t('tutoring.groups.termWeeks')}</Label>
+              <NumberInput id="edit-group-term" value={termWeeks} min={1} onChange={setTermWeeks} />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="edit-group-visibility">
-                {t('tutoring.groups.visibility')}
-              </Label>
+              <Label htmlFor="edit-group-visibility">{t('tutoring.groups.visibility')}</Label>
               <Select
                 value={visibility}
-                onValueChange={(value) =>
-                  setVisibility(value as TutoringGroupVisibility)
-                }
+                onValueChange={(value) => setVisibility(value as TutoringGroupVisibility)}
               >
                 <SelectTrigger id="edit-group-visibility">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="PUBLIC">
-                    {t('tutoring.groups.visibilityPublic')}
-                  </SelectItem>
-                  <SelectItem value="PRIVATE">
-                    {t('tutoring.groups.visibilityPrivate')}
-                  </SelectItem>
+                  <SelectItem value="PUBLIC">{t('tutoring.groups.visibilityPublic')}</SelectItem>
+                  <SelectItem value="PRIVATE">{t('tutoring.groups.visibilityPrivate')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="edit-group-deadline">
-                {t('tutoring.groups.joinDeadline')}
-              </Label>
+              <Label htmlFor="edit-group-deadline">{t('tutoring.groups.joinDeadline')}</Label>
               <DatePicker
                 id="edit-group-deadline"
                 value={joinDeadline}
@@ -366,9 +315,7 @@ function ClassSettingsBody({
           <Label>{t('tutoring.groups.timetable')}</Label>
           {canEditSchedule ? (
             <>
-              <p className="text-xs text-muted-foreground">
-                {t('tutoring.groups.timetableHint')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t('tutoring.groups.timetableHint')}</p>
               <GroupSlotEditor slots={slots} onChange={setSlots} />
             </>
           ) : (
@@ -382,15 +329,11 @@ function ClassSettingsBody({
           group={group}
           busy={busy}
           onUpdateLink={(url, notify, regenerate) =>
-            void updateLink(url, notify, regenerate).then(
-              (ok) => ok && onChanged()
-            )
+            void updateLink(url, notify, regenerate).then((ok) => ok && onChanged())
           }
           onAnnounce={(body, sms) => void announce(body, sms)}
           onConfirm={() => void confirm().then((ok) => ok && onChanged())}
-          onCancel={(reason) =>
-            void cancel(reason).then((ok) => ok && onChanged())
-          }
+          onCancel={(reason) => void cancel(reason).then((ok) => ok && onChanged())}
         />
 
         <Button variant="outline" className="w-full" asChild>
@@ -410,9 +353,7 @@ function ClassSettingsBody({
             disabled={busy || saving}
             onClick={() => void doPublish()}
           >
-            {busy || saving
-              ? t('common.saving')
-              : t('courses.live.publishClass')}
+            {busy || saving ? t('common.saving') : t('courses.live.publishClass')}
           </Button>
         )}
         <Button

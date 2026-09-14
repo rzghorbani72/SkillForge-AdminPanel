@@ -58,7 +58,5 @@ export type HealthRange = (typeof HEALTH_RANGES)[number];
 export const getAcademyHealthSignals = (signal?: AbortSignal) =>
   call<HealthSignals>('/academy-health/signals', { signal });
 
-export const getAcademyHealthSeries = (
-  days: HealthRange,
-  signal?: AbortSignal
-) => call<HealthSeries>(`/academy-health/series?days=${days}`, { signal });
+export const getAcademyHealthSeries = (days: HealthRange, signal?: AbortSignal) =>
+  call<HealthSeries>(`/academy-health/series?days=${days}`, { signal });

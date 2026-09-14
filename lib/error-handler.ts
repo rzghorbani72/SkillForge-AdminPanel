@@ -7,7 +7,7 @@ import {
   resolveApiErrorMessage,
   resolveFieldLabel,
   resolveFieldMessage,
-  type FieldError
+  type FieldError,
 } from './api-error';
 
 /**
@@ -82,9 +82,7 @@ export class ErrorHandler {
   static handleFormError(error: unknown): Record<string, string> {
     const language = currentLanguage();
     const fieldErrors: Record<string, string> = {};
-    const fields: FieldError[] = isApiResponseError(error)
-      ? error.error.fields
-      : [];
+    const fields: FieldError[] = isApiResponseError(error) ? error.error.fields : [];
 
     for (const fieldError of fields) {
       const formField = this.mapFieldName(fieldError.field);
@@ -112,7 +110,7 @@ export class ErrorHandler {
       name: 'name',
       role: 'role',
       academy_id: 'existingStoreId',
-      display_name: 'name'
+      display_name: 'name',
     };
 
     return fieldMap[field] ?? null;

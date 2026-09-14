@@ -7,10 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { canManageSubscription } from '@/lib/subscription-access';
-import {
-  getSubscriptionStatusDisplay,
-  SUBSCRIPTION_TONE_CLASSES
-} from '@/lib/subscription-status';
+import { getSubscriptionStatusDisplay, SUBSCRIPTION_TONE_CLASSES } from '@/lib/subscription-status';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
@@ -23,8 +20,7 @@ export function CurrentPlanBanner() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const canManage = canManageSubscription(user);
-  const { planName, status, isTrial, isLoading, hasAcademy } =
-    useAcademySubscription(canManage);
+  const { planName, status, isTrial, isLoading, hasAcademy } = useAcademySubscription(canManage);
 
   // With no academy there is no plan to report and none to sell yet — the page
   // below offers "create your first academy" instead.
@@ -41,9 +37,7 @@ export function CurrentPlanBanner() {
           <Sparkles className="h-5 w-5" />
         </div>
         <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">
-            {t('stores.currentPlan')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('stores.currentPlan')}</p>
           <div className="mt-0.5 flex items-center gap-2">
             <span className="text-base font-semibold">
               {hasLivePlan && planName ? planName : t('stores.noActivePlan')}
@@ -51,15 +45,13 @@ export function CurrentPlanBanner() {
             <span
               className={cn(
                 'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold leading-none',
-                SUBSCRIPTION_TONE_CLASSES[display.tone]
+                SUBSCRIPTION_TONE_CLASSES[display.tone],
               )}
             >
               {t(display.labelKey)}
             </span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {t('stores.planCoversAllAcademies')}
-          </p>
+          <p className="mt-1 text-xs text-muted-foreground">{t('stores.planCoversAllAcademies')}</p>
         </div>
       </div>
 

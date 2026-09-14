@@ -14,28 +14,17 @@ type Props = {
   onChange: (nationalId: string) => void;
 };
 
-export function KycStepIdentity({
-  nationalId,
-  phoneNumber,
-  disabled = false,
-  onChange
-}: Props) {
+export function KycStepIdentity({ nationalId, phoneNumber, disabled = false, onChange }: Props) {
   const { t, language } = useTranslation();
 
   return (
     <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
       <div className="space-y-2">
         <Label htmlFor="kyc-phone">{t('settings.kyc.phoneNumber')}</Label>
-        <p
-          id="kyc-phone"
-          dir="ltr"
-          className="rounded-md border bg-muted px-3 py-2 text-sm"
-        >
+        <p id="kyc-phone" dir="ltr" className="rounded-md border bg-muted px-3 py-2 text-sm">
           {phoneNumber ? formatPhoneDisplay(phoneNumber, language) : '—'}
         </p>
-        <p className="text-xs text-muted-foreground">
-          {t('settings.kyc.phoneLockedHelp')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('settings.kyc.phoneLockedHelp')}</p>
       </div>
 
       <div className="space-y-2">
@@ -51,9 +40,7 @@ export function KycStepIdentity({
           required
           disabled={disabled}
         />
-        <p className="text-xs text-muted-foreground">
-          {t('settings.kyc.nationalIdHelp')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('settings.kyc.nationalIdHelp')}</p>
       </div>
     </div>
   );

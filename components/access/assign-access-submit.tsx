@@ -22,7 +22,7 @@ export function AssignAccessSubmit({
   blockedHint,
   readyHint,
   isSaving,
-  onSubmit
+  onSubmit,
 }: AssignAccessSubmitProps) {
   return (
     <div className="space-y-2">
@@ -35,11 +35,7 @@ export function AssignAccessSubmit({
         <p className="text-xs text-muted-foreground">{readyHint}</p>
       ) : null}
 
-      <Button
-        type="button"
-        onClick={onSubmit}
-        disabled={Boolean(blockedHint) || isSaving}
-      >
+      <Button type="button" onClick={onSubmit} disabled={Boolean(blockedHint) || isSaving}>
         {isSaving ? (
           <Loader2 className="me-2 h-4 w-4 animate-spin" />
         ) : (

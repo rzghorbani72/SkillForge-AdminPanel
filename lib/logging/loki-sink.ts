@@ -52,14 +52,13 @@ export function createLokiSink(options: LokiSinkOptions): LokiSink {
     flushMs = 2000,
     maxEntries = 100,
     maxBytes = 1_000_000,
-    maxQueue = 2000
+    maxQueue = 2000,
   } = options;
   const endpoint = `${url.replace(/\/$/, '')}/loki/api/v1/push`;
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
-  if (user && token)
-    headers.Authorization = `Basic ${btoa(`${user}:${token}`)}`;
+  if (user && token) headers.Authorization = `Basic ${btoa(`${user}:${token}`)}`;
 
   let queue: LogEntry[] = [];
   let queuedBytes = 0;
@@ -72,7 +71,7 @@ export function createLokiSink(options: LokiSinkOptions): LokiSink {
         method: 'POST',
         headers,
         body: JSON.stringify({ streams: toStreams(batch) }),
-        keepalive: true
+        keepalive: true,
       });
       if (!res.ok) throw new Error(`Loki push failed: ${res.status}`);
     } catch {
@@ -97,7 +96,7 @@ export function createLokiSink(options: LokiSinkOptions): LokiSink {
         release,
         event: 'Logging',
         action: 'EntriesDropped',
-        dropped_count: dropped
+        dropped_count: dropped,
       });
       dropped = 0;
     }

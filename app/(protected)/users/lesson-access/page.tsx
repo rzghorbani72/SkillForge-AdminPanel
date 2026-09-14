@@ -1,20 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -24,7 +18,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -32,7 +26,7 @@ import { Pagination } from '@/components/shared/Pagination';
 import {
   CourseSearchCombobox,
   LessonSearchCombobox,
-  StudentProfileSearchCombobox
+  StudentProfileSearchCombobox,
 } from '@/components/entity-search';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -96,7 +90,7 @@ export default function StudentLessonAccessPage() {
         profile_id: Number(profileId),
         lesson_id: Number(lessonId),
         is_unlocked: isUnlocked,
-        note: note || undefined
+        note: note || undefined,
       });
       setDialog(false);
       setProfileId('');
@@ -126,25 +120,18 @@ export default function StudentLessonAccessPage() {
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('students.lessonAccess.title')}
-          </h1>
-          <p className="text-muted-foreground">
-            {t('students.lessonAccess.description')}
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('students.lessonAccess.title')}</h1>
+          <p className="text-muted-foreground">{t('students.lessonAccess.description')}</p>
         </div>
         <Button onClick={() => setDialog(true)}>
-          <Plus className="me-2 h-4 w-4" />{' '}
-          {t('students.lessonAccess.addOverride')}
+          <Plus className="me-2 h-4 w-4" /> {t('students.lessonAccess.addOverride')}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>{t('students.lessonAccess.accessOverrides')}</CardTitle>
-          <CardDescription>
-            {t('students.lessonAccess.accessOverridesDescription')}
-          </CardDescription>
+          <CardDescription>{t('students.lessonAccess.accessOverridesDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-3">
@@ -184,10 +171,7 @@ export default function StudentLessonAccessPage() {
                   </TableRow>
                 ) : list.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="h-32 text-center text-muted-foreground"
-                    >
+                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
                       {t('students.lessonAccess.noOverridesYet')}
                     </TableCell>
                   </TableRow>
@@ -208,8 +192,7 @@ export default function StudentLessonAccessPage() {
                           </Badge>
                         ) : (
                           <Badge className="bg-red-100 text-red-800">
-                            <Lock className="me-1 h-3 w-3" />{' '}
-                            {t('students.lessonAccess.locked')}
+                            <Lock className="me-1 h-3 w-3" /> {t('students.lessonAccess.locked')}
                           </Badge>
                         )}
                       </TableCell>
@@ -256,15 +239,11 @@ export default function StudentLessonAccessPage() {
       <Dialog open={dialog} onOpenChange={setDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {t('students.lessonAccess.addOverrideTitle')}
-            </DialogTitle>
+            <DialogTitle>{t('students.lessonAccess.addOverrideTitle')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="pid">
-                {t('students.lessonAccess.studentProfileId')}
-              </Label>
+              <Label htmlFor="pid">{t('students.lessonAccess.studentProfileId')}</Label>
               <StudentProfileSearchCombobox
                 id="pid"
                 value={profileId}
@@ -311,9 +290,7 @@ export default function StudentLessonAccessPage() {
               <Switch checked={isUnlocked} onCheckedChange={setIsUnlocked} />
             </div>
             <div>
-              <Label htmlFor="note">
-                {t('students.lessonAccess.internalNote')}
-              </Label>
+              <Label htmlFor="note">{t('students.lessonAccess.internalNote')}</Label>
               <Input
                 id="note"
                 value={note}
@@ -327,10 +304,7 @@ export default function StudentLessonAccessPage() {
             <Button variant="outline" onClick={() => setDialog(false)}>
               {t('common.cancel')}
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isSaving || !profileId || !lessonId}
-            >
+            <Button onClick={handleSave} disabled={isSaving || !profileId || !lessonId}>
               {isSaving
                 ? t('students.lessonAccess.saving')
                 : t('students.lessonAccess.saveOverride')}

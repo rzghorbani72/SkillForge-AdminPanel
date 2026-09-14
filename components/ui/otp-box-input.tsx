@@ -23,7 +23,7 @@ export function OtpBoxInput({
   disabled,
   autoFocus = true,
   className,
-  onComplete
+  onComplete,
 }: OtpBoxInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { language } = useLanguage();
@@ -54,10 +54,7 @@ export function OtpBoxInput({
     }
   }
 
-  function handleKeyDown(
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) {
+  function handleKeyDown(index: number, e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Backspace') {
       if (digits[index]) {
         const next = [...digits];
@@ -105,7 +102,7 @@ export function OtpBoxInput({
             'h-14 w-14 rounded-lg border border-[#c7c7c7] bg-transparent text-center font-mono text-xl font-semibold',
             'outline-none transition-colors',
             'focus:border-primary focus:ring-2 focus:ring-primary/20',
-            'disabled:cursor-not-allowed disabled:opacity-50'
+            'disabled:cursor-not-allowed disabled:opacity-50',
           )}
         />
       ))}

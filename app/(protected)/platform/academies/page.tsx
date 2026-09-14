@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -20,7 +14,7 @@ import {
   Wallet,
   Users,
   BookOpen,
-  CreditCard
+  CreditCard,
 } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import { apiClient } from '@/lib/api';
@@ -37,7 +31,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { formatPlatformToman } from '@/lib/utils';
 import type { Academy } from '@/types/api';
@@ -69,9 +63,7 @@ export default function PlatformAcademiesPage() {
   const searchParams = useSearchParams();
   const academyId = searchParams.get('academyId');
   const [stores, setStores] = useState<Academy[]>([]);
-  const [settlementRows, setSettlementRows] = useState<AcademySettlementRow[]>(
-    []
-  );
+  const [settlementRows, setSettlementRows] = useState<AcademySettlementRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,7 +79,7 @@ export default function PlatformAcademiesPage() {
     totalCourses: 0,
     totalStudents: 0,
     totalRevenue: 0,
-    totalPayments: 0
+    totalPayments: 0,
   });
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
@@ -99,9 +91,9 @@ export default function PlatformAcademiesPage() {
         const [settlementData, academiesRes] = await Promise.all([
           apiClient.getAcademySettlementTable({
             page: 1,
-            limit: 200
+            limit: 200,
           }),
-          apiClient.getMyAcademies().catch(() => null)
+          apiClient.getMyAcademies().catch(() => null),
         ]);
         const rows = settlementData?.rows || [];
         setSettlementRows(rows);
@@ -111,9 +103,7 @@ export default function PlatformAcademiesPage() {
           : Array.isArray((payload as { data?: Academy[] } | null)?.data)
             ? (payload as { data: Academy[] }).data
             : [];
-        const academyById = new Map(
-          academyList.map((academy) => [academy.id, academy])
-        );
+        const academyById = new Map(academyList.map((academy) => [academy.id, academy]));
         setStores(
           rows.map((row: AcademySettlementRow) => {
             const listed = academyById.get(row.academy_id);
@@ -128,9 +118,9 @@ export default function PlatformAcademiesPage() {
               showcase_mobile: listed?.showcase_mobile ?? null,
               has_transactions: listed?.has_transactions,
               can_remove: listed?.can_remove,
-              suspended_at: listed?.suspended_at
+              suspended_at: listed?.suspended_at,
             };
-          }) as Academy[]
+          }) as Academy[],
         );
       } catch (error) {
         console.error('Error fetching stores:', error);
@@ -169,7 +159,7 @@ export default function PlatformAcademiesPage() {
             totalCourses: 0,
             totalStudents: 0,
             totalRevenue: totalRevenue,
-            totalPayments: detail?.lines?.length || 0
+            totalPayments: detail?.lines?.length || 0,
           });
         } catch (error) {
           console.error('Error fetching store financial data:', error);
@@ -189,7 +179,7 @@ export default function PlatformAcademiesPage() {
   const filteredStores = stores.filter(
     (store) =>
       store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      store.slug.toLowerCase().includes(searchQuery.toLowerCase())
+      store.slug.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const paginatedStores = useMemo(() => {
@@ -209,9 +199,7 @@ export default function PlatformAcademiesPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>{t('platform.overview.accessDenied')}</CardTitle>
-            <CardDescription>
-              {t('platform.overview.accessDeniedDescription')}
-            </CardDescription>
+            <CardDescription>{t('platform.overview.accessDeniedDescription')}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -223,9 +211,7 @@ export default function PlatformAcademiesPage() {
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t('platform.stores.loading')}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t('platform.stores.loading')}</p>
         </div>
       </div>
     );
@@ -257,9 +243,7 @@ export default function PlatformAcademiesPage() {
             variant={selectedStore.is_active ? 'default' : 'secondary'}
             className="self-start sm:self-auto"
           >
-            {selectedStore.is_active
-              ? t('common.active')
-              : t('common.inactive')}
+            {selectedStore.is_active ? t('common.active') : t('common.inactive')}
           </Badge>
         </div>
         <div>
@@ -272,44 +256,34 @@ export default function PlatformAcademiesPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('dashboard.totalCourses')}
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">{t('dashboard.totalCourses')}</CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {formatNumber(storeStats.totalCourses)}
-              </div>
+              <div className="text-2xl font-bold">{formatNumber(storeStats.totalCourses)}</div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('dashboard.totalStudents')}
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">{t('dashboard.totalStudents')}</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {formatNumber(storeStats.totalStudents)}
-              </div>
+              <div className="text-2xl font-bold">{formatNumber(storeStats.totalStudents)}</div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('dashboard.totalRevenue')}
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">{t('dashboard.totalRevenue')}</CardTitle>
               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {formatPlatformToman(storeStats.totalRevenue, {
                   divideBy: 100,
-                  language
+                  language,
                 })}
               </div>
             </CardContent>
@@ -317,15 +291,11 @@ export default function PlatformAcademiesPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('dashboard.recentPayments')}
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">{t('dashboard.recentPayments')}</CardTitle>
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {formatNumber(storeStats.totalPayments)}
-              </div>
+              <div className="text-2xl font-bold">{formatNumber(storeStats.totalPayments)}</div>
             </CardContent>
           </Card>
 
@@ -338,8 +308,7 @@ export default function PlatformAcademiesPage() {
             </CardHeader>
             <CardContent>
               <div className="text-lg font-semibold">
-                {getPlanDisplayName(selectedStore.subscription_plan) ||
-                  t('common.none')}
+                {getPlanDisplayName(selectedStore.subscription_plan) || t('common.none')}
               </div>
               <p className="text-xs text-muted-foreground">
                 {t('platform.stores.expires')}:{' '}
@@ -354,18 +323,10 @@ export default function PlatformAcademiesPage() {
         {/* Financial Data Tabs */}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="overview">
-              {t('platform.stores.financialOverview')}
-            </TabsTrigger>
-            <TabsTrigger value="payments">
-              {t('platform.stores.payments')}
-            </TabsTrigger>
-            <TabsTrigger value="details">
-              {t('platform.stores.storeDetails')}
-            </TabsTrigger>
-            <TabsTrigger value="custom-plan">
-              {t('platform.stores.customPlan.tab')}
-            </TabsTrigger>
+            <TabsTrigger value="overview">{t('platform.stores.financialOverview')}</TabsTrigger>
+            <TabsTrigger value="payments">{t('platform.stores.payments')}</TabsTrigger>
+            <TabsTrigger value="details">{t('platform.stores.storeDetails')}</TabsTrigger>
+            <TabsTrigger value="custom-plan">{t('platform.stores.customPlan.tab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
@@ -393,13 +354,10 @@ export default function PlatformAcademiesPage() {
                         {t('platform.stores.totalRevenue')}
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatPlatformToman(
-                          storeFinancial.total_revenue || 0,
-                          {
-                            divideBy: 100,
-                            language
-                          }
-                        )}
+                        {formatPlatformToman(storeFinancial.total_revenue || 0, {
+                          divideBy: 100,
+                          language,
+                        })}
                       </p>
                     </div>
                     <div>
@@ -409,7 +367,7 @@ export default function PlatformAcademiesPage() {
                       <p className="text-2xl font-bold">
                         {formatPlatformToman(storeFinancial.total_costs || 0, {
                           divideBy: 100,
-                          language
+                          language,
                         })}
                       </p>
                     </div>
@@ -419,12 +377,11 @@ export default function PlatformAcademiesPage() {
                       </p>
                       <p className="text-2xl font-bold">
                         {formatPlatformToman(
-                          (storeFinancial.total_revenue || 0) -
-                            (storeFinancial.total_costs || 0),
+                          (storeFinancial.total_revenue || 0) - (storeFinancial.total_costs || 0),
                           {
                             divideBy: 100,
-                            language
-                          }
+                            language,
+                          },
                         )}
                       </p>
                     </div>
@@ -442,9 +399,7 @@ export default function PlatformAcademiesPage() {
             <Card>
               <CardHeader>
                 <CardTitle>{t('platform.stores.recentPayments')}</CardTitle>
-                <CardDescription>
-                  {t('platform.stores.recentPaymentsDescription')}
-                </CardDescription>
+                <CardDescription>{t('platform.stores.recentPaymentsDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {isLoadingDetail ? (
@@ -470,23 +425,17 @@ export default function PlatformAcademiesPage() {
                       {storePayments.slice(0, 10).map((payment: any) => (
                         <TableRow key={payment.id}>
                           <TableCell>
-                            {payment.payment_date
-                              ? formatDate(payment.payment_date)
-                              : '-'}
+                            {payment.payment_date ? formatDate(payment.payment_date) : '-'}
                           </TableCell>
                           <TableCell>
                             {formatPlatformToman(payment.amount || 0, {
                               divideBy: 100,
-                              language
+                              language,
                             })}
                           </TableCell>
                           <TableCell>
                             <Badge
-                              variant={
-                                payment.status === 'COMPLETED'
-                                  ? 'default'
-                                  : 'secondary'
-                              }
+                              variant={payment.status === 'COMPLETED' ? 'default' : 'secondary'}
                             >
                               {payment.status || t('platform.stores.pending')}
                             </Badge>
@@ -501,9 +450,7 @@ export default function PlatformAcademiesPage() {
                     </TableBody>
                   </Table>
                 ) : (
-                  <p className="text-sm text-muted-foreground">
-                    {t('platform.stores.noPayments')}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{t('platform.stores.noPayments')}</p>
                 )}
               </CardContent>
             </Card>
@@ -517,14 +464,10 @@ export default function PlatformAcademiesPage() {
               <CardContent className="space-y-4">
                 <div>
                   <p className="text-sm font-medium">{t('common.name')}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedStore.name}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{selectedStore.name}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium">
-                    {t('academiesHealth.id')}
-                  </p>
+                  <p className="text-sm font-medium">{t('academiesHealth.id')}</p>
                   <CopyableId value={selectedStore.id} className="mt-1" />
                 </div>
                 {selectedStore.uuid ? (
@@ -534,30 +477,20 @@ export default function PlatformAcademiesPage() {
                   </div>
                 ) : null}
                 <div>
-                  <p className="text-sm font-medium">
-                    {t('platform.stores.slug')}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedStore.slug}
-                  </p>
+                  <p className="text-sm font-medium">{t('platform.stores.slug')}</p>
+                  <p className="text-sm text-muted-foreground">{selectedStore.slug}</p>
                 </div>
                 {selectedStore.description && (
                   <div>
-                    <p className="text-sm font-medium">
-                      {t('common.description')}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedStore.description}
-                    </p>
+                    <p className="text-sm font-medium">{t('common.description')}</p>
+                    <p className="text-sm text-muted-foreground">{selectedStore.description}</p>
                   </div>
                 )}
                 {selectedStore.Domain && (
                   <div className="space-y-2">
                     {selectedStore.Domain.public_address && (
                       <div>
-                        <p className="text-sm font-medium">
-                          {t('platform.stores.publicDomain')}
-                        </p>
+                        <p className="text-sm font-medium">{t('platform.stores.publicDomain')}</p>
                         <p className="text-sm text-muted-foreground">
                           {selectedStore.Domain.public_address}
                         </p>
@@ -565,9 +498,7 @@ export default function PlatformAcademiesPage() {
                     )}
                     {selectedStore.Domain.private_address && (
                       <div>
-                        <p className="text-sm font-medium">
-                          {t('platform.stores.privateDomain')}
-                        </p>
+                        <p className="text-sm font-medium">{t('platform.stores.privateDomain')}</p>
                         <p className="text-sm text-muted-foreground">
                           {selectedStore.Domain.private_address}
                         </p>
@@ -577,12 +508,8 @@ export default function PlatformAcademiesPage() {
                 )}
                 <div>
                   <p className="text-sm font-medium">{t('common.status')}</p>
-                  <Badge
-                    variant={selectedStore.is_active ? 'default' : 'secondary'}
-                  >
-                    {selectedStore.is_active
-                      ? t('common.active')
-                      : t('common.inactive')}
+                  <Badge variant={selectedStore.is_active ? 'default' : 'secondary'}>
+                    {selectedStore.is_active ? t('common.active') : t('common.inactive')}
                   </Badge>
                 </div>
               </CardContent>
@@ -605,9 +532,7 @@ export default function PlatformAcademiesPage() {
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t('platform.stores.title')}
           </h2>
-          <p className="text-muted-foreground">
-            {t('platform.stores.description')}
-          </p>
+          <p className="text-muted-foreground">{t('platform.stores.description')}</p>
         </div>
         <Button asChild className="w-full shrink-0 sm:w-auto">
           <Link href="/platform/academies/create">
@@ -645,9 +570,7 @@ export default function PlatformAcademiesPage() {
             <StoreIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(stores.length)}
-            </div>
+            <div className="text-2xl font-bold">{formatNumber(stores.length)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -685,9 +608,7 @@ export default function PlatformAcademiesPage() {
             <CardContent className="pt-6">
               <div className="py-8 text-center">
                 <StoreIcon className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                <p className="text-lg font-medium">
-                  {t('platform.stores.noStoresFound')}
-                </p>
+                <p className="text-lg font-medium">{t('platform.stores.noStoresFound')}</p>
                 <p className="text-sm text-muted-foreground">
                   {searchQuery
                     ? t('platform.stores.tryAdjustingSearch')
@@ -727,51 +648,37 @@ export default function PlatformAcademiesPage() {
                   <TableCell>{store.slug}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap items-center gap-1">
-                      <Badge
-                        variant={store.is_active ? 'default' : 'secondary'}
-                      >
-                        {store.is_active
-                          ? t('common.active')
-                          : t('common.inactive')}
+                      <Badge variant={store.is_active ? 'default' : 'secondary'}>
+                        {store.is_active ? t('common.active') : t('common.inactive')}
                       </Badge>
                       {store.listed_publicly === false && (
-                        <Badge variant="outline">
-                          {t('stores.hiddenFromPublic')}
-                        </Badge>
+                        <Badge variant="outline">{t('stores.hiddenFromPublic')}</Badge>
                       )}
                       {store.suspended_at && (
-                        <Badge variant="destructive">
-                          {t('accountActions.suspended')}
-                        </Badge>
+                        <Badge variant="destructive">{t('accountActions.suspended')}</Badge>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
-                    {formatPlatformToman(
-                      settlementByAcademy.get(store.id)?.payable_now || 0,
-                      { language }
-                    )}
+                    {formatPlatformToman(settlementByAcademy.get(store.id)?.payable_now || 0, {
+                      language,
+                    })}
                   </TableCell>
                   <TableCell>
                     {formatPlatformToman(
-                      settlementByAcademy.get(store.id)
-                        ?.platform_commission_total || 0,
-                      { language }
+                      settlementByAcademy.get(store.id)?.platform_commission_total || 0,
+                      { language },
                     )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button variant="outline" size="sm" asChild>
-                        <Link
-                          href={`/platform/academies?academyId=${store.id}`}
-                        >
+                        <Link href={`/platform/academies?academyId=${store.id}`}>
                           {t('platform.stores.viewDetails')}
                         </Link>
                       </Button>
                       <Button variant="outline" size="sm" asChild>
-                        <Link
-                          href={`/platform/academies?academyId=${store.id}&action=edit`}
-                        >
+                        <Link href={`/platform/academies?academyId=${store.id}&action=edit`}>
                           {t('platform.stores.edit')}
                         </Link>
                       </Button>
@@ -796,9 +703,7 @@ export default function PlatformAcademiesPage() {
           currentPage={currentPage}
           totalPages={Math.ceil(filteredStores.length / itemsPerPage)}
           onPageChange={setCurrentPage}
-          hasNextPage={
-            currentPage < Math.ceil(filteredStores.length / itemsPerPage)
-          }
+          hasNextPage={currentPage < Math.ceil(filteredStores.length / itemsPerPage)}
           hasPreviousPage={currentPage > 1}
           totalItems={filteredStores.length}
           itemsPerPage={itemsPerPage}

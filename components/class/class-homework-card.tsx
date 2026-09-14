@@ -6,22 +6,13 @@ import { toast } from 'react-toastify';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DataList, type DataColumn } from '@/components/shared/data-list';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import type {
-  ClassSession,
-  LearningAssignment
-} from '@/types/learning-operations';
+import type { ClassSession, LearningAssignment } from '@/types/learning-operations';
 import { HomeworkDialog } from './homework-dialog';
 
 interface ClassHomeworkCardProps {
@@ -34,10 +25,7 @@ interface ClassHomeworkCardProps {
  * whole class, and work attached to a single meeting — the teacher picks which
  * when creating it, so there is no second screen to learn.
  */
-export function ClassHomeworkCard({
-  groupId,
-  sessions
-}: ClassHomeworkCardProps) {
+export function ClassHomeworkCard({ groupId, sessions }: ClassHomeworkCardProps) {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
   const [items, setItems] = useState<LearningAssignment[]>([]);
@@ -54,16 +42,16 @@ export function ClassHomeworkCard({
           ? [
               apiClient.getAssignments({
                 tutoring_group_id: groupId,
-                limit: 100
-              })
+                limit: 100,
+              }),
             ]
           : []),
         ...sessions.map((session) =>
           apiClient.getAssignments({
             tutoring_session_id: session.id,
-            limit: 100
-          })
-        )
+            limit: 100,
+          }),
+        ),
       ]);
       setItems(pages.flatMap((page) => page.assignments));
     } catch (err) {
@@ -88,16 +76,14 @@ export function ClassHomeworkCard({
     return (
       meeting.title ??
       meeting.Topic?.title ??
-      new Intl.DateTimeFormat(language, { dateStyle: 'short' }).format(
-        new Date(meeting.starts_at)
-      )
+      new Intl.DateTimeFormat(language, { dateStyle: 'short' }).format(new Date(meeting.starts_at))
     );
   };
 
   const dueLabel = (assignment: LearningAssignment) =>
     assignment.due_date
       ? new Intl.DateTimeFormat(language, { dateStyle: 'medium' }).format(
-          new Date(assignment.due_date)
+          new Date(assignment.due_date),
         )
       : t('courses.live.homeworkNoDueDate');
 
@@ -105,26 +91,24 @@ export function ClassHomeworkCard({
     {
       id: 'title',
       header: t('courses.live.homeworkTitle'),
-      cell: (item) => <span className="font-medium">{item.title}</span>
+      cell: (item) => <span className="font-medium">{item.title}</span>,
     },
     {
       id: 'parent',
       header: t('courses.live.homeworkFor'),
-      cell: (item) => <Badge variant="outline">{parentLabel(item)}</Badge>
+      cell: (item) => <Badge variant="outline">{parentLabel(item)}</Badge>,
     },
     {
       id: 'due',
       header: t('courses.live.homeworkDue'),
-      cell: (item) => (
-        <span className="text-muted-foreground">{dueLabel(item)}</span>
-      )
+      cell: (item) => <span className="text-muted-foreground">{dueLabel(item)}</span>,
     },
     {
       id: 'submissions',
       header: t('courses.live.homeworkSubmissions'),
       align: 'center',
-      cell: (item) => formatNumber(item._count?.Submission ?? 0)
-    }
+      cell: (item) => formatNumber(item._count?.Submission ?? 0),
+    },
   ];
 
   return (
@@ -138,12 +122,7 @@ export function ClassHomeworkCard({
             </CardTitle>
             <CardDescription>{t('courses.live.homeworkHint')}</CardDescription>
           </div>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={() => setDialogOpen(true)}
-          >
+          <Button type="button" size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
             <Plus className="h-4 w-4" />
             {t('courses.live.addHomework')}
           </Button>

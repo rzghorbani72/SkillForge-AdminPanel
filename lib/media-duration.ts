@@ -6,7 +6,7 @@
  */
 export function readMediaDurationSeconds(
   file: File,
-  kind: 'video' | 'audio' = 'video'
+  kind: 'video' | 'audio' = 'video',
 ): Promise<number | undefined> {
   return new Promise((resolve) => {
     const objectUrl = URL.createObjectURL(file);
@@ -16,9 +16,7 @@ export function readMediaDurationSeconds(
       URL.revokeObjectURL(objectUrl);
       element.removeAttribute('src');
       resolve(
-        duration && Number.isFinite(duration) && duration > 0
-          ? Math.round(duration)
-          : undefined
+        duration && Number.isFinite(duration) && duration > 0 ? Math.round(duration) : undefined,
       );
     };
 
@@ -30,8 +28,6 @@ export function readMediaDurationSeconds(
 }
 
 /** Video-only alias kept for the upload paths that only ever handle video. */
-export function readVideoDurationSeconds(
-  file: File
-): Promise<number | undefined> {
+export function readVideoDurationSeconds(file: File): Promise<number | undefined> {
   return readMediaDurationSeconds(file, 'video');
 }

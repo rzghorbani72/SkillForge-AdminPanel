@@ -44,7 +44,7 @@ export const fakeUsers = {
         'Marketing Manager',
         'Graphic Designer',
         'Sales Manager',
-        'Product Manager'
+        'Product Manager',
       ];
       const cities = [
         'San Francisco',
@@ -59,7 +59,7 @@ export const fakeUsers = {
         'Dallas',
         'San Jose',
         'Austin',
-        'Jacksonville'
+        'Jacksonville',
       ];
       const states = [
         'California',
@@ -71,7 +71,7 @@ export const fakeUsers = {
         'Ohio',
         'Georgia',
         'North Carolina',
-        'Michigan'
+        'Michigan',
       ];
 
       return {
@@ -82,9 +82,7 @@ export const fakeUsers = {
         phone: `001-${Math.floor(Math.random() * 900) + 100}-${
           Math.floor(Math.random() * 900) + 100
         }-${Math.floor(Math.random() * 10000)}`,
-        street: `${Math.floor(
-          Math.random() * 1000
-        )} ${faker.location.street()}`,
+        street: `${Math.floor(Math.random() * 1000)} ${faker.location.street()}`,
         city: faker.helpers.arrayElement(cities),
         state: faker.helpers.arrayElement(states),
         country: 'USA',
@@ -97,7 +95,7 @@ export const fakeUsers = {
           .toISOString()
           .split('T')[0],
         job: faker.helpers.arrayElement(jobs),
-        profile_picture: `https://api.slingacademy.com/public/sample-users/${id}.png`
+        profile_picture: `https://api.slingacademy.com/public/sample-users/${id}.png`,
       };
     }
 
@@ -110,13 +108,7 @@ export const fakeUsers = {
   },
 
   // Get all users with optional gender filtering and search
-  async getAll({
-    genders = [],
-    search
-  }: {
-    genders?: string[];
-    search?: string;
-  }) {
+  async getAll({ genders = [], search }: { genders?: string[]; search?: string }) {
     let users = [...this.records];
 
     // Filter users based on selected genders
@@ -127,16 +119,7 @@ export const fakeUsers = {
     // Search functionality across multiple fields
     if (search) {
       users = matchSorter(users, search, {
-        keys: [
-          'first_name',
-          'last_name',
-          'email',
-          'job',
-          'city',
-          'street',
-          'state',
-          'country'
-        ]
+        keys: ['first_name', 'last_name', 'email', 'job', 'city', 'street', 'state', 'country'],
       });
     }
 
@@ -148,7 +131,7 @@ export const fakeUsers = {
     page = 1,
     limit = 10,
     genders,
-    search
+    search,
   }: {
     page?: number;
     limit?: number;
@@ -174,9 +157,9 @@ export const fakeUsers = {
       total_users: totalUsers,
       offset,
       limit,
-      users: paginatedUsers
+      users: paginatedUsers,
     };
-  }
+  },
 };
 
 // Initialize sample users
@@ -210,20 +193,18 @@ export const fakeProducts = {
         'Groceries',
         'Books',
         'Jewelry',
-        'Beauty Products'
+        'Beauty Products',
       ];
 
       return {
         id,
         name: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
-        created_at: faker.date
-          .between({ from: '2022-01-01', to: '2023-12-31' })
-          .toISOString(),
+        created_at: faker.date.between({ from: '2022-01-01', to: '2023-12-31' }).toISOString(),
         price: parseFloat(faker.commerce.price({ min: 5, max: 500, dec: 2 })),
         photo_url: `https://api.slingacademy.com/public/sample-products/${id}.png`,
         category: faker.helpers.arrayElement(categories),
-        updated_at: faker.date.recent().toISOString()
+        updated_at: faker.date.recent().toISOString(),
       };
     }
 
@@ -236,26 +217,18 @@ export const fakeProducts = {
   },
 
   // Get all products with optional category filtering and search
-  async getAll({
-    categories = [],
-    search
-  }: {
-    categories?: string[];
-    search?: string;
-  }) {
+  async getAll({ categories = [], search }: { categories?: string[]; search?: string }) {
     let products = [...this.records];
 
     // Filter products based on selected categories
     if (categories.length > 0) {
-      products = products.filter((product) =>
-        categories.includes(product.category)
-      );
+      products = products.filter((product) => categories.includes(product.category));
     }
 
     // Search functionality across multiple fields
     if (search) {
       products = matchSorter(products, search, {
-        keys: ['name', 'description', 'category']
+        keys: ['name', 'description', 'category'],
       });
     }
 
@@ -267,7 +240,7 @@ export const fakeProducts = {
     page = 1,
     limit = 10,
     categories,
-    search
+    search,
   }: {
     page?: number;
     limit?: number;
@@ -277,7 +250,7 @@ export const fakeProducts = {
     const categoriesArray = categories ? categories.split('.') : [];
     const allProducts = await this.getAll({
       categories: categoriesArray,
-      search
+      search,
     });
     const totalProducts = allProducts.length;
 
@@ -296,9 +269,9 @@ export const fakeProducts = {
       total_products: totalProducts,
       offset,
       limit,
-      products: paginatedProducts
+      products: paginatedProducts,
     };
-  }
+  },
 };
 
 // Initialize sample products

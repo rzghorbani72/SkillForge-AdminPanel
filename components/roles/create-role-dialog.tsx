@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiClient } from '@/lib/api';
@@ -38,20 +38,15 @@ interface Props {
   maxLevel: number;
 }
 
-export function CreateRoleDialog({
-  open,
-  onClose,
-  onCreated,
-  catalog,
-  maxLevel
-}: Props) {
+export function CreateRoleDialog({ open, onClose, onCreated, catalog, maxLevel }: Props) {
   const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [label, setLabel] = useState('');
   const [description, setDescription] = useState('');
   const [level, setLevel] = useState(0);
-  const { granted, toggle, toggleResource, replace, permissions } =
-    usePermissionSelection(defaultsFor(catalog, 0));
+  const { granted, toggle, toggleResource, replace, permissions } = usePermissionSelection(
+    defaultsFor(catalog, 0),
+  );
 
   const labelValid = label.trim().length >= 2;
   const levelOptions = selectableAccessLevels(maxLevel);
@@ -79,7 +74,7 @@ export function CreateRoleDialog({
         label: label.trim(),
         description: description || undefined,
         hierarchy_level: level,
-        permissions
+        permissions,
       });
       ErrorHandler.showSuccess(t('roles.roleCreated'));
       onCreated();
@@ -106,24 +101,15 @@ export function CreateRoleDialog({
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
               <Label htmlFor="role-label">{t('roles.labelLabel')}</Label>
-              <Input
-                id="role-label"
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-              />
+              <Input id="role-label" value={label} onChange={(e) => setLabel(e.target.value)} />
               {label && !labelValid && (
-                <p className="text-xs text-destructive">
-                  {t('roles.labelInvalid')}
-                </p>
+                <p className="text-xs text-destructive">{t('roles.labelInvalid')}</p>
               )}
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="role-level">{t('roles.levelLabel')}</Label>
-              <Select
-                value={String(level)}
-                onValueChange={(value) => changeLevel(Number(value))}
-              >
+              <Select value={String(level)} onValueChange={(value) => changeLevel(Number(value))}>
                 <SelectTrigger id="role-level">
                   <SelectValue />
                 </SelectTrigger>
@@ -138,7 +124,7 @@ export function CreateRoleDialog({
               {!levelValid && (
                 <p className="text-xs text-destructive">
                   {t('roles.levelCapHint', {
-                    level: getAccessLevelLabel(maxLevel, t)
+                    level: getAccessLevelLabel(maxLevel, t),
                   })}
                 </p>
               )}
@@ -180,10 +166,7 @@ export function CreateRoleDialog({
           <Button variant="outline" onClick={onClose} disabled={saving}>
             {t('common.cancel')}
           </Button>
-          <Button
-            onClick={submit}
-            disabled={saving || !labelValid || !levelValid}
-          >
+          <Button onClick={submit} disabled={saving || !labelValid || !levelValid}>
             {saving ? t('common.saving') : t('common.create')}
           </Button>
         </DialogFooter>

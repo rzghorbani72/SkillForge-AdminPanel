@@ -12,20 +12,12 @@ type SidebarUpgradeBannerProps = {
   isMinimized: boolean;
 };
 
-export function SidebarUpgradeBanner({
-  isMinimized
-}: SidebarUpgradeBannerProps) {
+export function SidebarUpgradeBanner({ isMinimized }: SidebarUpgradeBannerProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
   const canManage = canManageSubscription(user);
-  const {
-    shouldShowUpgrade,
-    planName,
-    daysRemaining,
-    isLoading,
-    needsPlanPurchase,
-    hasAcademy
-  } = useAcademySubscription(canManage);
+  const { shouldShowUpgrade, planName, daysRemaining, isLoading, needsPlanPurchase, hasAcademy } =
+    useAcademySubscription(canManage);
 
   if (!canManage || !hasAcademy) {
     return null;
@@ -63,7 +55,7 @@ export function SidebarUpgradeBanner({
             'flex h-8 w-8 items-center justify-center rounded-lg transition-colors',
             isUrgent
               ? 'bg-primary text-primary-foreground hover:opacity-90'
-              : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'
+              : 'bg-primary/10 text-primary hover:bg-primary hover:text-white',
           )}
           title={title}
         >
@@ -78,24 +70,17 @@ export function SidebarUpgradeBanner({
       <div
         className={cn(
           'rounded-lg border p-2.5',
-          isUrgent
-            ? 'border-primary/30 bg-primary/5'
-            : 'border-border/60 bg-muted/30'
+          isUrgent ? 'border-primary/30 bg-primary/5' : 'border-border/60 bg-muted/30',
         )}
       >
         <div className="mb-1.5 flex items-center gap-2">
           <div
             className={cn(
               'flex h-6 w-6 items-center justify-center rounded-md',
-              isUrgent ? 'bg-primary/15' : 'bg-muted'
+              isUrgent ? 'bg-primary/15' : 'bg-muted',
             )}
           >
-            <Zap
-              className={cn(
-                'h-3 w-3',
-                isUrgent ? 'text-primary' : 'text-muted-foreground'
-              )}
-            />
+            <Zap className={cn('h-3 w-3', isUrgent ? 'text-primary' : 'text-muted-foreground')} />
           </div>
           <span className="text-xs font-semibold text-foreground">{title}</span>
         </div>
@@ -110,7 +95,7 @@ export function SidebarUpgradeBanner({
             'flex items-center justify-center gap-1 px-3 py-1 text-[11px] font-semibold',
             isUrgent
               ? 'rounded-full bg-brandMint text-brandMint-foreground shadow-[0_12px_31px_-12px_rgba(48,255,180,0.6)] transition-transform hover:-translate-y-0.5'
-              : 'rounded-lg border bg-background text-foreground transition-opacity hover:opacity-90'
+              : 'rounded-lg border bg-background text-foreground transition-opacity hover:opacity-90',
           )}
         >
           {ctaLabel}

@@ -29,15 +29,7 @@ export interface LogEntry extends LogFields {
 
 export type LogSink = (entry: LogEntry) => void;
 
-const ENVELOPE_KEYS = [
-  'event',
-  'action',
-  'level',
-  'ts',
-  'app',
-  'env',
-  'release'
-] as const;
+const ENVELOPE_KEYS = ['event', 'action', 'level', 'ts', 'app', 'env', 'release'] as const;
 
 export interface LoggerConfig<C extends LogCatalog> {
   catalog: C;
@@ -70,22 +62,16 @@ export type LogAction<C extends LogCatalog, E extends LogDomain<C>> = Extract<
 >;
 
 export type ContextField = 'request_id' | 'academy_id' | 'user_id' | 'role';
-export type ErrorField =
-  | 'error_name'
-  | 'error_message'
-  | 'error_code'
-  | 'error_stack';
+export type ErrorField = 'error_name' | 'error_message' | 'error_code' | 'error_stack';
 
 /** Declared catalog fields plus the always-allowed context and error keys. */
 export type LogDetails<
   C extends LogCatalog,
   E extends LogDomain<C>,
-  A extends LogAction<C, E>
+  A extends LogAction<C, E>,
 > = Partial<
   Record<
-    | (C[E]['actions'][A] extends LogEventDef
-        ? C[E]['actions'][A]['fields'][number]
-        : never)
+    | (C[E]['actions'][A] extends LogEventDef ? C[E]['actions'][A]['fields'][number] : never)
     | ContextField
     | ErrorField,
     LogPrimitive
@@ -106,7 +92,7 @@ export function listLogCatalog(catalog: LogCatalog): LogCatalogEntry[] {
         ...def,
         event,
         action,
-        domainDescription: domain.description
+        domainDescription: domain.description,
       });
     }
   }
@@ -153,22 +139,22 @@ export interface Logger<C extends LogCatalog> {
   event<E extends LogDomain<C>, A extends LogAction<C, E>>(
     event: E,
     action: A,
-    details?: LogDetails<C, E, A> & { level?: LogLevel }
+    details?: LogDetails<C, E, A> & { level?: LogLevel },
   ): void;
   ok<E extends LogDomain<C>, A extends LogAction<C, E>>(
     event: E,
     action: A,
-    details?: LogDetails<C, E, A>
+    details?: LogDetails<C, E, A>,
   ): void;
   warn<E extends LogDomain<C>, A extends LogAction<C, E>>(
     event: E,
     action: A,
-    details?: LogDetails<C, E, A>
+    details?: LogDetails<C, E, A>,
   ): void;
   error<E extends LogDomain<C>, A extends LogAction<C, E>>(
     event: E,
     action: A,
-    details?: LogDetails<C, E, A>
+    details?: LogDetails<C, E, A>,
   ): void;
 }
 
@@ -176,24 +162,13 @@ function envVar(name: string): string | undefined {
   return typeof process !== 'undefined' ? process.env?.[name] : undefined;
 }
 
-export function createLogger<C extends LogCatalog>(
-  config: LoggerConfig<C>
-): Logger<C> {
+export function createLogger<C extends LogCatalog>(config: LoggerConfig<C>): Logger<C> {
   const env = config.env ?? envVar('NODE_ENV') ?? 'development';
-  const release =
-    config.release ??
-    envVar('RELEASE') ??
-    envVar('NEXT_PUBLIC_RELEASE') ??
-    'dev';
+  const release = config.release ?? envVar('RELEASE') ?? envVar('NEXT_PUBLIC_RELEASE') ?? 'dev';
   const sink = config.sink ?? consoleSink;
   const getContext = config.getContext ?? (() => ({}));
 
-  const emit = (
-    event: string,
-    action: string,
-    level: LogLevel,
-    fields: LogFields
-  ): void => {
+  const emit = (event: string, action: string, level: LogLevel, fields: LogFields): void => {
     const extra: LogFields = { ...getContext(), ...flattenFields(fields) };
     if (level !== 'error') delete extra.error_stack;
     // Envelope keys come first (readable in a console) and can never be
@@ -207,7 +182,7 @@ export function createLogger<C extends LogCatalog>(
       app: config.app,
       env,
       release,
-      ...extra
+      ...extra,
     });
   };
 
@@ -221,6 +196,6 @@ export function createLogger<C extends LogCatalog>(
     },
     ok: (event, action, fields = {}) => emit(event, action, 'info', fields),
     warn: (event, action, fields = {}) => emit(event, action, 'warn', fields),
-    error: (event, action, fields = {}) => emit(event, action, 'error', fields)
+    error: (event, action, fields = {}) => emit(event, action, 'error', fields),
   };
 }

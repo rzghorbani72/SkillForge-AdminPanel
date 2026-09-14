@@ -21,7 +21,7 @@ type Props = {
 const NEW_SLOT: TutoringGroupSlot = {
   weekday: 6,
   start_minute: 9 * 60,
-  duration_minutes: 90
+  duration_minutes: 90,
 };
 
 /** The lengths almost every class actually uses, so typing is the exception. */
@@ -36,9 +36,7 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
   const formatNumber = useNumberFormat();
 
   const patch = (index: number, next: Partial<TutoringGroupSlot>) =>
-    onChange(
-      slots.map((slot, i) => (i === index ? { ...slot, ...next } : slot))
-    );
+    onChange(slots.map((slot, i) => (i === index ? { ...slot, ...next } : slot)));
 
   return (
     <div className="space-y-3">
@@ -76,16 +74,12 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor={`slot-start-${index}`}>
-                {t('tutoring.groups.slotStart')}
-              </Label>
+              <Label htmlFor={`slot-start-${index}`}>{t('tutoring.groups.slotStart')}</Label>
               <TimePicker
                 id={`slot-start-${index}`}
                 disabled={disabled}
                 value={minutesToTime(slot.start_minute)}
-                onChange={(next) =>
-                  patch(index, { start_minute: timeToMinutes(next) })
-                }
+                onChange={(next) => patch(index, { start_minute: timeToMinutes(next) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -97,9 +91,7 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
                 disabled={disabled}
                 value={slot.duration_minutes}
                 suffix={t('common.minutes')}
-                onChange={(raw) =>
-                  patch(index, { duration_minutes: Number(raw) || 0 })
-                }
+                onChange={(raw) => patch(index, { duration_minutes: Number(raw) || 0 })}
               />
               <div className="flex flex-wrap gap-1.5 pt-0.5">
                 {DURATION_PRESETS.map((preset) => (
@@ -112,7 +104,7 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
                       'rounded-full border px-2.5 py-0.5 text-[11px] transition-colors',
                       slot.duration_minutes === preset
                         ? 'border-primary bg-primary/10 font-medium text-primary'
-                        : 'text-muted-foreground hover:bg-muted'
+                        : 'text-muted-foreground hover:bg-muted',
                     )}
                   >
                     {formatNumber(preset)}

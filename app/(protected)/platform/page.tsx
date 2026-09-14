@@ -10,17 +10,11 @@ import {
   Store,
   TrendingUp,
   Users,
-  Wallet
+  Wallet,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatsCard } from '@/components/shared/stats-card';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient, type FlatMetrics } from '@/lib/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -37,16 +31,14 @@ const HEADLINE = [
   { key: 'mrr', icon: TrendingUp, hint: 'arr' },
   { key: 'gmv_paid_amount', icon: Wallet, hint: 'gmv_paid_count' },
   { key: 'nrr', icon: Repeat, hint: 'monthly_logo_churn' },
-  { key: 'learning_records', icon: GraduationCap, hint: 'mau' }
+  { key: 'learning_records', icon: GraduationCap, hint: 'mau' },
 ] as const;
 
 export default function PlatformOverviewPage() {
   const { t } = useTranslation();
   const format = useMetricFormat('TOMAN');
   const { user, isLoading: userLoading } = useAuthUser();
-  const { data, loading } = useMetricsFetch({}, (query) =>
-    apiClient.getMetricsOverview(query)
-  );
+  const { data, loading } = useMetricsFetch({}, (query) => apiClient.getMetricsOverview(query));
   const metrics: FlatMetrics = data?.metrics ?? {};
 
   if (!userLoading && user && !user.isAdminProfile && !user.platformLevel) {
@@ -55,9 +47,7 @@ export default function PlatformOverviewPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>{t('platform.overview.accessDenied')}</CardTitle>
-            <CardDescription>
-              {t('platform.overview.accessDeniedDescription')}
-            </CardDescription>
+            <CardDescription>{t('platform.overview.accessDeniedDescription')}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -69,9 +59,7 @@ export default function PlatformOverviewPage() {
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t('platform.overview.loading')}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t('platform.overview.loading')}</p>
         </div>
       </div>
     );
@@ -106,9 +94,7 @@ export default function PlatformOverviewPage() {
                 <Building2 className="h-5 w-5" />
                 {t('platform.overview.allSchools')}
               </CardTitle>
-              <CardDescription>
-                {t('platform.overview.allSchoolsDescription')}
-              </CardDescription>
+              <CardDescription>{t('platform.overview.allSchoolsDescription')}</CardDescription>
             </CardHeader>
           </Card>
         </Link>
@@ -119,9 +105,7 @@ export default function PlatformOverviewPage() {
                 <Users className="h-5 w-5" />
                 {t('platform.overview.platformUsers')}
               </CardTitle>
-              <CardDescription>
-                {t('platform.overview.platformUsersDescription')}
-              </CardDescription>
+              <CardDescription>{t('platform.overview.platformUsersDescription')}</CardDescription>
             </CardHeader>
           </Card>
         </Link>
@@ -143,9 +127,7 @@ export default function PlatformOverviewPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('platform.overview.quickActions')}</CardTitle>
-          <CardDescription>
-            {t('platform.overview.quickActionsDescription')}
-          </CardDescription>
+          <CardDescription>{t('platform.overview.quickActionsDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -154,18 +136,14 @@ export default function PlatformOverviewPage() {
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
               <Store className="mb-2 h-8 w-8 text-primary" />
-              <span className="text-sm font-medium">
-                {t('platform.overview.manageSchools')}
-              </span>
+              <span className="text-sm font-medium">{t('platform.overview.manageSchools')}</span>
             </Link>
             <Link
               href="/platform/users"
               className="flex flex-col items-center justify-center rounded-lg border p-4 transition-colors hover:bg-accent"
             >
               <Users className="mb-2 h-8 w-8 text-primary" />
-              <span className="text-sm font-medium">
-                {t('platform.overview.allUsers')}
-              </span>
+              <span className="text-sm font-medium">{t('platform.overview.allUsers')}</span>
             </Link>
             <Link
               href="/platform/metrics"

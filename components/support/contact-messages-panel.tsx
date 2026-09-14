@@ -15,12 +15,12 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import {
   CONTACT_MESSAGE_STATUSES,
   ContactMessageItem,
-  ContactMessageStatus
+  ContactMessageStatus,
 } from './staff-support-types';
 
 /**
@@ -39,7 +39,7 @@ export function ContactMessagesPanel() {
     try {
       const res = await apiClient.getContactMessages({
         status: status || undefined,
-        limit: 50
+        limit: 50,
       });
       setItems(res.items ?? []);
     } catch {
@@ -78,9 +78,7 @@ export function ContactMessagesPanel() {
         </Select>
       </div>
 
-      {items === null && (
-        <p className="text-sm text-muted-foreground">{t('support.loading')}</p>
-      )}
+      {items === null && <p className="text-sm text-muted-foreground">{t('support.loading')}</p>}
       {items?.length === 0 && (
         <div className="flex flex-col items-center gap-2 py-12 text-center text-sm text-muted-foreground">
           <Inbox className="h-8 w-8 opacity-40" />
@@ -94,15 +92,11 @@ export function ContactMessagesPanel() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="font-semibold">{item.subject}</span>
               <div className="flex items-center gap-2">
-                <Badge variant="secondary">
-                  {t(`support.categories.${item.category}`)}
-                </Badge>
+                <Badge variant="secondary">{t(`support.categories.${item.category}`)}</Badge>
                 <div className="w-40">
                   <Select
                     value={item.status}
-                    onValueChange={(next) =>
-                      changeStatus(item.id, next as ContactMessageStatus)
-                    }
+                    onValueChange={(next) => changeStatus(item.id, next as ContactMessageStatus)}
                   >
                     <SelectTrigger className="h-8">
                       <SelectValue />
@@ -119,16 +113,14 @@ export function ContactMessagesPanel() {
               </div>
             </div>
 
-            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-              {item.body}
-            </p>
+            <p className="whitespace-pre-wrap text-sm text-muted-foreground">{item.body}</p>
 
             <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
               <span className="font-medium text-foreground">{item.name}</span>
               <span>
                 {formatDate(item.created_at, {
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}
               </span>
               <a

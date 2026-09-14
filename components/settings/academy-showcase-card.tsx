@@ -5,13 +5,7 @@ import { Loader2, Save } from 'lucide-react';
 
 import { ImageUploadField } from '@/components/academies/image-upload-field';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -54,7 +48,7 @@ export function AcademyShowcaseCard() {
     try {
       await apiClient.updateAcademy({
         ...(desktop.id ? { showcase_desktop_id: desktop.id } : {}),
-        ...(mobile.id ? { showcase_mobile_id: mobile.id } : {})
+        ...(mobile.id ? { showcase_mobile_id: mobile.id } : {}),
       });
       ErrorHandler.showSuccess(t('settings.showcaseSaved'));
       await load();

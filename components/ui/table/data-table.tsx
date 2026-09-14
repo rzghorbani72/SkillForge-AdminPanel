@@ -4,7 +4,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import {
   Table,
@@ -12,19 +12,16 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
-import {
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon
-} from '@radix-ui/react-icons';
+import { DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   PaginationState,
-  useReactTable
+  useReactTable,
 } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { parseAsInteger, useQueryState } from 'nuqs';
@@ -40,35 +37,29 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   totalItems,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [10, 20, 30, 40, 50],
 }: DataTableProps<TData, TValue>) {
   const [currentPage, setCurrentPage] = useQueryState(
     'page',
-    parseAsInteger.withOptions({ shallow: false }).withDefault(1)
+    parseAsInteger.withOptions({ shallow: false }).withDefault(1),
   );
   const [pageSize, setPageSize] = useQueryState(
     'limit',
-    parseAsInteger
-      .withOptions({ shallow: false, history: 'push' })
-      .withDefault(10)
+    parseAsInteger.withOptions({ shallow: false, history: 'push' }).withDefault(10),
   );
 
   const paginationState = {
     pageIndex: currentPage - 1, // zero-based index for React Table
-    pageSize: pageSize
+    pageSize: pageSize,
   };
 
   const pageCount = Math.ceil(totalItems / pageSize);
 
   const handlePaginationChange = (
-    updaterOrValue:
-      | PaginationState
-      | ((old: PaginationState) => PaginationState)
+    updaterOrValue: PaginationState | ((old: PaginationState) => PaginationState),
   ) => {
     const pagination =
-      typeof updaterOrValue === 'function'
-        ? updaterOrValue(paginationState)
-        : updaterOrValue;
+      typeof updaterOrValue === 'function' ? updaterOrValue(paginationState) : updaterOrValue;
 
     setCurrentPage(pagination.pageIndex + 1); // converting zero-based index to one-based
     setPageSize(pagination.pageSize);
@@ -79,13 +70,13 @@ export function DataTable<TData, TValue>({
     columns,
     pageCount: pageCount,
     state: {
-      pagination: paginationState
+      pagination: paginationState,
     },
     onPaginationChange: handlePaginationChange,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    manualFiltering: true
+    manualFiltering: true,
   });
 
   return (
@@ -99,10 +90,7 @@ export function DataTable<TData, TValue>({
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -111,26 +99,17 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -144,12 +123,8 @@ export function DataTable<TData, TValue>({
           <div className="flex-1 text-sm text-muted-foreground">
             {totalItems > 0 ? (
               <>
-                Showing{' '}
-                {paginationState.pageIndex * paginationState.pageSize + 1} to{' '}
-                {Math.min(
-                  (paginationState.pageIndex + 1) * paginationState.pageSize,
-                  totalItems
-                )}{' '}
+                Showing {paginationState.pageIndex * paginationState.pageSize + 1} to{' '}
+                {Math.min((paginationState.pageIndex + 1) * paginationState.pageSize, totalItems)}{' '}
                 of {totalItems} entries
               </>
             ) : (
@@ -158,9 +133,7 @@ export function DataTable<TData, TValue>({
           </div>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
             <div className="flex items-center space-x-2">
-              <p className="whitespace-nowrap text-sm font-medium">
-                Rows per page
-              </p>
+              <p className="whitespace-nowrap text-sm font-medium">Rows per page</p>
               <Select
                 value={`${paginationState.pageSize}`}
                 onValueChange={(value) => {

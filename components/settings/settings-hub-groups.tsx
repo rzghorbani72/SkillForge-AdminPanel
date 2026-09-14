@@ -1,22 +1,9 @@
 'use client';
 
-import {
-  Building,
-  CreditCard,
-  Layers,
-  Layout,
-  Shield,
-  ShieldCheck,
-  User,
-  Zap
-} from 'lucide-react';
+import { Building, CreditCard, Layers, Layout, Shield, ShieldCheck, User, Zap } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScopeBadge } from '@/components/settings/scope-badge';
-import {
-  HUB_TONES,
-  TintedNavCard,
-  type HubCardTone
-} from '@/components/settings/tinted-nav-card';
+import { HUB_TONES, TintedNavCard, type HubCardTone } from '@/components/settings/tinted-nav-card';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatNumber } from '@/lib/utils';
@@ -47,7 +34,7 @@ const SUBSCRIPTION_STATUS_LABEL_KEYS: Record<string, string> = {
   ACTIVE: 'settings.statusActive',
   GRACE: 'settings.statusGrace',
   EXPIRED: 'settings.statusExpired',
-  INACTIVE: 'settings.statusInactive'
+  INACTIVE: 'settings.statusInactive',
 };
 
 function HubCard({ item }: { item: HubItem }) {
@@ -68,8 +55,7 @@ function HubCard({ item }: { item: HubItem }) {
 
 function PlatformPlanCard() {
   const { t, language } = useTranslation();
-  const { planName, status, daysRemaining, isLoading } =
-    useAcademySubscription(true);
+  const { planName, status, daysRemaining, isLoading } = useAcademySubscription(true);
 
   return (
     <TintedNavCard
@@ -94,9 +80,7 @@ function PlatformPlanCard() {
           <div className="flex justify-between">
             <span>{t('settings.subscriptionStatus')}</span>
             <span className="font-medium text-foreground">
-              {status
-                ? t(SUBSCRIPTION_STATUS_LABEL_KEYS[status] ?? '') || status
-                : '—'}
+              {status ? t(SUBSCRIPTION_STATUS_LABEL_KEYS[status] ?? '') || status : '—'}
             </span>
           </div>
           {daysRemaining != null ? (
@@ -127,7 +111,7 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
         href: '/settings/profile',
         icon: User,
         scope: 'personal',
-        tone: HUB_TONES.sky
+        tone: HUB_TONES.sky,
       },
       {
         title: t('settings.security'),
@@ -135,9 +119,9 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
         href: '/settings/security',
         icon: Shield,
         scope: 'personal',
-        tone: HUB_TONES.amber
-      }
-    ]
+        tone: HUB_TONES.amber,
+      },
+    ],
   };
 
   const platformGroup: HubGroup = {
@@ -152,7 +136,7 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             href: '/platform/pricing',
             icon: Building,
             scope: 'platform',
-            tone: HUB_TONES.violet
+            tone: HUB_TONES.violet,
           },
           {
             title: t('settings.paymentGatewayTitle'),
@@ -160,8 +144,8 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             href: '/settings/payment-gateway',
             icon: CreditCard,
             scope: 'platform',
-            tone: HUB_TONES.teal
-          }
+            tone: HUB_TONES.teal,
+          },
         ]
       : [
           {
@@ -170,9 +154,9 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             href: '/settings/academy',
             icon: Building,
             scope: 'platform',
-            tone: HUB_TONES.rose
-          }
-        ]
+            tone: HUB_TONES.rose,
+          },
+        ],
   };
 
   const academyGroup: HubGroup = {
@@ -188,7 +172,7 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             href: '/website',
             icon: Layout,
             scope: 'academy',
-            tone: HUB_TONES.indigo
+            tone: HUB_TONES.indigo,
           },
           {
             title: t('settings.studentPlansTitle'),
@@ -196,7 +180,7 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             href: '/plans?tab=academy',
             icon: Layers,
             scope: 'academy',
-            tone: HUB_TONES.emerald
+            tone: HUB_TONES.emerald,
           },
           {
             title: t('roles.title'),
@@ -204,13 +188,13 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             href: '/settings/roles',
             icon: ShieldCheck,
             scope: 'academy',
-            tone: HUB_TONES.amber
-          }
-        ]
+            tone: HUB_TONES.amber,
+          },
+        ],
   };
 
   const groups = [personalGroup, platformGroup, academyGroup].filter(
-    (group) => group.items.length > 0 || group.scope === 'platform'
+    (group) => group.items.length > 0 || group.scope === 'platform',
   );
 
   return (
@@ -228,9 +212,7 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             {group.items.map((item) => (
               <HubCard key={item.href} item={item} />
             ))}
-            {!isPlatformAdmin && group.scope === 'platform' ? (
-              <PlatformPlanCard />
-            ) : null}
+            {!isPlatformAdmin && group.scope === 'platform' ? <PlatformPlanCard /> : null}
           </div>
         </section>
       ))}

@@ -6,7 +6,7 @@ import { useStore } from '@/hooks/useStore';
 import {
   EMPTY_MANAGER_DASHBOARD,
   type DashboardPeriodKey,
-  type ManagerDashboard
+  type ManagerDashboard,
 } from '@/types/dashboard';
 
 /**

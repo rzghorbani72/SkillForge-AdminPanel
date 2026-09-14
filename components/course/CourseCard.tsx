@@ -8,18 +8,14 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { StatusPill } from './StatusPill';
 import { CourseTypePill } from './course-type-pill';
-import {
-  courseHue,
-  formatCourseDurationMinutes,
-  groupSeatPrice
-} from './courseUtils';
+import { courseHue, formatCourseDurationMinutes, groupSeatPrice } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
 
 export function CourseCard({
   course,
   onEdit,
   onDelete,
-  onClick
+  onClick,
 }: {
   course: CourseWithRevenue;
   onEdit?: () => void;
@@ -31,9 +27,7 @@ export function CourseCard({
   const hue = courseHue(course.id);
   const priceVal = course.price ?? (course as any).primary_price ?? 0;
   const isFree = course.is_free ?? (course as any).pricing_type === 'FREE';
-  const pricingType = isFree
-    ? 'FREE'
-    : ((course as any).pricing_type ?? 'ONE_TIME');
+  const pricingType = isFree ? 'FREE' : ((course as any).pricing_type ?? 'ONE_TIME');
   const studentsCount =
     (course as any).students_count ??
     course.enrollments_count ??
@@ -42,19 +36,14 @@ export function CourseCard({
   const imageObj = (course as any).Image ?? (course as any).cover;
   const coverUrl =
     imageObj?.publicUrl ||
-    (imageObj?.id
-      ? `${langApiVersionPath()}/images/fetch-image-by-id/${imageObj.id}`
-      : null);
+    (imageObj?.id ? `${langApiVersionPath()}/images/fetch-image-by-id/${imageObj.id}` : null);
   const teacher =
     (course as any).Profile?.display_name ??
     (course as any).teacher_name ??
     (course as any).Teacher?.display_name ??
     '—';
-  const categoryName =
-    (course as any).Category?.name ?? (course as any).category ?? null;
-  const status = course.is_published
-    ? 'PUBLISHED'
-    : ((course as any).status ?? 'DRAFT');
+  const categoryName = (course as any).Category?.name ?? (course as any).category ?? null;
+  const status = course.is_published ? 'PUBLISHED' : ((course as any).status ?? 'DRAFT');
   const isLive = course.course_type === 'LIVE';
   const seatPrice = groupSeatPrice(course);
   const rawDuration = (course as any).duration;
@@ -64,11 +53,7 @@ export function CourseCard({
       : typeof rawDuration === 'string' && /^\d+$/.test(rawDuration.trim())
         ? Number(rawDuration)
         : null;
-  const durationLabel = formatCourseDurationMinutes(
-    durationMinutes,
-    formatNumber,
-    t
-  );
+  const durationLabel = formatCourseDurationMinutes(durationMinutes, formatNumber, t);
   const isMonetaryPrice = isLive
     ? seatPrice !== null && seatPrice > 0
     : pricingType !== 'FREE' && priceVal > 0;
@@ -88,7 +73,7 @@ export function CourseCard({
     <div
       className={cn(
         'group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow duration-200 hover:shadow-md',
-        onClick && 'cursor-pointer'
+        onClick && 'cursor-pointer',
       )}
       onClick={onClick}
     >
@@ -97,7 +82,7 @@ export function CourseCard({
         style={{
           background: coverUrl
             ? undefined
-            : `linear-gradient(135deg, hsl(${hue} 80% 82%), hsl(${hue} 60% 92%))`
+            : `linear-gradient(135deg, hsl(${hue} 80% 82%), hsl(${hue} 60% 92%))`,
         }}
       >
         {coverUrl ? (
@@ -108,10 +93,7 @@ export function CourseCard({
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <BookOpen
-              className="h-12 w-12 opacity-40"
-              style={{ color: `hsl(${hue} 60% 40%)` }}
-            />
+            <BookOpen className="h-12 w-12 opacity-40" style={{ color: `hsl(${hue} 60% 40%)` }} />
           </div>
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/40 to-transparent" />
@@ -143,14 +125,12 @@ export function CourseCard({
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
             style={{
               background: `hsl(${hue} 80% 90%)`,
-              color: `hsl(${hue} 60% 38%)`
+              color: `hsl(${hue} 60% 38%)`,
             }}
           >
             {teacher.charAt(0)}
           </span>
-          <span className="truncate text-sm text-muted-foreground">
-            {teacher}
-          </span>
+          <span className="truncate text-sm text-muted-foreground">{teacher}</span>
         </div>
 
         <div className="mt-auto">
@@ -161,9 +141,7 @@ export function CourseCard({
                 {t('courses.student')}
               </div>
               <div className="truncate text-sm font-semibold tabular-nums">
-                {studentsCount > 0
-                  ? formatNumber(studentsCount)
-                  : t('courses.beFirstStudent')}
+                {studentsCount > 0 ? formatNumber(studentsCount) : t('courses.beFirstStudent')}
               </div>
             </div>
             <div className="min-w-0 text-end">
@@ -184,10 +162,7 @@ export function CourseCard({
           </div>
 
           {(onEdit || onDelete) && (
-            <div
-              className="mt-4 flex gap-2"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="mt-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
               {onEdit && (
                 <Button
                   type="button"

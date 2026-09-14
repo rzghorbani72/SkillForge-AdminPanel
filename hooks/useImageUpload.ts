@@ -24,23 +24,19 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadAbortController, setUploadAbortController] =
-    useState<AbortController | null>(null);
+  const [uploadAbortController, setUploadAbortController] = useState<AbortController | null>(null);
   const [uploadedImageId, setUploadedImageId] = useState<string | null>(null);
 
   // Handle file selection
-  const handleFileChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        setSelectedFile(file);
-        // Create preview URL
-        const previewUrl = URL.createObjectURL(file);
-        setPreview(previewUrl);
-      }
-    },
-    []
-  );
+  const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+    }
+  }, []);
 
   // Remove selected file and preview
   const removeFile = useCallback(() => {
@@ -71,10 +67,10 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
           file,
           {
             title: options.title || file.name,
-            description: options.description || 'Uploaded image'
+            description: options.description || 'Uploaded image',
           },
           setUploadProgress,
-          abortController
+          abortController,
         );
         // Handle response structure: { message, status, data: { id, url, ... } }
         // or direct image object: { id, url, ... }
@@ -95,9 +91,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
         } else {
           console.error('Upload response structure:', uploadResponse);
           toast.error(tNow('toasts.imageBadResponse'));
-          options.onError?.(
-            new Error('Upload failed: Invalid response structure')
-          );
+          options.onError?.(new Error('Upload failed: Invalid response structure'));
         }
       } catch (error: any) {
         if (error.name === 'AbortError') {
@@ -119,7 +113,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
         setUploadAbortController(null);
       }
     },
-    [selectedFile, options]
+    [selectedFile, options],
   );
 
   // Select a file and upload it immediately (click-to-browse / drag-drop)
@@ -130,7 +124,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
       setPreview(previewUrl);
       uploadImage(file);
     },
-    [uploadImage]
+    [uploadImage],
   );
 
   // Cancel ongoing upload
@@ -184,6 +178,6 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
     hasFile: !!selectedFile,
     isUploaded: !!uploadedImageId,
     canUpload: !!selectedFile && !isUploading,
-    canCancel: isUploading
+    canCancel: isUploading,
   };
 };

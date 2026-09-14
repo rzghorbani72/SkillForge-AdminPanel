@@ -4,16 +4,13 @@
 export const tr = {
   monitoring: {
     title: 'Akademi sağlığı',
-    subtitle:
-      'Sitenizin çalıştığını ve öğrencilerin hatasız kullandığını görün',
+    subtitle: 'Sitenizin çalıştığını ve öğrencilerin hatasız kullandığını görün',
     statusOk: 'Akademiniz normal çalışıyor',
     statusDegraded: 'Bazı kullanıcılar hata alıyor',
     statusQuiet: 'Son 24 saatte hiç etkinlik yok',
     statusOkHint: 'Sunucu hatası ve ödeme sorunu görünmüyor.',
-    statusDegradedHint:
-      'Neyin bozuk olduğunu görmek için aşağıdaki hatalara bakın.',
-    statusQuietHint:
-      'Yeni bir akademi için bu normaldir, arıza anlamına gelmez.',
+    statusDegradedHint: 'Neyin bozuk olduğunu görmek için aşağıdaki hatalara bakın.',
+    statusQuietHint: 'Yeni bir akademi için bu normaldir, arıza anlamına gelmez.',
     checkedJustNow: 'Her dakika otomatik yenilenir',
     activeLearners: 'Şu anda öğrenen (son 60 dk)',
     logins24h: 'Girişler (24s)',
@@ -55,13 +52,12 @@ export const tr = {
     uptimeNote:
       'Bu sayfa çalışma yüzdesi değil sağlık sinyalleri gösterir: kapalı bir sunucu kendini raporlayamaz.',
     loadFailed: 'Akademi sağlığı yüklenemedi',
-    retry: 'Tekrar dene'
+    retry: 'Tekrar dene',
   },
   meta: {
     title: 'Mentoma Paneli',
     titleTemplate: '%s | Mentoma Paneli',
-    description:
-      'Mentoma yönetim paneli — akademileri, kursları ve öğrencileri yönetin.'
+    description: 'Mentoma yönetim paneli — akademileri, kursları ve öğrencileri yönetin.',
   },
   pageTitles: {
     home: 'Ana sayfa',
@@ -96,11 +92,11 @@ export const tr = {
     websitePages: 'Web sitesi sayfaları',
     websiteSeo: 'Web sitesi SEO',
     websiteDomain: 'Web sitesi alan adı',
-    websiteTrust: 'Güven rozetleri'
+    websiteTrust: 'Güven rozetleri',
   },
   panelFooter: {
     poweredBy: 'Destekleyen',
-    brand: 'Mentoma'
+    brand: 'Mentoma',
   },
   validation: {
     required: 'Bu alan zorunludur',
@@ -134,7 +130,7 @@ export const tr = {
     originalPriceWholeNumber: 'Orijinal fiyat tam sayı olmalıdır',
     nameRequired: 'Ad gereklidir',
     phoneRequired: 'Telefon numarası gereklidir',
-    passwordMin6: 'Şifre en az 6 karakter olmalıdır'
+    passwordMin6: 'Şifre en az 6 karakter olmalıdır',
   },
   blog: {
     academyTitle: 'Blog',
@@ -151,14 +147,14 @@ export const tr = {
       DRAFT: 'Taslak',
       IN_REVIEW: 'İncelemede',
       PUBLISHED: 'Yayında',
-      ARCHIVED: 'Arşivlendi'
+      ARCHIVED: 'Arşivlendi',
     },
     actions: {
       submit: 'İncelemeye gönder',
       approve: 'Yayınla',
       reject: 'Geri gönder',
       archive: 'Yayından kaldır',
-      uploadCover: 'Kapak yükle'
+      uploadCover: 'Kapak yükle',
     },
     fields: {
       title: 'Başlık',
@@ -172,17 +168,17 @@ export const tr = {
       content: 'Yazı',
       contentPlaceholder: 'Yazınızı buraya yazın...',
       metaTitle: 'Arama başlığı',
-      metaDescription: 'Arama açıklaması'
+      metaDescription: 'Arama açıklaması',
     },
     seo: {
       title: 'Arama ve paylaşım',
       description:
-        'Google ve sosyal ağların gösterdiği bilgi. Başlık ve özeti kullanmak için boş bırakın.'
+        'Google ve sosyal ağların gösterdiği bilgi. Başlık ve özeti kullanmak için boş bırakın.',
     },
     empty: {
       title: 'Henüz yazı yok',
-      description: 'Blogunuzu doldurmak için ilk yazınızı yazın.'
-    }
+      description: 'Blogunuzu doldurmak için ilk yazınızı yazın.',
+    },
   },
   editor: {
     quote: 'Alıntı',
@@ -203,9 +199,8 @@ export const tr = {
     numberedList: 'Numaralı liste',
     link: 'Bağlantı',
     linkPrompt: 'Bağlantı adresini girin',
-    formattingHint:
-      'Biçimlendirme yazarken uygulanır; her satır yönünü kendi seçer.',
-    charactersRemaining: '{{count}} karakter kaldı'
+    formattingHint: 'Biçimlendirme yazarken uygulanır; her satır yönünü kendi seçer.',
+    charactersRemaining: '{{count}} karakter kaldı',
   },
   toasts: {
     imageNoneSelected: 'Görsel seçilmedi',
@@ -221,16 +216,14 @@ export const tr = {
     videoUnreadable: 'Bu video dosyası okunamıyor. Başka bir dosya deneyin.',
     videoInvalidFormat: 'Lütfen MP4 biçiminde bir video seçin',
     videoTooLarge: "Video ({{size}}) 700MB'tan büyük. Lütfen önce sıkıştırın.",
-    videoTooLong:
-      'Video ({{duration}}) 30 dakikadan uzun. Lütfen daha kısa parçalara bölün.',
+    videoTooLong: 'Video ({{duration}}) 30 dakikadan uzun. Lütfen daha kısa parçalara bölün.',
     videoSelected: 'Video seçildi: {{size}}',
     posterInvalidFormat: 'Lütfen PNG, JPG, JPEG veya WebP bir görsel seçin',
     fileSelected: 'Seçildi: {{name}}',
     singleFileOnly: 'Aynı anda yalnızca bir dosya yükleyebilirsiniz',
     maxFiles: 'En fazla {{count}} dosya yükleyebilirsiniz',
     fileRejected: '{{name}} dosyası reddedildi',
-    fileTooLarge:
-      'Bu dosya {{size}} sınırından büyük. Lütfen daha küçük bir dosya seçin.',
+    fileTooLarge: 'Bu dosya {{size}} sınırından büyük. Lütfen daha küçük bir dosya seçin.',
     audioChooseFile: 'Lütfen bir ses dosyası seçin',
     audioChooseFirst: 'Önce bir ses dosyası seçin',
     audioBadResponse: 'Ses yüklendi ancak sunucu bir kimlik döndürmedi',
@@ -276,12 +269,11 @@ export const tr = {
     gatewayUpdated: '{{name}} güncellendi',
     gatewayLoadFailed: 'Ödeme sağlayıcıları yüklenemedi',
     gatewayUpdateFailed: 'Ödeme sağlayıcısı güncellenemedi',
-    withdrawalMarked: 'Talep {{status}} olarak işaretlendi'
+    withdrawalMarked: 'Talep {{status}} olarak işaretlendi',
   },
   selectSchool: {
     title: 'Akademinizi Seçin',
-    subtitle:
-      'Birden fazla akademiye kayıtlısınız. Erişmek istediğinizi seçin.',
+    subtitle: 'Birden fazla akademiye kayıtlısınız. Erişmek istediğinizi seçin.',
     loading: 'Akademileriniz yükleniyor...',
     welcomeBack: 'Tekrar hoş geldiniz, {{name}}',
     noStoresFound: 'Hesabınız için akademi bulunamadı',
@@ -300,7 +292,7 @@ export const tr = {
     needHelp: 'Yardım mı lazım?',
     needHelpText:
       'Akademinizi bulamıyorsanız veya yeni bir akademiye kaydolmanız gerekiyorsa, lütfen akademi yöneticinizle iletişime geçin veya',
-    contactSupport: 'destek ile iletişime geçin'
+    contactSupport: 'destek ile iletişime geçin',
   },
   billing: {
     title: 'Tüm Abonelikler',
@@ -314,15 +306,15 @@ export const tr = {
     storageColumn: 'Depolama',
     managePlan: 'Planı yönet',
     emptyTitle: 'Henüz akademi yok',
-    emptyDesc: 'Abonelik başlatmak için ilk akademinizi oluşturun'
+    emptyDesc: 'Abonelik başlatmak için ilk akademinizi oluşturun',
   },
   scope: {
     viewingAcademy: 'Görüntülenen akademi:',
     platformWide: 'Bu sayfa tüm akademilerinizi kapsar',
-    noAcademySelected: 'Akademi seçilmedi'
+    noAcademySelected: 'Akademi seçilmedi',
   },
   academy: {
-    visitSite: 'Siteyi ziyaret et'
+    visitSite: 'Siteyi ziyaret et',
   },
   common: {
     published: 'Yayında',
@@ -393,10 +385,8 @@ export const tr = {
     refresh: 'Yenile',
     noStoreSelected: 'Akademi seçilmedi',
     selectStoreToView: 'İçeriği görmek için üst çubuktan bir akademi seçin.',
-    selectStoreToViewCourses:
-      'Kursları görmek için üst çubuktan bir akademi seçin.',
-    selectStoreToCreateProduct:
-      'Ürün oluşturmak için üst çubuktan bir akademi seçin.',
+    selectStoreToViewCourses: 'Kursları görmek için üst çubuktan bir akademi seçin.',
+    selectStoreToCreateProduct: 'Ürün oluşturmak için üst çubuktan bir akademi seçin.',
     moreFilters: 'Daha Fazla Filtre',
     tryAdjustingFilters: 'Arama veya filtreleri ayarlamayı deneyin',
     email: 'E-posta',
@@ -413,12 +403,11 @@ export const tr = {
     requested: 'Talep Edildi',
     addNotes: 'Kararınızla ilgili not ekleyin...',
     validPhoneNumberFormat: '✓ Geçerli telefon numarası',
-    invalidPhoneNumberFormat: '⚠ Geçersiz telefon numarası formatı'
+    invalidPhoneNumberFormat: '⚠ Geçersiz telefon numarası formatı',
   },
   roles: {
     title: 'Roller ve İzinler',
-    description:
-      'Roller oluşturun ve her rolün platformda neye erişebileceğini yönetin',
+    description: 'Roller oluşturun ve her rolün platformda neye erişebileceğini yönetin',
     addRole: 'Rol ekle',
     systemBadge: 'Sistem',
     customBadge: 'Özel',
@@ -449,7 +438,7 @@ export const tr = {
     action: {
       read: 'Görüntüle',
       write: 'Düzenle',
-      delete: 'Sil'
+      delete: 'Sil',
     },
     resource: {
       academies: 'Akademiler',
@@ -470,12 +459,12 @@ export const tr = {
       notifications: 'Bildirimler',
       legal: 'Yasal belgeler',
       theme: 'Tema',
-      roles: 'Roller ve izinler'
-    }
+      roles: 'Roller ve izinler',
+    },
   },
   accessControl: {
     deniedTitle: 'Erişim reddedildi',
-    deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.'
+    deniedDescription: 'Bu sayfayı görüntüleme izniniz yok.',
   },
   navigation: {
     teacherEarnings: 'Kazançlarım',
@@ -597,19 +586,17 @@ export const tr = {
       templates: 'Şablonlar',
       configuration: 'Yapılandırma',
       governance: 'Güven ve hukuk',
-      students: 'Öğrenciler'
-    }
+      students: 'Öğrenciler',
+    },
   },
   gdpr: {
-    message:
-      'Bu paneli çalıştırmak ve deneyiminizi geliştirmek için çerezleri kullanıyoruz.',
+    message: 'Bu paneli çalıştırmak ve deneyiminizi geliştirmek için çerezleri kullanıyoruz.',
     learnMore: 'Daha fazla bilgi',
     decline: 'Reddet',
-    accept: 'Kabul et'
+    accept: 'Kabul et',
   },
   legal: {
-    mustAcceptTerms:
-      'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.',
+    mustAcceptTerms: 'Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.',
     documentsUnavailable:
       'Yasal belgeler henüz kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.',
     lastUpdated: 'Son güncelleme',
@@ -619,19 +606,16 @@ export const tr = {
       'Son ziyaretinizden bu yana koşullarımız biraz değişti. Kısa özeti okuyup onaylayın.',
     acceptAndContinue: 'Kabul et ve devam et',
     accepting: 'Kabul kaydediliyor...',
-    notTranslatedNotice:
-      'Bu belge henüz dilinize çevrilmedi. İngilizce sürüm gösteriliyor.',
+    notTranslatedNotice: 'Bu belge henüz dilinize çevrilmedi. İngilizce sürüm gösteriliyor.',
     whatChanged: 'Ne değişti?',
     changesAdded: 'Eklenenler',
     changesRemoved: 'Çıkarılanlar',
-    onlyMinorChanges:
-      'Yalnızca küçük yazım/biçim düzeltmeleri — kuralların kendisi değişmedi.',
+    onlyMinorChanges: 'Yalnızca küçük yazım/biçim düzeltmeleri — kuralların kendisi değişmedi.',
     firstTimeAcceptance: 'Bu belgeyi ilk kez kabul etmeniz gerekiyor.',
-    diffUnavailable:
-      'Değişiklik özeti şu anda kullanılamıyor. Lütfen belgenin tamamını okuyun.',
+    diffUnavailable: 'Değişiklik özeti şu anda kullanılamıyor. Lütfen belgenin tamamını okuyun.',
     viewFullDocument: 'Belgenin tamamını görüntüle',
     declineAndSignOut: 'Reddet ve çıkış yap',
-    decliningAndSigningOut: 'Çıkış yapılıyor...'
+    decliningAndSigningOut: 'Çıkış yapılıyor...',
   },
   onboarding: {
     bannerTitle: 'İlk akademinizi oluşturun',
@@ -642,13 +626,12 @@ export const tr = {
     noAcademyDescription:
       'Hesabınız bir akademi yöneticisi tarafından oluşturuldu. Sizi akademisine ekleyene kadar burada bir şey görünmez.',
     setupBannerTitle: 'Akademinizi yayına alın',
-    setupBannerDescription:
-      '{done} / 4 adım tamamlandı — eğitime başlamak için bunları bitirin.',
+    setupBannerDescription: '{done} / 4 adım tamamlandı — eğitime başlamak için bunları bitirin.',
     setupStepWebsite: 'Akademi sitesini oluşturun veya düzenleyin',
     setupStepTemplate: 'Şablon seçin',
     setupStepCourse: 'Kurs ekleyin',
     setupStepVisit: 'Siteyi ziyaret edin',
-    setupDismiss: 'Kurulum listesini kapat'
+    setupDismiss: 'Kurulum listesini kapat',
   },
 
   auth: {
@@ -679,8 +662,7 @@ export const tr = {
     changeIdentifier: 'Numarayı değiştir',
     useOtpInstead: 'Tek kullanımlık kodla giriş yap',
     accountNotRegisteredForLogin: 'Bu telefon numarasıyla kayıtlı hesap yok.',
-    phoneAlreadyRegistered:
-      'Bu telefon numarası zaten kayıtlı. Lütfen giriş yapın.',
+    phoneAlreadyRegistered: 'Bu telefon numarası zaten kayıtlı. Lütfen giriş yapın.',
     registerToLoginHint: 'Önce ücretsiz hesap oluşturun, sonra giriş yapın.',
     createAccountToContinue: 'Hesap oluştur',
     sendingCode: 'Kod gönderiliyor...',
@@ -699,8 +681,7 @@ export const tr = {
     panelForStaff: 'Bu panel yalnızca',
     teachersManagersAdmins: 'Öğretmenler, Yöneticiler ve Yöneticiler',
     staffOnly: 'içindir.',
-    studentsLoginThroughStore:
-      'Öğrenciler enstitülerinin web sitesi üzerinden giriş yapmalıdır.',
+    studentsLoginThroughStore: 'Öğrenciler enstitülerinin web sitesi üzerinden giriş yapmalıdır.',
     dontHaveAccount: 'Yönetim hesabınız yok mu?',
     registerStore: 'Enstitünüzü Kaydedin',
     areYouStudent: 'Öğrenci misiniz?',
@@ -712,11 +693,9 @@ export const tr = {
     phoneRequired: 'Telefon numarası gereklidir',
     emailRequired: 'E-posta gereklidir',
     passwordTooShort: 'Şifre en az 6 karakter olmalıdır',
-    passwordAsciiOnly:
-      'Şifre yalnızca İngilizce harf, rakam ve sembol içerebilir',
+    passwordAsciiOnly: 'Şifre yalnızca İngilizce harf, rakam ve sembol içerebilir',
     passwordHasSymbol: 'Bir sembol içerir',
-    passwordTooWeak:
-      'Şifre bir İngilizce harf, bir rakam ve bir sembol içermelidir',
+    passwordTooWeak: 'Şifre bir İngilizce harf, bir rakam ve bir sembol içermelidir',
     passwordMinLength: 'En az 6 karakter',
     showPassword: 'Parolayı göster',
     hidePassword: 'Parolayı gizle',
@@ -733,8 +712,7 @@ export const tr = {
     createStoreAccount: 'Enstitü Hesabı Oluştur',
     verifyContactDescription:
       'Önce telefonu (ve varsa e-postayı) doğrulayın. Ardından temel verileri doldurun.',
-    registerDescription:
-      'Enstitü yöneticisi olarak kaydolun veya öğrenci olarak katılın',
+    registerDescription: 'Enstitü yöneticisi olarak kaydolun veya öğrenci olarak katılın',
     fullNameRequired: 'Ad soyad gereklidir',
     phoneNumberRequired: 'Telefon numarası gereklidir',
     validPhoneNumber: 'Lütfen geçerli bir telefon numarası girin (7-15 rakam)',
@@ -744,11 +722,9 @@ export const tr = {
     passwordsDoNotMatch: 'Şifreler eşleşmiyor',
     storeNameRequired: 'Enstitü adı gereklidir',
     storeSlugRequired: 'Enstitü kısa adı gereklidir',
-    storeSlugInvalid:
-      'Enstitü kısa adı yalnızca küçük harfler, rakamlar ve tire içerebilir',
+    storeSlugInvalid: 'Enstitü kısa adı yalnızca küçük harfler, rakamlar ve tire içerebilir',
     selectStoreRequired: 'Lütfen bir enstitü seçin',
-    teacherRequestReasonRequired:
-      'Lütfen neden öğretmen olmak istediğinizi açıklayın',
+    teacherRequestReasonRequired: 'Lütfen neden öğretmen olmak istediğinizi açıklayın',
     registering: 'Kullanıcı kaydediliyor...',
     continueToBaseData: 'Temel Verilere Devam Et',
     registerUser: 'Kullanıcı Kaydet',
@@ -766,15 +742,12 @@ export const tr = {
     resendEmailOtp: 'E-posta Doğrulama Kodunu Yeniden Gönder',
     sendEmailOtp: 'E-posta Doğrulama Kodu Gönder',
     verifyEmailOtp: 'E-posta Doğrulama Kodunu Doğrula',
-    verifyPhoneLater:
-      'Telefon numaranızı daha sonra hesap ayarlarından doğrulayabilirsiniz',
-    verifyEmailLater:
-      'E-posta adresinizi daha sonra hesap ayarlarından doğrulayabilirsiniz',
+    verifyPhoneLater: 'Telefon numaranızı daha sonra hesap ayarlarından doğrulayabilirsiniz',
+    verifyEmailLater: 'E-posta adresinizi daha sonra hesap ayarlarından doğrulayabilirsiniz',
     stepVerification: 'Doğrulama',
     stepBaseData: 'Temel Veriler',
     createNewStore: 'Yeni Enstitü Oluştur',
-    createNewStoreDescription:
-      'Kendi eğitim kurumunuzu yönetici olarak başlatın',
+    createNewStoreDescription: 'Kendi eğitim kurumunuzu yönetici olarak başlatın',
     joinExistingStore: 'Mevcut Enstitüye Katıl',
     joinExistingStoreDescription:
       'Öğrenci olarak katılın ve isteğe bağlı olarak öğretmen rolü talep edin',
@@ -791,23 +764,21 @@ export const tr = {
     adminOnly: 'Bu panel yalnızca',
     adminsOnly: 'yöneticiler içindir.',
     signInAsAdmin: 'Yönetici olarak giriş yapın',
-    staffRouteOnly:
-      'Bu rota Yönetici ve Destek personeli içindir. Lütfen normal girişi kullanın.',
+    staffRouteOnly: 'Bu rota Yönetici ve Destek personeli içindir. Lütfen normal girişi kullanın.',
     adminUnauthorizedRole:
       'Yönetici paneline erişim izniniz yok. Yalnızca ADMIN rolüne izin verilir.',
     bySigningIn: 'Giriş yaparak şunları kabul edersiniz:',
     togglePasswordVisibility: 'Şifre görünürlüğünü değiştir',
     notAdmin: 'Yönetici değil misiniz?',
     regularLogin: 'Normal Giriş',
-    loginTitle: 'Hesabınıza giriş yapın'
+    loginTitle: 'Hesabınıza giriş yapın',
   },
   teacherShare: {
-    note: 'Bu akademide öğretmen payı her satışın {{teacher}}’i, {{academy}}’i akademiye gider; bu oranı yönetici belirler.'
+    note: 'Bu akademide öğretmen payı her satışın {{teacher}}’i, {{academy}}’i akademiye gider; bu oranı yönetici belirler.',
   },
   teacherEarnings: {
     title: 'Kazançlarım',
-    description:
-      'Kurs satışlarından payınız, akademinin size ödediği tutar ve kalan borç.',
+    description: 'Kurs satışlarından payınız, akademinin size ödediği tutar ve kalan borç.',
     earned: 'Toplam payınız',
     paid: 'Size ödenen',
     owed: 'Kalan borç',
@@ -822,11 +793,10 @@ export const tr = {
     confirmDone: 'Ödeme onaylandı',
     rejectDone: 'Ödeme reddedildi; tutar yeniden size borç olarak yazıldı',
     confirmedAt: '{{date}} tarihinde onaylandı',
-    rejectWaitHint:
-      'Banka takas döngüsü nedeniyle reddetme {{date}} itibarıyla açılır',
+    rejectWaitHint: 'Banka takas döngüsü nedeniyle reddetme {{date}} itibarıyla açılır',
     responseNote:
       'Onay veya ret yalnızca sizinle akademi yöneticisi arasındaki hesaptır; platformun ilgisi yoktur. Para gelmezse 72 saat sonra reddedebilirsiniz; tutar yeniden borç olur.',
-    noPayouts: 'Henüz ödeme kaydedilmedi'
+    noPayouts: 'Henüz ödeme kaydedilmedi',
   },
   dashboard: {
     limits: {
@@ -844,7 +814,7 @@ export const tr = {
       storage_gb: 'Depolama (GB)',
       monthly_traffic_gb: 'Aylık trafik (GB)',
       dedicated_templates: 'Özel site şablonları',
-      videos: 'Videolar'
+      videos: 'Videolar',
     },
     cards: {
       courses: 'Oluşturulan kurslar',
@@ -854,7 +824,7 @@ export const tr = {
       completion: 'Kurs tamamlama oranı',
       completionHint: '{{period}} kayıtlarının kursu bitirme oranı',
       active: 'Aktif kayıtlar',
-      activeHint: '{{period}} içinde kursa devam eden öğrenciler'
+      activeHint: '{{period}} içinde kursa devam eden öğrenciler',
     },
     teacherPayout: {
       title: '{{name}} için ödeme kaydet',
@@ -866,7 +836,7 @@ export const tr = {
       bankResponseHint: 'örn. referans numarası veya dekont metni',
       submit: 'Ödemeyi kaydet',
       success: 'Ödeme kaydedildi',
-      failed: 'Ödeme kaydedilemedi'
+      failed: 'Ödeme kaydedilemedi',
     },
     money: {
       academyRow: 'Akademi geliri',
@@ -874,25 +844,21 @@ export const tr = {
       platformOwes: 'Tasfiyeye hazır',
       platformOwesHint: '{{pending}} transfer bekliyor',
       paidToAcademy: 'Akademiye ödenen',
-      paidToAcademyHint:
-        'Şimdiye kadar akademi banka hesabına aktarılan toplam',
+      paidToAcademyHint: 'Şimdiye kadar akademi banka hesabına aktarılan toplam',
       teacherRate: 'Öğretmen payı oranı',
-      teacherRateHint:
-        'Her öğretmenin her satıştaki payı; akademi ayarlarından değiştirilir',
+      teacherRateHint: 'Her öğretmenin her satıştaki payı; akademi ayarlarından değiştirilir',
       teacherShare: 'Öğretmen payı',
       teacherPaid: 'Öğretmenlere ödenen',
       teacherPaidHint: 'Bu dönemde öğretmenlere aktarıp kaydettiğiniz tutar',
       payTeacher: 'Ödeme kaydet',
-      teacherShareHint:
-        'Öğretmenlerin bu dönemdeki satışlardan kazandığı tutar',
+      teacherShareHint: 'Öğretmenlerin bu dönemdeki satışlardan kazandığı tutar',
       flowTitle: 'Para akışı',
       flowSubtitle: 'Para nereye gidiyor',
       unnamed: 'İsimsiz',
       gross: 'Toplam gelir',
       grossHint: 'Bu dönemdeki tüm başarılı öğrenci ödemeleri',
       net: 'Akademinin net payı',
-      netHint:
-        'İadeler ve öğretmen payları düşüldükten sonra tahsil edilen gelir',
+      netHint: 'İadeler ve öğretmen payları düşüldükten sonra tahsil edilen gelir',
       payoutsDue: 'Öğretmenlere borç',
       payoutsDueHint: '{{count}} öğretmene henüz ödenmemiş toplam pay',
       coursesTitle: 'Kursa göre gelir',
@@ -916,7 +882,7 @@ export const tr = {
       sortNet: 'Net',
       sortStudents: 'Öğrenci',
       noCourses: 'Henüz satan bir kurs yok',
-      noTeachers: 'Henüz satışı olan öğretmen yok'
+      noTeachers: 'Henüz satışı olan öğretmen yok',
     },
     title: 'Kontrol Paneli',
     welcome: 'Yönetim Paneline Hoş Geldiniz',
@@ -936,8 +902,7 @@ export const tr = {
     checkMetrics: 'Performans metriklerinizi kontrol edin',
     quickActions: 'Hızlı İşlemler',
     quickActionsDescription: 'Başlamanız için ortak görevler',
-    recentActivityDescription:
-      'Enstitüleriniz ve kurslarınızdan son güncellemeler',
+    recentActivityDescription: 'Enstitüleriniz ve kurslarınızdan son güncellemeler',
     recentCourses: 'Son Kurslar',
     recentEnrollments: 'Son Kayıtlar',
     recentPayments: 'Son Ödemeler',
@@ -965,11 +930,9 @@ export const tr = {
     unknownUser: 'Bilinmeyen Kullanıcı',
     unknownCourse: 'Bilinmeyen Kurs',
     noRecentEnrollments: 'Son kayıt yok',
-    enrollmentsWillAppear:
-      'Öğrenciler kurslarınıza katıldığında kayıtlar burada görünecek.',
+    enrollmentsWillAppear: 'Öğrenciler kurslarınıza katıldığında kayıtlar burada görünecek.',
     noRecentPayments: 'Son ödeme yok',
-    paymentsWillAppear:
-      'Öğrenciler kurslarınızı satın aldığında ödeme işlemleri burada görünecek.',
+    paymentsWillAppear: 'Öğrenciler kurslarınızı satın aldığında ödeme işlemleri burada görünecek.',
     published: 'Yayınlandı',
     draft: 'Taslak',
     activityNewCourseCreated: 'Yeni kurs oluşturuldu',
@@ -993,7 +956,7 @@ export const tr = {
     timeYearsAgoPlural: '{{count}} yıl önce',
     platformRevenue: 'Platform Geliri',
     allPlatformCourses: 'Tüm Platform Kursları',
-    allPlatformStudents: 'Tüm Platform Öğrencileri'
+    allPlatformStudents: 'Tüm Platform Öğrencileri',
   },
   stores: {
     title: 'Enstitüler',
@@ -1027,7 +990,7 @@ export const tr = {
     removeAcademyLockedManager: 'Bu akademide ödeme var ve silinemez.',
     removeAcademyConfirm:
       'Bu akademi herkese açık siteden ve bu listeden kalkar. Öğrenci kayıtları ve ödemeler saklanır.',
-    landingScreenshots: 'Tanıtım ekran görüntüleri'
+    landingScreenshots: 'Tanıtım ekran görüntüleri',
   },
   courses: {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.
@@ -1056,11 +1019,9 @@ export const tr = {
       topicsRequired: 'En az bir konu yazın.',
       topicsSaved: 'Konular kaydedildi.',
       pricing: 'Fiyatlandırma',
-      pricingHint:
-        'Canlı kurs iki şekilde satılır: grup dersinde bir yer ya da birebir ders.',
+      pricingHint: 'Canlı kurs iki şekilde satılır: grup dersinde bir yer ya da birebir ders.',
       groupPrice: 'Grup dersi kişi başı fiyat',
-      groupPriceHint:
-        'Bir öğrencinin grup dersine katılmak için ödediği tutar.',
+      groupPriceHint: 'Bir öğrencinin grup dersine katılmak için ödediği tutar.',
       soloPrice: 'Özel ders fiyatı',
       soloPriceHint: 'Birebir ders fiyatı. Boş bırakırsanız satılmaz.',
       pricesRequired: 'İki fiyattan en az birini girin.',
@@ -1071,8 +1032,7 @@ export const tr = {
       solo: 'Özel',
       group: 'Grup',
       schedule: 'Ders programı',
-      scheduleHint:
-        'Haftalık saatleri ve oturum sayısını seçin; tarihler otomatik oluşur.',
+      scheduleHint: 'Haftalık saatleri ve oturum sayısını seçin; tarihler otomatik oluşur.',
       sessionCount: 'Oturum sayısı',
       startDate: 'Başlangıç tarihi',
       startDateRequired: 'Bir başlangıç tarihi seçin.',
@@ -1083,16 +1043,13 @@ export const tr = {
       previewTitle: 'Oturum tarihleri',
       createClass: 'Ders oluştur',
       classCreated: 'Ders oluşturuldu.',
-      needsPriceBeforeSchedule:
-        'Önce grup fiyatını kaydedin, sonra ders oluşturun.',
+      needsPriceBeforeSchedule: 'Önce grup fiyatını kaydedin, sonra ders oluşturun.',
       timetable: 'Ders programı',
-      noClassesYet:
-        'Henüz ders yok. Önce grup fiyatını kaydedin, sonra ders oluşturun.',
+      noClassesYet: 'Henüz ders yok. Önce grup fiyatını kaydedin, sonra ders oluşturun.',
       backToClasses: 'Derslere dön',
       publishClass: 'Dersi yayınla',
       classPublished: 'Ders yayınlandı ve tarihleri yazıldı.',
-      noSessionsYet:
-        'Henüz oturum yok. Tarihleri oluşturmak için dersi yayınlayın.',
+      noSessionsYet: 'Henüz oturum yok. Tarihleri oluşturmak için dersi yayınlayın.',
       seatsTaken: '{{capacity}} yerin {{taken}} tanesi',
       meetingsCount: '{{count}} oturum',
       nextSession: 'Next meeting',
@@ -1124,25 +1081,20 @@ export const tr = {
       hasRecording: 'Kaydı var',
       hasOwnLink: 'Kendi bağlantısı',
       meetingUrlPlaceholder: 'https://meet.example.com/your-class',
-      meetingUrlHint:
-        'Bu ders için sınıf geneli bağlantıyı kullanmak istiyorsanız boş bırakın.',
+      meetingUrlHint: 'Bu ders için sınıf geneli bağlantıyı kullanmak istiyorsanız boş bırakın.',
       sessionChat: 'Bu dersin sohbeti',
       uploadMaterial: 'Ders materyali yükle',
       uploadHelperVideo: 'Yardımcı video yükle',
-      uploadHelperVideoHint:
-        'Öğrencilerin canlı dersin yanında izleyebileceği ek video.',
-      uploadMaterialHint:
-        'Ders sonrası paylaşılan slayt, çalışma kağıdı veya notlar.',
+      uploadHelperVideoHint: 'Öğrencilerin canlı dersin yanında izleyebileceği ek video.',
+      uploadMaterialHint: 'Ders sonrası paylaşılan slayt, çalışma kağıdı veya notlar.',
       materialAdded: 'Dosya bu derse eklendi',
       allowRecordingDownload: 'Kaydın indirilmesine izin ver',
-      pageSubtitle:
-        'Konuları, fiyatı, programı ve her oturumun adını burada oluşturun.',
+      pageSubtitle: 'Konuları, fiyatı, programı ve her oturumun adını burada oluşturun.',
       coursePublished: 'Kurs yayınlandı.',
       publishNeedsTopic: 'Yayınlamadan önce en az bir konu ekleyin.',
       publishNeedsPrice: 'Yayınlamadan önce ders fiyatını belirleyin.',
       publishNeedsClass: 'Yayınlamadan önce en az bir ders oluşturun.',
-      publishNeedsSchedule:
-        'Dersin haftalık saatlerini ve oturum sayısını belirtin.'
+      publishNeedsSchedule: 'Dersin haftalık saatlerini ve oturum sayısını belirtin.',
     },
     title: 'Kurslar',
     backToCourses: 'Kurslara Dön',
@@ -1191,8 +1143,7 @@ export const tr = {
     addNewLesson: 'Yeni Ders Ekle',
     lessonNotFoundDesc: 'Aradığınız ders mevcut değil.',
     backToLessons: 'Derslere Dön',
-    lessonDetailsSubtitle:
-      '"{{course}}" içindeki "{{season}}" için ders detayları',
+    lessonDetailsSubtitle: '"{{course}}" içindeki "{{season}}" için ders detayları',
     editLesson: 'Dersi Düzenle',
     deleteLesson: 'Dersi Sil',
     lessonInformation: 'Ders Bilgileri',
@@ -1236,29 +1187,24 @@ export const tr = {
       'Bu kurs yayında ve öğrenciler tarafından görülüyor. Değişiklikler kaydeder kaydetmez yayına girer.',
     updatedToast: 'Kurs güncellendi',
     fixErrorsBeforeSaving: 'Kaydetmeden önce işaretli alanları düzeltin',
-    createdDraftToast:
-      'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',
+    createdDraftToast: 'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',
     courseTypeLabel: 'Kurs türü',
     typeOfflineTitle: 'Kayıtlı',
     typeOfflineHint: 'Öğrencinin kendi zamanında izlediği video dersler.',
     typeLiveTitle: 'Canlı',
-    typeLiveHint:
-      'Belirli bir programda, öğretmenin katılımıyla yapılan çevrimiçi ders.',
+    typeLiveHint: 'Belirli bir programda, öğretmenin katılımıyla yapılan çevrimiçi ders.',
     errors: {
       titleMin: 'Başlık en az 5 karakter olmalıdır',
       titleMax: 'Başlık 80 karakterden az olmalıdır',
       descriptionRequired: 'Açıklama gereklidir',
       descriptionMax: 'Açıklama 4000 karakterden az olmalıdır',
-      learningOutcomesMax:
-        '“Bu kursta neler öğreneceksiniz” 2000 karakterden az olmalıdır',
+      learningOutcomesMax: '“Bu kursta neler öğreneceksiniz” 2000 karakterden az olmalıdır',
       primaryPriceRequired: 'Ana fiyat gereklidir',
       primaryPriceWholeNumber: 'Ana fiyat tam sayı olmalıdır',
       primaryPriceRange: 'Ana fiyat 0 ile 999.999.999 arasında olmalıdır',
       beforeDiscountWholeNumber: 'İndirim öncesi fiyat tam sayı olmalıdır',
-      beforeDiscountRange:
-        'İndirim öncesi fiyat 0 ile 999.999.999 arasında olmalıdır',
-      beforeDiscountTooLow:
-        'İndirim öncesi fiyat, satış fiyatından yüksek olmalıdır'
+      beforeDiscountRange: 'İndirim öncesi fiyat 0 ile 999.999.999 arasında olmalıdır',
+      beforeDiscountTooLow: 'İndirim öncesi fiyat, satış fiyatından yüksek olmalıdır',
     },
     enterCourseTitle: 'Kurs başlığını girin (en az 5 karakter)',
     titleLength: 'Başlık 5 ile 80 karakter arasında olmalıdır',
@@ -1266,8 +1212,7 @@ export const tr = {
     whatYouWillLearn: 'Bu kursta neler öğreneceksiniz',
     whatYouWillLearnHint:
       'Her beceriyi ayrı bir satıra yazın. Öğrenciler bunu kurs tanıtım sayfasında görür.',
-    whatYouWillLearnPlaceholder:
-      'Günlük İngilizce konuşmalar yapmak\nİş yerinde kısa sunum vermek',
+    whatYouWillLearnPlaceholder: 'Günlük İngilizce konuşmalar yapmak\nİş yerinde kısa sunum vermek',
     descriptionLength: 'Açıklama 4000 karakterden az olmalıdır',
     noCourses: 'Kurs bulunamadı',
     createFirstCourse: 'İlk kursunuzu oluşturun',
@@ -1290,10 +1235,8 @@ export const tr = {
     lessonTitle: 'Ders',
     lessonDescription: 'Ders açıklaması',
     lessonDuration: 'Süre',
-    publishLessonTitleRequired:
-      'Yayınlamadan önce her dersin bir başlığı olmalıdır.',
-    publishEmptySeason:
-      'Yayınlamadan önce her sezonun en az bir dersi olmalıdır.',
+    publishLessonTitleRequired: 'Yayınlamadan önce her dersin bir başlığı olmalıdır.',
+    publishEmptySeason: 'Yayınlamadan önce her sezonun en az bir dersi olmalıdır.',
     publishNeedsLesson: 'Yayınlamadan önce en az bir ders ekleyin.',
     enterLessonTitle: 'Ders başlığını girin',
     freePreview: 'Ücretsiz önizleme',
@@ -1303,15 +1246,13 @@ export const tr = {
     optional: 'İsteğe bağlı',
     lessonVideo: 'Video',
     lessonCover: 'Kapak Görseli',
-    lessonCoverHint:
-      'Bu ders için küçük resim olarak gösterilir — küçük dosya daha hızlı yüklenir',
+    lessonCoverHint: 'Bu ders için küçük resim olarak gösterilir — küçük dosya daha hızlı yüklenir',
     uploadCoverImage: 'Kapak görseli yükle',
     removeVideo: 'Videoyu kaldır',
     removeCover: 'Kapak görselini kaldır',
     videoNeedsSecuring: 'Bu video henüz güvenli biçime dönüştürülmedi.',
     secureThisVideo: 'Güvenli biçime dönüştür',
-    videoSecuringQueued:
-      'Video güvenli dönüştürme için sıraya alındı. Bu birkaç dakika sürer.',
+    videoSecuringQueued: 'Video güvenli dönüştürme için sıraya alındı. Bu birkaç dakika sürer.',
     videoSecuringFailed:
       'Bu videonun güvenli dönüştürmesi başarısız oldu. Tekrar deneyebilirsiniz.',
     videoSecuringInProgress: 'Güvenli biçime dönüştürülüyor…',
@@ -1329,8 +1270,7 @@ export const tr = {
     lessonsCount: '{{count}} ders',
     free: 'Ücretsiz',
     published: 'Yayında',
-    seasonsHint:
-      'Kursunuzu sezonlara göre düzenleyin, ardından her sezona ders ekleyin',
+    seasonsHint: 'Kursunuzu sezonlara göre düzenleyin, ardından her sezona ders ekleyin',
     saving: 'Kaydediliyor…',
     saved: 'Kaydedildi',
     saveFailed: 'Kaydedilemedi',
@@ -1348,11 +1288,9 @@ export const tr = {
     lessonComplete: 'Hazır',
     lessonIncomplete: 'Eksik',
     clearSeason: 'Bu bölümü boşalt',
-    confirmClearSeason:
-      'Bu tek bölüm — boşaltmak derslerini siler ve başlığını temizler.',
+    confirmClearSeason: 'Bu tek bölüm — boşaltmak derslerini siler ve başlığını temizler.',
     clearLesson: 'Bu dersi boşalt',
-    confirmClearLesson:
-      'Bu, bölümdeki tek ders — boşaltmak başlığını ve medyasını temizler.',
+    confirmClearLesson: 'Bu, bölümdeki tek ders — boşaltmak başlığını ve medyasını temizler.',
     addSeasonBlocked: 'Yeni bölüm eklemeden önce son bölüme bir ders ekleyin.',
     addLessonBlocked: 'Yeni ders eklemeden önce başlıksız dersi adlandırın.',
     seasonNumber: '{{n}}. Bölüm',
@@ -1367,7 +1305,7 @@ export const tr = {
     liveScheduleLink: 'Buluşma saatini belirle',
     lessonSettingsLink: 'Sınav, canlı saat ve indirme kuralı',
     liveSaveFirst:
-      'Önce dersi kaydedin, ardından düzenleme sayfasında toplantı bağlantısını yapılandırın.'
+      'Önce dersi kaydedin, ardından düzenleme sayfasında toplantı bağlantısını yapılandırın.',
   },
   students: {
     title: 'Öğrenciler',
@@ -1383,8 +1321,7 @@ export const tr = {
     enrollmentsDescription:
       'Öğrenci × kurs listesi: kayıt durumu, filtreler ve her kurs için erişim detayları.',
     zeroResults: '0 sonuç',
-    useSearchAndFilters:
-      'Belirli kayıtları daraltmak için aşağıdaki arama ve filtreleri kullanın.',
+    useSearchAndFilters: 'Belirli kayıtları daraltmak için aşağıdaki arama ve filtreleri kullanın.',
     searchByStudentOrCourse: 'Öğrenci veya kursa göre ara...',
     filterByStatus: 'Duruma göre filtrele',
     resultsCount: 'sonuç',
@@ -1417,8 +1354,7 @@ export const tr = {
     allUsers: 'Tüm Kullanıcılar',
     manageAllUsers: 'Farklı rollerdeki tüm kullanıcıları yönetin',
     addUser: 'Kullanıcı Ekle',
-    searchUsersByNameEmailPhone:
-      'Kullanıcıları ad, e-posta veya telefona göre ara...',
+    searchUsersByNameEmailPhone: 'Kullanıcıları ad, e-posta veya telefona göre ara...',
     totalUsersCard: 'Toplam Kullanıcı',
     allRegisteredUsers: 'Tüm kayıtlı kullanıcılar',
     managers: 'Yöneticiler',
@@ -1466,25 +1402,22 @@ export const tr = {
       internalNote: 'Dahili Not (isteğe bağlı)',
       saveOverride: 'İstisnayı Kaydet',
       saving: 'Kaydediliyor...',
-      removeConfirm: 'Bu erişim istisnasını kaldır?'
+      removeConfirm: 'Bu erişim istisnasını kaldır?',
     },
     manualEnroll: {
       title: 'Manuel Kayıt',
       description:
         'Platform dışında ödeme yapan öğrencileri kaydedin (nakit, banka transferi veya diğer çevrimdışı yöntemler)',
       enrollStudent: 'Öğrenci Kaydet',
-      enrollStudentDescription:
-        'Aktif bir kayıt oluşturur ve manuel ödeme kaydeder',
+      enrollStudentDescription: 'Aktif bir kayıt oluşturur ve manuel ödeme kaydeder',
       courseId: 'Kurs ID *',
       studentProfileId: 'Öğrenci Profil ID *',
       amountPaid: 'Ödenen Tutar (IRR)',
       paymentNote: 'Ödeme Notu',
       leaveEmptyIfFree: 'Ücretsizse boş bırakın',
-      manualPaymentNote:
-        'Bu, kayıtlarınız için MANÜEl/BANKA_TRANSFERİ ödeme kaydı oluşturur',
+      manualPaymentNote: 'Bu, kayıtlarınız için MANÜEl/BANKA_TRANSFERİ ödeme kaydı oluşturur',
       recentEnrollments: 'Son Kayıtlar',
-      recentEnrollmentsDescription:
-        'Akademinizdeki tüm kayıtlar (manuel dahil)',
+      recentEnrollmentsDescription: 'Akademinizdeki tüm kayıtlar (manuel dahil)',
       noEnrollmentsFound: 'Kayıt bulunamadı',
       enrolling: 'Kaydediliyor...',
       enrollStudentBtn: 'Öğrenciyi Kaydet',
@@ -1495,8 +1428,8 @@ export const tr = {
       student: 'Öğrenci',
       course: 'Kurs',
       payment: 'Ödeme',
-      enrolled: 'Kayıtlı'
-    }
+      enrolled: 'Kayıtlı',
+    },
   },
   teachers: {
     title: 'Öğretmenler',
@@ -1506,7 +1439,7 @@ export const tr = {
     courses: 'Kurslar',
     status: 'Durum',
     allTeachers: 'Tüm Öğretmenler',
-    noTeachers: 'Öğretmen bulunamadı'
+    noTeachers: 'Öğretmen bulunamadı',
   },
   settings: {
     title: 'Ayarlar',
@@ -1518,7 +1451,7 @@ export const tr = {
       single: 'Yalnızca bir akademiniz var — varsayılan seçmenize gerek yok.',
       pickOne: 'Birini seçin',
       noDefault: '— varsayılan yok —',
-      saved: 'Varsayılan akademi kaydedildi'
+      saved: 'Varsayılan akademi kaydedildi',
     },
     subscriptionTitle: 'Abonelik',
     loadingSubscription: 'Abonelik yükleniyor...',
@@ -1554,11 +1487,9 @@ export const tr = {
     profileSettingsDescription:
       'Kişisel bilgilerinizi, avatarınızı ve iletişim bilgilerinizi güncelleyin.',
     storeSettings: 'Akademi Bilgileri',
-    storeSettingsDescription:
-      'Enstitü adınızı, açıklamanızı ve alan adı yapılandırmanızı yönetin.',
+    storeSettingsDescription: 'Enstitü adınızı, açıklamanızı ve alan adı yapılandırmanızı yönetin.',
     themeBranding: 'Tema ve Marka',
-    themeBrandingDescription:
-      'Öğrenciler için renkleri, logoları ve görsel görünümü özelleştirin.',
+    themeBrandingDescription: 'Öğrenciler için renkleri, logoları ve görsel görünümü özelleştirin.',
     uiTemplateBuilder: 'Site Şablonu',
     uiTemplateBuilderDescription:
       'Enstitü web sitenizdeki UI bloklarının düzenini, görünürlüğünü ve yapılandırmasını özelleştirin.',
@@ -1600,26 +1531,22 @@ export const tr = {
     store: 'Enstitü',
     profile: 'Profil',
     profileSettingsTitle: 'Profil Ayarları',
-    profileSettingsSubtitle:
-      'Diğer yöneticilerin göreceği kişisel bilgilerinizi güncelleyin.',
+    profileSettingsSubtitle: 'Diğer yöneticilerin göreceği kişisel bilgilerinizi güncelleyin.',
     profileInformation: 'Profil Bilgileri',
-    profileInformationDescription:
-      'Avatarınızı, iletişim bilgilerinizi ve biyografinizi yönetin.',
+    profileInformationDescription: 'Avatarınızı, iletişim bilgilerinizi ve biyografinizi yönetin.',
     uploadPhoto: 'Fotoğraf Yükle',
     photoFormatHint: 'JPG, PNG veya GIF, maksimum 2MB.',
     photoDropHint: 'Buraya bir fotoğraf bırakın veya seçmek için tıklayın.',
     photoTooLarge: 'Fotoğraf 2MB sınırından büyük.',
     photoInvalidType: 'Yalnızca JPG, PNG, GIF veya WebP kabul edilir.',
-    passwordSessionNote:
-      'Yeni parola eskisinin yerini hemen alır ve oturumunuz açık kalır.',
+    passwordSessionNote: 'Yeni parola eskisinin yerini hemen alır ve oturumunuz açık kalır.',
     fullName: 'Tam Ad',
     fullNamePlaceholder: 'Ad Soyad',
     emailPlaceholder: 'ornek@skillforge.com',
     phoneNumber: 'Telefon Numarası',
     phoneNumberPlaceholder: '+90 500 000 0000',
     bio: 'Biyografi',
-    bioPlaceholder:
-      'Meslektaşlarınıza kendiniz hakkında daha fazla bilgi verin',
+    bioPlaceholder: 'Meslektaşlarınıza kendiniz hakkında daha fazla bilgi verin',
     saveChanges: 'Değişiklikleri Kaydet',
     pricingCmsTitle: 'Fiyatlandırma İçerik Yönetimi',
     pricingCmsSubtitle:
@@ -1666,11 +1593,9 @@ export const tr = {
     showcaseMobileHint:
       'Telefon çerçevesindeki mobil site görüntüsü — en iyisi 390 x 844 piksel, hızlı yükleme için dosyayı küçük tutun',
     showcaseSaved: 'Vitrin görselleri kaydedildi',
-    storeSettingsSubtitle:
-      'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',
+    storeSettingsSubtitle: 'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',
     generalInformation: 'Genel Bilgiler',
-    generalInformationDescription:
-      'Enstitünüzün adını, açıklamasını ve alan adını güncelleyin.',
+    generalInformationDescription: 'Enstitünüzün adını, açıklamasını ve alan adını güncelleyin.',
     storeName: 'Enstitü Adı',
     storeNamePlaceholder: 'آکادمی Akademisi',
     customDomain: 'Özel Alan Adı',
@@ -1689,11 +1614,9 @@ export const tr = {
       'Tek oturum açma, özel alan adları ve daha fazlasını nasıl yapılandıracağınızı öğrenmek için belgeleri ziyaret edin.',
     openDocumentation: 'Belgeleri Aç',
     themeBrandingTitle: 'Tema ve Marka',
-    themeBrandingSubtitle:
-      'Öğrenciler için renkleri, logoları ve görsel görünümü özelleştirin.',
+    themeBrandingSubtitle: 'Öğrenciler için renkleri, logoları ve görsel görünümü özelleştirin.',
     colours: 'Renkler',
-    coloursDescription:
-      'Öğrencilerin platform genelinde göreceği paleti seçin.',
+    coloursDescription: 'Öğrencilerin platform genelinde göreceği paleti seçin.',
     primaryColour: 'Ana Renk',
     lightTheme: 'Açık Tema',
     darkTheme: 'Koyu Tema',
@@ -1711,16 +1634,14 @@ export const tr = {
     livePreview: 'Canlı Önizleme',
     previewBadge: 'Önizleme Rozeti',
     welcomeToYourStore: 'Enstitünüze Hoş Geldiniz',
-    previewDescription:
-      'Bu, enstitünüzün nasıl görüneceğinin bir önizlemesidir.',
+    previewDescription: 'Bu, enstitünüzün nasıl görüneceğinin bir önizlemesidir.',
     primaryAction: 'Ana Eylem',
     brandAssets: 'Marka Varlıkları',
     brandAssetsDescription:
       'Logoları yükleyin ve sertifikalar ile e-postalar için marka kaynaklarını ayarlayın.',
     logoUrl: 'Logo URL',
     logoUrlPlaceholder: 'https://cdn.yourstore.com/logo.png',
-    logoUrlHint:
-      "Herkese açık bir resim URL'si sağlayın. Net sonuçlar için SVG önerilir.",
+    logoUrlHint: "Herkese açık bir resim URL'si sağlayın. Net sonuçlar için SVG önerilir.",
     preview: 'Önizleme',
     storeLogoPreview: 'Enstitü logosu önizlemesi',
     noLogoProvided: 'Logo sağlanmadı',
@@ -1731,16 +1652,14 @@ export const tr = {
     advancedCustomizationDescription:
       'Enstitü web siteniz için animasyonlar, desenler ve görsel efektleri özelleştirin',
     backgroundAnimation: 'Arka Plan Animasyonu',
-    backgroundAnimationHelp:
-      'Web siteniz için animasyonlu bir arka plan efekti seçin',
+    backgroundAnimationHelp: 'Web siteniz için animasyonlu bir arka plan efekti seçin',
     svgPatternOptional: 'SVG Deseni (İsteğe Bağlı)',
     svgPatternPlaceholder: 'pattern-dots, pattern-grid, pattern-waves, vb.',
     svgPatternHelper:
       'Arka plan kaplaması olarak kullanmak için bir desen kimliği girin (hiçbiri için boş bırakın)',
     elementAnimationStyle: 'Öğe Animasyon Stili',
     elementAnimationSubtle: 'Hafif',
-    elementAnimationHelp:
-      'Animasyonlu öğelerin sayfada nasıl göründüğünü kontrol edin',
+    elementAnimationHelp: 'Animasyonlu öğelerin sayfada nasıl göründüğünü kontrol edin',
     borderRadiusStyle: 'Köşe Yuvarlatma Stili',
     borderRadiusRounded: 'Yuvarlatılmış',
     borderRadiusSoft: 'Yumuşak',
@@ -1766,8 +1685,7 @@ export const tr = {
     saveTheme: 'Temayı Kaydet',
     themePreferencesSaved: 'Tema tercihleri kaydedildi',
     themeGeneratorTitle: 'Tema Üretici',
-    themeGeneratorSubtitle:
-      'Müşterileriniz için yaratıcı temalar tasarlayın ve üretin.',
+    themeGeneratorSubtitle: 'Müşterileriniz için yaratıcı temalar tasarlayın ve üretin.',
     copyConfig: 'Yapılandırmayı Kopyala',
     copied: 'Kopyalandı!',
     applyToStore: 'Mağazaya Uygula',
@@ -1782,11 +1700,9 @@ export const tr = {
     style: 'Stil',
     themeGeneratorApplied: 'Tema mağazaya başarıyla uygulandı',
     presetsTitle: 'Hazır Tema Şablonları',
-    presetsDescription:
-      'Profesyonelce tasarlanmış bir şablondan başlayın, sonra özelleştirin',
+    presetsDescription: 'Profesyonelce tasarlanmış bir şablondan başlayın, sonra özelleştirin',
     colorPaletteTitle: 'Renk Paleti',
-    colorPaletteDescription:
-      'Açık ve karanlık modlar için ayrı renkler belirleyin',
+    colorPaletteDescription: 'Açık ve karanlık modlar için ayrı renkler belirleyin',
     darkModeLabel: 'Varsayılan Mod',
     lightMode: 'Açık',
     darkMode: 'Koyu',
@@ -1811,11 +1727,10 @@ export const tr = {
     effectsDescription: 'Arka planın vitrinde nasıl animasyon yapacağını seçin',
     svgPattern: 'SVG Desen',
     styleTitle: 'Görsel Stil',
-    styleDescription:
-      'Kenar yuvarlaklığı, gölgeler ve animasyon yoğunluğunu kontrol edin',
+    styleDescription: 'Kenar yuvarlaklığı, gölgeler ve animasyon yoğunluğunu kontrol edin',
     borderRadius: 'Kenar Yuvarlaklığı',
     elementAnimation: 'Öğe Animasyonu',
-    configSummary: 'Yapılandırma Özeti'
+    configSummary: 'Yapılandırma Özeti',
   },
   products: {
     title: 'Ürünler',
@@ -1829,7 +1744,7 @@ export const tr = {
     shortDescriptionLength: 'Kısa açıklama (maksimum 400 karakter)',
     allProducts: 'Tüm Ürünler',
     noProducts: 'Ürün bulunamadı',
-    createFirstProduct: 'İlk ürününüzü oluşturun'
+    createFirstProduct: 'İlk ürününüzü oluşturun',
   },
   categories: {
     title: 'Kategoriler',
@@ -1852,8 +1767,7 @@ export const tr = {
     updateFailed: 'Kategori güncellenemedi',
     deleteSuccess: 'Kategori başarıyla silindi',
     deleteFailed: 'Kategori silinemedi',
-    deleteConfirm:
-      'Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'
+    deleteConfirm: 'Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
   },
   modal: {
     confirmDelete: 'Emin misiniz?',
@@ -1861,7 +1775,7 @@ export const tr = {
     deleteItem: 'Sil',
     cancel: 'İptal',
     confirm: 'Onayla',
-    deleting: 'Siliniyor...'
+    deleting: 'Siliniyor...',
   },
   errors: {
     required: 'Bu alan gereklidir',
@@ -1871,7 +1785,7 @@ export const tr = {
     passwordsDoNotMatch: 'Şifreler eşleşmiyor',
     somethingWentWrong: 'Bir şeyler yanlış gitti',
     tryAgain: 'Lütfen tekrar deneyin',
-    networkError: 'Ağ hatası. Lütfen bağlantınızı kontrol edin.'
+    networkError: 'Ağ hatası. Lütfen bağlantınızı kontrol edin.',
   },
   success: {
     saved: 'Başarıyla kaydedildi',
@@ -1889,12 +1803,11 @@ export const tr = {
     exported: 'Başarıyla dışa aktarıldı',
     refreshed: 'Başarıyla yenilendi',
     uploaded: 'Başarıyla yüklendi',
-    operationCompleted: 'İşlem başarıyla tamamlandı'
+    operationCompleted: 'İşlem başarıyla tamamlandı',
   },
   error: {
     unexpected: 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.',
-    authenticationFailed:
-      'Kimlik doğrulama başarısız oldu. Lütfen tekrar giriş yapın.',
+    authenticationFailed: 'Kimlik doğrulama başarısız oldu. Lütfen tekrar giriş yapın.',
     noPermission: 'Bu işlemi gerçekleştirme izniniz yok.',
     resourceNotFound: 'İstenen kaynak bulunamadı.',
     serverError: 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.',
@@ -1913,29 +1826,26 @@ export const tr = {
     requiredFields: 'Lütfen tüm gerekli alanları doldurun',
     noDataToExport: 'Dışa aktarılacak veri yok',
     accessDenied: 'Bu kaynağa erişim izniniz yok',
-    roleRequired: 'Bu kaynağa erişmek için gerekli role sahip değilsiniz'
+    roleRequired: 'Bu kaynağa erişmek için gerekli role sahip değilsiniz',
   },
   unauthorized: {
     title: 'Account blocked',
     description:
       'This admin panel account has been banned or deactivated. You cannot sign in until an academy manager restores access.',
     note: 'Note:',
-    contactAdmin:
-      'If you believe this is a mistake, contact your academy manager.',
+    contactAdmin: 'If you believe this is a mistake, contact your academy manager.',
     whatYouCanDo: 'What you can do:',
     accessStudentDashboard: "Access your academy's student dashboard",
     contactStoreAdmin: 'Contact your academy manager to restore access',
-    joinAsTeacher:
-      "Join a academy and request teacher role if you're an educator",
+    joinAsTeacher: "Join a academy and request teacher role if you're an educator",
     needHelp: 'Need help?',
-    contactSupport:
-      'If you believe this is a mistake, contact Mentoma support.',
-    redirectingIn: 'Returning to the login page in {{seconds}} seconds.'
+    contactSupport: 'If you believe this is a mistake, contact Mentoma support.',
+    redirectingIn: 'Returning to the login page in {{seconds}} seconds.',
   },
   notFound: {
     title: 'Sayfa Bulunamadı',
     description: 'Aradığınız sayfa mevcut değil.',
-    backHome: 'Ana Sayfaya Dön'
+    backHome: 'Ana Sayfaya Dön',
   },
   content: {
     course: 'Kurs',
@@ -1952,7 +1862,7 @@ export const tr = {
     uploadVideoDescription: 'Dersler için video içeriği yükleyin',
     selectStoreFirst: 'Önce Enstitü Seçin',
     createContent: 'İçerik Oluştur',
-    createNewContent: 'Yeni İçerik Oluştur'
+    createNewContent: 'Yeni İçerik Oluştur',
   },
   forgotPassword: {
     title: 'Şifreyi Sıfırla',
@@ -1986,10 +1896,9 @@ export const tr = {
     newPassword: 'Yeni Şifre',
     confirmNewPassword: 'Yeni şifreyi onaylayın',
     passwordResetSuccessTitle: 'Şifre Başarıyla Sıfırlandı!',
-    passwordResetSuccessMessage:
-      'Şifreniz sıfırlandı. Artık yeni şifrenizle giriş yapabilirsiniz.',
+    passwordResetSuccessMessage: 'Şifreniz sıfırlandı. Artık yeni şifrenizle giriş yapabilirsiniz.',
     resetAnotherPassword: 'Başka Bir Şifreyi Sıfırla',
-    goToLogin: 'Girişe Git'
+    goToLogin: 'Girişe Git',
   },
   media: {
     videoLoading: 'Güvenli oynatma hazırlanıyor…',
@@ -2002,8 +1911,7 @@ export const tr = {
     dropImageHint:
       'Seçmek için tıklayın veya bir görseli buraya sürükleyin — küçük dosyalar sayfaların daha hızlı yüklenmesini sağlar',
     dropVideoHint: 'Seçmek için tıklayın veya bir videoyu buraya sürükleyin',
-    dropAudioHint:
-      'Seçmek için tıklayın veya bir ses dosyasını buraya sürükleyin',
+    dropAudioHint: 'Seçmek için tıklayın veya bir ses dosyasını buraya sürükleyin',
     dropDocumentHint: 'Seçmek için tıklayın veya bir dosyayı buraya sürükleyin',
     noAudioSelected: 'Ses dosyası seçilmedi',
     noDocumentSelected: 'Belge seçilmedi',
@@ -2092,8 +2000,7 @@ export const tr = {
     editAudio: 'Sesi Düzenle',
     updateMetadata: 'Bu ses dosyasının meta verilerini güncelleyin.',
     publiclyAccessible: 'Herkese açık',
-    allowMembersAccess:
-      'Enstitü üyelerinin bu ses dosyasına erişmesine izin verin.',
+    allowMembersAccess: 'Enstitü üyelerinin bu ses dosyasına erişmesine izin verin.',
     untitledAudio: 'Başlıksız ses',
     fileSize: 'Dosya boyutu',
     duration: 'Süre',
@@ -2106,8 +2013,7 @@ export const tr = {
     loadingCategories: 'Kategoriler yükleniyor...',
     noCategoriesFound: 'Kategori bulunamadı',
     noCategoriesMatch: 'Arama kriterlerinize uyan kategori yok.',
-    createFirstCategory:
-      'İçeriğinizi düzenlemek için ilk kategorinizi oluşturun.',
+    createFirstCategory: 'İçeriğinizi düzenlemek için ilk kategorinizi oluşturun.',
     createCategory: 'Kategori Oluştur',
     categoryCreated: 'Kategori başarıyla oluşturuldu',
     categoryUpdated: 'Kategori başarıyla güncellendi',
@@ -2123,7 +2029,7 @@ export const tr = {
     allVideoContent: 'Tüm video içeriği',
     defaultCourseVideos: 'Varsayılan kurs videoları',
     courseContentVideos: 'Kurs içerik videoları',
-    combinedVideoLength: 'Toplam video süresi'
+    combinedVideoLength: 'Toplam video süresi',
   },
   users: {
     allUsers: 'Tüm Kullanıcılar',
@@ -2166,8 +2072,7 @@ export const tr = {
     manageAllUsersDescription: 'Farklı rollerdeki tüm kullanıcıları yönetin',
     manageUsersInStore: 'Mağazanızdaki kullanıcıları yönetin',
     addUser: 'Kullanıcı Ekle',
-    searchUsersPlaceholder:
-      'Kullanıcıları ad, e-posta veya telefona göre ara...',
+    searchUsersPlaceholder: 'Kullanıcıları ad, e-posta veya telefona göre ara...',
     totalUsers: 'Toplam Kullanıcı',
     allRegisteredUsers: 'Tüm kayıtlı kullanıcılar',
     managers: 'Yöneticiler',
@@ -2177,7 +2082,7 @@ export const tr = {
     students: 'Öğrenciler',
     courseLearners: 'Kurs öğrencileri',
     generalUsersNoRoles: 'Belirli rolü olmayan genel kullanıcılar',
-    users: 'Kullanıcılar'
+    users: 'Kullanıcılar',
   },
   admins: {
     title: 'Admin Kullanıcıları',
@@ -2210,7 +2115,7 @@ export const tr = {
     cannotModifyOlderAdmin: 'Daha eski admini değiştiremezsiniz',
     statusUpdatedToActive: 'Admin durumu aktif olarak güncellendi',
     statusUpdatedToInactive: 'Admin durumu pasif olarak güncellendi',
-    failedToUpdateStatus: 'Admin durumu güncellenemedi'
+    failedToUpdateStatus: 'Admin durumu güncellenemedi',
   },
   createAdminUser: {
     title: 'Admin Kullanıcı Oluştur',
@@ -2240,10 +2145,9 @@ export const tr = {
     emailRequired: 'E-posta gereklidir',
     pleaseEnterPhoneOtp: 'Lütfen telefon OTP kodunu girin',
     pleaseEnterEmailOtp: 'Lütfen e-posta OTP kodunu girin',
-    pleaseVerifyBothOtps:
-      "Lütfen hem telefon hem de e-posta OTP'lerini doğrulayın",
+    pleaseVerifyBothOtps: "Lütfen hem telefon hem de e-posta OTP'lerini doğrulayın",
     passwordsDoNotMatch: 'Şifreler eşleşmiyor',
-    adminUserCreatedSuccess: 'Admin kullanıcı başarıyla oluşturuldu'
+    adminUserCreatedSuccess: 'Admin kullanıcı başarıyla oluşturuldu',
   },
   changeUserRole: {
     title: 'Kullanıcı Rolünü Değiştir',
@@ -2252,12 +2156,11 @@ export const tr = {
     newRole: 'Yeni Rol',
     selectRole: 'Bir rol seçin',
     noRole: 'Rol yok',
-    changeRole: 'Rolü Değiştir'
+    changeRole: 'Rolü Değiştir',
   },
   teacherRequests: {
     title: 'Öğretmen Talepleri',
-    description:
-      'Öğrencilerden gelen öğretmen erişim taleplerini inceleyin ve yönetin',
+    description: 'Öğrencilerden gelen öğretmen erişim taleplerini inceleyin ve yönetin',
     noRequests: 'Öğretmen Talebi Yok',
     noRequestsDescription: 'Şu anda bekleyen öğretmen talebi bulunmuyor.',
     allStatuses: 'Tüm Durumlar',
@@ -2268,7 +2171,7 @@ export const tr = {
     reject: 'Reddet',
     pending: 'Beklemede',
     approved: 'Onaylandı',
-    rejected: 'Reddedildi'
+    rejected: 'Reddedildi',
   },
   analytics: {
     overview: 'Analitik Genel Bakış',
@@ -2302,11 +2205,9 @@ export const tr = {
     monthOverMonth: 'Aydan Aya',
     changeComparedPrevious: 'Önceki aya göre değişim',
     monthlyRevenueVsEnrollments: 'Aylık Gelir vs Kayıtlar',
-    monthlyRevenueDescription:
-      'İşlem hacmiyle birlikte toplam geliri takip edin.',
+    monthlyRevenueDescription: 'İşlem hacmiyle birlikte toplam geliri takip edin.',
     revenueByCourse: 'Kursa Göre Gelir',
-    revenueByCourseDescription:
-      'Kayıtlı ödemelerde en çok katkıda bulunan kurslar.',
+    revenueByCourseDescription: 'Kayıtlı ödemelerde en çok katkıda bulunan kurslar.',
     noCourseRevenueData: 'Henüz kurs gelir verisi mevcut değil.',
     enrollmentValueByCourse: 'Kursa Göre Kayıt Değeri',
     enrollmentValueDescription: 'Kayıt başına alınan ödemelerin toplamı.',
@@ -2316,8 +2217,7 @@ export const tr = {
     activeVsCompleted: 'Aktif ve Tamamlanan Kayıtlar',
     activeVsCompletedDescription: 'Son aylardaki öğrenci aktivite trendi.',
     topCoursesByEnrollments: 'Kayıtlara Göre En İyi Kurslar',
-    topCoursesByEnrollmentsDescription:
-      'Öğrencileriniz arasında en popüler kurslar.',
+    topCoursesByEnrollmentsDescription: 'Öğrencileriniz arasında en popüler kurslar.',
     revenueLeaderboard: 'Gelir Sıralaması',
     revenueLeaderboardDescription: 'En yüksek ödeme toplamına sahip kurslar.',
     studentEngagement: 'Öğrenci Etkileşimi',
@@ -2330,13 +2230,11 @@ export const tr = {
     completedStudentsDescription: 'Kurslarını bitirdiler',
     activeCourses: 'Aktif Kurslar',
     activeCoursesDescription: 'Aktif öğrencileri olan kurslar',
-    engagementDistributionDescription:
-      'Etkileşim segmentine göre öğrenci payı.',
+    engagementDistributionDescription: 'Etkileşim segmentine göre öğrenci payı.',
     coursesByEngagement: 'Etkileşime Göre Kurslar',
     coursesByEngagementDescription: 'Kurs başına aktif ve tamamlanmış durum.',
     paymentDetails: 'Ödeme detayları',
-    paymentDetailsDescription:
-      'Banka ve ödeme sağlayıcısının kaydettiği tutarlar Riyal cinsinden.',
+    paymentDetailsDescription: 'Banka ve ödeme sağlayıcısının kaydettiği tutarlar Riyal cinsinden.',
     bankAmount: 'Banka tutarı (Riyal)',
     gateway: 'Ödeme kanalı',
     noPaymentDetails: 'Henüz kayıtlı ödeme yok.',
@@ -2348,8 +2246,8 @@ export const tr = {
       PAID: 'Ödendi',
       FAILED: 'Başarısız',
       CANCELLED: 'İptal',
-      REFUNDED: 'İade'
-    }
+      REFUNDED: 'İade',
+    },
   },
   payments: {
     transactions: 'İşlemler',
@@ -2386,8 +2284,7 @@ export const tr = {
     failed: 'Başarısız',
     requiresFollowUp: 'Takip gerekiyor',
     searchPayments: 'Ödemeleri Ara',
-    searchPaymentsDescription:
-      'Öğrenci, kurs, fatura veya duruma göre filtrele.',
+    searchPaymentsDescription: 'Öğrenci, kurs, fatura veya duruma göre filtrele.',
     searchPaymentsPlaceholder: 'Ödemeleri ara…',
     showingPayments: '{{total}} ödemeden {{count}} tanesi gösteriliyor',
     recentTransactions: 'Son İşlemler',
@@ -2411,13 +2308,11 @@ export const tr = {
     inPipeline: "Pipeline'da",
     inPipelineDescription: 'Planlanmış veya beta aşamasındaki yöntemler.',
     gatewayPerformance: 'Ağ Geçidi Performansı',
-    gatewayPerformanceDescription:
-      'Yöntem başına gelir payı ve toplam ödemeler.',
+    gatewayPerformanceDescription: 'Yöntem başına gelir payı ve toplam ödemeler.',
     noPaymentsProcessed:
       'Henüz ödeme işlenmedi. İşlemler gerçekleştiğinde, burada yöntem düzeyinde metrikleri göreceksiniz.',
     creditDebitCards: 'Kredi ve Banka Kartları',
-    creditDebitCardsDescription:
-      'Stripe aracılığıyla tüm büyük kart ağlarından ödeme kabul edin.',
+    creditDebitCardsDescription: 'Stripe aracılığıyla tüm büyük kart ağlarından ödeme kabul edin.',
     bankTransfer: 'Banka Havalesi',
     bankTransferDescription:
       'Kurumsal müşteriler için doğrudan ACH ve havale ödemelerini destekleyin.',
@@ -2428,8 +2323,7 @@ export const tr = {
     configure: 'Yapılandır',
     ofRevenue: '% gelir',
     invoices: 'Faturalar',
-    invoicesDescription:
-      'Kurs satın almalarıyla ilgili faturaları oluşturun, izleyin ve indirin.',
+    invoicesDescription: 'Kurs satın almalarıyla ilgili faturaları oluşturun, izleyin ve indirin.',
     filters: 'Filtreler',
     createInvoice: 'Fatura Oluştur',
     issued: 'Düzenlenen',
@@ -2441,15 +2335,14 @@ export const tr = {
     refunded: 'İade Edildi',
     refundedDescription: 'Öğrencilere iade edilen faturalar.',
     findInvoice: 'Fatura Bul',
-    findInvoiceDescription:
-      'Öğrenci, kurs, fatura numarası veya duruma göre ara.',
+    findInvoiceDescription: 'Öğrenci, kurs, fatura numarası veya duruma göre ara.',
     searchInvoicesPlaceholder: 'Faturalarda ara…',
     showingInvoices: '{{total}} içinden {{count}} gösteriliyor',
     invoiceLedger: 'Fatura Defteri',
     invoiceLedgerDescription: 'Son oluşturulan faturaların detaylı listesi.',
     noInvoices: 'Şu anda gösterilecek fatura yok.',
     createOrAdjust: 'Yeni bir fatura oluşturun veya filtrelerinizi ayarlayın.',
-    download: 'İndir'
+    download: 'İndir',
   },
   vouchers: {
     title: 'Kuponlar',
@@ -2497,7 +2390,7 @@ export const tr = {
     updatedSuccess: 'Kupon başarıyla güncellendi',
     updateFailed: 'Kupon güncellenemedi',
     deletedSuccess: 'Kupon başarıyla silindi',
-    deleteFailed: 'Kupon silinemedi'
+    deleteFailed: 'Kupon silinemedi',
   },
   financial: {
     store: {
@@ -2535,7 +2428,7 @@ export const tr = {
         paid: 'Ödenen',
         net: 'Akademi payı',
         coupon: 'Kupon',
-        refunded: 'İade'
+        refunded: 'İade',
       },
       revenue: {
         title: 'Gelir ve Faydalar',
@@ -2551,8 +2444,7 @@ export const tr = {
         teacherRevenue: 'Eğitmen Geliri',
         teacher: 'Eğitmen',
         teacherRevenueBreakdown: 'Eğitmen Gelir Dökümü',
-        teacherRevenueBreakdownDescription:
-          'Bu mağazadaki her eğitmen için gelir payı dağılımı',
+        teacherRevenueBreakdownDescription: 'Bu mağazadaki her eğitmen için gelir payı dağılımı',
         visibility: 'Görünürlük',
         showAmount: 'Tutarı göster',
         hideAmount: 'Tutarı gizle',
@@ -2588,7 +2480,7 @@ export const tr = {
         student: 'Öğrenci',
         course: 'Kurs',
         amount: 'Tutar',
-        noPayments: 'Ödeme bulunamadı'
+        noPayments: 'Ödeme bulunamadı',
       },
       costs: {
         title: 'Mağaza Maliyetleri',
@@ -2617,7 +2509,7 @@ export const tr = {
         revenue: 'Gelir',
         cost: 'Maliyet',
         profit: 'Kar',
-        uncategorized: 'Kategorize edilmemiş'
+        uncategorized: 'Kategorize edilmemiş',
       },
       payments: {
         title: 'Öğrenci Ödemeleri',
@@ -2649,7 +2541,7 @@ export const tr = {
         course: 'Kurs',
         method: 'Yöntem',
         status: 'Durum',
-        amount: 'Tutar'
+        amount: 'Tutar',
       },
       reports: {
         title: 'Mali Raporlar',
@@ -2690,13 +2582,12 @@ export const tr = {
         period: 'Dönem',
         category: 'Kategori',
         finalProfit: 'Nihai Kar',
-        uncategorized: 'Kategorize edilmemiş'
-      }
+        uncategorized: 'Kategorize edilmemiş',
+      },
     },
     platform: {
       title: 'Platform Mali Yönetimi',
-      description:
-        'Platform genelinde mali genel bakış ve iş nakit akışı yönetimi',
+      description: 'Platform genelinde mali genel bakış ve iş nakit akışı yönetimi',
       loading: 'Mali veriler yükleniyor...',
       filters: 'Filtreler',
       year: 'Yıl',
@@ -2717,7 +2608,7 @@ export const tr = {
       tabs: {
         platformRecords: 'Platform Kayıtları',
         allStores: 'Tüm Akademiler',
-        storeRecords: 'Mağaza Kayıtları'
+        storeRecords: 'Mağaza Kayıtları',
       },
       platformRecords: {
         title: 'Platform Mali Kayıtları',
@@ -2733,14 +2624,13 @@ export const tr = {
         noRecords: 'Platform mali kaydı bulunamadı',
         deleteConfirm: 'Bu kaydı silmek istediğinizden emin misiniz?',
         deleteSuccess: 'Kayıt başarıyla silindi',
-        deleteError: 'Kayıt silinemedi'
+        deleteError: 'Kayıt silinemedi',
       },
       storeRecords: {
         title: 'Mağaza Mali Kayıtları',
         description: 'Mağaza başına maliyet ve gelir kayıtları',
         allStoresTitle: 'Tüm Akademilerın Mali Kayıtları',
-        allStoresDescription:
-          'Tüm mağazalarda mağaza başına maliyet ve gelir kayıtları',
+        allStoresDescription: 'Tüm mağazalarda mağaza başına maliyet ve gelir kayıtları',
         addRecord: 'Kayıt Ekle',
         store: 'Mağaza',
         period: 'Dönem',
@@ -2751,13 +2641,12 @@ export const tr = {
         margin: 'Marj',
         actions: 'İşlemler',
         view: 'Görüntüle',
-        noRecords: 'Mağaza mali kaydı bulunamadı'
-      }
+        noRecords: 'Mağaza mali kaydı bulunamadı',
+      },
     },
     desk: {
       title: 'Finans',
-      description:
-        'Akademi ve platform ödemeleri, paylar ve Mentoma’nın yatırması gereken tutar.',
+      description: 'Akademi ve platform ödemeleri, paylar ve Mentoma’nın yatırması gereken tutar.',
       toDeposit: 'Yatirilacak',
       toDepositHint: 'Hâlâ Mentoma’da duran ve akademilere ait öğrenci parası',
       pending: 'Bekleyen talepler',
@@ -2794,25 +2683,22 @@ export const tr = {
       notifyOk: 'Akademi kurucusu SMS ve e-posta ile bilgilendirildi',
       notifyFailed: 'Akademi kurucusu bilgilendirilemedi',
       monthlyGross: 'Aylık brüt',
-      monthlyGrossHint:
-        'Her aydaki akademi satışları ve platform plan ödemeleri (Toman)',
+      monthlyGrossHint: 'Her aydaki akademi satışları ve platform plan ödemeleri (Toman)',
       cumulativeGross: 'Zaman içinde brüt',
       cumulativeGrossHint:
         'Akademi satışları ve platform plan ödemelerinin birikimli toplamı (Toman)',
       academyGross: 'Akademiler',
       platformGross: 'Platform',
-      noTrend: 'Henüz çizilecek başarılı ödeme yok'
-    }
+      noTrend: 'Henüz çizilecek başarılı ödeme yok',
+    },
   },
   platform: {
     overview: {
       pendingSettlements: '{{count}} tasfiye talebi inceleme bekliyor',
-      pendingSettlementsHint:
-        'Akademi yöneticileri transferi bekliyor; incelemek için tıklayın',
+      pendingSettlementsHint: 'Akademi yöneticileri transferi bekliyor; incelemek için tıklayın',
       noPendingSettlements: 'Bekleyen tasfiye talebi yok',
       title: 'Platform Genel Bakış',
-      description:
-        'Tüm okulları ve platform genelindeki istatistikleri yönetin ve izleyin',
+      description: 'Tüm okulları ve platform genelindeki istatistikleri yönetin ve izleyin',
       loading: 'Platform genel bakışı yükleniyor...',
       totalSchools: 'Toplam Okullar',
       activeSchools: '{{count}} aktif okul',
@@ -2823,19 +2709,15 @@ export const tr = {
       platformRevenue: 'Platform Geliri',
       allTimeRevenue: 'Tüm zamanların geliri',
       allSchools: 'Tüm Okullar',
-      allSchoolsDescription:
-        'Platformdaki tüm okulları görüntüleyin ve yönetin',
+      allSchoolsDescription: 'Platformdaki tüm okulları görüntüleyin ve yönetin',
       allSchoolsAccess: 'Kapsamlı okul yönetim araçlarına erişin',
       platformUsers: 'Platform Kullanıcıları',
-      platformUsersDescription:
-        'Platform genelindeki tüm kullanıcıları yönetin',
+      platformUsersDescription: 'Platform genelindeki tüm kullanıcıları yönetin',
       platformUsersAccess:
         'Yöneticileri, yöneticileri, öğretmenleri ve öğrencileri görüntüleyin ve yönetin',
       platformAnalytics: 'Platform Analitiği',
-      platformAnalyticsDescription:
-        'Platform genelindeki analitikleri ve içgörüleri görüntüleyin',
-      platformAnalyticsAccess:
-        'Platform performansını ve büyüme metriklerini izleyin',
+      platformAnalyticsDescription: 'Platform genelindeki analitikleri ve içgörüleri görüntüleyin',
+      platformAnalyticsAccess: 'Platform performansını ve büyüme metriklerini izleyin',
       quickActions: 'Hızlı İşlemler',
       quickActionsDescription: 'Yaygın platform yönetim görevleri',
       manageSchools: 'Okulları Yönet',
@@ -2844,7 +2726,7 @@ export const tr = {
       platformAnalyticsLink: 'Platform Analitiği',
       accessDenied: 'Erişim Reddedildi',
       accessDeniedDescription:
-        'Bu sayfa yalnızca platform seviyesindeki yöneticiler tarafından erişilebilir.'
+        'Bu sayfa yalnızca platform seviyesindeki yöneticiler tarafından erişilebilir.',
     },
     stores: {
       title: 'Tüm Akademiler',
@@ -2864,8 +2746,7 @@ export const tr = {
       private: 'Özel',
       storeDetails: 'Mağaza Detayları',
       financialOverview: 'Finansal Genel Bakış',
-      financialOverviewDescription:
-        'Bu mağaza için platform seviyesindeki finansal istatistikler',
+      financialOverviewDescription: 'Bu mağaza için platform seviyesindeki finansal istatistikler',
       payments: 'Ödemeler',
       recentPayments: 'Son Ödemeler',
       recentPaymentsDescription: 'Bu mağaza için en son ödeme işlemleri',
@@ -2883,8 +2764,7 @@ export const tr = {
         description:
           'Büyük akademiler için özel limitler ve özellikler belirleyin — standart planın yerini alır.',
         enabledBadge: 'Özel plan aktif',
-        disabledHint:
-          'Bu akademinin henüz özel planı yok — standart planını kullanıyor.',
+        disabledHint: 'Bu akademinin henüz özel planı yok — standart planını kullanıyor.',
         nameLabel: 'Plan adı',
         namePlaceholder: 'ör. Kurumsal — Acme Akademi',
         limitsTitle: 'Limitler',
@@ -2902,8 +2782,7 @@ export const tr = {
         featuresPlaceholder: 'ör. Özel destek',
         priceMonthlyLabel: 'Aylık fiyat (Toman)',
         priceYearlyLabel: 'Yıllık fiyat (Toman)',
-        priceHint:
-          'Yalnızca bilgi amaçlıdır — akademiden otomatik olarak tahsil edilmez.',
+        priceHint: 'Yalnızca bilgi amaçlıdır — akademiden otomatik olarak tahsil edilmez.',
         noteLabel: 'Dahili not',
         notePlaceholder: 'Sözleşme referansı, anlaşma detayları...',
         save: 'Özel planı kaydet',
@@ -2915,9 +2794,9 @@ export const tr = {
         clearing: 'Kaldırılıyor...',
         assignedAt: 'Belirlenme tarihi',
         saveSuccess: 'Özel plan kaydedildi',
-        clearSuccess: 'Özel plan kaldırıldı'
-      }
-    }
+        clearSuccess: 'Özel plan kaldırıldı',
+      },
+    },
   },
   settlement: {
     eyebrow: 'Finance',
@@ -2926,25 +2805,25 @@ export const tr = {
       'See where your money came from, how much of it Mentoma is still holding, and request a transfer to your academy bank account.',
     custody: {
       PLATFORM: 'Held by Mentoma',
-      ACADEMY: 'Held by you'
+      ACADEMY: 'Held by you',
     },
     balance: {
       available: {
         title: 'Available to settle',
-        hint: 'The amount you can request right now.'
+        hint: 'The amount you can request right now.',
       },
       pending: {
         title: 'In progress',
-        hint: 'Requested but not yet transferred to your bank account.'
+        hint: 'Requested but not yet transferred to your bank account.',
       },
       withdrawn: {
         title: 'Settled to date',
-        hint: 'Everything transferred to your academy account so far.'
+        hint: 'Everything transferred to your academy account so far.',
       },
       direct: {
         title: 'Collected by you',
-        hint: 'Cash, POS and card-to-card. You already have this money; it is never settled.'
-      }
+        hint: 'Cash, POS and card-to-card. You already have this money; it is never settled.',
+      },
     },
     channels: {
       title: 'Earnings by payment channel',
@@ -2954,7 +2833,7 @@ export const tr = {
       custody: 'Who holds it',
       count: 'Transactions',
       gross: 'Total amount',
-      share: 'Share'
+      share: 'Share',
     },
     bank: {
       title: 'Settlement bank account',
@@ -2977,37 +2856,35 @@ export const tr = {
       status: {
         PENDING: 'Awaiting verification',
         APPROVED: 'Verified',
-        REJECTED: 'Rejected'
-      }
+        REJECTED: 'Rejected',
+      },
     },
     request: {
       title: 'Request a settlement',
-      description:
-        'Enter the amount to be transferred to your verified account.',
+      description: 'Enter the amount to be transferred to your verified account.',
       amountLabel: 'Requested amount',
       notesLabel: 'Note (optional)',
       useMax: 'Full balance: {{amount}}',
       submit: 'Submit settlement request',
       submitted: 'Settlement request submitted',
       manualHint:
-        'Transfers are made manually during banking hours; the bank reference appears here once it is done.'
+        'Transfers are made manually during banking hours; the bank reference appears here once it is done.',
     },
     blockers: {
       NO_BANK_ACCOUNT: 'You have not added a Sheba number yet.',
       BANK_ACCOUNT_PENDING: 'Your Sheba number is being reviewed.',
-      BANK_ACCOUNT_REJECTED:
-        'Your Sheba number was rejected; please correct it.',
+      BANK_ACCOUNT_REJECTED: 'Your Sheba number was rejected; please correct it.',
       NO_BALANCE: 'There is nothing available to settle.',
       BELOW_MINIMUM: 'The minimum request amount is {{amount}}.',
       REQUEST_IN_PROGRESS: 'A settlement request is already being processed.',
       COOLDOWN_UNTIL: 'You can submit the next request from {{date}}.',
-      COOLDOWN: 'The waiting period before the next request has not passed yet.'
+      COOLDOWN: 'The waiting period before the next request has not passed yet.',
     },
     status: {
       PENDING: 'Pending review',
       APPROVED: 'Approved',
       REJECTED: 'Rejected',
-      PAID: 'Transferred'
+      PAID: 'Transferred',
     },
     history: {
       title: 'Settlement history',
@@ -3015,8 +2892,8 @@ export const tr = {
       requestedAt: 'Requested at',
       amount: 'Amount',
       destination: 'Destination account',
-      bankRef: 'Bank reference'
-    }
+      bankRef: 'Bank reference',
+    },
   },
   affiliates: {
     title: 'Bağlı Pazarlama',
@@ -3032,8 +2909,7 @@ export const tr = {
     requestPayout: 'Ödeme talep et',
     payoutPending: 'Ödeme talebi beklemede',
     payoutHistory: 'Ödeme geçmişi',
-    myDashSubtitle:
-      'Referans bağlantılarınızı, gösterimlerinizi ve kazançlarınızı takip edin.',
+    myDashSubtitle: 'Referans bağlantılarınızı, gösterimlerinizi ve kazançlarınızı takip edin.',
     noLinksYet: 'Henüz bağlı pazarlama bağlantınız yok',
     noLinksDesc:
       'Bağlı pazarlamacı olarak eklenmek ve referans bağlantınızı almak için enstitü ile iletişime geçin.',
@@ -3047,15 +2923,13 @@ export const tr = {
     submitRequest: 'Talebi Gönder',
     loadFailed: 'Bağlı pazarlama verileri yüklenemedi',
     enterValidAmount: 'Geçerli bir tutar girin',
-    payoutRequested:
-      'Ödeme talebi gönderildi! Enstitü kısa süre içinde işleme alacaktır.',
+    payoutRequested: 'Ödeme talebi gönderildi! Enstitü kısa süre içinde işleme alacaktır.',
     requestPayoutFailed: 'Ödeme talebi başarısız oldu',
     description:
       'Kurslarınızı tanıtmaları için kişileri davet edin ve her satıştan komisyon kazanın.',
     newAffiliate: 'Ortaklık Ekle',
     noAffiliates: 'Henüz ortak yok',
-    noAffiliatesDesc:
-      'Erişiminizi büyütmeye başlamak için ilk ortağınızı ekleyin.',
+    noAffiliatesDesc: 'Erişiminizi büyütmeye başlamak için ilk ortağınızı ekleyin.',
     createAffiliate: 'Ortaklık Ekle',
     editAffiliate: 'Ortağı Düzenle',
     code: 'Referans kodu',
@@ -3118,8 +2992,7 @@ export const tr = {
     previewPhoneDesc: 'Kayıt olduğunuz cep numarasını girin',
     previewPhonePlaceholder: '+90 5XX XXX XXXX',
     previewSendOtp: 'Doğrulama kodu al',
-    previewTerms:
-      'Giriş yaparak hizmet şartlarını ve gizlilik politikasını kabul edersiniz',
+    previewTerms: 'Giriş yaparak hizmet şartlarını ve gizlilik politikasını kabul edersiniz',
     previewOtpTitle: 'Doğrulama kodunu girin',
     previewOtpSent: '{{phone}} numarasına 6 haneli kod gönderildi',
     previewResend: '00:48 içinde yeniden gönder',
@@ -3135,7 +3008,7 @@ export const tr = {
     previewStatTotal: 'Toplam gelir',
     previewStatBalance: 'Bakiye',
     previewStatClicks: 'Tıklamalar',
-    previewStatSales: 'Satışlar'
+    previewStatSales: 'Satışlar',
   },
   sitePreview: {
     blockHeader: 'Navigasyon',
@@ -3153,8 +3026,7 @@ export const tr = {
     blockMembership: 'Üyelik',
     blockSlideshow: 'Slayt Gösterisi',
     heroVideoTitle: 'Banner videosu',
-    heroVideoHint:
-      'Videoyu afişin üzerinden yükleyin veya medya kitaplığından seçin.',
+    heroVideoHint: 'Videoyu afişin üzerinden yükleyin veya medya kitaplığından seçin.',
     heroVideoPick: 'Video seç',
     heroVideoSelected: 'Seçilen video',
     heroVideoAutoplay: 'Otomatik ve sessiz oynat',
@@ -3169,8 +3041,7 @@ export const tr = {
     slidesEditorTitle: 'Slaytlar',
     slidesAdd: 'Slayt ekle',
     slidesEmpty: 'Henüz slayt eklenmedi.',
-    slidesCaption:
-      'Her slayt, başlık ve kısa bir metin içeren tam genişlikte bir görseldir.',
+    slidesCaption: 'Her slayt, başlık ve kısa bir metin içeren tam genişlikte bir görseldir.',
     slideTitle: 'Slayt başlığı',
     slideSubtitle: 'Slayt metni',
     videosEditorTitle: 'Bu bölümdeki videolar',
@@ -3191,10 +3062,8 @@ export const tr = {
     panelIncomplete: 'Bu bölüm gerekli bilgilere sahip değil',
     panelAdvanced: 'Gelişmiş Ayarlar',
     panelNoContent: 'Bu bölümün düzenlenebilir içeriği yok.',
-    panelRequiredHint:
-      'Ziyaretçiler için bu bölümü anlamlı kılmak adına {{field}} ekleyin.',
-    panelStyleFromTheme:
-      'Bu bölümün görünümü genel şablon temasından miras alınır.',
+    panelRequiredHint: 'Ziyaretçiler için bu bölümü anlamlı kılmak adına {{field}} ekleyin.',
+    panelStyleFromTheme: 'Bu bölümün görünümü genel şablon temasından miras alınır.',
     panelBackground: 'Arkaplan',
     panelBgGradient: 'Gradyan',
     panelBgSolid: 'Düz Renk',
@@ -3206,8 +3075,7 @@ export const tr = {
     heroUploadImage: 'Görsel yükle',
     heroUploading: 'Yükleniyor…',
     heroNoIllustration: 'Görseli kaldır',
-    heroIllustrationHint:
-      'Yalnızca görsel alanını değiştirir — bu tasarım korunur',
+    heroIllustrationHint: 'Yalnızca görsel alanını değiştirir — bu tasarım korunur',
     panelOverlayOpacity: 'Katman Opaklığı',
     panelTextAlignment: 'Metin Hizalaması',
     panelAlignCenter: 'Orta',
@@ -3224,8 +3092,7 @@ export const tr = {
     panelSectionVisible: 'Bu Bölümü Göster',
     sidebarTitle: 'Şablon Özelleştirme',
     sidebarTitleAdmin: 'Genel şablonu düzenle',
-    sidebarMasterNotice:
-      'Bu ana şablondur; kaydetmek tüm yöneticiler için temel sürümü günceller',
+    sidebarMasterNotice: 'Bu ana şablondur; kaydetmek tüm yöneticiler için temel sürümü günceller',
     tabSections: 'Bölümler',
     saveSiteChanges: 'Kaydet',
     saveCopyDone: 'Kendi sürümünüz kaydedildi',
@@ -3328,7 +3195,7 @@ export const tr = {
     sectionChangeDesign: 'Bu bölümün tasarımını değiştir',
     sectionHide: 'Bölümü gizle',
     sectionShow: 'Bölümü göster',
-    sectionDrag: 'Yeniden sıralamak için sürükle'
+    sectionDrag: 'Yeniden sıralamak için sürükle',
   },
   learningOperations: {
     workspace: 'Çalışma alanı',
@@ -3348,8 +3215,7 @@ export const tr = {
     lastAccessed: 'Son erişim',
     videoHeartbeats: 'Video nabızları',
     summaryUnavailable: 'Bu profil için öğrenme özeti kullanılamıyor.',
-    timelineUnavailable:
-      'Bu profil için öğrenme zaman çizelgesi kullanılamıyor.',
+    timelineUnavailable: 'Bu profil için öğrenme zaman çizelgesi kullanılamıyor.',
     noTimeline: 'Henüz öğrenme etkinliği kaydedilmedi.',
     courseId: 'Kurs kimliği',
     lessonId: 'Ders kimliği',
@@ -3363,14 +3229,14 @@ export const tr = {
       QUIZ_ATTEMPTED: 'Sınav denendi',
       QUIZ_GRADED: 'Sınav puanlandı',
       ATTENDANCE_MARKED: 'Yoklama alındı',
-      ENROLLMENT_ACTIVATED: 'Kayıt etkinleştirildi'
+      ENROLLMENT_ACTIVATED: 'Kayıt etkinleştirildi',
     },
     status: {
       DRAFT: 'Taslak',
       SUBMITTED: 'Gönderildi',
       GRADED: 'Puanlandı',
-      REJECTED: 'Reddedildi'
-    }
+      REJECTED: 'Reddedildi',
+    },
   },
   opsQueue: {
     title: 'Müdahale kuyruğu',
@@ -3391,8 +3257,7 @@ export const tr = {
     lowScoreThresholdHint:
       'Ham puanı bu sayının altında olan notlandırılmış ödevleri düşük puanlar kuyruğunda gösterir.',
     refresh: 'Kuyruğu yenile',
-    refreshHint:
-      'Filtre değişikliklerini uygulayın ve tüm müdahale kuyruklarını yeniden yükleyin.',
+    refreshHint: 'Filtre değişikliklerini uygulayın ve tüm müdahale kuyruklarını yeniden yükleyin.',
     overdueGrading: 'Gecikmiş puanlama',
     overdueGradingDescription: 'İnceleme bekleyen gönderilmiş ödevler.',
     inactivity: 'Pasif öğrenciler',
@@ -3402,15 +3267,13 @@ export const tr = {
     missedClasses: 'Kaçırılan özel dersler',
     missedClassesDescription: 'Yoklama yok olarak işaretlendi.',
     unansweredThreads: 'Yanıtsız tartışmalar',
-    unansweredThreadsDescription:
-      'Son mesajı öğrenciden gelen tartışma konuları.',
+    unansweredThreadsDescription: 'Son mesajı öğrenciden gelen tartışma konuları.',
     empty: 'Bu kuyrukta şu an bir şey yok.',
     profile: 'Profil',
     sessionId: 'Oturum kimliği',
     threadId: 'Konu kimliği',
     interventionNote: 'Müdahale notu',
-    interventionNoteDescription:
-      'Öğrenci öğrenme zaman çizelgesine takip notu kaydedin.',
+    interventionNoteDescription: 'Öğrenci öğrenme zaman çizelgesine takip notu kaydedin.',
     profileIdPlaceholder: 'Öğrenci profil kimliği',
     followUpAt: 'Takip tarihi',
     note: 'Not',
@@ -3419,7 +3282,7 @@ export const tr = {
     savingNote: 'Kaydediliyor…',
     noteSaved: 'Müdahale notu kaydedildi',
     noteRequired: 'Profil kimliği ve not zorunludur',
-    useForNote: 'Not için kullan'
+    useForNote: 'Not için kullan',
   },
   tutoring: {
     groups: {
@@ -3435,14 +3298,12 @@ export const tr = {
       create: 'Create class',
       offer: 'Price to sell it at',
       offerPlaceholder: 'Choose a tutoring offer',
-      offerHint:
-        'The price comes from the offer; the class only sets the times.',
+      offerHint: 'The price comes from the offer; the class only sets the times.',
       name: 'Class name',
       description_: 'Description',
       capacity: 'Capacity',
       minStudents: 'Minimum students',
-      minStudentsHint:
-        'The class waits until this many seats are booked, then starts by itself.',
+      minStudentsHint: 'The class waits until this many seats are booked, then starts by itself.',
       ageMin: 'Minimum age',
       ageMax: 'Maximum age',
       termWeeks: 'Term length (weeks)',
@@ -3454,8 +3315,7 @@ export const tr = {
         'If the minimum is not reached by then, the class is cancelled and everyone is refunded.',
       meetingUrl: 'Meeting link',
       timetable: 'Weekly times',
-      timetableHint:
-        'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
+      timetableHint: 'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
       slotRow: 'Weekly meeting',
       slotStart: 'Start time',
       slotDuration: 'Length (minutes)',
@@ -3489,11 +3349,9 @@ export const tr = {
       announceSms: 'Also send an SMS (costs money per student)',
       announceSend: 'Send',
       startNow: 'Start now anyway',
-      startNowHint:
-        'Start the class even though the minimum is not reached yet.',
+      startNowHint: 'Start the class even though the minimum is not reached yet.',
       cancelLabel: 'Reason for cancelling',
-      cancelHint:
-        'Cancelling opens a refund request for every student who paid.',
+      cancelHint: 'Cancelling opens a refund request for every student who paid.',
       cancel: 'Cancel class and refund',
       sessionsTitle: 'Meetings',
       sessionsEmpty: 'Meetings appear once the class starts.',
@@ -3503,30 +3361,29 @@ export const tr = {
         CONFIRMED: 'Confirmed',
         RUNNING: 'Running',
         COMPLETED: 'Finished',
-        CANCELLED: 'Cancelled'
+        CANCELLED: 'Cancelled',
       },
       memberStatus: {
         PENDING: 'Waiting',
         ACTIVE: 'Active',
         PAUSED: 'Paused',
         COMPLETED: 'Finished',
-        CANCELLED: 'Cancelled'
+        CANCELLED: 'Cancelled',
       },
       sessionStatus: {
         SCHEDULED: 'Scheduled',
         COMPLETED: 'Held',
         CANCELLED: 'Cancelled',
         RESCHEDULED: 'Moved',
-        NO_SHOW: 'No show'
-      }
+        NO_SHOW: 'No show',
+      },
     },
     title: 'Özel ders',
     description: '1:1 ilişkileri, oturumları ve yoklamayı yönetin.',
     offers: 'Özel abonelik teklifleri',
     offersDescription:
       'Öğrencinin bir eğitmene abone olmak için satın aldığı şey. Ücret dönem başına alınır.',
-    noOffers:
-      'Henüz teklif yok. Öğrencilerin abone olabilmesi için bir tane oluşturun.',
+    noOffers: 'Henüz teklif yok. Öğrencilerin abone olabilmesi için bir tane oluşturun.',
     createOffer: 'Teklif oluştur',
     offerTitle: 'Teklif başlığı',
     offerTitlePlaceholder: 'örn. Sara ile haftalık 1:1',
@@ -3589,8 +3446,8 @@ export const tr = {
     status: {
       PRESENT: 'Mevcut',
       JOINED: 'Katıldı',
-      ABSENT: 'Yok'
-    }
+      ABSENT: 'Yok',
+    },
   },
   downloadPolicy: {
     title: 'İndirme politikası',
@@ -3601,7 +3458,7 @@ export const tr = {
     subscription: 'Abonelik erişimi için indirmeye izin ver',
     tutoring: 'Özel ders erişimi için indirmeye izin ver',
     save: 'İndirme politikasını kaydet',
-    saved: 'İndirme politikası kaydedildi.'
+    saved: 'İndirme politikası kaydedildi.',
   },
   quiz: {
     manager: 'Sınav yönetimi',
@@ -3641,8 +3498,8 @@ export const tr = {
     type: {
       MULTIPLE_CHOICE: 'Çoktan seçmeli',
       TRUE_FALSE: 'Doğru / yanlış',
-      SHORT_TEXT: 'Kısa metin'
-    }
+      SHORT_TEXT: 'Kısa metin',
+    },
   },
   discussion: {
     title: 'Öğrenme tartışması',
@@ -3654,20 +3511,20 @@ export const tr = {
     attachFile: 'Attach file',
     removeAttachment: 'Remove attachment',
     uploadFailed: 'The file could not be uploaded.',
-    openAttachment: 'Open file'
+    openAttachment: 'Open file',
   },
   pricing: {
     planLimits: {
       keys: {
-        monthly_traffic_gb: 'Aylık trafik (GB)'
+        monthly_traffic_gb: 'Aylık trafik (GB)',
       },
       costDriver: {
         storage: 'Depolama',
         egress: 'Trafik',
         compute: 'İşlem',
         sms: 'SMS',
-        gateway: 'Ödeme geçidi'
-      }
+        gateway: 'Ödeme geçidi',
+      },
     },
     calculator: {
       title: 'Plan fiyat hesaplayıcı',
@@ -3689,7 +3546,7 @@ export const tr = {
       colLive: 'Canlı / ay',
       colDelta: 'Fark',
       colMargin: 'Marj @ önerilen',
-      colBreakEven: 'Başa baş akademi'
+      colBreakEven: 'Başa baş akademi',
     },
     costs: {
       title: 'Maliyet varsayımları ve ek paketler',
@@ -3711,9 +3568,9 @@ export const tr = {
         storage_addon_gb: 'Depolama paketi (GB)',
         storage_addon_price_toman: 'Depolama paketi fiyatı (Toman)',
         traffic_addon_gb: 'Trafik paketi (GB)',
-        traffic_addon_price_toman: 'Trafik paketi fiyatı (Toman)'
-      }
-    }
+        traffic_addon_price_toman: 'Trafik paketi fiyatı (Toman)',
+      },
+    },
   },
   userNav: {
     profile: 'Profil',
@@ -3726,8 +3583,8 @@ export const tr = {
       MANAGER: 'Akademi Yöneticisi',
       TEACHER: 'Eğitmen',
       STUDENT: 'Öğrenci',
-      USER: 'Kullanıcı'
-    }
+      USER: 'Kullanıcı',
+    },
   },
 
   /**
@@ -3752,8 +3609,7 @@ export const tr = {
       'You must verify your phone number before signing up. Request and enter the verification code first.',
     AUTH_MUST_VERIFY_EMAIL:
       'You must verify your email before signing up. Request and enter the verification code first.',
-    AUTH_IDENTIFIER_REQUIRED:
-      'Please enter your phone number or email to continue.',
+    AUTH_IDENTIFIER_REQUIRED: 'Please enter your phone number or email to continue.',
     AUTH_ACADEMY_ID_REQUIRED: 'Please select your academy to sign in.',
     AUTH_ACADEMY_ACCESS_DENIED:
       'You do not have access to this academy. Contact the academy manager if you should.',
@@ -3763,36 +3619,26 @@ export const tr = {
       'The password and its confirmation do not match. Please re-enter both fields.',
     AUTH_CURRENT_PASSWORD_INCORRECT:
       'The current password you entered is not correct. Please try again.',
-    AUTH_ADMIN_ROLE_NOT_ALLOWED:
-      'An admin account cannot be created through this route.',
+    AUTH_ADMIN_ROLE_NOT_ALLOWED: 'An admin account cannot be created through this route.',
     AUTH_ADMIN_ONLY: 'Only system admins can perform this action.',
     AUTH_NOT_AUTHENTICATED: 'Your session is not valid. Please sign in again.',
-    AUTH_SESSION_EXPIRED:
-      'Your session has ended. Please sign in again to continue.',
-    AUTH_REFRESH_TOKEN_MISSING:
-      'Your session could not be found. Please sign in again.',
+    AUTH_SESSION_EXPIRED: 'Your session has ended. Please sign in again to continue.',
+    AUTH_REFRESH_TOKEN_MISSING: 'Your session could not be found. Please sign in again.',
     AUTH_REFRESH_TOKEN_INVALID:
       'Your session is no longer valid. Please sign in again to continue.',
-    AUTH_TEMP_TOKEN_INVALID:
-      'This step has expired. Please start signing in again.',
-    AUTH_SESSION_NOT_FOUND:
-      'That session was not found, or it has already been closed.',
-    OTP_INVALID:
-      'That verification code is not correct. Please check it, or request a new code.',
-    OTP_EXPIRED:
-      'This verification code has expired. Tap "Resend" to get a new one.',
-    OTP_ALREADY_USED:
-      'This verification code has already been used. Please request a new one.',
+    AUTH_TEMP_TOKEN_INVALID: 'This step has expired. Please start signing in again.',
+    AUTH_SESSION_NOT_FOUND: 'That session was not found, or it has already been closed.',
+    OTP_INVALID: 'That verification code is not correct. Please check it, or request a new code.',
+    OTP_EXPIRED: 'This verification code has expired. Tap "Resend" to get a new one.',
+    OTP_ALREADY_USED: 'This verification code has already been used. Please request a new one.',
     OTP_COOLDOWN:
       'A code was just sent to you. Please wait {seconds} seconds before requesting another.',
     OTP_RATE_LIMITED:
       'You have requested too many verification codes. Please try again a little later.',
-    OTP_PHONE_REQUIRED:
-      'Please enter your phone number to receive a verification code.',
+    OTP_PHONE_REQUIRED: 'Please enter your phone number to receive a verification code.',
     OTP_PHONE_INVALID:
       'That phone number is not valid. Enter it with the country code, for example +989121234567.',
-    OTP_TYPE_REQUIRED:
-      'The verification code type was not specified. Please try again.',
+    OTP_TYPE_REQUIRED: 'The verification code type was not specified. Please try again.',
     OTP_SEND_FAILED:
       'We could not send the verification code. Please try again shortly; contact support if it keeps happening.',
     VALIDATION_FAILED:
@@ -3800,10 +3646,8 @@ export const tr = {
     VALIDATION_REQUIRED: '{field} is required.',
     VALIDATION_MIN_LENGTH: '{field} must be at least {min} characters.',
     VALIDATION_MAX_LENGTH: '{field} must be no longer than {max} characters.',
-    VALIDATION_EMAIL:
-      '{field} is not a valid email address. Example: name@example.com',
-    VALIDATION_PHONE:
-      '{field} is not a valid phone number. Enter it with the country code.',
+    VALIDATION_EMAIL: '{field} is not a valid email address. Example: name@example.com',
+    VALIDATION_PHONE: '{field} is not a valid phone number. Enter it with the country code.',
     VALIDATION_PATTERN:
       'The format of {field} is not correct. Please enter it as the field describes.',
     VALIDATION_STRING: '{field} must be text.',
@@ -3819,15 +3663,12 @@ export const tr = {
     VALIDATION_INVALID: 'The value entered for {field} is not valid.',
     CONFLICT_DUPLICATE:
       'An item with this name or details already exists. Please choose a different one.',
-    RESOURCE_NOT_FOUND:
-      'What you were looking for was not found. It may have been deleted.',
+    RESOURCE_NOT_FOUND: 'What you were looking for was not found. It may have been deleted.',
     PERMISSION_DENIED:
       'You do not have permission to do this. Contact your academy manager for access.',
     TENANT_MISMATCH: 'This item does not belong to your academy.',
-    FILE_TOO_LARGE:
-      'The file is larger than allowed. Please choose a smaller file.',
-    FILE_TYPE_NOT_ALLOWED:
-      'This file type is not allowed. Please choose a supported format.',
+    FILE_TOO_LARGE: 'The file is larger than allowed. Please choose a smaller file.',
+    FILE_TYPE_NOT_ALLOWED: 'This file type is not allowed. Please choose a supported format.',
     EXTERNAL_SERVICE_FAILED:
       'We could not reach an external service. Please try again in a moment.',
     SUBSCRIPTION_EXPIRED:
@@ -3840,15 +3681,13 @@ export const tr = {
       'No payment gateway is currently enabled. Contact the platform administrator.',
     PAYMENT_GATEWAY_NOT_CONFIGURED:
       'The payment gateway is on, but no API key is saved. Open Token & details and paste the BitPay key.',
-    PAYMENT_GATEWAY_REJECTED:
-      'The payment gateway rejected this checkout. {reason}',
+    PAYMENT_GATEWAY_REJECTED: 'The payment gateway rejected this checkout. {reason}',
     HTTP_400:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     BAD_REQUEST:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     HTTP_401: 'You need to be signed in to do this. Please sign in again.',
-    UNAUTHENTICATED:
-      'You need to be signed in to do this. Please sign in again.',
+    UNAUTHENTICATED: 'You need to be signed in to do this. Please sign in again.',
     HTTP_403:
       'You do not have permission to do this. If you think this is a mistake, contact your academy manager.',
     FORBIDDEN:
@@ -3857,32 +3696,23 @@ export const tr = {
       'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
     NOT_FOUND:
       'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
-    HTTP_409:
-      'This item already exists. Please choose a different name or value.',
-    CONFLICT:
-      'This item already exists. Please choose a different name or value.',
-    HTTP_413:
-      'The uploaded file is larger than allowed. Please choose a smaller file.',
-    PAYLOAD_TOO_LARGE:
-      'The uploaded file is larger than allowed. Please choose a smaller file.',
-    HTTP_415:
-      'That file type is not supported. Please choose a file in an allowed format.',
+    HTTP_409: 'This item already exists. Please choose a different name or value.',
+    CONFLICT: 'This item already exists. Please choose a different name or value.',
+    HTTP_413: 'The uploaded file is larger than allowed. Please choose a smaller file.',
+    PAYLOAD_TOO_LARGE: 'The uploaded file is larger than allowed. Please choose a smaller file.',
+    HTTP_415: 'That file type is not supported. Please choose a file in an allowed format.',
     UNSUPPORTED_MEDIA_TYPE:
       'That file type is not supported. Please choose a file in an allowed format.',
-    HTTP_422:
-      'The submitted data could not be processed. Please review the values and try again.',
+    HTTP_422: 'The submitted data could not be processed. Please review the values and try again.',
     UNPROCESSABLE:
       'The submitted data could not be processed. Please review the values and try again.',
-    HTTP_429:
-      'You have made too many attempts. Please wait a little and try again.',
-    RATE_LIMITED:
-      'You have made too many attempts. Please wait a little and try again.',
+    HTTP_429: 'You have made too many attempts. Please wait a little and try again.',
+    RATE_LIMITED: 'You have made too many attempts. Please wait a little and try again.',
     HTTP_500:
       'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
     INTERNAL_ERROR:
       'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
-    HTTP_502:
-      'We could not reach one of our external services. Please try again in a moment.',
+    HTTP_502: 'We could not reach one of our external services. Please try again in a moment.',
     UPSTREAM_ERROR:
       'We could not reach one of our external services. Please try again in a moment.',
     HTTP_503:
@@ -3890,10 +3720,8 @@ export const tr = {
     SERVICE_UNAVAILABLE:
       'The service is temporarily unavailable, likely for maintenance. Please try again in a few minutes.',
     HTTP_504: 'An external service took too long to respond. Please try again.',
-    UPSTREAM_TIMEOUT:
-      'An external service took too long to respond. Please try again.',
-    NETWORK_ERROR:
-      'We could not reach the server. Check your internet connection and try again.',
+    UPSTREAM_TIMEOUT: 'An external service took too long to respond. Please try again.',
+    NETWORK_ERROR: 'We could not reach the server. Check your internet connection and try again.',
     UNKNOWN:
       'An unexpected error occurred and has been logged. Please try again; contact support if it keeps happening.',
     fields: {
@@ -3925,8 +3753,8 @@ export const tr = {
       starts_at: 'Start date',
       ends_at: 'End date',
       file: 'File',
-      image_id: 'Image'
-    }
+      image_id: 'Image',
+    },
   },
   platformCosts: {
     title: 'Platform costs',
@@ -3946,7 +3774,7 @@ export const tr = {
       infrastructure: 'Infrastructure',
       people: 'People',
       operations: 'Operations',
-      other: 'Other'
+      other: 'Other',
     },
     subcategories: {
       social: 'Social ads',
@@ -3966,8 +3794,8 @@ export const tr = {
       accounting: 'Accounting',
       tools: 'Software tools',
       office: 'Office',
-      other: 'Other'
-    }
+      other: 'Other',
+    },
   },
   platformMetrics: {
     title: 'Investor report',
@@ -3981,7 +3809,7 @@ export const tr = {
       users: 'Users & activity',
       catalog: 'Courses & learning record',
       economics: 'Unit economics',
-      reconciliation: 'Reconciliation'
+      reconciliation: 'Reconciliation',
     },
     currency: { label: 'Currency', toman: 'Toman', eur: 'EUR' },
     source: { label: 'Source', live: 'Live', snapshot: 'Monthly snapshot' },
@@ -4067,7 +3895,7 @@ export const tr = {
       invoiced_amount: 'Invoiced amount',
       invoice_count: 'Paid invoices',
       manual_invoice_count: 'Manual invoices',
-      manual_invoice_amount: 'Manual invoice amount'
+      manual_invoice_amount: 'Manual invoice amount',
     },
     bridge: {
       title: 'Monthly MRR bridge',
@@ -4076,7 +3904,7 @@ export const tr = {
       expansion: 'Expansion',
       contraction: 'Contraction',
       churned: 'Churned',
-      ending: 'Ending'
+      ending: 'Ending',
     },
     columns: {
       month: 'Month',
@@ -4106,7 +3934,7 @@ export const tr = {
       churnedAcademies: 'Churned',
       measured: 'Academies measured',
       medianDays: 'Median days',
-      p75Days: 'P75 days'
+      p75Days: 'P75 days',
     },
     sections: {
       byStatus: 'By status',
@@ -4123,12 +3951,12 @@ export const tr = {
       timeToValue: 'Time to first value',
       learningRecord: 'Learning record',
       activity: 'Login activity',
-      registrations: 'Registrations'
+      registrations: 'Registrations',
     },
     ttv: {
       first_course_created: 'First course created',
       first_enrollment: 'First student enrolled',
-      first_paid_invoice: 'First paid invoice'
+      first_paid_invoice: 'First paid invoice',
     },
     reconciliation: {
       title: 'Invoice, payment and gateway tie-out',
@@ -4139,26 +3967,22 @@ export const tr = {
       orphan: 'Orphan',
       manual: 'Settled manually',
       invoiceToPayment: 'Invoice → Payment',
-      paymentToGateway: 'Payment → Gateway'
+      paymentToGateway: 'Payment → Gateway',
     },
     caveats: {
       title: 'Data limits',
-      loginHistory:
-        'Login and retention series start from the day this table went live.',
-      marketingSpend:
-        'Marketing spend is entered by hand; without it CAC cannot be computed.',
-      runway:
-        'Cash balance is not stored in the platform, so runway cannot be computed.',
-      financialRecords:
-        'No platform financial records in this window, so gross margin is unknown.',
-      zeroChurn: 'Observed churn is zero, so LTV is undefined.'
+      loginHistory: 'Login and retention series start from the day this table went live.',
+      marketingSpend: 'Marketing spend is entered by hand; without it CAC cannot be computed.',
+      runway: 'Cash balance is not stored in the platform, so runway cannot be computed.',
+      financialRecords: 'No platform financial records in this window, so gross margin is unknown.',
+      zeroChurn: 'Observed churn is zero, so LTV is undefined.',
     },
     spend: {
       title: 'Marketing spend',
       channel: 'Channel',
       amount: 'Amount',
       add: 'Record spend',
-      saved: 'Saved'
+      saved: 'Saved',
     },
     guides: {
       overview:
@@ -4178,124 +4002,124 @@ export const tr = {
       economics:
         'Unit economics from marketing spend and cost records you enter. CAC, LTV and runway stay blank until those inputs exist.',
       reconciliation:
-        'Three-way check that every paid invoice has a payment, and every payment has a gateway confirmation. A gap is a money-path defect, not a reporting artefact.'
+        'Three-way check that every paid invoice has a payment, and every payment has a gateway confirmation. A gap is a money-path defect, not a reporting artefact.',
     },
     terms: {
       mrr: {
         abbr: 'MRR',
         full: 'Monthly Recurring Revenue',
-        hint: 'Invoice amount spread evenly across each month of the plan term.'
+        hint: 'Invoice amount spread evenly across each month of the plan term.',
       },
       arr: {
         abbr: 'ARR',
         full: 'Annual Recurring Revenue',
-        hint: 'MRR × 12.'
+        hint: 'MRR × 12.',
       },
       arpa: {
         abbr: 'ARPA',
         full: 'Average Revenue Per Account',
-        hint: 'MRR ÷ paying academies.'
+        hint: 'MRR ÷ paying academies.',
       },
       nrr: {
         abbr: 'NRR',
         full: 'Net Revenue Retention',
-        hint: 'Last-month MRR of the opening cohort ÷ first-month MRR. Can exceed 100% when academies upgrade.'
+        hint: 'Last-month MRR of the opening cohort ÷ first-month MRR. Can exceed 100% when academies upgrade.',
       },
       grr: {
         abbr: 'GRR',
         full: 'Gross Revenue Retention',
-        hint: 'Like NRR but upgrades are excluded, so it never exceeds 100%.'
+        hint: 'Like NRR but upgrades are excluded, so it never exceeds 100%.',
       },
       cohort: {
         abbr: 'Cohort',
         full: 'Cohort',
-        hint: 'A group that started in the same month, followed together in later months.'
+        hint: 'A group that started in the same month, followed together in later months.',
       },
       logoRetention: {
         abbr: 'Logo retention',
         full: 'Logo Retention',
-        hint: 'Share of the opening cohort still paying anything this month.'
+        hint: 'Share of the opening cohort still paying anything this month.',
       },
       gmv: {
         abbr: 'GMV',
         full: 'Gross Merchandise Value',
-        hint: 'Student payments to academies. Not Mentoma income (0% commission).'
+        hint: 'Student payments to academies. Not Mentoma income (0% commission).',
       },
       dau: {
         abbr: 'DAU',
         full: 'Daily Active Users',
-        hint: 'Distinct users who logged in in the last 1 day.'
+        hint: 'Distinct users who logged in in the last 1 day.',
       },
       wau: {
         abbr: 'WAU',
         full: 'Weekly Active Users',
-        hint: 'Distinct users who logged in in the last 7 days.'
+        hint: 'Distinct users who logged in in the last 7 days.',
       },
       mau: {
         abbr: 'MAU',
         full: 'Monthly Active Users',
-        hint: 'Distinct users who logged in in the last 30 days.'
+        hint: 'Distinct users who logged in in the last 30 days.',
       },
       stickiness: {
         abbr: 'Stickiness',
         full: 'DAU / MAU',
-        hint: 'How often monthly users come back on a given day.'
+        hint: 'How often monthly users come back on a given day.',
       },
       cac: {
         abbr: 'CAC',
         full: 'Customer Acquisition Cost',
-        hint: 'Marketing spend ÷ new paying academies.'
+        hint: 'Marketing spend ÷ new paying academies.',
       },
       ltv: {
         abbr: 'LTV',
         full: 'Lifetime Value',
-        hint: '(ARPA × gross margin) ÷ monthly logo churn.'
+        hint: '(ARPA × gross margin) ÷ monthly logo churn.',
       },
       ltvCac: {
         abbr: 'LTV : CAC',
         full: 'Lifetime Value to Customer Acquisition Cost',
-        hint: 'How many times lifetime value covers acquisition cost. Above 3 is a common healthy bar.'
+        hint: 'How many times lifetime value covers acquisition cost. Above 3 is a common healthy bar.',
       },
       ttv: {
         abbr: 'TTV',
         full: 'Time To Value',
-        hint: 'Days from academy creation to first course, first enrollment, or first paid invoice.'
+        hint: 'Days from academy creation to first course, first enrollment, or first paid invoice.',
       },
       ruleOf40: {
         abbr: 'Rule of 40',
         full: 'Rule of 40',
-        hint: 'Annualised MRR growth % + gross margin %. Healthy SaaS is at or above 40.'
+        hint: 'Annualised MRR growth % + gross margin %. Healthy SaaS is at or above 40.',
       },
       quickRatio: {
         abbr: 'Quick ratio',
         full: 'Quick Ratio',
-        hint: '(New + expansion MRR) ÷ (contraction + churned MRR). Above 4 is strong.'
+        hint: '(New + expansion MRR) ÷ (contraction + churned MRR). Above 4 is strong.',
       },
       expansion: {
         abbr: 'Expansion',
         full: 'Expansion MRR',
-        hint: 'Extra MRR from academies that already paid last month and pay more this month.'
+        hint: 'Extra MRR from academies that already paid last month and pay more this month.',
       },
       contraction: {
         abbr: 'Contraction',
         full: 'Contraction MRR',
-        hint: 'Lost MRR from academies that still pay, but less than last month.'
+        hint: 'Lost MRR from academies that still pay, but less than last month.',
       },
       churn: {
         abbr: 'Churn',
         full: 'Churned MRR',
-        hint: 'MRR (or academies) that paid last month and pay nothing this month.'
+        hint: 'MRR (or academies) that paid last month and pay nothing this month.',
       },
       learningRecord: {
         abbr: 'Learning record',
         full: 'Learning Record',
-        hint: 'Quizzes, submissions, grades, discussions, attendance, and certificates. The switching-cost metric.'
+        hint: 'Quizzes, submissions, grades, discussions, attendance, and certificates. The switching-cost metric.',
       },
       orphan: {
         abbr: 'Orphan',
         full: 'Orphan payment',
-        hint: 'A paid payment with no matching invoice — investigate.'
-      }
-    }
-  }
+        hint: 'A paid payment with no matching invoice — investigate.',
+      },
+    },
+  },
 };

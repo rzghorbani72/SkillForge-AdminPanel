@@ -14,9 +14,7 @@ export default function NotFound() {
       <span className="bg-gradient-to-b from-foreground to-transparent bg-clip-text text-[10rem] font-extrabold leading-none text-transparent">
         404
       </span>
-      <h2 className="font-heading my-2 text-2xl font-bold">
-        {t('notFound.title')}
-      </h2>
+      <h2 className="font-heading my-2 text-2xl font-bold">{t('notFound.title')}</h2>
       <p>{t('notFound.description')}</p>
       <div className="mt-8 flex justify-center gap-2">
         <Button onClick={() => router.back()} variant="default" size="lg">

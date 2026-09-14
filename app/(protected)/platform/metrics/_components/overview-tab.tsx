@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  TrendingUp,
-  Users,
-  Building2,
-  GraduationCap,
-  Repeat,
-  Wallet
-} from 'lucide-react';
+import { TrendingUp, Users, Building2, GraduationCap, Repeat, Wallet } from 'lucide-react';
 import { StatsCard } from '@/components/shared/stats-card';
 import { apiClient, type MetricsQuery } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -28,15 +21,13 @@ const HEADLINE = [
   { key: 'paying_academies', icon: Building2 },
   { key: 'nrr', icon: Repeat },
   { key: 'total_users', icon: Users },
-  { key: 'learning_records', icon: GraduationCap }
+  { key: 'learning_records', icon: GraduationCap },
 ] as const;
 
 export function OverviewTab({ query, currency }: Props) {
   const { t } = useTranslation();
   const format = useMetricFormat(currency);
-  const { data, loading } = useMetricsFetch(query, (q) =>
-    apiClient.getMetricsOverview(q)
-  );
+  const { data, loading } = useMetricsFetch(query, (q) => apiClient.getMetricsOverview(q));
   const metrics = data?.metrics ?? null;
 
   return (
@@ -48,11 +39,7 @@ export function OverviewTab({ query, currency }: Props) {
             title={t(`platformMetrics.metrics.${key}`)}
             value={format(key, metrics?.[key] ?? null)}
             icon={icon}
-            description={
-              METRIC_TERM_KEYS[key]
-                ? termFullHint(t, METRIC_TERM_KEYS[key])
-                : undefined
-            }
+            description={METRIC_TERM_KEYS[key] ? termFullHint(t, METRIC_TERM_KEYS[key]) : undefined}
           />
         ))}
       </div>

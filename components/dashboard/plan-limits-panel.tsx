@@ -32,9 +32,7 @@ export default function PlanLimitsPanel({ limits, isLoading }: Props) {
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
             {t('dashboard.limits.title')}
           </p>
-          <CardTitle className="mt-1 text-base">
-            {t('dashboard.limits.subtitle')}
-          </CardTitle>
+          <CardTitle className="mt-1 text-base">{t('dashboard.limits.subtitle')}</CardTitle>
         </div>
         <Link
           href="/subscriptions"
@@ -54,9 +52,7 @@ export default function PlanLimitsPanel({ limits, isLoading }: Props) {
             ))
           : limits.map((row) => {
               const percent =
-                row.limit > 0
-                  ? Math.min(100, Math.round((row.used / row.limit) * 100))
-                  : 0;
+                row.limit > 0 ? Math.min(100, Math.round((row.used / row.limit) * 100)) : 0;
               return (
                 <div key={row.key} className="space-y-1.5">
                   <div className="flex items-baseline justify-between gap-2">
@@ -67,15 +63,12 @@ export default function PlanLimitsPanel({ limits, isLoading }: Props) {
                       {num(row.used)} / {num(row.limit)}
                     </span>
                   </div>
-                  <Progress
-                    value={percent}
-                    className={`h-1.5 ${barTone(percent)}`}
-                  />
+                  <Progress value={percent} className={`h-1.5 ${barTone(percent)}`} />
                   <p className="text-[11px] text-muted-foreground">
                     {row.remaining === 0
                       ? t('dashboard.limits.full')
                       : t('dashboard.limits.remaining', {
-                          count: num(row.remaining)
+                          count: num(row.remaining),
                         })}
                   </p>
                 </div>

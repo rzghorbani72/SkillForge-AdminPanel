@@ -13,8 +13,7 @@ export function useNumberFormat() {
   const locale = getLocaleForLanguage(language);
 
   return useCallback(
-    (value: number, options?: Intl.NumberFormatOptions) =>
-      value.toLocaleString(locale, options),
-    [locale]
+    (value: number, options?: Intl.NumberFormatOptions) => value.toLocaleString(locale, options),
+    [locale],
   );
 }

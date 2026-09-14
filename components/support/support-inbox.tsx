@@ -8,10 +8,7 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pagination } from '@/components/shared/Pagination';
 import { StaffTicketDetail } from './staff-ticket-detail';
-import {
-  SupportInboxFilters,
-  SupportInboxFiltersState
-} from './support-inbox-filters';
+import { SupportInboxFilters, SupportInboxFiltersState } from './support-inbox-filters';
 import { StaffTicketListItem, TicketTeam } from './staff-support-types';
 import { TicketListItem } from './ticket-list-item';
 import { InboxQueueBar, InboxView } from './inbox-queue-bar';
@@ -19,7 +16,7 @@ import { InboxQueueBar, InboxView } from './inbox-queue-bar';
 const emptyFilters = (): SupportInboxFiltersState => ({
   status: '',
   priority: '',
-  academy_id: ''
+  academy_id: '',
 });
 
 interface Props {
@@ -30,8 +27,7 @@ interface Props {
 export function SupportInbox({ scope }: Props) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const [filters, setFilters] =
-    useState<SupportInboxFiltersState>(emptyFilters);
+  const [filters, setFilters] = useState<SupportInboxFiltersState>(emptyFilters);
   const [view, setView] = useState<InboxView>('all');
   const [team, setTeam] = useState<TicketTeam | null>(null);
   const [page, setPage] = useState(1);
@@ -51,7 +47,7 @@ export function SupportInbox({ scope }: Props) {
       mine: view === 'mine' || undefined,
       unassigned: view === 'unassigned' || undefined,
       page,
-      limit
+      limit,
     };
     // Counts describe the whole inbox, so they ignore the chosen queue —
     // otherwise every chip would just recount the list already on screen.
@@ -59,14 +55,14 @@ export function SupportInbox({ scope }: Props) {
       ...query,
       team: undefined,
       mine: undefined,
-      unassigned: undefined
+      unassigned: undefined,
     };
     try {
       const [res, sum] = await Promise.all([
         scope === 'academy'
           ? apiClient.getSupportInbox(query)
           : apiClient.getSupportPlatformInbox(query),
-        apiClient.getSupportInboxSummary(scope, countQuery).catch(() => null)
+        apiClient.getSupportInboxSummary(scope, countQuery).catch(() => null),
       ]);
       setItems((res.items ?? []) as StaffTicketListItem[]);
       setTotal(res.total ?? 0);

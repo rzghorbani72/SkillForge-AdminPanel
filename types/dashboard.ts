@@ -87,11 +87,11 @@ export const EMPTY_MANAGER_DASHBOARD: ManagerDashboard = {
     teacher_paid: 0,
     net: 0,
     gross_previous: 0,
-    net_previous: 0
+    net_previous: 0,
   },
   payouts_due: { count: 0, amount: 0 },
   limits: [],
   series: [],
   courses: [],
-  teachers: []
+  teachers: [],
 };

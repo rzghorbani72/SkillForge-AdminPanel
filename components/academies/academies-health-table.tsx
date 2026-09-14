@@ -7,7 +7,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,16 +22,13 @@ import { getPlanDisplayName } from '@/lib/plan-display-name';
 import { cn } from '@/lib/utils';
 import { CopyableId } from './copyable-id';
 import { AcademySettlementSheet } from './academy-settlement-sheet';
-import {
-  SettlementSignalCell,
-  TicketSignalCell
-} from './academy-health-signals';
+import { SettlementSignalCell, TicketSignalCell } from './academy-health-signals';
 
 type AttentionFilter = 'all' | 'settle' | 'tickets';
 
 function storagePercent(
   academy: AcademyHealthView,
-  formatPercent: (value: number) => string
+  formatPercent: (value: number) => string,
 ): string {
   const storage = academy.limits?.storage_gb;
   if (!storage || storage.limit <= 0) return '—';
@@ -39,9 +36,7 @@ function storagePercent(
 }
 
 function needsSettle(academy: AcademyHealthView): boolean {
-  return (
-    (academy.to_deposit ?? 0) > 0 || (academy.pending_withdrawal_count ?? 0) > 0
-  );
+  return (academy.to_deposit ?? 0) > 0 || (academy.pending_withdrawal_count ?? 0) > 0;
 }
 
 function hasOpenTickets(academy: AcademyHealthView): boolean {
@@ -84,9 +79,9 @@ export function AcademiesHealthTable() {
   const counts = useMemo(
     () => ({
       settle: rows.filter(needsSettle).length,
-      tickets: rows.filter(hasOpenTickets).length
+      tickets: rows.filter(hasOpenTickets).length,
     }),
-    [rows]
+    [rows],
   );
 
   const sorted = useMemo(() => {
@@ -109,12 +104,12 @@ export function AcademiesHealthTable() {
     pending: t('academiesHealth.settle.pending'),
     requests: t('academiesHealth.pendingRequests'),
     clear: t('academiesHealth.settleClear'),
-    bankMissing: t('academiesHealth.settle.bankMissing')
+    bankMissing: t('academiesHealth.settle.bankMissing'),
   };
 
   const ticketLabels = {
     open: t('academiesHealth.openTickets'),
-    closed: t('academiesHealth.closedTickets')
+    closed: t('academiesHealth.closedTickets'),
   };
 
   return (
@@ -127,7 +122,7 @@ export function AcademiesHealthTable() {
               [
                 ['all', t('academiesHealth.filterAll'), rows.length],
                 ['settle', t('academiesHealth.filterSettle'), counts.settle],
-                ['tickets', t('academiesHealth.filterTickets'), counts.tickets]
+                ['tickets', t('academiesHealth.filterTickets'), counts.tickets],
               ] as const
             ).map(([key, label, count]) => (
               <Button
@@ -138,22 +133,16 @@ export function AcademiesHealthTable() {
                 onClick={() => setFilter(key)}
               >
                 {label}
-                <span className="ms-1.5 tabular-nums opacity-80">
-                  {formatNumber(count)}
-                </span>
+                <span className="ms-1.5 tabular-nums opacity-80">{formatNumber(count)}</span>
               </Button>
             ))}
           </div>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-sm text-muted-foreground">
-              {t('support.loading')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('support.loading')}</p>
           ) : sorted.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('academiesHealth.empty')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('academiesHealth.empty')}</p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
@@ -199,10 +188,7 @@ export function AcademiesHealthTable() {
                               ) : null}
                             </p>
                             <div onClick={(e) => e.stopPropagation()}>
-                              <CopyableId
-                                value={academy.id}
-                                className="max-w-[160px] text-xs"
-                              />
+                              <CopyableId value={academy.id} className="max-w-[160px] text-xs" />
                             </div>
                           </div>
                         </TableCell>
@@ -210,9 +196,7 @@ export function AcademiesHealthTable() {
                           {academy.manager_name ?? '—'}
                         </TableCell>
                         <TableCell className="align-top text-sm">
-                          {academy.created_at
-                            ? formatDate(academy.created_at)
-                            : '—'}
+                          {academy.created_at ? formatDate(academy.created_at) : '—'}
                         </TableCell>
                         <TableCell className="align-top text-sm">
                           {getPlanDisplayName(academy.plan_slug) ?? '—'}
@@ -238,7 +222,7 @@ export function AcademiesHealthTable() {
                         <TableCell className="align-top text-sm">
                           {academy.expires_at
                             ? formatDate(academy.expires_at, {
-                                month: 'numeric'
+                                month: 'numeric',
                               })
                             : '—'}
                         </TableCell>

@@ -19,19 +19,14 @@ export type TicketCategory =
   | 'OTHER';
 
 /** Which queue answers the ticket. The backend derives it from the category. */
-export type TicketTeam =
-  | 'SALES'
-  | 'TECHNICAL'
-  | 'BILLING'
-  | 'CONSULTING'
-  | 'GENERAL';
+export type TicketTeam = 'SALES' | 'TECHNICAL' | 'BILLING' | 'CONSULTING' | 'GENERAL';
 
 export const TICKET_TEAMS: TicketTeam[] = [
   'SALES',
   'TECHNICAL',
   'BILLING',
   'CONSULTING',
-  'GENERAL'
+  'GENERAL',
 ];
 
 export interface TicketPerson {
@@ -62,7 +57,7 @@ export interface StaffTicketListItem {
 }
 
 export function ticketResponsible(
-  ticket: Pick<StaffTicketListItem, 'AssignedTo' | 'AssignedAdmin'>
+  ticket: Pick<StaffTicketListItem, 'AssignedTo' | 'AssignedAdmin'>,
 ): TicketPerson | null {
   return ticket.AssignedAdmin ?? ticket.AssignedTo;
 }
@@ -126,14 +121,9 @@ export const TICKET_STATUSES: TicketStatus[] = [
   'WAITING_ON_USER',
   'RESOLVED',
   'CLOSED',
-  'REOPENED'
+  'REOPENED',
 ];
-export const TICKET_PRIORITIES: TicketPriority[] = [
-  'LOW',
-  'NORMAL',
-  'HIGH',
-  'URGENT'
-];
+export const TICKET_PRIORITIES: TicketPriority[] = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
 export const CALL_STATUSES = ['COMPLETED', 'NO_ANSWER', 'SCHEDULED'] as const;
 
 export type ContactMessageStatus = 'NEW' | 'IN_PROGRESS' | 'RESOLVED' | 'SPAM';
@@ -157,5 +147,5 @@ export const CONTACT_MESSAGE_STATUSES: ContactMessageStatus[] = [
   'NEW',
   'IN_PROGRESS',
   'RESOLVED',
-  'SPAM'
+  'SPAM',
 ];

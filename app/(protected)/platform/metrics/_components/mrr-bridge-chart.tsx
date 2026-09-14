@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
 } from 'recharts';
 import { DataPanel } from '@/components/shared/data-list';
 import type { MetricsRetention, MrrBridgeMonth } from '@/lib/api';
@@ -41,11 +41,7 @@ export function MrrBridgeChart({ bridge, retention, currency }: Props) {
         <ResponsiveContainer width="100%" height="100%" minWidth={480}>
           <BarChart data={bridge}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis
-              dataKey="month"
-              tick={{ fontSize: 14 }}
-              tickFormatter={periodLabel}
-            />
+            <XAxis dataKey="month" tick={{ fontSize: 14 }} tickFormatter={periodLabel} />
             <YAxis
               tick={{ fontSize: 14 }}
               width={96}

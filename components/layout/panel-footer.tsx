@@ -6,10 +6,9 @@ import { resolveStorefrontBaseUrl } from '@/lib/ui-template/preview-url';
 export function PanelFooter() {
   const { t, language } = useTranslation();
   const landingUrl = resolveStorefrontBaseUrl();
-  const year = new Date().toLocaleDateString(
-    language === 'fa' ? 'fa-IR-u-ca-persian' : 'en-US',
-    { year: 'numeric' }
-  );
+  const year = new Date().toLocaleDateString(language === 'fa' ? 'fa-IR-u-ca-persian' : 'en-US', {
+    year: 'numeric',
+  });
 
   return (
     <footer className="mt-auto h-[50px] shrink-0 border-t border-border px-4">

@@ -7,7 +7,7 @@ export const RANGE_OPTIONS: RangeOption[] = [
   { labelKey: 'courseDetail.last30', days: 30 },
   { labelKey: 'courseDetail.last90', days: 90 },
   { labelKey: 'courseDetail.last6m', days: 180 },
-  { labelKey: 'courseDetail.last12m', days: 365 }
+  { labelKey: 'courseDetail.last12m', days: 365 },
 ];
 
 export type RevenuePoint = { date: string; revenue: number; label: string };
@@ -25,10 +25,7 @@ export function sumAmount(payments: CoursePayment[]): number {
   return payments.reduce((total, p) => total + (p.amount ?? 0), 0);
 }
 
-export function paymentsInLastDays(
-  payments: CoursePayment[],
-  days: number
-): CoursePayment[] {
+export function paymentsInLastDays(payments: CoursePayment[], days: number): CoursePayment[] {
   const start = new Date();
   start.setDate(start.getDate() - days);
   const startISO = toISODate(start);
@@ -41,7 +38,7 @@ export function paymentsInLastDays(
 export function buildRevenueSeries(
   payments: CoursePayment[],
   days: number,
-  locale: string
+  locale: string,
 ): RevenuePoint[] {
   const buckets = new Map<string, number>();
   const cursor = new Date();
@@ -63,8 +60,8 @@ export function buildRevenueSeries(
     revenue,
     label: new Date(date).toLocaleDateString(locale, {
       month: 'short',
-      day: 'numeric'
-    })
+      day: 'numeric',
+    }),
   }));
 }
 

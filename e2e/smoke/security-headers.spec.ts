@@ -6,9 +6,7 @@ import { test, expect } from '@playwright/test';
  * the clickjacking (X-Frame-Options: DENY) + sniffing headers. No backend.
  */
 test.describe('AdminPanel security headers (smoke)', () => {
-  test('login response sets CSP, frame, sniff and referrer headers', async ({
-    page
-  }) => {
+  test('login response sets CSP, frame, sniff and referrer headers', async ({ page }) => {
     const res = await page.goto('/login');
     expect(res, 'navigation returned a response').toBeTruthy();
     const h = res!.headers();

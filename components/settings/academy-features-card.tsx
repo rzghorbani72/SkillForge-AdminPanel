@@ -4,13 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiClient, type AcademyFeatureFlags } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,29 +15,26 @@ const FEATURE_KEYS: FeatureKey[] = [
   'enrollment_enabled',
   'subscription_enabled',
   'live_classes_enabled',
-  'tutor_led_learning_enabled'
+  'tutor_led_learning_enabled',
 ];
 
-const FEATURE_LABELS: Record<
-  FeatureKey,
-  { title: string; description: string }
-> = {
+const FEATURE_LABELS: Record<FeatureKey, { title: string; description: string }> = {
   enrollment_enabled: {
     title: 'settings.enrollmentEnabled',
-    description: 'settings.enrollmentEnabledDescription'
+    description: 'settings.enrollmentEnabledDescription',
   },
   subscription_enabled: {
     title: 'settings.subscriptionEnabled',
-    description: 'settings.subscriptionEnabledDescription'
+    description: 'settings.subscriptionEnabledDescription',
   },
   live_classes_enabled: {
     title: 'settings.liveClassesEnabled',
-    description: 'settings.liveClassesEnabledDescription'
+    description: 'settings.liveClassesEnabledDescription',
   },
   tutor_led_learning_enabled: {
     title: 'settings.tutorLedLearningEnabled',
-    description: 'settings.tutorLedLearningEnabledDescription'
-  }
+    description: 'settings.tutorLedLearningEnabledDescription',
+  },
 };
 
 export function AcademyFeaturesCard() {
@@ -75,7 +66,7 @@ export function AcademyFeaturesCard() {
     setSavingKey(key);
     try {
       const updated = await apiClient.updateCurrentAcademyFeatures({
-        [key]: checked
+        [key]: checked,
       });
       setFeatures(updated);
       ErrorHandler.showSuccess(t('settings.featuresUpdatedSuccess'));
@@ -91,19 +82,14 @@ export function AcademyFeaturesCard() {
     <Card>
       <CardHeader>
         <CardTitle>{t('settings.academyFeaturesTitle')}</CardTitle>
-        <CardDescription>
-          {t('settings.academyFeaturesDescription')}
-        </CardDescription>
+        <CardDescription>{t('settings.academyFeaturesDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {loading ? (
           <Skeleton className="h-24 w-full" />
         ) : (
           FEATURE_KEYS.map((key) => (
-            <div
-              key={key}
-              className="flex items-start justify-between gap-4 rounded-lg border p-4"
-            >
+            <div key={key} className="flex items-start justify-between gap-4 rounded-lg border p-4">
               <div className="space-y-1">
                 <Label htmlFor={key}>{t(FEATURE_LABELS[key].title)}</Label>
                 <p className="text-sm text-muted-foreground">

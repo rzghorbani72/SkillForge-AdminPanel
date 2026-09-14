@@ -10,10 +10,7 @@ function inlineMarkdown(text: string): string {
   let safe = escapeHtml(text);
   safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   safe = safe.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  safe = safe.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" rel="noopener noreferrer">$1</a>'
-  );
+  safe = safe.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" rel="noopener noreferrer">$1</a>');
   return safe;
 }
 
@@ -92,20 +89,15 @@ export function markdownToHtml(markdown: string): string {
       continue;
     }
 
-    if (
-      TABLE_ROW.test(trimmed) &&
-      TABLE_SEPARATOR.test((lines[i + 1] ?? '').trim())
-    ) {
+    if (TABLE_ROW.test(trimmed) && TABLE_SEPARATOR.test((lines[i + 1] ?? '').trim())) {
       flushOpen();
       closeLists();
       closeBlockquote();
       const headerCells = splitTableCells(trimmed);
       html.push(
         '<table><thead><tr>' +
-          headerCells
-            .map((cell) => `<th>${inlineMarkdown(cell)}</th>`)
-            .join('') +
-          '</tr></thead><tbody>'
+          headerCells.map((cell) => `<th>${inlineMarkdown(cell)}</th>`).join('') +
+          '</tr></thead><tbody>',
       );
       i += 1; // skip the separator row
 
@@ -113,11 +105,7 @@ export function markdownToHtml(markdown: string): string {
         i += 1;
         const rowCells = splitTableCells(lines[i].trim());
         html.push(
-          '<tr>' +
-            rowCells
-              .map((cell) => `<td>${inlineMarkdown(cell)}</td>`)
-              .join('') +
-            '</tr>'
+          '<tr>' + rowCells.map((cell) => `<td>${inlineMarkdown(cell)}</td>`).join('') + '</tr>',
         );
       }
 

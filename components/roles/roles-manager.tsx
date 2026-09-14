@@ -26,9 +26,7 @@ export function RolesManager() {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const { user } = useAuthUser();
-  const { roles, catalog, loading, reload, capLevel, ownLevel } = useRolesData(
-    user?.role
-  );
+  const { roles, catalog, loading, reload, capLevel, ownLevel } = useRolesData(user?.role);
 
   const [query, setQuery] = useState('');
   const [creating, setCreating] = useState(false);
@@ -45,7 +43,7 @@ export function RolesManager() {
     return sorted.filter(
       (role) =>
         role.name.toLowerCase().includes(needle) ||
-        getRoleMeta(role, t, formatNumber).label.toLowerCase().includes(needle)
+        getRoleMeta(role, t, formatNumber).label.toLowerCase().includes(needle),
     );
   }, [roles, query, t, formatNumber, user?.role]);
 
@@ -55,13 +53,11 @@ export function RolesManager() {
     return [
       `${formatNumber(roles.length - system)} ${t('roles.statCustom')}`,
       `${formatNumber(system)} ${t('roles.statSystem')}`,
-      `${formatNumber(assigned)} ${t('roles.statAssigned')}`
+      `${formatNumber(assigned)} ${t('roles.statAssigned')}`,
     ].join(' · ');
   }, [roles, formatNumber, t]);
 
-  const viewingAbilities = viewing
-    ? getRoleAbilities(viewing, user, capLevel, ownLevel)
-    : null;
+  const viewingAbilities = viewing ? getRoleAbilities(viewing, user, capLevel, ownLevel) : null;
 
   // A live search filter could hide the role that was just created, and it is
   // sorted to the top of the list — so clear the search and let the user see it.
@@ -100,11 +96,7 @@ export function RolesManager() {
         subtitle={loading ? t('roles.listSubtitle') : summary}
         actions={
           canCreate ? (
-            <Button
-              size="sm"
-              className="rounded-lg"
-              onClick={() => setCreating(true)}
-            >
+            <Button size="sm" className="rounded-lg" onClick={() => setCreating(true)}>
               <Plus className="me-1.5 h-4 w-4" />
               {t('roles.addRole')}
             </Button>
@@ -133,9 +125,7 @@ export function RolesManager() {
               <EmptyState
                 icon={<Shield className="h-10 w-10" />}
                 title={query ? t('roles.noMatchTitle') : t('roles.emptyTitle')}
-                description={
-                  query ? t('roles.noMatchDesc') : t('roles.emptyDesc')
-                }
+                description={query ? t('roles.noMatchDesc') : t('roles.emptyDesc')}
               />
             </div>
           }
@@ -177,7 +167,7 @@ export function RolesManager() {
         open={!!deleting}
         title={t('roles.deleteTitle')}
         description={t('roles.deleteConfirm', {
-          role: deleting ? getRoleMeta(deleting, t, formatNumber).label : ''
+          role: deleting ? getRoleMeta(deleting, t, formatNumber).label : '',
         })}
         onConfirm={confirmDelete}
         onCancel={() => setDeleting(null)}

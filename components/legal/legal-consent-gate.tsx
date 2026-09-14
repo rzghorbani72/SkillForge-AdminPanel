@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import Link from '@/components/ui/link';
 import { Loader2 } from 'lucide-react';
 import {
@@ -15,13 +9,13 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import {
   apiClient,
   LEGAL_CONSENT_REQUIRED_EVENT,
   type LegalConsentRequiredDetail,
-  type LegalPendingDocumentDiff
+  type LegalPendingDocumentDiff,
 } from '@/lib/api';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -30,7 +24,7 @@ import { LegalDocumentDiff } from './legal-document-diff';
 
 const DOCUMENT_LINKS: Record<string, string> = {
   TERMS: '/terms',
-  PRIVACY: '/privacy'
+  PRIVACY: '/privacy',
 };
 
 type PendingLegalDocument = {
@@ -48,7 +42,7 @@ function isPendingList(value: unknown): value is PendingLegalDocument[] {
         typeof item === 'object' &&
         typeof (item as PendingLegalDocument).type === 'string' &&
         typeof (item as PendingLegalDocument).title === 'string' &&
-        typeof (item as PendingLegalDocument).version === 'string'
+        typeof (item as PendingLegalDocument).version === 'string',
     )
   );
 }
@@ -180,9 +174,7 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
     <>
       {/* Dashboard renders behind the gate — API calls stay paused until acceptance,
           so this is just the frozen last-known UI showing through the glass. */}
-      <LegalConsentPendingContext.Provider value>
-        {children}
-      </LegalConsentPendingContext.Provider>
+      <LegalConsentPendingContext.Provider value>{children}</LegalConsentPendingContext.Provider>
 
       <Dialog open>
         <DialogContent
@@ -203,10 +195,7 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
               const diffEntry = diffs.find((d) => d.type === doc.type);
               const fullDocHref = DOCUMENT_LINKS[doc.type];
               return (
-                <li
-                  key={doc.type}
-                  className="rounded-lg border border-border px-3 py-2.5"
-                >
+                <li key={doc.type} className="rounded-lg border border-border px-3 py-2.5">
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <span className="font-medium">{doc.title}</span>

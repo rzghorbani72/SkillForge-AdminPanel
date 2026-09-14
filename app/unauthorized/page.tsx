@@ -28,10 +28,7 @@ export default function UnauthorizedPage() {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(
-      () => setSecondsLeft((value) => Math.max(value - 1, 0)),
-      1000
-    );
+    const timer = setInterval(() => setSecondsLeft((value) => Math.max(value - 1, 0)), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -39,10 +36,7 @@ export default function UnauthorizedPage() {
     if (secondsLeft === 0) goToLogin();
   }, [secondsLeft, goToLogin]);
 
-  const bullets = [
-    t('unauthorized.contactStoreAdmin'),
-    t('unauthorized.contactSupport')
-  ];
+  const bullets = [t('unauthorized.contactStoreAdmin'), t('unauthorized.contactSupport')];
 
   return (
     <AuthLayout>
@@ -53,12 +47,8 @@ export default function UnauthorizedPage() {
           <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
             <ShieldAlert className="h-7 w-7" />
           </span>
-          <h1 className="text-lg font-bold text-[#181C20]">
-            {t('unauthorized.title')}
-          </h1>
-          <p className="text-sm leading-6 text-muted-foreground">
-            {t('unauthorized.description')}
-          </p>
+          <h1 className="text-lg font-bold text-[#181C20]">{t('unauthorized.title')}</h1>
+          <p className="text-sm leading-6 text-muted-foreground">{t('unauthorized.description')}</p>
         </div>
 
         <ul className="space-y-2 rounded-2xl bg-white/50 p-4 text-sm text-foreground">
@@ -73,7 +63,7 @@ export default function UnauthorizedPage() {
         <div className="space-y-2">
           <p className="text-center text-xs text-muted-foreground">
             {t('unauthorized.redirectingIn', {
-              seconds: formatNumber(secondsLeft)
+              seconds: formatNumber(secondsLeft),
             })}
           </p>
           <div

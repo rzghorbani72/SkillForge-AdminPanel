@@ -4,7 +4,7 @@ import {
   keepPreviousData,
   useQuery,
   type QueryKey,
-  type UseQueryOptions
+  type UseQueryOptions,
 } from '@tanstack/react-query';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
 
@@ -44,7 +44,7 @@ export function useApiQuery<T>({
     queryFn: ({ signal }) => queryFn(signal),
     enabled: enabled && academyId !== null,
     placeholderData: keepPrevious ? keepPreviousData : undefined,
-    ...options
+    ...options,
   });
 
   return {
@@ -52,6 +52,6 @@ export function useApiQuery<T>({
     error: query.error,
     isLoading: query.isPending && query.fetchStatus !== 'idle',
     isFetching: query.isFetching,
-    refresh: query.refetch
+    refresh: query.refetch,
   };
 }

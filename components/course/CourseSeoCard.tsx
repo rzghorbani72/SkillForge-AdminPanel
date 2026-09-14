@@ -5,13 +5,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -21,7 +15,7 @@ import {
   COURSE_KEYWORDS_MAX,
   COURSE_META_DESCRIPTION_MAX,
   COURSE_META_TITLE_MAX,
-  type CourseFormData
+  type CourseFormData,
 } from './schema';
 
 type Props = {
@@ -41,13 +35,11 @@ export default function CourseSeoCard({ form }: Props) {
 
   const addKeyword = (raw: string) => {
     const value = raw.trim().replace(/\s+/g, ' ').slice(0, COURSE_KEYWORD_MAX);
-    const isDuplicate = keywords.some(
-      (k) => k.toLowerCase() === value.toLowerCase()
-    );
+    const isDuplicate = keywords.some((k) => k.toLowerCase() === value.toLowerCase());
     if (!value || isDuplicate || keywords.length >= COURSE_KEYWORDS_MAX) return;
     form.setValue('keywords', [...keywords, value], {
       shouldDirty: true,
-      shouldTouch: true
+      shouldTouch: true,
     });
   };
 
@@ -55,7 +47,7 @@ export default function CourseSeoCard({ form }: Props) {
     form.setValue(
       'keywords',
       keywords.filter((_, i) => i !== index),
-      { shouldDirty: true, shouldTouch: true }
+      { shouldDirty: true, shouldTouch: true },
     );
   };
 
@@ -76,9 +68,7 @@ export default function CourseSeoCard({ form }: Props) {
     <Card>
       <CardHeader>
         <CardTitle>{t('courses.seo.title')}</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {t('courses.seo.description')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('courses.seo.description')}</p>
       </CardHeader>
       <CardContent className="space-y-6">
         <FormField
@@ -96,8 +86,7 @@ export default function CourseSeoCard({ form }: Props) {
               </FormControl>
               <FormMessage />
               <p className="text-xs text-muted-foreground">
-                {t('courses.seo.metaTitleHint')} (
-                {formatNumber(field.value?.length || 0)}/
+                {t('courses.seo.metaTitleHint')} ({formatNumber(field.value?.length || 0)}/
                 {formatNumber(COURSE_META_TITLE_MAX)})
               </p>
             </FormItem>
@@ -120,8 +109,7 @@ export default function CourseSeoCard({ form }: Props) {
               </FormControl>
               <FormMessage />
               <p className="text-xs text-muted-foreground">
-                {t('courses.seo.metaDescriptionHint')} (
-                {formatNumber(field.value?.length || 0)}/
+                {t('courses.seo.metaDescriptionHint')} ({formatNumber(field.value?.length || 0)}/
                 {formatNumber(COURSE_META_DESCRIPTION_MAX)})
               </p>
             </FormItem>
@@ -129,17 +117,11 @@ export default function CourseSeoCard({ form }: Props) {
         />
 
         <FormItem>
-          <FormLabel htmlFor="course-keyword-input">
-            {t('courses.seo.keywords')}
-          </FormLabel>
+          <FormLabel htmlFor="course-keyword-input">{t('courses.seo.keywords')}</FormLabel>
           {keywords.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {keywords.map((keyword, index) => (
-                <Badge
-                  key={keyword}
-                  variant="secondary"
-                  className="gap-1 py-1 pe-1 ps-3"
-                >
+                <Badge key={keyword} variant="secondary" className="gap-1 py-1 pe-1 ps-3">
                   {keyword}
                   <button
                     type="button"
@@ -168,10 +150,9 @@ export default function CourseSeoCard({ form }: Props) {
           />
           <p className="text-xs text-muted-foreground">
             {t('courses.seo.keywordsHint', {
-              count: formatNumber(COURSE_KEYWORDS_MAX)
+              count: formatNumber(COURSE_KEYWORDS_MAX),
             })}{' '}
-            ({formatNumber(keywords.length)}/{formatNumber(COURSE_KEYWORDS_MAX)}
-            )
+            ({formatNumber(keywords.length)}/{formatNumber(COURSE_KEYWORDS_MAX)})
           </p>
         </FormItem>
       </CardContent>

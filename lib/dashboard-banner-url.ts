@@ -8,10 +8,7 @@ export function uploadedImageId(result: unknown): string | null {
   if (!result || typeof result !== 'object') return null;
   const raw = result as Record<string, unknown>;
   const nested = raw.data;
-  const data =
-    nested && typeof nested === 'object'
-      ? (nested as Record<string, unknown>)
-      : raw;
+  const data = nested && typeof nested === 'object' ? (nested as Record<string, unknown>) : raw;
   const id = data.id;
   return id === undefined || id === null ? null : String(id);
 }

@@ -8,7 +8,7 @@ import {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
 interface ConfirmDeleteDialogProps {
@@ -28,7 +28,7 @@ export function ConfirmDeleteDialog({
   onConfirm,
   onCancel,
   confirmLabel = 'حذف',
-  cancelLabel = 'انصراف'
+  cancelLabel = 'انصراف',
 }: ConfirmDeleteDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={(v) => !v && onCancel()}>
@@ -37,10 +37,7 @@ export function ConfirmDeleteDialog({
         first child (text) lands on the RIGHT,
         second child (icon) lands on the LEFT
       */}
-      <AlertDialogContent
-        className="max-w-sm gap-5"
-        style={{ direction: 'rtl' }}
-      >
+      <AlertDialogContent className="max-w-sm gap-5" style={{ direction: 'rtl' }}>
         <div className="space-y-3">
           <div dir="ltr" className="flex items-center justify-between">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10">

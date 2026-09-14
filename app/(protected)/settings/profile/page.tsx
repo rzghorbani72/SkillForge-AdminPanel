@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LogOut, Save, UserRound } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -73,9 +67,9 @@ export default function ProfileSettingsPage() {
         ? {
             name: user.full_name ?? user.display_name ?? '',
             email: user.email ?? '',
-            phone: user.phone_number ?? ''
+            phone: user.phone_number ?? '',
           }
-        : EMPTY_FORM
+        : EMPTY_FORM,
     );
   }, [user]);
 
@@ -128,9 +122,7 @@ export default function ProfileSettingsPage() {
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {t('settings.profileSettingsTitle')}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          {t('settings.profileSettingsSubtitle')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('settings.profileSettingsSubtitle')}</p>
       </div>
 
       <Card>
@@ -141,9 +133,7 @@ export default function ProfileSettingsPage() {
             </span>
             {t('settings.profileInformation')}
           </CardTitle>
-          <CardDescription>
-            {t('settings.profileInformationDescription')}
-          </CardDescription>
+          <CardDescription>{t('settings.profileInformationDescription')}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
@@ -187,7 +177,7 @@ export default function ProfileSettingsPage() {
               onRevert={() => {
                 setForm((current) => ({
                   ...current,
-                  phone: user?.phone_number ?? ''
+                  phone: user?.phone_number ?? '',
                 }));
                 phoneOtp.reset();
               }}
@@ -220,7 +210,7 @@ export default function ProfileSettingsPage() {
               onRevert={() => {
                 setForm((current) => ({
                   ...current,
-                  email: user?.email ?? ''
+                  email: user?.email ?? '',
                 }));
                 emailOtp.reset();
               }}
@@ -251,11 +241,7 @@ export default function ProfileSettingsPage() {
               <LogOut className="h-4 w-4" />
               {isLoggingOut ? t('settings.saving') : t('auth.logout')}
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isSaving || !user}
-              className="gap-2"
-            >
+            <Button onClick={handleSave} disabled={isSaving || !user} className="gap-2">
               <Save className="h-4 w-4" />
               {isSaving ? t('settings.saving') : t('settings.saveChanges')}
             </Button>

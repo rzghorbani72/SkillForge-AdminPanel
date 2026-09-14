@@ -1,9 +1,6 @@
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
-import {
-  validateVideoDuration,
-  validateVideoFile
-} from '@/constants/video-constraints';
+import { validateVideoDuration, validateVideoFile } from '@/constants/video-constraints';
 
 export async function isVideoFileAcceptable(file: File): Promise<boolean> {
   const fileValidation = validateVideoFile(file);
@@ -20,9 +17,7 @@ export async function isVideoFileAcceptable(file: File): Promise<boolean> {
       URL.revokeObjectURL(video.src);
       const durationValidation = validateVideoDuration(video.duration);
       if (!durationValidation.valid) {
-        toast.error(
-          tNow(durationValidation.errorKey, durationValidation.params)
-        );
+        toast.error(tNow(durationValidation.errorKey, durationValidation.params));
         resolve(false);
       } else {
         resolve(true);

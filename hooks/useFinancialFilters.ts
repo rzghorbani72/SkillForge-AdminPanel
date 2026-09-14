@@ -23,15 +23,13 @@ export interface FinancialFilters {
 
 function buildDateRange(year: number, month: number | null): DateRange {
   const startDate = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
-  const endDate = month
-    ? new Date(year, month, 0, 23, 59, 59)
-    : new Date(year, 11, 31, 23, 59, 59);
+  const endDate = month ? new Date(year, month, 0, 23, 59, 59) : new Date(year, 11, 31, 23, 59, 59);
 
   return {
     startDate,
     endDate,
     startIso: startDate.toISOString(),
-    endIso: endDate.toISOString()
+    endIso: endDate.toISOString(),
   };
 }
 
@@ -50,9 +48,7 @@ function languageToLocale(lang: string): string {
 
 export function useFinancialFilters(): FinancialFilters {
   const { language } = useTranslation();
-  const [selectedYear, setSelectedYear] = useState(() =>
-    new Date().getFullYear()
-  );
+  const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   const years = useMemo(() => {
@@ -62,7 +58,7 @@ export function useFinancialFilters(): FinancialFilters {
 
   const dateRange = useMemo(
     () => buildDateRange(selectedYear, selectedMonth),
-    [selectedYear, selectedMonth]
+    [selectedYear, selectedMonth],
   );
 
   const locale = languageToLocale(language);
@@ -73,9 +69,9 @@ export function useFinancialFilters(): FinancialFilters {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
-        ...(language === 'fa' ? { calendar: 'persian' as const } : {})
+        ...(language === 'fa' ? { calendar: 'persian' as const } : {}),
       }),
-    [locale, language]
+    [locale, language],
   );
 
   return {
@@ -85,6 +81,6 @@ export function useFinancialFilters(): FinancialFilters {
     setSelectedMonth,
     dateRange,
     years,
-    formatDate
+    formatDate,
   };
 }

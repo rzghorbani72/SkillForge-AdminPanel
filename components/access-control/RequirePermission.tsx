@@ -1,12 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { hasPermission } from '@/lib/permissions';
@@ -40,9 +35,7 @@ export function RequirePermission({ resource, action, children }: Props) {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>{t('accessControl.deniedTitle')}</CardTitle>
-            <CardDescription>
-              {t('accessControl.deniedDescription')}
-            </CardDescription>
+            <CardDescription>{t('accessControl.deniedDescription')}</CardDescription>
           </CardHeader>
         </Card>
       </div>

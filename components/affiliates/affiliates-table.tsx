@@ -12,7 +12,7 @@ export function AffiliatesTable({
   baseUrl,
   formatCurrency,
   onEdit,
-  onRemove
+  onRemove,
 }: {
   affiliates: Affiliate[];
   baseUrl: string;
@@ -27,59 +27,34 @@ export function AffiliatesTable({
       <table className="w-full text-base">
         <thead className="border-b bg-muted/30">
           <tr className="text-xs text-muted-foreground">
-            <th className="px-4 py-3 text-start font-medium">
-              {t('affiliates.colAffiliate')}
-            </th>
-            <th className="px-4 py-3 text-start font-medium">
-              {t('affiliates.colLink')}
-            </th>
-            <th className="px-4 py-3 text-end font-medium">
-              {t('affiliates.clicks')}
-            </th>
-            <th className="px-4 py-3 text-end font-medium">
-              {t('affiliates.colSignups')}
-            </th>
-            <th className="px-4 py-3 text-end font-medium">
-              {t('affiliates.conversions')}
-            </th>
-            <th className="px-4 py-3 text-end font-medium">
-              {t('affiliates.earnings')}
-            </th>
-            <th className="px-4 py-3 text-end font-medium">
-              {t('affiliates.commission')}
-            </th>
-            <th className="px-4 py-3 text-start font-medium">
-              {t('affiliates.status')}
-            </th>
+            <th className="px-4 py-3 text-start font-medium">{t('affiliates.colAffiliate')}</th>
+            <th className="px-4 py-3 text-start font-medium">{t('affiliates.colLink')}</th>
+            <th className="px-4 py-3 text-end font-medium">{t('affiliates.clicks')}</th>
+            <th className="px-4 py-3 text-end font-medium">{t('affiliates.colSignups')}</th>
+            <th className="px-4 py-3 text-end font-medium">{t('affiliates.conversions')}</th>
+            <th className="px-4 py-3 text-end font-medium">{t('affiliates.earnings')}</th>
+            <th className="px-4 py-3 text-end font-medium">{t('affiliates.commission')}</th>
+            <th className="px-4 py-3 text-start font-medium">{t('affiliates.status')}</th>
             <th className="w-10 px-4 py-3" />
           </tr>
         </thead>
         <tbody className="divide-y">
           {affiliates.map((aff) => {
-            const commission =
-              aff.Usages?.reduce((s, u) => s + u.commission_amount, 0) ?? 0;
+            const commission = aff.Usages?.reduce((s, u) => s + u.commission_amount, 0) ?? 0;
             const sales = (aff as any).sales ?? aff.Usages?.length ?? 0;
             const signups = (aff as any).signups ?? aff.Usages?.length ?? 0;
             const revenue = (aff as any).revenue ?? 0;
             const refUrl = `${baseUrl}?ref=${aff.code}`;
 
             return (
-              <tr
-                key={aff.id}
-                className={cn(
-                  'hover:bg-muted/20',
-                  !aff.is_active && 'opacity-60'
-                )}
-              >
+              <tr key={aff.id} className={cn('hover:bg-muted/20', !aff.is_active && 'opacity-60')}>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2.5">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
                       {(aff.affiliate_name?.[0] ?? '?').toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-semibold leading-tight">
-                        {aff.affiliate_name}
-                      </p>
+                      <p className="font-semibold leading-tight">{aff.affiliate_name}</p>
                     </div>
                   </div>
                 </td>
@@ -94,12 +69,8 @@ export function AffiliatesTable({
                 <td className="px-4 py-3 text-end font-mono">
                   {aff.clicks.toLocaleString('fa-IR')}
                 </td>
-                <td className="px-4 py-3 text-end font-mono">
-                  {signups.toLocaleString('fa-IR')}
-                </td>
-                <td className="px-4 py-3 text-end font-mono">
-                  {sales.toLocaleString('fa-IR')}
-                </td>
+                <td className="px-4 py-3 text-end font-mono">{signups.toLocaleString('fa-IR')}</td>
+                <td className="px-4 py-3 text-end font-mono">{sales.toLocaleString('fa-IR')}</td>
                 <td className="px-4 py-3 text-end font-mono text-sm">
                   {revenue > 0 ? (
                     formatCurrency(revenue)
@@ -118,10 +89,7 @@ export function AffiliatesTable({
                   <StatusBadge aff={aff} />
                 </td>
                 <td className="px-4 py-3">
-                  <RowActions
-                    onEdit={() => onEdit(aff)}
-                    onRemove={() => onRemove(aff)}
-                  />
+                  <RowActions onEdit={() => onEdit(aff)} onRemove={() => onRemove(aff)} />
                 </td>
               </tr>
             );

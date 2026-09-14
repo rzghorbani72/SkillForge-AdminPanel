@@ -2,7 +2,7 @@ import {
   API_VERSION_PATH,
   isLegacyApiPath,
   resolveBackendRewriteTarget,
-  stripTrailingSlash
+  stripTrailingSlash,
 } from './api-config';
 import { langApiVersionPath } from './api-lang';
 import { DEFAULT_LANGUAGE } from './i18n/config';
@@ -10,9 +10,7 @@ import { resolveTrustedBackendBaseUrl } from './security/ssrf';
 
 function readPreferredLanguage(): string {
   if (typeof window !== 'undefined') {
-    return (
-      window.localStorage.getItem('preferred_language') || DEFAULT_LANGUAGE
-    );
+    return window.localStorage.getItem('preferred_language') || DEFAULT_LANGUAGE;
   }
   return DEFAULT_LANGUAGE;
 }
@@ -23,8 +21,7 @@ function readPreferredLanguage(): string {
  */
 export function getBrowserApiBaseUrl(lang?: string | null): string {
   const versionPath = langApiVersionPath(lang ?? readPreferredLanguage());
-  const raw =
-    stripTrailingSlash(process.env.NEXT_PUBLIC_API_URL ?? '') || versionPath;
+  const raw = stripTrailingSlash(process.env.NEXT_PUBLIC_API_URL ?? '') || versionPath;
 
   if (process.env.NODE_ENV === 'development') {
     if (raw.startsWith('http://') || raw.startsWith('https://')) {
@@ -33,11 +30,7 @@ export function getBrowserApiBaseUrl(lang?: string | null): string {
     return versionPath;
   }
 
-  if (
-    raw.startsWith('http://') ||
-    raw.startsWith('https://') ||
-    isLegacyApiPath(raw)
-  ) {
+  if (raw.startsWith('http://') || raw.startsWith('https://') || isLegacyApiPath(raw)) {
     return versionPath;
   }
 
@@ -56,7 +49,7 @@ export function getServerApiBaseUrl(lang?: string | null): string {
 
 export function getBackendRewriteTarget(): string {
   return resolveBackendRewriteTarget(
-    process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_BACKEND_API_URL
+    process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_BACKEND_API_URL,
   );
 }
 
@@ -64,7 +57,7 @@ export {
   API_VERSION_PATH,
   browserApiPath,
   LEGACY_API_PATH,
-  API_PRODUCTION_DEFAULTS
+  API_PRODUCTION_DEFAULTS,
 } from './api-config';
 
 export { normalizeApiLang, langApiVersionPath } from './api-lang';

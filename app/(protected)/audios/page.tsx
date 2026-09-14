@@ -1,13 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef, MouseEvent } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -21,7 +15,7 @@ import {
   Clock,
   HardDrive,
   Music2,
-  Volume2
+  Volume2,
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -30,7 +24,7 @@ import { UploadMediaDialog } from '@/components/content/upload-media-dialog';
 import {
   AccessControlBadge,
   AccessControlActions,
-  type AccessControl
+  type AccessControl,
 } from '@/components/ui/access-control-badge';
 import { toast } from 'react-toastify';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -46,7 +40,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -64,7 +58,7 @@ const DEFAULT_AUDIO_BITRATES_KBPS: Record<string, number> = {
   'audio/ogg': 96,
   'audio/wav': 1411,
   'audio/flac': 921,
-  'audio/webm': 96
+  'audio/webm': 96,
 };
 
 interface AudioItem {
@@ -96,7 +90,7 @@ const formatDate = (isoDate: string | undefined, locale: string) => {
   return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   });
 };
 
@@ -149,7 +143,7 @@ export default function AudiosPage() {
           : [];
 
       const storeAudios = rawAudios.filter(
-        (audio) => !audio.academy_id || audio.academy_id === selectedAcademy.id
+        (audio) => !audio.academy_id || audio.academy_id === selectedAcademy.id,
       );
 
       setPlayingId((current) => {
@@ -166,8 +160,7 @@ export default function AudiosPage() {
       setDurationMap((prev) => {
         const next: Record<number, number> = {};
         storeAudios.forEach((audio) => {
-          const initialDuration =
-            audio.metadata?.duration ?? audio.duration ?? prev[audio.id] ?? 0;
+          const initialDuration = audio.metadata?.duration ?? audio.duration ?? prev[audio.id] ?? 0;
           next[audio.id] = initialDuration;
         });
         return next;
@@ -205,8 +198,8 @@ export default function AudiosPage() {
           (audio) =>
             audio.title?.toLowerCase().includes(query) ||
             audio.description?.toLowerCase().includes(query) ||
-            audio.filename?.toLowerCase().includes(query)
-        )
+            audio.filename?.toLowerCase().includes(query),
+        ),
       );
     }
   }, [audios, searchTerm]);
@@ -272,9 +265,7 @@ export default function AudiosPage() {
 
     const rect = event.currentTarget.getBoundingClientRect();
     const isRtl = getComputedStyle(event.currentTarget).direction === 'rtl';
-    const offsetX = isRtl
-      ? rect.right - event.clientX
-      : event.clientX - rect.left;
+    const offsetX = isRtl ? rect.right - event.clientX : event.clientX - rect.left;
     const percent = Math.min(Math.max(offsetX / rect.width, 0), 1);
     const durationSeconds = getDurationSeconds(audio);
     const newTime = durationSeconds * percent;
@@ -282,41 +273,40 @@ export default function AudiosPage() {
     node.currentTime = newTime;
     setProgressMap((prev) => ({
       ...prev,
-      [audio.id]: newTime
+      [audio.id]: newTime,
     }));
   };
 
-  const registerAudioRef =
-    (audio: AudioItem) => (element: HTMLAudioElement | null) => {
-      audioRefs.current[audio.id] = element;
+  const registerAudioRef = (audio: AudioItem) => (element: HTMLAudioElement | null) => {
+    audioRefs.current[audio.id] = element;
 
-      if (!element) return;
+    if (!element) return;
 
-      element.onloadedmetadata = () => {
-        if (Number.isFinite(element.duration) && element.duration > 0) {
-          setDurationMap((prev) => ({
-            ...prev,
-            [audio.id]: element.duration
-          }));
-        }
-      };
-
-      element.ontimeupdate = () => {
-        setProgressMap((prev) => ({
+    element.onloadedmetadata = () => {
+      if (Number.isFinite(element.duration) && element.duration > 0) {
+        setDurationMap((prev) => ({
           ...prev,
-          [audio.id]: element.currentTime
+          [audio.id]: element.duration,
         }));
-      };
-
-      element.onended = () => {
-        setPlayingId((current) => (current === audio.id ? null : current));
-        setProgressMap((prev) => ({
-          ...prev,
-          [audio.id]: 0
-        }));
-        element.currentTime = 0;
-      };
+      }
     };
+
+    element.ontimeupdate = () => {
+      setProgressMap((prev) => ({
+        ...prev,
+        [audio.id]: element.currentTime,
+      }));
+    };
+
+    element.onended = () => {
+      setPlayingId((current) => (current === audio.id ? null : current));
+      setProgressMap((prev) => ({
+        ...prev,
+        [audio.id]: 0,
+      }));
+      element.currentTime = 0;
+    };
+  };
 
   const handleAudioUploaded = () => {
     fetchAudios();
@@ -336,7 +326,7 @@ export default function AudiosPage() {
       await apiClient.updateAudio(editAudio.id, {
         title: trimmedTitle,
         description: editDescription.trim(),
-        is_public: editIsPublic
+        is_public: editIsPublic,
       });
       toast.success(t('media.audioUpdated'));
       setEditAudio(null);
@@ -369,7 +359,7 @@ export default function AudiosPage() {
   const totalSize = audios.reduce((sum, audio) => sum + (audio.size ?? 0), 0);
   const totalDurationSeconds = audios.reduce(
     (sum, audio) => sum + (audio.metadata?.duration ?? audio.duration ?? 0),
-    0
+    0,
   );
 
   if (!selectedAcademy) {
@@ -400,15 +390,8 @@ export default function AudiosPage() {
       </PageHeader>
 
       {/* Stats */}
-      <div
-        className="fade-in-up grid gap-4 sm:grid-cols-3"
-        style={{ animationDelay: '0.1s' }}
-      >
-        <StatsCard
-          icon={Music}
-          title={t('media.totalFiles')}
-          value={formatNumber(audios.length)}
-        />
+      <div className="fade-in-up grid gap-4 sm:grid-cols-3" style={{ animationDelay: '0.1s' }}>
+        <StatsCard icon={Music} title={t('media.totalFiles')} value={formatNumber(audios.length)} />
         <StatsCard
           icon={HardDrive}
           title={t('media.totalSize')}
@@ -424,10 +407,7 @@ export default function AudiosPage() {
       </div>
 
       {/* Search */}
-      <div
-        className="fade-in-up flex items-center gap-3"
-        style={{ animationDelay: '0.15s' }}
-      >
+      <div className="fade-in-up flex items-center gap-3" style={{ animationDelay: '0.15s' }}>
         <SearchBar
           placeholder={t('media.searchAudio')}
           value={searchTerm}
@@ -447,9 +427,7 @@ export default function AudiosPage() {
       {error && (
         <Card className="border-destructive/50 bg-destructive/5">
           <CardHeader>
-            <CardTitle className="text-destructive">
-              {t('media.error')}
-            </CardTitle>
+            <CardTitle className="text-destructive">{t('media.error')}</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -466,9 +444,7 @@ export default function AudiosPage() {
           className="fade-in-up"
           icon={<Music className="h-10 w-10" />}
           title={t('media.noAudioFound')}
-          description={
-            searchTerm ? t('media.noAudioMatch') : t('media.uploadFirstAudio')
-          }
+          description={searchTerm ? t('media.noAudioMatch') : t('media.uploadFirstAudio')}
         />
       ) : (
         <div className="stagger-children grid gap-5 sm:grid-cols-2">
@@ -476,9 +452,7 @@ export default function AudiosPage() {
             const totalDurationSeconds = getDurationSeconds(audio);
             const playedSeconds = progressMap[audio.id] ?? 0;
             const progressPercent =
-              totalDurationSeconds > 0
-                ? (playedSeconds / totalDurationSeconds) * 100
-                : 0;
+              totalDurationSeconds > 0 ? (playedSeconds / totalDurationSeconds) * 100 : 0;
             const isPlaying = playingId === audio.id;
 
             return (
@@ -487,7 +461,7 @@ export default function AudiosPage() {
                 className={cn(
                   'group overflow-hidden border-border/50 transition-all duration-300',
                   'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
-                  isPlaying && 'border-primary/30 ring-2 ring-primary/20'
+                  isPlaying && 'border-primary/30 ring-2 ring-primary/20',
                 )}
                 style={{ animationDelay: `${0.05 * (index + 1)}s` }}
               >
@@ -529,7 +503,7 @@ export default function AudiosPage() {
                         variant={isPlaying ? 'default' : 'outline'}
                         className={cn(
                           'h-10 w-10 shrink-0 rounded-full transition-all',
-                          isPlaying && 'bg-primary shadow-lg shadow-primary/25'
+                          isPlaying && 'bg-primary shadow-lg shadow-primary/25',
                         )}
                         onClick={() => handlePlayPause(audio)}
                       >
@@ -547,7 +521,7 @@ export default function AudiosPage() {
                           <div
                             className="absolute inset-y-0 start-0 rounded-full bg-primary transition-all group-hover/progress:bg-primary/90"
                             style={{
-                              width: `${Math.min(100, progressPercent)}%`
+                              width: `${Math.min(100, progressPercent)}%`,
                             }}
                           />
                         </div>
@@ -569,8 +543,7 @@ export default function AudiosPage() {
                       variant="secondary"
                       className="rounded-full px-2 py-0 text-[10px] font-semibold"
                     >
-                      {audio.mime_type?.split('/')[1]?.toUpperCase() ||
-                        t('media.audioType')}
+                      {audio.mime_type?.split('/')[1]?.toUpperCase() || t('media.audioType')}
                     </Badge>
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
@@ -627,10 +600,7 @@ export default function AudiosPage() {
 
       {/* View Audio Dialog */}
       {viewAudio && (
-        <Dialog
-          open={!!viewAudio}
-          onOpenChange={(open) => !open && setViewAudio(null)}
-        >
+        <Dialog open={!!viewAudio} onOpenChange={(open) => !open && setViewAudio(null)}>
           <DialogContent className="sm:max-w-[540px]">
             <DialogHeader>
               <DialogTitle>{viewAudio.title}</DialogTitle>
@@ -646,17 +616,13 @@ export default function AudiosPage() {
                 </span>
                 <span>
                   {t('media.duration')}:{' '}
-                  {formatDuration(
-                    viewAudio.metadata?.duration ?? viewAudio.duration
-                  )}
+                  {formatDuration(viewAudio.metadata?.duration ?? viewAudio.duration)}
                 </span>
                 <span>
-                  {t('media.type')}:{' '}
-                  {viewAudio.mime_type || t('media.audioType')}
+                  {t('media.type')}: {viewAudio.mime_type || t('media.audioType')}
                 </span>
                 <span>
-                  {t('media.uploaded')}:{' '}
-                  {formatDate(viewAudio.created_at, locale)}
+                  {t('media.uploaded')}: {formatDate(viewAudio.created_at, locale)}
                 </span>
               </div>
             </div>
@@ -671,10 +637,7 @@ export default function AudiosPage() {
 
       {/* Edit Audio Dialog */}
       {editAudio && (
-        <Dialog
-          open={!!editAudio}
-          onOpenChange={(open) => !open && setEditAudio(null)}
-        >
+        <Dialog open={!!editAudio} onOpenChange={(open) => !open && setEditAudio(null)}>
           <DialogContent className="sm:max-w-[540px]">
             <DialogHeader>
               <DialogTitle>{t('media.editAudio')}</DialogTitle>
@@ -691,9 +654,7 @@ export default function AudiosPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="audio-description">
-                  {t('media.description')}
-                </Label>
+                <Label htmlFor="audio-description">{t('media.description')}</Label>
                 <Textarea
                   id="audio-description"
                   value={editDescription}
@@ -704,25 +665,14 @@ export default function AudiosPage() {
               </div>
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div>
-                  <p className="text-sm font-medium">
-                    {t('media.publiclyAccessible')}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t('media.allowMembersAccess')}
-                  </p>
+                  <p className="text-sm font-medium">{t('media.publiclyAccessible')}</p>
+                  <p className="text-xs text-muted-foreground">{t('media.allowMembersAccess')}</p>
                 </div>
-                <Switch
-                  checked={editIsPublic}
-                  onCheckedChange={setEditIsPublic}
-                />
+                <Switch checked={editIsPublic} onCheckedChange={setEditIsPublic} />
               </div>
             </div>
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setEditAudio(null)}
-                disabled={isUpdating}
-              >
+              <Button variant="outline" onClick={() => setEditAudio(null)} disabled={isUpdating}>
                 {t('media.cancel')}
               </Button>
               <Button onClick={handleUpdateAudio} disabled={isUpdating}>
@@ -738,10 +688,7 @@ export default function AudiosPage() {
         <ConfirmDeleteModal
           open={!!deleteAudio}
           onOpenChange={(open) => !open && setDeleteAudio(null)}
-          title={
-            deleteAudio.title ||
-            `${t('media.audioLabel')} #${String(deleteAudio.id)}`
-          }
+          title={deleteAudio.title || `${t('media.audioLabel')} #${String(deleteAudio.id)}`}
           itemType={t('media.audioFile')}
           onConfirm={handleDeleteAudio}
           isLoading={isDeleting}

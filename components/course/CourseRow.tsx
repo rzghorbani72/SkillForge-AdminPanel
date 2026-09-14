@@ -12,7 +12,7 @@ export function CourseRow({
   course,
   onEdit,
   onDelete,
-  onClick
+  onClick,
 }: {
   course: CourseWithRevenue;
   onEdit?: () => void;
@@ -24,9 +24,7 @@ export function CourseRow({
   const hue = courseHue(course.id);
   const priceVal = course.price ?? (course as any).primary_price ?? 0;
   const isFree = course.is_free ?? (course as any).pricing_type === 'FREE';
-  const pricingType = isFree
-    ? 'FREE'
-    : ((course as any).pricing_type ?? 'ONE_TIME');
+  const pricingType = isFree ? 'FREE' : ((course as any).pricing_type ?? 'ONE_TIME');
   const studentsCount =
     (course as any).students_count ??
     course.enrollments_count ??
@@ -40,13 +38,9 @@ export function CourseRow({
   // A live course is sold by the seat, so its own price is not what it charges.
   const isLive = course.course_type === 'LIVE';
   const seatPrice = groupSeatPrice(course);
-  const status = course.is_published
-    ? 'PUBLISHED'
-    : ((course as any).status ?? 'DRAFT');
-  const seasonsCount =
-    (course as any).Season?.length ?? (course as any).seasons_count ?? 0;
-  const lessonsCount =
-    course.lessons_count ?? (course as any)._count?.Lesson ?? 0;
+  const status = course.is_published ? 'PUBLISHED' : ((course as any).status ?? 'DRAFT');
+  const seasonsCount = (course as any).Season?.length ?? (course as any).seasons_count ?? 0;
+  const lessonsCount = course.lessons_count ?? (course as any)._count?.Lesson ?? 0;
 
   return (
     <tr
@@ -58,7 +52,7 @@ export function CourseRow({
           <div
             className="h-9 w-14 flex-shrink-0 overflow-hidden rounded-md"
             style={{
-              background: `linear-gradient(135deg, hsl(${hue} 80% 82%), hsl(${hue} 60% 92%))`
+              background: `linear-gradient(135deg, hsl(${hue} 80% 82%), hsl(${hue} 60% 92%))`,
             }}
           />
           <div>
@@ -69,7 +63,7 @@ export function CourseRow({
             <div className="text-sm text-muted-foreground">
               {isLive
                 ? t('courses.live.classesCount', {
-                    count: formatNumber(course.classes_count ?? 0)
+                    count: formatNumber(course.classes_count ?? 0),
                   })
                 : `${seasonsCount} ${t('courses.season')} · ${lessonsCount} ${t('courses.lesson')}`}
             </div>
@@ -82,7 +76,7 @@ export function CourseRow({
             className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold"
             style={{
               background: `hsl(${hue} 80% 90%)`,
-              color: `hsl(${hue} 60% 38%)`
+              color: `hsl(${hue} 60% 38%)`,
             }}
           >
             {teacher.charAt(0)}
@@ -91,9 +85,7 @@ export function CourseRow({
         </div>
       </td>
       <td className="px-4 py-3.5 text-base">
-        {studentsCount > 0
-          ? formatNumber(studentsCount)
-          : t('courses.beFirstStudent')}
+        {studentsCount > 0 ? formatNumber(studentsCount) : t('courses.beFirstStudent')}
       </td>
       <td className="px-4 py-3.5 text-base font-medium tabular-nums text-primary">
         {isLive

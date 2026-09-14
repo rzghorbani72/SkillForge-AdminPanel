@@ -20,19 +20,14 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
     <DataPanel
       title={t('tutoring.groups.summaryTitle')}
       subtitle={
-        group.status === 'WAITING' && seatsNeeded > 0
-          ? t('tutoring.groups.needsMore')
-          : undefined
+        group.status === 'WAITING' && seatsNeeded > 0 ? t('tutoring.groups.needsMore') : undefined
       }
     >
       <dl className="grid gap-4 p-5 sm:grid-cols-3">
         <div>
-          <dt className="text-xs text-muted-foreground">
-            {t('tutoring.groups.columnSeats')}
-          </dt>
+          <dt className="text-xs text-muted-foreground">{t('tutoring.groups.columnSeats')}</dt>
           <dd className="text-lg font-semibold">
-            {formatNumber(group.seats_taken, language)} /{' '}
-            {formatNumber(group.capacity, language)}
+            {formatNumber(group.seats_taken, language)} / {formatNumber(group.capacity, language)}
           </dd>
           <dd className="mt-1">
             <ClassSizeBadge capacity={group.capacity} />
@@ -40,32 +35,24 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
           {group.seats_held ? (
             <dd className="text-xs text-muted-foreground">
               {t('courses.live.seatsHeld', {
-                held: formatNumber(group.seats_held, language)
+                held: formatNumber(group.seats_held, language),
               })}{' '}
               · {t('courses.live.heldHint')}
             </dd>
           ) : null}
         </div>
         <div>
-          <dt className="text-xs text-muted-foreground">
-            {t('tutoring.groups.columnMin')}
-          </dt>
-          <dd className="text-lg font-semibold">
-            {formatNumber(group.min_students, language)}
-          </dd>
+          <dt className="text-xs text-muted-foreground">{t('tutoring.groups.columnMin')}</dt>
+          <dd className="text-lg font-semibold">{formatNumber(group.min_students, language)}</dd>
         </div>
         <div>
-          <dt className="text-xs text-muted-foreground">
-            {t('tutoring.groups.startsOn')}
-          </dt>
+          <dt className="text-xs text-muted-foreground">{t('tutoring.groups.startsOn')}</dt>
           <dd className="text-lg font-semibold">
             {termStart(group) ? formatDate(termStart(group) ?? '') : '—'}
           </dd>
         </div>
         <div className="sm:col-span-3">
-          <dt className="text-xs text-muted-foreground">
-            {t('tutoring.groups.columnSchedule')}
-          </dt>
+          <dt className="text-xs text-muted-foreground">{t('tutoring.groups.columnSchedule')}</dt>
           <dd className="mt-1">
             <GroupScheduleSummary
               slots={group.Slots}
@@ -76,9 +63,7 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
         </div>
         {group.age_min || group.age_max ? (
           <div>
-            <dt className="text-xs text-muted-foreground">
-              {t('tutoring.groups.ageRange')}
-            </dt>
+            <dt className="text-xs text-muted-foreground">{t('tutoring.groups.ageRange')}</dt>
             <dd>
               {formatNumber(group.age_min ?? 0, language)}–
               {formatNumber(group.age_max ?? 0, language)}

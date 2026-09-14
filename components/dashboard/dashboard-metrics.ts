@@ -3,8 +3,7 @@ import { Enrollment, Payment } from '@/types/api';
 /** A settled payment. The API's PaymentStatus enum spells this `PAID`. */
 const isPaid = (status?: string | null) => status === 'PAID';
 
-const paidAtOf = (p: Payment) =>
-  p.paid_at ?? p.payment_date ?? p.created_at ?? null;
+const paidAtOf = (p: Payment) => p.paid_at ?? p.payment_date ?? p.created_at ?? null;
 
 export type WeekdayPoint = { index: number; enrollments: number };
 
@@ -52,7 +51,7 @@ export const statusSegments = (enrollments: Enrollment[]): StatusSegment[] => {
 
   return keys.map((key) => ({
     key,
-    value: total === 0 ? 0 : Math.round((counts[key] / total) * 100)
+    value: total === 0 ? 0 : Math.round((counts[key] / total) * 100),
   }));
 };
 
@@ -67,13 +66,8 @@ export const completionRate = (enrollments: Enrollment[]): number => {
  * The real student journey: everyone the academy knows, who enrolled, who is
  * still learning, who finished. Each step is a subset of the one above it.
  */
-export const journeySteps = (
-  enrollments: Enrollment[],
-  totalStudents: number
-): JourneyStep[] => {
-  const enrolledStudents = new Set(
-    enrollments.map((e) => e.user_id).filter(Boolean)
-  ).size;
+export const journeySteps = (enrollments: Enrollment[], totalStudents: number): JourneyStep[] => {
+  const enrolledStudents = new Set(enrollments.map((e) => e.user_id).filter(Boolean)).size;
   const active = enrollments.filter((e) => e.status === 'ACTIVE').length;
   const completed = enrollments.filter((e) => e.status === 'COMPLETED').length;
 
@@ -81,15 +75,12 @@ export const journeySteps = (
     { key: 'students', value: Math.max(totalStudents, enrolledStudents) },
     { key: 'enrolled', value: enrolledStudents },
     { key: 'active', value: active },
-    { key: 'completed', value: completed }
+    { key: 'completed', value: completed },
   ];
 };
 
 /** Change against the previous window as a whole percentage; null with no base. */
-export const percentChange = (
-  current: number,
-  previous: number
-): number | null =>
+export const percentChange = (current: number, previous: number): number | null =>
   previous === 0 ? null : Math.round(((current - previous) / previous) * 100);
 
 const inRange = (raw: string | null | undefined, from: Date, to: Date) => {
@@ -99,41 +90,25 @@ const inRange = (raw: string | null | undefined, from: Date, to: Date) => {
 };
 
 /** Settled revenue between two instants — a card value or its delta baseline. */
-export const revenueBetween = (
-  payments: Payment[],
-  from: Date,
-  to: Date
-): number =>
+export const revenueBetween = (payments: Payment[], from: Date, to: Date): number =>
   payments
     .filter((p) => isPaid(p.status) && inRange(paidAtOf(p), from, to))
     .reduce((sum, p) => sum + (p.amount ?? 0), 0);
 
-export const enrollmentsBetween = (
-  enrollments: Enrollment[],
-  from: Date,
-  to: Date
-): Enrollment[] => enrollments.filter((e) => inRange(e.enrolled_at, from, to));
+export const enrollmentsBetween = (enrollments: Enrollment[], from: Date, to: Date): Enrollment[] =>
+  enrollments.filter((e) => inRange(e.enrolled_at, from, to));
 
-export const countBetween = (
-  dates: (string | null | undefined)[],
-  from: Date,
-  to: Date
-): number => dates.filter((raw) => inRange(raw, from, to)).length;
+export const countBetween = (dates: (string | null | undefined)[], from: Date, to: Date): number =>
+  dates.filter((raw) => inRange(raw, from, to)).length;
 
 /** Revenue per bucket; `end` closes the last, still-open bucket. */
-export const bucketRevenue = (
-  payments: Payment[],
-  buckets: Date[],
-  end: Date
-): number[] =>
-  buckets.map((from, i) =>
-    revenueBetween(payments, from, buckets[i + 1] ?? end)
-  );
+export const bucketRevenue = (payments: Payment[], buckets: Date[], end: Date): number[] =>
+  buckets.map((from, i) => revenueBetween(payments, from, buckets[i + 1] ?? end));
 
 export const bucketCount = (
   dates: (string | null | undefined)[],
   buckets: Date[],
-  end: Date
+  end: Date,
 ): number[] =>
   buckets.map((from, i) => {
     const to = buckets[i + 1] ?? end;

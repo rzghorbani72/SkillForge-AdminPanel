@@ -15,12 +15,7 @@ type SeoPreviewProps = {
  * Managers do not read meta tags; they recognise a Google result and a shared
  * link. Showing both is what makes the fields self-explanatory.
  */
-export function SeoPreview({
-  title,
-  description,
-  siteUrl,
-  shareImageUrl
-}: SeoPreviewProps) {
+export function SeoPreview({ title, description, siteUrl, shareImageUrl }: SeoPreviewProps) {
   const { t } = useTranslation();
 
   return (
@@ -33,15 +28,9 @@ export function SeoPreview({
         </CardHeader>
         <CardContent>
           <div className="space-y-1" dir="ltr">
-            <p className="truncate text-xs text-emerald-700 dark:text-emerald-500">
-              {siteUrl}
-            </p>
-            <p className="line-clamp-1 text-lg text-blue-700 dark:text-blue-400">
-              {title}
-            </p>
-            <p className="line-clamp-2 text-sm text-muted-foreground">
-              {description}
-            </p>
+            <p className="truncate text-xs text-emerald-700 dark:text-emerald-500">{siteUrl}</p>
+            <p className="line-clamp-1 text-lg text-blue-700 dark:text-blue-400">{title}</p>
+            <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p>
           </div>
         </CardContent>
       </Card>
@@ -68,13 +57,9 @@ export function SeoPreview({
               )}
             </div>
             <div className="space-y-1 p-3">
-              <p className="truncate text-xs uppercase text-muted-foreground">
-                {siteUrl}
-              </p>
+              <p className="truncate text-xs uppercase text-muted-foreground">{siteUrl}</p>
               <p className="line-clamp-1 text-sm font-semibold">{title}</p>
-              <p className="line-clamp-2 text-xs text-muted-foreground">
-                {description}
-              </p>
+              <p className="line-clamp-2 text-xs text-muted-foreground">{description}</p>
             </div>
           </div>
         </CardContent>

@@ -28,22 +28,12 @@ export function InviteLink({ joinCode }: { joinCode: string }) {
 
   return (
     <div className="space-y-1.5">
-      <p className="text-xs text-muted-foreground">
-        {t('tutoring.groups.inviteLink')}
-      </p>
+      <p className="text-xs text-muted-foreground">{t('tutoring.groups.inviteLink')}</p>
       <div className="flex items-center gap-2">
-        <code
-          dir="ltr"
-          className="min-w-0 flex-1 truncate rounded-md bg-muted px-2 py-1.5 text-xs"
-        >
+        <code dir="ltr" className="min-w-0 flex-1 truncate rounded-md bg-muted px-2 py-1.5 text-xs">
           {url}
         </code>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={() => void copy()}
-        >
+        <Button type="button" size="sm" variant="outline" onClick={() => void copy()}>
           {copied ? (
             <Check className="me-1.5 h-3.5 w-3.5" />
           ) : (

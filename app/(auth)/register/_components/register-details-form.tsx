@@ -1,11 +1,7 @@
 'use client';
 
 import { UseFormReturn, UseFormRegisterReturn } from 'react-hook-form';
-import {
-  AuthField,
-  AuthPhoneField,
-  AuthSubmit
-} from '@/components/auth/auth-fields';
+import { AuthField, AuthPhoneField, AuthSubmit } from '@/components/auth/auth-fields';
 import { LegalConsentCheckbox } from '@/components/auth/legal-consent-checkbox';
 import { PasswordStrength } from '@/components/ui/password-strength';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -29,14 +25,12 @@ interface RegisterDetailsFormProps {
 const toPassword = (value: string) => sanitizePasswordInput(value);
 
 /** Converts Persian digits and strips non-English password characters. */
-const withAsciiPassword = (
-  field: UseFormRegisterReturn
-): UseFormRegisterReturn => ({
+const withAsciiPassword = (field: UseFormRegisterReturn): UseFormRegisterReturn => ({
   ...field,
   onChange: (event: { target: HTMLInputElement }) => {
     event.target.value = sanitizePasswordInput(event.target.value);
     return field.onChange(event);
-  }
+  },
 });
 
 export function RegisterDetailsForm({
@@ -44,7 +38,7 @@ export function RegisterDetailsForm({
   loading,
   acceptedLegal,
   onAcceptedLegalChange,
-  onSubmit
+  onSubmit,
 }: RegisterDetailsFormProps) {
   const { t } = useTranslation();
   const { errors } = form.formState;
@@ -53,14 +47,11 @@ export function RegisterDetailsForm({
     'name',
     'phone',
     'password',
-    'confirmPassword'
+    'confirmPassword',
   ]);
   // Passwords are not trimmed — leading/trailing spaces can be intentional.
   const allFieldsFilled =
-    name.trim() !== '' &&
-    phone.trim() !== '' &&
-    password !== '' &&
-    confirmPassword !== '';
+    name.trim() !== '' && phone.trim() !== '' && password !== '' && confirmPassword !== '';
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -87,9 +78,7 @@ export function RegisterDetailsForm({
           autoComplete="new-password"
           error={errors.password?.message}
           disabled={loading}
-          {...withAsciiPassword(
-            form.register('password', { setValueAs: toPassword })
-          )}
+          {...withAsciiPassword(form.register('password', { setValueAs: toPassword }))}
         />
         <PasswordStrength password={password} />
       </div>
@@ -100,9 +89,7 @@ export function RegisterDetailsForm({
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
         disabled={loading}
-        {...withAsciiPassword(
-          form.register('confirmPassword', { setValueAs: toPassword })
-        )}
+        {...withAsciiPassword(form.register('confirmPassword', { setValueAs: toPassword }))}
       />
 
       <LegalConsentCheckbox
@@ -113,10 +100,7 @@ export function RegisterDetailsForm({
         disabled={loading}
       />
 
-      <AuthSubmit
-        loading={loading}
-        disabled={loading || !acceptedLegal || !allFieldsFilled}
-      >
+      <AuthSubmit loading={loading} disabled={loading || !acceptedLegal || !allFieldsFilled}>
         {loading ? t('auth.sending') : t('auth.registerTitle')}
       </AuthSubmit>
     </form>

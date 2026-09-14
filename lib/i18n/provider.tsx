@@ -3,12 +3,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { DirectionProvider } from '@radix-ui/react-direction';
 import type { LanguageCode, TextDirection, LanguageConfig } from './config';
-import {
-  DEFAULT_LANGUAGE,
-  getLanguageConfig,
-  getDefaultLanguageForCountry,
-  isRTL
-} from './config';
+import { DEFAULT_LANGUAGE, getLanguageConfig, getDefaultLanguageForCountry, isRTL } from './config';
 import { applyZodErrorMap } from './zod-error-map';
 
 interface I18nContextValue {
@@ -27,11 +22,7 @@ interface I18nProviderProps {
   countryCode?: string | null;
 }
 
-export function I18nProvider({
-  children,
-  initialLanguage,
-  countryCode
-}: I18nProviderProps) {
+export function I18nProvider({ children, initialLanguage, countryCode }: I18nProviderProps) {
   // Check for stored language preference first
   let storedLanguage: LanguageCode | null = null;
   if (typeof window !== 'undefined') {
@@ -53,7 +44,7 @@ export function I18nProvider({
         'ko',
         'hi',
         'ur',
-        'he'
+        'he',
       ].includes(stored)
     ) {
       storedLanguage = stored as LanguageCode;
@@ -64,9 +55,7 @@ export function I18nProvider({
   const defaultLanguage =
     initialLanguage ||
     storedLanguage ||
-    (countryCode
-      ? getDefaultLanguageForCountry(countryCode)
-      : DEFAULT_LANGUAGE);
+    (countryCode ? getDefaultLanguageForCountry(countryCode) : DEFAULT_LANGUAGE);
 
   const config = getLanguageConfig(defaultLanguage);
   const direction = config.direction;
@@ -95,7 +84,7 @@ export function I18nProvider({
         direction,
         config,
         setLanguage,
-        isRTL: rtl
+        isRTL: rtl,
       }}
     >
       <DirectionProvider dir={direction}>{children}</DirectionProvider>

@@ -10,24 +10,24 @@ export const PANEL_NOINDEX_ROBOTS: NonNullable<Metadata['robots']> = {
   googleBot: {
     index: false,
     follow: false,
-    noimageindex: true
-  }
+    noimageindex: true,
+  },
 };
 
 export function buildPanelMetadata(language: LanguageCode): Metadata {
   return {
     title: {
       default: t('meta.title', language),
-      template: t('meta.titleTemplate', language)
+      template: t('meta.titleTemplate', language),
     },
     description: t('meta.description', language),
     robots: PANEL_NOINDEX_ROBOTS,
     icons: {
       icon: [
         { url: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' },
-        { url: '/panel-icon.svg', type: 'image/svg+xml' }
+        { url: '/panel-icon.svg', type: 'image/svg+xml' },
       ],
-      shortcut: '/favicon.ico'
-    }
+      shortcut: '/favicon.ico',
+    },
   };
 }

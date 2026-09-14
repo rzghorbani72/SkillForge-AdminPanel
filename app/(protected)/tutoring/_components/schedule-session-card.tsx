@@ -9,7 +9,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -38,7 +38,7 @@ export function ScheduleSessionCard({
   onChange,
   activeEngagements,
   saving,
-  onSubmit
+  onSubmit,
 }: ScheduleSessionCardProps) {
   const { t } = useTranslation();
 
@@ -52,9 +52,7 @@ export function ScheduleSessionCard({
           <Label>{t('tutoring.engagement')}</Label>
           <Select
             value={form.engagement_id}
-            onValueChange={(value) =>
-              onChange({ ...form, engagement_id: value })
-            }
+            onValueChange={(value) => onChange({ ...form, engagement_id: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder={t('tutoring.selectEngagement')} />
@@ -63,8 +61,7 @@ export function ScheduleSessionCard({
               {activeEngagements.map((engagement) => (
                 <SelectItem key={engagement.id} value={engagement.id}>
                   {engagement.Course?.title ?? engagement.course_id} ·{' '}
-                  {engagement.Student?.display_name ??
-                    engagement.student_profile_id}
+                  {engagement.Student?.display_name ?? engagement.student_profile_id}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -75,9 +72,7 @@ export function ScheduleSessionCard({
           <DatePicker
             id="startsAt"
             value={form.starts_at}
-            onChange={(pickedValue: string) =>
-              onChange({ ...form, starts_at: pickedValue })
-            }
+            onChange={(pickedValue: string) => onChange({ ...form, starts_at: pickedValue })}
             withTime
           />
         </div>
@@ -86,9 +81,7 @@ export function ScheduleSessionCard({
           <DatePicker
             id="endsAtSession"
             value={form.ends_at}
-            onChange={(pickedValue: string) =>
-              onChange({ ...form, ends_at: pickedValue })
-            }
+            onChange={(pickedValue: string) => onChange({ ...form, ends_at: pickedValue })}
             withTime
           />
         </div>
@@ -97,9 +90,7 @@ export function ScheduleSessionCard({
           <Input
             id="timezone"
             value={form.timezone}
-            onChange={(event) =>
-              onChange({ ...form, timezone: event.target.value })
-            }
+            onChange={(event) => onChange({ ...form, timezone: event.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -109,22 +100,16 @@ export function ScheduleSessionCard({
             dir="ltr"
             placeholder="https://meet.google.com/..."
             value={form.meeting_url}
-            onChange={(event) =>
-              onChange({ ...form, meeting_url: event.target.value })
-            }
+            onChange={(event) => onChange({ ...form, meeting_url: event.target.value })}
           />
-          <p className="text-xs text-muted-foreground">
-            {t('tutoring.meetingUrlHint')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('tutoring.meetingUrlHint')}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="notes">{t('tutoring.notes')}</Label>
           <Textarea
             id="notes"
             value={form.notes}
-            onChange={(event) =>
-              onChange({ ...form, notes: event.target.value })
-            }
+            onChange={(event) => onChange({ ...form, notes: event.target.value })}
             rows={2}
           />
         </div>

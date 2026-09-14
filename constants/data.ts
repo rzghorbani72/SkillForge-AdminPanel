@@ -7,7 +7,7 @@ export enum OtpType {
   RESET_PASSWORD_BY_PHONE = 'RESET_PASSWORD_BY_PHONE',
   RESET_PASSWORD_BY_EMAIL = 'RESET_PASSWORD_BY_EMAIL',
   REGISTER_PHONE_VERIFICATION = 'REGISTER_PHONE_VERIFICATION',
-  REGISTER_EMAIL_VERIFICATION = 'REGISTER_EMAIL_VERIFICATION'
+  REGISTER_EMAIL_VERIFICATION = 'REGISTER_EMAIL_VERIFICATION',
 }
 
 export type User = {
@@ -57,14 +57,14 @@ const ACADEMY_SUPPORT_ROLES: NonNullable<NavItem['roles']> = [
   'FINANCE',
   'SUPPORT',
   'MANAGER',
-  'TEACHER'
+  'TEACHER',
 ];
 
 function academySupportItem(
   title: string,
   href: string,
   label: string,
-  icon: IconType = 'help'
+  icon: IconType = 'help',
 ): NavItem {
   return {
     title,
@@ -72,7 +72,7 @@ function academySupportItem(
     icon,
     label,
     roles: ACADEMY_SUPPORT_ROLES,
-    scope: 'academy'
+    scope: 'academy',
   };
 }
 
@@ -86,7 +86,7 @@ export const navItems: NavItem[] = [
     icon: 'dashboard' as IconType,
     label: 'platformOverview',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT'],
-    scope: 'platform'
+    scope: 'platform',
   },
   {
     title: 'Academies',
@@ -94,7 +94,7 @@ export const navItems: NavItem[] = [
     icon: 'store' as IconType,
     label: 'allAcademies',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT'],
-    scope: 'platform'
+    scope: 'platform',
   },
   {
     title: 'Users',
@@ -102,7 +102,7 @@ export const navItems: NavItem[] = [
     icon: 'users' as IconType,
     label: 'users',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
-    scope: 'platform'
+    scope: 'platform',
   },
   {
     title: 'Support Inbox',
@@ -111,7 +111,7 @@ export const navItems: NavItem[] = [
     label: 'supportInbox',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
     supportOnly: true,
-    scope: 'platform'
+    scope: 'platform',
   },
   // Money — platform cash in (managers → Mentoma) and cash out
   {
@@ -127,7 +127,7 @@ export const navItems: NavItem[] = [
         icon: 'trendingUp' as IconType,
         label: 'investorReport',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Platform costs',
@@ -136,7 +136,7 @@ export const navItems: NavItem[] = [
         label: 'platformCosts',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Financial',
@@ -146,7 +146,7 @@ export const navItems: NavItem[] = [
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
         financeOnly: true,
         scope: 'platform',
-        paymentGated: true
+        paymentGated: true,
       },
       {
         title: 'Manager subscriptions',
@@ -157,7 +157,7 @@ export const navItems: NavItem[] = [
         financeOnly: true,
         adminOnly: true,
         scope: 'platform',
-        paymentGated: true
+        paymentGated: true,
       },
       {
         title: 'Platform Vouchers',
@@ -166,7 +166,7 @@ export const navItems: NavItem[] = [
         label: 'platformVouchers',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Withdrawals',
@@ -176,7 +176,7 @@ export const navItems: NavItem[] = [
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
         financeOnly: true,
         scope: 'platform',
-        paymentGated: true
+        paymentGated: true,
       },
       {
         title: 'Teacher Payouts',
@@ -187,9 +187,9 @@ export const navItems: NavItem[] = [
         financeOnly: true,
         adminOnly: true,
         scope: 'platform',
-        paymentGated: true
-      }
-    ]
+        paymentGated: true,
+      },
+    ],
   },
   // Content — what the platform publishes, and the templates academies start from
   {
@@ -206,7 +206,7 @@ export const navItems: NavItem[] = [
         label: 'platformBlog',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Broadcasts',
@@ -215,7 +215,7 @@ export const navItems: NavItem[] = [
         label: 'broadcasts',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Dashboard Banners',
@@ -224,7 +224,7 @@ export const navItems: NavItem[] = [
         label: 'dashboardBanners',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Storage',
@@ -233,7 +233,7 @@ export const navItems: NavItem[] = [
         label: 'platformStorage',
         roles: ['PLATFORM_OWNER'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Templates Gallery',
@@ -242,7 +242,7 @@ export const navItems: NavItem[] = [
         label: 'templatesGallery',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Template Covers',
@@ -251,9 +251,9 @@ export const navItems: NavItem[] = [
         label: 'templateCovers',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
-      }
-    ]
+        scope: 'platform',
+      },
+    ],
   },
   // Configuration — what the platform sells
   {
@@ -270,7 +270,7 @@ export const navItems: NavItem[] = [
         label: 'platformSettings',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Plan Pricing',
@@ -279,9 +279,9 @@ export const navItems: NavItem[] = [
         label: 'planPricing',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
-      }
-    ]
+        scope: 'platform',
+      },
+    ],
   },
   // Governance — trust, legal and audit surfaces
   {
@@ -298,7 +298,7 @@ export const navItems: NavItem[] = [
         label: 'contentReview',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Legal Documents',
@@ -307,7 +307,7 @@ export const navItems: NavItem[] = [
         label: 'legalDocuments',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Support Access Logs',
@@ -316,7 +316,7 @@ export const navItems: NavItem[] = [
         label: 'supportAccessLogs',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
+        scope: 'platform',
       },
       {
         title: 'Roles & Permissions',
@@ -325,9 +325,9 @@ export const navItems: NavItem[] = [
         label: 'rolesPermissions',
         roles: ['PLATFORM_OWNER', 'ADMIN'],
         adminOnly: true,
-        scope: 'platform'
-      }
-    ]
+        scope: 'platform',
+      },
+    ],
   },
   // Ordered by how often a manager needs it: the daily destinations are flat
   // and always visible; only the occasional screens sit inside a group.
@@ -336,29 +336,22 @@ export const navItems: NavItem[] = [
     href: '/dashboard',
     icon: 'dashboard' as IconType,
     label: 'dashboard',
-    scope: 'academy'
+    scope: 'academy',
   },
   {
     title: 'Courses',
     href: '/courses',
     icon: 'course' as IconType,
     label: 'courses',
-    scope: 'academy'
+    scope: 'academy',
   },
   {
     title: 'Users',
     href: '/users',
     icon: 'users' as IconType,
     label: 'users',
-    roles: [
-      'PLATFORM_OWNER',
-      'ADMIN',
-      'FINANCE',
-      'SUPPORT',
-      'MANAGER',
-      'TEACHER'
-    ],
-    scope: 'academy'
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT', 'MANAGER', 'TEACHER'],
+    scope: 'academy',
   },
   {
     title: 'My Academies',
@@ -366,7 +359,7 @@ export const navItems: NavItem[] = [
     icon: 'store' as IconType,
     label: 'myAcademies',
     roles: ['MANAGER', 'TEACHER'],
-    scope: 'academy'
+    scope: 'academy',
   },
   // Teaching — every child is capability-gated, so an academy that sells only
   // recorded courses never sees this group at all.
@@ -374,14 +367,7 @@ export const navItems: NavItem[] = [
     title: 'Teaching',
     icon: 'bookOpen' as IconType,
     label: 'teaching',
-    roles: [
-      'PLATFORM_OWNER',
-      'ADMIN',
-      'FINANCE',
-      'SUPPORT',
-      'MANAGER',
-      'TEACHER'
-    ],
+    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT', 'MANAGER', 'TEACHER'],
     scope: 'academy',
     children: [
       {
@@ -390,7 +376,7 @@ export const navItems: NavItem[] = [
         icon: 'bookOpen' as IconType,
         label: 'assignments',
         scope: 'academy',
-        requiresLearningCapability: 'assignments'
+        requiresLearningCapability: 'assignments',
       },
       {
         title: 'Tutoring',
@@ -398,7 +384,7 @@ export const navItems: NavItem[] = [
         icon: 'userPlus' as IconType,
         label: 'tutoring',
         scope: 'academy',
-        requiresLearningCapability: 'tutoring'
+        requiresLearningCapability: 'tutoring',
       },
       {
         title: 'Group Classes',
@@ -406,7 +392,7 @@ export const navItems: NavItem[] = [
         icon: 'users' as IconType,
         label: 'tutoringGroups',
         scope: 'academy',
-        requiresLearningCapability: 'tutoring'
+        requiresLearningCapability: 'tutoring',
       },
       {
         title: 'Ops Queue',
@@ -414,9 +400,9 @@ export const navItems: NavItem[] = [
         icon: 'trendingUp' as IconType,
         label: 'opsQueue',
         scope: 'academy',
-        requiresLearningCapability: 'ops_queue'
-      }
-    ]
+        requiresLearningCapability: 'ops_queue',
+      },
+    ],
   },
   // مالی آکادمی — students → academy (income)
   {
@@ -432,7 +418,7 @@ export const navItems: NavItem[] = [
         icon: 'creditCard' as IconType,
         label: 'studentPayments',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Settlement',
@@ -440,7 +426,7 @@ export const navItems: NavItem[] = [
         icon: 'banknote' as IconType,
         label: 'settlement',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Student Vouchers',
@@ -448,9 +434,9 @@ export const navItems: NavItem[] = [
         icon: 'percent' as IconType,
         label: 'studentVouchers',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
-      }
-    ]
+        scope: 'academy',
+      },
+    ],
   },
   // مالی پلتفرم — academy → Mentoma (invoices, plan pay, platform vouchers)
   {
@@ -467,7 +453,7 @@ export const navItems: NavItem[] = [
         icon: 'creditCard' as IconType,
         label: 'platformPaymentsNav',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Academy Subscription',
@@ -475,7 +461,7 @@ export const navItems: NavItem[] = [
         icon: 'billing' as IconType,
         label: 'platformPlan',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Platform vouchers',
@@ -483,9 +469,9 @@ export const navItems: NavItem[] = [
         icon: 'percent' as IconType,
         label: 'planVouchers',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
-      }
-    ]
+        scope: 'academy',
+      },
+    ],
   },
   {
     title: 'Website',
@@ -500,7 +486,7 @@ export const navItems: NavItem[] = [
         icon: 'dashboard' as IconType,
         label: 'websiteOverview',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Appearance',
@@ -508,7 +494,7 @@ export const navItems: NavItem[] = [
         icon: 'gallery' as IconType,
         label: 'websiteAppearance',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Pages',
@@ -516,7 +502,7 @@ export const navItems: NavItem[] = [
         icon: 'fileText' as IconType,
         label: 'websitePages',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Search & sharing',
@@ -524,7 +510,7 @@ export const navItems: NavItem[] = [
         icon: 'search' as IconType,
         label: 'websiteSeo',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Trust badge',
@@ -532,7 +518,7 @@ export const navItems: NavItem[] = [
         icon: 'shield' as IconType,
         label: 'websiteTrust',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Domain',
@@ -540,9 +526,9 @@ export const navItems: NavItem[] = [
         icon: 'globe' as IconType,
         label: 'websiteDomain',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
-      }
-    ]
+        scope: 'academy',
+      },
+    ],
   },
   {
     title: 'My Earnings',
@@ -550,7 +536,7 @@ export const navItems: NavItem[] = [
     icon: 'wallet2' as IconType,
     label: 'teacherEarnings',
     roles: ['TEACHER'],
-    scope: 'academy'
+    scope: 'academy',
   },
   // Growth — what measures or feeds the public site, not the site itself
   {
@@ -566,7 +552,7 @@ export const navItems: NavItem[] = [
         icon: 'barChart' as IconType,
         label: 'analytics',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Blog',
@@ -574,7 +560,7 @@ export const navItems: NavItem[] = [
         icon: 'fileText' as IconType,
         label: 'academyBlog',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Marketing',
@@ -582,7 +568,7 @@ export const navItems: NavItem[] = [
         icon: 'network' as IconType,
         label: 'affiliates',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Academy health',
@@ -590,9 +576,9 @@ export const navItems: NavItem[] = [
         icon: 'activity' as IconType,
         label: 'monitoring',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
-      }
-    ]
+        scope: 'academy',
+      },
+    ],
   },
   // The owner's own account and setup, not the academy's day-to-day
   {
@@ -608,7 +594,7 @@ export const navItems: NavItem[] = [
         icon: 'settings' as IconType,
         label: 'settingsHub',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Storage',
@@ -616,7 +602,7 @@ export const navItems: NavItem[] = [
         icon: 'hardDrive' as IconType,
         label: 'storage',
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy'
+        scope: 'academy',
       },
       {
         title: 'Roles & Permissions',
@@ -624,9 +610,9 @@ export const navItems: NavItem[] = [
         icon: 'shield' as IconType,
         label: 'rolesPermissions',
         roles: ['MANAGER'],
-        scope: 'academy'
-      }
-    ]
+        scope: 'academy',
+      },
+    ],
   },
   {
     title: 'Support',
@@ -639,21 +625,16 @@ export const navItems: NavItem[] = [
       academySupportItem('Email', '/support/email', 'supportEmail'),
       academySupportItem('FAQ', '/support/faq', 'supportFaq'),
       academySupportItem('Phone number', '/support/phone', 'supportPhone'),
-      academySupportItem(
-        'Suggestion',
-        '/support/suggestion',
-        'supportSuggestion',
-        'megaphone'
-      )
-    ]
+      academySupportItem('Suggestion', '/support/suggestion', 'supportSuggestion', 'megaphone'),
+    ],
   },
   {
     title: 'My Affiliate',
     href: '/my-affiliate',
     icon: 'network' as IconType,
     label: 'my-affiliate',
-    roles: ['STUDENT', 'TEACHER', 'AFFILIATE']
-  }
+    roles: ['STUDENT', 'TEACHER', 'AFFILIATE'],
+  },
 ];
 
 // Dashboard quick stats
@@ -661,7 +642,7 @@ export const dashboardStats = {
   totalCourses: 24,
   totalStudents: 1234,
   totalRevenue: 45678,
-  activeEnrollments: 89
+  activeEnrollments: 89,
 };
 
 // Recent activity data
@@ -672,7 +653,7 @@ export const recentActivity = [
     title: 'New course created',
     description: 'React Fundamentals course was created',
     timestamp: '2 hours ago',
-    user: 'John Doe'
+    user: 'John Doe',
   },
   {
     id: 2,
@@ -680,7 +661,7 @@ export const recentActivity = [
     title: 'New student enrolled',
     description: 'Alice Johnson enrolled in JavaScript Basics',
     timestamp: '4 hours ago',
-    user: 'Alice Johnson'
+    user: 'Alice Johnson',
   },
   {
     id: 3,
@@ -688,15 +669,15 @@ export const recentActivity = [
     title: 'Payment received',
     description: '$99 payment for Advanced React course',
     timestamp: '6 hours ago',
-    user: 'Bob Smith'
-  }
+    user: 'Bob Smith',
+  },
 ];
 
 // Course difficulty options
 export const courseDifficulties = [
   { value: 'BEGINNER', label: 'Beginner' },
   { value: 'INTERMEDIATE', label: 'Intermediate' },
-  { value: 'ADVANCED', label: 'Advanced' }
+  { value: 'ADVANCED', label: 'Advanced' },
 ];
 
 // Media types
@@ -704,7 +685,7 @@ export const mediaTypes = [
   { value: 'IMAGE', label: 'Image' },
   { value: 'VIDEO', label: 'Video' },
   { value: 'AUDIO', label: 'Audio' },
-  { value: 'DOCUMENT', label: 'Document' }
+  { value: 'DOCUMENT', label: 'Document' },
 ];
 
 // User roles
@@ -712,7 +693,7 @@ export const userRoles = [
   { value: 'ADMIN', label: 'Admin' },
   { value: 'MANAGER', label: 'Manager' },
   { value: 'TEACHER', label: 'Teacher' },
-  { value: 'USER', label: 'User' }
+  { value: 'USER', label: 'User' },
 ];
 
 // Payment statuses
@@ -720,7 +701,7 @@ export const paymentStatuses = [
   { value: 'PENDING', label: 'Pending' },
   { value: 'COMPLETED', label: 'Completed' },
   { value: 'FAILED', label: 'Failed' },
-  { value: 'REFUNDED', label: 'Refunded' }
+  { value: 'REFUNDED', label: 'Refunded' },
 ];
 
 // Enrollment statuses
@@ -728,5 +709,5 @@ export const enrollmentStatuses = [
   { value: 'ACTIVE', label: 'Active' },
   { value: 'COMPLETED', label: 'Completed' },
   { value: 'CANCELLED', label: 'Cancelled' },
-  { value: 'EXPIRED', label: 'Expired' }
+  { value: 'EXPIRED', label: 'Expired' },
 ];

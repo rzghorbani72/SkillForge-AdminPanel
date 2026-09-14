@@ -2,13 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from '@/components/ui/link';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CreditCard, DollarSign, Lock, Plus } from 'lucide-react';
@@ -27,15 +21,15 @@ const METHOD_CONFIG = [
     titleKey: 'payments.gateways.samanSep.title',
     descriptionKey: 'payments.gateways.samanSep.description',
     icon: CreditCard,
-    badges: [{ labelKey: 'payments.gatewayBadge.active', tone: 'active' }]
+    badges: [{ labelKey: 'payments.gatewayBadge.active', tone: 'active' }],
   },
   {
     key: 'BITPAY',
     titleKey: 'payments.gateways.bitpay.title',
     descriptionKey: 'payments.gateways.bitpay.description',
     icon: DollarSign,
-    badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }]
-  }
+    badges: [{ labelKey: 'payments.gatewayBadge.inactive', tone: 'inactive' }],
+  },
 ] as const;
 
 type Tone = 'active' | 'inactive' | 'pending' | 'beta' | 'roadmap';
@@ -45,15 +39,14 @@ const TONE_STYLES: Record<Tone, string> = {
   inactive: 'bg-muted text-muted-foreground',
   pending: 'bg-yellow-100 text-yellow-800',
   beta: 'bg-blue-100 text-blue-800',
-  roadmap: 'bg-purple-100 text-purple-800'
+  roadmap: 'bg-purple-100 text-purple-800',
 };
 
 export default function PaymentMethodsPage() {
   const { t, language } = useTranslation();
   const { payments } = usePaymentsData();
   const currentAcademy = useCurrentAcademy();
-  const formatMethodLabel = (method: string) =>
-    formatPaymentMethodLabel(method, t);
+  const formatMethodLabel = (method: string) => formatPaymentMethodLabel(method, t);
 
   const methodMetrics = useMemo(() => {
     const map = new Map<string, { count: number; total: number }>();
@@ -68,10 +61,7 @@ export default function PaymentMethodsPage() {
       bucket.total += payment.amount ?? 0;
     });
 
-    const totalRevenue = Array.from(map.values()).reduce(
-      (sum, item) => sum + item.total,
-      0
-    );
+    const totalRevenue = Array.from(map.values()).reduce((sum, item) => sum + item.total, 0);
 
     return {
       totalRevenue,
@@ -79,77 +69,54 @@ export default function PaymentMethodsPage() {
         method,
         count: data.count,
         total: data.total,
-        share:
-          totalRevenue > 0 ? Math.round((data.total / totalRevenue) * 100) : 0
-      }))
+        share: totalRevenue > 0 ? Math.round((data.total / totalRevenue) * 100) : 0,
+      })),
     };
   }, [payments]);
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('payments.paymentMethodsTitle')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('payments.paymentMethodsPageDescription')}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('payments.paymentMethodsTitle')}</h1>
+        <p className="text-muted-foreground">{t('payments.paymentMethodsPageDescription')}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('analytics.totalRevenue')}
-            </CardTitle>
-            <CardDescription>
-              {t('payments.capturedThroughGateways')}
-            </CardDescription>
+            <CardTitle className="text-sm font-medium">{t('analytics.totalRevenue')}</CardTitle>
+            <CardDescription>{t('payments.capturedThroughGateways')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {formatCurrencyWithStore(
-                methodMetrics.totalRevenue,
-                currentAcademy,
-                100,
-                language
-              )}
+              {formatCurrencyWithStore(methodMetrics.totalRevenue, currentAcademy, 100, language)}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.activeMethods')}
-            </CardTitle>
-            <CardDescription>
-              {t('payments.activeMethodsDescription')}
-            </CardDescription>
+            <CardTitle className="text-sm font-medium">{t('payments.activeMethods')}</CardTitle>
+            <CardDescription>{t('payments.activeMethodsDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
               {
-                METHOD_CONFIG.filter((item) =>
-                  item.badges.some((badge) => badge.tone === 'active')
-                ).length
+                METHOD_CONFIG.filter((item) => item.badges.some((badge) => badge.tone === 'active'))
+                  .length
               }
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.retiredGateways')}
-            </CardTitle>
-            <CardDescription>
-              {t('payments.retiredGatewaysDescription')}
-            </CardDescription>
+            <CardTitle className="text-sm font-medium">{t('payments.retiredGateways')}</CardTitle>
+            <CardDescription>{t('payments.retiredGatewaysDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
               {
                 METHOD_CONFIG.filter((item) =>
-                  item.badges.some((badge) => badge.tone === 'inactive')
+                  item.badges.some((badge) => badge.tone === 'inactive'),
                 ).length
               }
             </p>
@@ -160,38 +127,22 @@ export default function PaymentMethodsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('payments.gatewayPerformance')}</CardTitle>
-          <CardDescription>
-            {t('payments.gatewayPerformanceDescription')}
-          </CardDescription>
+          <CardDescription>{t('payments.gatewayPerformanceDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {methodMetrics.breakdown.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('payments.noPaymentsProcessed')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('payments.noPaymentsProcessed')}</p>
           ) : (
             methodMetrics.breakdown.map((item) => (
-              <div
-                key={item.method}
-                className="space-y-3 rounded-lg border p-4"
-              >
+              <div key={item.method} className="space-y-3 rounded-lg border p-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold">
-                    {formatMethodLabel(item.method)}
-                  </p>
+                  <p className="text-sm font-semibold">{formatMethodLabel(item.method)}</p>
                   <Badge variant="outline">
                     {item.count} {t('payments.paymentsCountLabel')}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>
-                    {formatCurrencyWithStore(
-                      item.total,
-                      currentAcademy,
-                      100,
-                      language
-                    )}
-                  </span>
+                  <span>{formatCurrencyWithStore(item.total, currentAcademy, 100, language)}</span>
                   <span className="text-muted-foreground">
                     {item.share}% {t('payments.ofRevenue')}
                   </span>
@@ -218,29 +169,20 @@ export default function PaymentMethodsPage() {
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap gap-2">
                   {method.badges.map((badge) => (
-                    <Badge
-                      key={badge.labelKey}
-                      className={TONE_STYLES[badge.tone]}
-                    >
+                    <Badge key={badge.labelKey} className={TONE_STYLES[badge.tone]}>
                       {t(badge.labelKey)}
                     </Badge>
                   ))}
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" asChild>
-                    <Link
-                      href={`/settings/payment-gateway?gateway=${method.key}&tab=access`}
-                    >
-                      <Lock className="me-2 h-4 w-4" />{' '}
-                      {t('payments.manageAccess')}
+                    <Link href={`/settings/payment-gateway?gateway=${method.key}&tab=access`}>
+                      <Lock className="me-2 h-4 w-4" /> {t('payments.manageAccess')}
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
-                    <Link
-                      href={`/settings/payment-gateway?gateway=${method.key}&tab=config`}
-                    >
-                      <Plus className="me-2 h-4 w-4" />{' '}
-                      {t('payments.configure')}
+                    <Link href={`/settings/payment-gateway?gateway=${method.key}&tab=config`}>
+                      <Plus className="me-2 h-4 w-4" /> {t('payments.configure')}
                     </Link>
                   </Button>
                 </div>

@@ -16,7 +16,7 @@ export function SearchBar({
   placeholder = 'Search...',
   value,
   onChange,
-  className
+  className,
 }: SearchBarProps) {
   return (
     <div className={cn('relative max-w-md', className)}>

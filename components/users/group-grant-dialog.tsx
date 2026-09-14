@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -17,12 +17,9 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
-import {
-  EntityMultiSelect,
-  type SelectableEntity
-} from '@/components/shared/entity-multi-select';
+import { EntityMultiSelect, type SelectableEntity } from '@/components/shared/entity-multi-select';
 import { apiClient } from '@/lib/api';
 import { studentGroupsApi } from '@/lib/api-extra';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -42,12 +39,10 @@ type GroupGrantDialogProps = {
 type CourseRecord = { id: string; title?: string | null };
 type LessonRecord = { id: string; title?: string | null };
 
-function toEntities(
-  records: { id: string; title?: string | null }[]
-): SelectableEntity[] {
+function toEntities(records: { id: string; title?: string | null }[]): SelectableEntity[] {
   return records.map((record) => ({
     id: record.id,
-    title: record.title || '—'
+    title: record.title || '—',
   }));
 }
 
@@ -60,7 +55,7 @@ export function GroupGrantDialog({
   groupId,
   mode,
   onOpenChange,
-  onGranted
+  onGranted,
 }: GroupGrantDialogProps) {
   const { t } = useTranslation();
   const [courses, setCourses] = useState<SelectableEntity[]>([]);
@@ -77,7 +72,7 @@ export function GroupGrantDialog({
     try {
       const data = await apiClient.getCourses({
         page: 1,
-        limit: COURSE_PAGE_SIZE
+        limit: COURSE_PAGE_SIZE,
       });
       setCourses(toEntities((data?.courses ?? []) as CourseRecord[]));
     } catch (error) {
@@ -93,7 +88,7 @@ export function GroupGrantDialog({
     try {
       const data = (await apiClient.getLessons({
         course_id: selectedCourseId,
-        limit: COURSE_PAGE_SIZE
+        limit: COURSE_PAGE_SIZE,
       })) as LessonRecord[];
       setLessons(toEntities(Array.isArray(data) ? data : []));
     } catch (error) {
@@ -159,24 +154,16 @@ export function GroupGrantDialog({
               ? t('users.grantCourseAccessTitle')
               : t('users.grantLessonAccessTitle')}
           </DialogTitle>
-          <DialogDescription>
-            {t('users.grantAccessDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('users.grantAccessDescription')}</DialogDescription>
         </DialogHeader>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           {mode === 'lesson' && (
             <div className="space-y-2">
               <Label>{t('users.selectCourseFirst')}</Label>
-              <Select
-                value={courseId}
-                onValueChange={setCourseId}
-                disabled={isSaving}
-              >
+              <Select value={courseId} onValueChange={setCourseId} disabled={isSaving}>
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder={t('users.selectCoursePlaceholder')}
-                  />
+                  <SelectValue placeholder={t('users.selectCoursePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {courses.map((course) => (
@@ -205,16 +192,12 @@ export function GroupGrantDialog({
               disabled={isSaving}
               labels={{
                 placeholder:
-                  mode === 'course'
-                    ? t('users.selectCourses')
-                    : t('users.selectLessons'),
+                  mode === 'course' ? t('users.selectCourses') : t('users.selectLessons'),
                 selected: t('common.selected'),
                 search: t('common.search'),
                 empty:
-                  mode === 'course'
-                    ? t('users.noCoursesAvailable')
-                    : t('users.noLessonsAvailable'),
-                remove: t('common.remove')
+                  mode === 'course' ? t('users.noCoursesAvailable') : t('users.noLessonsAvailable'),
+                remove: t('common.remove'),
               }}
             />
           )}

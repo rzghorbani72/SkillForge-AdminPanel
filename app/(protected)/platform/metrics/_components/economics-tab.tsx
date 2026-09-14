@@ -2,17 +2,13 @@
 
 import Link from 'next/link';
 import { ScalarMetrics } from './scalar-metrics';
-import {
-  DataPanel,
-  DataList,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataPanel, DataList, type DataColumn } from '@/components/shared/data-list';
 import { Button } from '@/components/ui/button';
 import {
   apiClient,
   type MetricsQuery,
   type MetricsCurrency,
-  type MarketingSpendRow
+  type MarketingSpendRow,
 } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -27,49 +23,45 @@ interface Props {
 
 const CAVEAT_KEYS: Record<string, string> = {
   marketing_spend_not_entered: 'platformMetrics.caveats.marketingSpend',
-  runway_requires_cash_balance_not_stored_in_platform:
-    'platformMetrics.caveats.runway',
-  no_platform_financial_records_for_period:
-    'platformMetrics.caveats.financialRecords',
-  zero_observed_churn_ltv_undefined: 'platformMetrics.caveats.zeroChurn'
+  runway_requires_cash_balance_not_stored_in_platform: 'platformMetrics.caveats.runway',
+  no_platform_financial_records_for_period: 'platformMetrics.caveats.financialRecords',
+  zero_observed_churn_ltv_undefined: 'platformMetrics.caveats.zeroChurn',
 };
 
 export function EconomicsTab({ query, currency }: Props) {
   const { t } = useTranslation();
   const format = useMetricFormat(currency);
   const formatDate = useDateFormat();
-  const { data, loading } = useMetricsFetch(query, (q) =>
-    apiClient.getMetricsUnitEconomics(q)
-  );
+  const { data, loading } = useMetricsFetch(query, (q) => apiClient.getMetricsUnitEconomics(q));
   const { data: spend, loading: spendLoading } = useMetricsFetch(query, (q) =>
-    apiClient.getMarketingSpend(q)
+    apiClient.getMarketingSpend(q),
   );
 
   const spendColumns: DataColumn<MarketingSpendRow>[] = [
     {
       id: 'channel',
       header: t('platformMetrics.spend.channel'),
-      cell: (row) => row.channel
+      cell: (row) => row.channel,
     },
     {
       id: 'amount',
       header: t('platformMetrics.spend.amount'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => format('amount', row.amount)
+      cell: (row) => format('amount', row.amount),
     },
     {
       id: 'period',
       header: t('platformMetrics.columns.month'),
       className: METRIC_VALUE_CLASS,
       cell: (row) =>
-        `${formatDate(new Date(row.period_start))} – ${formatDate(new Date(row.period_end))}`
+        `${formatDate(new Date(row.period_start))} – ${formatDate(new Date(row.period_end))}`,
     },
     {
       id: 'note',
       header: t('platformMetrics.columns.metric'),
-      cell: (row) => row.note ?? '—'
-    }
+      cell: (row) => row.note ?? '—',
+    },
   ];
 
   return (

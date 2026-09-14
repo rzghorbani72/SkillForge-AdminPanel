@@ -6,7 +6,11 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const { OVERSIZE_ALLOWLIST, LEGACY_ANY_ALLOWLIST = [], MAX_LINES } = await import(resolve(ROOT, 'eslint.oversize.mjs'));
+const {
+  OVERSIZE_ALLOWLIST,
+  LEGACY_ANY_ALLOWLIST = [],
+  MAX_LINES,
+} = await import(resolve(ROOT, 'eslint.oversize.mjs'));
 
 const codeLines = (src) =>
   src.split('\n').filter((l) => {
@@ -28,13 +32,19 @@ const cleanAny = LEGACY_ANY_ALLOWLIST.filter((f) => {
 let failed = false;
 if (stale.length) {
   failed = true;
-  console.error(`These files are now within ${MAX_LINES} lines (or gone) — remove them from OVERSIZE_ALLOWLIST:`);
+  console.error(
+    `These files are now within ${MAX_LINES} lines (or gone) — remove them from OVERSIZE_ALLOWLIST:`,
+  );
   for (const f of stale) console.error(`  - ${f}`);
 }
 if (cleanAny.length) {
   failed = true;
-  console.error('These files no longer use `any`/`x!` (or are gone) — remove them from LEGACY_ANY_ALLOWLIST:');
+  console.error(
+    'These files no longer use `any`/`x!` (or are gone) — remove them from LEGACY_ANY_ALLOWLIST:',
+  );
   for (const f of cleanAny) console.error(`  - ${f}`);
 }
 if (failed) process.exit(1);
-console.log(`legacy allowlists: ${OVERSIZE_ALLOWLIST.length} oversize, ${LEGACY_ANY_ALLOWLIST.length} untyped file(s) left`);
+console.log(
+  `legacy allowlists: ${OVERSIZE_ALLOWLIST.length} oversize, ${LEGACY_ANY_ALLOWLIST.length} untyped file(s) left`,
+);

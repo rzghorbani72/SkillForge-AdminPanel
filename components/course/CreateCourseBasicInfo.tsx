@@ -8,7 +8,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
@@ -19,7 +19,7 @@ import {
   COURSE_LEARNING_OUTCOMES_MAX,
   COURSE_REQUIREMENTS_MAX,
   COURSE_TITLE_MAX,
-  CourseFormData
+  CourseFormData,
 } from './schema';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -51,8 +51,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
               <p
                 className={`text-sm ${(field.value?.length || 0) >= COURSE_TITLE_MAX - 10 ? 'text-orange-600' : 'text-muted-foreground'}`}
               >
-                {t('courses.titleLength')} (
-                {formatNumber(field.value?.length || 0)}/
+                {t('courses.titleLength')} ({formatNumber(field.value?.length || 0)}/
                 {formatNumber(COURSE_TITLE_MAX)})
               </p>
             </FormItem>
@@ -95,9 +94,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
                   className="min-h-[120px]"
                 />
               </FormControl>
-              <FormDescription>
-                {t('courses.whatYouWillLearnHint')}
-              </FormDescription>
+              <FormDescription>{t('courses.whatYouWillLearnHint')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

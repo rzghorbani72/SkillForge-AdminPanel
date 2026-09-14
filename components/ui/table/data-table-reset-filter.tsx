@@ -6,10 +6,7 @@ type DataTableResetFilterProps = {
   onReset: () => void;
 };
 
-export function DataTableResetFilter({
-  isFilterActive,
-  onReset
-}: DataTableResetFilterProps) {
+export function DataTableResetFilter({ isFilterActive, onReset }: DataTableResetFilterProps) {
   return (
     <>
       {isFilterActive ? (

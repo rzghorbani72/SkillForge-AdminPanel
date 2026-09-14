@@ -9,7 +9,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import type { AcademySubscriptionInvoice } from '@/hooks/use-academy-subscription';
@@ -32,12 +32,12 @@ const STATUS_META: Record<
   FAILED: { labelKey: 'plans.invoiceStatusFailed', variant: 'destructive' },
   CANCELLED: {
     labelKey: 'plans.invoiceStatusCancelled',
-    variant: 'secondary'
+    variant: 'secondary',
   },
   DUPLICATE: {
     labelKey: 'plans.invoiceStatusDuplicate',
-    variant: 'destructive'
-  }
+    variant: 'destructive',
+  },
 };
 
 function currencyLabel(code: string, rialLabel: string): string {
@@ -49,10 +49,7 @@ function dash(value: string | null | undefined): string {
   return trimmed ? trimmed : '—';
 }
 
-export function SubscriptionInvoicesList({
-  invoices,
-  highlightId
-}: SubscriptionInvoicesListProps) {
+export function SubscriptionInvoicesList({ invoices, highlightId }: SubscriptionInvoicesListProps) {
   const { t, language } = useTranslation();
   const locale = getLocaleForLanguage(language);
   const formatDate = useDateFormat();
@@ -65,9 +62,7 @@ export function SubscriptionInvoicesList({
   };
 
   if (!invoices.length) {
-    return (
-      <p className="text-sm text-muted-foreground">{t('plans.noInvoices')}</p>
-    );
+    return <p className="text-sm text-muted-foreground">{t('plans.noInvoices')}</p>;
   }
 
   return (
@@ -77,22 +72,14 @@ export function SubscriptionInvoicesList({
           <TableRow className="bg-muted/30">
             <TableHead>{t('plans.invoicePlan')}</TableHead>
             <TableHead>{t('plans.invoiceStatus')}</TableHead>
-            <TableHead className="text-end">
-              {t('plans.invoiceAmount')}
-            </TableHead>
-            <TableHead className="text-end">
-              {t('plans.invoiceNetAmount')}
-            </TableHead>
-            <TableHead className="text-end">
-              {t('plans.invoiceVatShort')}
-            </TableHead>
+            <TableHead className="text-end">{t('plans.invoiceAmount')}</TableHead>
+            <TableHead className="text-end">{t('plans.invoiceNetAmount')}</TableHead>
+            <TableHead className="text-end">{t('plans.invoiceVatShort')}</TableHead>
             <TableHead>{t('plans.invoiceDiscountCode')}</TableHead>
             <TableHead>{t('plans.invoicePaidOn')}</TableHead>
             <TableHead>{t('plans.invoicePeriodLabel')}</TableHead>
             <TableHead>{t('plans.payTrackingCode')}</TableHead>
-            <TableHead className="text-end">
-              {t('plans.invoiceActions')}
-            </TableHead>
+            <TableHead className="text-end">{t('plans.invoiceActions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -117,8 +104,7 @@ export function SubscriptionInvoicesList({
                 key={invoice.id}
                 className={cn(
                   invoice.id === highlightId && 'bg-primary/5',
-                  invoice.status === 'FAILED' &&
-                    'bg-red-50/40 dark:bg-red-950/10'
+                  invoice.status === 'FAILED' && 'bg-red-50/40 dark:bg-red-950/10',
                 )}
               >
                 <TableCell className="whitespace-nowrap font-medium">
@@ -140,9 +126,7 @@ export function SubscriptionInvoicesList({
                     ? `${invoice.vat_amount.toLocaleString(locale)} ${unit}`
                     : '—'}
                 </TableCell>
-                <TableCell className="whitespace-nowrap font-mono text-xs">
-                  {discount}
-                </TableCell>
+                <TableCell className="whitespace-nowrap font-mono text-xs">{discount}</TableCell>
                 <TableCell className="whitespace-nowrap text-muted-foreground">
                   {dateValue ? formatDate(dateValue) : '—'}
                 </TableCell>
@@ -150,7 +134,7 @@ export function SubscriptionInvoicesList({
                   {isPaid
                     ? t('plans.invoicePeriod', {
                         start: formatDate(invoice.starts_at),
-                        end: formatDate(invoice.ends_at)
+                        end: formatDate(invoice.ends_at),
                       })
                     : '—'}
                 </TableCell>

@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,7 +16,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import {
   CONTENT_REVIEW_STATUS,
   type ContentReviewStatus,
-  type ReviewQueueItem
+  type ReviewQueueItem,
 } from '@/types/compliance';
 
 type Props = {
@@ -31,13 +31,7 @@ type Props = {
  * Suspending takes a real site offline and publishes the note to students, so
  * it demands a reason; approving does not.
  */
-export function ReviewActionDialog({
-  item,
-  action,
-  submitting,
-  onClose,
-  onConfirm
-}: Props) {
+export function ReviewActionDialog({ item, action, submitting, onClose, onConfirm }: Props) {
   const { t } = useTranslation();
   const [note, setNote] = useState('');
 
@@ -51,15 +45,10 @@ export function ReviewActionDialog({
   };
 
   return (
-    <Dialog
-      open={Boolean(item && action)}
-      onOpenChange={(open) => !open && close()}
-    >
+    <Dialog open={Boolean(item && action)} onOpenChange={(open) => !open && close()}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>
-            {t(`compliance.action.${action ?? 'PENDING'}.title`)}
-          </DialogTitle>
+          <DialogTitle>{t(`compliance.action.${action ?? 'PENDING'}.title`)}</DialogTitle>
           <DialogDescription>
             {item?.academy_name}
             {item?.custom_domain ? ` — ${item.custom_domain}` : ''}
@@ -84,9 +73,7 @@ export function ReviewActionDialog({
             }
           />
           {isSuspend ? (
-            <p className="text-xs text-muted-foreground">
-              {t('compliance.action.suspendWarning')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('compliance.action.suspendWarning')}</p>
           ) : null}
         </div>
 

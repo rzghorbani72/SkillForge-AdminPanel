@@ -31,42 +31,35 @@ export function ClassSellingFields({
   wholeClassBooking,
   seatsHeld = 0,
   onSeatPriceChange,
-  onWholeClassBookingChange
+  onWholeClassBookingChange,
 }: ClassSellingFieldsProps) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
   const formatNumber = useNumberFormat();
-  const effectivePrice =
-    seatPrice === '' ? (offerPrice ?? 0) : Number(seatPrice);
+  const effectivePrice = seatPrice === '' ? (offerPrice ?? 0) : Number(seatPrice);
 
   return (
     <div className="space-y-4 rounded-lg border p-4">
       <div className="space-y-1.5">
-        <Label htmlFor={`${idPrefix}-seat-price`}>
-          {t('courses.live.seatPrice')}
-        </Label>
+        <Label htmlFor={`${idPrefix}-seat-price`}>{t('courses.live.seatPrice')}</Label>
         <PriceInput
           id={`${idPrefix}-seat-price`}
           value={seatPrice}
           placeholder={offerPrice != null ? String(offerPrice) : undefined}
           onChange={onSeatPriceChange}
         />
-        <p className="text-xs text-muted-foreground">
-          {t('courses.live.seatPriceHint')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('courses.live.seatPriceHint')}</p>
       </div>
 
       {capacity > 1 ? (
         <p className="text-sm">
           <span className="text-muted-foreground">
             {t('courses.live.wholeClassPrice', {
-              count: formatNumber(capacity)
+              count: formatNumber(capacity),
             })}
             :
           </span>{' '}
-          <span className="font-semibold">
-            {formatCurrency(effectivePrice * capacity)}
-          </span>
+          <span className="font-semibold">{formatCurrency(effectivePrice * capacity)}</span>
         </p>
       ) : null}
 

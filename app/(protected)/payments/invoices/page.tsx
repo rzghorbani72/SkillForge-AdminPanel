@@ -1,13 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +17,7 @@ const STATUS_COLORS: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800',
   FAILED: 'bg-red-100 text-red-800',
   REFUNDED: 'bg-blue-100 text-blue-800',
-  CANCELLED: 'bg-muted text-foreground'
+  CANCELLED: 'bg-muted text-foreground',
 };
 
 const STATUS_LABEL_KEYS: Record<string, string> = {
@@ -31,13 +25,10 @@ const STATUS_LABEL_KEYS: Record<string, string> = {
   PENDING: 'payments.pending',
   FAILED: 'payments.failed',
   REFUNDED: 'payments.refunded',
-  CANCELLED: 'payments.cancelled'
+  CANCELLED: 'payments.cancelled',
 };
 
-function formatDate(
-  value: string | null | undefined,
-  language: string
-): string {
+function formatDate(value: string | null | undefined, language: string): string {
   if (!value) return '—';
   return new Date(value).toLocaleDateString(getLocaleForLanguage(language));
 }
@@ -70,12 +61,8 @@ export default function InvoicesPage() {
   const totals = useMemo(() => {
     const issued = payments.length;
     const paid = payments.filter((payment) => payment.status === 'PAID').length;
-    const outstanding = payments.filter(
-      (payment) => payment.status === 'PENDING'
-    ).length;
-    const refunds = payments.filter(
-      (payment) => payment.status === 'REFUNDED'
-    ).length;
+    const outstanding = payments.filter((payment) => payment.status === 'PENDING').length;
+    const refunds = payments.filter((payment) => payment.status === 'REFUNDED').length;
 
     return { issued, paid, outstanding, refunds };
   }, [payments]);
@@ -86,9 +73,7 @@ export default function InvoicesPage() {
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -99,12 +84,8 @@ export default function InvoicesPage() {
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t('payments.invoices')}
-          </h1>
-          <p className="text-muted-foreground">
-            {t('payments.invoicesDescription')}
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('payments.invoices')}</h1>
+          <p className="text-muted-foreground">{t('payments.invoicesDescription')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
@@ -119,9 +100,7 @@ export default function InvoicesPage() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.issued')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">{t('payments.issued')}</CardTitle>
             <CardDescription>{t('payments.issuedDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -130,9 +109,7 @@ export default function InvoicesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.paid')}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">{t('payments.paid')}</CardTitle>
             <CardDescription>{t('payments.paidDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -141,12 +118,8 @@ export default function InvoicesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.outstanding')}
-            </CardTitle>
-            <CardDescription>
-              {t('payments.outstandingDescription')}
-            </CardDescription>
+            <CardTitle className="text-sm font-medium">{t('payments.outstanding')}</CardTitle>
+            <CardDescription>{t('payments.outstandingDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.outstanding}</p>
@@ -154,12 +127,8 @@ export default function InvoicesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('payments.refunded')}
-            </CardTitle>
-            <CardDescription>
-              {t('payments.refundedDescription')}
-            </CardDescription>
+            <CardTitle className="text-sm font-medium">{t('payments.refunded')}</CardTitle>
+            <CardDescription>{t('payments.refundedDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{totals.refunds}</p>
@@ -170,9 +139,7 @@ export default function InvoicesPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('payments.findInvoice')}</CardTitle>
-          <CardDescription>
-            {t('payments.findInvoiceDescription')}
-          </CardDescription>
+          <CardDescription>{t('payments.findInvoiceDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
@@ -187,7 +154,7 @@ export default function InvoicesPage() {
           <div className="text-sm text-muted-foreground">
             {t('payments.showingInvoices', {
               count: invoices.length,
-              total: payments.length
+              total: payments.length,
             })}
           </div>
         </CardContent>
@@ -196,20 +163,14 @@ export default function InvoicesPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('payments.invoiceLedger')}</CardTitle>
-          <CardDescription>
-            {t('payments.invoiceLedgerDescription')}
-          </CardDescription>
+          <CardDescription>{t('payments.invoiceLedgerDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {invoices.length === 0 ? (
             <div className="py-12 text-center">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-              <p className="mt-3 text-sm font-medium">
-                {t('payments.noInvoices')}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t('payments.createOrAdjust')}
-              </p>
+              <p className="mt-3 text-sm font-medium">{t('payments.noInvoices')}</p>
+              <p className="text-xs text-muted-foreground">{t('payments.createOrAdjust')}</p>
             </div>
           ) : (
             invoices.slice(0, 25).map((payment) => (
@@ -223,25 +184,18 @@ export default function InvoicesPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">
-                      {t('payments.invoices')} #
-                      {payment.id.toString().padStart(6, '0')}
+                      {t('payments.invoices')} #{payment.id.toString().padStart(6, '0')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {payment.user?.display_name ??
-                        t('payments.unknownStudent')}{' '}
-                      · {payment.course?.title ?? t('payments.unknownCourse')}
+                      {payment.user?.display_name ?? t('payments.unknownStudent')} ·{' '}
+                      {payment.course?.title ?? t('payments.unknownCourse')}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="text-end text-sm">
                     <p className="font-semibold">
-                      {formatCurrencyWithStore(
-                        payment.amount ?? 0,
-                        currentAcademy,
-                        100,
-                        language
-                      )}
+                      {formatCurrencyWithStore(payment.amount ?? 0, currentAcademy, 100, language)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(payment.payment_date, language)}
@@ -249,14 +203,10 @@ export default function InvoicesPage() {
                   </div>
                   <Badge
                     className={cn(
-                      STATUS_COLORS[payment.status] ??
-                        'bg-muted text-muted-foreground'
+                      STATUS_COLORS[payment.status] ?? 'bg-muted text-muted-foreground',
                     )}
                   >
-                    {t(
-                      STATUS_LABEL_KEYS[payment.status] ??
-                        'payments.unknownStatus'
-                    )}
+                    {t(STATUS_LABEL_KEYS[payment.status] ?? 'payments.unknownStatus')}
                   </Badge>
                   <Button variant="outline" size="sm">
                     {t('payments.download')}

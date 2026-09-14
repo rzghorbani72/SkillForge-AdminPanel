@@ -6,10 +6,7 @@ import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Label } from '@/components/ui/label';
-import {
-  CourseSearchCombobox,
-  TeacherProfileSearchCombobox
-} from '@/components/entity-search';
+import { CourseSearchCombobox, TeacherProfileSearchCombobox } from '@/components/entity-search';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { OfferFormState } from '../hooks/use-tutoring-offers';
 
@@ -20,12 +17,7 @@ interface CreateOfferCardProps {
   onSubmit: () => void;
 }
 
-export function CreateOfferCard({
-  form,
-  onChange,
-  saving,
-  onSubmit
-}: CreateOfferCardProps) {
+export function CreateOfferCard({ form, onChange, saving, onSubmit }: CreateOfferCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -46,9 +38,7 @@ export function CreateOfferCard({
           <Label>{t('tutoring.tutorProfileId')}</Label>
           <TeacherProfileSearchCombobox
             value={form.tutor_profile_id}
-            onValueChange={(value) =>
-              onChange({ ...form, tutor_profile_id: value })
-            }
+            onValueChange={(value) => onChange({ ...form, tutor_profile_id: value })}
           />
         </div>
         <div className="space-y-2">
@@ -56,9 +46,7 @@ export function CreateOfferCard({
           <Input
             id="offerTitle"
             value={form.title}
-            onChange={(event) =>
-              onChange({ ...form, title: event.target.value })
-            }
+            onChange={(event) => onChange({ ...form, title: event.target.value })}
             placeholder={t('tutoring.offerTitlePlaceholder')}
           />
         </div>
@@ -72,9 +60,7 @@ export function CreateOfferCard({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="offerDuration">
-              {t('tutoring.offerDurationDays')}
-            </Label>
+            <Label htmlFor="offerDuration">{t('tutoring.offerDurationDays')}</Label>
             <NumberInput
               id="offerDuration"
               value={form.duration_days}
@@ -83,9 +69,7 @@ export function CreateOfferCard({
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="offerSessions">
-            {t('tutoring.offerSessionsOptional')}
-          </Label>
+          <Label htmlFor="offerSessions">{t('tutoring.offerSessionsOptional')}</Label>
           <NumberInput
             id="offerSessions"
             value={form.sessions_included}
@@ -94,9 +78,7 @@ export function CreateOfferCard({
         </div>
         <Button
           onClick={() => void onSubmit()}
-          disabled={
-            saving || !form.course_id || !form.tutor_profile_id || !form.title
-          }
+          disabled={saving || !form.course_id || !form.tutor_profile_id || !form.title}
         >
           {t('tutoring.createOffer')}
         </Button>

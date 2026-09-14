@@ -6,7 +6,7 @@ import {
   TEMPLATE_KEYS,
   CATEGORY_LABELS,
   getTemplateLabel,
-  getTemplateCategoryByKey
+  getTemplateCategoryByKey,
 } from '@/constants/template-names';
 
 // Exactly the platform gallery templates — nothing else belongs in the
@@ -18,9 +18,10 @@ import {
 const HERO_GROUPS = CATEGORY_LABELS.filter(({ value }) => value !== 'all')
   .map(({ value, label }) => ({
     label,
-    variants: TEMPLATE_KEYS.filter(
-      (key) => getTemplateCategoryByKey(key) === value
-    ).map((key) => ({ value: key as string, label: getTemplateLabel(key) }))
+    variants: TEMPLATE_KEYS.filter((key) => getTemplateCategoryByKey(key) === value).map((key) => ({
+      value: key as string,
+      label: getTemplateLabel(key),
+    })),
   }))
   .filter((group) => group.variants.length > 0);
 
@@ -43,7 +44,7 @@ export function HeroVariantPicker({
   heroBlockId,
   value,
   onChange,
-  preview
+  preview,
 }: HeroVariantPickerProps) {
   const current = value;
 

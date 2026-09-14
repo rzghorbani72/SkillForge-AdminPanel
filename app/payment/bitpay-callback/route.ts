@@ -1,9 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import {
-  buildTrustedBackendUrl,
-  buildInternalBackendHeaders
-} from '@/lib/security/ssrf';
+import { buildTrustedBackendUrl, buildInternalBackendHeaders } from '@/lib/security/ssrf';
 import { paymentResultUrl } from '@/lib/payment-callback-url';
 
 /**
@@ -18,7 +15,7 @@ import { paymentResultUrl } from '@/lib/payment-callback-url';
  */
 const failure = (reason: string) =>
   NextResponse.redirect(paymentResultUrl({ success: 'false', error: reason }), {
-    status: 303
+    status: 303,
   });
 
 const handle = async (request: NextRequest) => {
@@ -47,21 +44,18 @@ const handle = async (request: NextRequest) => {
     const token = cookieStore.get('jwt')?.value;
     const academyId = cookieStore.get('academy_id')?.value;
 
-    const verifyRes = await fetch(
-      buildTrustedBackendUrl('/payments/verify/bitpay'),
-      {
-        method: 'POST',
-        headers: buildInternalBackendHeaders({
-          ...(token && { Authorization: `Bearer ${token}` }),
-          ...(academyId && { 'X-Academy-ID': academyId })
-        }),
-        body: JSON.stringify({
-          payment_id: paymentId,
-          trans_id: transId,
-          id_get: idGet
-        })
-      }
-    );
+    const verifyRes = await fetch(buildTrustedBackendUrl('/payments/verify/bitpay'), {
+      method: 'POST',
+      headers: buildInternalBackendHeaders({
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(academyId && { 'X-Academy-ID': academyId }),
+      }),
+      body: JSON.stringify({
+        payment_id: paymentId,
+        trans_id: transId,
+        id_get: idGet,
+      }),
+    });
 
     const data = (await verifyRes.json()) as {
       status?: string;
@@ -76,9 +70,9 @@ const handle = async (request: NextRequest) => {
       paymentResultUrl({
         success: 'true',
         refid: transId,
-        clientrefid: data.data?.payment_id ?? paymentId
+        clientrefid: data.data?.payment_id ?? paymentId,
       }),
-      { status: 303 }
+      { status: 303 },
     );
   } catch {
     return failure('server_error');

@@ -14,7 +14,7 @@ export interface ThreadAttachment {
 /** A file handed over in a chat message: images inline, anything else as a row. */
 export function MessageAttachment({
   attachment,
-  mine
+  mine,
 }: {
   attachment: ThreadAttachment;
   mine: boolean;

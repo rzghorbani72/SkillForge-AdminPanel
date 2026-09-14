@@ -1,20 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  FileText,
-  Image as ImageIcon,
-  Music,
-  Trash2,
-  Video
-} from 'lucide-react';
+import { FileText, Image as ImageIcon, Music, Trash2, Video } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { toast } from 'react-toastify';
-import {
-  DataList,
-  DataPanel,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -24,14 +14,10 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { formatFileSize } from '@/components/shared/utils';
-import {
-  apiClient,
-  type StorageFileRow,
-  type StorageMediaType
-} from '@/lib/api';
+import { apiClient, type StorageFileRow, type StorageMediaType } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -43,16 +29,10 @@ const KIND_ICON: Record<StorageMediaType, LucideIcon> = {
   video: Video,
   image: ImageIcon,
   audio: Music,
-  document: FileText
+  document: FileText,
 };
 
-const KIND_FILTERS: (StorageMediaType | 'all')[] = [
-  'all',
-  'video',
-  'image',
-  'audio',
-  'document'
-];
+const KIND_FILTERS: (StorageMediaType | 'all')[] = ['all', 'video', 'image', 'audio', 'document'];
 
 interface StorageFilesPanelProps {
   rows: StorageFileRow[];
@@ -75,14 +55,12 @@ export function StorageFilesPanel({
   kind,
   onKindChange,
   onPageChange,
-  onDeleted
+  onDeleted,
 }: StorageFilesPanelProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
-  const [pendingDelete, setPendingDelete] = useState<StorageFileRow | null>(
-    null
-  );
+  const [pendingDelete, setPendingDelete] = useState<StorageFileRow | null>(null);
   const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const lastPage = Math.max(1, Math.ceil(total / limit));
@@ -94,9 +72,7 @@ export function StorageFilesPanel({
       if (result.deleted === 0) {
         toast.info(t('storage.deleteAllUnusedEmpty'));
       } else {
-        toast.success(
-          t('storage.deleteAllUnusedSuccess', { count: result.deleted })
-        );
+        toast.success(t('storage.deleteAllUnusedSuccess', { count: result.deleted }));
       }
       setConfirmDeleteAll(false);
       onDeleted();
@@ -146,28 +122,28 @@ export function StorageFilesPanel({
             </span>
           </span>
         );
-      }
+      },
     },
     {
       id: 'kind',
       header: t('storage.columnType'),
-      cell: (file) => t(`storage.type${capitalize(file.kind)}`)
+      cell: (file) => t(`storage.type${capitalize(file.kind)}`),
     },
     {
       id: 'size',
       header: t('storage.columnSize'),
       align: 'end',
-      cell: (file) => formatFileSize(file.size) || '—'
+      cell: (file) => formatFileSize(file.size) || '—',
     },
     {
       id: 'created',
       header: t('storage.columnUploaded'),
-      cell: (file) => formatDate(file.created_at)
+      cell: (file) => formatDate(file.created_at),
     },
     {
       id: 'usage',
       header: t('storage.columnUsedIn'),
-      cell: (file) => <StorageFileUsageCell usages={file.usages} />
+      cell: (file) => <StorageFileUsageCell usages={file.usages} />,
     },
     {
       id: 'actions',
@@ -185,8 +161,8 @@ export function StorageFilesPanel({
           >
             <Trash2 className="h-4 w-4" />
           </Button>
-        ) : null
-    }
+        ) : null,
+    },
   ];
 
   return (
@@ -201,9 +177,7 @@ export function StorageFilesPanel({
             variant={kind === option ? 'default' : 'outline'}
             onClick={() => onKindChange(option)}
           >
-            {option === 'all'
-              ? t('storage.filterAll')
-              : t(`storage.type${capitalize(option)}`)}
+            {option === 'all' ? t('storage.filterAll') : t(`storage.type${capitalize(option)}`)}
           </Button>
         ))}
         actions={
@@ -223,7 +197,7 @@ export function StorageFilesPanel({
               <span className="text-xs text-muted-foreground">
                 {t('storage.pageOf', {
                   page: formatNumber(page),
-                  total: formatNumber(lastPage)
+                  total: formatNumber(lastPage),
                 })}
               </span>
               <span className="flex gap-2">
@@ -274,17 +248,11 @@ export function StorageFilesPanel({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('storage.deleteAllUnusedTitle')}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('storage.deleteAllUnusedConfirm')}
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('storage.deleteAllUnusedTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('storage.deleteAllUnusedConfirm')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
-              {t('common.cancel')}
-            </AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteAll}
               disabled={isDeleting}
@@ -299,8 +267,7 @@ export function StorageFilesPanel({
   );
 }
 
-const capitalize = (value: string) =>
-  `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+const capitalize = (value: string) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
 /** Media URLs come back as API-relative paths, same as every other media list. */
 const resolveMediaSrc = (url: string) =>

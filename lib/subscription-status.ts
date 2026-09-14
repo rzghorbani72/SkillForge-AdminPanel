@@ -6,18 +6,9 @@
  * never started a plan (INACTIVE) wrongly read as منقضی‌شده / Expired. Each state
  * now maps to its own label and tone so the badge tells the truth.
  */
-export type SubscriptionStatusValue =
-  | 'ACTIVE'
-  | 'GRACE'
-  | 'EXPIRED'
-  | 'INACTIVE';
+export type SubscriptionStatusValue = 'ACTIVE' | 'GRACE' | 'EXPIRED' | 'INACTIVE';
 
-export type SubscriptionTone =
-  | 'active'
-  | 'trial'
-  | 'grace'
-  | 'expired'
-  | 'inactive';
+export type SubscriptionTone = 'active' | 'trial' | 'grace' | 'expired' | 'inactive';
 
 export interface SubscriptionStatusDisplay {
   tone: SubscriptionTone;
@@ -29,40 +20,40 @@ export interface SubscriptionStatusDisplay {
 
 export function getSubscriptionStatusDisplay(
   status: SubscriptionStatusValue | undefined,
-  isTrial?: boolean
+  isTrial?: boolean,
 ): SubscriptionStatusDisplay {
   if (status === 'ACTIVE') {
     return isTrial
       ? {
           tone: 'trial',
           labelKey: 'subscriptionStatus.trial',
-          needsPlan: false
+          needsPlan: false,
         }
       : {
           tone: 'active',
           labelKey: 'subscriptionStatus.active',
-          needsPlan: false
+          needsPlan: false,
         };
   }
   if (status === 'GRACE') {
     return {
       tone: 'grace',
       labelKey: 'subscriptionStatus.grace',
-      needsPlan: true
+      needsPlan: true,
     };
   }
   if (status === 'EXPIRED') {
     return {
       tone: 'expired',
       labelKey: 'subscriptionStatus.expired',
-      needsPlan: true
+      needsPlan: true,
     };
   }
   // undefined / INACTIVE — never started, or no plan on record.
   return {
     tone: 'inactive',
     labelKey: 'subscriptionStatus.inactive',
-    needsPlan: true
+    needsPlan: true,
   };
 }
 
@@ -72,5 +63,5 @@ export const SUBSCRIPTION_TONE_CLASSES: Record<SubscriptionTone, string> = {
   trial: 'bg-info/10 text-info',
   grace: 'bg-warning/10 text-warning',
   expired: 'bg-destructive/10 text-destructive',
-  inactive: 'bg-muted text-muted-foreground'
+  inactive: 'bg-muted text-muted-foreground',
 };

@@ -12,7 +12,7 @@ interface LoadingSpinnerProps {
 export function LoadingSpinner({
   message = 'Loading...',
   variant = 'default',
-  className
+  className,
 }: LoadingSpinnerProps) {
   if (variant === 'minimal') {
     return (
@@ -32,9 +32,7 @@ export function LoadingSpinner({
               <Sparkles className="h-10 w-10 animate-pulse text-white" />
             </div>
           </div>
-          <p className="mt-6 text-sm font-medium text-muted-foreground">
-            {message}
-          </p>
+          <p className="mt-6 text-sm font-medium text-muted-foreground">{message}</p>
         </div>
       </div>
     );
@@ -50,9 +48,7 @@ export function LoadingSpinner({
               <Sparkles className="h-8 w-8 animate-pulse text-white" />
             </div>
           </div>
-          <p className="mt-4 text-sm font-medium text-muted-foreground">
-            {message}
-          </p>
+          <p className="mt-4 text-sm font-medium text-muted-foreground">{message}</p>
           <div className="mx-auto mt-4 flex justify-center gap-1">
             <div className="h-2 w-2 animate-bounce rounded-full bg-primary/40 [animation-delay:-0.3s]" />
             <div className="h-2 w-2 animate-bounce rounded-full bg-primary/40 [animation-delay:-0.15s]" />

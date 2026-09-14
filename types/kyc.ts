@@ -1,7 +1,7 @@
 export const KYC_STATUS = {
   MISSING: 'MISSING',
   PARTIAL: 'PARTIAL',
-  VERIFIED: 'VERIFIED'
+  VERIFIED: 'VERIFIED',
 } as const;
 
 export type KycStatus = (typeof KYC_STATUS)[keyof typeof KYC_STATUS];

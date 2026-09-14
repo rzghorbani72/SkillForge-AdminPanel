@@ -1,21 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import {
-  Phone,
-  MessageSquare,
-  TrendingUp,
-  ChevronLeft,
-  ChevronRight,
-  X
-} from 'lucide-react';
+import { Phone, MessageSquare, TrendingUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 function AffiliateDashPreview({
   formatCurrency,
-  baseUrl
+  baseUrl,
 }: {
   formatCurrency: (n: number) => string;
   baseUrl: string;
@@ -32,9 +25,7 @@ function AffiliateDashPreview({
             ا
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">
-              {t('affiliates.previewWelcome')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('affiliates.previewWelcome')}</p>
             <p className="text-base font-bold">امیر حسینی</p>
           </div>
         </div>
@@ -51,29 +42,27 @@ function AffiliateDashPreview({
           {
             l: t('affiliates.previewStatTotal'),
             v: formatCurrency(28400000),
-            accent: true
+            accent: true,
           },
           {
             l: t('affiliates.previewStatBalance'),
             v: formatCurrency(8200000),
-            accent: false
+            accent: false,
           },
           { l: t('affiliates.previewStatClicks'), v: '۱٬۸۴۲', accent: false },
-          { l: t('affiliates.previewStatSales'), v: '۳۸', accent: false }
+          { l: t('affiliates.previewStatSales'), v: '۳۸', accent: false },
         ].map((s, i) => (
           <div
             key={i}
             className={cn(
               'rounded-xl border p-3',
-              s.accent && 'border-primary bg-primary text-primary-foreground'
+              s.accent && 'border-primary bg-primary text-primary-foreground',
             )}
           >
             <p
               className={cn(
                 'text-xs',
-                s.accent
-                  ? 'text-primary-foreground/70'
-                  : 'text-muted-foreground'
+                s.accent ? 'text-primary-foreground/70' : 'text-muted-foreground',
               )}
             >
               {s.l}
@@ -85,9 +74,7 @@ function AffiliateDashPreview({
 
       <div className="px-5 pb-4">
         <div className="rounded-xl border bg-muted/30 p-3">
-          <p className="mb-2 text-xs text-muted-foreground">
-            {t('affiliates.previewLinkTitle')}
-          </p>
+          <p className="mb-2 text-xs text-muted-foreground">{t('affiliates.previewLinkTitle')}</p>
           <div className="flex items-center gap-2">
             <code className="flex-1 rounded-lg border bg-background px-3 py-2 font-mono text-xs">
               {baseUrl}/r/amir2403
@@ -106,12 +93,8 @@ function AffiliateDashPreview({
         <div className="rounded-xl border p-4">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <p className="text-xs text-muted-foreground">
-                {t('affiliates.previewChartTitle')}
-              </p>
-              <p className="mt-1 font-mono text-xl font-bold">
-                {formatCurrency(28400000)}
-              </p>
+              <p className="text-xs text-muted-foreground">{t('affiliates.previewChartTitle')}</p>
+              <p className="mt-1 font-mono text-xl font-bold">{formatCurrency(28400000)}</p>
             </div>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
               <TrendingUp className="h-3 w-3" />
@@ -125,7 +108,7 @@ function AffiliateDashPreview({
                 className="flex-1 rounded-t bg-primary/80 transition-all hover:bg-primary"
                 style={{
                   ['--bar-h' as string]: `${(v / max) * 100}%`,
-                  height: 'var(--bar-h)'
+                  height: 'var(--bar-h)',
                 }}
                 role="presentation"
               />
@@ -139,10 +122,7 @@ function AffiliateDashPreview({
           <p className="text-xs font-semibold text-muted-foreground">
             {t('affiliates.previewRecentSales')}
           </p>
-          <button
-            type="button"
-            className="text-xs text-primary hover:underline"
-          >
+          <button type="button" className="text-xs text-primary hover:underline">
             {t('affiliates.previewViewAll')}
           </button>
         </div>
@@ -154,26 +134,26 @@ function AffiliateDashPreview({
                   user: 'علی محمدی',
                   course: 'ری‌اکت پیشرفته',
                   amount: 2480000,
-                  comm: 372000
+                  comm: 372000,
                 },
                 {
                   user: 'فاطمه احمدی',
                   course: 'زبان انگلیسی',
                   amount: 980000,
-                  comm: 147000
+                  comm: 147000,
                 },
                 {
                   user: 'مریم نوری',
                   course: 'فتوشاپ',
                   amount: 1480000,
-                  comm: 222000
+                  comm: 222000,
                 },
                 {
                   user: 'حسین رضایی',
                   course: 'پایتون',
                   amount: 1980000,
-                  comm: 297000
-                }
+                  comm: 297000,
+                },
               ].map((s, i) => (
                 <tr key={i} className="hover:bg-muted/20">
                   <td className="px-3 py-2.5">
@@ -184,12 +164,8 @@ function AffiliateDashPreview({
                       <span className="font-medium">{s.user}</span>
                     </div>
                   </td>
-                  <td className="px-3 py-2.5 text-muted-foreground">
-                    {s.course}
-                  </td>
-                  <td className="px-3 py-2.5 font-mono">
-                    {formatCurrency(s.amount)}
-                  </td>
+                  <td className="px-3 py-2.5 text-muted-foreground">{s.course}</td>
+                  <td className="px-3 py-2.5 font-mono">{formatCurrency(s.amount)}</td>
                   <td className="px-3 py-2.5 font-mono font-semibold text-emerald-600">
                     +{formatCurrency(s.comm)}
                   </td>
@@ -206,7 +182,7 @@ function AffiliateDashPreview({
 export function AffiliateLoginPreview({
   onClose,
   baseUrl,
-  formatCurrency
+  formatCurrency,
 }: {
   onClose: () => void;
   baseUrl: string;
@@ -233,14 +209,10 @@ export function AffiliateLoginPreview({
         hideCloseButton
         className={cn(
           'flex max-h-[92vh] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl transition-all duration-300',
-          step === 'dash'
-            ? 'w-[920px] max-w-[920px]'
-            : 'w-[380px] max-w-[380px]'
+          step === 'dash' ? 'w-[920px] max-w-[920px]' : 'w-[380px] max-w-[380px]',
         )}
       >
-        <DialogTitle className="sr-only">
-          {t('affiliates.previewPanelTitle')}
-        </DialogTitle>
+        <DialogTitle className="sr-only">{t('affiliates.previewPanelTitle')}</DialogTitle>
         <button
           type="button"
           aria-label={t('common.close')}
@@ -255,12 +227,8 @@ export function AffiliateLoginPreview({
             M
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold">
-              {t('affiliates.previewPanelTitle')}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {baseUrl.replace(/^https?:\/\//, '')}/r
-            </p>
+            <p className="text-sm font-semibold">{t('affiliates.previewPanelTitle')}</p>
+            <p className="text-xs text-muted-foreground">{baseUrl.replace(/^https?:\/\//, '')}/r</p>
           </div>
           <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
             {t('affiliates.previewBadge')}
@@ -268,19 +236,14 @@ export function AffiliateLoginPreview({
         </div>
 
         {step === 'phone' && (
-          <div
-            className="flex flex-col items-center px-8 py-10 text-center"
-            dir="rtl"
-          >
+          <div className="flex flex-col items-center px-8 py-10 text-center" dir="rtl">
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <Phone className="h-6 w-6" />
             </div>
             <h2 className="mb-2 text-xl font-bold tracking-tight">
               {t('affiliates.previewPhoneTitle')}
             </h2>
-            <p className="mb-7 text-sm text-muted-foreground">
-              {t('affiliates.previewPhoneDesc')}
-            </p>
+            <p className="mb-7 text-sm text-muted-foreground">{t('affiliates.previewPhoneDesc')}</p>
             <input
               className="h-12 w-full rounded-lg border bg-background px-4 text-center font-mono text-base focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder={t('affiliates.previewPhonePlaceholder')}
@@ -295,17 +258,12 @@ export function AffiliateLoginPreview({
               {t('affiliates.previewSendOtp')}
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <p className="mt-5 text-xs text-muted-foreground">
-              {t('affiliates.previewTerms')}
-            </p>
+            <p className="mt-5 text-xs text-muted-foreground">{t('affiliates.previewTerms')}</p>
           </div>
         )}
 
         {step === 'otp' && (
-          <div
-            className="flex flex-col items-center px-8 py-10 text-center"
-            dir="rtl"
-          >
+          <div className="flex flex-col items-center px-8 py-10 text-center" dir="rtl">
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <MessageSquare className="h-6 w-6" />
             </div>
@@ -314,7 +272,7 @@ export function AffiliateLoginPreview({
             </h2>
             <p className="mb-6 text-sm text-muted-foreground">
               {t('affiliates.previewOtpSent', {
-                phone: phone || t('affiliates.previewPhonePlaceholder')
+                phone: phone || t('affiliates.previewPhonePlaceholder'),
               })}
             </p>
             <div className="flex justify-center gap-2" dir="rtl">
@@ -340,9 +298,7 @@ export function AffiliateLoginPreview({
                 />
               ))}
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              {t('affiliates.previewResend')}
-            </p>
+            <p className="mt-3 text-xs text-muted-foreground">{t('affiliates.previewResend')}</p>
             <button
               type="button"
               className="mt-5 w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
@@ -363,10 +319,7 @@ export function AffiliateLoginPreview({
         )}
 
         {step === 'dash' && (
-          <AffiliateDashPreview
-            formatCurrency={formatCurrency}
-            baseUrl={baseUrl}
-          />
+          <AffiliateDashPreview formatCurrency={formatCurrency} baseUrl={baseUrl} />
         )}
       </DialogContent>
     </Dialog>

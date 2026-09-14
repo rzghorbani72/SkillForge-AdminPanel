@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { isPasswordValid } from '@/lib/password-utils';
 import { toE164Iran } from '@/lib/phone-utils';
@@ -23,7 +23,7 @@ import {
   EMPTY_ADD_USER_FORM,
   isStudentRankRole,
   type AddUserForm,
-  type AssignableRole
+  type AssignableRole,
 } from './add-user-form';
 
 interface AddUserDialogProps {
@@ -42,11 +42,7 @@ interface AddUserDialogProps {
  * Two deliberate steps. The lookup answering is not a reason to throw the whole
  * form at the reader, so step two opens on a click and the panel grows with it.
  */
-export function AddUserDialog({
-  open,
-  onOpenChange,
-  onSuccess
-}: AddUserDialogProps) {
+export function AddUserDialog({ open, onOpenChange, onSuccess }: AddUserDialogProps) {
   const { t } = useTranslation();
 
   const [roleOptions, setRoleOptions] = useState<AssignableRole[]>([]);
@@ -74,7 +70,7 @@ export function AddUserDialog({
         setRoleOptions(roles);
         setForm((f) => ({
           ...f,
-          role: f.role || (defaultAssignableRole(roles) ?? '')
+          role: f.role || (defaultAssignableRole(roles) ?? ''),
         }));
       })
       .catch((e) => ErrorHandler.handleApiError(e))
@@ -102,23 +98,20 @@ export function AddUserDialog({
   const needsAccount = result !== null && !result.found;
   const canContinue = result !== null && !result.membership && !isSearching;
 
-  const isConfirmReady =
-    form.password === form.confirmPassword && form.confirmPassword.length > 0;
+  const isConfirmReady = form.password === form.confirmPassword && form.confirmPassword.length > 0;
   // A new person needs something to sign in with; an existing account already
   // has a password, so setting one here is optional.
   const isPasswordStepValid = needsAccount
     ? isPasswordValid(form.password) && isConfirmReady
-    : form.password.length === 0 ||
-      (isPasswordValid(form.password) && isConfirmReady);
+    : form.password.length === 0 || (isPasswordValid(form.password) && isConfirmReady);
   const isNameReady = !needsAccount || form.displayName.trim().length > 1;
-  const canSubmit =
-    canContinue && !!form.role && isNameReady && isPasswordStepValid;
+  const canSubmit = canContinue && !!form.role && isNameReady && isPasswordStepValid;
 
   function handleClose(next: boolean) {
     if (!next) {
       setForm({
         ...EMPTY_ADD_USER_FORM,
-        role: defaultAssignableRole(roleOptions) ?? ''
+        role: defaultAssignableRole(roleOptions) ?? '',
       });
       resetLookup();
       setOnDetails(false);
@@ -139,7 +132,7 @@ export function AddUserDialog({
         role: form.role,
         name: needsAccount ? form.displayName.trim() : undefined,
         email: needsAccount ? form.email.trim() || undefined : undefined,
-        password: form.password || undefined
+        password: form.password || undefined,
       });
 
       ErrorHandler.showSuccess(t('members.memberAdded'));
@@ -160,9 +153,7 @@ export function AddUserDialog({
         <DialogHeader>
           <DialogTitle>{t('users.addUserTitle')}</DialogTitle>
           <DialogDescription>
-            {onDetails
-              ? t('members.addMemberDescription')
-              : t('members.phoneHint')}
+            {onDetails ? t('members.addMemberDescription') : t('members.phoneHint')}
           </DialogDescription>
         </DialogHeader>
 

@@ -13,7 +13,7 @@ export const PLATFORM_MAX_ACCESS_DAYS = 1825;
  */
 export function accessTermDays(
   offeringDays: number | null | undefined,
-  courseDays: number | null | undefined
+  courseDays: number | null | undefined,
 ): number | null {
   return offeringDays ?? courseDays ?? null;
 }

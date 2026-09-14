@@ -16,11 +16,7 @@ type ArticleEditorScreenProps = {
 };
 
 /** Loads one article (when editing) and renders the form for both blogs. */
-export function ArticleEditorScreen({
-  scope,
-  basePath,
-  articleId
-}: ArticleEditorScreenProps) {
+export function ArticleEditorScreen({ scope, basePath, articleId }: ArticleEditorScreenProps) {
   const [article, setArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(Boolean(articleId));
 
@@ -50,11 +46,7 @@ export function ArticleEditorScreen({
       {isLoading ? (
         <Skeleton className="h-[480px]" />
       ) : (
-        <ArticleForm
-          scope={scope}
-          basePath={basePath}
-          article={article ?? undefined}
-        />
+        <ArticleForm scope={scope} basePath={basePath} article={article ?? undefined} />
       )}
     </div>
   );

@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Megaphone, Send } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,22 +14,18 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { isPlatformAdmin } from '@/lib/roles';
-import {
-  apiClient,
-  PlatformBroadcast,
-  PlatformBroadcastAudience
-} from '@/lib/api';
+import { apiClient, PlatformBroadcast, PlatformBroadcastAudience } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 
 const AUDIENCES: PlatformBroadcastAudience[] = [
   'ALL_MANAGERS',
   'ALL_TEACHERS',
-  'SELECTED_ACADEMIES'
+  'SELECTED_ACADEMIES',
 ];
 
 export default function BroadcastsPage() {
@@ -45,8 +35,7 @@ export default function BroadcastsPage() {
   const [broadcasts, setBroadcasts] = useState<PlatformBroadcast[]>([]);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [audience, setAudience] =
-    useState<PlatformBroadcastAudience>('ALL_MANAGERS');
+  const [audience, setAudience] = useState<PlatformBroadcastAudience>('ALL_MANAGERS');
   const [academyIds, setAcademyIds] = useState('');
   const [busy, setBusy] = useState(false);
   const [sendingId, setSendingId] = useState<string | null>(null);
@@ -79,7 +68,7 @@ export default function BroadcastsPage() {
                 .split(',')
                 .map((id) => id.trim())
                 .filter(Boolean)
-            : undefined
+            : undefined,
       });
       setTitle('');
       setBody('');
@@ -131,9 +120,7 @@ export default function BroadcastsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('broadcasts.compose')}</CardTitle>
-          <CardDescription>
-            {t('broadcasts.composeDescription')}
-          </CardDescription>
+          <CardDescription>{t('broadcasts.composeDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -142,20 +129,14 @@ export default function BroadcastsPage() {
           </div>
           <div className="space-y-2">
             <Label>{t('broadcasts.fields.body')}</Label>
-            <Textarea
-              rows={4}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-            />
+            <Textarea rows={4} value={body} onChange={(e) => setBody(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>{t('broadcasts.fields.audience')}</Label>
             <select
               className="h-9 w-full rounded-md border bg-background px-2 text-sm"
               value={audience}
-              onChange={(e) =>
-                setAudience(e.target.value as PlatformBroadcastAudience)
-              }
+              onChange={(e) => setAudience(e.target.value as PlatformBroadcastAudience)}
             >
               {AUDIENCES.map((a) => (
                 <option key={a} value={a}>
@@ -186,9 +167,7 @@ export default function BroadcastsPage() {
         </CardHeader>
         <CardContent>
           {broadcasts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('broadcasts.empty')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('broadcasts.empty')}</p>
           ) : (
             <Table>
               <TableHeader>
@@ -204,13 +183,9 @@ export default function BroadcastsPage() {
                 {broadcasts.map((b) => (
                   <TableRow key={b.id}>
                     <TableCell className="font-medium">{b.title}</TableCell>
+                    <TableCell>{t(`broadcasts.audiences.${b.audience}`)}</TableCell>
                     <TableCell>
-                      {t(`broadcasts.audiences.${b.audience}`)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={b.status === 'SENT' ? 'default' : 'secondary'}
-                      >
+                      <Badge variant={b.status === 'SENT' ? 'default' : 'secondary'}>
                         {t(`broadcasts.statuses.${b.status}`)}
                       </Badge>
                     </TableCell>

@@ -11,24 +11,16 @@ interface InactivityItemProps {
   onUseForNote: (profileId: string) => void;
 }
 
-export function InactivityItem({
-  item,
-  language,
-  onUseForNote
-}: InactivityItemProps) {
+export function InactivityItem({ item, language, onUseForNote }: InactivityItemProps) {
   const { t } = useTranslation();
 
   return (
     <div className="rounded-lg border p-3 text-sm">
-      <p className="font-medium">
-        {item.Profile?.display_name || t('users.unnamedUser')}
-      </p>
+      <p className="font-medium">{item.Profile?.display_name || t('users.unnamedUser')}</p>
       <p className="text-muted-foreground">{item.Course?.title ?? '—'}</p>
       <p className="text-muted-foreground">
         {t('learningOperations.lastAccessed')}:{' '}
-        {item.last_accessed
-          ? new Date(item.last_accessed).toLocaleString(language)
-          : '—'}
+        {item.last_accessed ? new Date(item.last_accessed).toLocaleString(language) : '—'}
       </p>
       {typeof item.progress_percent === 'number' && (
         <Badge variant="outline">{item.progress_percent}%</Badge>

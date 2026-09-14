@@ -11,13 +11,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import {
   Responsible,
   StaffTicketDetail,
   TICKET_PRIORITIES,
-  TICKET_STATUSES
+  TICKET_STATUSES,
 } from './staff-support-types';
 
 interface Props {
@@ -27,12 +27,7 @@ interface Props {
   onAct: (fn: () => Promise<unknown>) => void;
 }
 
-export function TicketStaffControls({
-  ticket,
-  responsibles,
-  busy,
-  onAct
-}: Props) {
+export function TicketStaffControls({ ticket, responsibles, busy, onAct }: Props) {
   const { t } = useTranslation();
   const [pendingStatus, setPendingStatus] = useState<string | null>(null);
   const [resolutionSummary, setResolutionSummary] = useState('');
@@ -40,8 +35,7 @@ export function TicketStaffControls({
   const caps = ticket.capabilities;
   if (!caps.canManage) return null;
 
-  const needsSummary = (status: string) =>
-    status === 'RESOLVED' || status === 'CLOSED';
+  const needsSummary = (status: string) => status === 'RESOLVED' || status === 'CLOSED';
 
   const applyStatus = (status: string) => {
     if (needsSummary(status)) {
@@ -54,19 +48,14 @@ export function TicketStaffControls({
   const confirmStatus = () => {
     if (!pendingStatus || !resolutionSummary.trim()) return;
     onAct(async () => {
-      await apiClient.changeSupportStatus(
-        ticket.id,
-        pendingStatus,
-        resolutionSummary.trim()
-      );
+      await apiClient.changeSupportStatus(ticket.id, pendingStatus, resolutionSummary.trim());
       setPendingStatus(null);
       setResolutionSummary('');
     });
   };
 
   const canReassign =
-    caps.canReassign &&
-    (ticket.scope === 'ACADEMY' || ticket.scope === 'PLATFORM');
+    caps.canReassign && (ticket.scope === 'ACADEMY' || ticket.scope === 'PLATFORM');
   const unclaimed = !ticket.AssignedTo;
 
   return (
@@ -84,15 +73,8 @@ export function TicketStaffControls({
             {t('support.claim')}
           </Button>
         )}
-        <Select
-          value={ticket.status}
-          disabled={busy}
-          onValueChange={applyStatus}
-        >
-          <SelectTrigger
-            className="h-9 w-[150px]"
-            aria-label={t('support.changeStatus')}
-          >
+        <Select value={ticket.status} disabled={busy} onValueChange={applyStatus}>
+          <SelectTrigger className="h-9 w-[150px]" aria-label={t('support.changeStatus')}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -107,14 +89,9 @@ export function TicketStaffControls({
         <Select
           value={ticket.priority}
           disabled={busy}
-          onValueChange={(v) =>
-            onAct(() => apiClient.changeSupportPriority(ticket.id, v))
-          }
+          onValueChange={(v) => onAct(() => apiClient.changeSupportPriority(ticket.id, v))}
         >
-          <SelectTrigger
-            className="h-9 w-[130px]"
-            aria-label={t('support.changePriority')}
-          >
+          <SelectTrigger className="h-9 w-[130px]" aria-label={t('support.changePriority')}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -130,14 +107,9 @@ export function TicketStaffControls({
           <Select
             value={ticket.AssignedTo?.id ?? ''}
             disabled={busy}
-            onValueChange={(v) =>
-              v && onAct(() => apiClient.reassignSupportTicket(ticket.id, v))
-            }
+            onValueChange={(v) => v && onAct(() => apiClient.reassignSupportTicket(ticket.id, v))}
           >
-            <SelectTrigger
-              className="h-9 w-[170px]"
-              aria-label={t('support.reassign')}
-            >
+            <SelectTrigger className="h-9 w-[170px]" aria-label={t('support.reassign')}>
               <SelectValue placeholder={t('support.reassign')} />
             </SelectTrigger>
             <SelectContent>
@@ -153,9 +125,7 @@ export function TicketStaffControls({
 
       {pendingStatus && (
         <div className="space-y-2 rounded-md border bg-muted/30 p-3">
-          <p className="text-xs font-medium">
-            {t('support.resolutionSummaryRequired')}
-          </p>
+          <p className="text-xs font-medium">{t('support.resolutionSummaryRequired')}</p>
           <Textarea
             value={resolutionSummary}
             onChange={(e) => setResolutionSummary(e.target.value)}
@@ -164,11 +134,7 @@ export function TicketStaffControls({
             placeholder={t('support.resolutionSummaryPlaceholder')}
           />
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              disabled={busy || !resolutionSummary.trim()}
-              onClick={confirmStatus}
-            >
+            <Button size="sm" disabled={busy || !resolutionSummary.trim()} onClick={confirmStatus}>
               {t('support.save')}
             </Button>
             <Button

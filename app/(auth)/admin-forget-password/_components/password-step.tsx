@@ -10,8 +10,7 @@ type Fp = ReturnType<typeof useAdminForgetPassword>;
 
 export function PasswordStep({ fp }: { fp: Fp }) {
   const { t } = fp;
-  const allFieldsFilled =
-    fp.formData.password !== '' && fp.formData.confirmed_password !== '';
+  const allFieldsFilled = fp.formData.password !== '' && fp.formData.confirmed_password !== '';
 
   return (
     <form
@@ -29,12 +28,7 @@ export function PasswordStep({ fp }: { fp: Fp }) {
           dir="ltr"
           autoComplete="new-password"
           value={fp.formData.password}
-          onChange={(e) =>
-            fp.handleInputChange(
-              'password',
-              sanitizePasswordInput(e.target.value)
-            )
-          }
+          onChange={(e) => fp.handleInputChange('password', sanitizePasswordInput(e.target.value))}
           error={fp.errors.password}
           disabled={fp.isLoading}
         />
@@ -48,10 +42,7 @@ export function PasswordStep({ fp }: { fp: Fp }) {
         autoComplete="new-password"
         value={fp.formData.confirmed_password}
         onChange={(e) =>
-          fp.handleInputChange(
-            'confirmed_password',
-            sanitizePasswordInput(e.target.value)
-          )
+          fp.handleInputChange('confirmed_password', sanitizePasswordInput(e.target.value))
         }
         error={fp.errors.confirmed_password}
         disabled={fp.isLoading}

@@ -25,7 +25,7 @@ const LiveSessionRecurrence = ({
   until,
   onRepeatsChange,
   onDaysChange,
-  onUntilChange
+  onUntilChange,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -33,27 +33,17 @@ const LiveSessionRecurrence = ({
     <div className="space-y-3 rounded-md border p-3">
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-1">
-          <Label htmlFor="live-repeats">
-            {t('courses.liveSession.repeatLabel')}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {t('courses.liveSession.repeatHint')}
-          </p>
+          <Label htmlFor="live-repeats">{t('courses.liveSession.repeatLabel')}</Label>
+          <p className="text-xs text-muted-foreground">{t('courses.liveSession.repeatHint')}</p>
         </div>
-        <Switch
-          id="live-repeats"
-          checked={repeats}
-          onCheckedChange={onRepeatsChange}
-        />
+        <Switch id="live-repeats" checked={repeats} onCheckedChange={onRepeatsChange} />
       </div>
 
       {repeats ? (
         <div className="space-y-3">
           <WeekdayPicker value={days} onChange={onDaysChange} />
           <div className="space-y-2">
-            <Label htmlFor="live-repeat-until">
-              {t('courses.liveSession.repeatUntilLabel')}
-            </Label>
+            <Label htmlFor="live-repeat-until">{t('courses.liveSession.repeatUntilLabel')}</Label>
             <DatePicker
               id="live-repeat-until"
               value={until}

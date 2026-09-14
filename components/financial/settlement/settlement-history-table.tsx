@@ -8,7 +8,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
@@ -22,9 +22,7 @@ interface SettlementHistoryTableProps {
 }
 
 /** The audit trail the manager can point at when money is questioned. */
-export function SettlementHistoryTable({
-  records
-}: SettlementHistoryTableProps) {
+export function SettlementHistoryTable({ records }: SettlementHistoryTableProps) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
   const formatDate = useDateFormat();
@@ -67,16 +65,10 @@ export function SettlementHistoryTable({
                       />
                     </TableCell>
                     <TableCell>
-                      {record.processed_at
-                        ? formatDate(record.processed_at)
-                        : '—'}
+                      {record.processed_at ? formatDate(record.processed_at) : '—'}
                     </TableCell>
                     <TableCell className="font-mono text-xs">
-                      {record.sheba_number ? (
-                        <CopyableValue value={record.sheba_number} />
-                      ) : (
-                        '—'
-                      )}
+                      {record.sheba_number ? <CopyableValue value={record.sheba_number} /> : '—'}
                     </TableCell>
                     <TableCell dir="ltr" className="font-mono text-xs">
                       {record.bank_transaction_code ?? '—'}

@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  AlertTriangle,
-  Clock3,
-  GraduationCap,
-  MessageCircle,
-  UserX
-} from 'lucide-react';
+import { AlertTriangle, Clock3, GraduationCap, MessageCircle, UserX } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { OpsQueueResponse } from '@/types/learning-operations';
 import { QueueCard } from './queue-card';
@@ -22,11 +16,7 @@ interface OpsQueueResultsProps {
   onUseForNote: (profileId: string) => void;
 }
 
-export function OpsQueueResults({
-  queue,
-  loading,
-  onUseForNote
-}: OpsQueueResultsProps) {
+export function OpsQueueResults({ queue, loading, onUseForNote }: OpsQueueResultsProps) {
   const { t, language } = useTranslation();
 
   if (loading) {
@@ -81,11 +71,7 @@ export function OpsQueueResults({
         empty={t('opsQueue.empty')}
       >
         {queue.low_scores.map((item) => (
-          <LowScoreItem
-            key={String(item.id)}
-            item={item}
-            onUseForNote={onUseForNote}
-          />
+          <LowScoreItem key={String(item.id)} item={item} onUseForNote={onUseForNote} />
         ))}
       </QueueCard>
 

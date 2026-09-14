@@ -20,29 +20,23 @@ export function DataPanel({
   filters,
   footer,
   children,
-  className
+  className,
 }: DataPanelProps) {
   return (
     <section
       className={cn(
         'overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm',
-        className
+        className,
       )}
     >
       <header className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h2 className="truncate text-base font-semibold leading-tight">
-            {title}
-          </h2>
+          <h2 className="truncate text-base font-semibold leading-tight">{title}</h2>
           {subtitle ? (
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">
-              {subtitle}
-            </p>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">{subtitle}</p>
           ) : null}
         </div>
-        {actions ? (
-          <div className="flex flex-wrap items-center gap-2">{actions}</div>
-        ) : null}
+        {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
       </header>
 
       {filters ? (

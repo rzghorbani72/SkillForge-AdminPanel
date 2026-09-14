@@ -1,15 +1,7 @@
 /** Platform UI/config — not academy, staff, or person. */
-export const PLATFORM_STORAGE_KEYS = [
-  'preferred_language',
-  'theme',
-  'sidebar-minimized'
-] as const;
+export const PLATFORM_STORAGE_KEYS = ['preferred_language', 'theme', 'sidebar-minimized'] as const;
 
-export const PLATFORM_COOKIE_NAMES = [
-  'preferred_language',
-  'gdpr_consent',
-  'NEXT_LOCALE'
-] as const;
+export const PLATFORM_COOKIE_NAMES = ['preferred_language', 'gdpr_consent', 'NEXT_LOCALE'] as const;
 
 export function isPlatformStorageKey(key: string): boolean {
   return (PLATFORM_STORAGE_KEYS as readonly string[]).includes(key);

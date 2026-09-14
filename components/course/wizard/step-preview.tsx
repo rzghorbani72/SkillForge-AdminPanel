@@ -23,12 +23,10 @@ export function StepPreview({
   seasons,
   lessons,
   coverPreviewUrl,
-  courseType
+  courseType,
 }: StepPreviewProps) {
   const { categories } = useCategoriesStore();
-  const category = categories.find(
-    (c) => c.id.toString() === values.category_id
-  );
+  const category = categories.find((c) => c.id.toString() === values.category_id);
 
   return (
     <CourseStudentPreview
@@ -52,9 +50,9 @@ export function StepPreview({
               key: lesson.clientKey,
               title: lesson.title,
               isFree: lesson.is_free,
-              duration: lesson.duration
-            }))
-        }))
+              duration: lesson.duration,
+            })),
+        })),
       }}
     />
   );

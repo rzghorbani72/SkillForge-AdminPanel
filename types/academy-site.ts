@@ -19,7 +19,7 @@ export const CONTACT_CHANNELS = [
   'youtube',
   'twitter',
   'aparat',
-  'eitaa'
+  'eitaa',
 ] as const;
 
 export type ContactChannel = (typeof CONTACT_CHANNELS)[number];

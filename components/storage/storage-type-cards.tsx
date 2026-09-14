@@ -11,26 +11,23 @@ import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { cn } from '@/lib/utils';
 import type { AcademyStorageTypeUsage, StorageMediaType } from '@/lib/api';
 
-const TYPE_META: Record<
-  StorageMediaType,
-  { icon: LucideIcon; labelKey: string; color: string }
-> = {
+const TYPE_META: Record<StorageMediaType, { icon: LucideIcon; labelKey: string; color: string }> = {
   video: { icon: Video, labelKey: 'storage.typeVideo', color: 'text-sky-600' },
   image: {
     icon: ImageIcon,
     labelKey: 'storage.typeImage',
-    color: 'text-emerald-600'
+    color: 'text-emerald-600',
   },
   audio: {
     icon: Music,
     labelKey: 'storage.typeAudio',
-    color: 'text-violet-600'
+    color: 'text-violet-600',
   },
   document: {
     icon: FileText,
     labelKey: 'storage.typeDocument',
-    color: 'text-amber-600'
-  }
+    color: 'text-amber-600',
+  },
 };
 
 interface StorageTypeCardsProps {

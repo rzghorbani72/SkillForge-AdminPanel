@@ -223,17 +223,9 @@ export interface InterventionNoteResult {
   created_at: string;
 }
 
-export type TutoringEngagementStatus =
-  | 'ACTIVE'
-  | 'PAUSED'
-  | 'CANCELLED'
-  | 'EXPIRED';
+export type TutoringEngagementStatus = 'ACTIVE' | 'PAUSED' | 'CANCELLED' | 'EXPIRED';
 
-export type TutoringSessionStatus =
-  | 'SCHEDULED'
-  | 'COMPLETED'
-  | 'CANCELLED'
-  | 'RESCHEDULED';
+export type TutoringSessionStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'RESCHEDULED';
 
 export type TutoringAttendanceStatus = 'JOINED' | 'PRESENT' | 'ABSENT';
 

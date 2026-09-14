@@ -20,11 +20,7 @@ type UsersGroupsGridProps = {
   onOpen: (groupId: string) => void;
 };
 
-export function UsersGroupsGrid({
-  groups,
-  onCreate,
-  onOpen
-}: UsersGroupsGridProps) {
+export function UsersGroupsGrid({ groups, onCreate, onOpen }: UsersGroupsGridProps) {
   const { t } = useTranslation();
 
   return (
@@ -48,20 +44,17 @@ export function UsersGroupsGrid({
                 background: `linear-gradient(135deg, ${colors.bg}, hsl(var(--card)))`,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
             >
-              <span
-                style={{ fontSize: 28, color: colors.text, fontWeight: 700 }}
-              >
+              <span style={{ fontSize: 28, color: colors.text, fontWeight: 700 }}>
                 {g.name.slice(0, 1)}
               </span>
             </div>
             <div className="p-4">
               <div className="mb-1 text-[15px] font-semibold">{g.name}</div>
               <div className="mb-4 min-h-[32px] text-[12px] text-muted-foreground">
-                {g.description ||
-                  `${g._count?.CourseGrants ?? 0} ${t('users.courses')}`}
+                {g.description || `${g._count?.CourseGrants ?? 0} ${t('users.courses')}`}
               </div>
               {/* Real counts from the list endpoint — the avatar row that used
                   to sit here rendered four hardcoded placeholders. */}
@@ -82,7 +75,7 @@ export function UsersGroupsGrid({
                     style={{
                       width: 12,
                       height: 12,
-                      transform: 'rotate(-90deg)'
+                      transform: 'rotate(-90deg)',
                     }}
                   />
                 </span>
@@ -99,9 +92,7 @@ export function UsersGroupsGrid({
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Plus style={{ width: 18, height: 18 }} />
         </span>
-        <span className="text-[14px] font-semibold text-foreground">
-          {t('users.newGroup')}
-        </span>
+        <span className="text-[14px] font-semibold text-foreground">{t('users.newGroup')}</span>
         <span className="max-w-[180px] text-center text-[11.5px]">
           {t('users.newGroupDescription')}
         </span>

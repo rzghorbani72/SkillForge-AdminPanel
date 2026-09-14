@@ -15,12 +15,10 @@ const MAX_LISTED_AREAS = 3;
 export function buildAutoHint(
   role: PlatformRole,
   t: TranslateFn,
-  formatNumber: FormatNumberFn
+  formatNumber: FormatNumberFn,
 ): string {
   const level = getAccessLevelLabel(role.hierarchy_level, t);
-  const resources = Array.from(
-    new Set(role.permissions.map((permission) => permission.resource))
-  );
+  const resources = Array.from(new Set(role.permissions.map((permission) => permission.resource)));
 
   if (resources.length === 0) {
     return t('roles.autoHintEmpty', { level });

@@ -9,7 +9,7 @@ import {
   EMPTY_REVENUE,
   type AnalyticsCourses,
   type AnalyticsOverview,
-  type AnalyticsRevenue
+  type AnalyticsRevenue,
 } from '@/types/analytics';
 
 export interface AnalyticsSnapshots {
@@ -20,9 +20,7 @@ export interface AnalyticsSnapshots {
   refresh: () => void;
 }
 
-export function useAnalyticsData(options?: {
-  revenue?: boolean;
-}): AnalyticsSnapshots {
+export function useAnalyticsData(options?: { revenue?: boolean }): AnalyticsSnapshots {
   const includeRevenue = options?.revenue === true;
   const [overview, setOverview] = useState<AnalyticsOverview>(EMPTY_OVERVIEW);
   const [revenue, setRevenue] = useState<AnalyticsRevenue>(EMPTY_REVENUE);
@@ -43,9 +41,7 @@ export function useAnalyticsData(options?: {
         const [overviewRes, coursesRes, revenueRes] = await Promise.allSettled([
           apiClient.getAnalyticsOverview(),
           apiClient.getAnalyticsCourses(),
-          includeRevenue
-            ? apiClient.getAnalyticsRevenue()
-            : Promise.resolve(null)
+          includeRevenue ? apiClient.getAnalyticsRevenue() : Promise.resolve(null),
         ]);
 
         if (!isMounted) return;
@@ -62,7 +58,7 @@ export function useAnalyticsData(options?: {
         if (coursesRes.status === 'fulfilled' && coursesRes.value) {
           setCourses({
             courses: coursesRes.value.courses ?? [],
-            totalCourses: coursesRes.value.totalCourses ?? 0
+            totalCourses: coursesRes.value.totalCourses ?? 0,
           });
         } else {
           setCourses(EMPTY_COURSES);
@@ -80,8 +76,8 @@ export function useAnalyticsData(options?: {
             revenueTrend: overviewRes.value.revenueTrend.map((point) => ({
               period: point.period,
               revenue: point.revenue,
-              transactions: point.enrollments
-            }))
+              transactions: point.enrollments,
+            })),
           });
         } else {
           setRevenue(EMPTY_REVENUE);
@@ -106,6 +102,6 @@ export function useAnalyticsData(options?: {
 
   return useMemo(
     () => ({ overview, revenue, courses, isLoading, refresh }),
-    [overview, revenue, courses, isLoading, refresh]
+    [overview, revenue, courses, isLoading, refresh],
   );
 }

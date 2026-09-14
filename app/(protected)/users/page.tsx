@@ -9,27 +9,14 @@ import { studentGroupsApi } from '@/lib/api-extra';
 import { ErrorHandler } from '@/lib/error-handler';
 import PageContainer from '@/components/layout/page-container';
 import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
-import {
-  UsersStatsBar,
-  type UserStat
-} from '@/components/users/users-stats-bar';
+import { UsersStatsBar, type UserStat } from '@/components/users/users-stats-bar';
 import { UsersTable } from '@/components/users/users-table';
-import {
-  UsersGroupsGrid,
-  type StudentGroup
-} from '@/components/users/users-groups-grid';
+import { UsersGroupsGrid, type StudentGroup } from '@/components/users/users-groups-grid';
 import { UsersRequestsView } from '@/components/users/users-requests-view';
 import { UsersEnrollmentsView } from '@/components/users/users-enrollments-view';
 import { UsersPendingBanner } from '@/components/users/users-pending-banner';
-import {
-  UsersTabBar,
-  type UsersTab,
-  type UsersTabItem
-} from '@/components/users/users-tab-bar';
-import {
-  UsersRoleFilter,
-  ALL_ROLES
-} from '@/components/users/users-role-filter';
+import { UsersTabBar, type UsersTab, type UsersTabItem } from '@/components/users/users-tab-bar';
+import { UsersRoleFilter, ALL_ROLES } from '@/components/users/users-role-filter';
 import { UsersPageHeader } from '@/components/users/users-page-header';
 import { CreateGroupDialog } from '@/components/users/create-group-dialog';
 import { GroupDetailDialog } from '@/components/users/group-detail-dialog';
@@ -48,7 +35,7 @@ const TAB_ACCESS: Record<string, UsersTab[]> = {
   PLATFORM_OWNER: ['all', 'groups', 'enrollments', 'requests'],
   ADMIN: ['all', 'groups', 'enrollments', 'requests'],
   MANAGER: ['all', 'groups', 'enrollments', 'requests'],
-  TEACHER: ['all', 'groups', 'enrollments']
+  TEACHER: ['all', 'groups', 'enrollments'],
 };
 
 function allowedTabs(role?: string): UsersTab[] {
@@ -60,7 +47,7 @@ const PLACEHOLDER_STATS: UserStat[] = [
   { labelKey: 'common.loading', value: 0 },
   { labelKey: 'common.loading', value: 0 },
   { labelKey: 'common.loading', value: 0 },
-  { labelKey: 'common.loading', value: 0 }
+  { labelKey: 'common.loading', value: 0 },
 ];
 
 export default function UsersPage() {
@@ -89,7 +76,7 @@ export default function UsersPage() {
     limit: PAGE_SIZE,
     search,
     role: roleFilter,
-    enabled: isUserTab
+    enabled: isUserTab,
   });
 
   // The sidebar links straight to a filtered view (e.g. /users?role=STUDENT),
@@ -99,10 +86,7 @@ export default function UsersPage() {
   const tabParam = searchParams.get('tab');
   useEffect(() => {
     if (roleParam) setRoleFilter(roleParam.toUpperCase());
-    if (
-      tabParam &&
-      allowedTabs(authUser?.role).includes(tabParam as UsersTab)
-    ) {
+    if (tabParam && allowedTabs(authUser?.role).includes(tabParam as UsersTab)) {
       setTab(tabParam as UsersTab);
     }
   }, [roleParam, tabParam, authUser?.role]);
@@ -145,23 +129,23 @@ export default function UsersPage() {
     { labelKey: 'users.totalUsers', value: userStats.total },
     { labelKey: 'users.activeUsers', value: userStats.active },
     { labelKey: 'users.teachers', value: userStats.teachers },
-    { labelKey: 'users.pendingApproval', value: userStats.pendingRequests }
+    { labelKey: 'users.pendingApproval', value: userStats.pendingRequests },
   ];
 
   const groupTabStats: UserStat[] = [
     { labelKey: 'users.groups', value: groups.length },
     {
       labelKey: 'common.active',
-      value: groups.filter((group) => group.is_active).length
+      value: groups.filter((group) => group.is_active).length,
     },
     {
       labelKey: 'users.groupMembers',
-      value: groups.reduce((sum, g) => sum + (g._count?.Members ?? 0), 0)
+      value: groups.reduce((sum, g) => sum + (g._count?.Members ?? 0), 0),
     },
     {
       labelKey: 'users.groupCourseAccess',
-      value: groups.reduce((sum, g) => sum + (g._count?.CourseGrants ?? 0), 0)
-    }
+      value: groups.reduce((sum, g) => sum + (g._count?.CourseGrants ?? 0), 0),
+    },
   ];
 
   const statsForTab = (): UserStat[] => {
@@ -178,8 +162,8 @@ export default function UsersPage() {
       value: 'requests',
       label: t('users.requests'),
       count: pendingRequestsCount,
-      urgent: true
-    }
+      urgent: true,
+    },
   ];
   const tabs = allTabs.filter((item) => allowed.includes(item.value));
 
@@ -197,14 +181,9 @@ export default function UsersPage() {
       />
       <UsersPageHeader onChanged={refreshAll} />
 
-      {pendingRequestsCount > 0 &&
-        tab !== 'requests' &&
-        allowed.includes('requests') && (
-          <UsersPendingBanner
-            count={pendingRequestsCount}
-            onReview={() => setTab('requests')}
-          />
-        )}
+      {pendingRequestsCount > 0 && tab !== 'requests' && allowed.includes('requests') && (
+        <UsersPendingBanner count={pendingRequestsCount} onReview={() => setTab('requests')} />
+      )}
 
       <UsersStatsBar stats={statsForTab()} />
 
@@ -221,11 +200,7 @@ export default function UsersPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <UsersRoleFilter
-              roles={availableRoles}
-              value={roleFilter}
-              onChange={setRoleFilter}
-            />
+            <UsersRoleFilter roles={availableRoles} value={roleFilter} onChange={setRoleFilter} />
           </div>
         )}
       </div>
@@ -259,10 +234,7 @@ export default function UsersPage() {
         </LearningNavGate>
       )}
       {tab === 'requests' && (
-        <UsersRequestsView
-          onPendingCountChange={refreshStats}
-          onStats={setReportedStats}
-        />
+        <UsersRequestsView onPendingCountChange={refreshStats} onStats={setReportedStats} />
       )}
     </PageContainer>
   );

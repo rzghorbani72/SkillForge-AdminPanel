@@ -101,7 +101,7 @@ function mixHsl(base: Hsl, target: Hsl, ratio: number): Hsl {
   return {
     h: base.h + (target.h - base.h) * t,
     s: base.s + (target.s - base.s) * t,
-    l: base.l + (target.l - base.l) * t
+    l: base.l + (target.l - base.l) * t,
   };
 }
 
@@ -110,34 +110,26 @@ export function derivePaletteFromPrimary(primaryHex: string): DerivedPalette {
   const base = hexToHsl(primary);
 
   const primaryLight = primary;
-  const primaryDark = hslToHex(
-    base.h,
-    clamp(base.s * 0.85, 20, 100),
-    clamp(base.l + 18, 35, 72)
-  );
+  const primaryDark = hslToHex(base.h, clamp(base.s * 0.85, 20, 100), clamp(base.l + 18, 35, 72));
 
   const secondaryLight = hslToHex(
     base.h,
     clamp(base.s * 0.35, 8, 45),
-    clamp(base.l * 0.42, 18, 38)
+    clamp(base.l * 0.42, 18, 38),
   );
-  const secondaryDark = hslToHex(
-    base.h,
-    clamp(base.s * 0.55, 12, 60),
-    clamp(base.l + 35, 55, 78)
-  );
+  const secondaryDark = hslToHex(base.h, clamp(base.s * 0.55, 12, 60), clamp(base.l + 35, 55, 78));
 
   const accent = hslToHex(
     (base.h + 150) % 360,
     clamp(Math.max(base.s, 55), 45, 85),
-    clamp(base.l > 50 ? base.l - 8 : base.l + 12, 42, 62)
+    clamp(base.l > 50 ? base.l - 8 : base.l + 12, 42, 62),
   );
 
   const backgroundLight = hslToHex(base.h, clamp(base.s * 0.12, 4, 18), 97);
   const backgroundDark = hslToHex(
     mixHsl(base, { h: base.h, s: 20, l: 8 }, 0.35).h,
     clamp(base.s * 0.35, 10, 40),
-    10
+    10,
   );
 
   return {
@@ -149,7 +141,7 @@ export function derivePaletteFromPrimary(primaryHex: string): DerivedPalette {
     secondaryDark,
     accent,
     backgroundLight,
-    backgroundDark
+    backgroundDark,
   };
 }
 
@@ -161,6 +153,6 @@ export function paletteToThemeColors(palette: DerivedPalette) {
     secondaryDark: palette.secondaryDark,
     accent: palette.accent,
     backgroundLight: palette.backgroundLight,
-    backgroundDark: palette.backgroundDark
+    backgroundDark: palette.backgroundDark,
   };
 }

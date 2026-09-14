@@ -10,14 +10,14 @@ import {
   MoreHorizontal,
   Pencil,
   Radio,
-  Settings2
+  Settings2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CourseTypePill } from '@/components/course/course-type-pill';
@@ -35,10 +35,7 @@ import type { CourseDetail } from './types';
 function thumbUrl(course: CourseDetail): string | null {
   const image = course.Image;
   if (!image) return null;
-  return (
-    image.publicUrl ??
-    `${langApiVersionPath()}/images/fetch-image-by-id/${image.id}`
-  );
+  return image.publicUrl ?? `${langApiVersionPath()}/images/fetch-image-by-id/${image.id}`;
 }
 
 /**
@@ -49,7 +46,7 @@ function thumbUrl(course: CourseDetail): string | null {
  */
 export function CourseWorkspaceHeader({
   sticky = true,
-  showTabs = true
+  showTabs = true,
 }: {
   sticky?: boolean;
   showTabs?: boolean;
@@ -78,16 +75,11 @@ export function CourseWorkspaceHeader({
     <div
       className={cn(
         'border-b bg-background/95 px-4 pt-3 backdrop-blur sm:px-6',
-        sticky && 'sticky top-0 z-20'
+        sticky && 'sticky top-0 z-20',
       )}
     >
       <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="-ms-2 h-8 w-8 shrink-0"
-          asChild
-        >
+        <Button variant="ghost" size="icon" className="-ms-2 h-8 w-8 shrink-0" asChild>
           <Link href="/courses" aria-label={t('courseDetail.backToCourses')}>
             <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
           </Link>
@@ -98,7 +90,7 @@ export function CourseWorkspaceHeader({
           style={{
             background: thumb
               ? undefined
-              : `linear-gradient(135deg, hsl(${hue} 80% 82%), hsl(${hue} 60% 92%))`
+              : `linear-gradient(135deg, hsl(${hue} 80% 82%), hsl(${hue} 60% 92%))`,
           }}
         >
           {thumb ? (
@@ -111,18 +103,13 @@ export function CourseWorkspaceHeader({
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <BookOpen
-                className="h-4 w-4 opacity-40"
-                style={{ color: `hsl(${hue} 60% 40%)` }}
-              />
+              <BookOpen className="h-4 w-4 opacity-40" style={{ color: `hsl(${hue} 60% 40%)` }} />
             </div>
           )}
         </div>
 
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <h1 className="truncate text-base font-bold tracking-tight sm:text-lg">
-            {course.title}
-          </h1>
+          <h1 className="truncate text-base font-bold tracking-tight sm:text-lg">{course.title}</h1>
           <StatusPill status={course.is_published ? 'PUBLISHED' : 'DRAFT'} />
           <CourseTypePill type={course.course_type} />
         </div>
@@ -163,11 +150,7 @@ export function CourseWorkspaceHeader({
               )}
               {course.is_published && course.slug && (
                 <DropdownMenuItem asChild>
-                  <a
-                    href={`/courses/${course.slug}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href={`/courses/${course.slug}`} target="_blank" rel="noreferrer">
                     <ExternalLink className="me-2 h-4 w-4" />
                     {t('courseDetail.viewPublicPage')}
                   </a>
@@ -178,16 +161,9 @@ export function CourseWorkspaceHeader({
         </div>
       </div>
 
-      {showTabs ? (
-        <CourseWorkspaceTabs courseId={courseId} />
-      ) : (
-        <div className="h-3" />
-      )}
+      {showTabs ? <CourseWorkspaceTabs courseId={courseId} /> : <div className="h-3" />}
 
-      <CourseQuickSettingsDialog
-        open={settingsOpen}
-        onOpenChange={setSettingsOpen}
-      />
+      <CourseQuickSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 }

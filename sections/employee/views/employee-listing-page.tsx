@@ -13,7 +13,7 @@ import Link from '@/components/ui/link';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Employee', link: '/dashboard/employee' }
+  { title: 'Employee', link: '/dashboard/employee' },
 ];
 
 export default async function EmployeeListingPage() {
@@ -27,7 +27,7 @@ export default async function EmployeeListingPage() {
     page,
     limit: pageLimit,
     ...(search && { search }),
-    ...(gender && { genders: gender })
+    ...(gender && { genders: gender }),
   };
 
   // mock api call

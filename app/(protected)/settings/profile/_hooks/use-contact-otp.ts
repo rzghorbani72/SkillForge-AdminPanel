@@ -19,7 +19,7 @@ type Channel = 'email' | 'phone';
 
 const SUCCESS_KEY = {
   email: 'settings.emailVerifiedSuccess',
-  phone: 'settings.phoneVerifiedSuccess'
+  phone: 'settings.phoneVerifiedSuccess',
 } as const;
 
 interface ContactOtp {
@@ -35,19 +35,12 @@ function payloadValue(channel: Channel, value: string): string {
 }
 
 /** Send/verify a new phone or email; the API saves it only after the code matches. */
-export function useContactOtp(
-  channel: Channel,
-  value: string,
-  onVerified: () => void
-): ContactOtp {
+export function useContactOtp(channel: Channel, value: string, onVerified: () => void): ContactOtp {
   const { t } = useTranslation();
   const [state, setState] = useState<OtpState>(IDLE_OTP);
 
   const reset = useCallback(() => setState(IDLE_OTP), []);
-  const setCode = useCallback(
-    (code: string) => setState((s) => ({ ...s, code })),
-    []
-  );
+  const setCode = useCallback((code: string) => setState((s) => ({ ...s, code })), []);
 
   const send = useCallback(async () => {
     const target = payloadValue(channel, value);

@@ -1,20 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
@@ -25,7 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,7 +34,7 @@ import type {
   ApiPagination,
   AssignmentSubmission,
   LearningAssignment,
-  SubmissionStatus
+  SubmissionStatus,
 } from '@/types/learning-operations';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
@@ -62,23 +56,17 @@ export default function AssignmentsPage() {
   const [assignments, setAssignments] = useState<LearningAssignment[]>([]);
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
   const [pagination, setPagination] = useState<ApiPagination | null>(null);
-  const [subPagination, setSubPagination] = useState<ApiPagination | null>(
-    null
-  );
+  const [subPagination, setSubPagination] = useState<ApiPagination | null>(null);
   const [pendingTotal, setPendingTotal] = useState(0);
   const [gradedTotal, setGradedTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubLoading, setIsSubLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [courseFilter, setCourseFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<SubmissionStatus | 'ALL'>(
-    'ALL'
-  );
+  const [statusFilter, setStatusFilter] = useState<SubmissionStatus | 'ALL'>('ALL');
   const [currentPage, setCurrentPage] = useState(1);
   const [subPage, setSubPage] = useState(1);
-  const [activeTab, setActiveTab] = useState<'assignments' | 'submissions'>(
-    'submissions'
-  );
+  const [activeTab, setActiveTab] = useState<'assignments' | 'submissions'>('submissions');
 
   const [gradeDialog, setGradeDialog] = useState<{
     open: boolean;
@@ -96,7 +84,7 @@ export default function AssignmentsPage() {
       const data = await apiClient.getAssignments({
         page: currentPage,
         limit: 15,
-        course_id: courseId
+        course_id: courseId,
       });
       setAssignments(data?.assignments ?? []);
       setPagination(data?.pagination ?? null);
@@ -114,7 +102,7 @@ export default function AssignmentsPage() {
         page: subPage,
         limit: 15,
         course_id: courseId,
-        status: statusFilter === 'ALL' ? undefined : statusFilter
+        status: statusFilter === 'ALL' ? undefined : statusFilter,
       });
       setSubmissions(data?.submissions ?? []);
       setSubPagination(data?.pagination ?? null);
@@ -131,13 +119,13 @@ export default function AssignmentsPage() {
         apiClient.getSubmissions({
           status: 'SUBMITTED',
           course_id: courseId,
-          limit: 1
+          limit: 1,
         }),
         apiClient.getSubmissions({
           status: 'GRADED',
           course_id: courseId,
-          limit: 1
-        })
+          limit: 1,
+        }),
       ]);
       setPendingTotal(pending.pagination?.total ?? 0);
       setGradedTotal(graded.pagination?.total ?? 0);
@@ -167,19 +155,14 @@ export default function AssignmentsPage() {
     if (!gradeDialog.submission) return;
     const score = Number(gradeScore);
     const maxScore = gradeDialog.submission.Assignment?.max_score;
-    if (
-      !Number.isFinite(score) ||
-      score < 0 ||
-      maxScore === undefined ||
-      score > maxScore
-    ) {
+    if (!Number.isFinite(score) || score < 0 || maxScore === undefined || score > maxScore) {
       return;
     }
     try {
       setIsGrading(true);
       await apiClient.gradeSubmission(gradeDialog.submission.id, {
         score,
-        feedback: gradeFeedback || undefined
+        feedback: gradeFeedback || undefined,
       });
       setGradeDialog({ open: false, submission: null });
       void fetchSubmissions();
@@ -211,9 +194,7 @@ export default function AssignmentsPage() {
   };
 
   const filteredAssignments = search
-    ? assignments.filter((a) =>
-        a.title.toLowerCase().includes(search.toLowerCase())
-      )
+    ? assignments.filter((a) => a.title.toLowerCase().includes(search.toLowerCase()))
     : assignments;
 
   const reviewQueue = useMemo(
@@ -221,11 +202,10 @@ export default function AssignmentsPage() {
       statusFilter === 'ALL'
         ? [...submissions].sort(
             (first, second) =>
-              Number(second.status === 'SUBMITTED') -
-              Number(first.status === 'SUBMITTED')
+              Number(second.status === 'SUBMITTED') - Number(first.status === 'SUBMITTED'),
           )
         : submissions,
-    [submissions, statusFilter]
+    [submissions, statusFilter],
   );
 
   const clearFilters = () => {
@@ -236,17 +216,10 @@ export default function AssignmentsPage() {
   return (
     <RequirePermission resource="assignments" action="read">
       <LearningNavGate requiredCapability="assignments">
-        <div
-          className="flex-1 space-y-6 p-4 sm:p-6"
-          dir={isRtl ? 'rtl' : 'ltr'}
-        >
+        <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {t('assignmentsPage.title')}
-            </h1>
-            <p className="text-muted-foreground">
-              {t('assignmentsPage.description')}
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight">{t('assignmentsPage.title')}</h1>
+            <p className="text-muted-foreground">{t('assignmentsPage.description')}</p>
           </div>
 
           <AssignmentsStats
@@ -290,9 +263,7 @@ export default function AssignmentsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>{t('assignmentsPage.allAssignments')}</CardTitle>
-                <CardDescription>
-                  {t('assignmentsPage.allAssignmentsDescription')}
-                </CardDescription>
+                <CardDescription>{t('assignmentsPage.allAssignmentsDescription')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="relative max-w-sm">
@@ -313,9 +284,7 @@ export default function AssignmentsPage() {
                         <TableHead>{t('assignmentsPage.lesson')}</TableHead>
                         <TableHead>{t('assignmentsPage.dueDate')}</TableHead>
                         <TableHead>{t('assignmentsPage.maxScore')}</TableHead>
-                        <TableHead>
-                          {t('assignmentsPage.submissions')}
-                        </TableHead>
+                        <TableHead>{t('assignmentsPage.submissions')}</TableHead>
                         <TableHead>{t('assignmentsPage.required')}</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -328,10 +297,7 @@ export default function AssignmentsPage() {
                         </TableRow>
                       ) : filteredAssignments.length === 0 ? (
                         <TableRow>
-                          <TableCell
-                            colSpan={7}
-                            className="h-32 text-center text-muted-foreground"
-                          >
+                          <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
                             {t('assignmentsPage.noAssignmentsFound')}
                           </TableCell>
                         </TableRow>
@@ -347,26 +313,19 @@ export default function AssignmentsPage() {
                               ) : null}
                             </TableCell>
                             <TableCell className="text-sm">
-                              {a.Lesson?.Course?.title ??
-                                t('assignmentsPage.notAvailable')}
+                              {a.Lesson?.Course?.title ?? t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell className="text-sm">
-                              <div>
-                                {a.Lesson?.title ??
-                                  t('assignmentsPage.notAvailable')}
-                              </div>
+                              <div>{a.Lesson?.title ?? t('assignmentsPage.notAvailable')}</div>
                               {a.Lesson?.Season?.title ? (
                                 <div className="text-xs text-muted-foreground">
-                                  {t('assignmentsPage.season')}:{' '}
-                                  {a.Lesson.Season.title}
+                                  {t('assignmentsPage.season')}: {a.Lesson.Season.title}
                                 </div>
                               ) : null}
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
                               {a.due_date
-                                ? new Date(a.due_date).toLocaleDateString(
-                                    locale
-                                  )
+                                ? new Date(a.due_date).toLocaleDateString(locale)
                                 : t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell>
@@ -386,9 +345,7 @@ export default function AssignmentsPage() {
                                     : 'bg-muted text-muted-foreground'
                                 }
                               >
-                                {a.is_required
-                                  ? t('common.required')
-                                  : t('common.optional')}
+                                {a.is_required ? t('common.required') : t('common.optional')}
                               </Badge>
                             </TableCell>
                           </TableRow>
@@ -443,10 +400,7 @@ export default function AssignmentsPage() {
                         </TableRow>
                       ) : submissions.length === 0 ? (
                         <TableRow>
-                          <TableCell
-                            colSpan={7}
-                            className="h-32 text-center text-muted-foreground"
-                          >
+                          <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
                             {t('assignmentsPage.noSubmissionsYet')}
                           </TableCell>
                         </TableRow>
@@ -454,16 +408,14 @@ export default function AssignmentsPage() {
                         reviewQueue.map((sub) => (
                           <TableRow key={sub.id}>
                             <TableCell className="font-medium">
-                              {sub.Profile?.display_name ??
-                                t('assignmentsPage.notAvailable')}
+                              {sub.Profile?.display_name ?? t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell className="text-sm">
                               {sub.Assignment?.Lesson?.Course?.title ??
                                 t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell className="text-sm">
-                              {sub.Assignment?.title ??
-                                t('assignmentsPage.notAvailable')}
+                              {sub.Assignment?.title ?? t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell>
                               <Badge className={statusColor(sub.status)}>
@@ -471,16 +423,13 @@ export default function AssignmentsPage() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-sm">
-                              {sub.score != null &&
-                              sub.Assignment?.max_score != null
+                              {sub.score != null && sub.Assignment?.max_score != null
                                 ? `${formatNumber(sub.score)} / ${formatNumber(sub.Assignment.max_score)}`
                                 : t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
                               {sub.submitted_at
-                                ? new Date(sub.submitted_at).toLocaleDateString(
-                                    locale
-                                  )
+                                ? new Date(sub.submitted_at).toLocaleDateString(locale)
                                 : t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell>
@@ -531,9 +480,7 @@ export default function AssignmentsPage() {
           >
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>
-                  {t('assignmentsPage.gradeSubmission')}
-                </DialogTitle>
+                <DialogTitle>{t('assignmentsPage.gradeSubmission')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 {gradeDialog.submission?.content ? (
@@ -570,10 +517,8 @@ export default function AssignmentsPage() {
                     {t('assignmentsPage.scoreMax', {
                       max:
                         gradeDialog.submission?.Assignment?.max_score != null
-                          ? formatNumber(
-                              gradeDialog.submission.Assignment.max_score
-                            )
-                          : t('assignmentsPage.notAvailable')
+                          ? formatNumber(gradeDialog.submission.Assignment.max_score)
+                          : t('assignmentsPage.notAvailable'),
                     })}
                   </Label>
                   <NumberInput
@@ -584,9 +529,7 @@ export default function AssignmentsPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="feedback">
-                    {t('assignmentsPage.feedbackOptional')}
-                  </Label>
+                  <Label htmlFor="feedback">{t('assignmentsPage.feedbackOptional')}</Label>
                   <Textarea
                     id="feedback"
                     value={gradeFeedback}
@@ -600,9 +543,7 @@ export default function AssignmentsPage() {
               <DialogFooter>
                 <Button
                   variant="outline"
-                  onClick={() =>
-                    setGradeDialog({ open: false, submission: null })
-                  }
+                  onClick={() => setGradeDialog({ open: false, submission: null })}
                 >
                   {t('common.cancel')}
                 </Button>
@@ -614,9 +555,7 @@ export default function AssignmentsPage() {
                     gradeDialog.submission?.Assignment?.max_score === undefined
                   }
                 >
-                  {isGrading
-                    ? t('common.saving')
-                    : t('assignmentsPage.saveGrade')}
+                  {isGrading ? t('common.saving') : t('assignmentsPage.saveGrade')}
                 </Button>
               </DialogFooter>
             </DialogContent>

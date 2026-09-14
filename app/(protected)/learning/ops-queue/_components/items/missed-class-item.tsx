@@ -10,27 +10,17 @@ interface MissedClassItemProps {
   onUseForNote: (profileId: string) => void;
 }
 
-export function MissedClassItem({
-  item,
-  language,
-  onUseForNote
-}: MissedClassItemProps) {
+export function MissedClassItem({ item, language, onUseForNote }: MissedClassItemProps) {
   const { t } = useTranslation();
 
   return (
     <div className="rounded-lg border p-3 text-sm">
-      <p className="font-medium">
-        {item.Profile?.display_name || t('users.unnamedUser')}
-      </p>
+      <p className="font-medium">{item.Profile?.display_name || t('users.unnamedUser')}</p>
       <p className="text-muted-foreground">
         {t('opsQueue.missedSessionAt')}:{' '}
-        {item.Session
-          ? new Date(item.Session.starts_at).toLocaleString(language)
-          : '—'}
+        {item.Session ? new Date(item.Session.starts_at).toLocaleString(language) : '—'}
       </p>
-      <p className="text-muted-foreground">
-        {new Date(item.created_at).toLocaleString(language)}
-      </p>
+      <p className="text-muted-foreground">{new Date(item.created_at).toLocaleString(language)}</p>
       <Button
         variant="ghost"
         size="sm"

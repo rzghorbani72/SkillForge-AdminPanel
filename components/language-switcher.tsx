@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Globe } from 'lucide-react';
@@ -52,9 +52,7 @@ export function LanguageSwitcher() {
   }
 
   // Filter languages to only show the 4 available ones
-  const availableLanguagesList = AVAILABLE_LANGUAGES.map(
-    (code) => LANGUAGES[code]
-  );
+  const availableLanguagesList = AVAILABLE_LANGUAGES.map((code) => LANGUAGES[code]);
 
   return (
     <DropdownMenu>
@@ -66,9 +64,7 @@ export function LanguageSwitcher() {
           disabled={isChanging}
         >
           <Globe className="h-4 w-4 text-foreground" />
-          <span className="font-medium text-foreground">
-            {currentLanguage.nativeName}
-          </span>
+          <span className="font-medium text-foreground">{currentLanguage.nativeName}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -88,9 +84,7 @@ export function LanguageSwitcher() {
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-2">
                 <span>{lang.nativeName}</span>
-                <span className="text-xs text-muted-foreground">
-                  ({lang.name})
-                </span>
+                <span className="text-xs text-muted-foreground">({lang.name})</span>
               </div>
               {language === lang.code && <span className="text-xs">✓</span>}
             </div>

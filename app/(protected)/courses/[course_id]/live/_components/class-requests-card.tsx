@@ -16,7 +16,7 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type {
   ClassRequest,
   ClassRequestWindow,
-  TutoringGroupSlot
+  TutoringGroupSlot,
 } from '@/types/learning-operations';
 import { CreateClassSheet } from './create-class-sheet';
 
@@ -25,7 +25,7 @@ const toSlots = (windows: ClassRequestWindow[]): TutoringGroupSlot[] =>
   windows.map((w) => ({
     weekday: w.weekday,
     start_minute: w.start_minute,
-    duration_minutes: Math.max(30, Math.min(180, w.end_minute - w.start_minute))
+    duration_minutes: Math.max(30, Math.min(180, w.end_minute - w.start_minute)),
   }));
 
 interface ClassRequestsCardProps {
@@ -45,7 +45,7 @@ export function ClassRequestsCard({
   courseTitle,
   offerId,
   defaultSeatPrice,
-  onClassCreated
+  onClassCreated,
 }: ClassRequestsCardProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
@@ -58,8 +58,8 @@ export function ClassRequestsCard({
       setRequests(
         await apiClient.getClassRequests({
           course_id: courseId,
-          status: 'PENDING'
-        })
+          status: 'PENDING',
+        }),
       );
     } catch (err) {
       ErrorHandler.handleApiError(err);
@@ -102,15 +102,12 @@ export function ClassRequestsCard({
     <DataPanel
       title={t('courses.live.requestsTitle')}
       subtitle={t('courses.live.requestsCount', {
-        count: formatNumber(requests.length)
+        count: formatNumber(requests.length),
       })}
     >
       <ul className="divide-y">
         {requests.map((request) => (
-          <li
-            key={request.id}
-            className="flex flex-wrap items-start justify-between gap-3 p-4"
-          >
+          <li key={request.id} className="flex flex-wrap items-start justify-between gap-3 p-4">
             <div className="min-w-0 space-y-1 text-sm">
               <p className="font-medium">
                 {request.Student?.display_name ?? '—'}
@@ -118,19 +115,15 @@ export function ClassRequestsCard({
                   {request.engagement_id
                     ? t('courses.live.requestPrivatePaid')
                     : t('courses.live.requestSeats', {
-                        count: formatNumber(request.seats)
+                        count: formatNumber(request.seats),
                       })}
                 </span>
               </p>
-              <p className="text-muted-foreground">
-                {formatRequestWindows(request.windows, t)}
-              </p>
+              <p className="text-muted-foreground">{formatRequestWindows(request.windows, t)}</p>
               {request.note ? (
                 <p className="text-xs text-muted-foreground">{request.note}</p>
               ) : null}
-              <p className="text-xs text-muted-foreground">
-                {formatDate(request.created_at)}
-              </p>
+              <p className="text-xs text-muted-foreground">{formatDate(request.created_at)}</p>
             </div>
             <div className="flex shrink-0 gap-2">
               {request.engagement_id ? (
@@ -148,14 +141,10 @@ export function ClassRequestsCard({
                   prefill={{
                     slots: toSlots(request.windows),
                     capacity: request.seats,
-                    minStudents: request.seats
+                    minStudents: request.seats,
                   }}
                   trigger={
-                    <Button
-                      type="button"
-                      size="sm"
-                      disabled={busyId === request.id}
-                    >
+                    <Button type="button" size="sm" disabled={busyId === request.id}>
                       <CalendarPlus className="me-1.5 h-4 w-4" />
                       {t('courses.live.openClassForRequest')}
                     </Button>

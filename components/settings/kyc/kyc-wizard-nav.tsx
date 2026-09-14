@@ -23,7 +23,7 @@ export function KycWizardNav({
   awaitingIbanConfirm,
   nextLabel,
   onBack,
-  onNext
+  onNext,
 }: Props) {
   const { t } = useTranslation();
   const hint =
@@ -36,12 +36,7 @@ export function KycWizardNav({
   return (
     <div className="flex flex-wrap items-center gap-3">
       {stepIndex > 0 ? (
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onBack}
-          disabled={busy}
-        >
+        <Button type="button" variant="outline" onClick={onBack} disabled={busy}>
           {t('common.back')}
         </Button>
       ) : null}

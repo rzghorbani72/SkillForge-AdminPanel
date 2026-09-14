@@ -1,22 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Eye,
-  EyeOff,
-  ImageIcon,
-  MoreHorizontal,
-  Pause,
-  Play,
-  Trash2
-} from 'lucide-react';
+import { Eye, EyeOff, ImageIcon, MoreHorizontal, Pause, Play, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { AcademyShowcaseModal } from '@/components/academies/academy-showcase-modal';
@@ -44,7 +36,7 @@ type AcademyStaffActionsProps = {
 export function AcademyStaffActions({
   academy,
   onChanged,
-  platformControls = false
+  platformControls = false,
 }: AcademyStaffActionsProps) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
@@ -72,9 +64,7 @@ export function AcademyStaffActions({
     setBusy(true);
     try {
       await apiClient.setAcademyPublicListing(academy.id, listedPublicly);
-      toast.success(
-        listedPublicly ? t('stores.listedToast') : t('stores.hiddenToast')
-      );
+      toast.success(listedPublicly ? t('stores.listedToast') : t('stores.hiddenToast'));
       onChanged();
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -115,38 +105,20 @@ export function AcademyStaffActions({
         <DropdownMenuContent align="end">
           {platformControls && (
             <>
-              <DropdownMenuItem
-                disabled={busy}
-                onSelect={() => setShowcaseOpen(true)}
-              >
+              <DropdownMenuItem disabled={busy} onSelect={() => setShowcaseOpen(true)}>
                 <ImageIcon className="me-2 h-4 w-4" />
                 {t('stores.landingScreenshots')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                disabled={busy}
-                onSelect={() => void setListed(!listed)}
-              >
-                {listed ? (
-                  <EyeOff className="me-2 h-4 w-4" />
-                ) : (
-                  <Eye className="me-2 h-4 w-4" />
-                )}
+              <DropdownMenuItem disabled={busy} onSelect={() => void setListed(!listed)}>
+                {listed ? <EyeOff className="me-2 h-4 w-4" /> : <Eye className="me-2 h-4 w-4" />}
                 {listed ? t('stores.hideFromPublic') : t('stores.showOnPublic')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={busy}
-                onSelect={() =>
-                  suspended ? void liftSuspension() : setSuspendOpen(true)
-                }
+                onSelect={() => (suspended ? void liftSuspension() : setSuspendOpen(true))}
               >
-                {suspended ? (
-                  <Play className="me-2 h-4 w-4" />
-                ) : (
-                  <Pause className="me-2 h-4 w-4" />
-                )}
-                {suspended
-                  ? t('accountActions.unsuspend')
-                  : t('accountActions.suspend')}
+                {suspended ? <Play className="me-2 h-4 w-4" /> : <Pause className="me-2 h-4 w-4" />}
+                {suspended ? t('accountActions.unsuspend') : t('accountActions.suspend')}
               </DropdownMenuItem>
             </>
           )}
@@ -158,7 +130,7 @@ export function AcademyStaffActions({
                 : t(
                     platformControls
                       ? 'stores.removeAcademyLocked'
-                      : 'stores.removeAcademyLockedManager'
+                      : 'stores.removeAcademyLockedManager',
                   )
             }
             className="text-destructive focus:text-destructive"

@@ -13,7 +13,7 @@ import type {
   ContainerWidth,
   HeadingScale,
   FontFamily,
-  TextDirection
+  TextDirection,
 } from './sidebar-types';
 import { FONT_OPTIONS } from './sidebar-types';
 import { AccordionSection } from './sidebar-primitives';
@@ -30,7 +30,7 @@ const COLOR_PALETTES: { nameKey: string; primary: string }[] = [
   { nameKey: 'sitePreview.palettePink', primary: '#ec4899' },
   { nameKey: 'sitePreview.paletteTeal', primary: '#14b8a6' },
   { nameKey: 'sitePreview.paletteGold', primary: '#f59e0b' },
-  { nameKey: 'sitePreview.paletteBlack', primary: '#27272a' }
+  { nameKey: 'sitePreview.paletteBlack', primary: '#27272a' },
 ];
 
 // Ordered by how round each option actually renders. The px values are the
@@ -44,7 +44,7 @@ const RADIUS_PRESETS: {
 }[] = [
   { labelKey: 'sitePreview.cornerSharp', value: 'sharp', px: 4 },
   { labelKey: 'sitePreview.cornerRound', value: 'rounded', px: 16 },
-  { labelKey: 'sitePreview.cornerExtraRound', value: 'soft', px: 24 }
+  { labelKey: 'sitePreview.cornerExtraRound', value: 'soft', px: 24 },
 ];
 
 // ── Brand Color ───────────────────────────────────────────────────────────────
@@ -65,8 +65,8 @@ const SCHEME_ROLES = [
   { labelKey: 'sitePreview.colorRoleAccent', key: 'accent' as const },
   {
     labelKey: 'sitePreview.colorRoleBackground',
-    key: 'backgroundLight' as const
-  }
+    key: 'backgroundLight' as const,
+  },
 ];
 
 // Wix/Zarla-style color-theme preview: a mini storefront swatch rendered with
@@ -77,11 +77,7 @@ function ColorPreview({ color }: { color: string }) {
   const p = derivePaletteFromPrimary(color);
   return (
     <div className="overflow-hidden rounded-lg border border-zinc-200">
-      <div
-        className="px-3 py-2.5"
-        style={{ backgroundColor: p.backgroundLight }}
-        dir="rtl"
-      >
+      <div className="px-3 py-2.5" style={{ backgroundColor: p.backgroundLight }} dir="rtl">
         <p className="truncate text-sm font-bold" style={{ color: '#18181b' }}>
           {t('sitePreview.colorPreviewTitle')}
         </p>
@@ -95,22 +91,14 @@ function ColorPreview({ color }: { color: string }) {
           >
             {t('sitePreview.colorPreviewButton')}
           </span>
-          <span
-            className="h-4 w-4 rounded-full"
-            style={{ backgroundColor: p.accent }}
-          />
+          <span className="h-4 w-4 rounded-full" style={{ backgroundColor: p.accent }} />
         </div>
       </div>
       <div className="flex border-t border-zinc-200">
         {SCHEME_ROLES.map(({ labelKey, key }) => (
-          <div
-            key={key}
-            className="flex-1 border-r border-zinc-200 last:border-r-0"
-          >
+          <div key={key} className="flex-1 border-r border-zinc-200 last:border-r-0">
             <div className="h-4" style={{ backgroundColor: p[key] }} />
-            <p className="py-0.5 text-center text-[8px] text-zinc-500">
-              {t(labelKey)}
-            </p>
+            <p className="py-0.5 text-center text-[8px] text-zinc-500">{t(labelKey)}</p>
           </div>
         ))}
       </div>
@@ -122,7 +110,7 @@ function PaletteCard({
   name,
   primary,
   selected,
-  onSelect
+  onSelect,
 }: {
   name: string;
   primary: string;
@@ -138,9 +126,7 @@ function PaletteCard({
       onClick={onSelect}
       title={name}
       className={`flex items-center gap-2 rounded-lg border-2 px-2.5 py-2 transition-all ${
-        selected
-          ? 'border-blue-500 bg-blue-50'
-          : 'border-zinc-200 bg-zinc-50 hover:border-zinc-400'
+        selected ? 'border-blue-500 bg-blue-50' : 'border-zinc-200 bg-zinc-50 hover:border-zinc-400'
       }`}
     >
       <span className="flex flex-shrink-0 overflow-hidden rounded-md border border-black/20">
@@ -155,7 +141,7 @@ function PaletteCard({
 
 function BrandColorSection({
   primaryColor,
-  onColorChange
+  onColorChange,
 }: {
   primaryColor: string;
   onColorChange: (c: string) => void;
@@ -187,7 +173,7 @@ function BrandColorSection({
   };
 
   const isPreset = COLOR_PALETTES.some(
-    (p) => p.primary.toLowerCase() === primaryColor.toLowerCase()
+    (p) => p.primary.toLowerCase() === primaryColor.toLowerCase(),
   );
 
   return (
@@ -212,9 +198,7 @@ function BrandColorSection({
           onClick={() => setShowCustom((v) => !v)}
           className="text-[11px] font-medium text-zinc-600 transition-colors hover:text-zinc-900"
         >
-          {showCustom
-            ? t('sitePreview.colorCustomClose')
-            : t('sitePreview.colorCustomOpen')}
+          {showCustom ? t('sitePreview.colorCustomClose') : t('sitePreview.colorCustomOpen')}
         </button>
 
         {(showCustom || !isPreset) && (
@@ -225,11 +209,7 @@ function BrandColorSection({
               type="color"
               aria-label={t('sitePreview.colorCustom')}
               title={t('sitePreview.colorCustom')}
-              value={
-                /^#[0-9a-fA-F]{6}$/.test(primaryColor)
-                  ? primaryColor
-                  : '#3B82F6'
-              }
+              value={/^#[0-9a-fA-F]{6}$/.test(primaryColor) ? primaryColor : '#3B82F6'}
               onChange={(e) => commit(e.target.value)}
               className="h-8 w-9 flex-shrink-0 cursor-pointer rounded-lg border border-zinc-300 bg-transparent p-0.5"
             />
@@ -253,7 +233,7 @@ function BrandColorSection({
 
 const SCRIPT_GROUPS: { script: 'arabic' | 'latin'; labelKey: string }[] = [
   { script: 'arabic', labelKey: 'sitePreview.fontScriptArabic' },
-  { script: 'latin', labelKey: 'sitePreview.fontScriptLatin' }
+  { script: 'latin', labelKey: 'sitePreview.fontScriptLatin' },
 ];
 
 function FontPreview({ fontFamily }: { fontFamily: FontFamily }) {
@@ -264,19 +244,15 @@ function FontPreview({ fontFamily }: { fontFamily: FontFamily }) {
       className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center"
       style={{ fontFamily: css }}
     >
-      <p className="text-lg font-bold text-zinc-900">
-        {t('sitePreview.fontPreviewTitle')}
-      </p>
-      <p className="text-sm text-zinc-600">
-        {t('sitePreview.fontPreviewSubtitle')}
-      </p>
+      <p className="text-lg font-bold text-zinc-900">{t('sitePreview.fontPreviewTitle')}</p>
+      <p className="text-sm text-zinc-600">{t('sitePreview.fontPreviewSubtitle')}</p>
     </div>
   );
 }
 
 function FontFamilySection({
   fontFamily,
-  onFontFamilyChange
+  onFontFamilyChange,
 }: {
   fontFamily: FontFamily;
   onFontFamilyChange: (f: FontFamily) => void;
@@ -290,9 +266,7 @@ function FontFamilySection({
           const group = FONT_OPTIONS.filter((f) => f.script === script);
           return (
             <div key={script}>
-              <p className="mb-1.5 text-[10px] font-semibold text-zinc-500">
-                {t(labelKey)}
-              </p>
+              <p className="mb-1.5 text-[10px] font-semibold text-zinc-500">{t(labelKey)}</p>
               <div className="grid grid-cols-2 gap-1.5">
                 {group.map((font) => (
                   <button
@@ -322,7 +296,7 @@ function FontFamilySection({
 
 function RoundedCornersSection({
   borderRadius,
-  onBorderRadiusChange
+  onBorderRadiusChange,
 }: {
   borderRadius: BorderRadius;
   onBorderRadiusChange: (r: BorderRadius) => void;
@@ -340,18 +314,14 @@ function RoundedCornersSection({
               type="button"
               onClick={() => onBorderRadiusChange(value)}
               className={`flex flex-col items-center gap-1.5 rounded-lg border-2 px-2 py-2.5 transition-colors ${
-                selected
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-zinc-200 hover:border-zinc-400'
+                selected ? 'border-blue-500 bg-blue-50' : 'border-zinc-200 hover:border-zinc-400'
               }`}
             >
               <span
                 className="h-8 w-full border-2 border-zinc-400 bg-white"
                 style={{ borderRadius: `${px}px` }}
               />
-              <span className="text-[11px] font-medium text-zinc-700">
-                {t(labelKey)}
-              </span>
+              <span className="text-[11px] font-medium text-zinc-700">{t(labelKey)}</span>
             </button>
           );
         })}
@@ -364,7 +334,7 @@ function RoundedCornersSection({
 
 function ThemeModeSection({
   darkMode,
-  onDarkModeChange
+  onDarkModeChange,
 }: {
   darkMode: boolean | null;
   onDarkModeChange: (m: boolean | null) => void;
@@ -380,20 +350,20 @@ function ThemeModeSection({
       label: t('sitePreview.themeModeLight'),
       desc: t('sitePreview.themeModeLightDesc'),
       icon: '☀️',
-      value: false
+      value: false,
     },
     {
       label: t('sitePreview.themeModeDark'),
       desc: t('sitePreview.themeModeDarkDesc'),
       icon: '🌙',
-      value: true
+      value: true,
     },
     {
       label: t('sitePreview.themeModeBoth'),
       desc: t('sitePreview.themeModeBothDesc'),
       icon: '🌗',
-      value: null
-    }
+      value: null,
+    },
   ];
 
   return (
@@ -431,7 +401,7 @@ const MOTION_OPTIONS: { labelKey: string; value: ElementAnimation }[] = [
   { labelKey: 'sitePreview.motionNone', value: 'none' },
   { labelKey: 'sitePreview.motionSubtle', value: 'subtle' },
   { labelKey: 'sitePreview.motionModerate', value: 'moderate' },
-  { labelKey: 'sitePreview.motionDynamic', value: 'dynamic' }
+  { labelKey: 'sitePreview.motionDynamic', value: 'dynamic' },
 ];
 
 const SHADOW_OPTIONS: { labelKey: string; value: Shadow; css: string }[] = [
@@ -439,23 +409,23 @@ const SHADOW_OPTIONS: { labelKey: string; value: Shadow; css: string }[] = [
   {
     labelKey: 'sitePreview.shadowSubtle',
     value: 'subtle',
-    css: '0 1px 2px 0 rgba(0,0,0,0.05)'
+    css: '0 1px 2px 0 rgba(0,0,0,0.05)',
   },
   {
     labelKey: 'sitePreview.shadowMedium',
     value: 'medium',
-    css: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)'
+    css: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
   },
   {
     labelKey: 'sitePreview.shadowStrong',
     value: 'strong',
-    css: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)'
-  }
+    css: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+  },
 ];
 
 function MotionSection({
   elementAnimation,
-  onElementAnimationChange
+  onElementAnimationChange,
 }: {
   elementAnimation: ElementAnimation;
   onElementAnimationChange: (a: ElementAnimation) => void;
@@ -480,9 +450,7 @@ function MotionSection({
             </button>
           ))}
         </div>
-        <p className="text-[10px] leading-relaxed text-zinc-500">
-          {t('sitePreview.motionHint')}
-        </p>
+        <p className="text-[10px] leading-relaxed text-zinc-500">{t('sitePreview.motionHint')}</p>
       </div>
     </AccordionSection>
   );
@@ -490,7 +458,7 @@ function MotionSection({
 
 function ShadowSection({
   shadow,
-  onShadowChange
+  onShadowChange,
 }: {
   shadow: Shadow;
   onShadowChange: (s: Shadow) => void;
@@ -510,13 +478,8 @@ function ShadowSection({
                 : 'border-zinc-200 hover:border-zinc-400'
             }`}
           >
-            <span
-              className="h-6 w-full rounded bg-white"
-              style={{ boxShadow: css }}
-            />
-            <span className="text-[10px] font-medium text-zinc-700">
-              {t(labelKey)}
-            </span>
+            <span className="h-6 w-full rounded bg-white" style={{ boxShadow: css }} />
+            <span className="text-[10px] font-medium text-zinc-700">{t(labelKey)}</span>
           </button>
         ))}
       </div>
@@ -529,25 +492,25 @@ function ShadowSection({
 const SPACING_OPTIONS: { labelKey: string; value: SectionSpacing }[] = [
   { labelKey: 'sitePreview.designSpacingCompact', value: 'compact' },
   { labelKey: 'sitePreview.designSpacingNormal', value: 'comfortable' },
-  { labelKey: 'sitePreview.designSpacingSpacious', value: 'spacious' }
+  { labelKey: 'sitePreview.designSpacingSpacious', value: 'spacious' },
 ];
 const WIDTH_OPTIONS: { labelKey: string; value: ContainerWidth }[] = [
   { labelKey: 'sitePreview.designWidthNarrow', value: 'narrow' },
   { labelKey: 'sitePreview.designWidthNormal', value: 'standard' },
   { labelKey: 'sitePreview.designWidthWide', value: 'wide' },
-  { labelKey: 'sitePreview.designWidthFull', value: 'full' }
+  { labelKey: 'sitePreview.designWidthFull', value: 'full' },
 ];
 const HEADING_OPTIONS: { labelKey: string; value: HeadingScale }[] = [
   { labelKey: 'sitePreview.designHeadingSmall', value: 'compact' },
   { labelKey: 'sitePreview.designHeadingNormal', value: 'standard' },
-  { labelKey: 'sitePreview.designHeadingLarge', value: 'large' }
+  { labelKey: 'sitePreview.designHeadingLarge', value: 'large' },
 ];
 
 function SizeRow<T extends string>({
   title,
   options,
   value,
-  onChange
+  onChange,
 }: {
   title: string;
   options: { labelKey: string; value: T }[];
@@ -582,7 +545,7 @@ function DesignSizeSection({
   sectionSpacing,
   containerWidth,
   headingScale,
-  onChange
+  onChange,
 }: {
   sectionSpacing: SectionSpacing;
   containerWidth: ContainerWidth;
@@ -624,7 +587,7 @@ function DesignSizeSection({
 
 function DirectionSection({
   textDirection,
-  onTextDirectionChange
+  onTextDirectionChange,
 }: {
   textDirection: TextDirection;
   onTextDirectionChange: (d: TextDirection) => void;
@@ -640,14 +603,14 @@ function DirectionSection({
       label: t('sitePreview.textDirectionRtl'),
       desc: t('sitePreview.textDirectionRtlDesc'),
       icon: '←',
-      value: 'rtl'
+      value: 'rtl',
     },
     {
       label: t('sitePreview.textDirectionLtr'),
       desc: t('sitePreview.textDirectionLtrDesc'),
       icon: '→',
-      value: 'ltr'
-    }
+      value: 'ltr',
+    },
   ];
 
   return (
@@ -664,9 +627,7 @@ function DirectionSection({
                 : 'border-zinc-200 hover:border-zinc-400'
             }`}
           >
-            <span className="text-base font-bold text-zinc-600">
-              {opt.icon}
-            </span>
+            <span className="text-base font-bold text-zinc-600">{opt.icon}</span>
             <div className="flex-1">
               <p className="text-sm font-medium text-zinc-800">{opt.label}</p>
               <p className="text-[10px] text-zinc-500">{opt.desc}</p>
@@ -726,25 +687,16 @@ export function SidebarStyleTab({
   onElementAnimationChange,
   onDarkModeChange,
   onTextDirectionChange,
-  onDesignSizeChange
+  onDesignSizeChange,
 }: SidebarStyleTabProps) {
   const { t } = useTranslation();
   const [showMore, setShowMore] = useState(false);
 
   return (
     <div>
-      <BrandColorSection
-        primaryColor={primaryColor}
-        onColorChange={onColorChange}
-      />
-      <FontFamilySection
-        fontFamily={fontFamily}
-        onFontFamilyChange={onFontFamilyChange}
-      />
-      <ThemeModeSection
-        darkMode={darkMode}
-        onDarkModeChange={onDarkModeChange}
-      />
+      <BrandColorSection primaryColor={primaryColor} onColorChange={onColorChange} />
+      <FontFamilySection fontFamily={fontFamily} onFontFamilyChange={onFontFamilyChange} />
+      <ThemeModeSection darkMode={darkMode} onDarkModeChange={onDarkModeChange} />
 
       <button
         type="button"
@@ -752,9 +704,7 @@ export function SidebarStyleTab({
         className="flex w-full items-center justify-between border-b border-zinc-200 px-4 py-3 text-xs font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
       >
         <span>{t('sitePreview.moreAppearance')}</span>
-        <ChevronDown
-          className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`}
-        />
+        <ChevronDown className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`} />
       </button>
 
       {showMore && (

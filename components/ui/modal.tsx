@@ -4,7 +4,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 
 interface ModalProps {
@@ -15,13 +15,7 @@ interface ModalProps {
   children?: React.ReactNode;
 }
 
-export const Modal: React.FC<ModalProps> = ({
-  title,
-  description,
-  isOpen,
-  onClose,
-  children
-}) => {
+export const Modal: React.FC<ModalProps> = ({ title, description, isOpen, onClose, children }) => {
   const onChange = (open: boolean) => {
     if (!open) {
       onClose();

@@ -15,16 +15,13 @@ import {
   X,
   SlidersHorizontal,
   Sparkles,
-  ImagePlus
+  ImagePlus,
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
-import {
-  AccessControlBadge,
-  AccessControlActions
-} from '@/components/ui/access-control-badge';
+import { AccessControlBadge, AccessControlActions } from '@/components/ui/access-control-badge';
 import ImageUploadModal from '@/components/modal/image-upload-modal';
 import ImageViewModal from '@/components/modal/image-view-modal';
 import ImageEditModal from '@/components/modal/image-edit-modal';
@@ -54,9 +51,7 @@ interface ImageItem {
 const resolveImageSrc = (image: ImageItem): string => {
   const raw = image.publicUrl ?? '';
   if (!raw) return '';
-  return raw.startsWith('/')
-    ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}`
-    : raw;
+  return raw.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}` : raw;
 };
 
 export default function ImagesPage() {
@@ -107,7 +102,7 @@ export default function ImagesPage() {
       setFilteredImages(images);
     } else {
       const filtered = images.filter((image) =>
-        image.filename.toLowerCase().includes(query.toLowerCase())
+        image.filename.toLowerCase().includes(query.toLowerCase()),
       );
       setFilteredImages(filtered);
     }
@@ -169,7 +164,7 @@ export default function ImagesPage() {
     return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -185,9 +180,7 @@ export default function ImagesPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
               <ImageIcon className="h-8 w-8 text-destructive" />
             </div>
-            <h2 className="mb-2 text-xl font-semibold">
-              {t('media.somethingWentWrong')}
-            </h2>
+            <h2 className="mb-2 text-xl font-semibold">{t('media.somethingWentWrong')}</h2>
             <p className="mb-4 text-muted-foreground">{error}</p>
             <Button onClick={fetchImages} variant="outline">
               {t('media.tryAgain')}
@@ -208,9 +201,7 @@ export default function ImagesPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                {t('media.images')}
-              </h1>
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('media.images')}</h1>
               <Badge
                 variant="secondary"
                 className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
@@ -220,8 +211,7 @@ export default function ImagesPage() {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageImageLibrary')} ({filteredImages.length} /{' '}
-              {images.length})
+              {t('media.manageImageLibrary')} ({filteredImages.length} / {images.length})
             </p>
           </div>
         </div>
@@ -245,10 +235,7 @@ export default function ImagesPage() {
       </div>
 
       {/* Search */}
-      <div
-        className="fade-in-up flex items-center gap-3"
-        style={{ animationDelay: '0.1s' }}
-      >
+      <div className="fade-in-up flex items-center gap-3" style={{ animationDelay: '0.1s' }}>
         <div className="relative max-w-md flex-1">
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -290,13 +277,9 @@ export default function ImagesPage() {
                 <ImageIcon className="h-10 w-10" />
               </div>
             </div>
-            <h3 className="text-xl font-semibold tracking-tight">
-              {t('media.noImagesFound')}
-            </h3>
+            <h3 className="text-xl font-semibold tracking-tight">{t('media.noImagesFound')}</h3>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-              {searchQuery
-                ? t('media.noImagesMatch')
-                : t('media.uploadFirstImage')}
+              {searchQuery ? t('media.noImagesMatch') : t('media.uploadFirstImage')}
             </p>
           </div>
         </div>
@@ -307,7 +290,7 @@ export default function ImagesPage() {
               key={image.id}
               className={cn(
                 'group overflow-hidden border-border/50 transition-all duration-300',
-                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5'
+                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
               )}
               style={{ animationDelay: `${0.05 * (index + 1)}s` }}
             >
@@ -332,8 +315,7 @@ export default function ImagesPage() {
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
-                            const placeholder =
-                              target.nextElementSibling as HTMLElement;
+                            const placeholder = target.nextElementSibling as HTMLElement;
                             if (placeholder) placeholder.style.display = 'flex';
                           }}
                         />
@@ -456,7 +438,7 @@ export default function ImagesPage() {
             id: editImage.id,
             publicUrl: resolveImageSrc(editImage),
             filename: editImage.filename,
-            alt: editImage.alt
+            alt: editImage.alt,
           }}
           onSave={handleUpdateImage}
         />

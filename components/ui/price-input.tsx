@@ -14,10 +14,7 @@ function groupDigits(raw: string, isFa: boolean): string {
 }
 
 export interface PriceInputProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    'value' | 'onChange' | 'type'
-  > {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> {
   /** Raw digit string (no separators) — what gets stored */
   value: string | number | null | undefined;
   /** Receives the raw digit string */
@@ -45,9 +42,7 @@ export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
           type="text"
           inputMode="numeric"
           value={groupDigits(raw, isFa)}
-          onChange={(e) =>
-            onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))
-          }
+          onChange={(e) => onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))}
           className={className}
           {...props}
         />
@@ -61,9 +56,7 @@ export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
           type="text"
           inputMode="numeric"
           value={groupDigits(raw, isFa)}
-          onChange={(e) =>
-            onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))
-          }
+          onChange={(e) => onChange(toEnglishDigits(e.target.value).replace(/\D/g, ''))}
           className={cn('pe-14', className)}
           {...props}
         />
@@ -72,6 +65,6 @@ export const PriceInput = React.forwardRef<HTMLInputElement, PriceInputProps>(
         </span>
       </div>
     );
-  }
+  },
 );
 PriceInput.displayName = 'PriceInput';

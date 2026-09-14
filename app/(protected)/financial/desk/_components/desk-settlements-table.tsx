@@ -8,7 +8,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useIranMoney } from '@/app/(protected)/analytics/_hooks/use-iran-money';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -25,7 +25,7 @@ type DeskSettlementsProps = {
 function InformedBadges({
   informed,
   sms,
-  email
+  email,
 }: {
   informed: boolean;
   sms: boolean;
@@ -38,12 +38,8 @@ function InformedBadges({
   return (
     <div className="flex flex-wrap gap-1">
       <Badge>{t('financial.desk.informed')}</Badge>
-      {sms ? (
-        <Badge variant="secondary">{t('financial.desk.sms')}</Badge>
-      ) : null}
-      {email ? (
-        <Badge variant="secondary">{t('financial.desk.email')}</Badge>
-      ) : null}
+      {sms ? <Badge variant="secondary">{t('financial.desk.sms')}</Badge> : null}
+      {email ? <Badge variant="secondary">{t('financial.desk.email')}</Badge> : null}
     </div>
   );
 }
@@ -51,7 +47,7 @@ function InformedBadges({
 export function DeskAcademiesTable({
   academies,
   notifyingId,
-  onNotify
+  onNotify,
 }: Pick<DeskSettlementsProps, 'academies' | 'notifyingId' | 'onNotify'>) {
   const { t } = useTranslation();
   const { formatToman } = useIranMoney();
@@ -73,10 +69,7 @@ export function DeskAcademiesTable({
       <TableBody>
         {academies.length === 0 ? (
           <TableRow>
-            <TableCell
-              colSpan={7}
-              className="text-center text-muted-foreground"
-            >
+            <TableCell colSpan={7} className="text-center text-muted-foreground">
               {t('financial.desk.noAcademies')}
             </TableCell>
           </TableRow>
@@ -90,13 +83,11 @@ export function DeskAcademiesTable({
                 {row.last_settled_at
                   ? formatDate(row.last_settled_at, {
                       hour: '2-digit',
-                      minute: '2-digit'
+                      minute: '2-digit',
                     })
                   : '—'}
               </TableCell>
-              <TableCell className="font-mono text-xs">
-                {row.last_tracking_code ?? '—'}
-              </TableCell>
+              <TableCell className="font-mono text-xs">{row.last_tracking_code ?? '—'}</TableCell>
               <TableCell>
                 <InformedBadges
                   informed={row.informed}
@@ -131,7 +122,7 @@ export function DeskAcademiesTable({
 export function DeskPaidTable({
   settlements,
   notifyingId,
-  onNotify
+  onNotify,
 }: Pick<DeskSettlementsProps, 'settlements' | 'notifyingId' | 'onNotify'>) {
   const { t } = useTranslation();
   const { formatToman } = useIranMoney();
@@ -152,10 +143,7 @@ export function DeskPaidTable({
       <TableBody>
         {settlements.length === 0 ? (
           <TableRow>
-            <TableCell
-              colSpan={6}
-              className="text-center text-muted-foreground"
-            >
+            <TableCell colSpan={6} className="text-center text-muted-foreground">
               {t('financial.desk.noSettlements')}
             </TableCell>
           </TableRow>
@@ -168,13 +156,11 @@ export function DeskPaidTable({
                 {row.processed_at
                   ? formatDate(row.processed_at, {
                       hour: '2-digit',
-                      minute: '2-digit'
+                      minute: '2-digit',
                     })
                   : '—'}
               </TableCell>
-              <TableCell className="font-mono text-xs">
-                {row.tracking_code ?? '—'}
-              </TableCell>
+              <TableCell className="font-mono text-xs">{row.tracking_code ?? '—'}</TableCell>
               <TableCell>
                 <InformedBadges
                   informed={row.informed}

@@ -20,7 +20,7 @@ export default defineConfig({
   use: {
     baseURL: BASE_URL,
     trace: 'on-first-retry',
-    locale: 'fa-IR'
+    locale: 'fa-IR',
   },
   projects: [
     // Use the system-installed Google Chrome (`channel: 'chrome'`). Playwright's
@@ -30,15 +30,15 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome'
-      }
-    }
+        channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
+      },
+    },
   ],
   // Auto-start the AdminPanel dev server unless one is already running.
   webServer: {
     command: 'pnpm dev',
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000
-  }
+    timeout: 120_000,
+  },
 });

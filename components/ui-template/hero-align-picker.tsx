@@ -15,21 +15,20 @@ const OPTIONS: {
   {
     value: 'center',
     labelKey: 'sitePreview.panelAlignCenter',
-    Icon: AlignCenter
+    Icon: AlignCenter,
   },
-  { value: 'end', labelKey: 'sitePreview.panelAlignLeft', Icon: AlignLeft }
+  { value: 'end', labelKey: 'sitePreview.panelAlignLeft', Icon: AlignLeft },
 ];
 
 export function HeroAlignPicker({
   value,
-  onChange
+  onChange,
 }: {
   value: unknown;
   onChange: (align: HeroAlign) => void;
 }) {
   const { t } = useTranslation();
-  const current: HeroAlign =
-    value === 'start' || value === 'end' ? value : 'center';
+  const current: HeroAlign = value === 'start' || value === 'end' ? value : 'center';
 
   return (
     <div>

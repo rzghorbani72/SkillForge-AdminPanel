@@ -27,13 +27,11 @@ export const OVERSIZE_ALLOWLIST = [
   'app/(protected)/my-affiliate/page.tsx',
   'app/(auth)/login/use-login.ts',
   'components/academies/academy-settlement-sheet.tsx',
-  'components/layout/AcademySelector.tsx',
   'components/course/useCourseForm.ts',
   'components/ui-template/section-library-modal.tsx',
   'components/affiliates/affiliate-dialog.tsx',
   'app/(protected)/images/page.tsx',
   'components/ui-template/template-select-modal.tsx',
-  'app/(protected)/settings/payment-gateway/page.tsx',
 ];
 
 // Legacy files still using `any`, `x!` or `console.*`; cleaned as they are split. May only shrink.
@@ -85,7 +83,6 @@ export const LEGACY_ANY_ALLOWLIST = [
   'components/course/useCourses.ts',
   'components/course/useCurriculumDraft.ts',
   'components/dashboard/useDashboard.ts',
-  'components/layout/AcademySelector.tsx',
   'components/modal/image-edit-modal.tsx',
   'components/modal/image-upload-modal.tsx',
   'components/product/CreateProductAssociations.tsx',
@@ -127,4 +124,5 @@ export const LEGACY_ANY_ALLOWLIST = [
   'scripts/production-report.ts',
   'sections/employee/employee-form.tsx',
   'sections/product/product-form.tsx',
-  'types/api.ts',];
+  'types/api.ts',
+];

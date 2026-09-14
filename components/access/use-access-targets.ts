@@ -30,7 +30,7 @@ export function useAccessTargets(enabled: boolean) {
     try {
       const [studentResponse, groupResponse] = await Promise.all([
         apiClient.getStudentUsers({ page: 1, limit: STUDENT_PAGE_SIZE }),
-        studentGroupsApi.list()
+        studentGroupsApi.list(),
       ]);
 
       const payload = studentResponse as {
@@ -42,18 +42,18 @@ export function useAccessTargets(enabled: boolean) {
         records
           .filter(
             (record): record is StudentRecord & { id: string } =>
-              !!record.id && record.id !== selfId
+              !!record.id && record.id !== selfId,
           )
           .map((record) => ({
             id: record.id,
-            title: record.full_name || record.display_name || '—'
-          }))
+            title: record.full_name || record.display_name || '—',
+          })),
       );
       setGroups(
         (groupResponse?.data ?? []).map((group) => ({
           id: group.id,
-          title: group.name
-        }))
+          title: group.name,
+        })),
       );
     } catch {
       setStudents([]);

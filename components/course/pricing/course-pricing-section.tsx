@@ -29,23 +29,16 @@ type Props = {
  * edited in a dialog so the page shows the prices that exist instead of a row of
  * empty inputs.
  */
-export function CoursePricingSection({
-  courseId,
-  form,
-  courseType = 'OFFLINE'
-}: Props) {
+export function CoursePricingSection({ courseId, form, courseType = 'OFFLINE' }: Props) {
   const { t } = useTranslation();
-  const { offers, isSaving, create, update, toggleActive, remove } =
-    useCourseOffers(courseId);
+  const { offers, isSaving, create, update, toggleActive, remove } = useCourseOffers(courseId);
   const tutoringOffers = useCourseTutoringOffers(courseId);
 
   // A live course is attended, not watched later: reserving a seat is the only
   // way in. No offer type applies, and its base price is never a selling way
   // (the server keeps `base_price_active` off for LIVE).
   const isLive = courseType === 'LIVE';
-  const addableTypes: readonly OfferingType[] = isLive
-    ? []
-    : ADDABLE_OFFER_TYPES;
+  const addableTypes: readonly OfferingType[] = isLive ? [] : ADDABLE_OFFER_TYPES;
 
   const [basePriceOpen, setBasePriceOpen] = useState(false);
   const [offerDialogOpen, setOfferDialogOpen] = useState(false);
@@ -66,16 +59,14 @@ export function CoursePricingSection({
     extraOffers.filter((o) => o.is_active).length +
     tutoringOffers.filter((o) => o.is_active).length;
   const lockReason =
-    form.watch('published') && activeWays <= 1
-      ? t('courses.lastSellingWayLocked')
-      : undefined;
+    form.watch('published') && activeWays <= 1 ? t('courses.lastSellingWayLocked') : undefined;
 
   // Each type is sold once per course: the base price already takes ONE_TIME (or
   // FREE when it is zero), so those drop off the list when adding a new way.
   const baseType: OfferingType = basePrice === 0 ? 'FREE' : 'ONE_TIME';
   const takenTypes: OfferingType[] = [
     ...(!isLive && basePriceActive ? [baseType] : []),
-    ...extraOffers.map((o) => o.type)
+    ...extraOffers.map((o) => o.type),
   ];
   const allTypesTaken = addableTypes.every((ot) => takenTypes.includes(ot));
 
@@ -109,11 +100,7 @@ export function CoursePricingSection({
         <div className="space-y-1">
           <CardTitle>{t('courses.pricingTitle')}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            {t(
-              isLive
-                ? 'courses.pricingSectionHintLive'
-                : 'courses.pricingSectionHint'
-            )}
+            {t(isLive ? 'courses.pricingSectionHintLive' : 'courses.pricingSectionHint')}
           </p>
         </div>
         {!isLive && (
@@ -133,11 +120,7 @@ export function CoursePricingSection({
         <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {!isLive && (
             <SellingWayCard
-              label={
-                basePrice === 0
-                  ? t('courses.offeringFREE')
-                  : t('courses.offeringONE_TIME')
-              }
+              label={basePrice === 0 ? t('courses.offeringFREE') : t('courses.offeringONE_TIME')}
               note={t('courses.offerFromCoursePrice')}
               price={basePrice}
               beforeDiscount={baseBeforeDiscount}
@@ -148,7 +131,7 @@ export function CoursePricingSection({
               removeDisabledReason={t('courses.basePriceNotRemovable')}
               onToggleActive={() =>
                 form.setValue('base_price_active', !basePriceActive, {
-                  shouldDirty: true
+                  shouldDirty: true,
                 })
               }
               onEdit={() => setBasePriceOpen(true)}
@@ -174,24 +157,14 @@ export function CoursePricingSection({
           ))}
 
           {isLive && (
-            <LiveSeatCards
-              courseId={courseId}
-              offers={tutoringOffers}
-              termLabel={termLabel}
-            />
+            <LiveSeatCards courseId={courseId} offers={tutoringOffers} termLabel={termLabel} />
           )}
 
-          {!isLive && (
-            <TutoringWayCards offers={tutoringOffers} termLabel={termLabel} />
-          )}
+          {!isLive && <TutoringWayCards offers={tutoringOffers} termLabel={termLabel} />}
         </div>
       </CardContent>
 
-      <BasePriceDialog
-        open={basePriceOpen}
-        onOpenChange={setBasePriceOpen}
-        form={form}
-      />
+      <BasePriceDialog open={basePriceOpen} onOpenChange={setBasePriceOpen} form={form} />
       <OfferDialog
         open={offerDialogOpen}
         onOpenChange={setOfferDialogOpen}

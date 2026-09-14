@@ -15,9 +15,7 @@ export function PageTitleSync() {
     const key = resolvePageTitleKey(pathname);
     const pageTitle = key ? t(key) : null;
     const title =
-      pageTitle && pageTitle !== key
-        ? t('meta.titleTemplate').replace('%s', pageTitle)
-        : siteTitle;
+      pageTitle && pageTitle !== key ? t('meta.titleTemplate').replace('%s', pageTitle) : siteTitle;
 
     const apply = () => {
       if (document.title !== title) document.title = title;
@@ -29,7 +27,7 @@ export function PageTitleSync() {
     observer.observe(document.head, {
       childList: true,
       subtree: true,
-      characterData: true
+      characterData: true,
     });
     return () => observer.disconnect();
   }, [pathname, t]);

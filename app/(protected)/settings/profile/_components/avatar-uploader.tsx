@@ -27,7 +27,7 @@ export function AvatarUploader({
   roleLabel,
   isUploading,
   progress,
-  onFile
+  onFile,
 }: AvatarUploaderProps) {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +54,7 @@ export function AvatarUploader({
         'flex flex-col items-center gap-5 rounded-xl border border-dashed p-5 transition-colors sm:flex-row sm:items-center sm:p-6',
         isDragging
           ? 'border-primary bg-primary/5'
-          : 'border-border bg-muted/30 hover:border-primary/40'
+          : 'border-border bg-muted/30 hover:border-primary/40',
       )}
     >
       <button
@@ -91,23 +91,13 @@ export function AvatarUploader({
           )}
         </div>
 
-        <p className="text-xs text-muted-foreground">
-          {t('settings.photoDropHint')}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {t('settings.photoFormatHint')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('settings.photoDropHint')}</p>
+        <p className="text-xs text-muted-foreground">{t('settings.photoFormatHint')}</p>
 
         {isUploading ? (
           <Progress value={progress} className="h-1.5 max-w-xs" />
         ) : (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={openPicker}
-            className="gap-2"
-          >
+          <Button type="button" variant="outline" size="sm" onClick={openPicker} className="gap-2">
             <ImagePlus className="h-4 w-4" />
             {avatarUrl ? t('settings.changePhoto') : t('settings.uploadPhoto')}
           </Button>

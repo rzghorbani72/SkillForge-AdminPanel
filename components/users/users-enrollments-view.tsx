@@ -10,7 +10,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { DataPanel } from '@/components/shared/data-list';
 import { Pagination } from '@/components/shared/Pagination';
@@ -21,7 +21,7 @@ import type { UserStat } from './users-stats-bar';
 import {
   useEnrollments,
   useEnrollmentTotals,
-  type EnrollmentStatusFilter
+  type EnrollmentStatusFilter,
 } from './use-enrollments';
 import { useDebouncedValue } from '@/lib/use-debounced-value';
 
@@ -32,7 +32,7 @@ const STATUS_KEYS: Record<EnrollmentStatusFilter, string> = {
   ACTIVE: 'common.active',
   COMPLETED: 'students.completed',
   CANCELLED: 'students.cancelled',
-  EXPIRED: 'students.expired'
+  EXPIRED: 'students.expired',
 };
 
 interface UsersEnrollmentsViewProps {
@@ -53,7 +53,7 @@ export function UsersEnrollmentsView({ onStats }: UsersEnrollmentsViewProps) {
     page,
     limit: PAGE_SIZE,
     status,
-    search
+    search,
   });
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export function UsersEnrollmentsView({ onStats }: UsersEnrollmentsViewProps) {
       { labelKey: 'students.enrollments', value: totals.all },
       { labelKey: 'common.active', value: totals.ACTIVE },
       { labelKey: 'students.completed', value: totals.COMPLETED },
-      { labelKey: 'students.cancelled', value: totals.CANCELLED }
+      { labelKey: 'students.cancelled', value: totals.CANCELLED },
     ]);
   }, [totals, onStats]);
 
@@ -107,9 +107,7 @@ export function UsersEnrollmentsView({ onStats }: UsersEnrollmentsViewProps) {
           </div>
           <Select
             value={status}
-            onValueChange={(value) =>
-              setStatus(value as EnrollmentStatusFilter)
-            }
+            onValueChange={(value) => setStatus(value as EnrollmentStatusFilter)}
           >
             <SelectTrigger className="h-9 w-[170px] rounded-lg bg-card text-sm">
               <SelectValue placeholder={t('students.filterByStatus')} />

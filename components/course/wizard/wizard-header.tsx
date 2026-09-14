@@ -39,7 +39,7 @@ export function WizardHeader({
   saveStatus,
   onSave,
   onRetrySave,
-  onBack
+  onBack,
 }: WizardHeaderProps) {
   const { t } = useTranslation();
 
@@ -60,14 +60,10 @@ export function WizardHeader({
             </Button>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="truncate text-xl font-bold tracking-tight">
-                  {title}
-                </h1>
+                <h1 className="truncate text-xl font-bold tracking-tight">{title}</h1>
                 <CourseTypePill type={courseType} />
               </div>
-              <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                {subtitle}
-              </p>
+              <p className="mt-0.5 truncate text-sm text-muted-foreground">{subtitle}</p>
             </div>
           </div>
         </div>
@@ -76,11 +72,7 @@ export function WizardHeader({
       <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
         <WizardStepper current={step} steps={steps} onSelect={onSelectStep} />
         {saveStatus && onSave && onRetrySave && (
-          <WizardSaveButton
-            saveStatus={saveStatus}
-            onSave={onSave}
-            onRetry={onRetrySave}
-          />
+          <WizardSaveButton saveStatus={saveStatus} onSave={onSave} onRetry={onRetrySave} />
         )}
       </div>
     </div>

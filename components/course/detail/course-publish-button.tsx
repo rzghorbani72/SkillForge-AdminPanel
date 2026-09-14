@@ -12,7 +12,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api';
@@ -37,11 +37,7 @@ export function CoursePublishButton() {
     try {
       await apiClient.updateCourse(course.id, { published: next });
       await refresh();
-      toast.success(
-        next
-          ? t('courseDetail.publishedToast')
-          : t('courseDetail.unpublishedToast')
-      );
+      toast.success(next ? t('courseDetail.publishedToast') : t('courseDetail.unpublishedToast'));
     } catch (error) {
       toast.error(apiErrorMessage(error, t('courseDetail.publishFailed')));
     } finally {
@@ -68,12 +64,8 @@ export function CoursePublishButton() {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            {t('courseDetail.unpublishConfirmTitle')}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {t('courseDetail.unpublishConfirmDesc')}
-          </AlertDialogDescription>
+          <AlertDialogTitle>{t('courseDetail.unpublishConfirmTitle')}</AlertDialogTitle>
+          <AlertDialogDescription>{t('courseDetail.unpublishConfirmDesc')}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>

@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  AuthField,
-  AuthPhoneField,
-  AuthSubmit
-} from '@/components/auth/auth-fields';
+import { AuthField, AuthPhoneField, AuthSubmit } from '@/components/auth/auth-fields';
 import { toE164Iran } from '@/lib/phone-utils';
 import { cn } from '@/lib/utils';
 import type { useAdminForgetPassword } from '../use-admin-forget-password';
@@ -13,14 +9,13 @@ type Fp = ReturnType<typeof useAdminForgetPassword>;
 
 const CHANNELS = [
   { key: 'email', labelKey: 'auth.email' },
-  { key: 'phone', labelKey: 'auth.phone' }
+  { key: 'phone', labelKey: 'auth.phone' },
 ] as const;
 
 export function IdentifierStep({ fp }: { fp: Fp }) {
   const { t } = fp;
   // Only one identifier field is rendered at a time.
-  const identifier =
-    fp.authMethod === 'email' ? fp.formData.email : fp.formData.phoneNumber;
+  const identifier = fp.authMethod === 'email' ? fp.formData.email : fp.formData.phoneNumber;
 
   return (
     <div className="space-y-5">
@@ -35,7 +30,7 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
               'h-12 flex-1 rounded-2xl text-base transition-colors',
               fp.authMethod === key
                 ? 'bg-white/50 font-medium text-[#181C20]'
-                : 'text-[#727272] hover:bg-white/30'
+                : 'text-[#727272] hover:bg-white/30',
             )}
           >
             {t(labelKey)}
@@ -74,10 +69,7 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
           disabled={fp.isLoading}
         />
 
-        <AuthSubmit
-          loading={fp.isLoading}
-          disabled={fp.isLoading || identifier.trim() === ''}
-        >
+        <AuthSubmit loading={fp.isLoading} disabled={fp.isLoading || identifier.trim() === ''}>
           {t('forgotPassword.sendOtp')}
         </AuthSubmit>
       </form>

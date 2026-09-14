@@ -28,7 +28,7 @@ export function SessionRecordingField({
   videoId,
   allowDownload,
   title,
-  onChanged
+  onChanged,
 }: SessionRecordingFieldProps) {
   const { t } = useTranslation();
   const [progress, setProgress] = useState(0);
@@ -42,11 +42,11 @@ export function SessionRecordingField({
         file,
         { title: title || file.name },
         undefined,
-        setProgress
+        setProgress,
       );
       await apiClient.setSessionRecording(sessionId, {
         video_id: video.id,
-        allow_download: allowDownload
+        allow_download: allowDownload,
       });
       onChanged(video.id, allowDownload);
       toast.success(t('courses.live.recordingSaved'));
@@ -72,7 +72,7 @@ export function SessionRecordingField({
     try {
       await apiClient.setSessionRecording(sessionId, {
         video_id: videoId,
-        allow_download: next
+        allow_download: next,
       });
     } catch (err) {
       ErrorHandler.handleApiError(err);

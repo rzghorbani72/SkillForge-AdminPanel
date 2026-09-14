@@ -14,7 +14,7 @@ import {
   courseFormSchema,
   parseAccessDurationDays,
   parseCourseDifficulty,
-  type CourseFormData
+  type CourseFormData,
 } from './schema';
 import {
   durationToSeconds,
@@ -25,7 +25,7 @@ import {
   validateForPublish,
   type CourseType,
   type LessonDraft,
-  type SeasonDraft
+  type SeasonDraft,
 } from './course-drafts';
 import { useCurriculumDraft } from './useCurriculumDraft';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
@@ -67,7 +67,7 @@ export function useCourseForm(courseId: string) {
     deletedLessonIds,
     setSeasons,
     setLessons,
-    clearDeleted
+    clearDeleted,
   } = curriculum;
 
   const form = useForm<CourseFormData>({
@@ -93,8 +93,8 @@ export function useCourseForm(courseId: string) {
       is_featured: false,
       base_price_active: true,
       allow_downloads: false,
-      apply_downloads_to_lessons: false
-    }
+      apply_downloads_to_lessons: false,
+    },
   });
 
   const buildPayload = useCallback(
@@ -103,13 +103,9 @@ export function useCourseForm(courseId: string) {
       seasonList: SeasonDraft[],
       lessonList: LessonDraft[],
       removedSeasonIds: string[],
-      removedLessonIds: string[]
+      removedLessonIds: string[],
     ) => {
-      const curriculum = prepareCurriculumForSave(
-        seasonList,
-        lessonList,
-        removedSeasonIds
-      );
+      const curriculum = prepareCurriculumForSave(seasonList, lessonList, removedSeasonIds);
       const coverId = data.cover_id?.trim();
       // Undefined keys are dropped from the JSON body, and every course field
       // on the server is optional — so omitting them leaves them untouched.
@@ -120,9 +116,7 @@ export function useCourseForm(courseId: string) {
         requirements: (data.requirements ?? '').trim(),
         difficulty: data.difficulty,
         is_certificate: data.is_certificate,
-        access_duration_days: parseAccessDurationDays(
-          data.access_duration_days
-        ),
+        access_duration_days: parseAccessDurationDays(data.access_duration_days),
         meta_title: data.meta_title.trim(),
         meta_description: data.meta_description.trim(),
         keywords: data.keywords,
@@ -134,12 +128,11 @@ export function useCourseForm(courseId: string) {
         is_featured: data.is_featured,
         base_price_active: data.base_price_active,
         allow_downloads: data.allow_downloads,
-        apply_downloads_to_lessons:
-          data.apply_downloads_to_lessons || undefined,
+        apply_downloads_to_lessons: data.apply_downloads_to_lessons || undefined,
         seasons: curriculum.seasons.map((s, i) => ({
           id: s.id,
           client_key: s.clientKey,
-          title: s.title.trim() || t('courses.seasonNumber', { n: i + 1 })
+          title: s.title.trim() || t('courses.seasonNumber', { n: i + 1 }),
         })),
         lessons: curriculum.lessons.map((l) => ({
           id: l.id,
@@ -157,17 +150,14 @@ export function useCourseForm(courseId: string) {
           // Omitted unless the manager touched this lesson's switch in this
           // session — see LessonDraft.allowDownloadTouched.
           allow_download: l.allowDownloadTouched ? l.allow_download : undefined,
-          season_client_key: l.seasonClientKey
+          season_client_key: l.seasonClientKey,
         })),
         deleted_season_ids:
-          curriculum.deletedSeasonIds.length > 0
-            ? curriculum.deletedSeasonIds
-            : undefined,
-        deleted_lesson_ids:
-          removedLessonIds.length > 0 ? removedLessonIds : undefined
+          curriculum.deletedSeasonIds.length > 0 ? curriculum.deletedSeasonIds : undefined,
+        deleted_lesson_ids: removedLessonIds.length > 0 ? removedLessonIds : undefined,
       };
     },
-    [t]
+    [t],
   );
 
   // ── Load existing course for edit ─────────────────────────────────────────
@@ -179,7 +169,7 @@ export function useCourseForm(courseId: string) {
         const [course, rawSeasons, rawLessons] = await Promise.all([
           apiClient.getCourse(courseId),
           apiClient.getSeasons(courseId),
-          apiClient.getLessons({ course_id: courseId })
+          apiClient.getLessons({ course_id: courseId }),
         ]);
 
         const lessonList = rawLessons as Lesson[];
@@ -190,20 +180,16 @@ export function useCourseForm(courseId: string) {
           lessonList.length > 0 &&
           lessonList.every(
             (l) =>
-              (l.allow_download_enrollment ?? false) ===
-                courseAllowsDownloads &&
-              (l.allow_download_subscription ?? false) ===
-                courseAllowsDownloads &&
-              (l.allow_download_tutoring ?? false) === courseAllowsDownloads
+              (l.allow_download_enrollment ?? false) === courseAllowsDownloads &&
+              (l.allow_download_subscription ?? false) === courseAllowsDownloads &&
+              (l.allow_download_tutoring ?? false) === courseAllowsDownloads,
           );
 
         setCourseType(
-          ((course as { course_type?: CourseType }).course_type ??
-            'OFFLINE') as CourseType
+          ((course as { course_type?: CourseType }).course_type ?? 'OFFLINE') as CourseType,
         );
         const cover = (course as any).Image ?? course.cover;
-        const categoryId =
-          (course as any).Category?.id ?? course.category?.id ?? '';
+        const categoryId = (course as any).Category?.id ?? course.category?.id ?? '';
         setCoverPreviewUrl(cover?.publicUrl ?? null);
 
         const loadedForm: CourseFormData = {
@@ -214,9 +200,7 @@ export function useCourseForm(courseId: string) {
           difficulty: parseCourseDifficulty(course.difficulty),
           is_certificate: course.is_certificate ?? false,
           access_duration_days:
-            course.access_duration_days != null
-              ? String(course.access_duration_days)
-              : '',
+            course.access_duration_days != null ? String(course.access_duration_days) : '',
           meta_title: course.meta_title ?? '',
           meta_description: course.meta_description ?? '',
           keywords: course.keywords ?? [],
@@ -230,17 +214,15 @@ export function useCourseForm(courseId: string) {
           is_featured: course.is_featured ?? false,
           base_price_active: course.base_price_active ?? true,
           allow_downloads: courseAllowsDownloads,
-          apply_downloads_to_lessons: lessonsFollowCourse
+          apply_downloads_to_lessons: lessonsFollowCourse,
         };
         form.reset(loadedForm);
 
-        const loadedSeasons: SeasonDraft[] = (rawSeasons as Season[]).map(
-          (s) => ({
-            id: s.id,
-            title: s.title,
-            clientKey: newKey()
-          })
-        );
+        const loadedSeasons: SeasonDraft[] = (rawSeasons as Season[]).map((s) => ({
+          id: s.id,
+          title: s.title,
+          clientKey: newKey(),
+        }));
         // Lessons are only ever rendered inside a season, so there must always
         // be one to hold them.
         if (loadedSeasons.length === 0) loadedSeasons.push(emptySeason());
@@ -248,7 +230,7 @@ export function useCourseForm(courseId: string) {
 
         // Map season DB id → clientKey so lessons can reference their season
         const seasonDbIdToClientKey = new Map<string, string>(
-          loadedSeasons.map((s) => [s.id!, s.clientKey])
+          loadedSeasons.map((s) => [s.id!, s.clientKey]),
         );
 
         const loadedLessons: LessonDraft[] = lessonList.map((l) => ({
@@ -257,9 +239,7 @@ export function useCourseForm(courseId: string) {
           description: l.description ?? '',
           // The file's own stored length wins whenever the lesson never got
           // one, so an old row shows the truth without re-measuring anything.
-          duration: secondsToDuration(
-            l.duration || l.Video?.duration || l.Audio?.duration
-          ),
+          duration: secondsToDuration(l.duration || l.Video?.duration || l.Audio?.duration),
           lesson_type: l.lesson_type ?? 'VIDEO',
           is_free: l.is_free,
           published: l.is_published,
@@ -273,7 +253,7 @@ export function useCourseForm(courseId: string) {
             l.allow_download_enrollment ||
               l.allow_download_subscription ||
               l.allow_download_tutoring ||
-              l.allow_download_free
+              l.allow_download_free,
           ),
           videoHlsStatus: l.Video?.hls_status,
           videoPreviewUrl:
@@ -284,15 +264,14 @@ export function useCourseForm(courseId: string) {
           documentPreviewName: l.Document?.title ?? undefined,
           clientKey: newKey(),
           seasonClientKey:
-            (l.season_id != null
-              ? seasonDbIdToClientKey.get(l.season_id)
-              : undefined) ?? defaultSeasonKey
+            (l.season_id != null ? seasonDbIdToClientKey.get(l.season_id) : undefined) ??
+            defaultSeasonKey,
         }));
 
         setSeasons(loadedSeasons);
         setLessons(loadedLessons);
         lastSavedRef.current = JSON.stringify(
-          buildPayload(loadedForm, loadedSeasons, loadedLessons, [], [])
+          buildPayload(loadedForm, loadedSeasons, loadedLessons, [], []),
         );
       } catch (err) {
         ErrorHandler.handleApiError(err);
@@ -315,10 +294,7 @@ export function useCourseForm(courseId: string) {
    * a toast on every pause in typing would be noise.
    */
   const save = useCallback(
-    async (
-      data: CourseFormData,
-      { silent = false, silentSuccess = false } = {}
-    ) => {
+    async (data: CourseFormData, { silent = false, silentSuccess = false } = {}) => {
       if (!selectedAcademy) {
         if (!silent) toast.error(t('toasts.selectAcademyFirst'));
         return false;
@@ -337,13 +313,7 @@ export function useCourseForm(courseId: string) {
         }
       }
 
-      const payload = buildPayload(
-        data,
-        seasons,
-        lessons,
-        deletedSeasonIds,
-        deletedLessonIds
-      );
+      const payload = buildPayload(data, seasons, lessons, deletedSeasonIds, deletedLessonIds);
 
       // Nothing changed since the last successful save, so there is nothing to
       // send. This is what keeps autosave from firing a request per keystroke.
@@ -379,28 +349,20 @@ export function useCourseForm(courseId: string) {
         const seasonIds = saved?.season_ids;
         const lessonIds = saved?.lesson_ids;
         const seasonKeysWithLessons = new Set(
-          payload.lessons
-            .map((l) => l.season_client_key)
-            .filter((key): key is string => !!key)
+          payload.lessons.map((l) => l.season_client_key).filter((key): key is string => !!key),
         );
         setSeasons((prev) => {
           const withIds = seasonIds
-            ? prev.map((s) =>
-                seasonIds[s.clientKey]
-                  ? { ...s, id: seasonIds[s.clientKey] }
-                  : s
-              )
+            ? prev.map((s) => (seasonIds[s.clientKey] ? { ...s, id: seasonIds[s.clientKey] } : s))
             : prev;
           const next = withIds.map((s) =>
-            seasonKeysWithLessons.has(s.clientKey) ? s : { ...s, id: undefined }
+            seasonKeysWithLessons.has(s.clientKey) ? s : { ...s, id: undefined },
           );
           return next.length > 0 ? next : [emptySeason()];
         });
         if (lessonIds) {
           setLessons((prev) =>
-            prev.map((l) =>
-              lessonIds[l.clientKey] ? { ...l, id: lessonIds[l.clientKey] } : l
-            )
+            prev.map((l) => (lessonIds[l.clientKey] ? { ...l, id: lessonIds[l.clientKey] } : l)),
           );
         }
 
@@ -410,12 +372,12 @@ export function useCourseForm(courseId: string) {
           ...payload,
           seasons: payload.seasons.map((s) => ({
             ...s,
-            id: s.id ?? seasonIds?.[s.client_key]
+            id: s.id ?? seasonIds?.[s.client_key],
           })),
           lessons: payload.lessons.map((l) => ({
             ...l,
-            id: l.id ?? lessonIds?.[l.client_key]
-          }))
+            id: l.id ?? lessonIds?.[l.client_key],
+          })),
         });
 
         setSaveStatus('saved');
@@ -441,8 +403,8 @@ export function useCourseForm(courseId: string) {
       deletedLessonIds,
       clearDeleted,
       buildPayload,
-      t
-    ]
+      t,
+    ],
   );
 
   // ── Autosave ──────────────────────────────────────────────────────────────
@@ -505,7 +467,7 @@ export function useCourseForm(courseId: string) {
       if (image.id) {
         form.setValue('cover_id', image.id, {
           shouldDirty: true,
-          shouldTouch: true
+          shouldTouch: true,
         });
         setCoverPreviewUrl(image.url || null);
       } else {
@@ -514,7 +476,7 @@ export function useCourseForm(courseId: string) {
       }
       void saveCover();
     },
-    [form, saveCover]
+    [form, saveCover],
   );
 
   /**
@@ -529,7 +491,7 @@ export function useCourseForm(courseId: string) {
       // leave the switch claiming a state the server never accepted.
       if (!saved) form.setValue('published', !next);
     },
-    [form, save]
+    [form, save],
   );
 
   const retrySave = useCallback(async () => {
@@ -552,10 +514,10 @@ export function useCourseForm(courseId: string) {
         return false;
       }
       return save(form.getValues(), {
-        silentSuccess: options?.silentSuccess
+        silentSuccess: options?.silentSuccess,
       });
     },
-    [form, save, t]
+    [form, save, t],
   );
 
   /**
@@ -582,6 +544,6 @@ export function useCourseForm(courseId: string) {
     retrySave,
     saveNow,
     saveAndExit,
-    saveCover
+    saveCover,
   };
 }

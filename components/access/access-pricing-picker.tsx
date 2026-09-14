@@ -18,15 +18,10 @@ const METHOD_ICONS: Record<GrantPaymentMethod, typeof Banknote> = {
   CASH: Banknote,
   BANK_TRANSFER: Landmark,
   POS: CreditCard,
-  ONLINE: Globe
+  ONLINE: Globe,
 };
 
-const METHODS: GrantPaymentMethod[] = [
-  'CASH',
-  'BANK_TRANSFER',
-  'POS',
-  'ONLINE'
-];
+const METHODS: GrantPaymentMethod[] = ['CASH', 'BANK_TRANSFER', 'POS', 'ONLINE'];
 
 /**
  * What the student pays for this grant. The server prices it from the course or
@@ -36,7 +31,7 @@ const METHODS: GrantPaymentMethod[] = [
 export function AccessPricingPicker({
   value,
   onChange,
-  disabled = false
+  disabled = false,
 }: AccessPricingPickerProps) {
   const { t } = useTranslation();
 
@@ -46,8 +41,8 @@ export function AccessPricingPicker({
     {
       mode: 'DISCOUNT',
       label: t('accessGrants.pricingDiscount'),
-      icon: CreditCard
-    }
+      icon: CreditCard,
+    },
   ] as const;
 
   const method = value.mode === 'FREE' ? null : value.method;
@@ -67,7 +62,7 @@ export function AccessPricingPicker({
               'flex items-center justify-center gap-1.5 rounded-md border px-2 py-2 text-sm transition-colors disabled:opacity-50',
               value.mode === mode
                 ? 'border-primary bg-primary/10 text-primary'
-                : 'hover:bg-muted/40'
+                : 'hover:bg-muted/40',
             )}
           >
             <Icon className="h-3.5 w-3.5" />
@@ -84,8 +79,7 @@ export function AccessPricingPicker({
             onChange={(event) =>
               onChange({
                 ...value,
-                discount_type:
-                  event.target.value === 'AMOUNT' ? 'AMOUNT' : 'PERCENT'
+                discount_type: event.target.value === 'AMOUNT' ? 'AMOUNT' : 'PERCENT',
               })
             }
             className="h-10 w-[9.5rem] rounded-md border bg-background px-3 text-sm"
@@ -100,7 +94,7 @@ export function AccessPricingPicker({
             onChange={(raw) =>
               onChange({
                 ...value,
-                discount_value: raw === '' ? 0 : Number(raw)
+                discount_value: raw === '' ? 0 : Number(raw),
               })
             }
             aria-label={t('accessGrants.discountValue')}
@@ -111,9 +105,7 @@ export function AccessPricingPicker({
 
       {value.mode !== 'FREE' && (
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">
-            {t('accessGrants.paymentMethod')}
-          </Label>
+          <Label className="text-xs text-muted-foreground">{t('accessGrants.paymentMethod')}</Label>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {METHODS.map((option) => {
               const Icon = METHOD_ICONS[option];
@@ -127,7 +119,7 @@ export function AccessPricingPicker({
                     'flex items-center justify-center gap-1.5 rounded-md border px-2 py-2 text-xs transition-colors disabled:opacity-50',
                     value.method === option
                       ? 'border-primary bg-primary/10 text-primary'
-                      : 'hover:bg-muted/40'
+                      : 'hover:bg-muted/40',
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -139,9 +131,7 @@ export function AccessPricingPicker({
           <Input
             disabled={disabled}
             value={value.reference ?? ''}
-            onChange={(event) =>
-              onChange({ ...value, reference: event.target.value })
-            }
+            onChange={(event) => onChange({ ...value, reference: event.target.value })}
             placeholder={t('accessGrants.referencePlaceholder')}
             className="h-9 max-w-md"
           />
@@ -153,7 +143,7 @@ export function AccessPricingPicker({
 
 function defaultForMode(
   mode: GrantPricing['mode'],
-  method: GrantPaymentMethod | null
+  method: GrantPaymentMethod | null,
 ): GrantPricing {
   if (mode === 'FREE') return { mode: 'FREE' };
   const payment = method ?? 'CASH';
@@ -162,6 +152,6 @@ function defaultForMode(
     mode: 'DISCOUNT',
     discount_type: 'PERCENT',
     discount_value: 20,
-    method: payment
+    method: payment,
   };
 }

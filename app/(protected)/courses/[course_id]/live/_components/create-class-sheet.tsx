@@ -10,12 +10,10 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
+  SheetTrigger,
 } from '@/components/ui/sheet';
 import { useTranslation } from '@/lib/i18n/hooks';
-import ScheduleBuilder, {
-  type ScheduleBuilderPrefill
-} from './schedule-builder';
+import ScheduleBuilder, { type ScheduleBuilderPrefill } from './schedule-builder';
 
 interface CreateClassSheetProps {
   offerId: string;
@@ -41,7 +39,7 @@ export function CreateClassSheet({
   prefill,
   trigger,
   onCreated,
-  variant = 'toolbar'
+  variant = 'toolbar',
 }: CreateClassSheetProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -60,10 +58,7 @@ export function CreateClassSheet({
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent
-        side="right"
-        className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-xl"
-      >
+      <SheetContent side="right" className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-xl">
         <SheetHeader className="text-start">
           <SheetTitle>{t('courses.live.schedule')}</SheetTitle>
           <SheetDescription>{t('courses.live.scheduleHint')}</SheetDescription>

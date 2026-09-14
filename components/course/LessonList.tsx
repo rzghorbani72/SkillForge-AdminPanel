@@ -6,12 +6,9 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent
+  DragEndEvent,
 } from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy
-} from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
@@ -37,7 +34,7 @@ export function LessonList({
   onClearLesson,
   onUpdateLesson,
   onAssignLesson,
-  onReorderLessons
+  onReorderLessons,
 }: LessonListProps) {
   const { t } = useTranslation();
   const sensors = useSensors(useSensor(PointerSensor));
@@ -89,9 +86,7 @@ export function LessonList({
       <QuickAddRow
         placeholder={t('courses.addLessonHint')}
         onAdd={onAddLesson}
-        blockedReason={
-          hasUntitledLesson ? t('courses.addLessonBlocked') : undefined
-        }
+        blockedReason={hasUntitledLesson ? t('courses.addLessonBlocked') : undefined}
       />
     </div>
   );

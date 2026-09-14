@@ -2,16 +2,7 @@
 
 import { useState, type ReactElement } from 'react';
 import Link from 'next/link';
-import {
-  Check,
-  Copy,
-  Eye,
-  KeyRound,
-  Pencil,
-  Trash2,
-  UserCheck,
-  UserX
-} from 'lucide-react';
+import { Check, Copy, Eye, KeyRound, Pencil, Trash2, UserCheck, UserX } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,21 +11,16 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -63,13 +49,7 @@ type UserRowActionsProps = {
   className?: string;
 };
 
-function ActionTooltip({
-  label,
-  children
-}: {
-  label: string;
-  children: ReactElement;
-}) {
+function ActionTooltip({ label, children }: { label: string; children: ReactElement }) {
   return (
     <Tooltip delayDuration={200}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
@@ -86,7 +66,7 @@ export function UserRowActions({
   onChanged,
   showDetailsLink = false,
   showEditLink = true,
-  className
+  className,
 }: UserRowActionsProps) {
   const { t } = useTranslation();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -96,9 +76,7 @@ export function UserRowActions({
 
   const canManage =
     callerRole === 'ADMIN' ||
-    (callerRole === 'MANAGER' &&
-      targetLevel != null &&
-      targetLevel < MANAGER_HIERARCHY_LEVEL);
+    (callerRole === 'MANAGER' && targetLevel != null && targetLevel < MANAGER_HIERARCHY_LEVEL);
 
   async function handleToggleActive() {
     setBusy(true);
@@ -185,21 +163,13 @@ export function UserRowActions({
                   <KeyRound className="h-4 w-4" />
                 </button>
               </ActionTooltip>
-              <ActionTooltip
-                label={
-                  user.is_active ? t('common.deactivate') : t('common.activate')
-                }
-              >
+              <ActionTooltip label={user.is_active ? t('common.deactivate') : t('common.activate')}>
                 <button
                   type="button"
                   onClick={handleToggleActive}
                   disabled={busy}
                   className={iconBtnClass}
-                  aria-label={
-                    user.is_active
-                      ? t('common.deactivate')
-                      : t('common.activate')
-                  }
+                  aria-label={user.is_active ? t('common.deactivate') : t('common.activate')}
                 >
                   {user.is_active ? (
                     <UserX className="h-4 w-4" />
@@ -232,14 +202,12 @@ export function UserRowActions({
             <AlertDialogTitle>{t('users.deleteUserTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
               {t('users.confirmDeleteUser', {
-                name: user.display_name || user.name || ''
+                name: user.display_name || user.name || '',
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={busy}>
-              {t('common.cancel')}
-            </AlertDialogCancel>
+            <AlertDialogCancel disabled={busy}>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={busy}
@@ -251,16 +219,11 @@ export function UserRowActions({
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog
-        open={!!newPassword}
-        onOpenChange={(open) => !open && setNewPassword(null)}
-      >
+      <Dialog open={!!newPassword} onOpenChange={(open) => !open && setNewPassword(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>{t('users.newPasswordTitle')}</DialogTitle>
-            <DialogDescription>
-              {t('users.newPasswordDescription')}
-            </DialogDescription>
+            <DialogDescription>{t('users.newPasswordDescription')}</DialogDescription>
           </DialogHeader>
           <div className="relative" dir="ltr">
             <div className="flex h-10 items-center rounded-lg border border-border bg-muted/40 px-3 pe-9 font-mono text-[15px] tracking-wide">

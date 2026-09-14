@@ -4,20 +4,13 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  ARTICLE_STATUS,
-  type Article,
-  type ArticleTransition
-} from '@/types/blog';
+import { ARTICLE_STATUS, type Article, type ArticleTransition } from '@/types/blog';
 
 type ArticleWorkflowActionsProps = {
   article: Article;
   /** Only an editor (manager or platform owner) sees approve/reject/archive. */
   canReview: boolean;
-  onRun: (
-    transition: ArticleTransition,
-    reviewNote?: string
-  ) => void | Promise<void>;
+  onRun: (transition: ArticleTransition, reviewNote?: string) => void | Promise<void>;
 };
 
 /**
@@ -25,11 +18,7 @@ type ArticleWorkflowActionsProps = {
  * Which ones exist is decided by the current status, so an impossible step is
  * never offered — the backend rejects it either way.
  */
-export function ArticleWorkflowActions({
-  article,
-  canReview,
-  onRun
-}: ArticleWorkflowActionsProps) {
+export function ArticleWorkflowActions({ article, canReview, onRun }: ArticleWorkflowActionsProps) {
   const { t } = useTranslation();
   const [isBusy, setIsBusy] = useState(false);
 
@@ -48,17 +37,14 @@ export function ArticleWorkflowActions({
   };
 
   const canSubmit =
-    article.status === ARTICLE_STATUS.DRAFT ||
-    article.status === ARTICLE_STATUS.ARCHIVED;
+    article.status === ARTICLE_STATUS.DRAFT || article.status === ARTICLE_STATUS.ARCHIVED;
   const canApprove =
     canReview &&
-    (article.status === ARTICLE_STATUS.IN_REVIEW ||
-      article.status === ARTICLE_STATUS.ARCHIVED);
+    (article.status === ARTICLE_STATUS.IN_REVIEW || article.status === ARTICLE_STATUS.ARCHIVED);
   const canReject = canReview && article.status === ARTICLE_STATUS.IN_REVIEW;
   const canArchive =
     canReview &&
-    (article.status === ARTICLE_STATUS.PUBLISHED ||
-      article.status === ARTICLE_STATUS.IN_REVIEW);
+    (article.status === ARTICLE_STATUS.PUBLISHED || article.status === ARTICLE_STATUS.IN_REVIEW);
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -74,23 +60,12 @@ export function ArticleWorkflowActions({
         </Button>
       )}
       {canApprove && (
-        <Button
-          type="button"
-          size="sm"
-          disabled={isBusy}
-          onClick={() => void run('approve')}
-        >
+        <Button type="button" size="sm" disabled={isBusy} onClick={() => void run('approve')}>
           {t('blog.actions.approve')}
         </Button>
       )}
       {canReject && (
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          disabled={isBusy}
-          onClick={handleReject}
-        >
+        <Button type="button" size="sm" variant="outline" disabled={isBusy} onClick={handleReject}>
           {t('blog.actions.reject')}
         </Button>
       )}

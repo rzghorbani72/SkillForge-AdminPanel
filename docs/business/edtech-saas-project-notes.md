@@ -1,5 +1,6 @@
 # EdTech SaaS Platform — Project Notes & Strategy
-*Saved from planning session — Claude.ai*
+
+_Saved from planning session — Claude.ai_
 
 ---
 
@@ -8,6 +9,7 @@
 A white-label LMS SaaS platform targeting teachers and academy managers. Similar to Teachable but with key differentiators around live classes, granular lesson access control, and a multi-teacher academy management layer.
 
 ### Target Audience
+
 - Individual teachers who want to sell courses and manage students
 - Academy managers who oversee multiple teachers, manage student rosters, and want unified reporting
 
@@ -15,11 +17,11 @@ A white-label LMS SaaS platform targeting teachers and academy managers. Similar
 
 ## 2. Core Enrollment & Access Models
 
-| Model | Description |
-|---|---|
-| Single course | One-time enrollment, student pays once |
-| Subscription | Recurring plan unlocks all "subscription-tagged" courses |
-| Bundle | One-time purchase of a curated package of courses |
+| Model         | Description                                              |
+| ------------- | -------------------------------------------------------- |
+| Single course | One-time enrollment, student pays once                   |
+| Subscription  | Recurring plan unlocks all "subscription-tagged" courses |
+| Bundle        | One-time purchase of a curated package of courses        |
 
 ---
 
@@ -46,14 +48,15 @@ Three modes with a clear priority hierarchy:
 
 ## 5. Platform Roles & Hierarchy
 
-| Role | Description |
-|---|---|
-| Student | Enrolls, accesses courses and live classes |
-| Teacher | Builds courses, manages own students, sets class times |
-| Academy Manager | Is ALSO a teacher themselves (dual role) |
-| Platform Admin | Us — controls global tier permissions |
+| Role            | Description                                            |
+| --------------- | ------------------------------------------------------ |
+| Student         | Enrolls, accesses courses and live classes             |
+| Teacher         | Builds courses, manages own students, sets class times |
+| Academy Manager | Is ALSO a teacher themselves (dual role)               |
+| Platform Admin  | Us — controls global tier permissions                  |
 
 ### Academy Manager capabilities:
+
 - Add/invite other teachers to their academy
 - Enable or disable specific features per their academy:
   - One-time enrollment (on/off)
@@ -63,6 +66,7 @@ Three modes with a clear priority hierarchy:
 - Control which features their teachers can use
 
 ### Key behaviors:
+
 - A manager running a small solo academy = acts as teacher + manager simultaneously
 - A manager running a large academy = delegates teaching, focuses on oversight
 - Feature toggles are set at the academy level — teachers cannot override
@@ -79,12 +83,12 @@ Three modes with a clear priority hierarchy:
 
 ### Proposed Tiers (Rough)
 
-| Tier | Model | Notes |
-|---|---|---|
-| Starter | Commission per enrollment | Small businesses, cheapest entry |
-| Growth | Flat fee, zero commission | Individual teacher |
-| Pro / Academy | Flat fee, zero commission | Multi-teacher, academy features |
-| Enterprise | Custom pricing | White-label, fully custom |
+| Tier          | Model                     | Notes                            |
+| ------------- | ------------------------- | -------------------------------- |
+| Starter       | Commission per enrollment | Small businesses, cheapest entry |
+| Growth        | Flat fee, zero commission | Individual teacher               |
+| Pro / Academy | Flat fee, zero commission | Multi-teacher, academy features  |
+| Enterprise    | Custom pricing            | White-label, fully custom        |
 
 ---
 
@@ -94,22 +98,24 @@ Three modes with a clear priority hierarchy:
 
 ### Feature Comparison
 
-| Feature | Teachable | Kajabi | LearnWorlds | Teachfloor | This Platform |
-|---|---|---|---|---|---|
-| Manager = also teacher | ✗ | ✗ | ✗ | ✗ | ✓ |
-| Manager adds teachers | partial | ✗ | ✓ (admin only) | ✓ | ✓ |
-| Per-academy feature toggles | ✗ | ✗ | ✗ | ✗ | ✓ |
-| Live class slot booking | ✗ | ✗ | ✗ | ✗ | ✓ |
-| Per-lesson per-student access | ✗ | ✗ | ✗ | ✗ | ✓ |
-| Group → individual → schedule priority | ✗ | ✗ | ✗ | ✗ | ✓ |
+| Feature                                | Teachable | Kajabi | LearnWorlds    | Teachfloor | This Platform |
+| -------------------------------------- | --------- | ------ | -------------- | ---------- | ------------- |
+| Manager = also teacher                 | ✗         | ✗      | ✗              | ✗          | ✓             |
+| Manager adds teachers                  | partial   | ✗      | ✓ (admin only) | ✓          | ✓             |
+| Per-academy feature toggles            | ✗         | ✗      | ✗              | ✗          | ✓             |
+| Live class slot booking                | ✗         | ✗      | ✗              | ✗          | ✓             |
+| Per-lesson per-student access          | ✗         | ✗      | ✗              | ✗          | ✓             |
+| Group → individual → schedule priority | ✗         | ✗      | ✗              | ✗          | ✓             |
 
 ### Key Competitors Summary
+
 - **Teachable & Kajabi** — solo creator focused, no multi-teacher academy structure
 - **LearnWorlds** — closest in roles/permissions, but admin ≠ teacher, no feature toggles
 - **Teachfloor** — cohort-focused, no live class booking or per-lesson access control
 - **EzyCourse** — most feature-rich all-in-one but still single-creator model
 
 ### Market Position
+
 The platform fills a gap between solo-creator platforms (Teachable, Kajabi) and full enterprise LMS systems (Docebo, TalentLMS). The sweet spot — small-to-medium academies with real teachers, real students, and real operational complexity — is genuinely underserved.
 
 ---
@@ -117,15 +123,18 @@ The platform fills a gap between solo-creator platforms (Teachable, Kajabi) and 
 ## 8. Open Questions to Resolve
 
 ### Access & Architecture
+
 - Is "subscription tag" set per-course by the teacher or per-platform-plan?
 - Is a live class booking separate from course enrollment, or does booking grant full course access?
 - Lesson drip rule: unlocks after class happens (teacher-triggered), fixed date, or N days from enrollment?
 
 ### Billing
+
 - Commission on Starter: per unique student, or per enrollment event?
 - Teacher payout model: Stripe Connect, manual, or split?
 
 ### Permissions
+
 - Does the academy manager see ALL student data across all teachers, or only their academy's students? (GDPR relevant)
 - Can a teacher exist both independently AND under an academy simultaneously?
 - Should feature toggles be visible to teachers, or silently enforced?
@@ -147,10 +156,10 @@ The platform fills a gap between solo-creator platforms (Teachable, Kajabi) and 
 Use this prompt with Claude Opus for deep business model and strategy analysis:
 
 ```
-You are a senior product strategist and SaaS business consultant with deep expertise 
+You are a senior product strategist and SaaS business consultant with deep expertise
 in EdTech platforms, marketplace monetization, and B2B SaaS go-to-market strategy.
 
-I am building an EdTech SaaS platform — a white-label LMS similar to Teachable but 
+I am building an EdTech SaaS platform — a white-label LMS similar to Teachable but
 targeted at teachers and academy managers. Here is the full product scope:
 
 ---
@@ -159,12 +168,12 @@ targeted at teachers and academy managers. Here is the full product scope:
 
 **Target audience:**
 - Individual teachers who want to sell courses and manage students
-- Academy managers who oversee multiple teachers, manage student rosters, and 
+- Academy managers who oversee multiple teachers, manage student rosters, and
   want unified reporting
 
 **Core access/enrollment models:**
 1. Single course — one-time enrollment, student pays once and gets access
-2. Subscription — student buys a recurring subscription that unlocks all courses 
+2. Subscription — student buys a recurring subscription that unlocks all courses
    tagged as "subscription-included" by the teacher
 3. Bundle — one-time purchase of a curated package of courses
 
@@ -177,7 +186,7 @@ targeted at teachers and academy managers. Here is the full product scope:
 **Lesson access control (key differentiator):**
 - Teacher can grant lesson access to a group of students
 - Teacher can grant access to an individual student
-- Teacher can schedule lesson access to unlock at specific times (aligned with 
+- Teacher can schedule lesson access to unlock at specific times (aligned with
   class schedule / drip)
 - Priority: group rule → individual override → scheduled unlock
 
@@ -205,7 +214,7 @@ targeted at teachers and academy managers. Here is the full product scope:
 ## MONETIZATION MODEL
 
 - We sell the platform to teachers/academies (B2B SaaS)
-- Zero commission on all packages EXCEPT the cheapest/starter tier for small 
+- Zero commission on all packages EXCEPT the cheapest/starter tier for small
   businesses — on that tier we take a commission per student enrollment
 - Larger packages pay a flat monthly/annual fee with zero commission
 
@@ -228,7 +237,7 @@ Please analyze the following and give concrete, actionable recommendations:
 - How should teacher payouts work (Stripe Connect, manual, etc.)?
 
 ### 2. Pricing strategy
-- Suggest a specific pricing table with tier names, monthly prices, annual 
+- Suggest a specific pricing table with tier names, monthly prices, annual
   discount %, and key feature gates
 - What features should be the "upgrade triggers" that push users from Starter → Growth → Pro?
 - Should we offer a free trial or freemium? What duration/limits?
@@ -270,9 +279,9 @@ Please analyze the following and give concrete, actionable recommendations:
 
 ---
 
-Please structure your response with clear headers for each of the 7 areas above. 
-Be specific — give numbers, examples, competitor references, and concrete 
-recommendations rather than generic advice. Where there are genuine trade-offs, 
+Please structure your response with clear headers for each of the 7 areas above.
+Be specific — give numbers, examples, competitor references, and concrete
+recommendations rather than generic advice. Where there are genuine trade-offs,
 explain them clearly so I can make an informed decision.
 ```
 
@@ -281,6 +290,7 @@ explain them clearly so I can make an informed decision.
 ## 11. Legal & IP Protection Steps
 
 ### Priority Order
+
 1. **Register your domain today** (~$10–15/year on Namecheap, Cloudflare Registrar)
 2. **Grab all social handles** (X, LinkedIn, Instagram, Product Hunt)
 3. **Register your company** (your country or UAE Free Zone — RAKEZ, Dubai Silicon Oasis ~$1,500–3,000/year)
@@ -288,6 +298,7 @@ explain them clearly so I can make an informed decision.
 5. **Keep code in private version-controlled repos** from day one (GitHub timestamps = legal evidence)
 
 ### What You Should Know
+
 - **Ideas cannot be legally owned** anywhere in the world — what you protect is the expression (code, brand, content)
 - **Copyright is automatic** — your code and designs are protected the moment you create them (Berne Convention, 181 countries). No registration needed, but document creation dates.
 - **Timestamps matter** — use Bernstein (bernstein.io) or IPArchive for cryptographic timestamps on concept documents
@@ -295,4 +306,4 @@ explain them clearly so I can make an informed decision.
 
 ---
 
-*Document saved from Claude.ai planning session*
+_Document saved from Claude.ai planning session_

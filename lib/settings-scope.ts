@@ -1,21 +1,18 @@
 export type SettingsScope = 'personal' | 'platform' | 'academy';
 
-export const SETTINGS_SCOPE_I18N: Record<
-  SettingsScope,
-  { label: string; description: string }
-> = {
+export const SETTINGS_SCOPE_I18N: Record<SettingsScope, { label: string; description: string }> = {
   personal: {
     label: 'settings.scope.personal',
-    description: 'settings.scope.personalDescription'
+    description: 'settings.scope.personalDescription',
   },
   platform: {
     label: 'settings.scope.platform',
-    description: 'settings.scope.platformDescription'
+    description: 'settings.scope.platformDescription',
   },
   academy: {
     label: 'settings.scope.academy',
-    description: 'settings.scope.academyDescription'
-  }
+    description: 'settings.scope.academyDescription',
+  },
 };
 
 const STARTER_PLAN_SLUGS = new Set(['basic', 'starter', 'none', '']);
@@ -44,7 +41,7 @@ export function isTopPlan(planSlug: string | null | undefined): boolean {
 export function shouldShowUpgradePrompt(
   status: string | undefined,
   daysRemaining: number | null | undefined,
-  planSlug: string | null | undefined
+  planSlug: string | null | undefined,
 ): boolean {
   if (status === 'EXPIRED' || status === 'INACTIVE') return true;
   if (isStarterPlan(planSlug)) return true;
@@ -74,9 +71,7 @@ type PaidEnrollmentFields = {
   invoices?: ReadonlyArray<{ status: string; note?: string | null }>;
 };
 
-function periodMonthsFromInvoices(
-  invoices: PaidEnrollmentFields['invoices']
-): number | null {
+function periodMonthsFromInvoices(invoices: PaidEnrollmentFields['invoices']): number | null {
   for (const invoice of invoices ?? []) {
     const months = invoice.note?.match(/months=(\d+)/)?.[1];
     if (months) return Number(months) === 3 ? 3 : 1;
@@ -89,18 +84,16 @@ function periodMonthsFromInvoices(
  * panel marks the current plan even before that backend fix is deployed.
  */
 export function overlayPaidEnrollment<T extends PaidEnrollmentFields>(
-  subscription: T | null
+  subscription: T | null,
 ): T | null {
   if (!subscription) return null;
   const hasPaid = hasPaidPlanEnrollment({
     hasPaid: subscription.has_paid,
-    invoices: subscription.invoices
+    invoices: subscription.invoices,
   });
   if (!hasPaid) return subscription;
   if (subscription.has_paid === true) {
-    return subscription.is_trial
-      ? { ...subscription, is_trial: false }
-      : subscription;
+    return subscription.is_trial ? { ...subscription, is_trial: false } : subscription;
   }
   const days = subscription.days_remaining ?? 0;
   const windowDays = subscription.renewal_window_days ?? 7;
@@ -110,9 +103,7 @@ export function overlayPaidEnrollment<T extends PaidEnrollmentFields>(
     is_trial: false,
     can_renew_now: days <= windowDays,
     period_months:
-      subscription.period_months ??
-      periodMonthsFromInvoices(subscription.invoices) ??
-      1
+      subscription.period_months ?? periodMonthsFromInvoices(subscription.invoices) ?? 1,
   };
 }
 
@@ -136,7 +127,7 @@ export function needsPlanPurchase(params: {
 export function shouldHideUpgradeCard(
   status: string | undefined,
   daysRemaining: number | null | undefined,
-  planSlug: string | null | undefined
+  planSlug: string | null | undefined,
 ): boolean {
   if (status !== 'ACTIVE' && status !== 'GRACE') return false;
   if (isStarterPlan(planSlug)) return false;

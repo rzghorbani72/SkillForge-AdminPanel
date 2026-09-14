@@ -7,7 +7,7 @@ import type { CatalogResource, RolePermission } from '@/types/roles';
 /** Ticked boxes of a permission grid, plus the payload shape the API expects. */
 export function usePermissionSelection(initial: RolePermission[]) {
   const [granted, setGranted] = useState<Set<string>>(
-    () => new Set(initial.map((p) => permissionKey(p.resource, p.action)))
+    () => new Set(initial.map((p) => permissionKey(p.resource, p.action))),
   );
 
   const toggle = useCallback((resource: string, action: string) => {
@@ -22,8 +22,7 @@ export function usePermissionSelection(initial: RolePermission[]) {
 
   const toggleResource = useCallback(
     (resources: CatalogResource[], resource: string, grantAll: boolean) => {
-      const actions =
-        resources.find((entry) => entry.resource === resource)?.actions ?? [];
+      const actions = resources.find((entry) => entry.resource === resource)?.actions ?? [];
       setGranted((prev) => {
         const next = new Set(prev);
         for (const action of actions) {
@@ -34,13 +33,11 @@ export function usePermissionSelection(initial: RolePermission[]) {
         return next;
       });
     },
-    []
+    [],
   );
 
   const replace = useCallback((permissions: RolePermission[]) => {
-    setGranted(
-      new Set(permissions.map((p) => permissionKey(p.resource, p.action)))
-    );
+    setGranted(new Set(permissions.map((p) => permissionKey(p.resource, p.action))));
   }, []);
 
   const permissions = useMemo<RolePermission[]>(
@@ -49,7 +46,7 @@ export function usePermissionSelection(initial: RolePermission[]) {
         const [resource, action] = key.split(':');
         return { resource, action };
       }),
-    [granted]
+    [granted],
   );
 
   return { granted, toggle, toggleResource, replace, permissions };

@@ -20,7 +20,7 @@ const ALLOWED_TAGS = [
   'blockquote',
   'code',
   'pre',
-  'hr'
+  'hr',
 ];
 
 const ALLOWED_ATTR = ['href', 'target', 'rel'];
@@ -45,7 +45,7 @@ function escapeRawHtml(markdown: string): string {
 /** Drops `javascript:` and other non-navigational link targets. */
 function stripUnsafeHrefs(html: string): string {
   return html.replace(/href="([^"]*)"/gi, (match, href: string) =>
-    SAFE_HREF.test(href.trim()) ? match : 'href="#"'
+    SAFE_HREF.test(href.trim()) ? match : 'href="#"',
   );
 }
 
@@ -58,14 +58,14 @@ function healPaddedEmphasis(markdown: string): string {
   return markdown.replace(
     /(\*\*|~~)(\s+)?([^\s*~][^*~\n]*?)(\s+)?\1/g,
     (_match, marker: string, lead = '', text: string, trail = '') =>
-      `${lead}${marker}${text}${marker}${trail}`
+      `${lead}${marker}${text}${marker}${trail}`,
   );
 }
 
 function toHtml(markdown: string): string {
   const html = marked.parse(escapeRawHtml(healPaddedEmphasis(markdown)), {
     async: false,
-    breaks: true
+    breaks: true,
   });
   return stripUnsafeHrefs(html);
 }
@@ -77,7 +77,7 @@ function toHtml(markdown: string): string {
 export function renderMarkdown(markdown: string): string {
   return DOMPurify.sanitize(toHtml(markdown), {
     ALLOWED_TAGS,
-    ALLOWED_ATTR
+    ALLOWED_ATTR,
   });
 }
 

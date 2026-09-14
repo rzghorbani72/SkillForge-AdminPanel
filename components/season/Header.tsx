@@ -9,9 +9,7 @@ const Header = ({ onCreate }: { onCreate: () => void }) => {
     <div className="flex items-center justify-between">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Seasons</h1>
-        <p className="text-muted-foreground">
-          Manage seasons/modules for {selectedAcademy?.name}
-        </p>
+        <p className="text-muted-foreground">Manage seasons/modules for {selectedAcademy?.name}</p>
       </div>
       <Button onClick={onCreate}>
         <Plus className="mr-2 h-4 w-4" />

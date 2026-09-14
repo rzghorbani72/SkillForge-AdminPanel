@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,7 +18,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -49,7 +49,7 @@ export function HomeworkDialog({
   onOpenChange,
   groupId,
   sessions,
-  onCreated
+  onCreated,
 }: HomeworkDialogProps) {
   const { t, language } = useTranslation();
   const defaultParent = groupId ? WHOLE_CLASS : (sessions[0]?.id ?? '');
@@ -85,7 +85,7 @@ export function HomeworkDialog({
         title: title.trim(),
         description: description.trim() || undefined,
         due_date: dueDate ? new Date(dueDate).toISOString() : undefined,
-        max_score: maxScore
+        max_score: maxScore,
       });
       reset();
       onOpenChange(false);
@@ -100,10 +100,9 @@ export function HomeworkDialog({
   const meetingLabel = (session: ClassSession, index: number) =>
     session.title ??
     session.Topic?.title ??
-    `${t('courses.live.meeting')} ${index + 1} — ${new Intl.DateTimeFormat(
-      language,
-      { dateStyle: 'short' }
-    ).format(new Date(session.starts_at))}`;
+    `${t('courses.live.meeting')} ${index + 1} — ${new Intl.DateTimeFormat(language, {
+      dateStyle: 'short',
+    }).format(new Date(session.starts_at))}`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -114,20 +113,12 @@ export function HomeworkDialog({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="homework-title">
-              {t('courses.live.homeworkTitle')} *
-            </Label>
-            <Input
-              id="homework-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
+            <Label htmlFor="homework-title">{t('courses.live.homeworkTitle')} *</Label>
+            <Input id="homework-title" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="homework-parent">
-              {t('courses.live.homeworkFor')}
-            </Label>
+            <Label htmlFor="homework-parent">{t('courses.live.homeworkFor')}</Label>
             <Select value={parent} onValueChange={setParent}>
               <SelectTrigger id="homework-parent">
                 <SelectValue />
@@ -150,23 +141,17 @@ export function HomeworkDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="homework-due">
-              {t('courses.live.homeworkDue')}
-            </Label>
+            <Label htmlFor="homework-due">{t('courses.live.homeworkDue')}</Label>
             <DatePicker
               id="homework-due"
               value={dueDate}
               onChange={(pickedValue: string) => setDueDate(pickedValue)}
             />
-            <p className="text-xs text-muted-foreground">
-              {t('courses.live.homeworkDueHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('courses.live.homeworkDueHint')}</p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="homework-score">
-              {t('courses.live.homeworkMaxScore')}
-            </Label>
+            <Label htmlFor="homework-score">{t('courses.live.homeworkMaxScore')}</Label>
             <NumberInput
               id="homework-score"
               value={maxScore}
@@ -177,9 +162,7 @@ export function HomeworkDialog({
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="homework-description">
-              {t('courses.live.homeworkDescription')}
-            </Label>
+            <Label htmlFor="homework-description">{t('courses.live.homeworkDescription')}</Label>
             <Textarea
               id="homework-description"
               value={description}
@@ -192,11 +175,7 @@ export function HomeworkDialog({
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('common.cancel')}
           </Button>
           <Button type="button" onClick={create} disabled={isSaving}>

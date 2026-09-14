@@ -4,21 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-export function RowActions({
-  onEdit,
-  onRemove
-}: {
-  onEdit: () => void;
-  onRemove: () => void;
-}) {
+export function RowActions({ onEdit, onRemove }: { onEdit: () => void; onRemove: () => void }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);

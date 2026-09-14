@@ -32,12 +32,10 @@ export function AcademyOnboarding() {
 
   const hasNoAcademy = !isLoading && !!user && academies.length === 0;
   const isStaff = isPlatformStaff(user);
-  const canOpenAcademy =
-    hasNoAcademy && !isStaff && user?.isSelfRegisteredManager === true;
+  const canOpenAcademy = hasNoAcademy && !isStaff && user?.isSelfRegisteredManager === true;
   // The legal modal wins: while it is open the API is paused anyway, so opening
   // the onboarding dialog would only stack a second modal and burn the one shot.
-  const showFirstTimeDialog =
-    canOpenAcademy && !user?.onboardingSeen && !legalConsentPending;
+  const showFirstTimeDialog = canOpenAcademy && !user?.onboardingSeen && !legalConsentPending;
 
   useEffect(() => {
     if (!showFirstTimeDialog || dialogHandled) return;
@@ -60,12 +58,7 @@ export function AcademyOnboarding() {
     <>
       <CreateAcademyBanner onCreate={() => setDialogOpen(true)} t={t} />
       {dialogOpen && !legalConsentPending && (
-        <AcademyCreateModal
-          open
-          onClose={() => setDialogOpen(false)}
-          onSubmit={submit}
-          t={t}
-        />
+        <AcademyCreateModal open onClose={() => setDialogOpen(false)} onSubmit={submit} t={t} />
       )}
     </>
   );
@@ -77,9 +70,7 @@ function NoAcademyAssignedState({ t }: { t: (k: string) => string }) {
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
         <Building2 className="h-7 w-7" />
       </div>
-      <h2 className="text-lg font-bold tracking-tight">
-        {t('onboarding.noAcademyTitle')}
-      </h2>
+      <h2 className="text-lg font-bold tracking-tight">{t('onboarding.noAcademyTitle')}</h2>
       <p className="max-w-md text-sm text-muted-foreground">
         {t('onboarding.noAcademyDescription')}
       </p>

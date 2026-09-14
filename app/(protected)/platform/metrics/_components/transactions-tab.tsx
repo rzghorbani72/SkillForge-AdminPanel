@@ -1,11 +1,7 @@
 'use client';
 
 import { StatsCard } from '@/components/shared/stats-card';
-import {
-  DataPanel,
-  DataList,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataPanel, DataList, type DataColumn } from '@/components/shared/data-list';
 import { apiClient, type MetricsQuery, type MetricsCurrency } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -31,30 +27,28 @@ export function TransactionsTab({ query, currency }: Props) {
   const format = useMetricFormat(currency);
   const formatNumber = useNumberFormat();
   const periodLabel = usePeriodLabel();
-  const { data, loading } = useMetricsFetch(query, (q) =>
-    apiClient.getMetricsTransactions(q)
-  );
+  const { data, loading } = useMetricsFetch(query, (q) => apiClient.getMetricsTransactions(q));
 
   const breakdownColumns: DataColumn<BreakdownRow>[] = [
     {
       id: 'key',
       header: t('platformMetrics.columns.key'),
-      cell: (row) => row.key
+      cell: (row) => row.key,
     },
     {
       id: 'count',
       header: t('platformMetrics.columns.count'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => formatNumber(row.count)
+      cell: (row) => formatNumber(row.count),
     },
     {
       id: 'amount',
       header: t('platformMetrics.columns.amount'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => format('amount', row.amount)
-    }
+      cell: (row) => format('amount', row.amount),
+    },
   ];
 
   const monthlyColumns: DataColumn<{
@@ -66,22 +60,22 @@ export function TransactionsTab({ query, currency }: Props) {
       id: 'month',
       header: t('platformMetrics.columns.month'),
       className: METRIC_VALUE_CLASS,
-      cell: (row) => periodLabel(row.month)
+      cell: (row) => periodLabel(row.month),
     },
     {
       id: 'count',
       header: t('platformMetrics.columns.count'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => formatNumber(row.count)
+      cell: (row) => formatNumber(row.count),
     },
     {
       id: 'amount',
       header: t('platformMetrics.columns.amount'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => format('amount', row.amount)
-    }
+      cell: (row) => format('amount', row.amount),
+    },
   ];
 
   return (
@@ -100,10 +94,7 @@ export function TransactionsTab({ query, currency }: Props) {
         />
         <StatsCard
           title={t('platformMetrics.metrics.checkout_success_rate')}
-          value={format(
-            'checkout_success_rate',
-            data?.checkout_success_rate ?? null
-          )}
+          value={format('checkout_success_rate', data?.checkout_success_rate ?? null)}
           icon={ShoppingCart}
         />
         <StatsCard
@@ -118,13 +109,10 @@ export function TransactionsTab({ query, currency }: Props) {
         [
           ['byStatus', data?.by_status],
           ['byProvider', data?.by_provider],
-          ['byMethod', data?.by_method]
+          ['byMethod', data?.by_method],
         ] as const
       ).map(([section, rows]) => (
-        <DataPanel
-          key={section}
-          title={t(`platformMetrics.sections.${section}`)}
-        >
+        <DataPanel key={section} title={t(`platformMetrics.sections.${section}`)}>
           <DataList
             items={rows ?? []}
             columns={breakdownColumns}

@@ -10,10 +10,7 @@ interface LanguageDetectorProps {
   forceDetect?: boolean; // Force detection even if language is stored
 }
 
-export function LanguageDetector({
-  onDetected,
-  forceDetect = false
-}: LanguageDetectorProps) {
+export function LanguageDetector({ onDetected, forceDetect = false }: LanguageDetectorProps) {
   const { setLanguage, language } = useI18n();
   const [mounted, setMounted] = useState(false);
 

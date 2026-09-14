@@ -55,11 +55,7 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function ProtectedLayoutWrapper({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export function ProtectedLayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <UserProvider>
       <LegalConsentGate>

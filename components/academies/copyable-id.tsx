@@ -5,13 +5,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { toPersianDigits } from '@/lib/phone-utils';
 import { cn } from '@/lib/utils';
 
-export function CopyableId({
-  value,
-  className
-}: {
-  value: string;
-  className?: string;
-}) {
+export function CopyableId({ value, className }: { value: string; className?: string }) {
   const { t, language } = useTranslation();
   if (!value) return <span>—</span>;
 

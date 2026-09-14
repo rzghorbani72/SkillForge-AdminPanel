@@ -32,7 +32,7 @@ export function StepBasics({
   courseType,
   onCourseTypeChange,
   coverPreviewUrl,
-  onCoverChange
+  onCoverChange,
 }: StepBasicsProps) {
   const { t } = useTranslation();
 
@@ -49,9 +49,7 @@ export function StepBasics({
             disabled={!onCourseTypeChange}
           />
           {!onCourseTypeChange && (
-            <p className="text-xs text-muted-foreground">
-              {t('courses.wizard.typeLockedHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('courses.wizard.typeLockedHint')}</p>
           )}
         </CardContent>
       </Card>
@@ -65,7 +63,7 @@ export function StepBasics({
         onCategoryChange={(id) =>
           form.setValue('category_id', id ?? '', {
             shouldDirty: true,
-            shouldTouch: true
+            shouldTouch: true,
           })
         }
         error={form.formState.errors.category_id?.message}

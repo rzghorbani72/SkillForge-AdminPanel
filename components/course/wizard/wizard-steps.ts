@@ -8,7 +8,7 @@ export const COURSE_WIZARD_STEPS = [
   'classroom',
   'access',
   'pricing',
-  'preview'
+  'preview',
 ] as const;
 
 export type CourseWizardStep = (typeof COURSE_WIZARD_STEPS)[number];
@@ -29,7 +29,7 @@ export const WIZARD_STEP_LABEL: Record<CourseWizardStep, string> = {
   classroom: 'courses.wizard.stepClassroom',
   access: 'courses.wizard.stepAccess',
   pricing: 'courses.wizard.stepPricing',
-  preview: 'courses.wizard.stepPreview'
+  preview: 'courses.wizard.stepPreview',
 };
 
 export const WIZARD_STEP_HINT: Record<CourseWizardStep, string> = {
@@ -38,31 +38,22 @@ export const WIZARD_STEP_HINT: Record<CourseWizardStep, string> = {
   classroom: 'courses.wizard.stepClassroomHint',
   access: 'courses.wizard.stepAccessHint',
   pricing: 'courses.wizard.stepPricingHint',
-  preview: 'courses.wizard.stepPreviewHint'
+  preview: 'courses.wizard.stepPreviewHint',
 };
 
 /** Fields each step owns, so Next validates only what is on screen. */
-export const WIZARD_STEP_FIELDS: Record<
-  CourseWizardStep,
-  (keyof CourseFormData)[]
-> = {
-  basics: [
-    'title',
-    'description',
-    'requirements',
-    'difficulty',
-    'access_duration_days'
-  ],
+export const WIZARD_STEP_FIELDS: Record<CourseWizardStep, (keyof CourseFormData)[]> = {
+  basics: ['title', 'description', 'requirements', 'difficulty', 'access_duration_days'],
   content: [],
   classroom: [],
   access: ['meta_title', 'meta_description', 'keywords'],
   pricing: ['primary_price', 'secondary_price'],
-  preview: []
+  preview: [],
 };
 
 export function stepFromParam(
   value: string | null,
-  steps: readonly CourseWizardStep[] = COURSE_WIZARD_STEPS
+  steps: readonly CourseWizardStep[] = COURSE_WIZARD_STEPS,
 ): CourseWizardStep {
   return steps.find((step) => step === value) ?? 'basics';
 }

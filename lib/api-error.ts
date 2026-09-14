@@ -39,7 +39,7 @@ export function toPersianDigits(value: string): string {
 function interpolate(
   template: string,
   params: Record<string, string | number>,
-  language: LanguageCode
+  language: LanguageCode,
 ): string {
   return template.replace(/\{(\w+)\}/g, (match, key: string) => {
     const value = params[key];
@@ -72,13 +72,8 @@ function lookup(language: LanguageCode, key: string): string | null {
  * `ar`/`tr` are not translated yet and fall back to English — never to Persian,
  * which would be unreadable for those users.
  */
-function lookupWithFallback(
-  language: LanguageCode,
-  key: string
-): string | null {
-  return (
-    lookup(language, key) ?? (language === 'fa' ? null : lookup('en', key))
-  );
+function lookupWithFallback(language: LanguageCode, key: string): string | null {
+  return lookup(language, key) ?? (language === 'fa' ? null : lookup('en', key));
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -91,14 +86,13 @@ function parseFields(raw: unknown): FieldError[] {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((entry) => {
     const row = asRecord(entry);
-    if (!row || typeof row.field !== 'string' || typeof row.code !== 'string')
-      return [];
+    if (!row || typeof row.field !== 'string' || typeof row.code !== 'string') return [];
     return [
       {
         field: row.field,
         code: row.code,
-        params: (asRecord(row.params) ?? {}) as Record<string, string | number>
-      }
+        params: (asRecord(row.params) ?? {}) as Record<string, string | number>,
+      },
     ];
   });
 }
@@ -115,7 +109,7 @@ export function parseApiError(status: number, body: unknown): ApiError {
     message: typeof row?.message === 'string' ? row.message : '',
     messageEn: typeof row?.message_en === 'string' ? row.message_en : '',
     params: (asRecord(row?.params) ?? {}) as Record<string, string | number>,
-    fields: parseFields(row?.fields)
+    fields: parseFields(row?.fields),
   };
 }
 
@@ -127,7 +121,7 @@ export function networkApiError(): ApiError {
     message: '',
     messageEn: '',
     params: {},
-    fields: []
+    fields: [],
   };
 }
 
@@ -143,10 +137,7 @@ export function isApiResponseError(value: unknown): value is ApiResponseError {
 }
 
 /** Translated label for a DTO field, e.g. `password` -> `رمز عبور`. */
-export function resolveFieldLabel(
-  field: string,
-  language: LanguageCode
-): string {
+export function resolveFieldLabel(field: string, language: LanguageCode): string {
   return (
     lookupWithFallback(language, `apiError.fields.${field}`) ??
     field.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
@@ -155,7 +146,7 @@ export function resolveFieldLabel(
 
 export function resolveFieldMessage(
   fieldError: FieldError,
-  language: LanguageCode = DEFAULT_LANGUAGE
+  language: LanguageCode = DEFAULT_LANGUAGE,
 ): string {
   const template =
     lookupWithFallback(language, `apiError.${fieldError.code}`) ??
@@ -165,9 +156,9 @@ export function resolveFieldMessage(
     template,
     {
       ...fieldError.params,
-      field: resolveFieldLabel(fieldError.field, language)
+      field: resolveFieldLabel(fieldError.field, language),
     },
-    language
+    language,
   );
 }
 
@@ -188,7 +179,7 @@ const STATUS_FAMILY_CODES: Readonly<Record<number, string>> = {
   500: 'INTERNAL_ERROR',
   502: 'UPSTREAM_ERROR',
   503: 'SERVICE_UNAVAILABLE',
-  504: 'UPSTREAM_TIMEOUT'
+  504: 'UPSTREAM_TIMEOUT',
 };
 
 function isMismatchedFamilyCode(code: string, status: number): boolean {
@@ -211,17 +202,14 @@ function isMismatchedFamilyCode(code: string, status: number): boolean {
  */
 export function resolveApiErrorMessage(
   error: unknown,
-  language: LanguageCode = DEFAULT_LANGUAGE
+  language: LanguageCode = DEFAULT_LANGUAGE,
 ): string {
   const apiError = isApiResponseError(error) ? error.error : null;
 
   if (apiError) {
     // The backend localizes against the language in the URL prefix. Trust it
     // only when the text really is in this language.
-    if (
-      apiError.message &&
-      (language !== 'fa' || PERSIAN_SCRIPT.test(apiError.message))
-    ) {
+    if (apiError.message && (language !== 'fa' || PERSIAN_SCRIPT.test(apiError.message))) {
       return apiError.message;
     }
 
@@ -230,10 +218,7 @@ export function resolveApiErrorMessage(
       return interpolate(byCode, apiError.params, language);
     }
 
-    const byStatus = lookupWithFallback(
-      language,
-      `apiError.HTTP_${apiError.status}`
-    );
+    const byStatus = lookupWithFallback(language, `apiError.HTTP_${apiError.status}`);
     if (byStatus) return byStatus;
   }
 

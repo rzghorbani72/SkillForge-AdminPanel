@@ -12,7 +12,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import {
   Dialog,
@@ -20,7 +20,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
@@ -31,24 +31,10 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
-import {
-  Database,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Database, Plus, Edit, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DatePicker } from '@/components/ui/date-picker';
 
@@ -115,7 +101,7 @@ export default function DatabasePage() {
       setLoading(true);
       const result = await apiClient.getModelRecords(selectedModel, {
         page,
-        limit
+        limit,
       });
       setRecords(result.data || []);
       setTotal(result.total || 0);
@@ -147,11 +133,7 @@ export default function DatabasePage() {
     if (!selectedModel || !selectedRecord) return;
     try {
       setLoading(true);
-      await apiClient.updateModelRecord(
-        selectedModel,
-        selectedRecord.id,
-        formData
-      );
+      await apiClient.updateModelRecord(selectedModel, selectedRecord.id, formData);
       toast.success(tNow('toasts.recordUpdated'));
       setIsEditDialogOpen(false);
       setSelectedRecord(null);
@@ -189,10 +171,7 @@ export default function DatabasePage() {
     if (!selectedModel) return;
     try {
       setLoading(true);
-      const fullRecord = await apiClient.getModelRecord(
-        selectedModel,
-        record.id
-      );
+      const fullRecord = await apiClient.getModelRecord(selectedModel, record.id);
       setSelectedRecord(fullRecord);
       setIsViewDialogOpen(true);
     } catch (error: any) {
@@ -210,9 +189,7 @@ export default function DatabasePage() {
       return (
         <Select
           value={value === '' ? '' : String(value)}
-          onValueChange={(val) =>
-            setFormData({ ...formData, [field.name]: val === 'true' })
-          }
+          onValueChange={(val) => setFormData({ ...formData, [field.name]: val === 'true' })}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select value" />
@@ -246,11 +223,7 @@ export default function DatabasePage() {
             setFormData({
               ...formData,
               [field.name]:
-                raw === ''
-                  ? 0
-                  : fieldType === 'int'
-                    ? parseInt(raw) || 0
-                    : parseFloat(raw) || 0
+                raw === '' ? 0 : fieldType === 'int' ? parseInt(raw) || 0 : parseFloat(raw) || 0,
             })
           }
         />
@@ -265,9 +238,7 @@ export default function DatabasePage() {
       return (
         <Textarea
           value={value}
-          onChange={(e) =>
-            setFormData({ ...formData, [field.name]: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
           rows={4}
         />
       );
@@ -276,9 +247,7 @@ export default function DatabasePage() {
     return (
       <Input
         value={value}
-        onChange={(e) =>
-          setFormData({ ...formData, [field.name]: e.target.value })
-        }
+        onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
       />
     );
   };
@@ -286,10 +255,7 @@ export default function DatabasePage() {
   const formatValue = (value: any): string => {
     if (value === null || value === undefined) return '-';
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
-    if (
-      value instanceof Date ||
-      (typeof value === 'string' && value.includes('T'))
-    ) {
+    if (value instanceof Date || (typeof value === 'string' && value.includes('T'))) {
       return new Date(value).toLocaleString();
     }
     if (typeof value === 'object') return JSON.stringify(value);
@@ -338,14 +304,9 @@ export default function DatabasePage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold">{selectedModel}</h2>
-              <p className="text-sm text-muted-foreground">
-                {total} total records
-              </p>
+              <p className="text-sm text-muted-foreground">{total} total records</p>
             </div>
-            <Dialog
-              open={isCreateDialogOpen}
-              onOpenChange={setIsCreateDialogOpen}
-            >
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button onClick={() => setFormData({})}>
                   <Plus className="mr-2 h-4 w-4" />
@@ -364,17 +325,13 @@ export default function DatabasePage() {
                     {fields
                       .filter(
                         (f) =>
-                          f.name !== 'id' &&
-                          f.name !== 'created_at' &&
-                          f.name !== 'updated_at'
+                          f.name !== 'id' && f.name !== 'created_at' && f.name !== 'updated_at',
                       )
                       .map((field) => (
                         <div key={field.name} className="space-y-2">
                           <Label htmlFor={field.name}>
                             {field.name}
-                            {!field.nullable && (
-                              <span className="ml-1 text-red-500">*</span>
-                            )}
+                            {!field.nullable && <span className="ml-1 text-red-500">*</span>}
                             <Badge variant="outline" className="ml-2 text-xs">
                               {field.type}
                             </Badge>
@@ -384,10 +341,7 @@ export default function DatabasePage() {
                       ))}
                   </div>
                   <div className="flex justify-end gap-2 pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsCreateDialogOpen(false)}
-                    >
+                    <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                       Cancel
                     </Button>
                     <Button onClick={handleCreate} disabled={loading}>
@@ -414,19 +368,13 @@ export default function DatabasePage() {
                   <TableBody>
                     {loading ? (
                       <TableRow>
-                        <TableCell
-                          colSpan={fields.length + 1}
-                          className="py-8 text-center"
-                        >
+                        <TableCell colSpan={fields.length + 1} className="py-8 text-center">
                           Loading...
                         </TableCell>
                       </TableRow>
                     ) : records.length === 0 ? (
                       <TableRow>
-                        <TableCell
-                          colSpan={fields.length + 1}
-                          className="py-8 text-center"
-                        >
+                        <TableCell colSpan={fields.length + 1} className="py-8 text-center">
                           No records found
                         </TableCell>
                       </TableRow>
@@ -434,10 +382,7 @@ export default function DatabasePage() {
                       records.map((record) => (
                         <TableRow key={record.id}>
                           {fields.slice(0, 8).map((field) => (
-                            <TableCell
-                              key={field.name}
-                              className="max-w-[200px] truncate"
-                            >
+                            <TableCell key={field.name} className="max-w-[200px] truncate">
                               {formatValue(record[field.name])}
                             </TableCell>
                           ))}
@@ -507,9 +452,7 @@ export default function DatabasePage() {
             <DialogContent className="sm:max-w-3xl">
               <DialogHeader>
                 <DialogTitle>Edit Record</DialogTitle>
-                <DialogDescription>
-                  Update the record in {selectedModel}
-                </DialogDescription>
+                <DialogDescription>Update the record in {selectedModel}</DialogDescription>
               </DialogHeader>
               <div className="mt-4 space-y-4">
                 <div className="grid max-h-[55vh] gap-4 overflow-y-auto sm:grid-cols-2">
@@ -528,10 +471,7 @@ export default function DatabasePage() {
                     ))}
                 </div>
                 <div className="flex justify-end gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsEditDialogOpen(false)}
-                  >
+                  <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                     Cancel
                   </Button>
                   <Button onClick={handleUpdate} disabled={loading}>

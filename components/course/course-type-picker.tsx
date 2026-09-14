@@ -15,14 +15,14 @@ const COURSE_TYPES: {
     value: 'OFFLINE',
     titleKey: 'courses.typeOfflineTitle',
     hintKey: 'courses.typeOfflineHint',
-    icon: PlayCircle
+    icon: PlayCircle,
   },
   {
     value: 'LIVE',
     titleKey: 'courses.typeLiveTitle',
     hintKey: 'courses.typeLiveHint',
-    icon: Radio
-  }
+    icon: Radio,
+  },
 ];
 
 /**
@@ -32,7 +32,7 @@ const COURSE_TYPES: {
 export function CourseTypePicker({
   value,
   onChange,
-  disabled = false
+  disabled = false,
 }: {
   value: CourseType;
   onChange: (type: CourseType) => void;
@@ -51,18 +51,14 @@ export function CourseTypePicker({
           aria-pressed={value === type}
           className={cn(
             'flex items-start gap-3 rounded-lg border p-4 text-start transition-colors',
-            value === type
-              ? 'border-primary bg-primary/5'
-              : 'border-input hover:bg-accent',
-            disabled && 'cursor-not-allowed opacity-60'
+            value === type ? 'border-primary bg-primary/5' : 'border-input hover:bg-accent',
+            disabled && 'cursor-not-allowed opacity-60',
           )}
         >
           <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <span>
             <span className="block text-sm font-medium">{t(titleKey)}</span>
-            <span className="mt-1 block text-xs text-muted-foreground">
-              {t(hintKey)}
-            </span>
+            <span className="mt-1 block text-xs text-muted-foreground">{t(hintKey)}</span>
           </span>
         </button>
       ))}

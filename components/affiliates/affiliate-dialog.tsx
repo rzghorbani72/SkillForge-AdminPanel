@@ -3,14 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Loader2,
-  CircleCheck,
-  Phone,
-  Sparkles,
-  Copy,
-  Check
-} from 'lucide-react';
+import { Loader2, CircleCheck, Phone, Sparkles, Copy, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
@@ -20,25 +13,16 @@ import { toE164Iran } from '@/lib/phone-utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
-import {
-  type Affiliate,
-  addAffiliateSchema,
-  type AddAffiliateForm
-} from './types';
+import { type Affiliate, addAffiliateSchema, type AddAffiliateForm } from './types';
 import { CopyBtn } from './copy-btn';
 import { apiErrorMessage } from '@/lib/api-error-message';
 
@@ -49,7 +33,7 @@ export function AffiliateDialog({
   onClose,
   onDone,
   baseUrl,
-  editData
+  editData,
 }: {
   open: boolean;
   onClose: () => void;
@@ -72,10 +56,8 @@ export function AffiliateDialog({
       affiliate_name: editData?.affiliate_name ?? '',
       phone: editData?.affiliate_phone ?? '',
       password: '',
-      commission_pct: editData
-        ? Math.round((editData.commission_rate ?? 0.15) * 100)
-        : 15
-    }
+      commission_pct: editData ? Math.round((editData.commission_rate ?? 0.15) * 100) : 15,
+    },
   });
 
   useEffect(() => {
@@ -84,9 +66,7 @@ export function AffiliateDialog({
         affiliate_name: editData?.affiliate_name ?? '',
         phone: editData?.affiliate_phone ?? '',
         password: isEdit ? '' : generateSimpleTempPassword(),
-        commission_pct: editData
-          ? Math.round((editData.commission_rate ?? 0.15) * 100)
-          : 15
+        commission_pct: editData ? Math.round((editData.commission_rate ?? 0.15) * 100) : 15,
       });
       setFoundUser(null);
       setCustomCommission(false);
@@ -152,7 +132,7 @@ export function AffiliateDialog({
       try {
         await apiClient.updateAffiliate(editData!.id, {
           affiliate_name: values.affiliate_name,
-          commission_rate: values.commission_pct / 100
+          commission_rate: values.commission_pct / 100,
         });
         toast.success(t('common.success'));
         onDone();
@@ -178,7 +158,7 @@ export function AffiliateDialog({
         phone: toE164Iran(values.phone.trim()),
         ...(values.password ? { password: values.password } : {}),
         commission_rate: values.commission_pct / 100,
-        send_sms: sendSms
+        send_sms: sendSms,
       });
       const code =
         typeof result === 'object' && result !== null && 'code' in result
@@ -187,7 +167,7 @@ export function AffiliateDialog({
       toast.success(
         foundUser
           ? t('affiliates.roleAdded', { name: foundUser.name, code })
-          : t('affiliates.createdSuccess', { code })
+          : t('affiliates.createdSuccess', { code }),
       );
       onDone();
       handleClose();
@@ -199,9 +179,7 @@ export function AffiliateDialog({
     }
   }
 
-  const refPreview = baseUrl
-    ? `${baseUrl.replace(/^https?:\/\//, '')}?ref=···`
-    : '?ref=···';
+  const refPreview = baseUrl ? `${baseUrl.replace(/^https?:\/\//, '')}?ref=···` : '?ref=···';
 
   return (
     <Dialog
@@ -213,14 +191,12 @@ export function AffiliateDialog({
       <DialogContent className="max-w-md p-0" dir="rtl">
         <DialogHeader className="border-b px-6 py-4">
           <p className="text-xs font-medium text-muted-foreground">
-            {isEdit
-              ? t('affiliates.editAffiliate')
-              : t('affiliates.addSubtitle')}
+            {isEdit ? t('affiliates.editAffiliate') : t('affiliates.addSubtitle')}
           </p>
           <DialogTitle className="text-lg">
             {isEdit
               ? t('affiliates.editDialogTitle', {
-                  name: editData?.affiliate_name ?? ''
+                  name: editData?.affiliate_name ?? '',
                 })
               : t('affiliates.addDialogTitle')}
           </DialogTitle>
@@ -277,16 +253,12 @@ export function AffiliateDialog({
 
               {isEdit && editData?.code ? (
                 <div>
-                  <p className="mb-2 text-sm font-medium">
-                    {t('affiliates.fieldCode')}
-                  </p>
+                  <p className="mb-2 text-sm font-medium">{t('affiliates.fieldCode')}</p>
                   <div
                     className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2"
                     dir="ltr"
                   >
-                    <code className="flex-1 font-mono text-sm tracking-wide">
-                      {editData.code}
-                    </code>
+                    <code className="flex-1 font-mono text-sm tracking-wide">{editData.code}</code>
                     <CopyBtn
                       text={`${baseUrl}?ref=${editData.code}`}
                       label={t('affiliates.copyLink')}
@@ -296,9 +268,7 @@ export function AffiliateDialog({
               ) : (
                 !isEdit && (
                   <div>
-                    <p className="mb-2 text-sm font-medium">
-                      {t('affiliates.fieldCode')}
-                    </p>
+                    <p className="mb-2 text-sm font-medium">{t('affiliates.fieldCode')}</p>
                     <div className="rounded-lg border border-dashed bg-muted/30 px-3 py-2.5">
                       <p className="text-xs text-muted-foreground">
                         {t('affiliates.codeAutoGenerated')}
@@ -315,9 +285,7 @@ export function AffiliateDialog({
               )}
 
               <div>
-                <p className="mb-2 text-sm font-medium">
-                  {t('affiliates.commissionLabel')}
-                </p>
+                <p className="mb-2 text-sm font-medium">{t('affiliates.commissionLabel')}</p>
                 <div className="flex flex-wrap gap-2">
                   {QUICK_RATES.map((r) => (
                     <button
@@ -327,7 +295,7 @@ export function AffiliateDialog({
                         'rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors',
                         !customCommission && commPct === r
                           ? 'border-primary bg-primary text-primary-foreground'
-                          : 'hover:bg-muted'
+                          : 'hover:bg-muted',
                       )}
                       onClick={() => {
                         form.setValue('commission_pct', r);
@@ -343,7 +311,7 @@ export function AffiliateDialog({
                       'rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors',
                       customCommission
                         ? 'border-primary bg-primary text-primary-foreground'
-                        : 'hover:bg-muted'
+                        : 'hover:bg-muted',
                     )}
                     onClick={() => {
                       setCustomCommission(true);
@@ -364,9 +332,7 @@ export function AffiliateDialog({
                       max={50}
                       step={1}
                       value={commPct}
-                      onChange={(e) =>
-                        form.setValue('commission_pct', Number(e.target.value))
-                      }
+                      onChange={(e) => form.setValue('commission_pct', Number(e.target.value))}
                       className="flex-1 accent-primary"
                     />
                     <span className="w-12 text-center font-mono text-sm font-semibold">
@@ -383,9 +349,7 @@ export function AffiliateDialog({
                   render={({ field }) => (
                     <FormItem>
                       <div className="flex items-center justify-between gap-2">
-                        <FormLabel className="mb-0">
-                          {t('affiliates.fieldPassword')}
-                        </FormLabel>
+                        <FormLabel className="mb-0">{t('affiliates.fieldPassword')}</FormLabel>
                         <button
                           type="button"
                           onClick={handleGeneratePassword}
@@ -440,12 +404,8 @@ export function AffiliateDialog({
                 <div className="flex items-center gap-3 rounded-xl border bg-muted/30 p-3">
                   <Phone className="h-4 w-4 shrink-0 text-primary" />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold">
-                      {t('affiliates.smsToggleTitle')}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {t('affiliates.smsToggleDesc')}
-                    </p>
+                    <p className="text-sm font-semibold">{t('affiliates.smsToggleTitle')}</p>
+                    <p className="text-xs text-muted-foreground">{t('affiliates.smsToggleDesc')}</p>
                   </div>
                   <Switch
                     checked={sendSms}
@@ -462,9 +422,7 @@ export function AffiliateDialog({
               </Button>
               <Button type="submit" disabled={saving || checkingPhone}>
                 {saving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-                {isEdit
-                  ? t('affiliates.saveChanges')
-                  : t('affiliates.createBtn')}
+                {isEdit ? t('affiliates.saveChanges') : t('affiliates.createBtn')}
               </Button>
             </div>
           </form>

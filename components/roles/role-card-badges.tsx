@@ -6,21 +6,13 @@ import type { PlatformRole } from '@/types/roles';
 const CHIP = 'shrink-0 rounded-md px-2 py-0.5 text-[11px] font-medium';
 
 /** System/custom, scope, and a marker on the card of the role you are using. */
-export function RoleCardBadges({
-  role,
-  isOwnRole
-}: {
-  role: PlatformRole;
-  isOwnRole: boolean;
-}) {
+export function RoleCardBadges({ role, isOwnRole }: { role: PlatformRole; isOwnRole: boolean }) {
   const { t } = useTranslation();
 
   return (
     <div className="flex shrink-0 flex-wrap justify-end gap-1">
       {isOwnRole && (
-        <span className={`${CHIP} bg-amber-500/10 text-amber-600`}>
-          {t('roles.yourRoleBadge')}
-        </span>
+        <span className={`${CHIP} bg-amber-500/10 text-amber-600`}>{t('roles.yourRoleBadge')}</span>
       )}
       <span
         className={

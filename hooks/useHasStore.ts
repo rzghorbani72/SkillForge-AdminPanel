@@ -18,18 +18,15 @@ export function useHasStore(): boolean | undefined {
   return useMemo(() => {
     if (!user) return undefined;
 
-    const isAdminProfile =
-      user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
-    const platformLevel =
-      user.platformLevel ?? user.profile?.platformLevel ?? false;
+    const isAdminProfile = user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
+    const platformLevel = user.platformLevel ?? user.profile?.platformLevel ?? false;
 
     if (isAdminProfile || platformLevel) return !!currentAcademy;
 
     if (user.role !== 'ADMIN') return undefined;
 
     const profile = (user as any)?.profile;
-    const academyId =
-      profile?.academy_id ?? profile?.academyId ?? user.academyId ?? null;
+    const academyId = profile?.academy_id ?? profile?.academyId ?? user.academyId ?? null;
     const currentAcademyData = profile?.academy ?? profile?.store ?? null;
 
     if (!academyId) {

@@ -18,20 +18,13 @@ interface SeatMeterProps {
  * bar turns amber when a class is nearly sold out, which is when a second class
  * is worth opening.
  */
-export function SeatMeter({
-  taken,
-  capacity,
-  held = 0,
-  className
-}: SeatMeterProps) {
+export function SeatMeter({ taken, capacity, held = 0, className }: SeatMeterProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   // `taken` already counts held seats; split them out so paid reads darker.
   const paid = Math.max(taken - held, 0);
-  const percent =
-    capacity > 0 ? Math.min(100, Math.round((taken / capacity) * 100)) : 0;
-  const paidPercent =
-    capacity > 0 ? Math.min(100, Math.round((paid / capacity) * 100)) : 0;
+  const percent = capacity > 0 ? Math.min(100, Math.round((taken / capacity) * 100)) : 0;
+  const paidPercent = capacity > 0 ? Math.min(100, Math.round((paid / capacity) * 100)) : 0;
   const full = capacity > 0 && taken >= capacity;
   const nearlyFull = !full && percent >= 80;
 
@@ -40,7 +33,7 @@ export function SeatMeter({
       <p className="text-xs text-muted-foreground">
         {t('courses.live.seatsTaken', {
           taken: formatNumber(taken),
-          capacity: formatNumber(capacity)
+          capacity: formatNumber(capacity),
         })}
       </p>
       <div
@@ -53,14 +46,14 @@ export function SeatMeter({
         <div
           className={cn(
             'absolute inset-y-0 start-0 rounded-full opacity-40 transition-[width]',
-            full ? 'bg-emerald-500' : nearlyFull ? 'bg-amber-500' : 'bg-primary'
+            full ? 'bg-emerald-500' : nearlyFull ? 'bg-amber-500' : 'bg-primary',
           )}
           style={{ width: `${percent}%` }}
         />
         <div
           className={cn(
             'absolute inset-y-0 start-0 rounded-full transition-[width]',
-            full ? 'bg-emerald-500' : nearlyFull ? 'bg-amber-500' : 'bg-primary'
+            full ? 'bg-emerald-500' : nearlyFull ? 'bg-amber-500' : 'bg-primary',
           )}
           style={{ width: `${paidPercent}%` }}
         />

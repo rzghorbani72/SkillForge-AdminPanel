@@ -25,17 +25,10 @@ export default function CoursesPage() {
 
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [category, setCategory] = useState<string>('all');
-  const [courseToDelete, setCourseToDelete] =
-    useState<CourseWithRevenue | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<CourseWithRevenue | null>(null);
 
-  const {
-    courses,
-    isLoading,
-    searchTerm,
-    setSearchTerm,
-    pricingFilter,
-    handleDeleteCourse
-  } = useCourses();
+  const { courses, isLoading, searchTerm, setSearchTerm, pricingFilter, handleDeleteCourse } =
+    useCourses();
 
   function handleCreate() {
     router.push('/courses/create');
@@ -57,8 +50,7 @@ export default function CoursesPage() {
   const filteredCourses = courses.filter((c) => {
     const catName = (c as any).Category?.name ?? (c as any).category ?? '';
     const catOk = category === 'all' || catName === category;
-    const pricingOk =
-      pricingFilter === 'ALL' || (c as any).pricing_type === pricingFilter;
+    const pricingOk = pricingFilter === 'ALL' || (c as any).pricing_type === pricingFilter;
     return catOk && pricingOk;
   });
 
@@ -87,9 +79,7 @@ export default function CoursesPage() {
             <h1 className="text-[24px] font-bold leading-none tracking-tight">
               {t('courses.title')}
             </h1>
-            <p className="mt-1 text-[14px] text-muted-foreground">
-              {t('courses.pageSubtitle')}
-            </p>
+            <p className="mt-1 text-[14px] text-muted-foreground">{t('courses.pageSubtitle')}</p>
           </div>
         </div>
 
@@ -114,10 +104,7 @@ export default function CoursesPage() {
             </Button>
           </div>
         ) : view === 'grid' ? (
-          <div
-            className="grid gap-5"
-            style={{ gridTemplateColumns: COURSE_CARD_GRID_COLUMNS }}
-          >
+          <div className="grid gap-5" style={{ gridTemplateColumns: COURSE_CARD_GRID_COLUMNS }}>
             {filteredCourses.map((c) => (
               <CourseCard
                 key={c.id}
@@ -185,7 +172,7 @@ export default function CoursesPage() {
           open={!!courseToDelete}
           title={t('courses.deleteCourse')}
           description={t('courses.deleteCourseConfirm', {
-            title: courseToDelete?.title ?? ''
+            title: courseToDelete?.title ?? '',
           })}
           onConfirm={() => {
             if (courseToDelete) handleDeleteCourse(courseToDelete);

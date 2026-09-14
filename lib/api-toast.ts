@@ -29,5 +29,5 @@ export const apiToast = {
       fallback ||
       t('error.unexpected', currentLanguage());
     toast.error(message, { toastId: `error:${message}` });
-  }
+  },
 };

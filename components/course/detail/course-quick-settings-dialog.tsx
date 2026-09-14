@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -21,7 +21,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
@@ -30,7 +30,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { apiClient } from '@/lib/api';
@@ -39,14 +39,11 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useCourseWorkspace } from './course-workspace-context';
 
 const schema = z.object({
-  title: z
-    .string()
-    .min(5, 'validation.titleMin5')
-    .max(80, 'validation.titleMax80'),
+  title: z.string().min(5, 'validation.titleMin5').max(80, 'validation.titleMax80'),
   category_id: z.string().optional(),
   is_featured: z.boolean(),
   is_certificate: z.boolean(),
-  certificate_min_percent: z.coerce.number().int().min(0).max(100)
+  certificate_min_percent: z.coerce.number().int().min(0).max(100),
 });
 
 type QuickSettingsValues = z.infer<typeof schema>;
@@ -72,10 +69,7 @@ type CourseQuickSettingsDialogProps = {
  * The small, everyday edits. Anything longer (pricing, cover, description,
  * curriculum) lives on the full editor page, which has its own URL.
  */
-export function CourseQuickSettingsDialog({
-  open,
-  onOpenChange
-}: CourseQuickSettingsDialogProps) {
+export function CourseQuickSettingsDialog({ open, onOpenChange }: CourseQuickSettingsDialogProps) {
   const { t } = useTranslation();
   const { course, refresh } = useCourseWorkspace();
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -88,8 +82,8 @@ export function CourseQuickSettingsDialog({
       category_id: undefined,
       is_featured: false,
       is_certificate: false,
-      certificate_min_percent: 70
-    }
+      certificate_min_percent: 70,
+    },
   });
 
   useEffect(() => {
@@ -99,7 +93,7 @@ export function CourseQuickSettingsDialog({
       category_id: course.Category?.id,
       is_featured: course.is_featured,
       is_certificate: course.is_certificate,
-      certificate_min_percent: course.certificate_min_percent ?? 70
+      certificate_min_percent: course.certificate_min_percent ?? 70,
     });
   }, [open, course, form]);
 
@@ -135,17 +129,11 @@ export function CourseQuickSettingsDialog({
       <DialogContent className="sm:max-w-[560px]">
         <DialogHeader>
           <DialogTitle>{t('courseDetail.quickSettings')}</DialogTitle>
-          <DialogDescription>
-            {t('courseDetail.quickSettingsDesc')}
-          </DialogDescription>
+          <DialogDescription>{t('courseDetail.quickSettingsDesc')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-5"
-            noValidate
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" noValidate>
             <FormField
               control={form.control}
               name="title"
@@ -169,9 +157,7 @@ export function CourseQuickSettingsDialog({
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue
-                          placeholder={t('courses.selectCategory')}
-                        />
+                        <SelectValue placeholder={t('courses.selectCategory')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -194,15 +180,10 @@ export function CourseQuickSettingsDialog({
                 <FormItem className="flex items-center justify-between gap-4 rounded-lg border p-3">
                   <div className="space-y-1">
                     <FormLabel>{t('courses.featured')}</FormLabel>
-                    <FormDescription>
-                      {t('courseDetail.featuredHint')}
-                    </FormDescription>
+                    <FormDescription>{t('courseDetail.featuredHint')}</FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -216,15 +197,10 @@ export function CourseQuickSettingsDialog({
                   <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1">
                       <FormLabel>{t('courseDetail.certificate')}</FormLabel>
-                      <FormDescription>
-                        {t('certificates.rosterHint')}
-                      </FormDescription>
+                      <FormDescription>{t('certificates.rosterHint')}</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </div>
 
@@ -235,20 +211,14 @@ export function CourseQuickSettingsDialog({
                       render={({ field: percentField }) => (
                         <FormItem className="grid grid-cols-[1fr_auto] items-center gap-3 border-t pt-3">
                           <div className="space-y-1">
-                            <FormLabel>
-                              {t('certificates.minPercentLabel')}
-                            </FormLabel>
-                            <FormDescription>
-                              {t('certificates.minPercentHint')}
-                            </FormDescription>
+                            <FormLabel>{t('certificates.minPercentLabel')}</FormLabel>
+                            <FormDescription>{t('certificates.minPercentHint')}</FormDescription>
                           </div>
                           <FormControl>
                             <NumberInput
                               className="w-24"
                               value={percentField.value}
-                              onChange={(raw) =>
-                                percentField.onChange(Number(raw) || 0)
-                              }
+                              onChange={(raw) => percentField.onChange(Number(raw) || 0)}
                               suffix="٪"
                             />
                           </FormControl>

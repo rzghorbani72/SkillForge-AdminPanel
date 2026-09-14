@@ -11,26 +11,20 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  CalendarDays,
-  Download,
-  MoreHorizontal,
-  TrendingDown,
-  TrendingUp
-} from 'lucide-react';
+import { CalendarDays, Download, MoreHorizontal, TrendingDown, TrendingUp } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import {
   PlatformFinancialSummary,
   StoreFinancialRecord,
-  PlatformFinancialRecord
+  PlatformFinancialRecord,
 } from '@/types/api';
 import { SettlementTotals } from '@/types/financial';
 import { formatCurrencyWithStore } from '@/lib/utils';
@@ -53,19 +47,12 @@ interface StatCardProps {
   negative?: boolean;
 }
 
-function StatCard({
-  label,
-  value,
-  sub,
-  delta,
-  accent,
-  negative
-}: StatCardProps) {
+function StatCard({ label, value, sub, delta, accent, negative }: StatCardProps) {
   return (
     <Card
       className={cn(
         'transition-shadow hover:shadow-sm',
-        accent && 'border-transparent bg-primary/5'
+        accent && 'border-transparent bg-primary/5',
       )}
     >
       <CardContent className="p-5">
@@ -73,7 +60,7 @@ function StatCard({
           <span
             className={cn(
               'text-xs font-medium uppercase tracking-wider',
-              accent ? 'text-primary' : 'text-muted-foreground'
+              accent ? 'text-primary' : 'text-muted-foreground',
             )}
           >
             {label}
@@ -84,7 +71,7 @@ function StatCard({
                 'flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
                 delta >= 0
                   ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                  : 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'
+                  : 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300',
               )}
             >
               {delta >= 0 ? (
@@ -99,7 +86,7 @@ function StatCard({
         <p
           className={cn(
             'mt-2 text-2xl font-bold tabular-nums tracking-tight',
-            negative && 'text-destructive'
+            negative && 'text-destructive',
           )}
         >
           {value}
@@ -119,21 +106,14 @@ export default function PlatformFinancialPage() {
   const { t, language } = useTranslation();
   const { user } = useAuthUser();
   const router = useRouter();
-  const {
-    selectedYear,
-    selectedMonth,
-    setSelectedYear,
-    setSelectedMonth,
-    years
-  } = useFinancialFilters();
+  const { selectedYear, selectedMonth, setSelectedYear, setSelectedMonth, years } =
+    useFinancialFilters();
 
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [summary, setSummary] = useState<PlatformFinancialSummary | null>(null);
   const [storeRecords, setStoreRecords] = useState<StoreFinancialRecord[]>([]);
-  const [platformRecords, setPlatformRecords] = useState<
-    PlatformFinancialRecord[]
-  >([]);
+  const [platformRecords, setPlatformRecords] = useState<PlatformFinancialRecord[]>([]);
   const [settlement, setSettlement] = useState<{
     totals?: SettlementTotals;
   } | null>(null);
@@ -156,30 +136,29 @@ export default function PlatformFinancialPage() {
           {
             currency: currency as string,
             currency_symbol: currency === 'IRR' ? 'Toman' : currency,
-            currency_position: 'after'
+            currency_position: 'after',
           },
           undefined,
-          language
+          language,
         ),
-    [language]
+    [language],
   );
 
   async function loadData() {
     try {
       setLoading(true);
-      const [summaryData, storeData, platformData, settlementData] =
-        await Promise.all([
-          apiClient.getPlatformFinancialSummary(),
-          apiClient.getAcademyFinancialRecords({
-            year: selectedYear,
-            month: selectedMonth || undefined
-          }),
-          apiClient.getPlatformFinancialRecords({
-            year: selectedYear,
-            month: selectedMonth || undefined
-          }),
-          apiClient.getIranSettlementStatement()
-        ]);
+      const [summaryData, storeData, platformData, settlementData] = await Promise.all([
+        apiClient.getPlatformFinancialSummary(),
+        apiClient.getAcademyFinancialRecords({
+          year: selectedYear,
+          month: selectedMonth || undefined,
+        }),
+        apiClient.getPlatformFinancialRecords({
+          year: selectedYear,
+          month: selectedMonth || undefined,
+        }),
+        apiClient.getIranSettlementStatement(),
+      ]);
       setSummary(summaryData);
       setStoreRecords(storeData);
       setPlatformRecords(platformData);
@@ -199,53 +178,39 @@ export default function PlatformFinancialPage() {
   if (!user || user?.role !== 'ADMIN') return null;
 
   const settlementTotals = settlement?.totals ?? null;
-  const margin = summary
-    ? profitMargin(summary.total.total_revenue, summary.total.total_cost)
-    : 0;
+  const margin = summary ? profitMargin(summary.total.total_revenue, summary.total.total_cost) : 0;
 
   const statCards: StatCardProps[] = [
     {
       label: t('financial.platform.totalRevenue'),
-      value: formatCurrency(
-        summary?.total.total_revenue ?? 0,
-        summary?.total.currency
-      ),
+      value: formatCurrency(summary?.total.total_revenue ?? 0, summary?.total.currency),
       sub: t('financial.platform.platformStoresCombined'),
-      delta: null
+      delta: null,
     },
     {
       label: t('financial.platform.netProfit'),
-      value: formatCurrency(
-        summary?.total.total_profit ?? 0,
-        summary?.total.currency
-      ),
+      value: formatCurrency(summary?.total.total_profit ?? 0, summary?.total.currency),
       sub: t('financial.platform.profitMargin', {
-        margin: margin.toFixed(1)
+        margin: margin.toFixed(1),
       }),
       delta: margin,
-      accent: true
+      accent: true,
     },
     {
       label: t('financial.platform.totalCost'),
-      value: formatCurrency(
-        summary?.total.total_cost ?? 0,
-        summary?.total.currency
-      ),
+      value: formatCurrency(summary?.total.total_cost ?? 0, summary?.total.currency),
       sub: t('financial.platform.allCostsCombined'),
       delta: null,
-      negative: true
+      negative: true,
     },
     {
       label: t('financial.platform.platformRevenue'),
-      value: formatCurrency(
-        summary?.platform.total_revenue ?? 0,
-        summary?.platform.currency
-      ),
+      value: formatCurrency(summary?.platform.total_revenue ?? 0, summary?.platform.currency),
       sub: t('financial.platform.platformRevenueCount', {
-        count: summary?.platform.record_count ?? 0
+        count: summary?.platform.record_count ?? 0,
       }),
-      delta: null
-    }
+      delta: null,
+    },
   ];
 
   return (
@@ -320,36 +285,34 @@ export default function PlatformFinancialPage() {
                   label: t('financial.platform.gross'),
                   value: formatCurrency(
                     settlementTotals.gross_amount ?? 0,
-                    settlementTotals.currency
-                  )
+                    settlementTotals.currency,
+                  ),
                 },
                 {
                   label: `${t('financial.platform.platformFee')} (${((settlementTotals as SettlementTotals & { vat_rate?: number }).vat_rate ?? 0.09) * 100}%)`,
                   value: formatCurrency(
                     settlementTotals.platform_fee ?? 0,
-                    settlementTotals.currency
-                  )
+                    settlementTotals.currency,
+                  ),
                 },
                 {
                   label: t('financial.platform.vat'),
                   value: formatCurrency(
                     settlementTotals.tax_vat_amount ?? 0,
-                    settlementTotals.currency
-                  )
+                    settlementTotals.currency,
+                  ),
                 },
                 {
                   label: t('financial.platform.schoolNet'),
                   value: formatCurrency(
                     settlementTotals.school_net_revenue ?? 0,
-                    settlementTotals.currency
-                  )
-                }
+                    settlementTotals.currency,
+                  ),
+                },
               ].map((item) => (
                 <div key={item.label}>
                   <p className="text-xs text-muted-foreground">{item.label}</p>
-                  <p className="mt-1 text-lg font-semibold tabular-nums">
-                    {item.value}
-                  </p>
+                  <p className="mt-1 text-lg font-semibold tabular-nums">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -360,12 +323,8 @@ export default function PlatformFinancialPage() {
       {/* Records Tables */}
       <Tabs defaultValue="platform" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="platform">
-            {t('financial.platform.tabs.platformRecords')}
-          </TabsTrigger>
-          <TabsTrigger value="stores">
-            {t('financial.platform.tabs.allStores')}
-          </TabsTrigger>
+          <TabsTrigger value="platform">{t('financial.platform.tabs.platformRecords')}</TabsTrigger>
+          <TabsTrigger value="stores">{t('financial.platform.tabs.allStores')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="platform">
@@ -373,12 +332,8 @@ export default function PlatformFinancialPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/30">
-                  <TableHead>
-                    {t('financial.platform.platformRecords.period')}
-                  </TableHead>
-                  <TableHead>
-                    {t('financial.platform.platformRecords.category')}
-                  </TableHead>
+                  <TableHead>{t('financial.platform.platformRecords.period')}</TableHead>
+                  <TableHead>{t('financial.platform.platformRecords.category')}</TableHead>
                   <TableHead className="text-end">
                     {t('financial.platform.platformRecords.revenue')}
                   </TableHead>
@@ -397,10 +352,7 @@ export default function PlatformFinancialPage() {
               <TableBody>
                 {platformRecords.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="py-10 text-center text-muted-foreground"
-                    >
+                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                       {t('financial.platform.platformRecords.noRecords')}
                     </TableCell>
                   </TableRow>
@@ -415,9 +367,7 @@ export default function PlatformFinancialPage() {
                         </TableCell>
                         <TableCell>
                           {record.costCategory ? (
-                            <Badge variant="outline">
-                              {record.costCategory.name}
-                            </Badge>
+                            <Badge variant="outline">{record.costCategory.name}</Badge>
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}
@@ -433,7 +383,7 @@ export default function PlatformFinancialPage() {
                             'text-end font-bold tabular-nums',
                             record.profit >= 0
                               ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-destructive'
+                              : 'text-destructive',
                           )}
                         >
                           {formatCurrency(record.profit, record.currency)}
@@ -460,30 +410,18 @@ export default function PlatformFinancialPage() {
                                 className="text-destructive"
                                 onClick={async () => {
                                   if (
-                                    confirm(
-                                      t(
-                                        'financial.platform.platformRecords.deleteConfirm'
-                                      )
-                                    )
+                                    confirm(t('financial.platform.platformRecords.deleteConfirm'))
                                   ) {
                                     try {
-                                      await apiClient.deletePlatformFinancialRecord(
-                                        record.id
-                                      );
+                                      await apiClient.deletePlatformFinancialRecord(record.id);
                                       toast.success(
-                                        t(
-                                          'financial.platform.platformRecords.deleteSuccess'
-                                        )
+                                        t('financial.platform.platformRecords.deleteSuccess'),
                                       );
                                       loadData();
                                     } catch (err: unknown) {
-                                      const msg =
-                                        err instanceof Error ? err.message : '';
+                                      const msg = err instanceof Error ? err.message : '';
                                       toast.error(
-                                        msg ||
-                                          t(
-                                            'financial.platform.platformRecords.deleteError'
-                                          )
+                                        msg || t('financial.platform.platformRecords.deleteError'),
                                       );
                                     }
                                   }
@@ -508,15 +446,9 @@ export default function PlatformFinancialPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/30">
-                  <TableHead>
-                    {t('financial.platform.storeRecords.store')}
-                  </TableHead>
-                  <TableHead>
-                    {t('financial.platform.storeRecords.period')}
-                  </TableHead>
-                  <TableHead>
-                    {t('financial.platform.storeRecords.category')}
-                  </TableHead>
+                  <TableHead>{t('financial.platform.storeRecords.store')}</TableHead>
+                  <TableHead>{t('financial.platform.storeRecords.period')}</TableHead>
+                  <TableHead>{t('financial.platform.storeRecords.category')}</TableHead>
                   <TableHead className="text-end">
                     {t('financial.platform.storeRecords.revenue')}
                   </TableHead>
@@ -535,10 +467,7 @@ export default function PlatformFinancialPage() {
               <TableBody>
                 {storeRecords.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="py-10 text-center text-muted-foreground"
-                    >
+                    <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
                       {t('financial.platform.storeRecords.noRecords')}
                     </TableCell>
                   </TableRow>
@@ -556,9 +485,7 @@ export default function PlatformFinancialPage() {
                         </TableCell>
                         <TableCell>
                           {record.costCategory ? (
-                            <Badge variant="outline">
-                              {record.costCategory.name}
-                            </Badge>
+                            <Badge variant="outline">{record.costCategory.name}</Badge>
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}
@@ -574,7 +501,7 @@ export default function PlatformFinancialPage() {
                             'text-end font-bold tabular-nums',
                             record.profit >= 0
                               ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-destructive'
+                              : 'text-destructive',
                           )}
                         >
                           {formatCurrency(record.profit, record.currency)}
@@ -597,11 +524,7 @@ export default function PlatformFinancialPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  router.push('/platform/academies')
-                                }
-                              >
+                              <DropdownMenuItem onClick={() => router.push('/platform/academies')}>
                                 {t('financial.platform.storeRecords.view')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>

@@ -27,7 +27,7 @@ const MONEY_KEYS = new Set([
   'paid_amount',
   'refunded_amount',
   'invoiced_amount',
-  'manual_invoice_amount'
+  'manual_invoice_amount',
 ]);
 
 const RATIO_KEYS = new Set([
@@ -43,7 +43,7 @@ const RATIO_KEYS = new Set([
   'gross_margin',
   'retention',
   'logo_churn_rate',
-  'mrr_growth_annualised'
+  'mrr_growth_annualised',
 ]);
 
 export function isMoneyKey(key: string): boolean {
@@ -63,21 +63,15 @@ export function useMetricFormat(currency: MetricsCurrency) {
         return '—';
       }
       if (RATIO_KEYS.has(key)) {
-        return `${formatNumber(Math.round(value * 1000) / 10)}٪`.replace(
-          '٪',
-          '%'
-        );
+        return `${formatNumber(Math.round(value * 1000) / 10)}٪`.replace('٪', '%');
       }
       if (MONEY_KEYS.has(key)) {
-        const amount =
-          currency === 'EUR'
-            ? Math.round(value * 100) / 100
-            : Math.round(value);
+        const amount = currency === 'EUR' ? Math.round(value * 100) / 100 : Math.round(value);
         const formatted = formatNumber(amount);
         return currency === 'EUR' ? `${formatted} €` : `${formatted} تومان`;
       }
       return formatNumber(Math.round(value * 100) / 100);
     },
-    [currency, formatNumber]
+    [currency, formatNumber],
   );
 }

@@ -3,11 +3,7 @@
  * Optimized for cost efficiency and storage management
  */
 
-import {
-  formatDuration,
-  formatFileSize,
-  formatFileSizeFloor
-} from '@/components/shared/utils';
+import { formatDuration, formatFileSize, formatFileSizeFloor } from '@/components/shared/utils';
 
 // Locale-aware size/duration labels (Persian digits + مگابایت when language is fa)
 export { formatFileSize, formatFileSizeFloor, formatDuration };
@@ -29,13 +25,13 @@ export const VIDEO_CONSTRAINTS = {
   // Video Quality
   RECOMMENDED_RESOLUTION: {
     min: { width: 1280, height: 720 }, // 720p minimum
-    max: { width: 1920, height: 1080 } // 1080p maximum
+    max: { width: 1920, height: 1080 }, // 1080p maximum
   },
 
   // Compression Settings
   RECOMMENDED_BITRATE: {
     '720p': 5000000, // 5 Mbps for 720p
-    '1080p': 8000000 // 8 Mbps for 1080p
+    '1080p': 8000000, // 8 Mbps for 1080p
   },
 
   // Storage Optimization
@@ -48,8 +44,8 @@ export const VIDEO_CONSTRAINTS = {
     ESTIMATED_SAVINGS: {
       fileSizeReduction: '80%', // From 500MB to 100MB
       storageCostReduction: '80%',
-      bandwidthCostReduction: '80%'
-    }
+      bandwidthCostReduction: '80%',
+    },
   },
 
   // Educational Best Practices
@@ -59,11 +55,10 @@ export const VIDEO_CONSTRAINTS = {
       'Use H.264 codec for best compatibility',
       'Set bitrate to 5 Mbps for 720p',
       'Remove unnecessary audio tracks',
-      'Use 30fps instead of 60fps for educational content'
+      'Use 30fps instead of 60fps for educational content',
     ],
-    qualityVsSize:
-      'Balance between quality and file size for optimal learning experience'
-  }
+    qualityVsSize: 'Balance between quality and file size for optimal learning experience',
+  },
 } as const;
 
 /**
@@ -84,10 +79,8 @@ export const validateVideoFile = (file: File): VideoValidation => {
       valid: false,
       errorKey: 'toasts.videoTooLarge',
       params: {
-        size:
-          formatFileSizeFloor(file.size) ||
-          `${VIDEO_CONSTRAINTS.MAX_FILE_SIZE_MB}`
-      }
+        size: formatFileSizeFloor(file.size) || `${VIDEO_CONSTRAINTS.MAX_FILE_SIZE_MB}`,
+      },
     };
   }
 
@@ -99,7 +92,7 @@ export const validateVideoDuration = (duration: number): VideoValidation => {
     return {
       valid: false,
       errorKey: 'toasts.videoTooLong',
-      params: { duration: formatDuration(duration) }
+      params: { duration: formatDuration(duration) },
     };
   }
 

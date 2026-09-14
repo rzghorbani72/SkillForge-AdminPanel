@@ -1,10 +1,7 @@
 'use client';
 
 import type { IconType } from '@/components/icons';
-import {
-  AnimatedHoverIcon,
-  type AnimateNavIcon
-} from '@/components/layout/animated-hover-icon';
+import { AnimatedHoverIcon, type AnimateNavIcon } from '@/components/layout/animated-hover-icon';
 import { ActivityIcon } from '@animateicons/react/lucide/activity-icon';
 import { BadgePercentIcon } from '@animateicons/react/lucide/badge-percent-icon';
 import { BookOpenIcon } from '@animateicons/react/lucide/book-open-icon';
@@ -66,17 +63,11 @@ const NAV_ICONS: Partial<Record<IconType, AnimateNavIcon>> = {
   wallet2: WalletIcon,
   billing: CreditCardIcon,
   calendarClock: CalendarIcon,
-  hardDrive: HardDriveIcon
+  hardDrive: HardDriveIcon,
 };
 
-export function AnimatedNavIcon({
-  name,
-  playing,
-  className
-}: AnimatedNavIconProps) {
+export function AnimatedNavIcon({ name, playing, className }: AnimatedNavIconProps) {
   const icon = (name && NAV_ICONS[name]) || LayoutDashboardIcon;
 
-  return (
-    <AnimatedHoverIcon icon={icon} playing={playing} className={className} />
-  );
+  return <AnimatedHoverIcon icon={icon} playing={playing} className={className} />;
 }

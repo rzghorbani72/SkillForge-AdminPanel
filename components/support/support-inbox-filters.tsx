@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { TICKET_PRIORITIES, TICKET_STATUSES } from './staff-support-types';
 
@@ -32,20 +32,13 @@ export function SupportInboxFilters({ tab, filters, onChange }: Props) {
     <div className="flex flex-wrap items-center gap-2">
       <Select
         value={filters.status || ALL}
-        onValueChange={(v) =>
-          onChange({ ...filters, status: v === ALL ? '' : v })
-        }
+        onValueChange={(v) => onChange({ ...filters, status: v === ALL ? '' : v })}
       >
-        <SelectTrigger
-          className="h-9 w-[140px]"
-          aria-label={t('support.filters.status')}
-        >
+        <SelectTrigger className="h-9 w-[140px]" aria-label={t('support.filters.status')}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={ALL}>
-            {t('support.filters.allStatuses')}
-          </SelectItem>
+          <SelectItem value={ALL}>{t('support.filters.allStatuses')}</SelectItem>
           {TICKET_STATUSES.map((s) => (
             <SelectItem key={s} value={s}>
               {t(`support.statuses.${s}`)}
@@ -56,20 +49,13 @@ export function SupportInboxFilters({ tab, filters, onChange }: Props) {
 
       <Select
         value={filters.priority || ALL}
-        onValueChange={(v) =>
-          onChange({ ...filters, priority: v === ALL ? '' : v })
-        }
+        onValueChange={(v) => onChange({ ...filters, priority: v === ALL ? '' : v })}
       >
-        <SelectTrigger
-          className="h-9 w-[130px]"
-          aria-label={t('support.filters.priority')}
-        >
+        <SelectTrigger className="h-9 w-[130px]" aria-label={t('support.filters.priority')}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={ALL}>
-            {t('support.filters.allPriorities')}
-          </SelectItem>
+          <SelectItem value={ALL}>{t('support.filters.allPriorities')}</SelectItem>
           {TICKET_PRIORITIES.map((p) => (
             <SelectItem key={p} value={p}>
               {t(`support.priorities.${p}`)}

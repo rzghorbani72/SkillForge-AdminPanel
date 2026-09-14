@@ -17,7 +17,7 @@ type Props = {
 export const GroupRosterCard = ({ members, busy, onRemove }: Props) => {
   const { t, language } = useTranslation();
   const live = members.filter(
-    (member) => member.status === 'PENDING' || member.status === 'ACTIVE'
+    (member) => member.status === 'PENDING' || member.status === 'ACTIVE',
   );
 
   return (
@@ -46,20 +46,19 @@ export const GroupRosterCard = ({ members, busy, onRemove }: Props) => {
                   </Badge>
                 ) : null}
               </span>
-            )
+            ),
           },
           {
             id: 'seats',
             header: t('tutoring.groups.columnBookedSeats'),
             cell: (member) => formatNumber(member.seats_claimed, language),
-            align: 'center'
+            align: 'center',
           },
           {
             id: 'status',
             header: t('tutoring.groups.columnStatus'),
-            cell: (member) =>
-              t(`tutoring.groups.memberStatus.${member.status}`),
-            align: 'center'
+            cell: (member) => t(`tutoring.groups.memberStatus.${member.status}`),
+            align: 'center',
           },
           {
             id: 'actions',
@@ -75,8 +74,8 @@ export const GroupRosterCard = ({ members, busy, onRemove }: Props) => {
                 >
                   {t('tutoring.groups.removeStudent')}
                 </Button>
-              ) : null
-          }
+              ) : null,
+          },
         ]}
         renderCard={(member) => (
           <div className="space-y-1 rounded-xl border p-4">

@@ -9,17 +9,14 @@ function parseCategoriesPayload(payload: unknown): Category[] {
   if (Array.isArray(payload)) {
     return payload.filter(
       (item): item is Category =>
-        !!item &&
-        typeof item === 'object' &&
-        typeof (item as Category).name === 'string'
+        !!item && typeof item === 'object' && typeof (item as Category).name === 'string',
     );
   }
   if (typeof payload !== 'object') return [];
 
   const obj = payload as Record<string, unknown>;
   if (Array.isArray(obj.data)) return parseCategoriesPayload(obj.data);
-  if (Array.isArray(obj.categories))
-    return parseCategoriesPayload(obj.categories);
+  if (Array.isArray(obj.categories)) return parseCategoriesPayload(obj.categories);
   if (obj.data && typeof obj.data === 'object') {
     return parseCategoriesPayload(obj.data);
   }
@@ -74,12 +71,12 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
       updateCategory: (id: number, category: Partial<Category>) =>
         set((state) => ({
           categories: state.categories.map((cat) =>
-            cat.id === id ? { ...cat, ...category } : cat
-          )
+            cat.id === id ? { ...cat, ...category } : cat,
+          ),
         })),
       removeCategory: (id: number) =>
         set((state) => ({
-          categories: state.categories.filter((cat) => cat.id !== id)
+          categories: state.categories.filter((cat) => cat.id !== id),
         })),
       setLoading: (loading: boolean) => set({ isLoading: loading }),
       setError: (error: string | null) => set({ error }),
@@ -92,11 +89,7 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
 
         if (!options?.force) {
           if (categories.length > 0) return;
-          if (
-            error &&
-            lastFetchedAt &&
-            now - lastFetchedAt < CATEGORIES_FETCH_COOLDOWN_MS
-          ) {
+          if (error && lastFetchedAt && now - lastFetchedAt < CATEGORIES_FETCH_COOLDOWN_MS) {
             return;
           }
         }
@@ -111,14 +104,14 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
               categories: categoriesData,
               isLoading: false,
               error: null,
-              lastFetchedAt: Date.now()
+              lastFetchedAt: Date.now(),
             });
           } catch (fetchError) {
             console.error('Error fetching categories:', fetchError);
             set({
               error: 'Failed to load categories',
               isLoading: false,
-              lastFetchedAt: Date.now()
+              lastFetchedAt: Date.now(),
             });
           } finally {
             categoriesFetchPromise = null;
@@ -133,12 +126,12 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
           categories: [],
           isLoading: false,
           error: null,
-          lastFetchedAt: null
+          lastFetchedAt: null,
         });
-      }
+      },
     }),
-    { name: 'categories-store', skipHydration: true }
-  )
+    { name: 'categories-store', skipHydration: true },
+  ),
 );
 
 // User/Auth Store
@@ -220,8 +213,7 @@ export const useUserStore = create<UserState & UserActions>()((set, get) => ({
         return;
       }
 
-      const academyId =
-        currentUser?.academyId ?? currentUser?.academy_id ?? null;
+      const academyId = currentUser?.academyId ?? currentUser?.academy_id ?? null;
       const currentAcademy = currentUser?.currentAcademy ?? null;
 
       const isAdminProfile = currentUser?.isAdminProfile ?? false;
@@ -248,10 +240,10 @@ export const useUserStore = create<UserState & UserActions>()((set, get) => ({
             null,
           role: role as 'ADMIN' | 'MANAGER' | 'TEACHER' | 'STUDENT',
           isAdminProfile: isAdminProfile,
-          platformLevel: platformLevel
+          platformLevel: platformLevel,
         },
         currentAcademy: currentAcademy,
-        permissions: currentUser?.permissions || []
+        permissions: currentUser?.permissions || [],
       };
 
       set({ user, isLoading: false, isInitialized: true });
@@ -260,7 +252,7 @@ export const useUserStore = create<UserState & UserActions>()((set, get) => ({
       set({
         error: error?.message || 'Failed to fetch user',
         isLoading: false,
-        isInitialized: true
+        isInitialized: true,
       });
     }
   },
@@ -269,8 +261,8 @@ export const useUserStore = create<UserState & UserActions>()((set, get) => ({
       user: null,
       isLoading: false,
       error: null,
-      isInitialized: false
-    })
+      isInitialized: false,
+    }),
 }));
 
 // Branding store — holds logo URL resolved from the theme config API
@@ -279,5 +271,5 @@ export const useBrandingStore = create<{
   setLogoUrl: (url: string | null) => void;
 }>()((set) => ({
   logoUrl: null,
-  setLogoUrl: (url) => set({ logoUrl: url })
+  setLogoUrl: (url) => set({ logoUrl: url }),
 }));

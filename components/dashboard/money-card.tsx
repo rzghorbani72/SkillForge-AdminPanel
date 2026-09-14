@@ -13,7 +13,7 @@ const LINES = [
   'hsl(var(--viz-2))',
   'hsl(var(--viz-3))',
   'hsl(var(--viz-1))',
-  'hsl(var(--viz-2))'
+  'hsl(var(--viz-2))',
 ];
 
 export type CardModel = {
@@ -33,7 +33,7 @@ export type CardModel = {
 
 export const TONE_CLASS = {
   pending: 'text-amber-600 dark:text-amber-400',
-  paid: 'text-emerald-600 dark:text-emerald-400'
+  paid: 'text-emerald-600 dark:text-emerald-400',
 } as const;
 
 function toneClass(card: CardModel): string | undefined {
@@ -43,7 +43,7 @@ function toneClass(card: CardModel): string | undefined {
 export function MoneyCard({
   card,
   index,
-  isLoading
+  isLoading,
 }: {
   card: CardModel;
   index: number;
@@ -64,9 +64,7 @@ export function MoneyCard({
           <card.icon className="h-5 w-5" style={{ color: line }} />
         </div>
 
-        <p className="mt-4 text-[13px] font-medium text-muted-foreground">
-          {card.title}
-        </p>
+        <p className="mt-4 text-[13px] font-medium text-muted-foreground">{card.title}</p>
 
         {isLoading ? (
           <>
@@ -77,9 +75,7 @@ export function MoneyCard({
           <>
             <div className="mt-1 flex flex-wrap items-baseline gap-2">
               {card.valueLabel ? (
-                <span className="text-2xl font-bold tracking-tight">
-                  {card.valueLabel}
-                </span>
+                <span className="text-2xl font-bold tracking-tight">{card.valueLabel}</span>
               ) : (
                 <MoneyValue value={card.value} className={toneClass(card)} />
               )}
@@ -89,7 +85,7 @@ export function MoneyCard({
                     'flex items-center gap-0.5 text-xs font-semibold',
                     isUp
                       ? 'text-emerald-600 dark:text-emerald-400'
-                      : 'text-rose-600 dark:text-rose-400'
+                      : 'text-rose-600 dark:text-rose-400',
                   )}
                 >
                   <Trend className="h-3.5 w-3.5" />

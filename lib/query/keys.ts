@@ -23,8 +23,7 @@ export const queryKeys = {
 
   categories: (academyId: AcademyId) => scope(academyId, 'categories'),
 
-  assignableRoles: (academyId: AcademyId) =>
-    scope(academyId, 'assignable-roles'),
+  assignableRoles: (academyId: AcademyId) => scope(academyId, 'assignable-roles'),
 
   accessControl: (academyId: AcademyId) => scope(academyId, 'access-control'),
 
@@ -39,11 +38,9 @@ export const queryKeys = {
     scope(academyId, 'storage-files', kind, String(page)),
 
   /** `slugs` is the sorted, comma-joined batch these quotes were priced for. */
-  upgradeQuotes: (academyId: AcademyId, slugs: string) =>
-    scope(academyId, 'upgrade-quotes', slugs),
+  upgradeQuotes: (academyId: AcademyId, slugs: string) => scope(academyId, 'upgrade-quotes', slugs),
 
-  learningNavCapabilities: (academyId: AcademyId) =>
-    scope(academyId, 'learning-nav-capabilities'),
+  learningNavCapabilities: (academyId: AcademyId) => scope(academyId, 'learning-nav-capabilities'),
 
   entitySearch: (academyId: AcademyId, entity: string, query: string) =>
     scope(academyId, 'entity-search', entity, query),
@@ -51,9 +48,8 @@ export const queryKeys = {
   slugAvailability: (academyId: AcademyId, slug: string) =>
     scope(academyId, 'slug-availability', slug),
 
-  academyHealthSignals: (academyId: AcademyId) =>
-    scope(academyId, 'academy-health-signals'),
+  academyHealthSignals: (academyId: AcademyId) => scope(academyId, 'academy-health-signals'),
 
   academyHealthSeries: (academyId: AcademyId, days: number) =>
-    scope(academyId, 'academy-health-series', days)
+    scope(academyId, 'academy-health-series', days),
 } as const;

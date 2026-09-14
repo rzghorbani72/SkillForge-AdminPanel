@@ -18,7 +18,7 @@ export default function CreateProductPage() {
     uploadCoverImage,
     cancelUpload,
     onSubmit,
-    handleBack
+    handleBack,
   } = useProductCreate();
 
   if (!selectedAcademy) {
@@ -27,10 +27,7 @@ export default function CreateProductPage() {
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
-      <CreateProductHeader
-        storeName={selectedAcademy.name}
-        onBack={handleBack}
-      />
+      <CreateProductHeader storeName={selectedAcademy.name} onBack={handleBack} />
 
       <CreateProductForm
         form={form}

@@ -10,12 +10,7 @@ import { getRoleDisplayLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
 export function getUserRoleName(user: User): string {
-  return (
-    user.role_name ??
-    user.profiles?.[0]?.role?.name ??
-    user.profiles?.[0]?.Role?.name ??
-    ''
-  );
+  return user.role_name ?? user.profiles?.[0]?.role?.name ?? user.profiles?.[0]?.Role?.name ?? '';
 }
 
 /** Custom roles carry the label their creator typed; built-ins are translated. */
@@ -25,7 +20,7 @@ export function getUserRoleLabel(user: User): {
 } {
   return {
     name: getUserRoleName(user),
-    label: user.role_label ?? user.profiles?.[0]?.role?.label ?? null
+    label: user.role_label ?? user.profiles?.[0]?.role?.label ?? null,
   };
 }
 
@@ -56,23 +51,15 @@ export function UserCard({ user, actions }: UserCardProps) {
   const { language } = useLanguage();
   const role = getUserRoleName(user);
   const roleLabel = getUserRoleLabel(user);
-  const phoneDisplay = user.phone_number
-    ? formatPhoneDisplay(user.phone_number, language)
-    : '—';
+  const phoneDisplay = user.phone_number ? formatPhoneDisplay(user.phone_number, language) : '—';
 
   return (
     <div className="flex h-full flex-col rounded-xl border border-border/70 bg-card p-4">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5">
-          <UserAvatar
-            name={user.display_name || user.name}
-            tone={userTone(user)}
-            size={40}
-          />
+          <UserAvatar name={user.display_name || user.name} tone={userTone(user)} size={40} />
           <div className="min-w-0">
-            <p className="truncate font-semibold leading-tight">
-              {user.display_name || user.name}
-            </p>
+            <p className="truncate font-semibold leading-tight">{user.display_name || user.name}</p>
             {role && (
               <p className="truncate text-[11px] text-muted-foreground">
                 {getRoleDisplayLabel(roleLabel, t)}

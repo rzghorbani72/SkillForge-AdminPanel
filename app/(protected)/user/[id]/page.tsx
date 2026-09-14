@@ -4,13 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -36,7 +30,7 @@ import {
   Building2,
   Shield,
   CheckCircle2,
-  XCircle
+  XCircle,
 } from 'lucide-react';
 
 /** The flat shape /users/:id actually returns — never a nested user+profiles. */
@@ -59,18 +53,10 @@ function formatDate(value?: string | null, withTime = false): string {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return withTime
-    ? date.toLocaleString('fa-IR')
-    : date.toLocaleDateString('fa-IR');
+  return withTime ? date.toLocaleString('fa-IR') : date.toLocaleDateString('fa-IR');
 }
 
-function VerifiedMark({
-  confirmed,
-  t
-}: {
-  confirmed?: boolean;
-  t: (k: string) => string;
-}) {
+function VerifiedMark({ confirmed, t }: { confirmed?: boolean; t: (k: string) => string }) {
   return confirmed ? (
     <span className="flex items-center gap-1 text-xs text-emerald-600">
       <CheckCircle2 className="h-3 w-3" /> {t('userDetails.verified')}
@@ -139,12 +125,8 @@ export default function UserDetailPage() {
     return (
       <div className="flex-1 p-4 sm:p-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">
-            {t('userDetails.userNotFound')}
-          </h2>
-          <p className="mt-2 text-muted-foreground">
-            {t('userDetails.userNotFoundDescription')}
-          </p>
+          <h2 className="text-2xl font-bold">{t('userDetails.userNotFound')}</h2>
+          <p className="mt-2 text-muted-foreground">{t('userDetails.userNotFoundDescription')}</p>
           <Button className="mt-4" onClick={() => router.push('/users')}>
             {t('userDetails.backToUsers')}
           </Button>
@@ -158,16 +140,11 @@ export default function UserDetailPage() {
   const translatedRole = getRoleLabel(roleName, t);
   // Custom roles have no translation key, so fall back to their stored label.
   const roleLabel =
-    roleName && translatedRole === roleName
-      ? user.role_label || roleName
-      : translatedRole;
+    roleName && translatedRole === roleName ? user.role_label || roleName : translatedRole;
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
-      <PageHeader
-        title={t('userDetails.title')}
-        description={t('userDetails.description')}
-      >
+      <PageHeader title={t('userDetails.title')} description={t('userDetails.description')}>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" onClick={() => router.back()}>
             <ArrowLeft className="me-2 h-4 w-4" />
@@ -226,13 +203,8 @@ export default function UserDetailPage() {
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
-                  <p
-                    className="text-[15px] font-medium tabular-nums tracking-wide"
-                    dir="ltr"
-                  >
-                    {user.phone_number
-                      ? formatPhoneDisplay(user.phone_number, language)
-                      : '—'}
+                  <p className="text-[15px] font-medium tabular-nums tracking-wide" dir="ltr">
+                    {user.phone_number ? formatPhoneDisplay(user.phone_number, language) : '—'}
                   </p>
                   <VerifiedMark confirmed={user.phone_confirmed} t={t} />
                 </div>
@@ -251,9 +223,7 @@ export default function UserDetailPage() {
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>{t('userDetails.userInformation')}</CardTitle>
-            <CardDescription>
-              {t('userDetails.userInformationDescription')}
-            </CardDescription>
+            <CardDescription>{t('userDetails.userInformationDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
@@ -267,27 +237,19 @@ export default function UserDetailPage() {
                 <div className="mb-1 flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground">
                   <Building2 className="h-3 w-3" /> {t('userDetails.academy')}
                 </div>
-                <p className="text-sm font-medium">
-                  {user.academy_name || '—'}
-                </p>
+                <p className="text-sm font-medium">{user.academy_name || '—'}</p>
               </div>
             </div>
 
             <div className="rounded-lg border p-4">
-              <h4 className="font-medium">
-                {t('userDetails.accountInformation')}
-              </h4>
+              <h4 className="font-medium">{t('userDetails.accountInformation')}</h4>
               <div className="mt-2 space-y-2 text-sm">
                 <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">
-                    {t('userDetails.created')}
-                  </span>
+                  <span className="text-muted-foreground">{t('userDetails.created')}</span>
                   <span>{formatDate(user.created_at, true)}</span>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">
-                    {t('userDetails.lastUpdated')}
-                  </span>
+                  <span className="text-muted-foreground">{t('userDetails.lastUpdated')}</span>
                   <span>{formatDate(user.updated_at, true)}</span>
                 </div>
               </div>

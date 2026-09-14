@@ -6,9 +6,7 @@ Sentry.init({
   // Session replay only when something breaks — keeps bandwidth and privacy cost low.
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 1.0,
-  integrations: [
-    Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })
-  ]
+  integrations: [Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })],
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

@@ -1,8 +1,4 @@
-import {
-  CountryCode,
-  getCountryByCode,
-  getDefaultCountry
-} from './country-codes';
+import { CountryCode, getCountryByCode, getDefaultCountry } from './country-codes';
 import { DEFAULT_GEO_SERVICE_URLS } from './security/config';
 import { assertAllowedExternalFetchUrl } from './security/ssrf';
 
@@ -27,8 +23,8 @@ export const detectUserCountry = async (): Promise<CountryCode> => {
         const response = await fetch(service, {
           method: 'GET',
           headers: {
-            Accept: 'application/json'
-          }
+            Accept: 'application/json',
+          },
         });
 
         if (!response.ok) continue;

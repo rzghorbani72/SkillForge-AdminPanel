@@ -36,43 +36,41 @@ export interface PlanMarginPreview {
 }
 
 const numberOr = (value: number | undefined, fallback: number): number =>
-  typeof value === 'number' && Number.isFinite(value) && value >= 0
-    ? value
-    : fallback;
+  typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : fallback;
 
 export function previewPlanMargin(
   revenueToman: number,
   limits: StructuredPlanLimits,
   costs?: Partial<MarginCosts>,
-  smsPerActiveStudent: number = SMS_PER_STUDENT
+  smsPerActiveStudent: number = SMS_PER_STUDENT,
 ): PlanMarginPreview {
   const storagePerGb = numberOr(
     costs?.cost_storage_per_gb_toman,
-    COST_DEFAULTS.cost_storage_per_gb_toman
+    COST_DEFAULTS.cost_storage_per_gb_toman,
   );
   const egressPerGb = numberOr(
     costs?.cost_egress_per_gb_toman,
-    COST_DEFAULTS.cost_egress_per_gb_toman
+    COST_DEFAULTS.cost_egress_per_gb_toman,
   );
   const appEgressPerGb = numberOr(
     costs?.cost_app_egress_per_gb_toman,
-    COST_DEFAULTS.cost_app_egress_per_gb_toman
+    COST_DEFAULTS.cost_app_egress_per_gb_toman,
   );
   const computeBase = numberOr(
     costs?.cost_compute_base_per_academy_toman,
-    COST_DEFAULTS.cost_compute_base_per_academy_toman
+    COST_DEFAULTS.cost_compute_base_per_academy_toman,
   );
   const computePerStudent = numberOr(
     costs?.cost_compute_per_student_toman,
-    COST_DEFAULTS.cost_compute_per_student_toman
+    COST_DEFAULTS.cost_compute_per_student_toman,
   );
   const smsPerMessage = numberOr(
     costs?.cost_sms_per_message_toman,
-    COST_DEFAULTS.cost_sms_per_message_toman
+    COST_DEFAULTS.cost_sms_per_message_toman,
   );
   const gatewayFeeRate = numberOr(
     costs?.cost_gateway_fee_rate,
-    COST_DEFAULTS.cost_gateway_fee_rate
+    COST_DEFAULTS.cost_gateway_fee_rate,
   );
 
   const storedGb = limits.storage_gb * STORAGE_UTIL;
@@ -83,15 +81,13 @@ export function previewPlanMargin(
 
   const storageCost = storedGb * storagePerGb;
   const egressCost =
-    deliveredGb * egressPerGb +
-    deliveredGb * APP_EGRESS_SHARE_OF_TRAFFIC * appEgressPerGb;
+    deliveredGb * egressPerGb + deliveredGb * APP_EGRESS_SHARE_OF_TRAFFIC * appEgressPerGb;
   const computeCost = computeBase + activeStudents * computePerStudent;
   const smsCost = activeStudents * smsPerActiveStudent * smsPerMessage;
   const gatewayCost = revenueToman * gatewayFeeRate;
   const cogs = storageCost + egressCost + computeCost + smsCost + gatewayCost;
   const grossProfit = revenueToman - cogs;
-  const grossMarginPercent =
-    revenueToman > 0 ? (grossProfit / revenueToman) * 100 : 0;
+  const grossMarginPercent = revenueToman > 0 ? (grossProfit / revenueToman) * 100 : 0;
   const cogsPercent = revenueToman > 0 ? (cogs / revenueToman) * 100 : 0;
 
   const drivers: [PlanMarginPreview['topCostDriver'], number][] = [
@@ -99,7 +95,7 @@ export function previewPlanMargin(
     ['egress', egressCost],
     ['compute', computeCost],
     ['sms', smsCost],
-    ['gateway', gatewayCost]
+    ['gateway', gatewayCost],
   ];
   drivers.sort((a, b) => b[1] - a[1]);
 
@@ -108,6 +104,6 @@ export function previewPlanMargin(
     revenue: revenueToman,
     grossMarginPercent: Math.round(grossMarginPercent * 10) / 10,
     cogsPercent: Math.round(cogsPercent * 10) / 10,
-    topCostDriver: drivers[0][0]
+    topCostDriver: drivers[0][0],
   };
 }

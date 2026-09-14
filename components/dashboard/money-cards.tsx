@@ -8,7 +8,7 @@ import {
   HandCoins,
   Landmark,
   Percent,
-  Wallet
+  Wallet,
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn, formatCurrencyWithStore, formatNumber } from '@/lib/utils';
@@ -33,7 +33,7 @@ export default function MoneyCards({
   payouts_due: payoutsDue,
   settlement,
   isLoading,
-  row
+  row,
 }: Props) {
   const { t, language } = useTranslation();
   const academy = useCurrentAcademy();
@@ -49,7 +49,7 @@ export default function MoneyCards({
       value: money.gross,
       hint: t('dashboard.money.grossHint'),
       icon: DollarSign,
-      change: delta(money.gross, money.gross_previous)
+      change: delta(money.gross, money.gross_previous),
     },
     {
       key: 'net',
@@ -57,7 +57,7 @@ export default function MoneyCards({
       value: money.net,
       hint: t('dashboard.money.netHint'),
       icon: Wallet,
-      change: delta(money.net, money.net_previous)
+      change: delta(money.net, money.net_previous),
     },
     {
       key: 'platformOwes',
@@ -71,7 +71,7 @@ export default function MoneyCards({
       ),
       icon: Landmark,
       tone: 'pending',
-      change: null
+      change: null,
     },
     {
       key: 'paidToAcademy',
@@ -80,8 +80,8 @@ export default function MoneyCards({
       hint: t('dashboard.money.paidToAcademyHint'),
       icon: Banknote,
       tone: 'paid',
-      change: null
-    }
+      change: null,
+    },
   ];
 
   const teacherCards: CardModel[] = [
@@ -91,7 +91,7 @@ export default function MoneyCards({
       value: money.teacher_payouts,
       hint: t('dashboard.money.teacherShareHint'),
       icon: GraduationCap,
-      change: null
+      change: null,
     },
     {
       key: 'teacherPaid',
@@ -100,18 +100,18 @@ export default function MoneyCards({
       hint: t('dashboard.money.teacherPaidHint'),
       icon: BadgeCheck,
       tone: 'paid',
-      change: null
+      change: null,
     },
     {
       key: 'payouts',
       title: t('dashboard.money.payoutsDue'),
       value: payoutsDue.amount,
       hint: t('dashboard.money.payoutsDueHint', {
-        count: formatNumber(payoutsDue.count, language)
+        count: formatNumber(payoutsDue.count, language),
       }),
       icon: HandCoins,
       tone: 'pending',
-      change: null
+      change: null,
     },
     {
       key: 'teacherRate',
@@ -120,16 +120,14 @@ export default function MoneyCards({
       valueLabel: percent((academy?.teacher_share_rate ?? 0) * 100),
       hint: t('dashboard.money.teacherRateHint'),
       icon: Percent,
-      change: null
-    }
+      change: null,
+    },
   ];
 
   const isAcademy = row === 'academy';
   return (
     <CardRow
-      title={t(
-        isAcademy ? 'dashboard.money.academyRow' : 'dashboard.money.teacherRow'
-      )}
+      title={t(isAcademy ? 'dashboard.money.academyRow' : 'dashboard.money.teacherRow')}
       cards={isAcademy ? academyCards : teacherCards}
       isLoading={isLoading}
       className="sm:grid-cols-2 xl:grid-cols-4"
@@ -141,7 +139,7 @@ function CardRow({
   title,
   cards,
   isLoading,
-  className
+  className,
 }: {
   title: string;
   cards: CardModel[];
@@ -153,12 +151,7 @@ function CardRow({
       <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>
       <div className={`grid gap-4 ${className}`}>
         {cards.map((card, index) => (
-          <MoneyCard
-            key={card.key}
-            card={card}
-            index={index}
-            isLoading={isLoading}
-          />
+          <MoneyCard key={card.key} card={card} index={index} isLoading={isLoading} />
         ))}
       </div>
     </section>
@@ -166,13 +159,7 @@ function CardRow({
 }
 
 /** The hint's amount turns orange while money is still on its way. */
-function PendingHint({
-  template,
-  amount
-}: {
-  template: string;
-  amount: number;
-}) {
+function PendingHint({ template, amount }: { template: string; amount: number }) {
   const { language } = useTranslation();
   const academy = useCurrentAcademy();
   const [before, after] = template.split('{{pending}}');

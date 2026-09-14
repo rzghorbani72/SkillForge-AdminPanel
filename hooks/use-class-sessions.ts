@@ -32,10 +32,8 @@ export function useClassSessions(groupId: string) {
 
   const replace = useCallback(
     (updated: ClassSession) =>
-      setSessions((rows) =>
-        rows.map((row) => (row.id === updated.id ? updated : row))
-      ),
-    []
+      setSessions((rows) => rows.map((row) => (row.id === updated.id ? updated : row))),
+    [],
   );
 
   return { sessions, isLoading, reload: load, replace };

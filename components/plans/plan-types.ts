@@ -71,13 +71,13 @@ export const DEFAULT_CUSTOM_PLAN_FORM: AcademyCustomPlanFormData = {
     storage_gb: '10',
     monthly_traffic_gb: '100',
     videos: '10',
-    dedicated_templates: '1'
+    dedicated_templates: '1',
   },
   features: '',
   price_monthly_toman: '',
   price_yearly_toman: '',
   note: '',
-  margin_override: false
+  margin_override: false,
 };
 
 export const DEFAULT_PLAN_FORM: PlanFormData = {
@@ -88,7 +88,7 @@ export const DEFAULT_PLAN_FORM: PlanFormData = {
   storage_limit_gb: '50',
   features: '',
   is_active: true,
-  sort_order: '0'
+  sort_order: '0',
 };
 
 export const DEFAULT_ACADEMY_PLAN_FORM: AcademyPlanFormData = {
@@ -97,12 +97,12 @@ export const DEFAULT_ACADEMY_PLAN_FORM: AcademyPlanFormData = {
   description: '',
   price: '0',
   duration_days: '',
-  is_active: true
+  is_active: true,
 };
 
 export const PERIOD_OPTIONS = [
   { months: 1, key: 'months1' },
-  { months: 3, key: 'months3' }
+  { months: 3, key: 'months3' },
 ] as const;
 
 export type BillingPeriod = 'monthly' | 'quarterly';
@@ -117,10 +117,7 @@ const QUARTERLY_DISCOUNT_RATE = 0.05;
 
 export function roundQuarterlyToman(monthlyToman: number): number {
   const discounted = monthlyToman * 3 * (1 - QUARTERLY_DISCOUNT_RATE);
-  return Math.max(
-    QUARTERLY_STEP,
-    Math.floor(discounted / QUARTERLY_STEP) * QUARTERLY_STEP
-  );
+  return Math.max(QUARTERLY_STEP, Math.floor(discounted / QUARTERLY_STEP) * QUARTERLY_STEP);
 }
 
 /** Full 3× monthly vs discounted quarterly charge — badge is always 5%. */
@@ -139,7 +136,7 @@ export function quarterlyDiscount(monthlyToman: number): {
 
 export function periodPrice(
   plan: { price_monthly: number; price_yearly: number | null },
-  period: BillingPeriod
+  period: BillingPeriod,
 ): number {
   if (period === 'quarterly') {
     return roundQuarterlyToman(plan.price_monthly);
@@ -158,7 +155,7 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
     '۲۵ گیگابایت فضا',
     'فروش عمومی نامحدود',
     'دامنه اختصاصی',
-    'بدون کارمزد فروش'
+    'بدون کارمزد فروش',
   ],
   growth: [
     '۵ معلم',
@@ -166,7 +163,7 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
     '۸۰ گیگابایت فضا',
     'فروش عمومی نامحدود',
     'دامنه اختصاصی',
-    '۲ مدیر'
+    '۲ مدیر',
   ],
   business: [
     '۱۵ معلم',
@@ -174,8 +171,8 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
     '۲۰۰ گیگابایت فضا',
     'فروش عمومی نامحدود',
     '۵ مدیر',
-    'دامنه اختصاصی'
-  ]
+    'دامنه اختصاصی',
+  ],
 };
 
 /**
@@ -186,7 +183,7 @@ export const PLAN_FEATURE_LIST_FA: Record<string, readonly string[]> = {
  */
 export function planFeatureList(
   slug: string,
-  live: readonly string[] | null | undefined
+  live: readonly string[] | null | undefined,
 ): readonly string[] {
   if (live && live.length > 0) return live;
   return PLAN_FEATURE_LIST_FA[slug] ?? [];

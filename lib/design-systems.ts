@@ -42,12 +42,12 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
     accent: '#6366f1',
     background: '#ffffff',
     backgroundDark: '#0f172a',
-    surface: '#f8fafc'
+    surface: '#f8fafc',
   },
   typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
   shape: { borderRadius: 'soft', shadow: 'medium' },
   motion: 'subtle',
-  darkMode: null
+  darkMode: null,
 };
 
 type DesignSystemVisuals = Omit<DesignSystem, 'name' | 'tagline'>;
@@ -63,12 +63,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#c1521c',
       background: '#ededE6',
       backgroundDark: '#05070d',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   tavan: {
     colors: {
@@ -78,12 +78,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#ff5b22',
       background: '#eff0eb',
       backgroundDark: '#0a0e0d',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'sharp', shadow: 'medium' },
     motion: 'moderate',
-    darkMode: null
+    darkMode: null,
   },
   dastan: {
     colors: {
@@ -93,12 +93,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#e0a32e',
       background: '#fbf6ec',
       backgroundDark: '#17110c',
-      surface: '#fffdf8'
+      surface: '#fffdf8',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   parastoo: {
     colors: {
@@ -108,12 +108,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#ffc02e',
       background: '#fff7ee',
       backgroundDark: '#0c1518',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     motion: 'moderate',
-    darkMode: null
+    darkMode: null,
   },
   nokhbeh: {
     colors: {
@@ -123,12 +123,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#ce3526',
       background: '#f7f6f1',
       backgroundDark: '#0d1013',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   zabaneh: {
     colors: {
@@ -138,12 +138,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#cfe81c',
       background: '#eef1f6',
       backgroundDark: '#080f1b',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'soft', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   bikaran: {
     colors: {
@@ -153,12 +153,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#2e6e6a',
       background: '#f4efe4',
       backgroundDark: '#0b1316',
-      surface: '#fbf8f1'
+      surface: '#fbf8f1',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   shafagh: {
     colors: {
@@ -168,12 +168,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#a3324f',
       background: '#fdf6f0',
       backgroundDark: '#180d0a',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'soft', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   elektron: {
     colors: {
@@ -183,12 +183,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#a855f7',
       background: '#f6f5ff',
       backgroundDark: '#0b0821',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     motion: 'moderate',
-    darkMode: null
+    darkMode: null,
   },
   rouzan: {
     colors: {
@@ -198,12 +198,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#06b6d4',
       background: '#fbfbfd',
       backgroundDark: '#0a0a12',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   daneshvar: {
     colors: {
@@ -214,12 +214,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#b08327',
       background: '#f7f5f0',
       backgroundDark: '#0b1017',
-      surface: '#fffdf8'
+      surface: '#fffdf8',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'sharp', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   peleh: {
     colors: {
@@ -230,12 +230,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#f59e0b',
       background: '#fff8f5',
       backgroundDark: '#12080a',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'soft', shadow: 'medium' },
     motion: 'moderate',
-    darkMode: null
+    darkMode: null,
   },
   andisheh: {
     colors: {
@@ -245,14 +245,14 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#a78bfa',
       background: '#070b14',
       backgroundDark: '#070b14',
-      surface: '#101a2b'
+      surface: '#101a2b',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'soft', shadow: 'strong' },
     motion: 'moderate',
     // The one design that is dark by definition: a light Andisheh would lose
     // the terminal stage the whole template is built on.
-    darkMode: true
+    darkMode: true,
   },
   shaparak: {
     colors: {
@@ -263,12 +263,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#f97316',
       background: '#fffdf7',
       backgroundDark: '#120c1f',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '800' },
     shape: { borderRadius: 'rounded', shadow: 'medium' },
     motion: 'moderate',
-    darkMode: null
+    darkMode: null,
   },
   partow: {
     colors: {
@@ -279,12 +279,12 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#06b6d4',
       background: '#fbfbfd',
       backgroundDark: '#0b0b12',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'soft', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
+    darkMode: null,
   },
   pardeh: {
     colors: {
@@ -294,13 +294,13 @@ export const DESIGN_SYSTEMS: Record<string, DesignSystemVisuals> = {
       accent: '#f2a33a',
       background: '#fdf6f0',
       backgroundDark: '#180d0a',
-      surface: '#ffffff'
+      surface: '#ffffff',
     },
     typography: { fontFamily: 'vazirmatn', displayWeight: '700' },
     shape: { borderRadius: 'soft', shadow: 'subtle' },
     motion: 'subtle',
-    darkMode: null
-  }
+    darkMode: null,
+  },
 };
 
 export function getDesignSystem(presetId: string): DesignSystem {
@@ -326,6 +326,6 @@ export function buildThemePayload(ds: DesignSystem): ThemeConfigPayload {
     dark_mode: ds.darkMode,
     border_radius_style: ds.shape.borderRadius,
     shadow_style: ds.shape.shadow,
-    element_animation_style: ds.motion ?? 'subtle'
+    element_animation_style: ds.motion ?? 'subtle',
   };
 }

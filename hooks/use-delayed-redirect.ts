@@ -27,6 +27,6 @@ export function useDelayedRedirect() {
   return {
     pending,
     scheduleRedirect: setPending,
-    clearRedirect: () => setPending(null)
+    clearRedirect: () => setPending(null),
   };
 }

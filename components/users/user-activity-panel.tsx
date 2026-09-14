@@ -1,13 +1,7 @@
 'use client';
 
 import { Receipt } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { UserDetailsPayment } from '@/types/user-details';
 
@@ -22,18 +16,10 @@ function formatAmount(value?: number | null): string {
 }
 
 function EmptyRow({ label }: { label: string }) {
-  return (
-    <p className="py-6 text-center text-[13px] text-muted-foreground">
-      {label}
-    </p>
-  );
+  return <p className="py-6 text-center text-[13px] text-muted-foreground">{label}</p>;
 }
 
-export function UserPaymentsCard({
-  payments
-}: {
-  payments: UserDetailsPayment[];
-}) {
+export function UserPaymentsCard({ payments }: { payments: UserDetailsPayment[] }) {
   const { t } = useTranslation();
 
   return (
@@ -43,9 +29,7 @@ export function UserPaymentsCard({
           <Receipt className="h-4 w-4 text-muted-foreground" />
           {t('userDetails.purchases')}
         </CardTitle>
-        <CardDescription>
-          {t('userDetails.purchasesDescription')}
-        </CardDescription>
+        <CardDescription>{t('userDetails.purchasesDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         {payments.length === 0 ? (
@@ -53,10 +37,7 @@ export function UserPaymentsCard({
         ) : (
           <ul className="divide-y divide-border/60">
             {payments.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between gap-3 py-2.5"
-              >
+              <li key={item.id} className="flex items-center justify-between gap-3 py-2.5">
                 <div className="min-w-0">
                   <p className="truncate text-[13.5px] font-medium">
                     {item.Course?.title || item.Order?.order_number || '—'}
@@ -69,9 +50,7 @@ export function UserPaymentsCard({
                   <p className="text-[13px] font-semibold">
                     {formatAmount(item.amount)} {t('common.toman')}
                   </p>
-                  <p className="text-[11.5px] text-muted-foreground">
-                    {item.status || '—'}
-                  </p>
+                  <p className="text-[11.5px] text-muted-foreground">{item.status || '—'}</p>
                 </div>
               </li>
             ))}

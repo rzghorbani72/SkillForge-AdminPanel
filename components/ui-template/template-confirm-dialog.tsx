@@ -8,7 +8,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
 export interface TemplateConfirmDialogProps {
@@ -33,7 +33,7 @@ export function TemplateConfirmDialog({
   destructive,
   defaultName,
   onConfirm,
-  onCancel
+  onCancel,
 }: TemplateConfirmDialogProps) {
   const hasNameField = defaultName !== undefined;
   const name = defaultName ?? '';
@@ -48,12 +48,8 @@ export function TemplateConfirmDialog({
 
         {hasNameField && (
           <div className="space-y-1.5">
-            <span className="text-xs text-muted-foreground">
-              نام قالب اختصاصی
-            </span>
-            <p className="rounded-lg border bg-muted/40 px-3 py-2 text-sm font-semibold">
-              {name}
-            </p>
+            <span className="text-xs text-muted-foreground">نام قالب اختصاصی</span>
+            <p className="rounded-lg border bg-muted/40 px-3 py-2 text-sm font-semibold">{name}</p>
           </div>
         )}
 
@@ -62,9 +58,7 @@ export function TemplateConfirmDialog({
           <AlertDialogAction
             disabled={hasNameField && !name.trim()}
             onClick={() => onConfirm(hasNameField ? name.trim() : undefined)}
-            className={
-              destructive ? 'bg-red-600 text-white hover:bg-red-700' : undefined
-            }
+            className={destructive ? 'bg-red-600 text-white hover:bg-red-700' : undefined}
           >
             {confirmLabel}
           </AlertDialogAction>

@@ -5,7 +5,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
@@ -20,11 +20,7 @@ type UsersRoleFilterProps = {
   onChange: (roleName: string) => void;
 };
 
-export function UsersRoleFilter({
-  roles,
-  value,
-  onChange
-}: UsersRoleFilterProps) {
+export function UsersRoleFilter({ roles, value, onChange }: UsersRoleFilterProps) {
   const { t } = useTranslation();
 
   return (
@@ -38,8 +34,7 @@ export function UsersRoleFilter({
           // Built-in roles use their translation; a custom role has no key, so
           // it falls back to the label its creator typed.
           const translated = getRoleLabel(role.name, t);
-          const label =
-            translated === role.name ? role.label || role.name : translated;
+          const label = translated === role.name ? role.label || role.name : translated;
           return (
             <SelectItem key={role.id} value={role.name}>
               {label}

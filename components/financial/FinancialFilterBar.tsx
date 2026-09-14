@@ -5,7 +5,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -23,7 +23,7 @@ export function FinancialFilterBar({
   selectedMonth,
   years,
   onYearChange,
-  onMonthChange
+  onMonthChange,
 }: FinancialFilterBarProps) {
   const { t } = useTranslation();
 
@@ -35,10 +35,7 @@ export function FinancialFilterBar({
         <Label className="text-xs text-muted-foreground">
           {t('financial.store.overview.year')}
         </Label>
-        <Select
-          value={selectedYear.toString()}
-          onValueChange={(v) => onYearChange(parseInt(v))}
-        >
+        <Select value={selectedYear.toString()} onValueChange={(v) => onYearChange(parseInt(v))}>
           <SelectTrigger className="h-9">
             <SelectValue />
           </SelectTrigger>
@@ -64,13 +61,11 @@ export function FinancialFilterBar({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">
-              {t('financial.store.overview.allMonths')}
-            </SelectItem>
+            <SelectItem value="all">{t('financial.store.overview.allMonths')}</SelectItem>
             {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
               <SelectItem key={month} value={month.toString()}>
                 {new Date(2000, month - 1).toLocaleString(locale, {
-                  month: 'long'
+                  month: 'long',
                 })}
               </SelectItem>
             ))}

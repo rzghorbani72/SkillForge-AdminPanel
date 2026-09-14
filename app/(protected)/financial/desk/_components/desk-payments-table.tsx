@@ -8,7 +8,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useIranMoney } from '@/app/(protected)/analytics/_hooks/use-iran-money';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -21,11 +21,7 @@ type DeskPaymentsTableProps = {
   onLoadMore: () => void;
 };
 
-export function DeskPaymentsTable({
-  data,
-  loading,
-  onLoadMore
-}: DeskPaymentsTableProps) {
+export function DeskPaymentsTable({ data, loading, onLoadMore }: DeskPaymentsTableProps) {
   const { t } = useTranslation();
   const { formatToman, formatRial } = useIranMoney();
   const formatDate = useDateFormat();
@@ -48,10 +44,7 @@ export function DeskPaymentsTable({
         <TableBody>
           {!loading && data.payments.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="text-center text-muted-foreground"
-              >
+              <TableCell colSpan={7} className="text-center text-muted-foreground">
                 {t('financial.desk.noPayments')}
               </TableCell>
             </TableRow>
@@ -61,7 +54,7 @@ export function DeskPaymentsTable({
                 <TableCell className="whitespace-nowrap text-xs">
                   {formatDate(row.paid_at, {
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
                   })}
                 </TableCell>
                 <TableCell>
@@ -82,9 +75,7 @@ export function DeskPaymentsTable({
                 <TableCell>{formatToman(row.platform_share)}</TableCell>
                 <TableCell className="text-xs">
                   <div>{formatRial(row.bank_amount)}</div>
-                  <div className="text-muted-foreground">
-                    {row.bank_ref ?? '—'}
-                  </div>
+                  <div className="text-muted-foreground">{row.bank_ref ?? '—'}</div>
                 </TableCell>
               </TableRow>
             ))
@@ -92,12 +83,7 @@ export function DeskPaymentsTable({
         </TableBody>
       </Table>
       {hasMore ? (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onLoadMore}
-          disabled={loading}
-        >
+        <Button variant="outline" size="sm" onClick={onLoadMore} disabled={loading}>
           {t('financial.desk.loadMore')}
         </Button>
       ) : null}

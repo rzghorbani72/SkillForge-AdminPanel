@@ -4,11 +4,7 @@ import { Check } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
-import {
-  COURSE_WIZARD_STEPS,
-  WIZARD_STEP_LABEL,
-  type CourseWizardStep
-} from './wizard-steps';
+import { COURSE_WIZARD_STEPS, WIZARD_STEP_LABEL, type CourseWizardStep } from './wizard-steps';
 
 type WizardStepperProps = {
   current: CourseWizardStep;
@@ -23,7 +19,7 @@ type WizardStepperProps = {
 export function WizardStepper({
   current,
   steps = COURSE_WIZARD_STEPS,
-  onSelect
+  onSelect,
 }: WizardStepperProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -45,21 +41,17 @@ export function WizardStepper({
                 'inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition-colors',
                 active
                   ? 'bg-primary/10 font-medium text-foreground'
-                  : 'text-muted-foreground hover:bg-accent'
+                  : 'text-muted-foreground hover:bg-accent',
               )}
             >
               <span
                 className={cn(
                   'inline-flex h-6 w-6 items-center justify-center rounded-full border text-xs tabular-nums',
                   active && 'border-primary bg-primary text-primary-foreground',
-                  done && 'border-primary/40 bg-primary/10 text-primary'
+                  done && 'border-primary/40 bg-primary/10 text-primary',
                 )}
               >
-                {done ? (
-                  <Check className="h-3.5 w-3.5" />
-                ) : (
-                  formatNumber(index + 1)
-                )}
+                {done ? <Check className="h-3.5 w-3.5" /> : formatNumber(index + 1)}
               </span>
               {t(WIZARD_STEP_LABEL[step])}
             </button>

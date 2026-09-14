@@ -25,7 +25,7 @@ export function ImageUploadField({
   uploading,
   onFile,
   size = 'md',
-  replaceHint
+  replaceHint,
 }: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,27 +33,21 @@ export function ImageUploadField({
     <div className="flex h-full flex-col">
       {/* One fixed-height line: a label that wrapped would push its own box
           out of line with the box beside it. */}
-      <label className="mb-2 block h-5 truncate text-sm font-medium leading-5">
-        {label}
-      </label>
+      <label className="mb-2 block h-5 truncate text-sm font-medium leading-5">{label}</label>
       <button
         type="button"
         disabled={uploading}
         onClick={() => inputRef.current?.click()}
         className={cn(
           'group flex w-full flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 px-2 transition-colors hover:border-primary/60 hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60',
-          size === 'md' ? 'min-h-32' : 'min-h-24'
+          size === 'md' ? 'min-h-32' : 'min-h-24',
         )}
       >
         {uploading ? (
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         ) : previewUrl ? (
           <span className="flex h-full w-full flex-col items-center justify-center gap-1 p-2">
-            <img
-              src={previewUrl}
-              alt={label}
-              className="max-h-16 w-full object-contain"
-            />
+            <img src={previewUrl} alt={label} className="max-h-16 w-full object-contain" />
             <span className="text-[11px] text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
               {replaceHint ?? hint}
             </span>
@@ -63,9 +57,7 @@ export function ImageUploadField({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-background shadow-sm transition-colors group-hover:bg-primary/10">
               <Upload className="h-4 w-4 text-muted-foreground" />
             </span>
-            <p className="text-center text-[11px] leading-4 text-muted-foreground">
-              {hint}
-            </p>
+            <p className="text-center text-[11px] leading-4 text-muted-foreground">{hint}</p>
           </>
         )}
       </button>

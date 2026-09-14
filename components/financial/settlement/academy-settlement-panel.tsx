@@ -24,14 +24,11 @@ function needsKyc(blockers: SettlementBlocker[]): boolean {
   return blockers.includes('KYC_REQUIRED') || blockers.includes('KYC_PENDING');
 }
 
-export function AcademySettlementPanel({
-  academyId
-}: AcademySettlementPanelProps) {
+export function AcademySettlementPanel({ academyId }: AcademySettlementPanelProps) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
   const formatDate = useDateFormat();
-  const { summary, history, isLoading, error, reload } =
-    useSettlement(academyId);
+  const { summary, history, isLoading, error, reload } = useSettlement(academyId);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function requestFullBalance() {
@@ -39,7 +36,7 @@ export function AcademySettlementPanel({
     setIsSubmitting(true);
     try {
       await settlementApi.requestSettlement(academyId, {
-        amount: summary.balance.available
+        amount: summary.balance.available,
       });
       toast.success(t('settlement.request.submitted'));
       await reload();
@@ -79,7 +76,7 @@ export function AcademySettlementPanel({
             <p className="max-w-lg text-xs leading-5 text-muted-foreground">
               {t('settlement.panel.heldHint', {
                 pending: formatCurrency(summary.balance.pending),
-                withdrawn: formatCurrency(summary.balance.withdrawn_total)
+                withdrawn: formatCurrency(summary.balance.withdrawn_total),
               })}
             </p>
           </div>
@@ -93,9 +90,7 @@ export function AcademySettlementPanel({
               <ArrowUpRight className="h-4 w-4" />
               {t('settlement.panel.request')}
             </Button>
-            <p className="text-xs text-muted-foreground">
-              {t('settlement.panel.oncePerDay')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('settlement.panel.oncePerDay')}</p>
             <Link
               href="/financial/academy/settlement"
               className="text-xs text-primary underline-offset-2 hover:underline"
@@ -109,19 +104,16 @@ export function AcademySettlementPanel({
       {summary.blockers.length > 0 ? (
         <ul className="space-y-2">
           {summary.blockers.map((blocker) => (
-            <li
-              key={blocker}
-              className="flex items-start gap-2 rounded-md bg-muted p-3 text-sm"
-            >
+            <li key={blocker} className="flex items-start gap-2 rounded-md bg-muted p-3 text-sm">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
               <span>
                 {blocker === 'COOLDOWN' && summary.next_request_at
                   ? t('settlement.blockers.COOLDOWN_UNTIL', {
-                      date: formatDate(summary.next_request_at)
+                      date: formatDate(summary.next_request_at),
                     })
                   : blocker === 'BELOW_MINIMUM'
                     ? t('settlement.blockers.BELOW_MINIMUM', {
-                        amount: formatCurrency(summary.min_amount)
+                        amount: formatCurrency(summary.min_amount),
                       })
                     : t(`settlement.blockers.${blocker}`)}
               </span>

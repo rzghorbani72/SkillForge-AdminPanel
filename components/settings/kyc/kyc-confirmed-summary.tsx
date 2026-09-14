@@ -32,18 +32,10 @@ export function KycConfirmedSummary({ state, upto }: Props) {
       <Group title={t('settings.kyc.sectionIdentity')}>
         <Row
           label={t('settings.kyc.phoneNumber')}
-          value={
-            state.phone_number
-              ? formatPhoneDisplay(state.phone_number, language)
-              : null
-          }
+          value={state.phone_number ? formatPhoneDisplay(state.phone_number, language) : null}
           ltr
         />
-        <Row
-          label={t('settings.kyc.nationalId')}
-          value={digits(state.national_id)}
-          ltr
-        />
+        <Row label={t('settings.kyc.nationalId')} value={digits(state.national_id)} ltr />
       </Group>
 
       {upto === 'iban' ? (
@@ -52,33 +44,19 @@ export function KycConfirmedSummary({ state, upto }: Props) {
             label={t('settings.kyc.birthDate')}
             value={state.birth_date ? formatDate(state.birth_date) : null}
           />
-          <Row
-            label={t('settings.kyc.sheba')}
-            value={digits(state.sheba_number)}
-            ltr
-            wide
-          />
+          <Row label={t('settings.kyc.sheba')} value={digits(state.sheba_number)} ltr wide />
           <Row
             label={t('settings.kyc.accountHolder')}
             value={state.iban_info?.name ?? state.legal_entity_name}
           />
-          <Row
-            label={t('settings.kyc.bankName')}
-            value={state.iban_info?.bank_name ?? null}
-          />
+          <Row label={t('settings.kyc.bankName')} value={state.iban_info?.bank_name ?? null} />
         </Group>
       ) : null}
     </div>
   );
 }
 
-function Group({
-  title,
-  children
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground">{title}</p>
@@ -91,7 +69,7 @@ function Row({
   label,
   value,
   ltr = false,
-  wide = false
+  wide = false,
 }: {
   label: string;
   value: string | null | undefined;
@@ -104,9 +82,7 @@ function Row({
       <dt className="text-xs text-muted-foreground">{label}</dt>
       <dd
         {...(ltr && value ? { dir: 'ltr' as const } : {})}
-        className={`whitespace-pre-wrap break-words text-sm font-medium ${
-          ltr ? 'text-start' : ''
-        }`}
+        className={`whitespace-pre-wrap break-words text-sm font-medium ${ltr ? 'text-start' : ''}`}
       >
         {value?.trim() || t('settings.kyc.notProvided')}
       </dd>

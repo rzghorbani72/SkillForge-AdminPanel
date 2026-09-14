@@ -26,7 +26,7 @@ function putPart(
   url: string,
   body: Blob,
   onLoadedChange: (loadedBytes: number) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -47,8 +47,8 @@ function putPart(
       if (!etag) {
         reject(
           new Error(
-            'Storage did not return an ETag. Enable ETag in the bucket CORS ExposeHeaders.'
-          )
+            'Storage did not return an ETag. Enable ETag in the bucket CORS ExposeHeaders.',
+          ),
         );
         return;
       }
@@ -73,7 +73,7 @@ export async function uploadFileParts(
   file: File,
   ticket: Required<Pick<DirectUploadTicket, 'part_size' | 'part_urls'>>,
   onProgress?: (percent: number) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<UploadedPart[]> {
   const { part_size: partSize, part_urls: partUrls } = ticket;
   const loadedPerPart = new Array<number>(partUrls.length).fill(0);
@@ -99,13 +99,12 @@ export async function uploadFileParts(
             loadedPerPart[index] = loadedBytes;
             reportProgress();
           },
-          signal
+          signal,
         );
         break;
       } catch (error) {
         loadedPerPart[index] = 0;
-        const cancelled =
-          signal?.aborted || (error as Error).message === 'Upload cancelled';
+        const cancelled = signal?.aborted || (error as Error).message === 'Upload cancelled';
         if (cancelled || attempt === MAX_PART_ATTEMPTS) throw error;
       }
     }

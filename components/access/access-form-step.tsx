@@ -11,12 +11,7 @@ type AccessFormStepProps = {
  * Numbers the "give access" form so a manager reads it as ordered steps
  * (who → how long → payment) instead of a flat wall of inputs.
  */
-export function AccessFormStep({
-  step,
-  title,
-  hint,
-  children
-}: AccessFormStepProps) {
+export function AccessFormStep({ step, title, hint, children }: AccessFormStepProps) {
   return (
     <section className="space-y-3 rounded-lg border bg-muted/20 p-3">
       <div className="flex items-start gap-2">
@@ -25,9 +20,7 @@ export function AccessFormStep({
         </span>
         <div className="space-y-0.5">
           <p className="text-sm font-medium leading-none">{title}</p>
-          {hint ? (
-            <p className="text-xs text-muted-foreground">{hint}</p>
-          ) : null}
+          {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
         </div>
       </div>
       {children}

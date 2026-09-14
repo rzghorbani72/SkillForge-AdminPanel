@@ -1,7 +1,7 @@
 import { AppearanceWorkspace } from '../_components/appearance-workspace';
 
 export default async function AppearanceEditorPage({
-  params
+  params,
 }: {
   params: Promise<{ slug: string }>;
 }) {

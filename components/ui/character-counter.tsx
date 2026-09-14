@@ -10,11 +10,7 @@ type CharacterCounterProps = {
   className?: string;
 };
 
-export function CharacterCounter({
-  length,
-  maxLength,
-  className
-}: CharacterCounterProps) {
+export function CharacterCounter({ length, maxLength, className }: CharacterCounterProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
 
@@ -26,7 +22,7 @@ export function CharacterCounter({
       className={cn(
         'shrink-0 text-sm',
         isNearLimit ? 'text-orange-600' : 'text-muted-foreground',
-        className
+        className,
       )}
     >
       {formatNumber(length)}/{formatNumber(maxLength)} —{' '}

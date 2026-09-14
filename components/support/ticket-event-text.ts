@@ -1,9 +1,6 @@
 import type { TicketMessage } from './staff-support-types';
 
-export function ticketEventText(
-  m: TicketMessage,
-  t: (k: string) => string
-): string {
+export function ticketEventText(m: TicketMessage, t: (k: string) => string): string {
   const meta = m.system_meta ?? {};
   const fill = (k: string) =>
     t(k)

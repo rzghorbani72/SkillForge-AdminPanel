@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  DataList,
-  DataPanel,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -22,19 +18,18 @@ type Props = {
 export function TeacherPayoutsTable({ rows, isLoading, onChanged }: Props) {
   const { t, language } = useTranslation();
   const academy = useCurrentAcademy();
-  const money = (value: number) =>
-    formatCurrencyWithStore(value, academy, undefined, language);
+  const money = (value: number) => formatCurrencyWithStore(value, academy, undefined, language);
 
   const columns: DataColumn<TeacherPayoutRecord>[] = [
     {
       id: 'date',
       header: t('teacherEarnings.colDate'),
-      cell: (row) => formatDate(row.processed_at ?? row.requested_at, language)
+      cell: (row) => formatDate(row.processed_at ?? row.requested_at, language),
     },
     {
       id: 'amount',
       header: t('teacherEarnings.colAmount'),
-      cell: (row) => <span className="font-semibold">{money(row.amount)}</span>
+      cell: (row) => <span className="font-semibold">{money(row.amount)}</span>,
     },
     {
       id: 'tracking',
@@ -43,28 +38,26 @@ export function TeacherPayoutsTable({ rows, isLoading, onChanged }: Props) {
         <span dir="ltr" className="font-medium">
           {row.tracking_code ?? '—'}
         </span>
-      )
+      ),
     },
     {
       id: 'bank',
       header: t('teacherEarnings.colBankResponse'),
       className: 'max-w-[240px] truncate text-xs text-muted-foreground',
-      cell: (row) => row.bank_response ?? '—'
+      cell: (row) => row.bank_response ?? '—',
     },
     {
       id: 'status',
       header: t('common.status'),
       align: 'end',
-      cell: (row) => <StatusBadge status={row.status.toLowerCase()} />
+      cell: (row) => <StatusBadge status={row.status.toLowerCase()} />,
     },
     {
       id: 'actions',
       header: t('common.actions'),
       align: 'end',
-      cell: (row) => (
-        <PayoutResponseActions payout={row} onChanged={onChanged} />
-      )
-    }
+      cell: (row) => <PayoutResponseActions payout={row} onChanged={onChanged} />,
+    },
   ];
 
   return (
@@ -72,9 +65,7 @@ export function TeacherPayoutsTable({ rows, isLoading, onChanged }: Props) {
       title={t('teacherEarnings.payoutsTitle')}
       subtitle={t('teacherEarnings.payoutsSubtitle')}
     >
-      <p className="px-5 pb-3 text-xs text-muted-foreground">
-        {t('teacherEarnings.responseNote')}
-      </p>
+      <p className="px-5 pb-3 text-xs text-muted-foreground">{t('teacherEarnings.responseNote')}</p>
       <DataList
         items={rows}
         columns={columns}

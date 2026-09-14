@@ -15,41 +15,37 @@ export interface LiveSetupStep {
  * on the page, so "what is missing" and "why publish is disabled" are one
  * answer instead of two.
  */
-export function liveSetupSteps(
-  readiness: LiveCourseReadiness
-): LiveSetupStep[] {
+export function liveSetupSteps(readiness: LiveCourseReadiness): LiveSetupStep[] {
   return [
     {
       id: 'topics',
       done: readiness.topics > 0,
       labelKey: 'courses.live.stepTopics',
-      hintKey: 'courses.live.stepTopicsHint'
+      hintKey: 'courses.live.stepTopicsHint',
     },
     {
       id: 'pricing',
       done: readiness.sellingOffers > 0,
       labelKey: 'courses.live.stepPricing',
-      hintKey: 'courses.live.stepPricingHint'
+      hintKey: 'courses.live.stepPricingHint',
     },
     {
       id: 'class',
       done: readiness.classes > 0,
       labelKey: 'courses.live.stepClass',
-      hintKey: 'courses.live.stepClassHint'
+      hintKey: 'courses.live.stepClassHint',
     },
     {
       id: 'schedule',
       done: readiness.classesWithSchedule > 0,
       labelKey: 'courses.live.stepSchedule',
-      hintKey: 'courses.live.stepScheduleHint'
-    }
+      hintKey: 'courses.live.stepScheduleHint',
+    },
   ];
 }
 
 /** The step the teacher should do next, or `null` when the course is ready. */
-export function currentLiveSetupStep(
-  steps: readonly LiveSetupStep[]
-): LiveSetupStep | null {
+export function currentLiveSetupStep(steps: readonly LiveSetupStep[]): LiveSetupStep | null {
   return steps.find((step) => !step.done) ?? null;
 }
 

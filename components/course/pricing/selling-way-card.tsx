@@ -53,7 +53,7 @@ export function SellingWayCard({
   removeDisabledReason,
   disabled = false,
   lockReason,
-  footer
+  footer,
 }: SellingWayCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -70,9 +70,7 @@ export function SellingWayCard({
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium">{label}</p>
-          <p className="mt-0.5 h-4 truncate text-xs text-muted-foreground">
-            {note ?? ''}
-          </p>
+          <p className="mt-0.5 h-4 truncate text-xs text-muted-foreground">{note ?? ''}</p>
         </div>
         <div className="h-6 w-9 shrink-0">
           {onToggleActive && (
@@ -88,17 +86,11 @@ export function SellingWayCard({
 
       <div className="mt-3 flex items-baseline gap-1.5">
         {isFree ? (
-          <span className="text-xl font-bold text-emerald-600">
-            {t('courses.offeringFREE')}
-          </span>
+          <span className="text-xl font-bold text-emerald-600">{t('courses.offeringFREE')}</span>
         ) : (
           <>
-            <span className="text-xl font-bold tabular-nums">
-              {formatNumber(price)}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {t('courses.toman')}
-            </span>
+            <span className="text-xl font-bold tabular-nums">{formatNumber(price)}</span>
+            <span className="text-xs text-muted-foreground">{t('courses.toman')}</span>
           </>
         )}
       </div>
@@ -126,9 +118,7 @@ export function SellingWayCard({
         )}
       </div>
 
-      {locked && (
-        <p className="mt-2 text-[11px] text-amber-600">{lockReason}</p>
-      )}
+      {locked && <p className="mt-2 text-[11px] text-amber-600">{lockReason}</p>}
 
       {footer ?? (
         <div className="mt-auto grid grid-cols-2 gap-2 border-t pt-3">

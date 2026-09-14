@@ -40,30 +40,22 @@ export function SidebarSectionsTab({
   onCloseSection,
   onPickBlockType,
   preview,
-  academyName
+  academyName,
 }: SidebarSectionsTabProps) {
   const sorted = [...blocks].sort((a, b) => a.order - b.order);
   const header = sorted.find((b) => b.type === 'header') ?? null;
   const footer = sorted.find((b) => b.type === 'footer') ?? null;
-  const middle = sorted.filter(
-    (b) => b.type !== 'header' && b.type !== 'footer'
-  );
+  const middle = sorted.filter((b) => b.type !== 'header' && b.type !== 'footer');
 
   const reorder = (next: UIBlockConfig[]) => {
-    const ordered = [
-      ...(header ? [header] : []),
-      ...next,
-      ...(footer ? [footer] : [])
-    ].map((block, index) => ({ ...block, order: index + 1 }));
+    const ordered = [...(header ? [header] : []), ...next, ...(footer ? [footer] : [])].map(
+      (block, index) => ({ ...block, order: index + 1 }),
+    );
     onBlocksChange(ordered);
   };
 
-  const selected = selectedBlockId
-    ? (sorted.find((b) => b.id === selectedBlockId) ?? null)
-    : null;
-  const midIndex = selected
-    ? middle.findIndex((b) => b.id === selected.id)
-    : -1;
+  const selected = selectedBlockId ? (sorted.find((b) => b.id === selectedBlockId) ?? null) : null;
+  const midIndex = selected ? middle.findIndex((b) => b.id === selected.id) : -1;
 
   const handleMove = (dir: 'up' | 'down') => {
     if (midIndex === -1) return;

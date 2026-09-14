@@ -3,12 +3,10 @@
  * Hamravesh cluster. Override in env when the cluster hostname changes.
  */
 export const CUSTOM_DOMAIN_CNAME_TARGET =
-  process.env.NEXT_PUBLIC_CUSTOM_DOMAIN_CNAME_TARGET ??
-  'c13.hamravesh.onhamravesh.ir';
+  process.env.NEXT_PUBLIC_CUSTOM_DOMAIN_CNAME_TARGET ?? 'c13.hamravesh.onhamravesh.ir';
 
 /** Where managers open their domain and add DNS rows (Arvan Cloud). */
-export const ARVAN_DOMAINS_PANEL_URL =
-  'https://panel.arvancloud.ir/cdn/domains';
+export const ARVAN_DOMAINS_PANEL_URL = 'https://panel.arvancloud.ir/cdn/domains';
 
 /** Cloud toggle in Arvan DNS: روشن (on) or خاموش (off). */
 export type DnsCloudMode = 'on' | 'off';
@@ -54,19 +52,19 @@ export function trafficDnsRows(target: string): DnsRecordRow[] {
   const value = stripDnsDot(target);
   return [
     { type: 'ANAME', name: '@', value, cloud: 'on' },
-    { type: 'CNAME', name: 'www', value, cloud: 'on' }
+    { type: 'CNAME', name: 'www', value, cloud: 'on' },
   ];
 }
 
 /** ACME rows for HTTPS — cloud OFF. */
 export function toManagerAcmeRows(
   records: readonly { host: string; value: string }[],
-  publicAddress: string
+  publicAddress: string,
 ): DnsRecordRow[] {
   return records.map((record) => ({
     type: 'CNAME',
     name: toDnsPanelHost(record.host, publicAddress),
     value: stripDnsDot(record.value),
-    cloud: 'off' as const
+    cloud: 'off' as const,
   }));
 }

@@ -17,9 +17,7 @@ export default function AcademyFinancialPage() {
   if (!currentAcademy) {
     return (
       <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
-        <p className="text-muted-foreground">
-          {t('financial.store.overview.noStore')}
-        </p>
+        <p className="text-muted-foreground">{t('financial.store.overview.noStore')}</p>
       </div>
     );
   }

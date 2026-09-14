@@ -65,7 +65,7 @@ import {
   CalendarClock,
   HardDrive,
   Webhook,
-  Activity
+  Activity,
 } from 'lucide-react';
 export type IconType =
   | 'dashboard'
@@ -210,5 +210,5 @@ export const Icons = {
   gallery: LayoutGrid,
   megaphone: Megaphone,
   globe: Globe,
-  search: Search
+  search: Search,
 };

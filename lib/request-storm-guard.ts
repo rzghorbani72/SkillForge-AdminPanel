@@ -22,29 +22,18 @@ export function trackKey(
   key: string,
   maxHits: number,
   windowMs: number,
-  now = Date.now()
+  now = Date.now(),
 ): StormVerdict {
   const recent = (hitsByKey.get(key) ?? []).filter((ts) => now - ts < windowMs);
   recent.push(now);
   if (recent.length > maxHits) recent.shift();
   hitsByKey.set(key, recent);
 
-  return recent.length >= maxHits
-    ? { tripped: true, count: recent.length }
-    : { tripped: false };
+  return recent.length >= maxHits ? { tripped: true, count: recent.length } : { tripped: false };
 }
 
-export function trackRoute(
-  method: string,
-  path: string,
-  now = Date.now()
-): StormVerdict {
-  return trackKey(
-    routeKey(method, path),
-    STORM_MAX_HITS_PER_ROUTE,
-    STORM_WINDOW_MS,
-    now
-  );
+export function trackRoute(method: string, path: string, now = Date.now()): StormVerdict {
+  return trackKey(routeKey(method, path), STORM_MAX_HITS_PER_ROUTE, STORM_WINDOW_MS, now);
 }
 
 export function resetStormGuard(): void {

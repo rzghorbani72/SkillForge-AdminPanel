@@ -11,7 +11,7 @@ import type { CourseType } from './course-drafts';
  */
 export function CourseTypePill({
   type = 'OFFLINE',
-  className = ''
+  className = '',
 }: {
   type?: CourseType;
   className?: string;

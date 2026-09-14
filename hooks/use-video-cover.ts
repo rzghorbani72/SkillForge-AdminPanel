@@ -31,14 +31,14 @@ export function useVideoCover(): UseVideoCoverReturn {
       coverFile.current = file;
       if (videoId) void attach(videoId, file);
     },
-    [attach]
+    [attach],
   );
 
   const onVideoAttached = useCallback(
     (videoId: string) => {
       if (coverFile.current) void attach(videoId, coverFile.current);
     },
-    [attach]
+    [attach],
   );
 
   return { onCoverPicked, onVideoAttached };

@@ -4,13 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -45,15 +39,11 @@ export function ArticleForm({ scope, basePath, article }: ArticleFormProps) {
   const [excerpt, setExcerpt] = useState(article?.excerpt ?? '');
   const [content, setContent] = useState(article?.content ?? '');
   const [metaTitle, setMetaTitle] = useState(article?.meta_title ?? '');
-  const [metaDescription, setMetaDescription] = useState(
-    article?.meta_description ?? ''
-  );
+  const [metaDescription, setMetaDescription] = useState(article?.meta_description ?? '');
   const [coverImageId, setCoverImageId] = useState<string | null>(
-    article?.featured_image_id ?? null
+    article?.featured_image_id ?? null,
   );
-  const [coverUrl, setCoverUrl] = useState<string | null>(
-    article?.Image?.publicUrl ?? null
-  );
+  const [coverUrl, setCoverUrl] = useState<string | null>(article?.Image?.publicUrl ?? null);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -72,7 +62,7 @@ export function ArticleForm({ scope, basePath, article }: ArticleFormProps) {
       excerpt: excerpt.trim() || undefined,
       meta_title: metaTitle.trim() || undefined,
       meta_description: metaDescription.trim() || undefined,
-      featured_image_id: coverImageId
+      featured_image_id: coverImageId,
     };
 
     setIsSaving(true);
@@ -96,9 +86,7 @@ export function ArticleForm({ scope, basePath, article }: ArticleFormProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>
-            {article ? t('blog.editArticle') : t('blog.newArticle')}
-          </CardTitle>
+          <CardTitle>{article ? t('blog.editArticle') : t('blog.newArticle')}</CardTitle>
           {article && <CardDescription>/blog/{article.slug}</CardDescription>}
         </CardHeader>
         <CardContent className="space-y-4">
@@ -152,9 +140,7 @@ export function ArticleForm({ scope, basePath, article }: ArticleFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="article-meta-title">
-              {t('blog.fields.metaTitle')}
-            </Label>
+            <Label htmlFor="article-meta-title">{t('blog.fields.metaTitle')}</Label>
             <Input
               id="article-meta-title"
               value={metaTitle}
@@ -165,9 +151,7 @@ export function ArticleForm({ scope, basePath, article }: ArticleFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="article-meta-description">
-              {t('blog.fields.metaDescription')}
-            </Label>
+            <Label htmlFor="article-meta-description">{t('blog.fields.metaDescription')}</Label>
             <Textarea
               id="article-meta-description"
               value={metaDescription}
@@ -183,11 +167,7 @@ export function ArticleForm({ scope, basePath, article }: ArticleFormProps) {
         <Button onClick={handleSave} disabled={isSaving}>
           {t('common.save')}
         </Button>
-        <Button
-          variant="outline"
-          onClick={() => router.push(basePath)}
-          disabled={isSaving}
-        >
+        <Button variant="outline" onClick={() => router.push(basePath)} disabled={isSaving}>
           {t('common.cancel')}
         </Button>
       </div>

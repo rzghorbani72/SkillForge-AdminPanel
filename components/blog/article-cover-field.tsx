@@ -15,10 +15,7 @@ type ArticleCoverFieldProps = {
 };
 
 /** The cover shown on the blog list and used as the social share image. */
-export function ArticleCoverField({
-  imageUrl,
-  onChange
-}: ArticleCoverFieldProps) {
+export function ArticleCoverField({ imageUrl, onChange }: ArticleCoverFieldProps) {
   const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -37,11 +34,7 @@ export function ArticleCoverField({
       <Label>{t('blog.fields.cover')}</Label>
       <div className="flex items-center gap-3">
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt=""
-            className="h-20 w-32 rounded-md border object-cover"
-          />
+          <img src={imageUrl} alt="" className="h-20 w-32 rounded-md border object-cover" />
         ) : (
           <div className="flex h-20 w-32 items-center justify-center rounded-md border border-dashed text-muted-foreground">
             <ImagePlus className="h-5 w-5" />
@@ -58,12 +51,7 @@ export function ArticleCoverField({
             {t('blog.actions.uploadCover')}
           </Button>
           {imageUrl && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => onChange(null, null)}
-            >
+            <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null, null)}>
               {t('common.remove')}
             </Button>
           )}

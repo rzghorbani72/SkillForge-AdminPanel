@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { CourseSearchCombobox } from '@/components/entity-search';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -18,7 +18,7 @@ const STATUS_OPTIONS: Array<SubmissionStatus | 'ALL'> = [
   'SUBMITTED',
   'GRADED',
   'REJECTED',
-  'DRAFT'
+  'DRAFT',
 ];
 
 interface AssignmentsFiltersProps {
@@ -36,16 +36,14 @@ export function AssignmentsFilters({
   status,
   onStatusChange,
   showStatusFilter,
-  onClear
+  onClear,
 }: AssignmentsFiltersProps) {
   const { t } = useTranslation();
 
   return (
     <div className="flex flex-wrap items-end gap-4">
       <div className="min-w-0 flex-1 space-y-2 sm:min-w-[220px]">
-        <Label htmlFor="assignments-course-filter">
-          {t('assignmentsPage.filterByCourse')}
-        </Label>
+        <Label htmlFor="assignments-course-filter">{t('assignmentsPage.filterByCourse')}</Label>
         <CourseSearchCombobox
           id="assignments-course-filter"
           value={courseId}
@@ -55,14 +53,10 @@ export function AssignmentsFilters({
       </div>
       {showStatusFilter ? (
         <div className="w-full space-y-2 sm:w-48">
-          <Label htmlFor="assignments-status-filter">
-            {t('assignmentsPage.filterByStatus')}
-          </Label>
+          <Label htmlFor="assignments-status-filter">{t('assignmentsPage.filterByStatus')}</Label>
           <Select
             value={status}
-            onValueChange={(value) =>
-              onStatusChange(value as SubmissionStatus | 'ALL')
-            }
+            onValueChange={(value) => onStatusChange(value as SubmissionStatus | 'ALL')}
           >
             <SelectTrigger
               id="assignments-status-filter"

@@ -43,7 +43,7 @@ export function sanitizeHtml(dirty: string, config?: DomPurifyConfig): string {
       'td',
       'div',
       'span',
-      'hr'
+      'hr',
     ],
     ALLOWED_ATTR: [
       'href',
@@ -56,14 +56,14 @@ export function sanitizeHtml(dirty: string, config?: DomPurifyConfig): string {
       'height',
       'class',
       'id',
-      'style' // Be cautious with style attribute
+      'style', // Be cautious with style attribute
     ],
     ALLOWED_URI_REGEXP:
       /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
     // Prevent data: URLs which can contain scripts
     FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover'],
     FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input'],
-    ...config
+    ...config,
   };
 
   return String(DOMPurify.sanitize(dirty, defaultConfig));
@@ -112,7 +112,7 @@ export function sanitizeRichText(dirty: string): string {
       'article',
       'hr',
       'figure',
-      'figcaption'
+      'figcaption',
     ],
     ALLOWED_ATTR: [
       'href',
@@ -129,8 +129,8 @@ export function sanitizeRichText(dirty: string): string {
       'controls',
       'autoplay',
       'loop',
-      'muted'
-    ]
+      'muted',
+    ],
   });
 }
 
@@ -142,7 +142,7 @@ export function sanitizePlainText(dirty: string): string {
   return String(
     DOMPurify.sanitize(dirty, {
       ALLOWED_TAGS: [],
-      ALLOWED_ATTR: []
-    })
+      ALLOWED_ATTR: [],
+    }),
   );
 }

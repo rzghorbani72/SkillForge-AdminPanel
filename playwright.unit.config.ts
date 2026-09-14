@@ -10,5 +10,5 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: 'list',
-  projects: [{ name: 'logic' }]
+  projects: [{ name: 'logic' }],
 });

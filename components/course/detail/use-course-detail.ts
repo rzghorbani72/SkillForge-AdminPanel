@@ -2,11 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
-import type {
-  CourseTopic,
-  TutoringGroup,
-  TutoringOffer
-} from '@/types/learning-operations';
+import type { CourseTopic, TutoringGroup, TutoringOffer } from '@/types/learning-operations';
 import type { CourseEnrollment, CoursePayment } from './types';
 
 interface LiveOverviewData {
@@ -22,7 +18,7 @@ const EMPTY_LIVE: LiveOverviewData = {
   groups: [],
   // Starts true so a live course never flashes an empty "nothing set up yet"
   // before its first response lands.
-  loading: true
+  loading: true,
 };
 
 function unwrapList<T>(data: unknown, key: string): T[] {
@@ -53,7 +49,7 @@ export function useCourseDetail(courseId: string, isLive = false) {
         const data = await apiClient.getPayments({
           course_id: courseId,
           status: 'PAID',
-          limit: 500
+          limit: 500,
         });
         setPayments(unwrapList<CoursePayment>(data, 'payments'));
       } catch {
@@ -71,7 +67,7 @@ export function useCourseDetail(courseId: string, isLive = false) {
       try {
         const data = await apiClient.getEnrollments({
           course_id: courseId,
-          limit: 10
+          limit: 10,
         });
         setEnrollments(unwrapList<CourseEnrollment>(data, 'enrollments'));
       } catch {
@@ -93,7 +89,7 @@ export function useCourseDetail(courseId: string, isLive = false) {
       const [topics, offers, groups] = await Promise.all([
         apiClient.getCourseTopics(courseId).catch(() => []),
         apiClient.getTutoringOffers({ course_id: courseId }).catch(() => []),
-        apiClient.getTutoringGroups({ course_id: courseId }).catch(() => [])
+        apiClient.getTutoringGroups({ course_id: courseId }).catch(() => []),
       ]);
       setLive({ topics, offers, groups, loading: false });
     };

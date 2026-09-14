@@ -8,14 +8,11 @@ import {
   isStarterPlan,
   isTopPlan,
   needsPlanPurchase as computeNeedsPlanPurchase,
-  shouldShowUpgradePrompt
+  shouldShowUpgradePrompt,
 } from '@/lib/settings-scope';
 import { subscriptionNeedsLiveRefresh } from '@/lib/subscription-days';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
-import {
-  useCurrentAcademyId,
-  useHasAcademyAccess
-} from '@/hooks/useCurrentAcademy';
+import { useCurrentAcademyId, useHasAcademyAccess } from '@/hooks/useCurrentAcademy';
 import { useLiveSubscriptionDays } from '@/hooks/use-live-subscription-days';
 import type { TrialContext } from '@/components/plans/trial-move-card';
 
@@ -100,7 +97,7 @@ export function useAcademySubscription(enabled = true) {
     queryKey: queryKeys.subscription(academyId),
     queryFn: (signal) =>
       apiClient.getCurrentAcademySubscription({
-        signal
+        signal,
       }) as Promise<AcademySubscriptionState>,
     enabled: canFetch,
     refetchOnWindowFocus: true,
@@ -110,11 +107,11 @@ export function useAcademySubscription(enabled = true) {
       return subscriptionNeedsLiveRefresh({
         isTrial: sub.is_trial,
         status: sub.status,
-        daysRemaining: sub.days_remaining
+        daysRemaining: sub.days_remaining,
       })
         ? 3_600_000
         : false;
-    }
+    },
   });
   const rawSubscription = data ?? null;
   const subscription = overlayPaidEnrollment(rawSubscription);
@@ -122,16 +119,14 @@ export function useAcademySubscription(enabled = true) {
   const planSlug = subscription?.academy?.subscription_plan ?? null;
   const customPlan = subscription?.academy?.custom_plan ?? null;
   const planName =
-    customPlan?.name ??
-    (planSlug && planSlug !== 'none' ? getPlanDisplayName(planSlug) : null);
+    customPlan?.name ?? (planSlug && planSlug !== 'none' ? getPlanDisplayName(planSlug) : null);
   const status = subscription?.status;
   const liveDaysRemaining = useLiveSubscriptionDays({
     subscriptionExpires: subscription?.academy?.subscription_expires,
     graceUntil: subscription?.grace_until,
-    status
+    status,
   });
-  const daysRemaining =
-    liveDaysRemaining ?? subscription?.days_remaining ?? null;
+  const daysRemaining = liveDaysRemaining ?? subscription?.days_remaining ?? null;
 
   return {
     subscription,
@@ -157,9 +152,8 @@ export function useAcademySubscription(enabled = true) {
         hasAcademy: hasAcademyAccess,
         planSlug,
         status,
-        hasPaid: subscription.has_paid
+        hasPaid: subscription.has_paid,
       }),
-    shouldShowUpgrade:
-      !customPlan && shouldShowUpgradePrompt(status, daysRemaining, planSlug)
+    shouldShowUpgrade: !customPlan && shouldShowUpgradePrompt(status, daysRemaining, planSlug),
   };
 }

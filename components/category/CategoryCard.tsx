@@ -1,13 +1,7 @@
 'use client';
 
 import { Category } from '@/types/api';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2, Eye, EyeOff, Calendar } from 'lucide-react';
@@ -20,16 +14,12 @@ interface CategoryCardProps {
   onDelete: (categoryId: number) => void;
 }
 
-export function CategoryCard({
-  category,
-  onEdit,
-  onDelete
-}: CategoryCardProps) {
+export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
   return (
     <Card
       className={cn(
         'group overflow-hidden border-border/50 transition-all duration-300',
-        'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5'
+        'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
       )}
     >
       <CardHeader className="pb-3">
@@ -46,7 +36,7 @@ export function CategoryCard({
                 variant="secondary"
                 className={cn(
                   'rounded-full px-2 py-0 text-[10px] font-semibold',
-                  getCategoryTypeColor(category.type)
+                  getCategoryTypeColor(category.type),
                 )}
               >
                 {category.type}
@@ -58,22 +48,16 @@ export function CategoryCard({
               'flex h-8 w-8 items-center justify-center rounded-lg',
               category.is_active
                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                : 'bg-muted text-muted-foreground'
+                : 'bg-muted text-muted-foreground',
             )}
           >
-            {category.is_active ? (
-              <Eye className="h-4 w-4" />
-            ) : (
-              <EyeOff className="h-4 w-4" />
-            )}
+            {category.is_active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {category.description && (
-          <CardDescription className="line-clamp-2 text-xs">
-            {category.description}
-          </CardDescription>
+          <CardDescription className="line-clamp-2 text-xs">{category.description}</CardDescription>
         )}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

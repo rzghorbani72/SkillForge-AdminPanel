@@ -20,14 +20,14 @@ const STATUS_TONE: Record<string, string> = {
   ACTIVE: 'bg-success/10 text-success',
   COMPLETED: 'bg-info/10 text-info',
   CANCELLED: 'bg-destructive/10 text-destructive',
-  EXPIRED: 'bg-muted text-muted-foreground'
+  EXPIRED: 'bg-muted text-muted-foreground',
 };
 
 const STATUS_LABEL_KEY: Record<string, string> = {
   ACTIVE: 'common.active',
   COMPLETED: 'students.completed',
   CANCELLED: 'students.cancelled',
-  EXPIRED: 'students.expired'
+  EXPIRED: 'students.expired',
 };
 
 export function enrollmentProgress(enrollment: Enrollment): number {
@@ -40,19 +40,13 @@ export function enrollmentProgress(enrollment: Enrollment): number {
   return Math.round((done / steps.length) * 100);
 }
 
-export function EnrollmentStatusPill({
-  status,
-  t
-}: {
-  status: string;
-  t: TranslateFn;
-}) {
+export function EnrollmentStatusPill({ status, t }: { status: string; t: TranslateFn }) {
   const labelKey = STATUS_LABEL_KEY[status];
   return (
     <span
       className={cn(
         'inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium',
-        STATUS_TONE[status] ?? 'bg-muted text-muted-foreground'
+        STATUS_TONE[status] ?? 'bg-muted text-muted-foreground',
       )}
     >
       {labelKey ? t(labelKey) : status}
@@ -66,11 +60,7 @@ interface EnrollmentsListProps {
   t: TranslateFn;
 }
 
-export function EnrollmentsList({
-  enrollments,
-  isLoading,
-  t
-}: EnrollmentsListProps) {
+export function EnrollmentsList({ enrollments, isLoading, t }: EnrollmentsListProps) {
   const formatNumber = useNumberFormat();
   const formatDate = useDateFormat();
 
@@ -83,10 +73,7 @@ export function EnrollmentsList({
         const studentId = enrollment.user?.id;
         return (
           <div className="flex items-center gap-2.5">
-            <UserAvatar
-              name={enrollment.user?.name}
-              tone={toneFromId(enrollment.user_id)}
-            />
+            <UserAvatar name={enrollment.user?.name} tone={toneFromId(enrollment.user_id)} />
             <div className="min-w-0">
               {studentId ? (
                 <Link
@@ -104,7 +91,7 @@ export function EnrollmentsList({
             </div>
           </div>
         );
-      }
+      },
     };
 
     const progress: DataColumn<Enrollment> = {
@@ -121,16 +108,14 @@ export function EnrollmentsList({
             </span>
           </div>
         );
-      }
+      },
     };
 
     const status: DataColumn<Enrollment> = {
       id: 'status',
       header: t('common.status'),
       align: 'end',
-      cell: (enrollment) => (
-        <EnrollmentStatusPill status={enrollment.status} t={t} />
-      )
+      cell: (enrollment) => <EnrollmentStatusPill status={enrollment.status} t={t} />,
     };
 
     return [
@@ -140,13 +125,11 @@ export function EnrollmentsList({
         header: t('students.enrolledOn'),
         className: 'hidden md:table-cell',
         cell: (enrollment) => (
-          <span className="text-muted-foreground">
-            {formatDate(enrollment.enrolled_at)}
-          </span>
-        )
+          <span className="text-muted-foreground">{formatDate(enrollment.enrolled_at)}</span>
+        ),
       },
       progress,
-      status
+      status,
     ];
   }, [t, formatNumber, formatDate]);
 

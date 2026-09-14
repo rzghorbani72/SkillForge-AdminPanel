@@ -54,7 +54,7 @@ export function useAssignableRoles(enabled = true): UseAssignableRolesResult {
       return roles;
     },
     enabled,
-    staleTime: ROLES_STALE_TIME_MS
+    staleTime: ROLES_STALE_TIME_MS,
   });
 
   const roles = useMemo(() => toAssignable(data ?? EMPTY_ROLES, t), [data, t]);
@@ -62,20 +62,14 @@ export function useAssignableRoles(enabled = true): UseAssignableRolesResult {
   return { roles, loading: isLoading };
 }
 
-function toAssignable(
-  roles: PlatformRole[],
-  t: (key: string) => string
-): AssignableRole[] {
+function toAssignable(roles: PlatformRole[], t: (key: string) => string): AssignableRole[] {
   return roles
     .filter((role) => role.is_active && !NEVER_ASSIGNABLE.has(role.name))
     .map((role) => ({
       id: role.id,
       name: role.name,
       label: getRoleDisplayLabel(role, t),
-      hierarchy_level: role.hierarchy_level
+      hierarchy_level: role.hierarchy_level,
     }))
-    .sort(
-      (a, b) =>
-        b.hierarchy_level - a.hierarchy_level || a.label.localeCompare(b.label)
-    );
+    .sort((a, b) => b.hierarchy_level - a.hierarchy_level || a.label.localeCompare(b.label));
 }

@@ -1,6 +1,5 @@
 /** 22rem = 352px so course cards stay wider than 320px when the row allows it. */
-export const COURSE_CARD_GRID_COLUMNS =
-  'repeat(auto-fill, minmax(min(100%, 22rem), 1fr))';
+export const COURSE_CARD_GRID_COLUMNS = 'repeat(auto-fill, minmax(min(100%, 22rem), 1fr))';
 
 export const CATEGORY_COLORS: Record<number, { h: number }> = {
   0: { h: 22 },
@@ -10,14 +9,11 @@ export const CATEGORY_COLORS: Record<number, { h: number }> = {
   4: { h: 320 },
   5: { h: 200 },
   6: { h: 280 },
-  7: { h: 50 }
+  7: { h: 50 },
 };
 
 export function courseHue(id: string | number) {
-  const n =
-    typeof id === 'number'
-      ? id
-      : id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const n = typeof id === 'number' ? id : id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   return (CATEGORY_COLORS[n % 8] ?? CATEGORY_COLORS[0]).h;
 }
 
@@ -32,7 +28,7 @@ export function formatNumber(n: number, lang = 'fa-IR') {
 export function formatCourseDurationMinutes(
   minutes: number | null | undefined,
   formatNum: (n: number) => string,
-  t: (key: string) => string
+  t: (key: string) => string,
 ): string | null {
   if (minutes == null || !Number.isFinite(minutes) || minutes <= 0) return null;
   const total = Math.round(minutes);

@@ -39,24 +39,18 @@ export function EntityMultiSelect({
   onChange,
   labels,
   renderMeta,
-  disabled = false
+  disabled = false,
 }: EntityMultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
 
   const filtered = query
-    ? items.filter((item) =>
-        item.title.toLowerCase().includes(query.toLowerCase())
-      )
+    ? items.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
     : items;
   const selectedItems = items.filter((item) => selected.includes(item.id));
 
   function toggle(id: string) {
-    onChange(
-      selected.includes(id)
-        ? selected.filter((x) => x !== id)
-        : [...selected, id]
-    );
+    onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
   }
 
   return (
@@ -67,7 +61,7 @@ export function EntityMultiSelect({
         onClick={() => setOpen((v) => !v)}
         className={cn(
           'flex w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-muted/40 disabled:opacity-50',
-          open && 'ring-2 ring-primary'
+          open && 'ring-2 ring-primary',
         )}
       >
         <span className="text-muted-foreground">
@@ -76,10 +70,7 @@ export function EntityMultiSelect({
             : `${labels.selected} (${selected.length.toLocaleString('fa-IR')})`}
         </span>
         <ChevronDown
-          className={cn(
-            'h-4 w-4 text-muted-foreground transition-transform',
-            open && 'rotate-180'
-          )}
+          className={cn('h-4 w-4 text-muted-foreground transition-transform', open && 'rotate-180')}
         />
       </button>
 
@@ -97,9 +88,7 @@ export function EntityMultiSelect({
           </div>
           <div className="max-h-52 overflow-y-auto py-1">
             {filtered.length === 0 ? (
-              <p className="px-3 py-4 text-center text-sm text-muted-foreground">
-                {labels.empty}
-              </p>
+              <p className="px-3 py-4 text-center text-sm text-muted-foreground">{labels.empty}</p>
             ) : (
               filtered.map((item) => {
                 const isChecked = selected.includes(item.id);
@@ -115,14 +104,12 @@ export function EntityMultiSelect({
                         'flex h-4 w-4 shrink-0 items-center justify-center rounded border',
                         isChecked
                           ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-input'
+                          : 'border-input',
                       )}
                     >
                       {isChecked && <Check className="h-3 w-3" />}
                     </span>
-                    <span className="min-w-0 flex-1 truncate">
-                      {item.title}
-                    </span>
+                    <span className="min-w-0 flex-1 truncate">{item.title}</span>
                     {renderMeta && (
                       <span className="shrink-0 text-xs text-muted-foreground">
                         {renderMeta(item)}

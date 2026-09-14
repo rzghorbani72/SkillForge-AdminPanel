@@ -11,19 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -36,7 +31,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -45,7 +40,7 @@ import { apiErrorMessage } from '@/lib/api-error-message';
 const refundSchema = z.object({
   refund_amount: z.coerce.number().optional(),
   reason: z.string().min(1, 'validation.required'),
-  revoke_enrollment: z.boolean().default(false)
+  revoke_enrollment: z.boolean().default(false),
 });
 type RefundValues = z.infer<typeof refundSchema>;
 
@@ -62,16 +57,14 @@ export default function RefundsPage() {
 
   const form = useForm<RefundValues>({
     resolver: zodResolver(refundSchema),
-    defaultValues: { reason: '', revoke_enrollment: false }
+    defaultValues: { reason: '', revoke_enrollment: false },
   });
 
   async function load() {
     setLoading(true);
     try {
       const data = (await apiClient.getPayments({ limit: 100 })) as any;
-      const list = Array.isArray(data)
-        ? data
-        : (data?.payments ?? data?.data ?? []);
+      const list = Array.isArray(data) ? data : (data?.payments ?? data?.data ?? []);
       setPayments(list);
     } catch (error) {
       toast.error(apiErrorMessage(error, t('common.error')));
@@ -92,14 +85,14 @@ export default function RefundsPage() {
       form.reset({
         refund_amount: elig?.max_refundable ?? payment.amount ?? 0,
         reason: '',
-        revoke_enrollment: false
+        revoke_enrollment: false,
       });
     } catch {
       setEligibility(null);
       form.reset({
         refund_amount: payment.amount ?? 0,
         reason: '',
-        revoke_enrollment: false
+        revoke_enrollment: false,
       });
     }
     setDialogOpen(true);
@@ -112,7 +105,7 @@ export default function RefundsPage() {
       await apiClient.issueRefund(selectedPayment.id, {
         refund_amount: values.refund_amount,
         reason: values.reason,
-        revoke_enrollment: values.revoke_enrollment
+        revoke_enrollment: values.revoke_enrollment,
       });
       toast.success(t('common.success'));
       setDialogOpen(false);
@@ -130,21 +123,15 @@ export default function RefundsPage() {
       !term ||
       p.id?.toString().includes(term) ||
       p.status?.toLowerCase().includes(term) ||
-      (p.user?.display_name ?? p.Profile?.display_name ?? '')
-        .toLowerCase()
-        .includes(term)
+      (p.user?.display_name ?? p.Profile?.display_name ?? '').toLowerCase().includes(term)
     );
   });
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('refunds.title')}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {t('refunds.description')}
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('refunds.title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('refunds.description')}</p>
       </div>
 
       <Card>
@@ -181,40 +168,26 @@ export default function RefundsPage() {
                   <TableHead>{t('refunds.amount')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
                   <TableHead>{t('refunds.date')}</TableHead>
-                  <TableHead className="text-right">
-                    {t('refunds.action')}
-                  </TableHead>
+                  <TableHead className="text-right">{t('refunds.action')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((p) => (
                   <TableRow key={p.id}>
+                    <TableCell>{p.user?.display_name ?? p.Profile?.display_name ?? '—'}</TableCell>
+                    <TableCell>{p.course?.title ?? p.Course?.title ?? '—'}</TableCell>
+                    <TableCell>{p.amount != null ? formatNumber(p.amount) : ''}</TableCell>
                     <TableCell>
-                      {p.user?.display_name ?? p.Profile?.display_name ?? '—'}
-                    </TableCell>
-                    <TableCell>
-                      {p.course?.title ?? p.Course?.title ?? '—'}
-                    </TableCell>
-                    <TableCell>
-                      {p.amount != null ? formatNumber(p.amount) : ''}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge
-                        status={p.status?.toLowerCase() ?? 'unknown'}
-                      />
+                      <StatusBadge status={p.status?.toLowerCase() ?? 'unknown'} />
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {p.created_at
-                        ? new Date(p.created_at).toLocaleDateString()
-                        : '—'}
+                      {p.created_at ? new Date(p.created_at).toLocaleDateString() : '—'}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="outline"
                         size="sm"
-                        disabled={
-                          p.status === 'REFUNDED' || p.status === 'FAILED'
-                        }
+                        disabled={p.status === 'REFUNDED' || p.status === 'FAILED'}
                         onClick={() => openRefundDialog(p)}
                       >
                         <RotateCcw className="mr-1 h-3 w-3" />
@@ -237,7 +210,7 @@ export default function RefundsPage() {
                 student:
                   selectedPayment?.user?.display_name ??
                   selectedPayment?.Profile?.display_name ??
-                  t('users.unnamedUser')
+                  t('users.unnamedUser'),
               })}
             </DialogTitle>
           </DialogHeader>
@@ -251,9 +224,7 @@ export default function RefundsPage() {
                     : ''}
                 </strong>
               </p>
-              {eligibility.reason && (
-                <p className="text-muted-foreground">{eligibility.reason}</p>
-              )}
+              {eligibility.reason && <p className="text-muted-foreground">{eligibility.reason}</p>}
             </div>
           )}
           <Form {...form}>
@@ -269,9 +240,7 @@ export default function RefundsPage() {
                         name={field.name}
                         ref={field.ref}
                         value={field.value ?? ''}
-                        onChange={(raw) =>
-                          field.onChange(raw === '' ? '' : Number(raw))
-                        }
+                        onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                       />
                     </FormControl>
                     <FormMessage />
@@ -310,21 +279,11 @@ export default function RefundsPage() {
                 )}
               />
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   {t('common.cancel')}
                 </Button>
-                <Button
-                  type="submit"
-                  variant="destructive"
-                  disabled={submitting}
-                >
-                  {submitting
-                    ? t('refunds.processing')
-                    : t('refunds.issueRefund')}
+                <Button type="submit" variant="destructive" disabled={submitting}>
+                  {submitting ? t('refunds.processing') : t('refunds.issueRefund')}
                 </Button>
               </div>
             </form>

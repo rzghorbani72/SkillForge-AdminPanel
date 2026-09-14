@@ -11,7 +11,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { PasswordStrength } from '@/components/ui/password-strength';
 import { generateTempPassword } from '@/lib/password-utils';
@@ -55,7 +55,7 @@ export function AddUserDetailsStep({
   canSubmit,
   onBack,
   onCancel,
-  onSubmit
+  onSubmit,
 }: AddUserDetailsStepProps) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
@@ -86,13 +86,7 @@ export function AddUserDetailsStep({
               : t('members.personNotFound')}
           </div>
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onBack}
-          disabled={loading}
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={onBack} disabled={loading}>
           {t('common.back')}
         </Button>
       </div>
@@ -127,9 +121,7 @@ export function AddUserDetailsStep({
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <Label htmlFor="password">
-              {needsAccount
-                ? `${t('students.oneTimePassword')} *`
-                : t('members.optionalPassword')}
+              {needsAccount ? `${t('students.oneTimePassword')} *` : t('members.optionalPassword')}
             </Label>
             <button
               type="button"
@@ -186,16 +178,10 @@ export function AddUserDetailsStep({
             onChange={(e) => patch({ confirmPassword: e.target.value })}
             placeholder="••••••••"
             disabled={loading || !form.password}
-            className={
-              form.confirmPassword && !isConfirmReady
-                ? 'border-destructive'
-                : undefined
-            }
+            className={form.confirmPassword && !isConfirmReady ? 'border-destructive' : undefined}
           />
           {form.confirmPassword && !isConfirmReady && (
-            <p className="text-xs text-destructive">
-              {t('auth.passwordsDoNotMatch')}
-            </p>
+            <p className="text-xs text-destructive">{t('auth.passwordsDoNotMatch')}</p>
           )}
         </div>
 
@@ -230,12 +216,7 @@ export function AddUserDetailsStep({
       </p>
 
       <DialogFooter className="gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={loading}
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
           {t('common.cancel')}
         </Button>
         <Button type="submit" disabled={loading || !canSubmit}>

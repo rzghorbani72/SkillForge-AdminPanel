@@ -27,22 +27,22 @@ export function applyZodErrorMap(language: LanguageCode): void {
           }
           return {
             message: t('validation.minChars', language, {
-              count: countParam(issue.minimum)
-            })
+              count: countParam(issue.minimum),
+            }),
           };
         }
         if (issue.type === 'number' || issue.type === 'bigint') {
           return {
             message: t('validation.minNumber', language, {
-              count: countParam(issue.minimum)
-            })
+              count: countParam(issue.minimum),
+            }),
           };
         }
         if (issue.type === 'array') {
           return {
             message: t('validation.minItems', language, {
-              count: countParam(issue.minimum)
-            })
+              count: countParam(issue.minimum),
+            }),
           };
         }
         break;
@@ -52,22 +52,22 @@ export function applyZodErrorMap(language: LanguageCode): void {
         if (issue.type === 'string') {
           return {
             message: t('validation.maxChars', language, {
-              count: countParam(issue.maximum)
-            })
+              count: countParam(issue.maximum),
+            }),
           };
         }
         if (issue.type === 'number' || issue.type === 'bigint') {
           return {
             message: t('validation.maxNumber', language, {
-              count: countParam(issue.maximum)
-            })
+              count: countParam(issue.maximum),
+            }),
           };
         }
         if (issue.type === 'array') {
           return {
             message: t('validation.maxItems', language, {
-              count: countParam(issue.maximum)
-            })
+              count: countParam(issue.maximum),
+            }),
           };
         }
         break;

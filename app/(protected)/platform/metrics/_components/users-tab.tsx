@@ -1,11 +1,7 @@
 'use client';
 
 import { StatsCard } from '@/components/shared/stats-card';
-import {
-  DataPanel,
-  DataList,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataPanel, DataList, type DataColumn } from '@/components/shared/data-list';
 import { apiClient, type MetricsQuery, type MetricsCurrency } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -26,26 +22,25 @@ export function UsersTab({ query, currency }: Props) {
   const format = useMetricFormat(currency);
   const formatNumber = useNumberFormat();
   const { data: users, loading: usersLoading } = useMetricsFetch(query, (q) =>
-    apiClient.getMetricsUsers(q)
+    apiClient.getMetricsUsers(q),
   );
-  const { data: activity, loading: activityLoading } = useMetricsFetch(
-    query,
-    (q) => apiClient.getMetricsActivity(q)
+  const { data: activity, loading: activityLoading } = useMetricsFetch(query, (q) =>
+    apiClient.getMetricsActivity(q),
   );
 
   const roleColumns: DataColumn<{ role: string; profiles: number }>[] = [
     {
       id: 'role',
       header: t('platformMetrics.columns.role'),
-      cell: (row) => row.role
+      cell: (row) => row.role,
     },
     {
       id: 'profiles',
       header: t('platformMetrics.columns.profiles'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => formatNumber(row.profiles)
-    }
+      cell: (row) => formatNumber(row.profiles),
+    },
   ];
 
   return (

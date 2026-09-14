@@ -1,11 +1,7 @@
 'use client';
 
 import { StatsCard } from '@/components/shared/stats-card';
-import {
-  DataPanel,
-  DataList,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataPanel, DataList, type DataColumn } from '@/components/shared/data-list';
 import { apiClient, type MetricsQuery, type MetricsCurrency } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -25,27 +21,26 @@ export function CatalogTab({ query, currency }: Props) {
   const { t } = useTranslation();
   const format = useMetricFormat(currency);
   const formatNumber = useNumberFormat();
-  const { data: catalog, loading: catalogLoading } = useMetricsFetch(
-    query,
-    (q) => apiClient.getMetricsCatalog(q)
+  const { data: catalog, loading: catalogLoading } = useMetricsFetch(query, (q) =>
+    apiClient.getMetricsCatalog(q),
   );
   const { data: record, loading: recordLoading } = useMetricsFetch(query, (q) =>
-    apiClient.getMetricsLearningRecord(q)
+    apiClient.getMetricsLearningRecord(q),
   );
 
   const typeColumns: DataColumn<{ type: string; count: number }>[] = [
     {
       id: 'type',
       header: t('platformMetrics.columns.type'),
-      cell: (row) => row.type
+      cell: (row) => row.type,
     },
     {
       id: 'count',
       header: t('platformMetrics.columns.count'),
       align: 'end',
       className: METRIC_VALUE_CLASS,
-      cell: (row) => formatNumber(row.count)
-    }
+      cell: (row) => formatNumber(row.count),
+    },
   ];
 
   return (
@@ -85,7 +80,7 @@ export function CatalogTab({ query, currency }: Props) {
         <DataList
           items={(catalog?.by_course_type ?? []).map((row) => ({
             type: row.course_type,
-            count: row.courses
+            count: row.courses,
           }))}
           columns={typeColumns}
           rowKey={(row) => row.type}
@@ -98,7 +93,7 @@ export function CatalogTab({ query, currency }: Props) {
         <DataList
           items={(catalog?.by_pricing_type ?? []).map((row) => ({
             type: row.pricing_type,
-            count: row.courses
+            count: row.courses,
           }))}
           columns={typeColumns}
           rowKey={(row) => row.type}
@@ -111,7 +106,7 @@ export function CatalogTab({ query, currency }: Props) {
         <DataList
           items={(catalog?.by_lesson_type ?? []).map((row) => ({
             type: row.lesson_type,
-            count: row.lessons
+            count: row.lessons,
           }))}
           columns={typeColumns}
           rowKey={(row) => row.type}

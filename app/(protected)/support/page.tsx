@@ -18,14 +18,12 @@ export default function SupportPage() {
   const platformStaffMode = isPlatformStaff(user);
 
   const tabs = useMemo<InboxKind[]>(
-    () =>
-      platformStaffMode ? ['platform', 'contact'] : ['academy', 'platform'],
-    [platformStaffMode]
+    () => (platformStaffMode ? ['platform', 'contact'] : ['academy', 'platform']),
+    [platformStaffMode],
   );
   const [chosenTab, setChosenTab] = useState<InboxKind | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
-  const tab: InboxKind =
-    chosenTab && tabs.includes(chosenTab) ? chosenTab : tabs[0];
+  const tab: InboxKind = chosenTab && tabs.includes(chosenTab) ? chosenTab : tabs[0];
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -36,17 +34,13 @@ export default function SupportPage() {
           </span>
           <div>
             <h1 className="text-xl font-semibold">{t('support.title')}</h1>
-            <p className="text-sm text-muted-foreground">
-              {t('support.subtitle')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('support.subtitle')}</p>
           </div>
         </div>
         {/* Academy staff raise tickets to the platform; platform staff answer
             them, so the create button is theirs only. */}
         {!platformStaffMode && (
-          <NewPlatformTicketDialog
-            onCreated={() => setReloadKey((k) => k + 1)}
-          />
+          <NewPlatformTicketDialog onCreated={() => setReloadKey((k) => k + 1)} />
         )}
       </div>
 

@@ -21,7 +21,7 @@ function Chip({
   active,
   count,
   label,
-  onClick
+  onClick,
 }: {
   active: boolean;
   count?: number;
@@ -35,9 +35,7 @@ function Chip({
       onClick={onClick}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors',
-        active
-          ? 'border-primary bg-primary text-primary-foreground'
-          : 'hover:bg-muted'
+        active ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-muted',
       )}
     >
       {label}
@@ -45,7 +43,7 @@ function Chip({
         <span
           className={cn(
             'rounded-full px-1.5 text-[11px]',
-            active ? 'bg-primary-foreground/20' : 'bg-muted-foreground/10'
+            active ? 'bg-primary-foreground/20' : 'bg-muted-foreground/10',
           )}
         >
           {formatNumber(count)}
@@ -66,7 +64,7 @@ export function InboxQueueBar({
   team,
   showTeams,
   onViewChange,
-  onTeamChange
+  onTeamChange,
 }: Props) {
   const { t } = useTranslation();
   const teamCount = (value: TicketTeam) =>
@@ -97,9 +95,7 @@ export function InboxQueueBar({
 
       {showTeams && (
         <div className="flex flex-wrap items-center gap-2 border-t pt-2">
-          <span className="text-[11px] text-muted-foreground">
-            {t('support.teamLabel')}
-          </span>
+          <span className="text-[11px] text-muted-foreground">{t('support.teamLabel')}</span>
           <Chip
             label={t('support.teams.ALL')}
             active={team === null}

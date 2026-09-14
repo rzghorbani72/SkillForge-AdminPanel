@@ -1,13 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -33,13 +27,7 @@ interface OpsQueueFilterFieldProps {
   children: ReactNode;
 }
 
-function OpsQueueFilterField({
-  id,
-  label,
-  appliesTo,
-  hint,
-  children
-}: OpsQueueFilterFieldProps) {
+function OpsQueueFilterField({ id, label, appliesTo, hint, children }: OpsQueueFilterFieldProps) {
   const hintId = `${id}-hint`;
 
   return (
@@ -65,7 +53,7 @@ export function OpsQueueFiltersCard({
   onInactiveDaysChange,
   lowScoreThreshold,
   onLowScoreThresholdChange,
-  onRefresh
+  onRefresh,
 }: OpsQueueFiltersCardProps) {
   const { t } = useTranslation();
 

@@ -22,18 +22,13 @@ interface NextSessionCardProps {
  * running), which link that meeting will actually use, and how much of the term
  * is left. Everything else on the page is editing; this is just answering.
  */
-export function NextSessionCard({
-  sessions,
-  classMeetingUrl
-}: NextSessionCardProps) {
+export function NextSessionCard({ sessions, classMeetingUrl }: NextSessionCardProps) {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
   const progress = classProgress(sessions);
   const session = progress.current ?? progress.next;
 
-  const percent = progress.total
-    ? Math.round((progress.done / progress.total) * 100)
-    : 0;
+  const percent = progress.total ? Math.round((progress.done / progress.total) * 100) : 0;
 
   const link = session?.meeting_url || classMeetingUrl || null;
   const copy = async () => {
@@ -47,19 +42,15 @@ export function NextSessionCard({
         dateStyle: 'full',
         timeStyle: 'short',
         hourCycle: 'h23',
-        timeZone: session.timezone
+        timeZone: session.timezone,
       }).format(new Date(session.starts_at))
     : null;
 
   return (
     <DataPanel
-      title={
-        progress.current
-          ? t('courses.live.sessionNow')
-          : t('courses.live.nextSession')
-      }
+      title={progress.current ? t('courses.live.sessionNow') : t('courses.live.nextSession')}
       subtitle={t('courses.live.sessionsRemaining', {
-        count: formatNumber(progress.remaining)
+        count: formatNumber(progress.remaining),
       })}
     >
       <div className="space-y-4 p-5">
@@ -101,12 +92,7 @@ export function NextSessionCard({
                       {t('courses.live.openLink')}
                     </a>
                   </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => void copy()}
-                  >
+                  <Button type="button" size="sm" variant="outline" onClick={() => void copy()}>
                     <Copy className="h-3.5 w-3.5" />
                     {t('courses.live.copyLink')}
                   </Button>
@@ -116,9 +102,7 @@ export function NextSessionCard({
           </>
         ) : (
           <p className="text-sm text-muted-foreground">
-            {progress.total
-              ? t('courses.live.allSessionsDone')
-              : t('courses.live.noSessionsYet')}
+            {progress.total ? t('courses.live.allSessionsDone') : t('courses.live.noSessionsYet')}
           </p>
         )}
 
@@ -126,7 +110,7 @@ export function NextSessionCard({
           <p className="text-xs text-muted-foreground">
             {t('courses.live.sessionsDone', {
               done: formatNumber(progress.done),
-              total: formatNumber(progress.total)
+              total: formatNumber(progress.total),
             })}
           </p>
           <div

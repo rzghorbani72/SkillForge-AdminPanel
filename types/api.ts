@@ -53,11 +53,7 @@ export interface User {
   profiles?: UserProfile[];
 }
 
-export type PlatformStaffRoleName =
-  | 'PLATFORM_OWNER'
-  | 'ADMIN'
-  | 'FINANCE'
-  | 'SUPPORT';
+export type PlatformStaffRoleName = 'PLATFORM_OWNER' | 'ADMIN' | 'FINANCE' | 'SUPPORT';
 
 export interface PlatformStaffRecord {
   id: string;
@@ -259,8 +255,7 @@ export interface Academy {
   deleted_at?: string;
   domain?: Domain;
   /** Present when API returns Prisma relation casing */
-  Domain?: Pick<Domain, 'private_address' | 'public_address' | 'id'> &
-    Partial<Domain>;
+  Domain?: Pick<Domain, 'private_address' | 'public_address' | 'id'> & Partial<Domain>;
   logo?: { id: string; publicUrl: string } | null;
   favicon?: { id: string; publicUrl: string } | null;
   /** Manager-authored search/share metadata for the public site. */
@@ -448,13 +443,7 @@ export interface Order {
     | 'REFUNDED';
   payment_status: 'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED' | 'REFUNDED';
   payment_id?: number;
-  shipping_status?:
-    | 'PENDING'
-    | 'PREPARING'
-    | 'SHIPPED'
-    | 'IN_TRANSIT'
-    | 'DELIVERED'
-    | 'RETURNED';
+  shipping_status?: 'PENDING' | 'PREPARING' | 'SHIPPED' | 'IN_TRANSIT' | 'DELIVERED' | 'RETURNED';
   tracking_number?: string;
   notes?: string;
   created_at: string;
@@ -571,12 +560,7 @@ export interface Lesson {
 }
 
 // Media Types
-export type VideoHlsStatus =
-  | 'PENDING'
-  | 'PROCESSING'
-  | 'READY'
-  | 'FAILED'
-  | 'SKIPPED';
+export type VideoHlsStatus = 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED' | 'SKIPPED';
 
 export interface Video {
   id: number;
@@ -621,16 +605,7 @@ export interface Category {
   id: number;
   name: string;
   description?: string;
-  type:
-    | 'COURSE'
-    | 'ARTICLE'
-    | 'BLOG'
-    | 'NEWS'
-    | 'VIDEO'
-    | 'AUDIO'
-    | 'DOCUMENT'
-    | 'IMAGE'
-    | 'ROOT';
+  type: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'IMAGE' | 'ROOT';
   parent_id?: number;
   is_active: boolean;
   created_at: string;
@@ -698,13 +673,7 @@ export interface Payment {
   order_id?: number | null;
   amount: number;
   currency: string;
-  status:
-    | 'PENDING'
-    | 'PAID'
-    | 'COMPLETED'
-    | 'FAILED'
-    | 'CANCELLED'
-    | 'REFUNDED';
+  status: 'PENDING' | 'PAID' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'REFUNDED';
   method?:
     | 'CREDIT_CARD'
     | 'DEBIT_CARD'
@@ -937,16 +906,7 @@ export interface CreateSeasonData {
 export interface CreateCategoryData {
   name: string;
   description?: string;
-  type?:
-    | 'COURSE'
-    | 'ARTICLE'
-    | 'BLOG'
-    | 'NEWS'
-    | 'VIDEO'
-    | 'AUDIO'
-    | 'DOCUMENT'
-    | 'IMAGE'
-    | 'ROOT';
+  type?: 'COURSE' | 'ARTICLE' | 'BLOG' | 'NEWS' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'IMAGE' | 'ROOT';
 }
 
 export interface UpdateProfileData {
@@ -1060,13 +1020,7 @@ export type FormulaTemplate =
   | 'FIXED_AMOUNT'
   | 'PERCENTAGE_BONUS'
   | 'CUSTOM';
-export type FormulaOperation =
-  | 'ADD'
-  | 'SUBTRACT'
-  | 'MULTIPLY'
-  | 'DIVIDE'
-  | 'PERCENTAGE'
-  | 'FIXED';
+export type FormulaOperation = 'ADD' | 'SUBTRACT' | 'MULTIPLY' | 'DIVIDE' | 'PERCENTAGE' | 'FIXED';
 export type FormulaVariable = 'REVENUE' | 'COST' | 'PROFIT' | 'FINAL_PROFIT';
 
 export interface FormulaStep {
@@ -1137,12 +1091,7 @@ export interface PlatformFinancialSummary {
   platform_commission_rate?: number;
 }
 
-export type OfferingType =
-  | 'FREE'
-  | 'ONE_TIME'
-  | 'SUBSCRIPTION'
-  | 'PRIVATE'
-  | 'PAYMENT_PLAN';
+export type OfferingType = 'FREE' | 'ONE_TIME' | 'SUBSCRIPTION' | 'PRIVATE' | 'PAYMENT_PLAN';
 
 export interface OfferCourseRef {
   Course: { id: string; title: string; slug: string };

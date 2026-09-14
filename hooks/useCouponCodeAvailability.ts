@@ -25,7 +25,7 @@ export function useCouponCodeAvailability({
   excludeId,
   takenMessage,
   onAvailable,
-  onTaken
+  onTaken,
 }: UseCouponCodeAvailabilityParams) {
   useEffect(() => {
     if (!enabled) {
@@ -51,7 +51,7 @@ export function useCouponCodeAvailability({
           start_date: startDate,
           end_date: endDate,
           academy_id: academyId?.trim() || undefined,
-          exclude_id: excludeId
+          exclude_id: excludeId,
         });
 
         if (cancelled) return;
@@ -70,15 +70,5 @@ export function useCouponCodeAvailability({
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [
-    enabled,
-    code,
-    startDate,
-    endDate,
-    academyId,
-    excludeId,
-    takenMessage,
-    onAvailable,
-    onTaken
-  ]);
+  }, [enabled, code, startDate, endDate, academyId, excludeId, takenMessage, onAvailable, onTaken]);
 }

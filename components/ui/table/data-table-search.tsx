@@ -10,11 +10,11 @@ interface DataTableSearchProps {
   searchQuery: string;
   setSearchQuery: (
     value: string | ((old: string) => string | null) | null,
-    options?: Options<unknown> | undefined
+    options?: Options<unknown> | undefined,
   ) => Promise<URLSearchParams>;
   setPage: <Shallow>(
     value: number | ((old: number) => number | null) | null,
-    options?: Options<Shallow> | undefined
+    options?: Options<Shallow> | undefined,
   ) => Promise<URLSearchParams>;
 }
 
@@ -22,7 +22,7 @@ export function DataTableSearch({
   searchKey,
   searchQuery,
   setSearchQuery,
-  setPage
+  setPage,
 }: DataTableSearchProps) {
   const [isLoading, startTransition] = useTransition();
 

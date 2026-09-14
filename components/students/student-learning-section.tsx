@@ -7,7 +7,7 @@ import type { Enrollment } from '@/types/api';
 import type {
   AssignmentSubmission,
   LearningActivity,
-  LearningSummaryEnrollment
+  LearningSummaryEnrollment,
 } from '@/types/learning-operations';
 import { StudentLearningPanel } from './student-learning-panel';
 
@@ -19,9 +19,7 @@ export function StudentLearningSection({ profileId }: { profileId: string }) {
   const { t } = useTranslation();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
-  const [summaryEnrollments, setSummaryEnrollments] = useState<
-    LearningSummaryEnrollment[]
-  >([]);
+  const [summaryEnrollments, setSummaryEnrollments] = useState<LearningSummaryEnrollment[]>([]);
   const [timeline, setTimeline] = useState<LearningActivity[]>([]);
   const [learningUnavailable, setLearningUnavailable] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -36,7 +34,7 @@ export function StudentLearningSection({ profileId }: { profileId: string }) {
       const enrollmentResponse = await apiClient.getEnrollments({
         profile_id: profileId,
         page: 1,
-        limit: 100
+        limit: 100,
       });
       const studentEnrollments = enrollmentResponse.enrollments ?? [];
       setEnrollments(studentEnrollments);
@@ -46,14 +44,14 @@ export function StudentLearningSection({ profileId }: { profileId: string }) {
           apiClient.getSubmissions({
             enrollment_id: enrollment.id,
             page: 1,
-            limit: 100
-          })
-        )
+            limit: 100,
+          }),
+        ),
       );
       setSubmissions(
         submissionResults.flatMap((result) =>
-          result.status === 'fulfilled' ? result.value.submissions : []
-        )
+          result.status === 'fulfilled' ? result.value.submissions : [],
+        ),
       );
 
       const [summaryResult, timelineResult] = await Promise.allSettled([
@@ -61,8 +59,8 @@ export function StudentLearningSection({ profileId }: { profileId: string }) {
         apiClient.getLearningTimeline({
           profile_id: profileId,
           page: 1,
-          limit: 30
-        })
+          limit: 30,
+        }),
       ]);
 
       if (summaryResult.status === 'fulfilled') {
@@ -104,9 +102,7 @@ export function StudentLearningSection({ profileId }: { profileId: string }) {
 
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold">
-        {t('learningOperations.workspace')}
-      </h2>
+      <h2 className="text-lg font-semibold">{t('learningOperations.workspace')}</h2>
       <StudentLearningPanel
         enrollments={enrollments}
         submissions={submissions}

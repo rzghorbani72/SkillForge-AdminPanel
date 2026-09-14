@@ -20,14 +20,13 @@ export function GroupTermRange({ group }: GroupTermRangeProps) {
   const endsOn = group.ends_on;
 
   if (!startsOn) return <>{t('courses.live.startDateMissing')}</>;
-  if (!endsOn)
-    return <>{t('courses.live.startsOn', { date: formatDate(startsOn) })}</>;
+  if (!endsOn) return <>{t('courses.live.startsOn', { date: formatDate(startsOn) })}</>;
 
   return (
     <>
       {t('courses.live.termRange', {
         from: formatDate(startsOn),
-        to: formatDate(endsOn)
+        to: formatDate(endsOn),
       })}
     </>
   );

@@ -9,7 +9,7 @@ export type AuthTab = 'login' | 'register' | 'forgot';
 const TABS: { key: AuthTab; href: string; labelKey: string }[] = [
   { key: 'login', href: '/login', labelKey: 'auth.signIn' },
   { key: 'register', href: '/register', labelKey: 'auth.register' },
-  { key: 'forgot', href: '/forget-password', labelKey: 'auth.forgotTab' }
+  { key: 'forgot', href: '/forget-password', labelKey: 'auth.forgotTab' },
 ];
 
 export function AuthTabs({ active }: { active: AuthTab }) {
@@ -25,7 +25,7 @@ export function AuthTabs({ active }: { active: AuthTab }) {
             'rounded-lg py-2 text-center text-sm font-medium transition-colors',
             tab.key === active
               ? 'bg-card text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
+              : 'text-muted-foreground hover:text-foreground',
           )}
         >
           {t(tab.labelKey)}

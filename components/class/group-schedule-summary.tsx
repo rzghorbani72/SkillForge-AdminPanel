@@ -25,7 +25,7 @@ export const GroupScheduleSummary = ({
   slots,
   startsOn,
   timezone,
-  className
+  className,
 }: GroupScheduleSummaryProps) => {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
@@ -41,14 +41,11 @@ export const GroupScheduleSummary = ({
   };
 
   const from = startsOn ? new Date(startsOn) : null;
-  const zone =
-    timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC';
+  const zone = timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC';
 
   const firstMeeting = (slot: TutoringGroupSlot) => {
     if (!from || Number.isNaN(from.getTime())) return null;
-    return formatDate(
-      nextWeekdayTime(zone, slot.weekday, slot.start_minute, from)
-    );
+    return formatDate(nextWeekdayTime(zone, slot.weekday, slot.start_minute, from));
   };
 
   if (!slots?.length) return <span className="text-muted-foreground">—</span>;
@@ -65,8 +62,7 @@ export const GroupScheduleSummary = ({
             {t(WEEKDAY_LABEL_KEYS[slot.weekday])}
             {date ? <span>{date}</span> : null}
             <span dir="ltr" className="inline-block tabular-nums">
-              {clock(slot.start_minute)}–
-              {clock(slot.start_minute + slot.duration_minutes)}
+              {clock(slot.start_minute)}–{clock(slot.start_minute + slot.duration_minutes)}
             </span>
           </span>
         );

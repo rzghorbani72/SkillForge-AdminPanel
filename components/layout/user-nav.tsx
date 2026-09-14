@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { useStore } from '@/hooks/useStore';
@@ -19,15 +19,7 @@ import { isPlatformStaff } from '@/lib/roles';
 import { signOut } from '@/lib/sign-out';
 import { KYC_IDENTITY_PATH } from '@/lib/kyc-error';
 import { KycStatusBadge } from '@/components/settings/kyc/kyc-readonly-panel';
-import {
-  Banknote,
-  Building2,
-  ChevronDown,
-  LifeBuoy,
-  LogOut,
-  Settings,
-  User
-} from 'lucide-react';
+import { Banknote, Building2, ChevronDown, LifeBuoy, LogOut, Settings, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatIdentifierDisplay } from '@/lib/format-identifier';
@@ -62,19 +54,15 @@ export function UserNav() {
   // Everything except the profile and signing out needs a tenant, so a user who
   // has not created an academy yet would only reach a blocked page. Assume an
   // academy while the list loads: hiding then re-showing the items flickers.
-  const hasAcademyContext =
-    academiesLoading || academies.length > 0 || isPlatformStaff(user);
+  const hasAcademyContext = academiesLoading || academies.length > 0 || isPlatformStaff(user);
 
-  const canSeeSettlement =
-    hasAcademyContext && SETTLEMENT_ROLES.includes(roleName);
+  const canSeeSettlement = hasAcademyContext && SETTLEMENT_ROLES.includes(roleName);
   const canSeeMyAcademies = MY_ACADEMIES_ROLES.includes(roleName);
 
   const roleLabel = roleName ? t(`userNav.roles.${roleName}`) || roleName : '';
   const avatarUrl = user?.avatarUrl ?? null;
   const headingName = user?.displayName ?? '';
-  const initials = headingName
-    ? getInitials(headingName)
-    : (roleName?.[0]?.toUpperCase() ?? 'U');
+  const initials = headingName ? getInitials(headingName) : (roleName?.[0]?.toUpperCase() ?? 'U');
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -89,7 +77,7 @@ export function UserNav() {
           className={cn(
             'flex items-center gap-2 rounded-xl px-2 py-1.5',
             'text-sm transition-colors hover:bg-muted',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40'
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
           )}
         >
           <Avatar className="h-8 w-8 ring-2 ring-primary/20">
@@ -101,9 +89,7 @@ export function UserNav() {
 
           {/* Name + role — hidden on mobile */}
           <div className="hidden flex-col items-start sm:flex">
-            <span className="font-medium leading-tight text-foreground">
-              {headingName}
-            </span>
+            <span className="font-medium leading-tight text-foreground">{headingName}</span>
           </div>
 
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
@@ -112,12 +98,7 @@ export function UserNav() {
 
       {/* Narrow enough to sit flush under the trigger instead of overhanging
           it — the trigger already shows the avatar, so it is not repeated. */}
-      <DropdownMenuContent
-        className="w-56 bg-popover p-2"
-        align="start"
-        sideOffset={8}
-        forceMount
-      >
+      <DropdownMenuContent className="w-56 bg-popover p-2" align="start" sideOffset={8} forceMount>
         {/* User info header */}
         <DropdownMenuLabel className="p-3 font-normal">
           <div className="flex min-w-0 flex-col gap-2">
@@ -139,19 +120,12 @@ export function UserNav() {
 
         <DropdownMenuItem
           className="cursor-pointer gap-2.5 py-2"
-          onClick={() =>
-            router.push(showKyc ? KYC_IDENTITY_PATH : '/settings/profile')
-          }
+          onClick={() => router.push(showKyc ? KYC_IDENTITY_PATH : '/settings/profile')}
         >
           <User className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <span className="min-w-0 flex-1 truncate">
-            {t('userNav.profile')}
-          </span>
+          <span className="min-w-0 flex-1 truncate">{t('userNav.profile')}</span>
           {kycState ? (
-            <KycStatusBadge
-              status={kycState.status}
-              complete={kycState.settlement_eligible}
-            />
+            <KycStatusBadge status={kycState.status} complete={kycState.settlement_eligible} />
           ) : null}
         </DropdownMenuItem>
 
@@ -203,9 +177,7 @@ export function UserNav() {
           disabled={isLoggingOut}
         >
           <LogOut className="h-4 w-4 shrink-0" />
-          <span>
-            {isLoggingOut ? t('userNav.loggingOut') : t('userNav.logout')}
-          </span>
+          <span>{isLoggingOut ? t('userNav.loggingOut') : t('userNav.logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

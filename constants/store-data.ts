@@ -16,7 +16,7 @@ export const users: User[] = [
     company: 'Dell',
     role: 'Frontend Developer',
     verified: false,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ export const users: User[] = [
     company: 'TechCorp',
     role: 'Backend Developer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 3,
@@ -32,7 +32,7 @@ export const users: User[] = [
     company: 'WebTech',
     role: 'UI Designer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 4,
@@ -40,7 +40,7 @@ export const users: User[] = [
     company: 'Innovate Inc.',
     role: 'Fullstack Developer',
     verified: false,
-    status: 'Inactive'
+    status: 'Inactive',
   },
   {
     id: 5,
@@ -48,7 +48,7 @@ export const users: User[] = [
     company: 'TechGuru',
     role: 'Product Manager',
     verified: true,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 6,
@@ -56,7 +56,7 @@ export const users: User[] = [
     company: 'CodeGenius',
     role: 'QA Engineer',
     verified: false,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 7,
@@ -64,7 +64,7 @@ export const users: User[] = [
     company: 'SoftWorks',
     role: 'UX Designer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 8,
@@ -72,7 +72,7 @@ export const users: User[] = [
     company: 'DevCraft',
     role: 'DevOps Engineer',
     verified: false,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 9,
@@ -80,7 +80,7 @@ export const users: User[] = [
     company: 'WebSolutions',
     role: 'Frontend Developer',
     verified: true,
-    status: 'Active'
+    status: 'Active',
   },
   {
     id: 10,
@@ -88,8 +88,8 @@ export const users: User[] = [
     company: 'DataTech',
     role: 'Data Analyst',
     verified: false,
-    status: 'Active'
-  }
+    status: 'Active',
+  },
 ];
 
 export type Employee = {
@@ -127,36 +127,36 @@ export const navItems: NavItem[] = [
     title: 'Academies',
     href: '/academies',
     icon: 'dashboard' as IconType,
-    label: 'academies'
+    label: 'academies',
   },
   {
     title: 'Employee',
     href: '/academies/:academyId/employee',
     icon: 'user' as IconType,
-    label: 'employee'
+    label: 'employee',
   },
   {
     title: 'Course',
     href: '/academies/:academyId/course',
     icon: 'course' as IconType,
-    label: 'course'
+    label: 'course',
   },
   {
     title: 'Article',
     href: '/academies/:academyId/article',
     icon: 'article' as IconType,
-    label: 'article'
+    label: 'article',
   },
   {
     title: 'Profile',
     href: '/academies/:academyId/profile',
     icon: 'userPen' as IconType,
-    label: 'profile'
+    label: 'profile',
   },
   {
     title: 'Logout',
     href: '/',
     icon: 'logout' as IconType,
-    label: 'logout'
-  }
+    label: 'logout',
+  },
 ];

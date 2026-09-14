@@ -14,7 +14,7 @@ const PLAN_DISPLAY_NAMES_FA: Record<string, string> = {
   pro: 'بیزینس',
   professional: 'بیزینس',
   enterprise: 'بیزینس',
-  custom: 'سفارشی'
+  custom: 'سفارشی',
 };
 
 export function getPlanDisplayName(slug?: string | null): string | null {

@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { CourseFormData } from '../schema';
@@ -33,9 +33,7 @@ export function BasePriceDialog({ open, onOpenChange, form }: Props) {
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t('courses.editBasePrice')}</DialogTitle>
-          <DialogDescription>
-            {t('courses.basePriceDialogHint')}
-          </DialogDescription>
+          <DialogDescription>{t('courses.basePriceDialogHint')}</DialogDescription>
         </DialogHeader>
 
         <CoursePriceFields form={form} />

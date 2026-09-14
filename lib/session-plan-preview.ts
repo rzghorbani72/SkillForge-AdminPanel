@@ -17,17 +17,16 @@ const offsetAt = (at: Date, timeZone: string): number => {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false
+    hour12: false,
   }).formatToParts(at);
-  const get = (type: string) =>
-    Number(parts.find((part) => part.type === type)?.value ?? '0');
+  const get = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? '0');
   const asUtc = Date.UTC(
     get('year'),
     get('month') - 1,
     get('day'),
     get('hour') % 24,
     get('minute'),
-    get('second')
+    get('second'),
   );
   return asUtc - at.getTime();
 };
@@ -40,7 +39,7 @@ const localDateOf = (at: Date, timeZone: string) => {
     month: local.getUTCMonth() + 1,
     day: local.getUTCDate(),
     weekday: local.getUTCDay(),
-    minutes: local.getUTCHours() * 60 + local.getUTCMinutes()
+    minutes: local.getUTCHours() * 60 + local.getUTCMinutes(),
   };
 };
 
@@ -54,7 +53,7 @@ const instantOf = (
   month: number,
   day: number,
   minutes: number,
-  timeZone: string
+  timeZone: string,
 ): Date => {
   const wallClock = Date.UTC(year, month - 1, day) + minutes * MINUTE_MS;
   const firstGuess = wallClock - offsetAt(new Date(wallClock), timeZone);
@@ -70,25 +69,13 @@ export const nextWeekdayTime = (
   timeZone: string,
   weekday: number,
   startMinute: number,
-  from: Date
+  from: Date,
 ): Date => {
   const here = localDateOf(from, timeZone);
   const daysAhead = (weekday - here.weekday + 7) % 7;
-  const at = instantOf(
-    here.year,
-    here.month,
-    here.day + daysAhead,
-    startMinute,
-    timeZone
-  );
+  const at = instantOf(here.year, here.month, here.day + daysAhead, startMinute, timeZone);
   if (at.getTime() >= from.getTime()) return at;
-  return instantOf(
-    here.year,
-    here.month,
-    here.day + daysAhead + 7,
-    startMinute,
-    timeZone
-  );
+  return instantOf(here.year, here.month, here.day + daysAhead + 7, startMinute, timeZone);
 };
 
 /**
@@ -105,17 +92,12 @@ export const previewSessionDates = (
   slots: TutoringGroupSlot[],
   sessionCount: number,
   startsOn: Date,
-  timeZone: string
+  timeZone: string,
 ): Date[] => {
   if (!slots.length || sessionCount < 1) return [];
 
   const pending = slots.map((slot) => ({
-    at: nextWeekdayTime(
-      timeZone,
-      slot.weekday,
-      slot.start_minute,
-      startsOn
-    ).getTime()
+    at: nextWeekdayTime(timeZone, slot.weekday, slot.start_minute, startsOn).getTime(),
   }));
 
   const planned: number[] = [];

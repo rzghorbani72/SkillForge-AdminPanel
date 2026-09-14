@@ -1,11 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  DataList,
-  DataPanel,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -21,7 +17,7 @@ const SORT_KEYS: readonly SortKey[] = ['gross', 'net', 'students'];
 const SORT_LABEL: Record<SortKey, string> = {
   gross: 'dashboard.money.sortGross',
   net: 'dashboard.money.sortNet',
-  students: 'dashboard.money.sortStudents'
+  students: 'dashboard.money.sortStudents',
 };
 
 type Props = { rows: CourseMoneyRow[]; isLoading?: boolean };
@@ -36,12 +32,11 @@ export default function CourseMoneyTable({ rows, isLoading }: Props) {
   const percent = usePercentLabel();
   const [sortKey, setSortKey] = useState<SortKey>('gross');
 
-  const money = (value: number) =>
-    formatCurrencyWithStore(value, academy, undefined, language);
+  const money = (value: number) => formatCurrencyWithStore(value, academy, undefined, language);
 
   const sorted = useMemo(
     () => [...rows].sort((a, b) => b[sortKey] - a[sortKey]).slice(0, 10),
-    [rows, sortKey]
+    [rows, sortKey],
   );
 
   const columns: DataColumn<CourseMoneyRow>[] = [
@@ -52,46 +47,42 @@ export default function CourseMoneyTable({ rows, isLoading }: Props) {
         <div className="min-w-0">
           <p className="truncate font-medium">{row.title}</p>
           {row.teacher_name ? (
-            <p className="truncate text-xs text-muted-foreground">
-              {row.teacher_name}
-            </p>
+            <p className="truncate text-xs text-muted-foreground">{row.teacher_name}</p>
           ) : null}
         </div>
-      )
+      ),
     },
     {
       id: 'students',
       header: t('dashboard.money.colStudents'),
-      cell: (row) => formatNumber(row.students, language)
+      cell: (row) => formatNumber(row.students, language),
     },
     {
       id: 'sales',
       header: t('dashboard.money.colSales'),
-      cell: (row) => formatNumber(row.sales, language)
+      cell: (row) => formatNumber(row.sales, language),
     },
     {
       id: 'gross',
       header: t('dashboard.money.colGross'),
-      cell: (row) => money(row.gross)
+      cell: (row) => money(row.gross),
     },
     {
       id: 'payout',
       header: t('dashboard.money.colPayout'),
-      cell: (row) => money(row.teacher_payout)
+      cell: (row) => money(row.teacher_payout),
     },
     {
       id: 'net',
       header: t('dashboard.money.colNet'),
-      cell: (row) => <span className="font-semibold">{money(row.net)}</span>
+      cell: (row) => <span className="font-semibold">{money(row.net)}</span>,
     },
     {
       id: 'progress',
       header: t('dashboard.money.colProgress'),
       align: 'end',
-      cell: (row) => (
-        <Badge variant="secondary">{percent(row.avg_progress)}</Badge>
-      )
-    }
+      cell: (row) => <Badge variant="secondary">{percent(row.avg_progress)}</Badge>,
+    },
   ];
 
   return (

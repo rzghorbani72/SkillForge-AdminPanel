@@ -1,18 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  CalendarDays,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
+import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { CalendarPeriod } from '@/hooks/useCalendarPeriod';
@@ -29,14 +20,7 @@ interface PeriodPickerProps {
  * `useCalendarPeriod()` on any screen that filters by a period.
  */
 export function PeriodPicker({ period, className }: PeriodPickerProps) {
-  const {
-    year,
-    month,
-    years,
-    months,
-    setYear: onYearChange,
-    setMonth: onMonthChange
-  } = period;
+  const { year, month, years, months, setYear: onYearChange, setMonth: onMonthChange } = period;
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const formatNumber = useNumberFormat();
@@ -48,12 +32,9 @@ export function PeriodPicker({ period, className }: PeriodPickerProps) {
     .filter((entry) => entry.year === year)
     .sort((a, b) => a.month - b.month);
 
-  const yearLabel = (value: number) =>
-    formatNumber(value, { useGrouping: false });
+  const yearLabel = (value: number) => formatNumber(value, { useGrouping: false });
 
-  const selected = months.find(
-    (entry) => entry.year === year && entry.month === month
-  );
+  const selected = months.find((entry) => entry.year === year && entry.month === month);
 
   const triggerLabel = selected
     ? `${selected.label} ${yearLabel(year)}`
@@ -61,9 +42,7 @@ export function PeriodPicker({ period, className }: PeriodPickerProps) {
 
   const goToYear = (next: number) => {
     onYearChange(next);
-    const stillExists = months.some(
-      (entry) => entry.year === next && entry.month === month
-    );
+    const stillExists = months.some((entry) => entry.year === next && entry.month === month);
     if (!stillExists) onMonthChange(null);
   };
 
@@ -77,9 +56,7 @@ export function PeriodPicker({ period, className }: PeriodPickerProps) {
   const chipClass = (active: boolean) =>
     cn(
       'h-8 rounded-md text-[13px] transition-colors',
-      active
-        ? 'bg-primary font-medium text-primary-foreground'
-        : 'hover:bg-muted'
+      active ? 'bg-primary font-medium text-primary-foreground' : 'hover:bg-muted',
     );
 
   return (
@@ -94,9 +71,7 @@ export function PeriodPicker({ period, className }: PeriodPickerProps) {
 
       <PopoverContent align="end" sideOffset={8} className="w-[19rem] p-0">
         <div className="flex items-center justify-between border-b px-3 py-2">
-          <span className="text-xs font-medium text-muted-foreground">
-            {t('period.heading')}
-          </span>
+          <span className="text-xs font-medium text-muted-foreground">{t('period.heading')}</span>
           <button
             type="button"
             className="text-xs font-medium text-primary hover:underline"
@@ -120,9 +95,7 @@ export function PeriodPicker({ period, className }: PeriodPickerProps) {
           >
             <OlderIcon className="h-4 w-4" />
           </Button>
-          <span className="text-sm font-semibold tabular-nums">
-            {yearLabel(year)}
-          </span>
+          <span className="text-sm font-semibold tabular-nums">{yearLabel(year)}</span>
           <Button
             variant="ghost"
             size="icon"

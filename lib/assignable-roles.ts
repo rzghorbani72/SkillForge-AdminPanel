@@ -14,9 +14,7 @@ type RoleOption = {
  * student. Matched by rank rather than by name so an academy's own
  * student-rank role (STUDENT_1, ...) wins too.
  */
-export function defaultAssignableRole(
-  roles: readonly RoleOption[]
-): string | undefined {
+export function defaultAssignableRole(roles: readonly RoleOption[]): string | undefined {
   const student =
     roles.find((role) => role.name === 'STUDENT') ??
     roles.find((role) => role.hierarchy_level === STUDENT_HIERARCHY_LEVEL);

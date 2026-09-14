@@ -30,11 +30,7 @@ export interface NavItem {
   paymentGated?: boolean;
   /** Keep this group even when only one child survives filtering. */
   keepGrouped?: boolean;
-  requiresLearningCapability?:
-    | 'students'
-    | 'assignments'
-    | 'ops_queue'
-    | 'tutoring';
+  requiresLearningCapability?: 'students' | 'assignments' | 'ops_queue' | 'tutoring';
 }
 
 export interface NavItemWithChildren extends NavItem {
@@ -61,11 +57,7 @@ export type SidebarNavItem = NavItemWithChildren;
 // Dashboard activity types
 export interface ActivityItem {
   id: number;
-  type:
-    | 'course_created'
-    | 'student_enrolled'
-    | 'payment_received'
-    | 'lesson_completed';
+  type: 'course_created' | 'student_enrolled' | 'payment_received' | 'lesson_completed';
   title: string;
   description: string;
   timestamp: string;

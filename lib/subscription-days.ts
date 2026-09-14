@@ -1,12 +1,6 @@
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export type SubscriptionUiStatus =
-  | 'ACTIVE'
-  | 'GRACE'
-  | 'EXPIRED'
-  | 'INACTIVE'
-  | string
-  | undefined;
+export type SubscriptionUiStatus = 'ACTIVE' | 'GRACE' | 'EXPIRED' | 'INACTIVE' | string | undefined;
 
 export function computeSubscriptionDaysRemaining(input: {
   subscriptionExpires: string | null | undefined;
@@ -28,10 +22,7 @@ export function computeSubscriptionDaysRemaining(input: {
     if (!input.graceUntil) return 0;
     const deadline = new Date(input.graceUntil);
     if (Number.isNaN(deadline.getTime())) return 0;
-    return Math.max(
-      0,
-      Math.ceil((deadline.getTime() - now.getTime()) / DAY_MS)
-    );
+    return Math.max(0, Math.ceil((deadline.getTime() - now.getTime()) / DAY_MS));
   }
 
   const expires = new Date(input.subscriptionExpires);

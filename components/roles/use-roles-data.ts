@@ -10,7 +10,7 @@ import type { PermissionCatalog, PlatformRole } from '@/types/roles';
 // ROLE_CREATION_CAP in Backend/src/roles/permission-catalog.ts).
 const CREATION_CAP_ROLE: Record<string, string> = {
   ADMIN: 'MANAGER',
-  MANAGER: 'TEACHER'
+  MANAGER: 'TEACHER',
 };
 
 const OWNER_MAX_CUSTOM_LEVEL = 5;
@@ -36,7 +36,7 @@ export function useRolesData(currentRole?: string): UseRolesDataResult {
       setLoading(true);
       const [rolesRes, catalogRes] = await Promise.all([
         apiClient.getPlatformRoles(),
-        apiClient.getPermissionCatalog()
+        apiClient.getPermissionCatalog(),
       ]);
       setRoles(rolesRes.roles);
       setCatalog(catalogRes);
@@ -53,7 +53,7 @@ export function useRolesData(currentRole?: string): UseRolesDataResult {
 
   const ownLevel = useMemo(
     () => roles.find((role) => role.name === currentRole)?.hierarchy_level ?? 0,
-    [roles, currentRole]
+    [roles, currentRole],
   );
 
   const capLevel = useMemo(() => {
@@ -62,14 +62,9 @@ export function useRolesData(currentRole?: string): UseRolesDataResult {
     if (!capRoleName) {
       // No cap role means PLATFORM_OWNER; anyone else falls back to their own
       // rank rather than to the widest ceiling.
-      return currentRole === 'PLATFORM_OWNER'
-        ? OWNER_MAX_CUSTOM_LEVEL
-        : ownLevel;
+      return currentRole === 'PLATFORM_OWNER' ? OWNER_MAX_CUSTOM_LEVEL : ownLevel;
     }
-    return (
-      roles.find((role) => role.name === capRoleName)?.hierarchy_level ??
-      ownLevel
-    );
+    return roles.find((role) => role.name === capRoleName)?.hierarchy_level ?? ownLevel;
   }, [roles, currentRole, ownLevel]);
 
   return { roles, catalog, loading, reload, capLevel, ownLevel };
@@ -80,22 +75,15 @@ export function useRolesData(currentRole?: string): UseRolesDataResult {
  * ones a manager works with. The built-in platform roles come after, ranked high
  * to low.
  */
-export function sortRoles(
-  roles: PlatformRole[],
-  currentRole?: string
-): PlatformRole[] {
+export function sortRoles(roles: PlatformRole[], currentRole?: string): PlatformRole[] {
   return [...roles].sort((a, b) => {
     const aIsOwn = a.name === currentRole;
     const bIsOwn = b.name === currentRole;
     if (aIsOwn !== bIsOwn) return aIsOwn ? -1 : 1;
     if (a.is_system !== b.is_system) return a.is_system ? 1 : -1;
     if (!a.is_system) {
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     }
-    return (
-      b.hierarchy_level - a.hierarchy_level || a.name.localeCompare(b.name)
-    );
+    return b.hierarchy_level - a.hierarchy_level || a.name.localeCompare(b.name);
   });
 }

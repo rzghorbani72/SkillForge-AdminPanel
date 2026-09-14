@@ -10,7 +10,7 @@ import {
   getDefaultLanguageForCountry,
   getLanguageConfig,
   isRTL,
-  getTextDirection
+  getTextDirection,
 } from './config';
 import type { LanguageCode, TextDirection } from './config';
 
@@ -20,7 +20,7 @@ import type { LanguageCode, TextDirection } from './config';
  */
 export function getAdminLanguage(
   userLanguage?: string | null,
-  countryCode?: string | null
+  countryCode?: string | null,
 ): LanguageCode {
   if (userLanguage) {
     const validLanguage = userLanguage.toLowerCase() as LanguageCode;
@@ -39,7 +39,7 @@ export function getAdminLanguage(
       'ko',
       'hi',
       'ur',
-      'he'
+      'he',
     ];
     if (supportedLanguages.includes(validLanguage)) {
       return validLanguage;
@@ -66,7 +66,7 @@ export function getAdminLanguage(
  */
 export function getAdminDirection(
   userLanguage?: string | null,
-  countryCode?: string | null
+  countryCode?: string | null,
 ): TextDirection {
   const language = getAdminLanguage(userLanguage, countryCode);
   return getTextDirection(language);
@@ -75,10 +75,7 @@ export function getAdminDirection(
 /**
  * Check if admin panel uses RTL
  */
-export function isAdminRTL(
-  userLanguage?: string | null,
-  countryCode?: string | null
-): boolean {
+export function isAdminRTL(userLanguage?: string | null, countryCode?: string | null): boolean {
   const language = getAdminLanguage(userLanguage, countryCode);
   return isRTL(language);
 }
@@ -86,10 +83,7 @@ export function isAdminRTL(
 /**
  * Get full language configuration for admin panel
  */
-export function getAdminLanguageConfig(
-  userLanguage?: string | null,
-  countryCode?: string | null
-) {
+export function getAdminLanguageConfig(userLanguage?: string | null, countryCode?: string | null) {
   const language = getAdminLanguage(userLanguage, countryCode);
   return getLanguageConfig(language);
 }

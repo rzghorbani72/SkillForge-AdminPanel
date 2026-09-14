@@ -7,7 +7,7 @@ import type {
   HeadingScale,
   SectionSpacing,
   Shadow,
-  TextDirection
+  TextDirection,
 } from '@/components/ui-template/sidebar-types';
 
 /** Every style control the customizer owns, in one object. */
@@ -38,7 +38,7 @@ export function buildFullThemePayload(state: ThemeSyncState) {
     ...buildThemeDraftFromPrimary(state.primaryColor, {
       borderRadius: state.borderRadius,
       shadow: state.shadow,
-      backgroundSvgPattern: ''
+      backgroundSvgPattern: '',
     }),
     dark_mode: state.darkMode,
     element_animation_style: state.elementAnimation,
@@ -46,6 +46,6 @@ export function buildFullThemePayload(state: ThemeSyncState) {
     text_direction: state.textDirection,
     section_spacing: state.sectionSpacing,
     container_width: state.containerWidth,
-    heading_scale: state.headingScale
+    heading_scale: state.headingScale,
   };
 }

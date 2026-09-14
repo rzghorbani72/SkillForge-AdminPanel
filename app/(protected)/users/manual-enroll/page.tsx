@@ -1,30 +1,21 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import {
-  CourseSearchCombobox,
-  StudentProfileSearchCombobox
-} from '@/components/entity-search';
+import { CourseSearchCombobox, StudentProfileSearchCombobox } from '@/components/entity-search';
 import { Pagination } from '@/components/shared/Pagination';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -68,7 +59,7 @@ export default function ManualEnrollPage() {
       setIsLoading(true);
       const data = await apiClient.getEnrollments({
         page: currentPage,
-        limit: 15
+        limit: 15,
       });
       setEnrollments(data?.enrollments ?? []);
       setPagination(data?.pagination ?? null);
@@ -93,10 +84,10 @@ export default function ManualEnrollPage() {
         course_id: Number(courseId),
         profile_id: Number(profileId),
         paid_amount: paidAmount ? Number(paidAmount) : undefined,
-        payment_note: paymentNote || undefined
+        payment_note: paymentNote || undefined,
       });
       setLastSuccess(
-        `${result?.Profile?.display_name ?? profileId} — ${result?.Course?.title ?? courseId}`
+        `${result?.Profile?.display_name ?? profileId} — ${result?.Course?.title ?? courseId}`,
       );
       setCourseId('');
       setProfileId('');
@@ -126,31 +117,22 @@ export default function ManualEnrollPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('students.manualEnroll.title')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('students.manualEnroll.description')}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('students.manualEnroll.title')}</h1>
+        <p className="text-muted-foreground">{t('students.manualEnroll.description')}</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" />{' '}
-              {t('students.manualEnroll.enrollStudent')}
+              <UserPlus className="h-5 w-5" /> {t('students.manualEnroll.enrollStudent')}
             </CardTitle>
-            <CardDescription>
-              {t('students.manualEnroll.enrollStudentDescription')}
-            </CardDescription>
+            <CardDescription>{t('students.manualEnroll.enrollStudentDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleEnroll} className="space-y-4">
               <div>
-                <Label htmlFor="courseId">
-                  {t('students.manualEnroll.courseId')}
-                </Label>
+                <Label htmlFor="courseId">{t('students.manualEnroll.courseId')}</Label>
                 <CourseSearchCombobox
                   id="courseId"
                   value={courseId}
@@ -160,9 +142,7 @@ export default function ManualEnrollPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="profileId">
-                  {t('students.manualEnroll.studentProfileId')}
-                </Label>
+                <Label htmlFor="profileId">{t('students.manualEnroll.studentProfileId')}</Label>
                 <StudentProfileSearchCombobox
                   id="profileId"
                   value={profileId}
@@ -172,9 +152,7 @@ export default function ManualEnrollPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="paidAmount">
-                  {t('students.manualEnroll.amountPaid')}
-                </Label>
+                <Label htmlFor="paidAmount">{t('students.manualEnroll.amountPaid')}</Label>
                 <PriceInput
                   id="paidAmount"
                   value={paidAmount}
@@ -187,9 +165,7 @@ export default function ManualEnrollPage() {
                 </p>
               </div>
               <div>
-                <Label htmlFor="paymentNote">
-                  {t('students.manualEnroll.paymentNote')}
-                </Label>
+                <Label htmlFor="paymentNote">{t('students.manualEnroll.paymentNote')}</Label>
                 <Input
                   id="paymentNote"
                   value={paymentNote}
@@ -221,9 +197,7 @@ export default function ManualEnrollPage() {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>
-              {t('students.manualEnroll.recentEnrollments')}
-            </CardTitle>
+            <CardTitle>{t('students.manualEnroll.recentEnrollments')}</CardTitle>
             <CardDescription>
               {t('students.manualEnroll.recentEnrollmentsDescription')}
             </CardDescription>
@@ -249,10 +223,7 @@ export default function ManualEnrollPage() {
                     </TableRow>
                   ) : enrollments.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={5}
-                        className="h-32 text-center text-muted-foreground"
-                      >
+                      <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
                         {t('students.manualEnroll.noEnrollmentsFound')}
                       </TableCell>
                     </TableRow>
@@ -270,13 +241,10 @@ export default function ManualEnrollPage() {
                             <div className="flex items-center gap-1 text-xs">
                               <CreditCard className="h-3 w-3" />
                               <span>
-                                {formatNumber(e.Payment.amount / 10)}{' '}
-                                {t('common.toman')}
+                                {formatNumber(e.Payment.amount / 10)} {t('common.toman')}
                               </span>
                               <Badge variant="outline" className="text-xs">
-                                {getPaymentMethodLabel(
-                                  e.Payment.payment_method
-                                )}
+                                {getPaymentMethodLabel(e.Payment.payment_method)}
                               </Badge>
                             </div>
                           ) : (

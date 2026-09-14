@@ -19,9 +19,7 @@ export function pickAndUploadImage(): Promise<UploadedImage | null> {
         return;
       }
       try {
-        const uploaded = (await apiClient.uploadImage(
-          file
-        )) as UploadedImage | null;
+        const uploaded = (await apiClient.uploadImage(file)) as UploadedImage | null;
         resolve(uploaded ?? null);
       } catch (error) {
         ErrorHandler.handleApiError(error);

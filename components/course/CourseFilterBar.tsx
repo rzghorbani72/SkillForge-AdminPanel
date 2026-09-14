@@ -20,7 +20,7 @@ export function CourseFilterBar({
   searchTerm,
   onSearchChange,
   view,
-  onViewChange
+  onViewChange,
 }: CourseFilterBarProps) {
   const { t } = useTranslation();
 

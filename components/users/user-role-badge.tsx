@@ -13,7 +13,7 @@ export type RoleConfig = {
 export function UserRoleBadge({
   role,
   tone = 22,
-  onClick
+  onClick,
 }: {
   role?: string;
   tone?: number;
@@ -31,7 +31,7 @@ export function UserRoleBadge({
           width: 6,
           height: 6,
           borderRadius: '50%',
-          background: colors.dot
+          background: colors.dot,
         }}
       />
       {role}

@@ -34,7 +34,7 @@ export function MobileSidebar() {
       role: userRole,
       hasStore,
       learningVisibility,
-      hasAcademy
+      hasAcademy,
     });
     return withPendingSettlementBadge(items, pendingSettlements);
   }, [userRole, hasStore, learningVisibility, hasAcademy, pendingSettlements]);
@@ -51,10 +51,7 @@ export function MobileSidebar() {
             <MenuIcon className="h-5 w-5" />
           </button>
         </SheetTrigger>
-        <SheetContent
-          side={isRTL ? 'right' : 'left'}
-          className="w-[min(18rem,85vw)] !px-0"
-        >
+        <SheetContent side={isRTL ? 'right' : 'left'} className="w-[min(18rem,85vw)] !px-0">
           <div className="beautiful-scrollbar h-full overflow-y-auto py-3 pe-2 ps-4">
             <Suspense
               fallback={
@@ -63,11 +60,7 @@ export function MobileSidebar() {
                 </div>
               }
             >
-              <DashboardNav
-                items={filteredNavItems}
-                isMobileNav={true}
-                setOpen={setOpen}
-              />
+              <DashboardNav items={filteredNavItems} isMobileNav={true} setOpen={setOpen} />
             </Suspense>
           </div>
         </SheetContent>

@@ -8,19 +8,14 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import { ChartLoading, useChartReveal } from './chart-motion';
 
 /** One hue in four steps — the cards read as a set, not four unrelated tiles. */
-const LINES = [
-  'hsl(var(--viz-1))',
-  'hsl(var(--viz-2))',
-  'hsl(var(--viz-3))',
-  'hsl(var(--viz-1))'
-];
+const LINES = ['hsl(var(--viz-1))', 'hsl(var(--viz-2))', 'hsl(var(--viz-3))', 'hsl(var(--viz-1))'];
 
 export function StatCard({
   card,
   index,
   period,
   isLoading,
-  loadingLabel
+  loadingLabel,
 }: {
   card: DashboardStatsCard;
   index: number;
@@ -39,7 +34,7 @@ export function StatCard({
       <span
         className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
-          background: `linear-gradient(90deg, transparent, ${line}, transparent)`
+          background: `linear-gradient(90deg, transparent, ${line}, transparent)`,
         }}
       />
       <CardContent className="flex flex-1 flex-col p-0">
@@ -50,19 +45,12 @@ export function StatCard({
           >
             <card.icon className="h-5 w-5" style={{ color: line }} />
           </div>
-          <button
-            type="button"
-            aria-hidden
-            tabIndex={-1}
-            className="card-corner-btn"
-          >
+          <button type="button" aria-hidden tabIndex={-1} className="card-corner-btn">
             <ArrowUpRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <p className="mt-4 text-[13px] font-medium text-muted-foreground">
-          {card.title}
-        </p>
+        <p className="mt-4 text-[13px] font-medium text-muted-foreground">{card.title}</p>
 
         {isLoading ? (
           <>
@@ -78,9 +66,7 @@ export function StatCard({
               <span
                 className={cn(
                   'inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums',
-                  isIncrease
-                    ? 'text-[hsl(var(--viz-accent))]'
-                    : 'text-destructive'
+                  isIncrease ? 'text-[hsl(var(--viz-accent))]' : 'text-destructive',
                 )}
               >
                 {isIncrease ? (
@@ -91,9 +77,7 @@ export function StatCard({
                 {card.change}
               </span>
             </div>
-            <p className="mt-2 truncate text-xs text-muted-foreground">
-              {card.description}
-            </p>
+            <p className="mt-2 truncate text-xs text-muted-foreground">{card.description}</p>
           </>
         )}
 
@@ -137,7 +121,7 @@ export default function StatsCards({
   cards,
   period,
   isLoading,
-  loadingLabel
+  loadingLabel,
 }: {
   cards: DashboardStatsCard[];
   period: string;

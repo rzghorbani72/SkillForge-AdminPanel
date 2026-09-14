@@ -10,7 +10,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -21,7 +21,7 @@ import {
   COUPON_TYPE_BADGE,
   COUPON_TYPE_LABEL_KEY,
   couponTypeOf,
-  type CouponSummary
+  type CouponSummary,
 } from '@/lib/coupons';
 import { CopyableVoucherCode } from '@/components/coupons/copyable-voucher-code';
 
@@ -41,7 +41,7 @@ export function PlanVouchersCard() {
     const type = couponTypeOf(voucher);
     if (type === 'FREE_TRIAL') {
       return t('coupons.daysValue', {
-        count: voucher.free_trial_days ?? 0
+        count: voucher.free_trial_days ?? 0,
       });
     }
     if (type === 'FULL_DISCOUNT') return formatPercent(100);
@@ -53,9 +53,7 @@ export function PlanVouchersCard() {
     <Card>
       <CardHeader>
         <CardTitle>{t('coupons.myPlanVouchers')}</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {t('coupons.myPlanVouchersHint')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('coupons.myPlanVouchersHint')}</p>
       </CardHeader>
       <CardContent>
         {loading ? (
@@ -63,9 +61,7 @@ export function PlanVouchersCard() {
         ) : vouchers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Ticket className="mb-3 h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              {t('coupons.noPlanVouchers')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('coupons.noPlanVouchers')}</p>
           </div>
         ) : (
           <Table>

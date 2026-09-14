@@ -6,13 +6,13 @@ from its timetable, so `/courses/[id]/edit` keeps the old single-page form for
 
 ## The steps
 
-| #   | Step      | What it writes                                        |
-| --- | --------- | ----------------------------------------------------- |
+| #   | Step      | What it writes                                              |
+| --- | --------- | ----------------------------------------------------------- |
 | 1   | `basics`  | title, description, what you will learn, course type, cover |
-| 2   | `content` | category, sections, lessons (video + attached file)   |
-| 3   | `access`  | public vs invited-only, plus per-student/group grants |
-| 4   | `pricing` | base price and every other way to enrol               |
-| 5   | `preview` | nothing — the student's view of the unsaved draft     |
+| 2   | `content` | category, sections, lessons (video + attached file)         |
+| 3   | `access`  | public vs invited-only, plus per-student/group grants       |
+| 4   | `pricing` | base price and every other way to enrol                     |
+| 5   | `preview` | nothing — the student's view of the unsaved draft           |
 
 ## Data flow
 

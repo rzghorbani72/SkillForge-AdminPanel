@@ -18,7 +18,7 @@ export const API_LANGS = [
   'ko',
   'hi',
   'ur',
-  'he'
+  'he',
 ] as const;
 
 export type ApiLang = (typeof API_LANGS)[number];

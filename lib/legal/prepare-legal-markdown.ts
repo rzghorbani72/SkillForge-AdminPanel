@@ -34,10 +34,7 @@ export function prepareLegalMarkdown(body: string, locale: string): string {
   if (locale === 'en') {
     const englishStart = markdown.search(ENGLISH_SECTION);
     if (englishStart >= 0) {
-      markdown = markdown
-        .slice(englishStart)
-        .replace(ENGLISH_SECTION, '# ')
-        .trim();
+      markdown = markdown.slice(englishStart).replace(ENGLISH_SECTION, '# ').trim();
     }
   }
 
@@ -55,6 +52,6 @@ function normalizeLegalLinks(markdown: string): string {
         return `[${label}](/terms)`;
       }
       return label;
-    }
+    },
   );
 }

@@ -16,7 +16,7 @@ export function errorFields(err: unknown): ErrorFields {
       error_name: err.name,
       error_message: err.message,
       ...(code ? { error_code: code } : {}),
-      ...(err.stack ? { error_stack: err.stack } : {})
+      ...(err.stack ? { error_stack: err.stack } : {}),
     };
   }
   return { error_name: 'UnknownError', error_message: str(err) ?? String(err) };

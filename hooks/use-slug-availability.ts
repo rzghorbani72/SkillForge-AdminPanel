@@ -11,9 +11,7 @@ type UseSlugAvailabilityOptions = {
   ownSlug?: string;
 };
 
-export function useSlugAvailability({
-  ownSlug
-}: UseSlugAvailabilityOptions = {}) {
+export function useSlugAvailability({ ownSlug }: UseSlugAvailabilityOptions = {}) {
   const [status, setStatus] = useState<SlugStatus>('idle');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const requestRef = useRef(0);
@@ -55,7 +53,7 @@ export function useSlugAvailability({
         abortRef.current = controller;
         try {
           const result = await apiClient.checkSlugAvailability(slug, {
-            signal: controller.signal
+            signal: controller.signal,
           });
           if (request !== requestRef.current) return;
           setStatus(result.available ? 'available' : 'taken');
@@ -65,7 +63,7 @@ export function useSlugAvailability({
         }
       }, DEBOUNCE_MS);
     },
-    [cancelPending, ownSlug]
+    [cancelPending, ownSlug],
   );
 
   const reset = useCallback(() => {

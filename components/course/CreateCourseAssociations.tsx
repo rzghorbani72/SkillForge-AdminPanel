@@ -6,11 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useCategoriesStore, parseCategoryFromApi } from '@/lib/store';
 import { apiClient } from '@/lib/api';
 import { apiToast } from '@/lib/api-toast';
@@ -22,11 +18,7 @@ interface Props {
   error?: string;
 }
 
-export default function CreateCourseAssociations({
-  categoryId,
-  onCategoryChange,
-  error
-}: Props) {
+export default function CreateCourseAssociations({ categoryId, onCategoryChange, error }: Props) {
   const { t } = useTranslation();
   const { categories, fetchCategories, addCategory } = useCategoriesStore();
   const [open, setOpen] = useState(false);
@@ -50,13 +42,9 @@ export default function CreateCourseAssociations({
 
   const courseCategories = categories
     .filter((c) => c.type === 'COURSE' && c.is_active)
-    .filter(
-      (c) => !search || c.name.toLowerCase().includes(search.toLowerCase())
-    );
+    .filter((c) => !search || c.name.toLowerCase().includes(search.toLowerCase()));
 
-  const selectedCategory = categories.find(
-    (c) => c.id.toString() === categoryId
-  );
+  const selectedCategory = categories.find((c) => c.id.toString() === categoryId);
 
   const handleCreateCategory = useCallback(async () => {
     const name = (newName || search).trim();
@@ -66,7 +54,7 @@ export default function CreateCourseAssociations({
       const result = await apiClient.createCategory({
         name,
         type: 'COURSE',
-        is_active: true
+        is_active: true,
       });
       const created = parseCategoryFromApi(result);
       if (created) {
@@ -95,17 +83,14 @@ export default function CreateCourseAssociations({
           {/* Selected category pill */}
           {selectedCategory && (
             <div className="flex flex-wrap gap-2">
-              <Badge
-                variant="secondary"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm"
-              >
+              <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5 text-sm">
                 {selectedCategory.name}
                 <button
                   type="button"
                   onClick={() => onCategoryChange(undefined)}
                   className="ml-0.5 rounded-full p-0.5 hover:text-destructive"
                   aria-label={t('courses.removeCategoryAria', {
-                    name: selectedCategory.name
+                    name: selectedCategory.name,
                   })}
                 >
                   <X className="h-3 w-3" />
@@ -199,11 +184,7 @@ export default function CreateCourseAssociations({
                         onClick={handleCreateCategory}
                         disabled={isSaving || !newName.trim()}
                       >
-                        {isSaving ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          t('common.save')
-                        )}
+                        {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : t('common.save')}
                       </Button>
                     </div>
                   )}
@@ -213,9 +194,7 @@ export default function CreateCourseAssociations({
           )}
 
           {!selectedCategory && !open && (
-            <p className="text-xs text-muted-foreground">
-              {t('courses.selectCategoryHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('courses.selectCategoryHint')}</p>
           )}
 
           {error && <p className="text-sm text-destructive">{error}</p>}

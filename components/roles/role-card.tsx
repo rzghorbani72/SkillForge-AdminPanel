@@ -25,7 +25,7 @@ export function RoleCard({
   isOwnRole,
   onOpenPermissions,
   onAssign,
-  onDelete
+  onDelete,
 }: RoleCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -42,22 +42,18 @@ export function RoleCard({
           <div className="min-w-0">
             <p className="truncate font-semibold leading-tight">{meta.label}</p>
             {!role.is_system && (
-              <p className="truncate text-[11px] text-muted-foreground">
-                {role.name}
-              </p>
+              <p className="truncate text-[11px] text-muted-foreground">{role.name}</p>
             )}
           </div>
         </div>
         <RoleCardBadges role={role} isOwnRole={isOwnRole} />
       </div>
 
-      <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-        {meta.hint}
-      </p>
+      <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{meta.hint}</p>
 
       <p className="mt-3 inline-flex w-fit rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
         {t('roles.cardLevel', {
-          level: getAccessLevelLabel(role.hierarchy_level, t)
+          level: getAccessLevelLabel(role.hierarchy_level, t),
         })}
       </p>
 
@@ -69,15 +65,13 @@ export function RoleCard({
           </span>
           <span>
             {t('roles.permissionCount', {
-              count: formatNumber(role.permissions.length)
+              count: formatNumber(role.permissions.length),
             })}
           </span>
         </div>
 
         {!abilities.canEdit && abilities.readOnlyReasonKey && (
-          <p className="text-[11px] text-muted-foreground">
-            {t(abilities.readOnlyReasonKey)}
-          </p>
+          <p className="text-[11px] text-muted-foreground">{t(abilities.readOnlyReasonKey)}</p>
         )}
 
         <div className="flex gap-2">
@@ -118,9 +112,7 @@ export function RoleCard({
               disabled={inUse}
               onClick={() => onDelete(role)}
               aria-label={t('roles.deleteRole')}
-              title={
-                inUse ? t('roles.deleteBlockedInUse') : t('roles.deleteRole')
-              }
+              title={inUse ? t('roles.deleteBlockedInUse') : t('roles.deleteRole')}
             >
               <Trash2 className="h-4 w-4 text-destructive" />
             </Button>

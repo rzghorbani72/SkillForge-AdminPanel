@@ -12,26 +12,21 @@ import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import {
   AlertDialog,
@@ -41,7 +36,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -52,7 +47,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -74,7 +69,7 @@ import {
   COUPON_STATUS_LABEL_KEY,
   couponStatusOf,
   couponTypeOf,
-  normalizeDiscountCode
+  normalizeDiscountCode,
 } from '@/lib/coupons';
 import { useCouponCodeAvailability } from '@/hooks/useCouponCodeAvailability';
 import { apiErrorMessage } from '@/lib/api-error-message';
@@ -92,25 +87,19 @@ function buildCouponSchema(endBeforeStartMessage: string) {
       usage_limit: z.coerce.number().int().min(1).optional(),
       academy_id: z.string().optional(),
       max_discount_amount: z.coerce.number().optional(),
-      min_purchase_amount: z.coerce.number().optional()
+      min_purchase_amount: z.coerce.number().optional(),
+    })
+    .refine((values) => values.coupon_type !== 'FREE_TRIAL' || (values.free_trial_days ?? 0) >= 1, {
+      path: ['free_trial_days'],
+      message: 'validation.required',
+    })
+    .refine((values) => values.usage_type !== 'LIMITED' || (values.usage_limit ?? 0) >= 1, {
+      path: ['usage_limit'],
+      message: 'validation.required',
     })
     .refine(
-      (values) =>
-        values.coupon_type !== 'FREE_TRIAL' ||
-        (values.free_trial_days ?? 0) >= 1,
-      { path: ['free_trial_days'], message: 'validation.required' }
-    )
-    .refine(
-      (values) =>
-        values.usage_type !== 'LIMITED' || (values.usage_limit ?? 0) >= 1,
-      { path: ['usage_limit'], message: 'validation.required' }
-    )
-    .refine(
-      (values) =>
-        !values.start_date ||
-        !values.end_date ||
-        values.start_date < values.end_date,
-      { path: ['end_date'], message: endBeforeStartMessage }
+      (values) => !values.start_date || !values.end_date || values.start_date < values.end_date,
+      { path: ['end_date'], message: endBeforeStartMessage },
     );
 }
 
@@ -127,10 +116,8 @@ export default function CouponsPage() {
   const isManager = user?.role === 'MANAGER';
   // Platform mode = Mentoma plan vouchers. Academy mode = student checkout codes.
   // useHasStore() is undefined for managers — never gate them on hasStore.
-  const canManagePlatformVouchers =
-    isPlatformAdmin(user) && platformMode === true;
-  const canManageAcademyCoupons =
-    isManager || (isPlatformAdmin(user) && hasStore === true);
+  const canManagePlatformVouchers = isPlatformAdmin(user) && platformMode === true;
+  const canManageAcademyCoupons = isManager || (isPlatformAdmin(user) && hasStore === true);
   const canManageCoupons = canManagePlatformVouchers || canManageAcademyCoupons;
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -139,10 +126,7 @@ export default function CouponsPage() {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [saving, setSaving] = useState(false);
 
-  const couponSchema = useMemo(
-    () => buildCouponSchema(t('coupons.endBeforeStart')),
-    [t]
-  );
+  const couponSchema = useMemo(() => buildCouponSchema(t('coupons.endBeforeStart')), [t]);
 
   const form = useForm<CouponValues>({
     resolver: zodResolver(couponSchema),
@@ -153,8 +137,8 @@ export default function CouponsPage() {
       start_date: '',
       end_date: '',
       usage_type: 'UNLIMITED',
-      academy_id: ''
-    }
+      academy_id: '',
+    },
   });
 
   const couponType = form.watch('coupon_type');
@@ -172,7 +156,7 @@ export default function CouponsPage() {
     (message: string) => {
       form.setError('code', { type: 'manual', message });
     },
-    [form]
+    [form],
   );
 
   useCouponCodeAvailability({
@@ -184,17 +168,13 @@ export default function CouponsPage() {
     excludeId: editTarget?.id,
     takenMessage: t('coupons.codeTaken'),
     onAvailable: clearCodeError,
-    onTaken: setCodeTakenError
+    onTaken: setCodeTakenError,
   });
 
   const today = todayInputValue();
   const startMinDate = editTarget ? undefined : today;
-  const startMaxDate = watchedEndDate
-    ? addInputDays(watchedEndDate, -1)
-    : undefined;
-  const endMinDate = watchedStartDate
-    ? (addInputDays(watchedStartDate, 1) ?? today)
-    : today;
+  const startMaxDate = watchedEndDate ? addInputDays(watchedEndDate, -1) : undefined;
+  const endMinDate = watchedStartDate ? (addInputDays(watchedStartDate, 1) ?? today) : today;
 
   useEffect(() => {
     if (!watchedStartDate || !watchedEndDate) {
@@ -204,7 +184,7 @@ export default function CouponsPage() {
     if (watchedStartDate >= watchedEndDate) {
       form.setError('end_date', {
         type: 'manual',
-        message: t('coupons.endBeforeStart')
+        message: t('coupons.endBeforeStart'),
       });
     } else {
       form.clearErrors('end_date');
@@ -215,12 +195,9 @@ export default function CouponsPage() {
     setLoading(true);
     try {
       const data = await apiClient.getDiscounts(
-        canManagePlatformVouchers
-          ? { academy_id: 'platform', limit: 100 }
-          : { limit: 100 }
+        canManagePlatformVouchers ? { academy_id: 'platform', limit: 100 } : { limit: 100 },
       );
-      const list =
-        (data as any)?.discounts ?? (Array.isArray(data) ? data : []);
+      const list = (data as any)?.discounts ?? (Array.isArray(data) ? data : []);
       setCoupons(list);
     } catch (error) {
       toast.error(apiErrorMessage(error, t('common.error')));
@@ -243,7 +220,7 @@ export default function CouponsPage() {
       start_date: '',
       end_date: '',
       usage_type: 'UNLIMITED',
-      academy_id: ''
+      academy_id: '',
     });
     setDialogOpen(true);
   }
@@ -261,7 +238,7 @@ export default function CouponsPage() {
       usage_limit: coupon.usage_limit ?? undefined,
       academy_id: coupon.academy_id ?? '',
       max_discount_amount: coupon.max_discount_amount ?? undefined,
-      min_purchase_amount: coupon.min_purchase_amount ?? undefined
+      min_purchase_amount: coupon.min_purchase_amount ?? undefined,
     });
     setDialogOpen(true);
   }
@@ -272,10 +249,7 @@ export default function CouponsPage() {
       const academyId = values.academy_id?.trim();
       const body = {
         coupon_type: values.coupon_type,
-        discount_type:
-          values.coupon_type === 'FIXED'
-            ? ('FIXED' as const)
-            : ('PERCENT' as const),
+        discount_type: values.coupon_type === 'FIXED' ? ('FIXED' as const) : ('PERCENT' as const),
         discount_value: values.discount_value ?? 0,
         free_trial_days: values.free_trial_days,
         start_date: new Date(values.start_date).toISOString(),
@@ -283,7 +257,7 @@ export default function CouponsPage() {
         usage_type: values.usage_type,
         usage_limit: values.usage_limit,
         max_discount_amount: values.max_discount_amount,
-        min_purchase_amount: values.min_purchase_amount
+        min_purchase_amount: values.min_purchase_amount,
       };
 
       if (editTarget) {
@@ -292,7 +266,7 @@ export default function CouponsPage() {
         await apiClient.createDiscount({
           ...body,
           code: normalizeDiscountCode(values.code),
-          ...(academyId ? { academy_id: academyId } : {})
+          ...(academyId ? { academy_id: academyId } : {}),
         });
       }
       toast.success(t('common.success'));
@@ -320,9 +294,7 @@ export default function CouponsPage() {
   if (!canManageCoupons) {
     return (
       <div className="flex-1 space-y-4 p-4 sm:p-6">
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('coupons.title')}
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t('coupons.title')}</h1>
         <p className="text-muted-foreground">{t('coupons.platformOnly')}</p>
       </div>
     );
@@ -333,18 +305,10 @@ export default function CouponsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight">
-            {t(
-              canManagePlatformVouchers
-                ? 'coupons.title'
-                : 'coupons.academyTitle'
-            )}
+            {t(canManagePlatformVouchers ? 'coupons.title' : 'coupons.academyTitle')}
           </h1>
           <p className="text-muted-foreground">
-            {t(
-              canManagePlatformVouchers
-                ? 'coupons.description'
-                : 'coupons.academyDescription'
-            )}
+            {t(canManagePlatformVouchers ? 'coupons.description' : 'coupons.academyDescription')}
           </p>
         </div>
         <Button onClick={openCreate} className="w-full shrink-0 sm:w-auto">
@@ -372,9 +336,7 @@ export default function CouponsPage() {
                   <TableHead>{t('coupons.code')}</TableHead>
                   <TableHead>{t('coupons.type')}</TableHead>
                   <TableHead>{t('coupons.value')}</TableHead>
-                  {canManagePlatformVouchers && (
-                    <TableHead>{t('coupons.academy')}</TableHead>
-                  )}
+                  {canManagePlatformVouchers && <TableHead>{t('coupons.academy')}</TableHead>}
                   <TableHead>{t('coupons.uses')}</TableHead>
                   <TableHead>{t('coupons.validity')}</TableHead>
                   <TableHead>{t('coupons.status')}</TableHead>
@@ -385,10 +347,7 @@ export default function CouponsPage() {
                 {coupons.map((c) => {
                   const status = couponStatusOf(c);
                   return (
-                    <TableRow
-                      key={c.id}
-                      className={status === 'active' ? undefined : 'opacity-60'}
-                    >
+                    <TableRow key={c.id} className={status === 'active' ? undefined : 'opacity-60'}>
                       <TableCell>
                         <CopyableVoucherCode code={c.code} />
                       </TableCell>
@@ -401,7 +360,7 @@ export default function CouponsPage() {
                       <TableCell>
                         {c.coupon_type === 'FREE_TRIAL'
                           ? t('coupons.daysValue', {
-                              count: c.free_trial_days ?? 0
+                              count: c.free_trial_days ?? 0,
                             })
                           : c.coupon_type === 'FULL_DISCOUNT'
                             ? formatPercent(100)
@@ -410,9 +369,7 @@ export default function CouponsPage() {
                               : formatNumber(c.discount_value ?? 0)}
                       </TableCell>
                       {canManagePlatformVouchers && (
-                        <TableCell>
-                          {c.Academy?.name ?? t('coupons.platformScope')}
-                        </TableCell>
+                        <TableCell>{c.Academy?.name ?? t('coupons.platformScope')}</TableCell>
                       )}
                       <TableCell>
                         {c.usage_limit
@@ -431,18 +388,10 @@ export default function CouponsPage() {
                         />
                       </TableCell>
                       <TableCell className="text-end">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEdit(c)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => openEdit(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setDeleteTarget(c)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(c)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -476,9 +425,7 @@ export default function CouponsPage() {
                           {...field}
                           disabled={!!editTarget}
                           onChange={(event) =>
-                            field.onChange(
-                              normalizeDiscountCode(event.target.value)
-                            )
+                            field.onChange(normalizeDiscountCode(event.target.value))
                           }
                         />
                       </FormControl>
@@ -493,10 +440,7 @@ export default function CouponsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('coupons.type')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger aria-label={t('coupons.type')}>
                             <SelectValue />
@@ -532,14 +476,8 @@ export default function CouponsPage() {
                               name={field.name}
                               ref={field.ref}
                               value={field.value ?? ''}
-                              onChange={(raw) =>
-                                field.onChange(raw === '' ? '' : Number(raw))
-                              }
-                              suffix={
-                                couponType === 'FIXED'
-                                  ? t('common.toman')
-                                  : undefined
-                              }
+                              onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
+                              suffix={couponType === 'FIXED' ? t('common.toman') : undefined}
                             />
                           </FormControl>
                           <FormMessage />
@@ -558,9 +496,7 @@ export default function CouponsPage() {
                                 name={field.name}
                                 ref={field.ref}
                                 value={field.value ?? ''}
-                                onChange={(raw) =>
-                                  field.onChange(raw === '' ? '' : Number(raw))
-                                }
+                                onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                               />
                             </FormControl>
                             <FormMessage />
@@ -583,9 +519,7 @@ export default function CouponsPage() {
                             name={field.name}
                             ref={field.ref}
                             value={field.value ?? ''}
-                            onChange={(raw) =>
-                              field.onChange(raw === '' ? '' : Number(raw))
-                            }
+                            onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                           />
                         </FormControl>
                         <FormMessage />
@@ -639,10 +573,7 @@ export default function CouponsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('coupons.usageType')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger aria-label={t('coupons.usageType')}>
                             <SelectValue />
@@ -673,9 +604,7 @@ export default function CouponsPage() {
                             name={field.name}
                             ref={field.ref}
                             value={field.value ?? ''}
-                            onChange={(raw) =>
-                              field.onChange(raw === '' ? '' : Number(raw))
-                            }
+                            onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
                           />
                         </FormControl>
                         <FormMessage />
@@ -689,24 +618,18 @@ export default function CouponsPage() {
                 {t(
                   canManagePlatformVouchers
                     ? 'coupons.platformScopeHint'
-                    : 'coupons.academyScopeHint'
+                    : 'coupons.academyScopeHint',
                 )}
               </p>
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   disabled={
-                    saving ||
-                    !!form.formState.errors.code ||
-                    !!form.formState.errors.end_date
+                    saving || !!form.formState.errors.code || !!form.formState.errors.end_date
                   }
                 >
                   {saving ? t('common.saving') : t('coupons.saveCoupon')}
@@ -717,10 +640,7 @@ export default function CouponsPage() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('coupons.deleteCoupon')}</AlertDialogTitle>

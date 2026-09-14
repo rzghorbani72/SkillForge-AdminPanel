@@ -7,5 +7,5 @@ export const classSizeOf = (capacity: number): ClassSize =>
 export const CLASS_SIZE_LABEL: Record<ClassSize, string> = {
   PRIVATE: 'tutoring.groups.sizePrivate',
   SMALL: 'tutoring.groups.sizeSmall',
-  PUBLIC: 'tutoring.groups.sizePublic'
+  PUBLIC: 'tutoring.groups.sizePublic',
 };

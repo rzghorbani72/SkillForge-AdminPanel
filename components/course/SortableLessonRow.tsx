@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  ChevronDown,
-  ChevronRight,
-  Clock,
-  GripVertical,
-  Trash2
-} from 'lucide-react';
+import { ChevronDown, ChevronRight, Clock, GripVertical, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
@@ -50,21 +44,16 @@ export function SortableLessonRow({
   onUpdate,
   onRemove,
   onClear,
-  onAssign
+  onAssign,
 }: LessonRowProps) {
   const { t, language } = useTranslation();
   const isFa = language === 'fa';
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: lesson.clientKey });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: lesson.clientKey,
+  });
 
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const combinedRef = useCallback(
@@ -72,7 +61,7 @@ export function SortableLessonRow({
       nodeRef.current = node;
       setNodeRef(node);
     },
-    [setNodeRef]
+    [setNodeRef],
   );
   useEffect(() => {
     if (!nodeRef.current) return;
@@ -80,15 +69,12 @@ export function SortableLessonRow({
     nodeRef.current.style.transition = transition ?? '';
   }, [transform, transition]);
 
-  const typeOption =
-    LESSON_TYPE_BY_KEY[lesson.lesson_type] ?? LESSON_TYPE_BY_KEY.VIDEO;
+  const typeOption = LESSON_TYPE_BY_KEY[lesson.lesson_type] ?? LESSON_TYPE_BY_KEY.VIDEO;
   const TypeIcon = typeOption.Icon;
   const typeLabel = t(typeOption.labelKey);
   const complete = isLessonComplete(lesson);
   const durationSeconds = durationToSeconds(lesson.duration);
-  const durationLabel = isFa
-    ? toPersianDigits(lesson.duration)
-    : lesson.duration;
+  const durationLabel = isFa ? toPersianDigits(lesson.duration) : lesson.duration;
   const isBlank = !lesson.title.trim();
 
   function handleTrashClick() {
@@ -113,15 +99,12 @@ export function SortableLessonRow({
         'rounded-md border border-s-[3px] border-border/50 bg-background/60',
         typeOption.accentClass,
         expanded && 'border-border bg-muted/30 shadow-sm ring-1 ring-border',
-        isDragging && 'opacity-50 shadow-lg ring-1 ring-primary/30'
+        isDragging && 'opacity-50 shadow-lg ring-1 ring-primary/30',
       )}
     >
       {/* Compact row: badges/actions on the left, title on the right */}
       <div
-        className={cn(
-          'flex items-center gap-3 px-3 py-2.5',
-          expanded && 'bg-background/80'
-        )}
+        className={cn('flex items-center gap-3 px-3 py-2.5', expanded && 'bg-background/80')}
         dir="ltr"
       >
         <div className="flex shrink-0 items-center gap-2">
@@ -143,11 +126,7 @@ export function SortableLessonRow({
                 type="button"
                 onClick={handleTrashClick}
                 className="rounded p-0.5 text-muted-foreground hover:text-destructive"
-                aria-label={
-                  canRemove
-                    ? t('courses.removeLesson')
-                    : t('courses.clearLesson')
-                }
+                aria-label={canRemove ? t('courses.removeLesson') : t('courses.clearLesson')}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -158,7 +137,7 @@ export function SortableLessonRow({
             <span
               className={cn(
                 'pointer-events-none inline-flex h-5 cursor-default select-none items-center gap-1 rounded-md border px-1.5 text-[10px] font-medium',
-                typeOption.badgeClass
+                typeOption.badgeClass,
               )}
               aria-label={typeLabel}
             >
@@ -190,10 +169,7 @@ export function SortableLessonRow({
           </div>
         </div>
 
-        <div
-          className="flex min-w-0 flex-1 items-center gap-2"
-          dir={isFa ? 'rtl' : 'ltr'}
-        >
+        <div className="flex min-w-0 flex-1 items-center gap-2" dir={isFa ? 'rtl' : 'ltr'}>
           <button
             type="button"
             {...attributes}
@@ -214,7 +190,7 @@ export function SortableLessonRow({
                 ? 'bg-muted-foreground/40'
                 : complete
                   ? 'bg-emerald-500'
-                  : 'bg-amber-400'
+                  : 'bg-amber-400',
             )}
             title={
               complete === null
@@ -236,11 +212,7 @@ export function SortableLessonRow({
 
       {confirmDelete && (
         <InlineConfirm
-          message={
-            canRemove
-              ? t('courses.confirmRemoveLesson')
-              : t('courses.confirmClearLesson')
-          }
+          message={canRemove ? t('courses.confirmRemoveLesson') : t('courses.confirmClearLesson')}
           onCancel={() => setConfirmDelete(false)}
           onConfirm={canRemove ? onRemove : onClear}
         />

@@ -57,15 +57,13 @@ export function resolveSessionRole(session: unknown): string | null {
 
   const nested = currentProfile?.role;
   const nestedName =
-    nested && typeof nested === 'object'
-      ? (nested as { name?: unknown }).name
-      : nested;
+    nested && typeof nested === 'object' ? (nested as { name?: unknown }).name : nested;
 
   const candidates = [
     Array.isArray(roles) ? roles[0] : null,
     role,
     currentProfile?.Role?.name,
-    nestedName
+    nestedName,
   ];
 
   for (const candidate of candidates) {
@@ -86,7 +84,7 @@ export function canOpenRoute(role: string | null, pathname: string): boolean {
   if (role !== 'AFFILIATE') return true;
 
   return AFFILIATE_ROUTES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
 }
 
@@ -104,12 +102,11 @@ const PLAN_SLUG = /^[a-z0-9-]{1,32}$/;
  */
 export function checkoutQueryFromSearch(
   plan: string | null | undefined,
-  period: string | null | undefined
+  period: string | null | undefined,
 ): string {
   const slug = (plan ?? '').trim().toLowerCase();
   if (!PLAN_SLUG.test(slug)) return '';
-  const periodPart =
-    period === 'monthly' || period === 'quarterly' ? `&period=${period}` : '';
+  const periodPart = period === 'monthly' || period === 'quarterly' ? `&period=${period}` : '';
   return `?plan=${encodeURIComponent(slug)}${periodPart}`;
 }
 
@@ -117,10 +114,7 @@ export function checkoutQueryFromSearch(
  * A `?next=` / `?redirect=` value is attacker-controllable. Only same-origin
  * relative panel paths are safe after a session is opened.
  */
-export function safePanelPath(
-  value: string | null | undefined,
-  fallback: string
-): string {
+export function safePanelPath(value: string | null | undefined, fallback: string): string {
   if (!value) return fallback;
   const candidate = value.trim();
   if (!candidate.startsWith('/')) return fallback;
@@ -128,7 +122,7 @@ export function safePanelPath(
   if (candidate.includes('\\')) return fallback;
   if (
     /^\/(?:login|register|admin-login|forget-password|admin-forget-password|auth\/handoff)\b/.test(
-      candidate
+      candidate,
     )
   ) {
     return fallback;
@@ -142,10 +136,7 @@ export function safePanelPath(
  * Academy-less managers land on the dashboard like everyone else — whether they
  * are invited to create an academy is decided there, not by the login redirect.
  */
-export function homeRouteFor(
-  role: string | null,
-  options: HomeRouteOptions = {}
-): string | null {
+export function homeRouteFor(role: string | null, options: HomeRouteOptions = {}): string | null {
   if (!isPanelRole(role)) return null;
 
   const { planQuery = '' } = options;

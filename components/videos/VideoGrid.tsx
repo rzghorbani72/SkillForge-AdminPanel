@@ -21,9 +21,7 @@ export function VideoGrid({ videos, hasSearch = false }: VideoGridProps) {
       <EmptyState
         icon={<Video className="h-10 w-10" />}
         title={t('media.noVideosFound')}
-        description={
-          hasSearch ? t('media.noVideosMatch') : t('media.uploadFirstVideo')
-        }
+        description={hasSearch ? t('media.noVideosMatch') : t('media.uploadFirstVideo')}
       />
     );
   }
@@ -35,11 +33,7 @@ export function VideoGrid({ videos, hasSearch = false }: VideoGridProps) {
           key={video.id}
           video={video}
           isActive={activeVideoId === video.id}
-          onToggle={() =>
-            setActiveVideoId((current) =>
-              current === video.id ? null : video.id
-            )
-          }
+          onToggle={() => setActiveVideoId((current) => (current === video.id ? null : video.id))}
           onDeactivate={() => setActiveVideoId(null)}
         />
       ))}

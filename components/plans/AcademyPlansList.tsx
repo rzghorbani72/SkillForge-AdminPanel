@@ -26,7 +26,7 @@ export function AcademyPlansList({
   onEditPlan,
   onDeletePlan,
   onToggleActive,
-  t
+  t,
 }: Props) {
   return (
     <div className="space-y-4">
@@ -51,16 +51,9 @@ export function AcademyPlansList({
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
             <BookOpen className="h-5 w-5 text-muted-foreground" />
           </div>
-          <p className="text-sm text-muted-foreground">
-            {t('plans.noAcademyPlans')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('plans.noAcademyPlans')}</p>
           {canManage && (
-            <Button
-              onClick={onCreatePlan}
-              variant="outline"
-              size="sm"
-              className="mt-4"
-            >
+            <Button onClick={onCreatePlan} variant="outline" size="sm" className="mt-4">
               <Plus className="me-2 h-4 w-4" />
               {t('plans.createFirstAcademyPlan')}
             </Button>
@@ -73,7 +66,7 @@ export function AcademyPlansList({
               key={plan.id}
               className={cn(
                 'flex items-center justify-between rounded-xl border bg-card px-5 py-4 transition-all',
-                !plan.is_active && 'opacity-60'
+                !plan.is_active && 'opacity-60',
               )}
             >
               <div className="flex items-center gap-4">
@@ -93,10 +86,7 @@ export function AcademyPlansList({
                         : t('plans.kindPackage')}
                     </Badge>
                     {!plan.is_active && (
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] text-muted-foreground"
-                      >
+                      <Badge variant="outline" className="text-[10px] text-muted-foreground">
                         {t('plans.inactive')}
                       </Badge>
                     )}
@@ -112,19 +102,14 @@ export function AcademyPlansList({
                       </span>
                     )}
                     {plan.description && (
-                      <span className="max-w-[200px] truncate">
-                        {plan.description}
-                      </span>
+                      <span className="max-w-[200px] truncate">{plan.description}</span>
                     )}
                   </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <Switch
-                  checked={plan.is_active}
-                  onCheckedChange={() => onToggleActive(plan)}
-                />
+                <Switch checked={plan.is_active} onCheckedChange={() => onToggleActive(plan)} />
                 <button
                   type="button"
                   aria-label={`Edit ${plan.name}`}

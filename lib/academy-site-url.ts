@@ -14,8 +14,7 @@ export interface AcademyAddress {
   Domain?: DomainAddress | null;
 }
 
-const clean = (value?: string | null): string | undefined =>
-  value?.trim() || undefined;
+const clean = (value?: string | null): string | undefined => value?.trim() || undefined;
 
 export interface AcademySiteUrls {
   subdomain: string | null;
@@ -25,9 +24,7 @@ export interface AcademySiteUrls {
 function buildSubdomainUrl(academy: AcademyAddress): string | null {
   const domain = academy.domain ?? academy.Domain ?? null;
   const subdomain =
-    clean(domain?.private_address) ??
-    clean(academy.private_address) ??
-    clean(academy.slug);
+    clean(domain?.private_address) ?? clean(academy.private_address) ?? clean(academy.slug);
   if (!subdomain) return null;
 
   const base = resolveStorefrontBaseUrl();
@@ -45,19 +42,17 @@ function buildPublicUrl(academy: AcademyAddress): string | null {
   const domain = academy.domain ?? academy.Domain ?? null;
   const publicAddress = clean(domain?.public_address);
   if (!publicAddress) return null;
-  return /^https?:\/\//i.test(publicAddress)
-    ? publicAddress
-    : `https://${publicAddress}`;
+  return /^https?:\/\//i.test(publicAddress) ? publicAddress : `https://${publicAddress}`;
 }
 
 /** Both storefront URLs when configured — subdomain always; public when connected. */
 export function resolveAcademySiteUrls(
-  academy: AcademyAddress | null | undefined
+  academy: AcademyAddress | null | undefined,
 ): AcademySiteUrls {
   if (!academy) return { subdomain: null, public: null };
   return {
     subdomain: buildSubdomainUrl(academy),
-    public: buildPublicUrl(academy)
+    public: buildPublicUrl(academy),
   };
 }
 
@@ -75,9 +70,7 @@ export function academySiteHost(url: string): string {
  * Mirrors academySiteUrl() in Backend/src/common/storefront-url.ts — keep the
  * two in step so a link in the panel always matches what the backend sends out.
  */
-export function academySiteUrl(
-  academy: AcademyAddress | null | undefined
-): string | null {
+export function academySiteUrl(academy: AcademyAddress | null | undefined): string | null {
   const urls = resolveAcademySiteUrls(academy);
   return urls.public ?? urls.subdomain;
 }

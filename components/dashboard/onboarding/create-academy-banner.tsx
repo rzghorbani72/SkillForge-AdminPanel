@@ -19,12 +19,8 @@ export function CreateAcademyBanner({ onCreate, t }: CreateAcademyBannerProps) {
           <Building2 className="h-7 w-7" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="mb-1.5 text-xl font-bold tracking-tight">
-            {t('onboarding.bannerTitle')}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {t('onboarding.bannerDescription')}
-          </p>
+          <h2 className="mb-1.5 text-xl font-bold tracking-tight">{t('onboarding.bannerTitle')}</h2>
+          <p className="text-sm text-muted-foreground">{t('onboarding.bannerDescription')}</p>
         </div>
         <button
           type="button"

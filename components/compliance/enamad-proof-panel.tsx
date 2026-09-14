@@ -20,9 +20,7 @@ export function EnamadProofPanel({ state }: { state: EnamadState }) {
       <ul className="space-y-2 text-sm">
         {state.file_url ? (
           <li>
-            <span className="font-medium">
-              {t('compliance.enamad.fileStep')}
-            </span>
+            <span className="font-medium">{t('compliance.enamad.fileStep')}</span>
             {': '}
             <a
               href={state.file_url}
@@ -43,9 +41,7 @@ export function EnamadProofPanel({ state }: { state: EnamadState }) {
         </li>
         {state.info_email ? (
           <li>
-            <span className="font-medium">
-              {t('compliance.enamad.emailStep')}
-            </span>
+            <span className="font-medium">{t('compliance.enamad.emailStep')}</span>
             {': '}
             {t('compliance.enamad.emailStepBody', { email: state.info_email })}
           </li>

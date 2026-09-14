@@ -9,7 +9,7 @@ const FIELD_LABEL_KEYS: Record<string, string> = {
   Title: 'sitePreview.panelSectionTitle',
   'View-all link': 'sitePreview.panelViewAllLink',
   'View-all button': 'sitePreview.panelViewAllButton',
-  'Strip label': 'sitePreview.panelStripLabel'
+  'Strip label': 'sitePreview.panelStripLabel',
 };
 
 interface TextOverridesEditorProps {
@@ -18,18 +18,13 @@ interface TextOverridesEditorProps {
   set: (key: string, value: unknown) => void;
 }
 
-export function TextOverridesEditor({
-  blockType,
-  cfg,
-  set
-}: TextOverridesEditorProps) {
+export function TextOverridesEditor({ blockType, cfg, set }: TextOverridesEditorProps) {
   const { t } = useTranslation();
   const fields = GRID_SECTION_TEXT_FIELDS[blockType];
   if (!fields) return null;
 
   const text = (cfg.text as Record<string, string> | undefined) ?? {};
-  const setText = (key: string, value: string) =>
-    set('text', { ...text, [key]: value });
+  const setText = (key: string, value: string) => set('text', { ...text, [key]: value });
 
   const translateLabel = (label: string): string => {
     const key = FIELD_LABEL_KEYS[label];
@@ -38,9 +33,7 @@ export function TextOverridesEditor({
 
   return (
     <div className="space-y-2 rounded-md border border-dashed border-zinc-200 p-2.5">
-      <span className="text-xs font-medium text-zinc-800">
-        {t('sitePreview.panelStaticText')}
-      </span>
+      <span className="text-xs font-medium text-zinc-800">{t('sitePreview.panelStaticText')}</span>
       {fields.map(({ key, label }) => (
         <div key={key} className="space-y-1">
           <span className="text-[10px] uppercase tracking-wide text-zinc-600">

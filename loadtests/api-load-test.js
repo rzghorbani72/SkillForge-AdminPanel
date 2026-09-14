@@ -14,9 +14,9 @@ import { check, group, sleep } from 'k6';
  */
 
 export const options = {
-  vus: 50,                          // Virtual Users
-  duration: '3m',                   // Total duration
-  rps: 100,                         // Requests per second
+  vus: 50, // Virtual Users
+  duration: '3m', // Total duration
+  rps: 100, // Requests per second
 
   stages: [
     { duration: '30s', target: 20 },
@@ -30,11 +30,11 @@ export const options = {
     'http_req_duration{endpoint:dashboard}': ['p(95)<1000'],
     'http_req_duration{endpoint:api}': ['p(95)<300'],
     'http_req_failed{endpoint:api}': ['rate<0.05'],
-    'checks': ['rate>0.95'],
+    checks: ['rate>0.95'],
   },
 };
 
-export default function() {
+export default function () {
   const baseUrl = __ENV.BASE_URL || 'http://localhost:4000';
 
   group('GET Requests', () => {
@@ -59,10 +59,8 @@ export default function() {
       });
 
       check(response, {
-        'GET /dashboard: status 200 or 301': (r) =>
-          r.status === 200 || r.status === 301,
-        'GET /dashboard: response time < 1000ms': (r) =>
-          r.timings.duration < 1000,
+        'GET /dashboard: status 200 or 301': (r) => r.status === 200 || r.status === 301,
+        'GET /dashboard: response time < 1000ms': (r) => r.timings.duration < 1000,
       });
     }
 
@@ -78,8 +76,7 @@ export default function() {
 
       check(response, {
         'GET /api/health: status 200': (r) => r.status === 200 || r.status === 404,
-        'GET /api/health: response time < 200ms': (r) =>
-          r.timings.duration < 200,
+        'GET /api/health: response time < 200ms': (r) => r.timings.duration < 200,
       });
     }
 

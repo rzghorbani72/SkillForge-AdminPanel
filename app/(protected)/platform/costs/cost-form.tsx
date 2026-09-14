@@ -12,14 +12,14 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   PLATFORM_COST_CATEGORIES,
   PLATFORM_COST_TREE,
   isCostCategory,
-  type PlatformCostCategory
+  type PlatformCostCategory,
 } from './cost-categories';
 
 export interface CostFormValues {
@@ -61,7 +61,7 @@ export function CostForm({ busy, onSubmit }: Props) {
       paid_at: paid.toISOString(),
       description: description.trim(),
       category,
-      subcategory
+      subcategory,
     });
     setAmount('');
     setDescription('');
@@ -78,21 +78,11 @@ export function CostForm({ busy, onSubmit }: Props) {
     >
       <div className="space-y-2">
         <Label htmlFor="cost-amount">{t('platformCosts.amount')}</Label>
-        <PriceInput
-          id="cost-amount"
-          value={amount}
-          onChange={setAmount}
-          required
-        />
+        <PriceInput id="cost-amount" value={amount} onChange={setAmount} required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="cost-paid-at">{t('platformCosts.paidAt')}</Label>
-        <DatePicker
-          id="cost-paid-at"
-          value={paidAt}
-          onChange={setPaidAt}
-          withTime
-        />
+        <DatePicker id="cost-paid-at" value={paidAt} onChange={setPaidAt} withTime />
       </div>
       <div className="space-y-2">
         <Label>{t('platformCosts.category')}</Label>
@@ -132,9 +122,7 @@ export function CostForm({ busy, onSubmit }: Props) {
         </Select>
       </div>
       <div className="space-y-2 sm:col-span-2">
-        <Label htmlFor="cost-description">
-          {t('platformCosts.description')}
-        </Label>
+        <Label htmlFor="cost-description">{t('platformCosts.description')}</Label>
         <Textarea
           id="cost-description"
           required

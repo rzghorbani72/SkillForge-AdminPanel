@@ -9,13 +9,10 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import {
-  SortableContext,
-  verticalListSortingStrategy
-} from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 import { Button } from '@/components/ui/button';
 import { SetupCard } from '@/components/course/live/setup-card';
@@ -46,31 +43,25 @@ const signature = (rows: readonly { title: string }[]) =>
  * row by row, so reordering and renaming are a single call the backend can
  * validate against the meetings already named after a topic.
  */
-export default function TopicListEditor({
-  courseId,
-  initial,
-  onSaved
-}: TopicListEditorProps) {
+export default function TopicListEditor({ courseId, initial, onSaved }: TopicListEditorProps) {
   const { t } = useTranslation();
   const [drafts, setDrafts] = useState<Draft[]>(
     initial.map((topic) => ({
       key: topic.id,
       id: topic.id,
-      title: topic.title
-    }))
+      title: topic.title,
+    })),
   );
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(() => signature(initial));
   const sensors = useSensors(useSensor(PointerSensor));
   const dirty = useMemo(
     () => signature(drafts.filter((row) => row.title.trim())) !== saved,
-    [drafts, saved]
+    [drafts, saved],
   );
 
   const update = (key: string, title: string) =>
-    setDrafts((rows) =>
-      rows.map((row) => (row.key === key ? { ...row, title } : row))
-    );
+    setDrafts((rows) => rows.map((row) => (row.key === key ? { ...row, title } : row)));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -103,8 +94,8 @@ export default function TopicListEditor({
         saved.map((topic) => ({
           key: topic.id,
           id: topic.id,
-          title: topic.title
-        }))
+          title: topic.title,
+        })),
       );
       setSaved(signature(saved));
       onSaved?.(saved);
@@ -148,11 +139,7 @@ export default function TopicListEditor({
                   index={index}
                   title={draft.title}
                   onChange={(title) => update(draft.key, title)}
-                  onRemove={() =>
-                    setDrafts((rows) =>
-                      rows.filter((row) => row.key !== draft.key)
-                    )
-                  }
+                  onRemove={() => setDrafts((rows) => rows.filter((row) => row.key !== draft.key))}
                 />
               ))}
             </div>
@@ -169,12 +156,7 @@ export default function TopicListEditor({
             <Plus className="h-4 w-4" />
             {t('courses.live.addTopic')}
           </Button>
-          <Button
-            type="button"
-            size="sm"
-            onClick={save}
-            disabled={isSaving || !dirty}
-          >
+          <Button type="button" size="sm" onClick={save} disabled={isSaving || !dirty}>
             {isSaving ? t('common.saving') : t('common.save')}
           </Button>
         </div>

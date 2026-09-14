@@ -48,7 +48,7 @@ export function useCertificateRoster(courseId: string) {
         setBusyEnrollmentId(null);
       }
     },
-    [load, t]
+    [load, t],
   );
 
   const revoke = useCallback(
@@ -64,7 +64,7 @@ export function useCertificateRoster(courseId: string) {
         setBusyEnrollmentId(null);
       }
     },
-    [load, t]
+    [load, t],
   );
 
   return { roster, isLoading, busyEnrollmentId, issue, revoke, reload: load };

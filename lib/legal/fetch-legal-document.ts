@@ -7,18 +7,15 @@ const FALLBACK_LANGS = ['fa', 'en'] as const;
 
 export async function fetchLegalDocument(
   type: LegalDocType,
-  locale: string
+  locale: string,
 ): Promise<LegalDocument | null> {
-  const candidates = [
-    locale,
-    ...FALLBACK_LANGS.filter((candidate) => candidate !== locale)
-  ];
+  const candidates = [locale, ...FALLBACK_LANGS.filter((candidate) => candidate !== locale)];
 
   for (const loc of candidates) {
     try {
       const base = getServerApiBaseUrl(loc);
       const res = await fetch(`${base}/legal/documents/${type}`, {
-        cache: 'no-store'
+        cache: 'no-store',
       });
       if (res.ok) {
         const payload = (await res.json()) as LegalDocument;

@@ -2,11 +2,7 @@
 
 import { useState } from 'react';
 import { AuthShell } from '@/components/auth/auth-shell';
-import {
-  AuthPhoneField,
-  AuthSubmit,
-  AuthSecondaryLink
-} from '@/components/auth/auth-fields';
+import { AuthPhoneField, AuthSubmit, AuthSecondaryLink } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import Link from '@/components/ui/link';
@@ -46,7 +42,7 @@ export function IdentifyStep({
   onCaptchaVerify,
   onIdentifierChange,
   onSubmit,
-  children
+  children,
 }: IdentifyStepProps) {
   const { t } = useTranslation();
   const [hasCaptchaToken, setHasCaptchaToken] = useState(false);
@@ -56,8 +52,7 @@ export function IdentifyStep({
     onCaptchaVerify(token);
   }
 
-  const canSubmit =
-    identifier.trim() !== '' && (!captchaRequired || hasCaptchaToken);
+  const canSubmit = identifier.trim() !== '' && (!captchaRequired || hasCaptchaToken);
 
   return (
     <AuthShell activeTab="login" title={title} subtitle={subtitle}>
@@ -103,9 +98,7 @@ export function IdentifyStep({
       </form>
 
       {registerHref && (
-        <AuthSecondaryLink href={registerHref}>
-          {t('auth.signUp')}
-        </AuthSecondaryLink>
+        <AuthSecondaryLink href={registerHref}>{t('auth.signUp')}</AuthSecondaryLink>
       )}
     </AuthShell>
   );

@@ -1,13 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,7 +11,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { ShieldAlert } from 'lucide-react';
 import { apiClient } from '@/lib/api';
@@ -28,7 +22,7 @@ import {
   CONTENT_KIND_VALUES,
   MODERATION_STATUS,
   type ContentKind,
-  type ContentQueueItem
+  type ContentQueueItem,
 } from '@/types/compliance';
 
 /** Individual uploads held by a HOLD_FOR_REVIEW policy, awaiting approval. */
@@ -45,8 +39,8 @@ export function ContentQueueCard() {
       setItems(
         await apiClient.getContentQueue({
           status: MODERATION_STATUS.PENDING_REVIEW,
-          content_kind: kind ?? undefined
-        })
+          content_kind: kind ?? undefined,
+        }),
       );
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -69,10 +63,8 @@ export function ContentQueueCard() {
     try {
       await apiClient.reviewContentItem(item.id, {
         content_kind: item.content_kind,
-        status: approved
-          ? MODERATION_STATUS.APPROVED
-          : MODERATION_STATUS.REJECTED,
-        note: note || undefined
+        status: approved ? MODERATION_STATUS.APPROVED : MODERATION_STATUS.REJECTED,
+        note: note || undefined,
       });
       await load();
     } catch (error) {
@@ -85,12 +77,8 @@ export function ContentQueueCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          {t('compliance.moderation.queueTitle')}
-        </CardTitle>
-        <CardDescription>
-          {t('compliance.moderation.queueDescription')}
-        </CardDescription>
+        <CardTitle className="text-base">{t('compliance.moderation.queueTitle')}</CardTitle>
+        <CardDescription>{t('compliance.moderation.queueDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">
@@ -131,9 +119,7 @@ export function ContentQueueCard() {
                   <TableHead>{t('compliance.moderation.item')}</TableHead>
                   <TableHead>{t('compliance.queue.academy')}</TableHead>
                   <TableHead>{t('compliance.queue.published')}</TableHead>
-                  <TableHead className="text-end">
-                    {t('compliance.queue.actions')}
-                  </TableHead>
+                  <TableHead className="text-end">{t('compliance.queue.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -144,9 +130,7 @@ export function ContentQueueCard() {
                         <span className="font-medium">{item.title}</span>
                         <div className="flex items-center gap-1">
                           <Badge variant="outline">
-                            {t(
-                              `compliance.moderation.kind.${item.content_kind}`
-                            )}
+                            {t(`compliance.moderation.kind.${item.content_kind}`)}
                           </Badge>
                           {item.keyword_hits.length > 0 ? (
                             <Badge
@@ -161,9 +145,7 @@ export function ContentQueueCard() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm">
-                      {item.academy_name ?? '—'}
-                    </TableCell>
+                    <TableCell className="text-sm">{item.academy_name ?? '—'}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {formatDate(item.created_at)}
                     </TableCell>

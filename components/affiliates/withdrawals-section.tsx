@@ -12,14 +12,14 @@ const W_STYLE: Record<string, string> = {
   PENDING: 'bg-amber-100 text-amber-700',
   APPROVED: 'bg-blue-100 text-blue-700',
   PAID: 'bg-emerald-100 text-emerald-700',
-  REJECTED: 'bg-red-100 text-red-700'
+  REJECTED: 'bg-red-100 text-red-700',
 };
 
 const W_STATUS_LABEL_KEYS: Record<string, string> = {
   PENDING: 'affiliates.statusPending',
   APPROVED: 'affiliates.statusApproved',
   PAID: 'affiliates.statusPaid',
-  REJECTED: 'affiliates.statusRejected'
+  REJECTED: 'affiliates.statusRejected',
 };
 
 function WBadge({ status, t }: { status: string; t: (key: string) => string }) {
@@ -27,13 +27,13 @@ function WBadge({ status, t }: { status: string; t: (key: string) => string }) {
     PENDING: <Clock className="h-3 w-3" />,
     APPROVED: <CircleCheck className="h-3 w-3" />,
     PAID: <CircleCheck className="h-3 w-3" />,
-    REJECTED: <XCircle className="h-3 w-3" />
+    REJECTED: <XCircle className="h-3 w-3" />,
   };
   return (
     <span
       className={cn(
         'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
-        W_STYLE[status] ?? 'bg-muted text-muted-foreground'
+        W_STYLE[status] ?? 'bg-muted text-muted-foreground',
       )}
     >
       {icons[status]}
@@ -42,11 +42,7 @@ function WBadge({ status, t }: { status: string; t: (key: string) => string }) {
   );
 }
 
-export function WithdrawalsSection({
-  formatCurrency
-}: {
-  formatCurrency: (n: number) => string;
-}) {
+export function WithdrawalsSection({ formatCurrency }: { formatCurrency: (n: number) => string }) {
   const { t, language } = useTranslation();
   const locale = getLocaleForLanguage(language);
   const [items, setItems] = useState<any[]>([]);
@@ -75,8 +71,8 @@ export function WithdrawalsSection({
       await apiClient.processAffiliateWithdrawal(id, status);
       toast.success(
         t('toasts.withdrawalMarked', {
-          status: t(W_STATUS_LABEL_KEYS[status] ?? status)
-        })
+          status: t(W_STATUS_LABEL_KEYS[status] ?? status),
+        }),
       );
       load();
     } catch (e: any) {
@@ -93,9 +89,7 @@ export function WithdrawalsSection({
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <ArrowDownToLine className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-semibold">
-          {t('affiliates.withdrawalsTitle')}
-        </h2>
+        <h2 className="text-lg font-semibold">{t('affiliates.withdrawalsTitle')}</h2>
         {pending.length > 0 && (
           <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
             {t('affiliates.withdrawalsPending', { count: pending.length })}
@@ -106,37 +100,21 @@ export function WithdrawalsSection({
         <table className="w-full text-base">
           <thead className="border-b bg-muted/30">
             <tr className="text-xs text-muted-foreground">
-              <th className="px-4 py-3 text-start font-medium">
-                {t('affiliates.colAffiliate')}
-              </th>
-              <th className="px-4 py-3 text-start font-medium">
-                {t('affiliates.colAmount')}
-              </th>
-              <th className="px-4 py-3 text-start font-medium">
-                {t('affiliates.colRequestDate')}
-              </th>
-              <th className="px-4 py-3 text-start font-medium">
-                {t('affiliates.status')}
-              </th>
-              <th className="px-4 py-3 text-end font-medium">
-                {t('common.actions')}
-              </th>
+              <th className="px-4 py-3 text-start font-medium">{t('affiliates.colAffiliate')}</th>
+              <th className="px-4 py-3 text-start font-medium">{t('affiliates.colAmount')}</th>
+              <th className="px-4 py-3 text-start font-medium">{t('affiliates.colRequestDate')}</th>
+              <th className="px-4 py-3 text-start font-medium">{t('affiliates.status')}</th>
+              <th className="px-4 py-3 text-end font-medium">{t('common.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {items.map((w) => (
               <tr key={w.id} className="hover:bg-muted/20">
                 <td className="px-4 py-3">
-                  <p className="font-medium">
-                    {w.AffiliateLink?.affiliate_name}
-                  </p>
-                  <p className="font-mono text-xs text-muted-foreground">
-                    {w.AffiliateLink?.code}
-                  </p>
+                  <p className="font-medium">{w.AffiliateLink?.affiliate_name}</p>
+                  <p className="font-mono text-xs text-muted-foreground">{w.AffiliateLink?.code}</p>
                 </td>
-                <td className="px-4 py-3 font-semibold">
-                  {formatCurrency(w.amount)}
-                </td>
+                <td className="px-4 py-3 font-semibold">{formatCurrency(w.amount)}</td>
                 <td className="px-4 py-3 text-xs text-muted-foreground">
                   {new Date(w.requested_at).toLocaleDateString(locale)}
                 </td>

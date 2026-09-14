@@ -6,7 +6,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import {
   DomainSetupBlank,
   DomainSetupCheckButton,
-  DomainSetupStepCard
+  DomainSetupStepCard,
 } from '@/components/settings/domain-setup-step-card';
 import type { AcmeDnsRecord } from '@/types/custom-domain-setup';
 
@@ -39,7 +39,7 @@ export function DomainPlatformSteps({
   onAttach,
   onSaveAcme,
   actorPlatform,
-  t
+  t,
 }: Props) {
   return (
     <>
@@ -112,9 +112,7 @@ export function DomainPlatformSteps({
                 size="icon"
                 variant="ghost"
                 disabled={acmeRows.length <= 1}
-                onClick={() =>
-                  setAcmeRows(acmeRows.filter((_, idx) => idx !== i))
-                }
+                onClick={() => setAcmeRows(acmeRows.filter((_, idx) => idx !== i))}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -125,9 +123,7 @@ export function DomainPlatformSteps({
               type="button"
               size="sm"
               variant="outline"
-              onClick={() =>
-                setAcmeRows([...acmeRows, { host: '', value: '' }])
-              }
+              onClick={() => setAcmeRows([...acmeRows, { host: '', value: '' }])}
             >
               <Plus className="me-1 h-3.5 w-3.5" />
               {t('settings.domainDns.wizard.acmePaste.addRow')}

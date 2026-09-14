@@ -15,7 +15,7 @@ import {
   validateEmail,
   validateOtp,
   validateNewPassword as validateChosenPassword,
-  validatePhone
+  validatePhone,
 } from '@/lib/auth-validation';
 
 type Step = 'identifier' | 'otp' | 'password' | 'success';
@@ -36,7 +36,7 @@ const EMPTY: ForgetFields = {
   fullPhoneNumber: '',
   password: '',
   confirmed_password: '',
-  otp: ''
+  otp: '',
 };
 
 export function useAdminForgetPassword() {
@@ -59,9 +59,9 @@ export function useAdminForgetPassword() {
     const newErrors = collectErrors(
       {
         email: validateEmail(formData.email),
-        phoneNumber: validatePhone(formData.phoneNumber)
+        phoneNumber: validatePhone(formData.phoneNumber),
       },
-      t
+      t,
     );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -71,12 +71,9 @@ export function useAdminForgetPassword() {
     const newErrors = collectErrors(
       {
         password: validateChosenPassword(formData.password),
-        confirmed_password: validateConfirmPassword(
-          formData.password,
-          formData.confirmed_password
-        )
+        confirmed_password: validateConfirmPassword(formData.password, formData.confirmed_password),
       },
-      t
+      t,
     );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -88,32 +85,20 @@ export function useAdminForgetPassword() {
     setErrors({});
     try {
       if (authMethod === 'email') {
-        await apiClient.sendEmailOtp(
-          formData.email,
-          OtpType.RESET_PASSWORD_BY_EMAIL
-        );
+        await apiClient.sendEmailOtp(formData.email, OtpType.RESET_PASSWORD_BY_EMAIL);
         setMessage(t('forgotPassword.otpSentToEmail'));
-        notifyOtpSent(
-          t('forgotPassword.otpSentToEmail'),
-          'admin-forget-password-otp-sent'
-        );
+        notifyOtpSent(t('forgotPassword.otpSentToEmail'), 'admin-forget-password-otp-sent');
       } else {
         await apiClient.sendPhoneOtp(
           toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
-          OtpType.RESET_PASSWORD_BY_PHONE
+          OtpType.RESET_PASSWORD_BY_PHONE,
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
-        notifyOtpSent(
-          t('forgotPassword.otpSentToPhone'),
-          'admin-forget-password-otp-sent'
-        );
+        notifyOtpSent(t('forgotPassword.otpSentToPhone'), 'admin-forget-password-otp-sent');
       }
       setStep('otp');
     } catch (error: unknown) {
-      const errorMessage = apiErrorMessage(
-        error,
-        t('forgotPassword.failedToSendOtp')
-      );
+      const errorMessage = apiErrorMessage(error, t('forgotPassword.failedToSendOtp'));
       setErrors({ identifier: errorMessage });
       toast.error(errorMessage, { toastId: 'admin-forget-password-error' });
     } finally {
@@ -134,22 +119,19 @@ export function useAdminForgetPassword() {
         await apiClient.verifyEmailOtp(
           formData.email,
           formData.otp,
-          OtpType.RESET_PASSWORD_BY_EMAIL
+          OtpType.RESET_PASSWORD_BY_EMAIL,
         );
       } else {
         await apiClient.verifyPhoneOtp(
           toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
           formData.otp,
-          OtpType.RESET_PASSWORD_BY_PHONE
+          OtpType.RESET_PASSWORD_BY_PHONE,
         );
       }
       setStep('password');
       setMessage(t('forgotPassword.otpVerifiedSuccess'));
     } catch (error: unknown) {
-      const errorMessage = apiErrorMessage(
-        error,
-        t('forgotPassword.invalidOtp')
-      );
+      const errorMessage = apiErrorMessage(error, t('forgotPassword.invalidOtp'));
       setErrors({ otp: errorMessage });
       toast.error(errorMessage, { toastId: 'admin-forget-password-otp-error' });
     } finally {
@@ -164,23 +146,18 @@ export function useAdminForgetPassword() {
     try {
       await apiClient.adminForgetPassword({
         email: formData.email.trim(),
-        phone_number: toE164Iran(
-          formData.fullPhoneNumber || formData.phoneNumber
-        ),
+        phone_number: toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
         password: formData.password,
         confirmed_password: formData.confirmed_password,
-        otp: formData.otp
+        otp: formData.otp,
       });
       setStep('success');
       setMessage(t('forgotPassword.passwordResetSuccess'));
     } catch (error: unknown) {
-      const errorMessage = apiErrorMessage(
-        error,
-        t('forgotPassword.passwordResetFailed')
-      );
+      const errorMessage = apiErrorMessage(error, t('forgotPassword.passwordResetFailed'));
       setErrors({ password: errorMessage });
       toast.error(errorMessage, {
-        toastId: 'admin-forget-password-reset-error'
+        toastId: 'admin-forget-password-reset-error',
       });
     } finally {
       setIsLoading(false);
@@ -210,6 +187,6 @@ export function useAdminForgetPassword() {
     handleSendOtp,
     handleVerifyOtp,
     handleResetPassword,
-    resetForm
+    resetForm,
   };
 }

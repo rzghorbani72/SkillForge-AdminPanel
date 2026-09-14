@@ -5,13 +5,7 @@ import { CalendarClock, RefreshCw } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Badge } from '@/components/ui/badge';
@@ -21,7 +15,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -68,12 +62,8 @@ export default function SubscriptionsPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('subscriptions.title')}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {t('subscriptions.description')}
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('subscriptions.title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('subscriptions.description')}</p>
       </div>
 
       <Card>
@@ -83,17 +73,13 @@ export default function SubscriptionsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button onClick={runLifecycleTick} disabled={ticking}>
-            <RefreshCw
-              className={`mr-2 h-4 w-4 ${ticking ? 'animate-spin' : ''}`}
-            />
+            <RefreshCw className={`mr-2 h-4 w-4 ${ticking ? 'animate-spin' : ''}`} />
             {ticking ? t('subscriptions.running') : t('subscriptions.runTick')}
           </Button>
 
           {tickResult && (
             <div className="space-y-2 rounded-md border bg-muted/50 p-4">
-              <p className="text-sm font-semibold">
-                {t('subscriptions.tickResult')}
-              </p>
+              <p className="text-sm font-semibold">{t('subscriptions.tickResult')}</p>
               <div className="flex flex-wrap gap-3 text-sm">
                 {tickResult.expired !== undefined && (
                   <Badge variant="outline">
@@ -102,8 +88,7 @@ export default function SubscriptionsPage() {
                 )}
                 {tickResult.renewalsPending !== undefined && (
                   <Badge variant="outline">
-                    {t('subscriptions.renewalsPending')}:{' '}
-                    {tickResult.renewalsPending}
+                    {t('subscriptions.renewalsPending')}: {tickResult.renewalsPending}
                   </Badge>
                 )}
                 {tickResult.reminders !== undefined && (
@@ -153,29 +138,17 @@ export default function SubscriptionsPage() {
                     <TableCell className="font-medium">
                       {plan.name ?? plan.plan_name ?? '—'}
                     </TableCell>
+                    <TableCell>{plan.academy?.name ?? plan.academy_id ?? '—'}</TableCell>
                     <TableCell>
-                      {plan.academy?.name ?? plan.academy_id ?? '—'}
+                      <Badge variant="outline">{plan.kind ?? plan.type ?? '—'}</Badge>
                     </TableCell>
+                    <TableCell>{plan.price != null ? formatNumber(plan.price) : '—'}</TableCell>
+                    <TableCell>{plan.duration_days ? `${plan.duration_days}d` : '—'}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">
-                        {plan.kind ?? plan.type ?? '—'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {plan.price != null ? formatNumber(plan.price) : '—'}
-                    </TableCell>
-                    <TableCell>
-                      {plan.duration_days ? `${plan.duration_days}d` : '—'}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge
-                        status={plan.is_active ? 'active' : 'inactive'}
-                      />
+                      <StatusBadge status={plan.is_active ? 'active' : 'inactive'} />
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {plan.expires_at
-                        ? new Date(plan.expires_at).toLocaleDateString()
-                        : '—'}
+                      {plan.expires_at ? new Date(plan.expires_at).toLocaleDateString() : '—'}
                     </TableCell>
                   </TableRow>
                 ))}

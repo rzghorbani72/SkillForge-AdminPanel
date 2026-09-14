@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,7 +37,7 @@ export function BankAccountDialog({
   academyId,
   open,
   onOpenChange,
-  onSaved
+  onSaved,
 }: BankAccountDialogProps) {
   const { t } = useTranslation();
   const [step, setStep] = useState<'details' | 'otp'>('details');
@@ -46,9 +46,7 @@ export function BankAccountDialog({
   const [otp, setOtp] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const normalizedSheba = toEnglishDigits(sheba)
-    .replace(/\s/g, '')
-    .toUpperCase();
+  const normalizedSheba = toEnglishDigits(sheba).replace(/\s/g, '').toUpperCase();
   const isShebaValid = SHEBA_PATTERN.test(normalizedSheba);
 
   function reset() {
@@ -82,7 +80,7 @@ export function BankAccountDialog({
       await settlementApi.submitBankAccount(academyId, {
         sheba_number: normalizedSheba,
         account_holder_name: holder.trim(),
-        otp: toEnglishDigits(otp)
+        otp: toEnglishDigits(otp),
       });
       toast.success(t('settlement.bank.submitted'));
       close(false);
@@ -117,20 +115,12 @@ export function BankAccountDialog({
                 value={sheba}
                 onChange={(e) => setSheba(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">
-                {t('settlement.bank.shebaHint')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t('settlement.bank.shebaHint')}</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="holder">{t('settlement.bank.holderLabel')}</Label>
-              <Input
-                id="holder"
-                value={holder}
-                onChange={(e) => setHolder(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                {t('settlement.bank.holderRule')}
-              </p>
+              <Input id="holder" value={holder} onChange={(e) => setHolder(e.target.value)} />
+              <p className="text-xs text-muted-foreground">{t('settlement.bank.holderRule')}</p>
             </div>
           </div>
         ) : (
@@ -152,17 +142,12 @@ export function BankAccountDialog({
           {step === 'details' ? (
             <Button
               onClick={sendCode}
-              disabled={
-                isSubmitting || !isShebaValid || holder.trim().length < 2
-              }
+              disabled={isSubmitting || !isShebaValid || holder.trim().length < 2}
             >
               {t('settlement.bank.sendCode')}
             </Button>
           ) : (
-            <Button
-              onClick={save}
-              disabled={isSubmitting || otp.length !== OTP_LENGTH}
-            >
+            <Button onClick={save} disabled={isSubmitting || otp.length !== OTP_LENGTH}>
               {t('common.save')}
             </Button>
           )}

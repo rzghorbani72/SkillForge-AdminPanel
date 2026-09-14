@@ -3,13 +3,7 @@
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useCallback, useEffect, useState } from 'react';
 import { Plus, Save, Trash2, Pencil, X, Check } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
@@ -20,7 +14,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import {
   Table,
@@ -28,7 +22,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -39,12 +33,9 @@ import {
   apiClient,
   type GatewayConfigData,
   type PlatformSettingsData,
-  type SubscriptionPlanData
+  type SubscriptionPlanData,
 } from '@/lib/api';
-import {
-  PlanFormFields,
-  type PlanFormState
-} from '@/components/platform/pricing/plan-form-fields';
+import { PlanFormFields, type PlanFormState } from '@/components/platform/pricing/plan-form-fields';
 import { GatewayTogglesCard } from '@/components/platform/pricing/gateway-toggles-card';
 import { CostAssumptionsCard } from '@/components/platform/pricing/cost-assumptions-card';
 import { PlanPriceCalculatorCard } from '@/components/platform/pricing/plan-price-calculator-card';
@@ -55,7 +46,7 @@ import {
   fromPercent,
   irrToToman,
   tomanToIrr,
-  toPercent
+  toPercent,
 } from '@/components/platform/pricing/pricing-helpers';
 
 const emptyPlanForm = (): PlanFormState => ({
@@ -69,7 +60,7 @@ const emptyPlanForm = (): PlanFormState => ({
   is_most_popular: false,
   annual_months_included: '0',
   sort_order: '0',
-  limits: { ...DEFAULT_LIMITS }
+  limits: { ...DEFAULT_LIMITS },
 });
 
 const asNumber = (value: unknown, fallback = 0): number => {
@@ -81,15 +72,14 @@ const planToForm = (p: SubscriptionPlanData): PlanFormState => ({
   name: p.name,
   slug: p.slug,
   price_monthly_toman: String(irrToToman(p.price_monthly)),
-  price_yearly_toman:
-    p.price_yearly != null ? String(irrToToman(p.price_yearly)) : '',
+  price_yearly_toman: p.price_yearly != null ? String(irrToToman(p.price_yearly)) : '',
   storage_limit_gb: String(p.storage_limit_gb),
   features: Array.isArray(p.features) ? p.features.join('\n') : '',
   is_active: p.is_active,
   is_most_popular: p.is_most_popular ?? false,
   annual_months_included: String(p.annual_months_included ?? 0),
   sort_order: String(p.sort_order),
-  limits: { ...DEFAULT_LIMITS, ...(p.limits ?? {}) }
+  limits: { ...DEFAULT_LIMITS, ...(p.limits ?? {}) },
 });
 
 export default function PlatformPricingPage() {
@@ -106,14 +96,12 @@ export default function PlatformPricingPage() {
     payment_release_phase: '',
     legal_entity_name: '',
     vat_registration_no: '',
-    economic_code: ''
+    economic_code: '',
   });
   const [savingSettings, setSavingSettings] = useState(false);
 
   const [plans, setPlans] = useState<SubscriptionPlanData[]>([]);
-  const [editingPlanId, setEditingPlanId] = useState<string | 'new' | null>(
-    null
-  );
+  const [editingPlanId, setEditingPlanId] = useState<string | 'new' | null>(null);
   const [planForm, setPlanForm] = useState<PlanFormState>(emptyPlanForm());
   const [savingPlan, setSavingPlan] = useState(false);
   const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null);
@@ -127,13 +115,11 @@ export default function PlatformPricingPage() {
       vat_rate: String(toPercent(asNumber(s.vat_rate))),
       storage_overage_fee_irr: String(asNumber(s.storage_overage_fee_irr)),
       subscription_grace_days: String(asNumber(s.subscription_grace_days)),
-      subscription_reminder_days: String(
-        asNumber(s.subscription_reminder_days)
-      ),
+      subscription_reminder_days: String(asNumber(s.subscription_reminder_days)),
       payment_release_phase: s.payment_release_phase ?? '',
       legal_entity_name: s.legal_entity_name ?? '',
       vat_registration_no: s.vat_registration_no ?? '',
-      economic_code: s.economic_code ?? ''
+      economic_code: s.economic_code ?? '',
     });
   }, []);
 
@@ -142,21 +128,18 @@ export default function PlatformPricingPage() {
       const data = await apiClient.listGatewayConfigs();
       setGateways(data.gateways);
     } catch (error) {
-      ErrorHandler.showError(
-        apiErrorMessage(error, t('pricing.platform.gatewaysLoadFailed'))
-      );
+      ErrorHandler.showError(apiErrorMessage(error, t('pricing.platform.gatewaysLoadFailed')));
     }
   }, [t]);
 
   const loadAll = useCallback(async () => {
     if (!isPlatformAdminUser) return;
 
-    const [settingsResult, plansResult, gatewaysResult] =
-      await Promise.allSettled([
-        apiClient.getPlatformSettings(),
-        apiClient.getSubscriptionPlans(),
-        apiClient.listGatewayConfigs()
-      ]);
+    const [settingsResult, plansResult, gatewaysResult] = await Promise.allSettled([
+      apiClient.getPlatformSettings(),
+      apiClient.getSubscriptionPlans(),
+      apiClient.listGatewayConfigs(),
+    ]);
 
     if (settingsResult.status === 'fulfilled' && settingsResult.value) {
       applySettings(settingsResult.value);
@@ -190,20 +173,16 @@ export default function PlatformPricingPage() {
         commission_rate: 0,
         storage_overage_fee_irr: Number(settingsForm.storage_overage_fee_irr),
         subscription_grace_days: Number(settingsForm.subscription_grace_days),
-        subscription_reminder_days: Number(
-          settingsForm.subscription_reminder_days
-        ),
+        subscription_reminder_days: Number(settingsForm.subscription_reminder_days),
         payment_release_phase: settingsForm.payment_release_phase,
         legal_entity_name: settingsForm.legal_entity_name || null,
         vat_registration_no: settingsForm.vat_registration_no || null,
-        economic_code: settingsForm.economic_code || null
+        economic_code: settingsForm.economic_code || null,
       } as Partial<PlatformSettingsData>);
       ErrorHandler.showSuccess(t('pricing.platform.saveSettingsSuccess'));
       await loadAll();
     } catch (error) {
-      ErrorHandler.showError(
-        apiErrorMessage(error, t('pricing.platform.saveSettingsFailed'))
-      );
+      ErrorHandler.showError(apiErrorMessage(error, t('pricing.platform.saveSettingsFailed')));
     } finally {
       setSavingSettings(false);
     }
@@ -243,7 +222,7 @@ export default function PlatformPricingPage() {
       is_most_popular: planForm.is_most_popular,
       annual_months_included: Number(planForm.annual_months_included) || 0,
       sort_order: Number(planForm.sort_order),
-      limits: planForm.limits
+      limits: planForm.limits,
     };
   };
 
@@ -252,24 +231,17 @@ export default function PlatformPricingPage() {
     try {
       if (editingPlanId === 'new') {
         await apiClient.createSubscriptionPlan(
-          buildPlanPayload() as Parameters<
-            typeof apiClient.createSubscriptionPlan
-          >[0]
+          buildPlanPayload() as Parameters<typeof apiClient.createSubscriptionPlan>[0],
         );
         ErrorHandler.showSuccess(t('pricing.platform.planCreated'));
       } else if (editingPlanId) {
-        await apiClient.updateSubscriptionPlan(
-          editingPlanId,
-          buildPlanPayload()
-        );
+        await apiClient.updateSubscriptionPlan(editingPlanId, buildPlanPayload());
         ErrorHandler.showSuccess(t('pricing.platform.planUpdated'));
       }
       cancelPlan();
       await loadAll();
     } catch (error) {
-      ErrorHandler.showError(
-        apiErrorMessage(error, t('pricing.platform.savePlanFailed'))
-      );
+      ErrorHandler.showError(apiErrorMessage(error, t('pricing.platform.savePlanFailed')));
     } finally {
       setSavingPlan(false);
     }
@@ -282,34 +254,25 @@ export default function PlatformPricingPage() {
       ErrorHandler.showSuccess(t('pricing.platform.planDeleted'));
       await loadAll();
     } catch (error) {
-      ErrorHandler.showError(
-        apiErrorMessage(error, t('pricing.platform.deletePlanFailed'))
-      );
+      ErrorHandler.showError(apiErrorMessage(error, t('pricing.platform.deletePlanFailed')));
     } finally {
       setDeletingPlanId(null);
     }
   };
 
-  const handleToggleGateway = async (
-    gateway: GatewayConfigData,
-    isActive: boolean
-  ) => {
+  const handleToggleGateway = async (gateway: GatewayConfigData, isActive: boolean) => {
     setSavingGatewayId(gateway.id);
     setGateways((prev) =>
-      prev.map((g) => (g.id === gateway.id ? { ...g, is_active: isActive } : g))
+      prev.map((g) => (g.id === gateway.id ? { ...g, is_active: isActive } : g)),
     );
     try {
       await apiClient.updateGatewayConfig(gateway.id, { is_active: isActive });
       ErrorHandler.showSuccess(t('pricing.platform.gatewaySaved'));
     } catch (error) {
       setGateways((prev) =>
-        prev.map((g) =>
-          g.id === gateway.id ? { ...g, is_active: gateway.is_active } : g
-        )
+        prev.map((g) => (g.id === gateway.id ? { ...g, is_active: gateway.is_active } : g)),
       );
-      ErrorHandler.showError(
-        apiErrorMessage(error, t('pricing.platform.gatewaySaveFailed'))
-      );
+      ErrorHandler.showError(apiErrorMessage(error, t('pricing.platform.gatewaySaveFailed')));
     } finally {
       setSavingGatewayId(null);
     }
@@ -323,9 +286,7 @@ export default function PlatformPricingPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('pricing.platform.accessRestricted')}</CardTitle>
-            <CardDescription>
-              {t('pricing.platform.accessRestrictedDesc')}
-            </CardDescription>
+            <CardDescription>{t('pricing.platform.accessRestrictedDesc')}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -335,20 +296,14 @@ export default function PlatformPricingPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('pricing.platform.title')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('pricing.platform.subtitle')}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('pricing.platform.title')}</h1>
+        <p className="text-muted-foreground">{t('pricing.platform.subtitle')}</p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>{t('pricing.platform.financialRates')}</CardTitle>
-          <CardDescription>
-            {t('pricing.platform.financialRatesDesc')}
-          </CardDescription>
+          <CardDescription>{t('pricing.platform.financialRatesDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -357,13 +312,9 @@ export default function PlatformPricingPage() {
               <NumberInput
                 allowDecimal
                 value={settingsForm.vat_rate}
-                onChange={(raw) =>
-                  setSettingsForm({ ...settingsForm, vat_rate: raw })
-                }
+                onChange={(raw) => setSettingsForm({ ...settingsForm, vat_rate: raw })}
               />
-              <p className="text-xs text-muted-foreground">
-                {t('pricing.platform.vatRateHint')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t('pricing.platform.vatRateHint')}</p>
             </div>
           </div>
 
@@ -375,7 +326,7 @@ export default function PlatformPricingPage() {
                 onChange={(raw) =>
                   setSettingsForm({
                     ...settingsForm,
-                    storage_overage_fee_irr: raw
+                    storage_overage_fee_irr: raw,
                   })
                 }
               />
@@ -387,7 +338,7 @@ export default function PlatformPricingPage() {
                 onChange={(raw) =>
                   setSettingsForm({
                     ...settingsForm,
-                    subscription_grace_days: raw
+                    subscription_grace_days: raw,
                   })
                 }
               />
@@ -399,7 +350,7 @@ export default function PlatformPricingPage() {
                 onChange={(raw) =>
                   setSettingsForm({
                     ...settingsForm,
-                    subscription_reminder_days: raw
+                    subscription_reminder_days: raw,
                   })
                 }
               />
@@ -413,7 +364,7 @@ export default function PlatformPricingPage() {
               onValueChange={(value) =>
                 setSettingsForm({
                   ...settingsForm,
-                  payment_release_phase: value
+                  payment_release_phase: value,
                 })
               }
             >
@@ -449,7 +400,7 @@ export default function PlatformPricingPage() {
               onChange={(e) =>
                 setSettingsForm({
                   ...settingsForm,
-                  legal_entity_name: e.target.value
+                  legal_entity_name: e.target.value,
                 })
               }
             />
@@ -461,7 +412,7 @@ export default function PlatformPricingPage() {
               onChange={(e) =>
                 setSettingsForm({
                   ...settingsForm,
-                  vat_registration_no: e.target.value
+                  vat_registration_no: e.target.value,
                 })
               }
             />
@@ -473,7 +424,7 @@ export default function PlatformPricingPage() {
               onChange={(e) =>
                 setSettingsForm({
                   ...settingsForm,
-                  economic_code: e.target.value
+                  economic_code: e.target.value,
                 })
               }
             />
@@ -484,9 +435,7 @@ export default function PlatformPricingPage() {
       <div className="flex justify-end">
         <Button onClick={handleSaveSettings} disabled={savingSettings}>
           <Save className="me-2 h-4 w-4" />
-          {savingSettings
-            ? t('pricing.platform.saving')
-            : t('pricing.platform.saveSettings')}
+          {savingSettings ? t('pricing.platform.saving') : t('pricing.platform.saveSettings')}
         </Button>
       </div>
 
@@ -500,11 +449,7 @@ export default function PlatformPricingPage() {
             <CardTitle>{t('pricing.platform.plansTitle')}</CardTitle>
             <CardDescription>{t('pricing.platform.plansDesc')}</CardDescription>
           </div>
-          <Button
-            size="sm"
-            onClick={startNewPlan}
-            disabled={editingPlanId !== null}
-          >
+          <Button size="sm" onClick={startNewPlan} disabled={editingPlanId !== null}>
             <Plus className="me-2 h-4 w-4" /> {t('pricing.platform.newPlan')}
           </Button>
         </CardHeader>
@@ -526,15 +471,9 @@ export default function PlatformPricingPage() {
                 <Button variant="ghost" size="sm" onClick={cancelPlan}>
                   <X className="me-1 h-3 w-3" /> {t('pricing.platform.cancel')}
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={handleSavePlan}
-                  disabled={savingPlan}
-                >
+                <Button size="sm" onClick={handleSavePlan} disabled={savingPlan}>
                   <Check className="me-1 h-3 w-3" />
-                  {savingPlan
-                    ? t('pricing.platform.saving')
-                    : t('pricing.platform.savePlan')}
+                  {savingPlan ? t('pricing.platform.saving') : t('pricing.platform.savePlan')}
                 </Button>
               </div>
             </div>
@@ -553,9 +492,7 @@ export default function PlatformPricingPage() {
                   <TableHead>{t('pricing.platform.colAnnual')}</TableHead>
                   <TableHead>{t('pricing.platform.colStorage')}</TableHead>
                   <TableHead>{t('pricing.platform.colStatus')}</TableHead>
-                  <TableHead className="text-end">
-                    {t('pricing.platform.colActions')}
-                  </TableHead>
+                  <TableHead className="text-end">{t('pricing.platform.colActions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -563,9 +500,7 @@ export default function PlatformPricingPage() {
                   <TableRow key={plan.id}>
                     <TableCell className="font-medium">
                       <div>{plan.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {plan.slug}
-                      </div>
+                      <div className="text-xs text-muted-foreground">{plan.slug}</div>
                     </TableCell>
                     <TableCell>
                       <div>{formatToman(irrToToman(plan.price_monthly))}</div>
@@ -576,9 +511,7 @@ export default function PlatformPricingPage() {
                     <TableCell>
                       {plan.price_yearly != null ? (
                         <>
-                          <div>
-                            {formatToman(irrToToman(plan.price_yearly))}
-                          </div>
+                          <div>{formatToman(irrToToman(plan.price_yearly))}</div>
                           <div className="text-xs text-muted-foreground">
                             {formatIRR(plan.price_yearly)}
                           </div>
@@ -608,9 +541,7 @@ export default function PlatformPricingPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeletePlan(plan.id)}
-                        disabled={
-                          deletingPlanId === plan.id || editingPlanId !== null
-                        }
+                        disabled={deletingPlanId === plan.id || editingPlanId !== null}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -634,19 +565,13 @@ export default function PlatformPricingPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('pricing.platform.summaryTitle')}</CardTitle>
-            <CardDescription>
-              {t('pricing.platform.summaryDesc')}
-            </CardDescription>
+            <CardDescription>{t('pricing.platform.summaryDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-4">
               <div>
-                <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryVat')}
-                </dt>
-                <dd className="font-semibold">
-                  {toPercent(asNumber(settings.vat_rate))}%
-                </dd>
+                <dt className="text-muted-foreground">{t('pricing.platform.summaryVat')}</dt>
+                <dd className="font-semibold">{toPercent(asNumber(settings.vat_rate))}%</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">
@@ -657,38 +582,26 @@ export default function PlatformPricingPage() {
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryGrace')}
-                </dt>
+                <dt className="text-muted-foreground">{t('pricing.platform.summaryGrace')}</dt>
                 <dd className="font-semibold">
-                  {settings.subscription_grace_days}{' '}
-                  {t('pricing.platform.days')}
+                  {settings.subscription_grace_days} {t('pricing.platform.days')}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryReminder')}
-                </dt>
+                <dt className="text-muted-foreground">{t('pricing.platform.summaryReminder')}</dt>
                 <dd className="font-semibold">
-                  {settings.subscription_reminder_days}{' '}
-                  {t('pricing.platform.daysBefore')}
+                  {settings.subscription_reminder_days} {t('pricing.platform.daysBefore')}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryOverage')}
-                </dt>
+                <dt className="text-muted-foreground">{t('pricing.platform.summaryOverage')}</dt>
                 <dd className="font-semibold">
                   {formatIRR(asNumber(settings.storage_overage_fee_irr))}/GB
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryPhase')}
-                </dt>
-                <dd className="text-xs font-semibold">
-                  {settings.payment_release_phase}
-                </dd>
+                <dt className="text-muted-foreground">{t('pricing.platform.summaryPhase')}</dt>
+                <dd className="text-xs font-semibold">{settings.payment_release_phase}</dd>
               </div>
             </dl>
           </CardContent>

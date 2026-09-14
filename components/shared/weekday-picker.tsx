@@ -17,19 +17,12 @@ type Props = {
  * Saturday-first weekday chips, shared by the live-session repeat editor and the
  * group-class timetable so both speak the same Persian week.
  */
-export const WeekdayPicker = ({
-  value,
-  onChange,
-  single = false,
-  disabled = false
-}: Props) => {
+export const WeekdayPicker = ({ value, onChange, single = false, disabled = false }: Props) => {
   const { t } = useTranslation();
 
   const toggle = (day: number) => {
     if (single) return onChange([day]);
-    onChange(
-      value.includes(day) ? value.filter((d) => d !== day) : [...value, day]
-    );
+    onChange(value.includes(day) ? value.filter((d) => d !== day) : [...value, day]);
   };
 
   return (

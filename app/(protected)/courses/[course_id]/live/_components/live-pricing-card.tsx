@@ -15,10 +15,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
 import { queryKeys } from '@/lib/query/keys';
-import type {
-  TutoringOffer,
-  TutoringOfferKind
-} from '@/types/learning-operations';
+import type { TutoringOffer, TutoringOfferKind } from '@/types/learning-operations';
 
 interface LivePricingCardProps {
   courseId: string;
@@ -43,7 +40,7 @@ export default function LivePricingCard({
   courseTitle,
   tutorProfileId,
   offers,
-  onSaved
+  onSaved,
 }: LivePricingCardProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -64,7 +61,7 @@ export default function LivePricingCard({
       tutor_profile_id: tutorProfileId,
       kind,
       title: `${courseTitle} — ${t(`courses.live.${kind === 'SOLO' ? 'solo' : 'group'}`)}`,
-      price
+      price,
     });
   };
 
@@ -85,7 +82,7 @@ export default function LivePricingCard({
       // also adds the class pages to the sidebar.
       if (saved.some((offer) => offer.feature_enabled_now)) {
         await queryClient.invalidateQueries({
-          queryKey: queryKeys.learningNavCapabilities(academyId)
+          queryKey: queryKeys.learningNavCapabilities(academyId),
         });
         toast.success(
           <span>
@@ -93,7 +90,7 @@ export default function LivePricingCard({
             <Link href="/settings/academy" className="underline">
               {t('courses.live.openAcademySettings')}
             </Link>
-          </span>
+          </span>,
         );
       } else {
         toast.success(t('courses.live.pricesSaved'));
@@ -105,9 +102,7 @@ export default function LivePricingCard({
     }
   };
 
-  const dirty =
-    groupPrice !== priceOf(offers, 'GROUP') ||
-    soloPrice !== priceOf(offers, 'SOLO');
+  const dirty = groupPrice !== priceOf(offers, 'GROUP') || soloPrice !== priceOf(offers, 'SOLO');
 
   return (
     <SetupCard
@@ -120,18 +115,14 @@ export default function LivePricingCard({
       <div className="space-y-4">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <Label htmlFor="group-price">
-              {t('courses.live.groupPrice')} *
-            </Label>
+            <Label htmlFor="group-price">{t('courses.live.groupPrice')} *</Label>
             <PriceInput
               id="group-price"
               value={groupPrice}
               onChange={setGroupPrice}
               suffix={t('common.toman')}
             />
-            <p className="text-xs text-muted-foreground">
-              {t('courses.live.groupPriceHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('courses.live.groupPriceHint')}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="solo-price">{t('courses.live.soloPrice')}</Label>
@@ -141,21 +132,14 @@ export default function LivePricingCard({
               onChange={setSoloPrice}
               suffix={t('common.toman')}
             />
-            <p className="text-xs text-muted-foreground">
-              {t('courses.live.soloPriceHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('courses.live.soloPriceHint')}</p>
           </div>
         </div>
         <PriceLadderPreview
           groupPrice={Number(groupPrice) || 0}
           soloPrice={Number(soloPrice) || 0}
         />
-        <Button
-          type="button"
-          size="sm"
-          onClick={save}
-          disabled={isSaving || !dirty}
-        >
+        <Button type="button" size="sm" onClick={save} disabled={isSaving || !dirty}>
           {isSaving ? t('common.saving') : t('common.save')}
         </Button>
       </div>

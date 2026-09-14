@@ -2,10 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
-import type {
-  TeacherBalance,
-  TeacherPayoutRecord
-} from '@/types/teacher-earnings';
+import type { TeacherBalance, TeacherPayoutRecord } from '@/types/teacher-earnings';
 
 export function useTeacherEarnings() {
   const [balance, setBalance] = useState<TeacherBalance | null>(null);
@@ -20,7 +17,7 @@ export function useTeacherEarnings() {
       try {
         const [nextBalance, nextPayouts] = await Promise.all([
           apiClient.getTeacherBalance(),
-          apiClient.getTeacherPayoutRecords()
+          apiClient.getTeacherPayoutRecords(),
         ]);
         if (cancelled) return;
         setBalance(nextBalance ?? null);

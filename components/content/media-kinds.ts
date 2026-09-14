@@ -23,7 +23,7 @@ interface MediaKindConfig {
     file: File,
     metadata: { title: string; description: string },
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ) => Promise<unknown>;
 }
 
@@ -44,16 +44,10 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
       'video/webm': ['.webm'],
       'video/quicktime': ['.mov'],
       'video/x-msvideo': ['.avi'],
-      'video/mpeg': ['.mpeg', '.mpg']
+      'video/mpeg': ['.mpeg', '.mpg'],
     },
     upload: (file, metadata, onProgress, abortController) =>
-      apiClient.uploadVideoWithProgress(
-        file,
-        metadata,
-        undefined,
-        onProgress,
-        abortController
-      )
+      apiClient.uploadVideoWithProgress(file, metadata, undefined, onProgress, abortController),
   },
   audio: {
     triggerKey: 'media.uploadAudio',
@@ -68,10 +62,10 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
       'audio/mpeg': ['.mp3'],
       'audio/wav': ['.wav'],
       'audio/ogg': ['.ogg'],
-      'audio/webm': ['.weba', '.webm']
+      'audio/webm': ['.weba', '.webm'],
     },
     upload: (file, metadata, onProgress, abortController) =>
-      apiClient.uploadAudio(file, metadata, onProgress, abortController)
+      apiClient.uploadAudio(file, metadata, onProgress, abortController),
   },
   document: {
     triggerKey: 'media.uploadDocument',
@@ -85,19 +79,15 @@ export const MEDIA_KINDS: Record<MediaKind, MediaKindConfig> = {
     accept: {
       'application/pdf': ['.pdf'],
       'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        ['.docx'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
       'application/vnd.ms-powerpoint': ['.ppt'],
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-        ['.pptx'],
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
       'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
-        '.xlsx'
-      ],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
       'text/plain': ['.txt'],
-      'text/markdown': ['.md']
+      'text/markdown': ['.md'],
     },
     upload: (file, metadata, onProgress, abortController) =>
-      apiClient.uploadDocument(file, metadata, onProgress, abortController)
-  }
+      apiClient.uploadDocument(file, metadata, onProgress, abortController),
+  },
 };

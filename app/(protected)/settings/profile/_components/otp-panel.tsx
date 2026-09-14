@@ -14,13 +14,7 @@ interface OtpPanelProps {
   onResend: () => void;
 }
 
-export function OtpPanel({
-  state,
-  sentTo,
-  onCodeChange,
-  onVerify,
-  onResend
-}: OtpPanelProps) {
+export function OtpPanel({ state, sentTo, onCodeChange, onVerify, onResend }: OtpPanelProps) {
   const { t } = useTranslation();
   if (state.step === 'idle') return null;
 
@@ -47,23 +41,14 @@ export function OtpPanel({
                 if (!isVerifying) onVerify();
               }}
             />
-            <Button
-              size="sm"
-              onClick={onVerify}
-              disabled={state.code.length < 4 || isVerifying}
-            >
+            <Button size="sm" onClick={onVerify} disabled={state.code.length < 4 || isVerifying}>
               {isVerifying ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 t('settings.verifyCode')
               )}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onResend}
-              disabled={isVerifying}
-            >
+            <Button variant="ghost" size="sm" onClick={onResend} disabled={isVerifying}>
               {t('settings.resendCode')}
             </Button>
           </div>

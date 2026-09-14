@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,14 +23,14 @@ import {
   CONTENT_REVIEW_STATUS,
   type ContentReviewStatus,
   type ReviewQueueItem,
-  type ReviewQueueResponse
+  type ReviewQueueResponse,
 } from '@/types/compliance';
 
 const TABS: (ContentReviewStatus | 'ALL')[] = [
   CONTENT_REVIEW_STATUS.PENDING,
   CONTENT_REVIEW_STATUS.FLAGGED,
   CONTENT_REVIEW_STATUS.APPROVED,
-  'ALL'
+  'ALL',
 ];
 
 export default function PlatformModerationPage() {
@@ -47,9 +41,7 @@ export default function PlatformModerationPage() {
 
   const [queue, setQueue] = useState<ReviewQueueResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<ContentReviewStatus | 'ALL'>(
-    CONTENT_REVIEW_STATUS.PENDING
-  );
+  const [tab, setTab] = useState<ContentReviewStatus | 'ALL'>(CONTENT_REVIEW_STATUS.PENDING);
   const [publicOnly, setPublicOnly] = useState(false);
   const [page, setPage] = useState(1);
   const [target, setTarget] = useState<ReviewQueueItem | null>(null);
@@ -68,7 +60,7 @@ export default function PlatformModerationPage() {
       const data = await apiClient.getReviewQueue({
         status: tab === 'ALL' ? undefined : tab,
         public_domain_only: publicOnly,
-        page
+        page,
       });
       setQueue(data);
     } catch (error) {
@@ -88,7 +80,7 @@ export default function PlatformModerationPage() {
     try {
       await apiClient.reviewAcademyContent(target.academy_id, {
         status: action,
-        note: note || undefined
+        note: note || undefined,
       });
       setTarget(null);
       setAction(null);
@@ -107,12 +99,8 @@ export default function PlatformModerationPage() {
       <div className="flex items-start gap-3">
         <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-primary" />
         <div>
-          <h1 className="text-2xl font-semibold">
-            {t('compliance.queue.title')}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t('compliance.queue.subtitle')}
-          </p>
+          <h1 className="text-2xl font-semibold">{t('compliance.queue.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('compliance.queue.subtitle')}</p>
         </div>
       </div>
 
@@ -120,13 +108,9 @@ export default function PlatformModerationPage() {
         <CardHeader className="gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-base">
-                {t('compliance.queue.listTitle')}
-              </CardTitle>
+              <CardTitle className="text-base">{t('compliance.queue.listTitle')}</CardTitle>
               <CardDescription>
-                {queue
-                  ? t('compliance.queue.count', { count: queue.total })
-                  : ''}
+                {queue ? t('compliance.queue.count', { count: queue.total }) : ''}
               </CardDescription>
             </div>
             <Button
@@ -171,8 +155,7 @@ export default function PlatformModerationPage() {
               <ReviewQueueTable
                 items={queue?.items ?? []}
                 storefrontBaseUrl={
-                  process.env.NEXT_PUBLIC_STOREFRONT_URL?.replace(/\/$/, '') ??
-                  null
+                  process.env.NEXT_PUBLIC_STOREFRONT_URL?.replace(/\/$/, '') ?? null
                 }
                 onAct={(item, next) => {
                   setTarget(item);
@@ -196,11 +179,7 @@ export default function PlatformModerationPage() {
         </CardContent>
       </Card>
 
-      <AcademyComplianceDialog
-        item={managing}
-        onClose={() => setManaging(null)}
-        onChanged={load}
-      />
+      <AcademyComplianceDialog item={managing} onClose={() => setManaging(null)} onChanged={load} />
 
       <AbuseReportsCard />
 

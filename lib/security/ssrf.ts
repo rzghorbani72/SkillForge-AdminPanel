@@ -1,9 +1,5 @@
 import { stripTrailingSlash, resolveBackendRewriteTarget } from '../api-config';
-import {
-  getAllowedBackendHosts,
-  isHostAllowed,
-  normalizeHostname
-} from './config';
+import { getAllowedBackendHosts, isHostAllowed, normalizeHostname } from './config';
 
 const BLOCKED_BACKEND_PATH_RE = /^\/\/|\\|@|:|%2f|%5c|\.\.(\/|%2f|%5c)/i;
 
@@ -49,12 +45,10 @@ export function resolveTrustedBackendBaseUrl(): string {
     process.env.INTERNAL_API_URL ??
       process.env.BACKEND_API_URL ??
       process.env.NEXT_PUBLIC_BACKEND_API_URL ??
-      ''
+      '',
   );
 
-  const candidate = raw.startsWith('http')
-    ? raw
-    : resolveBackendRewriteTarget(raw || null);
+  const candidate = raw.startsWith('http') ? raw : resolveBackendRewriteTarget(raw || null);
 
   const parsed = assertAllowedBackendOrigin(candidate);
   return stripTrailingSlash(parsed.toString());
@@ -68,10 +62,10 @@ export function buildTrustedBackendUrl(path: string): string {
 
 /** Server-to-server backend calls (payment verify, etc.). */
 export function buildInternalBackendHeaders(
-  extra?: Record<string, string | undefined>
+  extra?: Record<string, string | undefined>,
 ): Record<string, string> {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
   const key = process.env.INTERNAL_API_KEY;
   if (key) headers['x-api-key'] = key;
@@ -90,10 +84,7 @@ export function assertAllowedBackendRewriteTarget(url: string): string {
   return stripTrailingSlash(withProtocol);
 }
 
-export function assertAllowedExternalFetchUrl(
-  url: string,
-  allowedHosts: readonly string[]
-): URL {
+export function assertAllowedExternalFetchUrl(url: string, allowedHosts: readonly string[]): URL {
   const parsed = parseUrlOrThrow(url);
 
   if (parsed.protocol !== 'https:') {

@@ -29,7 +29,7 @@ function UserRow({
   isSelf,
   callerRole,
   onRoleClick,
-  onChanged
+  onChanged,
 }: UserRowProps) {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -43,9 +43,7 @@ function UserRow({
       ? user.role_label || currentRoleId
       : translatedRole;
   const displayName = user.display_name || user.name;
-  const phoneDisplay = user.phone_number
-    ? formatPhoneDisplay(user.phone_number, language)
-    : '—';
+  const phoneDisplay = user.phone_number ? formatPhoneDisplay(user.phone_number, language) : '—';
 
   return (
     <tr className="border-b border-border/50 transition-colors hover:bg-muted/30">
@@ -74,14 +72,10 @@ function UserRow({
         {phoneDisplay}
       </td>
       <td className="px-4 py-3.5 text-sm text-muted-foreground">
-        {user.created_at
-          ? new Date(user.created_at).toLocaleDateString('fa-IR')
-          : '—'}
+        {user.created_at ? new Date(user.created_at).toLocaleDateString('fa-IR') : '—'}
       </td>
       <td className="px-4 py-3">
-        <UserStatusPill
-          status={user.status || (user.is_active ? 'active' : 'inactive')}
-        />
+        <UserStatusPill status={user.status || (user.is_active ? 'active' : 'inactive')} />
       </td>
       <td className="whitespace-nowrap px-4 py-3.5">
         <UserRowActions
@@ -114,7 +108,7 @@ export function UsersTable({
   page,
   onPageChange,
   onRoleClick,
-  onChanged
+  onChanged,
 }: UsersTableProps) {
   const { t } = useTranslation();
   const { user: authUser } = useAuthUser();
@@ -126,9 +120,7 @@ export function UsersTable({
   // while /users/{students,teachers,managers} nest it under profiles[0].
   function getUserRoleId(user: User): string | undefined {
     const profile = user.profiles?.[0];
-    return (
-      profile?.role?.name ?? profile?.Role?.name ?? user.role_name ?? undefined
-    );
+    return profile?.role?.name ?? profile?.Role?.name ?? user.role_name ?? undefined;
   }
 
   function getUserTone(user: User, index: number): number {
@@ -165,10 +157,7 @@ export function UsersTable({
         <tbody>
           {users.length === 0 ? (
             <tr>
-              <td
-                colSpan={6}
-                className="py-12 text-center text-base text-muted-foreground"
-              >
+              <td colSpan={6} className="py-12 text-center text-base text-muted-foreground">
                 {t('users.noUsersFound')}
               </td>
             </tr>
@@ -193,7 +182,7 @@ export function UsersTable({
         <span>
           {t('users.showingOf', {
             shown: users.length,
-            total: totalCount
+            total: totalCount,
           })}
         </span>
         {totalPages > 1 && (
@@ -205,10 +194,7 @@ export function UsersTable({
             >
               ‹
             </button>
-            {Array.from(
-              { length: Math.min(totalPages, 5) },
-              (_, i) => i + 1
-            ).map((p) => (
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
                 onClick={() => onPageChange(p)}

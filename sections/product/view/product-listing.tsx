@@ -13,7 +13,7 @@ import Link from '@/components/ui/link';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Products', link: '/dashboard/product' }
+  { title: 'Products', link: '/dashboard/product' },
 ];
 
 export default async function ProductListingPage() {
@@ -27,7 +27,7 @@ export default async function ProductListingPage() {
     page,
     limit: pageLimit,
     ...(search && { search }),
-    ...(categories && { categories: categories })
+    ...(categories && { categories: categories }),
   };
 
   const data = await fakeProducts.getProducts(filters);

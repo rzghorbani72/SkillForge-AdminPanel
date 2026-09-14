@@ -13,9 +13,7 @@ export type Translate = (key: string) => string;
 
 export function validatePhone(value: string): ValidationKey {
   if (!value.trim()) return 'auth.phoneRequired';
-  return /^\+989\d{9}$/.test(toE164Iran(value))
-    ? null
-    : 'auth.validPhoneNumber';
+  return /^\+989\d{9}$/.test(toE164Iran(value)) ? null : 'auth.validPhoneNumber';
 }
 
 export function validateEmail(value: string): ValidationKey {
@@ -40,10 +38,7 @@ export function validateNewPassword(value: string): ValidationKey {
   return isPasswordValid(value) ? null : 'auth.passwordTooWeak';
 }
 
-export function validateConfirmPassword(
-  password: string,
-  confirmation: string
-): ValidationKey {
+export function validateConfirmPassword(password: string, confirmation: string): ValidationKey {
   if (!confirmation) return 'auth.confirmPasswordRequired';
   return password === confirmation ? null : 'auth.passwordsDoNotMatch';
 }
@@ -60,22 +55,16 @@ export function validateOtp(value: string): ValidationKey {
 /** Drops the valid fields and translates the failing ones for form state. */
 export function collectErrors(
   fields: Record<string, ValidationKey>,
-  t: Translate
+  t: Translate,
 ): Record<string, string> {
-  return Object.entries(fields).reduce<Record<string, string>>(
-    (errors, [field, key]) => {
-      if (key) errors[field] = t(key);
-      return errors;
-    },
-    {}
-  );
+  return Object.entries(fields).reduce<Record<string, string>>((errors, [field, key]) => {
+    if (key) errors[field] = t(key);
+    return errors;
+  }, {});
 }
 
 /** Same rules as above, wrapped for react-hook-form + zod screens. */
-export function authField(
-  validate: (value: string) => ValidationKey,
-  t: Translate
-) {
+export function authField(validate: (value: string) => ValidationKey, t: Translate) {
   return z.string().superRefine((value, ctx) => {
     const key = validate(value);
     if (key) ctx.addIssue({ code: z.ZodIssueCode.custom, message: t(key) });

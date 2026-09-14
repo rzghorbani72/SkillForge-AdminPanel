@@ -34,7 +34,7 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
     stepLockedUntil,
     maxReachableStep,
     nextLabel,
-    canAdvance
+    canAdvance,
   } = wizard;
 
   return (
@@ -51,7 +51,7 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
         <p className="text-xs text-muted-foreground">
           {t('settings.kyc.attemptsRemaining', {
             count: stepAttempts.attempts_remaining,
-            total: state.max_verify_attempts
+            total: state.max_verify_attempts,
           })}
         </p>
       ) : null}
@@ -65,9 +65,7 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
 
       {step === 'identity' ? (
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold">
-            {t('settings.kyc.sectionIdentity')}
-          </h3>
+          <h3 className="text-sm font-semibold">{t('settings.kyc.sectionIdentity')}</h3>
           <KycStepIdentity
             nationalId={nationalId}
             phoneNumber={state.phone_number ?? ''}
@@ -79,18 +77,12 @@ export function KycWizardForm({ initial, onSubmitted }: Props) {
 
       {step === 'iban' ? (
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold">
-            {t('settings.kyc.sectionFinancial')}
-          </h3>
+          <h3 className="text-sm font-semibold">{t('settings.kyc.sectionFinancial')}</h3>
           <KycConfirmedSummary state={state} upto="identity" />
           {awaitingIbanConfirm && confirmInfo ? (
             <KycIbanConfirmCard info={confirmInfo} shebaNumber={confirmSheba} />
           ) : (
-            <KycStepSheba
-              values={sheba}
-              disabled={inputsLocked}
-              onChange={wizard.setSheba}
-            />
+            <KycStepSheba values={sheba} disabled={inputsLocked} onChange={wizard.setSheba} />
           )}
         </section>
       ) : null}

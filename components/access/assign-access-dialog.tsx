@@ -6,16 +6,13 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'react-toastify';
 import { accessGrantsApi, type CreateAccessGrantBody } from '@/lib/api-extra';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  AssignAccessForm,
-  type AssignAccessSelection
-} from './assign-access-form';
+import { AssignAccessForm, type AssignAccessSelection } from './assign-access-form';
 import { CourseTargetPicker } from './course-target-picker';
 
 type AssignAccessDialogProps = {
@@ -37,7 +34,7 @@ export function AssignAccessDialog({
   onOpenChange,
   scope,
   initialProfileIds,
-  onGranted
+  onGranted,
 }: AssignAccessDialogProps) {
   const { t } = useTranslation();
   const [courseIds, setCourseIds] = useState<string[]>([]);
@@ -51,16 +48,14 @@ export function AssignAccessDialog({
     try {
       const body: CreateAccessGrantBody = {
         ...selection,
-        profile_ids: Array.from(
-          new Set([...(initialProfileIds ?? []), ...selection.profile_ids])
-        ),
-        ...(scope ?? { course_ids: courseIds })
+        profile_ids: Array.from(new Set([...(initialProfileIds ?? []), ...selection.profile_ids])),
+        ...(scope ?? { course_ids: courseIds }),
       };
       const summary = await accessGrantsApi.create(body);
       toast.success(
         t('accessGrants.granted', {
-          count: String(summary.student_grants + summary.group_grants)
-        })
+          count: String(summary.student_grants + summary.group_grants),
+        }),
       );
       setCourseIds([]);
       onGranted?.();

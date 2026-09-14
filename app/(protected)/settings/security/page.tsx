@@ -1,13 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Bell, Save } from 'lucide-react';
@@ -28,17 +22,14 @@ const DEFAULT_NOTIFICATIONS: NotificationSettings = {
   emailNotifications: true,
   smsNotifications: false,
   courseUpdates: true,
-  paymentAlerts: true
+  paymentAlerts: true,
 };
 
 export default function SecuritySettingsPage() {
   const { t } = useTranslation();
   const { isLoading } = useSettingsData();
-  const [notifications, setNotifications] = useState<NotificationSettings>(
-    DEFAULT_NOTIFICATIONS
-  );
-  const [isSavingNotifications, setIsSavingNotifications] =
-    useState<boolean>(false);
+  const [notifications, setNotifications] = useState<NotificationSettings>(DEFAULT_NOTIFICATIONS);
+  const [isSavingNotifications, setIsSavingNotifications] = useState<boolean>(false);
 
   const handleNotificationSave = async () => {
     try {
@@ -66,12 +57,8 @@ export default function SecuritySettingsPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('settings.securityTitle')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('settings.securitySubtitle')}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('settings.securityTitle')}</h1>
+        <p className="text-muted-foreground">{t('settings.securitySubtitle')}</p>
       </div>
 
       <ActiveSessionsCard />
@@ -81,32 +68,30 @@ export default function SecuritySettingsPage() {
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" /> {t('settings.notificationPreferences')}
           </CardTitle>
-          <CardDescription>
-            {t('settings.notificationPreferencesDescription')}
-          </CardDescription>
+          <CardDescription>{t('settings.notificationPreferencesDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {[
             {
               key: 'emailNotifications',
               title: t('settings.emailNotifications'),
-              description: t('settings.emailNotificationsDescription')
+              description: t('settings.emailNotificationsDescription'),
             },
             {
               key: 'smsNotifications',
               title: t('settings.smsAlerts'),
-              description: t('settings.smsAlertsDescription')
+              description: t('settings.smsAlertsDescription'),
             },
             {
               key: 'courseUpdates',
               title: t('settings.courseUpdates'),
-              description: t('settings.courseUpdatesDescription')
+              description: t('settings.courseUpdatesDescription'),
             },
             {
               key: 'paymentAlerts',
               title: t('settings.paymentAlerts'),
-              description: t('settings.paymentAlertsDescription')
-            }
+              description: t('settings.paymentAlertsDescription'),
+            },
           ].map(({ key, title, description }) => (
             <div
               key={key}
@@ -127,7 +112,7 @@ export default function SecuritySettingsPage() {
                   onCheckedChange={(checked) =>
                     setNotifications((prev) => ({
                       ...prev,
-                      [key]: checked
+                      [key]: checked,
                     }))
                   }
                   className="h-6 data-[state=checked]:bg-emerald-600 data-[state=unchecked]:bg-muted"
@@ -142,9 +127,7 @@ export default function SecuritySettingsPage() {
               disabled={isSavingNotifications}
             >
               <Save className="mr-2 h-4 w-4" />
-              {isSavingNotifications
-                ? t('settings.saving')
-                : t('settings.savePreferences')}
+              {isSavingNotifications ? t('settings.saving') : t('settings.savePreferences')}
             </Button>
           </div>
         </CardContent>

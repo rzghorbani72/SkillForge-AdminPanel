@@ -1,13 +1,7 @@
 'use client';
 
 import Link from '@/components/ui/link';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -24,12 +18,7 @@ type Props = {
   onRefresh: () => void;
 };
 
-export function GatewayTogglesCard({
-  gateways,
-  savingId,
-  onToggle,
-  onRefresh
-}: Props) {
+export function GatewayTogglesCard({ gateways, savingId, onToggle, onRefresh }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -37,9 +26,7 @@ export function GatewayTogglesCard({
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle>{t('pricing.platform.gatewaysTitle')}</CardTitle>
-          <CardDescription>
-            {t('pricing.platform.gatewaysDesc')}
-          </CardDescription>
+          <CardDescription>{t('pricing.platform.gatewaysDesc')}</CardDescription>
         </div>
         <div className="flex shrink-0 gap-2">
           <Button variant="outline" size="sm" onClick={onRefresh}>
@@ -72,10 +59,7 @@ export function GatewayTogglesCard({
                     {gw.display_name &&
                       gw.display_name !== gw.name &&
                       gw.display_name !== label && (
-                        <Badge
-                          variant="outline"
-                          className="text-xs font-normal"
-                        >
+                        <Badge variant="outline" className="text-xs font-normal">
                           {gw.display_name}
                         </Badge>
                       )}

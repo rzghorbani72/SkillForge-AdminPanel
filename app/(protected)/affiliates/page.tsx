@@ -4,10 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Plus, Network, Eye } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
-import {
-  useCurrentAcademyId,
-  useCurrentAcademy
-} from '@/hooks/useCurrentAcademy';
+import { useCurrentAcademyId, useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { Button } from '@/components/ui/button';
@@ -40,9 +37,7 @@ export default function AffiliatesPage() {
     setLoading(true);
     try {
       const data = await apiClient.getAffiliates();
-      setAffiliates(
-        Array.isArray(data) ? data : (data?.affiliates ?? data?.data ?? [])
-      );
+      setAffiliates(Array.isArray(data) ? data : (data?.affiliates ?? data?.data ?? []));
     } catch (error) {
       toast.error(apiErrorMessage(error, t('affiliates.loadError')));
     } finally {
@@ -58,16 +53,15 @@ export default function AffiliatesPage() {
   const totalClicks = affiliates.reduce((s, a) => s + (a.clicks ?? 0), 0);
   const totalSales = affiliates.reduce(
     (s, a) => s + ((a as any).sales ?? a.Usages?.length ?? 0),
-    0
+    0,
   );
   const totalCommission = affiliates.reduce(
     (s, a) => s + (a.Usages?.reduce((x, u) => x + u.commission_amount, 0) ?? 0),
-    0
+    0,
   );
 
   async function removeAffiliate(aff: Affiliate) {
-    if (!confirm(t('affiliates.deleteConfirm', { name: aff.affiliate_name })))
-      return;
+    if (!confirm(t('affiliates.deleteConfirm', { name: aff.affiliate_name }))) return;
     try {
       await apiClient.deleteAffiliate(aff.id);
       toast.success(t('affiliates.deleteSuccess'));
@@ -86,12 +80,8 @@ export default function AffiliatesPage() {
           <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {t('affiliates.sectionLabel')}
           </p>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {t('affiliates.programTitle')}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t('affiliates.pageSubtitle')}
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('affiliates.programTitle')}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t('affiliates.pageSubtitle')}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Button variant="outline" onClick={() => setShowPreview(true)}>
@@ -139,10 +129,7 @@ export default function AffiliatesPage() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="h-14 animate-pulse rounded-xl border bg-muted"
-            />
+            <div key={i} className="h-14 animate-pulse rounded-xl border bg-muted" />
           ))}
         </div>
       ) : affiliates.length === 0 ? (
@@ -150,17 +137,12 @@ export default function AffiliatesPage() {
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
             <Network className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h2 className="text-lg font-semibold">
-            {t('affiliates.noAffiliates')}
-          </h2>
+          <h2 className="text-lg font-semibold">{t('affiliates.noAffiliates')}</h2>
           <p className="mt-1 max-w-xs text-sm text-muted-foreground">
             {t('affiliates.noAffiliatesDesc')}
           </p>
           {academyId && (
-            <Button
-              className="mt-6"
-              onClick={() => setDialogState({ open: true })}
-            >
+            <Button className="mt-6" onClick={() => setDialogState({ open: true })}>
               <Plus className="me-2 h-4 w-4" />
               {t('affiliates.newAffiliate')}
             </Button>

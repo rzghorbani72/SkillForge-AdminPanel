@@ -2,10 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label';
-import {
-  EntityMultiSelect,
-  type SelectableEntity
-} from '@/components/shared/entity-multi-select';
+import { EntityMultiSelect, type SelectableEntity } from '@/components/shared/entity-multi-select';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -25,7 +22,7 @@ export function CourseTargetPicker({
   selected,
   onChange,
   disabled = false,
-  enabled = true
+  enabled = true,
 }: CourseTargetPickerProps) {
   const { t } = useTranslation();
   const [courses, setCourses] = useState<SelectableEntity[]>([]);
@@ -34,12 +31,10 @@ export function CourseTargetPicker({
     try {
       const data = await apiClient.getCourses({
         page: 1,
-        limit: COURSE_PAGE_SIZE
+        limit: COURSE_PAGE_SIZE,
       });
       const records = (data?.courses ?? []) as CourseRecord[];
-      setCourses(
-        records.map((course) => ({ id: course.id, title: course.title || '—' }))
-      );
+      setCourses(records.map((course) => ({ id: course.id, title: course.title || '—' })));
     } catch {
       setCourses([]);
     }
@@ -63,7 +58,7 @@ export function CourseTargetPicker({
           selected: t('accessGrants.courses'),
           search: t('common.search'),
           empty: t('accessGrants.noCourses'),
-          remove: t('common.remove')
+          remove: t('common.remove'),
         }}
       />
     </div>

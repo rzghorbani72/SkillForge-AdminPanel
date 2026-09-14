@@ -33,7 +33,7 @@ export function MemberPicker({
   selected,
   onToggle,
   excludeIds,
-  disabled = false
+  disabled = false,
 }: MemberPickerProps) {
   const { t } = useTranslation();
   const { user: authUser } = useAuthUser();
@@ -49,7 +49,7 @@ export function MemberPicker({
       const data = await apiClient.getUsers({
         page: 1,
         limit: MEMBER_PAGE_SIZE,
-        search: debouncedSearch || undefined
+        search: debouncedSearch || undefined,
       });
       setCandidates(data?.users ?? data?.profiles ?? []);
     } catch (error) {
@@ -103,8 +103,7 @@ export function MemberPicker({
         ) : (
           <ul className="divide-y divide-border/60">
             {visible.map((candidate) => {
-              const displayName =
-                candidate.display_name || candidate.name || '—';
+              const displayName = candidate.display_name || candidate.name || '—';
               return (
                 <li key={candidate.id}>
                   <label className="flex cursor-pointer items-center gap-2.5 px-3 py-2 transition-colors hover:bg-muted/40">
@@ -117,9 +116,7 @@ export function MemberPicker({
                     />
                     <UserAvatar name={displayName} tone={210} size={26} />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-medium">
-                        {displayName}
-                      </span>
+                      <span className="block truncate text-[13px] font-medium">{displayName}</span>
                       <span className="block truncate text-[11.5px] text-muted-foreground">
                         {candidate.email || candidate.phone_number || '—'}
                       </span>

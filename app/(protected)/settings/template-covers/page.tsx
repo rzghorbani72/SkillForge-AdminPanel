@@ -60,12 +60,10 @@ export default function TemplateCoversPage() {
       try {
         const [data, session] = await Promise.all([
           apiClient.getSectionCatalog() as Promise<CatalogEntry[]>,
-          apiClient.getTemplatePreviewSession().catch(() => null)
+          apiClient.getTemplatePreviewSession().catch(() => null),
         ]);
         setGroups(toGroups(data));
-        setStorefrontBase(
-          resolveStorefrontBaseUrl(session?.storefrontBaseUrl) ?? null
-        );
+        setStorefrontBase(resolveStorefrontBaseUrl(session?.storefrontBaseUrl) ?? null);
       } catch (error) {
         ErrorHandler.handleApiError(error);
       } finally {
@@ -81,8 +79,8 @@ export default function TemplateCoversPage() {
           پیش‌نمایش بخش‌های قالب‌ها
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          هر قالب عمومی با رندر واقعی فروشگاه نمایش داده می‌شود — داخل هر کادر
-          اسکرول کنید تا همه بخش‌ها را ببینید.
+          هر قالب عمومی با رندر واقعی فروشگاه نمایش داده می‌شود — داخل هر کادر اسکرول کنید تا همه
+          بخش‌ها را ببینید.
         </p>
       </div>
 
@@ -94,13 +92,9 @@ export default function TemplateCoversPage() {
       )}
 
       {isLoading ? (
-        <p className="py-12 text-center text-sm text-muted-foreground">
-          {t('common.loading')}
-        </p>
+        <p className="py-12 text-center text-sm text-muted-foreground">{t('common.loading')}</p>
       ) : groups.length === 0 ? (
-        <p className="py-12 text-center text-sm text-muted-foreground">
-          قالب عمومی‌ای یافت نشد.
-        </p>
+        <p className="py-12 text-center text-sm text-muted-foreground">قالب عمومی‌ای یافت نشد.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           {groups.map((group) => (

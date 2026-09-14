@@ -12,7 +12,7 @@ import {
   Upload,
   MousePointerClick,
   Info,
-  Undo2
+  Undo2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -25,21 +25,14 @@ import { getSectionSchema, isSectionIncomplete } from './section-schema';
 import { TextOverridesEditor } from './text-overrides-editor';
 import { SectionSlotEditor } from './section-slot-editor';
 import { isGridSection } from './slot-constants';
-import {
-  HeroVariantPicker,
-  type HeroPreviewContext
-} from './hero-variant-picker';
+import { HeroVariantPicker, type HeroPreviewContext } from './hero-variant-picker';
 import { BlockTypePicker, blockTypeLabelKey } from './block-type-picker';
 import { HeroVideoPicker } from './hero-video-picker';
 import { SlidesEditor } from './slides-editor';
 import { VideosEditor } from './videos-editor';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
 import { HeroAlignPicker } from './hero-align-picker';
-import {
-  TEMPLATE_KEYS,
-  isCenteredHero,
-  isVideoBannerHero
-} from '@/constants/template-names';
+import { TEMPLATE_KEYS, isCenteredHero, isVideoBannerHero } from '@/constants/template-names';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
 
@@ -47,21 +40,10 @@ type HeroBgType = 'gradient' | 'solid' | 'image';
 const MEDIA_HEIGHT_MIN = 120;
 const MEDIA_HEIGHT_MAX = 720;
 const MEDIA_HEIGHT_DEFAULT = 260;
-const MEDIA_RATIOS = [
-  'free',
-  '3:1',
-  '21:9',
-  '16:9',
-  '4:3',
-  '1:1',
-  '9:16'
-] as const;
+const MEDIA_RATIOS = ['free', '3:1', '21:9', '16:9', '4:3', '1:1', '9:16'] as const;
 
 function isGalleryHeroStyle(style: unknown): boolean {
-  return (
-    typeof style === 'string' &&
-    (TEMPLATE_KEYS as readonly string[]).includes(style)
-  );
+  return typeof style === 'string' && (TEMPLATE_KEYS as readonly string[]).includes(style);
 }
 
 export interface SectionEditorProps {
@@ -94,7 +76,7 @@ export function SectionEditor({
   onToggleVisible,
   onBack,
   onPickBlockType,
-  preview
+  preview,
 }: SectionEditorProps) {
   const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -104,8 +86,7 @@ export function SectionEditor({
   const isPlaceholder = block.type === 'placeholder';
   const schema = getSectionSchema(block.type);
   const cfg = block.config ?? {};
-  const set = (key: string, value: unknown) =>
-    onUpdate(block.id, { [key]: value });
+  const set = (key: string, value: unknown) => onUpdate(block.id, { [key]: value });
   // Set by handleBlockDelete: what this slot used to be, so a shortcut can
   // skip straight to that type's design library instead of the full grid.
   const previousType =
@@ -140,9 +121,7 @@ export function SectionEditor({
         >
           <ArrowRight className="h-4 w-4" />
         </button>
-        <span className="text-sm font-semibold text-zinc-900">
-          {schema.name}
-        </span>
+        <span className="text-sm font-semibold text-zinc-900">{schema.name}</span>
         {incomplete && (
           <span
             title={t('sitePreview.panelIncomplete')}
@@ -165,14 +144,12 @@ export function SectionEditor({
               >
                 <Undo2 className="h-3.5 w-3.5 shrink-0" />
                 {t('sitePreview.revertToPrevious', {
-                  type: t(blockTypeLabelKey(previousType)) || previousType
+                  type: t(blockTypeLabelKey(previousType)) || previousType,
                 })}
               </button>
             )}
             {onPickBlockType && (
-              <BlockTypePicker
-                onSelect={(type) => onPickBlockType(block.id, type)}
-              />
+              <BlockTypePicker onSelect={(type) => onPickBlockType(block.id, type)} />
             )}
           </>
         ) : (
@@ -205,9 +182,7 @@ export function SectionEditor({
                     <div className="grid grid-cols-4 gap-1.5" dir="ltr">
                       {MEDIA_RATIOS.map((ratio) => {
                         const current =
-                          typeof cfg.mediaRatio === 'string'
-                            ? cfg.mediaRatio
-                            : 'free';
+                          typeof cfg.mediaRatio === 'string' ? cfg.mediaRatio : 'free';
                         return (
                           <button
                             key={ratio}
@@ -219,9 +194,7 @@ export function SectionEditor({
                                 : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100'
                             }`}
                           >
-                            {ratio === 'free'
-                              ? t('sitePreview.panelRatioFree')
-                              : ratio}
+                            {ratio === 'free' ? t('sitePreview.panelRatioFree') : ratio}
                           </button>
                         );
                       })}
@@ -259,12 +232,8 @@ export function SectionEditor({
                       min={MEDIA_HEIGHT_MIN}
                       max={MEDIA_HEIGHT_MAX}
                       step={10}
-                      value={
-                        (cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT
-                      }
-                      onChange={(e) =>
-                        set('mediaHeight', Number(e.target.value))
-                      }
+                      value={(cfg.mediaHeight as number) ?? MEDIA_HEIGHT_DEFAULT}
+                      onChange={(e) => set('mediaHeight', Number(e.target.value))}
                       className="mt-1.5 w-full accent-blue-500"
                     />
                   </div>
@@ -290,10 +259,7 @@ export function SectionEditor({
                   <Eye className="h-3.5 w-3.5" />
                   {t('sitePreview.panelSectionVisible')}
                 </span>
-                <Switch
-                  checked={isVisible}
-                  onCheckedChange={(v) => onToggleVisible(block.id, v)}
-                />
+                <Switch checked={isVisible} onCheckedChange={(v) => onToggleVisible(block.id, v)} />
               </div>
             )}
 
@@ -313,33 +279,18 @@ export function SectionEditor({
                 </button>
                 {showAdvanced && (
                   <div className="mt-3 space-y-4">
-                    <TextOverridesEditor
-                      blockType={block.type}
-                      cfg={cfg}
-                      set={set}
-                    />
-                    <SectionSlotEditor
-                      blockType={block.type}
-                      cfg={cfg}
-                      set={set}
-                    />
+                    <TextOverridesEditor blockType={block.type} cfg={cfg} set={set} />
+                    <SectionSlotEditor blockType={block.type} cfg={cfg} set={set} />
                   </div>
                 )}
               </div>
             )}
 
-            {!isGalleryHero &&
-              schema.hasBackground &&
-              block.type !== 'hero' && (
-                <div className="mt-4 border-t border-zinc-200/70 pt-4">
-                  <HeroBackground
-                    block={block}
-                    cfg={cfg}
-                    set={set}
-                    onUpdate={onUpdate}
-                  />
-                </div>
-              )}
+            {!isGalleryHero && schema.hasBackground && block.type !== 'hero' && (
+              <div className="mt-4 border-t border-zinc-200/70 pt-4">
+                <HeroBackground block={block} cfg={cfg} set={set} onUpdate={onUpdate} />
+              </div>
+            )}
 
             {schema.dynamicContentNote && (
               <div className="mt-4 flex items-start gap-2 rounded-lg border border-blue-400/20 bg-blue-400/5 px-3 py-2.5">
@@ -397,7 +348,7 @@ function HeroBackground({
   block,
   cfg,
   set,
-  onUpdate
+  onUpdate,
 }: {
   block: UIBlockConfig;
   cfg: Record<string, unknown>;
@@ -414,7 +365,7 @@ function HeroBackground({
     try {
       setIsUploading(true);
       const result = await apiClient.uploadImage(file, {
-        title: 'Hero Background'
+        title: 'Hero Background',
       });
       const raw = result as unknown as Record<string, unknown>;
       const id =
@@ -425,7 +376,7 @@ function HeroBackground({
         onUpdate(block.id, {
           bgImage: url,
           backgroundImage: url,
-          bgType: 'image'
+          bgType: 'image',
         });
       }
     } catch (error) {
@@ -439,7 +390,7 @@ function HeroBackground({
   const bgOptions: { type: HeroBgType; label: string }[] = [
     { type: 'gradient', label: t('sitePreview.panelBgGradient') },
     { type: 'solid', label: t('sitePreview.panelBgSolid') },
-    { type: 'image', label: t('sitePreview.panelBgImage') }
+    { type: 'image', label: t('sitePreview.panelBgImage') },
   ];
 
   return (
@@ -459,7 +410,7 @@ function HeroBackground({
                 if (type === 'solid' && !cfg.bgColor) {
                   onUpdate(block.id, {
                     bgType: 'solid',
-                    bgColor: '#3b82f6'
+                    bgColor: '#3b82f6',
                   });
                 } else {
                   set('bgType', type);
@@ -519,9 +470,7 @@ function HeroBackground({
           ) : (
             <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-zinc-300 py-4 text-xs text-zinc-600 transition-colors hover:border-blue-500 hover:text-blue-400">
               <Upload className="h-4 w-4" />
-              {isUploading
-                ? t('sitePreview.panelUploading')
-                : t('sitePreview.panelUploadImage')}
+              {isUploading ? t('sitePreview.panelUploading') : t('sitePreview.panelUploadImage')}
               <input
                 type="file"
                 accept="image/*"
@@ -533,12 +482,8 @@ function HeroBackground({
           )}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-600">
-                {t('sitePreview.panelOverlayOpacity')}
-              </span>
-              <span className="text-xs text-zinc-700">
-                {(cfg.overlayOpacity as number) ?? 40}%
-              </span>
+              <span className="text-xs text-zinc-600">{t('sitePreview.panelOverlayOpacity')}</span>
+              <span className="text-xs text-zinc-700">{(cfg.overlayOpacity as number) ?? 40}%</span>
             </div>
             <input
               type="range"

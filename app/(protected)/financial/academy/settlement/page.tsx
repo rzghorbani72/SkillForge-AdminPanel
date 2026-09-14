@@ -14,15 +14,12 @@ import { useTranslation } from '@/lib/i18n/hooks';
 export default function SettlementPage() {
   const { t } = useTranslation();
   const academyId = useCurrentAcademyId();
-  const { summary, history, isLoading, error, reload } =
-    useSettlement(academyId);
+  const { summary, history, isLoading, error, reload } = useSettlement(academyId);
 
   if (!academyId) {
     return (
       <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
-        <p className="text-muted-foreground">
-          {t('financial.store.overview.noStore')}
-        </p>
+        <p className="text-muted-foreground">{t('financial.store.overview.noStore')}</p>
       </div>
     );
   }
@@ -33,12 +30,8 @@ export default function SettlementPage() {
         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {t('settlement.eyebrow')}
         </p>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('settlement.title')}
-        </h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
-          {t('settlement.description')}
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('settlement.title')}</h1>
+        <p className="max-w-2xl text-sm text-muted-foreground">{t('settlement.description')}</p>
       </header>
 
       {isLoading ? (
@@ -65,11 +58,7 @@ export default function SettlementPage() {
               bankAccount={summary.bank_account}
               onSaved={reload}
             />
-            <SettlementRequestCard
-              academyId={academyId}
-              summary={summary}
-              onRequested={reload}
-            />
+            <SettlementRequestCard academyId={academyId} summary={summary} onRequested={reload} />
           </div>
           <SettlementHistoryTable records={history} />
         </>

@@ -23,9 +23,7 @@ function buildPageItems(current: number, total: number): (number | string)[] {
     return Array.from({ length: total }, (_, i) => i + 1);
   }
 
-  const window = [current - 1, current, current + 1].filter(
-    (p) => p > 1 && p < total
-  );
+  const window = [current - 1, current, current + 1].filter((p) => p > 1 && p < total);
   const items: (number | string)[] = [1];
 
   if (window[0] > 2) items.push(`${GAP}-start`);
@@ -43,7 +41,7 @@ export function Pagination({
   hasNextPage,
   hasPreviousPage,
   totalItems,
-  itemsPerPage
+  itemsPerPage,
 }: PaginationProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -56,7 +54,7 @@ export function Pagination({
         {t('common.showingResults', {
           from: formatNumber(from),
           to: formatNumber(to),
-          total: formatNumber(totalItems)
+          total: formatNumber(totalItems),
         })}
       </p>
 
@@ -73,11 +71,7 @@ export function Pagination({
 
         {buildPageItems(currentPage, totalPages).map((item) =>
           typeof item === 'string' ? (
-            <span
-              key={item}
-              className="px-1 text-xs text-muted-foreground"
-              aria-hidden
-            >
+            <span key={item} className="px-1 text-xs text-muted-foreground" aria-hidden>
               …
             </span>
           ) : (
@@ -89,7 +83,7 @@ export function Pagination({
             >
               {formatNumber(item)}
             </PageButton>
-          )
+          ),
         )}
 
         <PageButton
@@ -117,7 +111,7 @@ function PageButton({
   label,
   children,
   active = false,
-  disabled = false
+  disabled = false,
 }: PageButtonProps) {
   return (
     <button
@@ -131,7 +125,7 @@ function PageButton({
         active
           ? 'border-border bg-foreground text-background'
           : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-        disabled && 'cursor-not-allowed opacity-40 hover:bg-transparent'
+        disabled && 'cursor-not-allowed opacity-40 hover:bg-transparent',
       )}
     >
       {children}

@@ -9,9 +9,7 @@ import { isApiResponseError } from './api-error';
  * stable code.
  */
 export function isUserNotRegisteredError(error: unknown): boolean {
-  return (
-    isApiResponseError(error) && error.error.code === 'AUTH_USER_NOT_REGISTERED'
-  );
+  return isApiResponseError(error) && error.error.code === 'AUTH_USER_NOT_REGISTERED';
 }
 
 /**
@@ -25,7 +23,7 @@ export function isCaptchaRequiredError(error: unknown): boolean {
 const PANEL_BLOCKED_CODES = new Set([
   'AUTH_ACCOUNT_DISABLED',
   'AUTH_USER_BANNED',
-  'AUTH_MEMBER_BANNED'
+  'AUTH_MEMBER_BANNED',
 ]);
 
 /**

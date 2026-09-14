@@ -8,15 +8,12 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  EntityMultiSelect,
-  type SelectableEntity
-} from '@/components/shared/entity-multi-select';
+import { EntityMultiSelect, type SelectableEntity } from '@/components/shared/entity-multi-select';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -37,11 +34,7 @@ type CourseRecord = { id: string; title?: string | null };
  * group course grant. Courses are picked by title; the previous UI asked the
  * manager to type a raw course id into window.prompt().
  */
-export function GrantCourseDialog({
-  profileId,
-  onOpenChange,
-  onGranted
-}: GrantCourseDialogProps) {
+export function GrantCourseDialog({ profileId, onOpenChange, onGranted }: GrantCourseDialogProps) {
   const { t } = useTranslation();
   const [courses, setCourses] = useState<SelectableEntity[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -56,14 +49,14 @@ export function GrantCourseDialog({
     try {
       const data = await apiClient.getCourses({
         page: 1,
-        limit: COURSE_PAGE_SIZE
+        limit: COURSE_PAGE_SIZE,
       });
       const records = (data?.courses ?? []) as CourseRecord[];
       setCourses(
         records.map((course) => ({
           id: course.id,
-          title: course.title || '—'
-        }))
+          title: course.title || '—',
+        })),
       );
     } catch (error) {
       ErrorHandler.handleApiError(error);
@@ -94,7 +87,7 @@ export function GrantCourseDialog({
       for (const courseId of selected) {
         await apiClient.grantCourseAccess(profileId, {
           course_id: courseId,
-          note: note.trim() || undefined
+          note: note.trim() || undefined,
         });
       }
       ErrorHandler.showSuccess(t('users.courseAccessGranted'));
@@ -112,9 +105,7 @@ export function GrantCourseDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{t('users.grantCourse')}</DialogTitle>
-          <DialogDescription>
-            {t('users.grantCourseDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('users.grantCourseDescription')}</DialogDescription>
         </DialogHeader>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -133,7 +124,7 @@ export function GrantCourseDialog({
                 selected: t('common.selected'),
                 search: t('common.search'),
                 empty: t('users.noCoursesAvailable'),
-                remove: t('common.remove')
+                remove: t('common.remove'),
               }}
             />
           )}

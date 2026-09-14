@@ -22,8 +22,8 @@ export function useDateFormat() {
         // 24-hour whenever the caller asks for a time.
         hourCycle: 'h23',
         ...(language === 'fa' ? { calendar: 'persian' as const } : {}),
-        ...options
+        ...options,
       }).format(new Date(value)),
-    [locale, language]
+    [locale, language],
   );
 }

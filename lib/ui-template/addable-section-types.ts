@@ -11,7 +11,7 @@ export const ADDABLE_SECTION_TYPES = [
   'projects',
   'marquee',
   'course-grid',
-  'membership'
+  'membership',
 ] as const;
 
 export type AddableSectionType = (typeof ADDABLE_SECTION_TYPES)[number];

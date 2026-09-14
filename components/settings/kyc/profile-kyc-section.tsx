@@ -1,19 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ShieldCheck } from 'lucide-react';
-import {
-  KycReadonlyPanel,
-  KycStatusBadge
-} from '@/components/settings/kyc/kyc-readonly-panel';
+import { KycReadonlyPanel, KycStatusBadge } from '@/components/settings/kyc/kyc-readonly-panel';
 import { KycChangeIban } from '@/components/settings/kyc/kyc-change-iban';
 import { KycWizardForm } from '@/components/settings/kyc/kyc-wizard-form';
 import { Button } from '@/components/ui/button';
@@ -58,10 +49,7 @@ export function ProfileKycSection({ enabled }: Props) {
           </span>
           {t('settings.kyc.formTitle')}
           {state ? (
-            <KycStatusBadge
-              status={state.status}
-              complete={state.settlement_eligible}
-            />
+            <KycStatusBadge status={state.status} complete={state.settlement_eligible} />
           ) : null}
         </CardTitle>
         <CardDescription>{t('settings.kyc.formDescription')}</CardDescription>
@@ -77,12 +65,7 @@ export function ProfileKycSection({ enabled }: Props) {
           <div className="space-y-4">
             <KycWizardForm initial={state} onSubmitted={applyState} />
             {addingIban ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setAddingIban(false)}
-              >
+              <Button type="button" variant="ghost" size="sm" onClick={() => setAddingIban(false)}>
                 {t('settings.kyc.cancelChangeIban')}
               </Button>
             ) : null}
@@ -96,10 +79,7 @@ export function ProfileKycSection({ enabled }: Props) {
               </p>
             ) : null}
             {state.is_owner ? (
-              <KycChangeIban
-                onSelected={applyState}
-                onAddNew={() => setAddingIban(true)}
-              />
+              <KycChangeIban onSelected={applyState} onAddNew={() => setAddingIban(true)} />
             ) : null}
           </div>
         )}

@@ -8,7 +8,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -21,7 +21,7 @@ export function PlatformStaffTable({
   canManage,
   currentUserId,
   isOwner,
-  onChanged
+  onChanged,
 }: {
   rows: PlatformStaffRecord[];
   roleLabel: Record<string, string>;
@@ -45,9 +45,7 @@ export function PlatformStaffTable({
     try {
       await apiClient.updatePlatformStaff(row.id, {
         is_active: !row.is_active,
-        reason: row.is_active
-          ? 'Deactivated from users hub'
-          : 'Reactivated from users hub'
+        reason: row.is_active ? 'Deactivated from users hub' : 'Reactivated from users hub',
       });
       onChanged();
     } catch (error) {
@@ -86,9 +84,7 @@ export function PlatformStaffTable({
                   {roleLabel[row.platform_role] ?? row.platform_role}
                 </Badge>
               </TableCell>
-              <TableCell className="text-muted-foreground">
-                {row.email ?? '—'}
-              </TableCell>
+              <TableCell className="text-muted-foreground">{row.email ?? '—'}</TableCell>
               <TableCell>
                 <Badge variant={row.is_active ? 'default' : 'outline'}>
                   {row.is_active ? t('common.active') : t('common.inactive')}
@@ -97,14 +93,8 @@ export function PlatformStaffTable({
               {canManage && (
                 <TableCell>
                   {canModify(row) && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => void toggleActive(row)}
-                    >
-                      {row.is_active
-                        ? t('common.deactivate')
-                        : t('common.activate')}
+                    <Button size="sm" variant="ghost" onClick={() => void toggleActive(row)}>
+                      {row.is_active ? t('common.deactivate') : t('common.activate')}
                     </Button>
                   )}
                 </TableCell>

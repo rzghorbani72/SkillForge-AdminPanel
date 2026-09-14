@@ -6,13 +6,10 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  useAcademyVideos,
-  videoStreamPath
-} from '@/lib/ui-template/use-academy-videos';
+import { useAcademyVideos, videoStreamPath } from '@/lib/ui-template/use-academy-videos';
 import { SectionItemControls, moveItem } from './section-item-controls';
 
 export interface VideoItemConfig {
@@ -46,9 +43,7 @@ export function VideosEditor({ cfg, set }: VideosEditorProps) {
   const write = (next: VideoItemConfig[]) => set('videos', next);
 
   const patch = (index: number, changes: Partial<VideoItemConfig>) =>
-    write(
-      videos.map((video, i) => (i === index ? { ...video, ...changes } : video))
-    );
+    write(videos.map((video, i) => (i === index ? { ...video, ...changes } : video)));
 
   const addVideo = (videoId: string) => {
     const source = library.find((item) => item.id === videoId);
@@ -59,23 +54,19 @@ export function VideosEditor({ cfg, set }: VideosEditorProps) {
         videoId: source.id,
         url: videoStreamPath(source),
         poster: source.poster_url ?? undefined,
-        title: source.title
-      }
+        title: source.title,
+      },
     ]);
   };
 
-  const available = library.filter(
-    (item) => !videos.some((video) => video.videoId === item.id)
-  );
+  const available = library.filter((item) => !videos.some((video) => video.videoId === item.id));
 
   return (
     <div className="space-y-3">
       <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
         {t('sitePreview.videosEditorTitle')}
       </span>
-      <p className="text-[11px] leading-relaxed text-zinc-500">
-        {t('sitePreview.videosCaption')}
-      </p>
+      <p className="text-[11px] leading-relaxed text-zinc-500">{t('sitePreview.videosCaption')}</p>
 
       {videos.length === 0 ? (
         <p className="rounded-lg border border-dashed border-zinc-300 py-4 text-center text-[11px] text-zinc-500">
@@ -106,9 +97,7 @@ export function VideosEditor({ cfg, set }: VideosEditorProps) {
             />
             <Input
               value={video.description ?? ''}
-              onChange={(event) =>
-                patch(index, { description: event.target.value })
-              }
+              onChange={(event) => patch(index, { description: event.target.value })}
               placeholder={t('sitePreview.videoCustomDescription')}
               className="h-8 border-zinc-300 bg-white text-xs"
             />
@@ -117,9 +106,7 @@ export function VideosEditor({ cfg, set }: VideosEditorProps) {
       )}
 
       {!isLoading && available.length === 0 ? (
-        <p className="text-[11px] text-zinc-500">
-          {t('sitePreview.videosLibraryEmpty')}
-        </p>
+        <p className="text-[11px] text-zinc-500">{t('sitePreview.videosLibraryEmpty')}</p>
       ) : (
         <Select value="" onValueChange={addVideo} disabled={isLoading}>
           <SelectTrigger className="h-8 border-zinc-300 bg-white text-xs">

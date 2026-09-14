@@ -19,7 +19,7 @@ export function LegalConsentCheckbox({
   checked,
   onChange,
   disabled,
-  includeStaffTerms = false
+  includeStaffTerms = false,
 }: LegalConsentCheckboxProps) {
   const { t } = useTranslation();
 
@@ -45,10 +45,7 @@ export function LegalConsentCheckbox({
           <>
             {' '}
             {t('auth.and')}{' '}
-            <Link
-              href="/staff-terms"
-              className="underline hover:text-foreground"
-            >
+            <Link href="/staff-terms" className="underline hover:text-foreground">
               {t('auth.staffTerms')}
             </Link>
           </>

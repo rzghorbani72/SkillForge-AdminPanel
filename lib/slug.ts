@@ -1,14 +1,8 @@
-export type SlugStatus =
-  | 'idle'
-  | 'checking'
-  | 'available'
-  | 'taken'
-  | 'invalid';
+export type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
 
 const MAX_SLUG_LENGTH = 40;
 
-export const ACADEMY_DOMAIN =
-  process.env.NEXT_PUBLIC_ACADEMY_DOMAIN ?? 'mentoma.ir';
+export const ACADEMY_DOMAIN = process.env.NEXT_PUBLIC_ACADEMY_DOMAIN ?? 'mentoma.ir';
 
 export const RESERVED_SLUGS = new Set([
   'api',
@@ -51,7 +45,7 @@ export const RESERVED_SLUGS = new Set([
   'internal',
   'platform',
   'mentoma',
-  'edusphere'
+  'edusphere',
 ]);
 
 export function toSlug(value: string): string {
@@ -65,7 +59,5 @@ export function toSlug(value: string): string {
 }
 
 export function isValidSlug(slug: string): boolean {
-  return new RegExp(
-    `^[a-z0-9](?:[a-z0-9-]{0,${MAX_SLUG_LENGTH - 2}}[a-z0-9])?$`
-  ).test(slug);
+  return new RegExp(`^[a-z0-9](?:[a-z0-9-]{0,${MAX_SLUG_LENGTH - 2}}[a-z0-9])?$`).test(slug);
 }

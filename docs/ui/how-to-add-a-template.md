@@ -14,34 +14,34 @@ AdminPanel (editor) → Backend (stores/validates) → Edusphere (renders)
 
 ### 1. Backend — the source of truth
 
-| File | What it does |
-|------|-------------|
-| `Backend/src/ui-template/templates/template-presets.ts` | **Where you add new templates.** Register a named preset with an array of blocks. |
-| `Backend/src/ui-template/section-catalog.ts` | Flattens all presets into a flat catalog. Derives `imageSlots` + `gridInfo` per block. |
-| `Backend/src/ui-template/dto/create-ui-template.dto.ts` | Validates block shape: `id`, `type`, `order`, `isVisible`, `config`, `mediaSize`, `mediaAspect`. |
-| `Backend/src/ui-template/ui-template.service.ts` | CRUD for draft/published templates. |
-| `Backend/src/ui-template/ui-template.controller.ts` | Exposes `GET /ui-template/sections` (catalog) and `POST /draft/sections` (import). |
-| `Backend/src/theme/theme-css.util.ts` | Maps theme config values → CSS variables (`--theme-primary`, `--theme-section-padding-y`, etc.). |
-| `Backend/src/theme/dto/update-theme-config.dto.ts` | Validates design-system inputs: `primary_color`, `border_radius_style`, `shadow_style`, `section_spacing`, `container_width`, `heading_scale`. |
+| File                                                    | What it does                                                                                                                                   |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Backend/src/ui-template/templates/template-presets.ts` | **Where you add new templates.** Register a named preset with an array of blocks.                                                              |
+| `Backend/src/ui-template/section-catalog.ts`            | Flattens all presets into a flat catalog. Derives `imageSlots` + `gridInfo` per block.                                                         |
+| `Backend/src/ui-template/dto/create-ui-template.dto.ts` | Validates block shape: `id`, `type`, `order`, `isVisible`, `config`, `mediaSize`, `mediaAspect`.                                               |
+| `Backend/src/ui-template/ui-template.service.ts`        | CRUD for draft/published templates.                                                                                                            |
+| `Backend/src/ui-template/ui-template.controller.ts`     | Exposes `GET /ui-template/sections` (catalog) and `POST /draft/sections` (import).                                                             |
+| `Backend/src/theme/theme-css.util.ts`                   | Maps theme config values → CSS variables (`--theme-primary`, `--theme-section-padding-y`, etc.).                                               |
+| `Backend/src/theme/dto/update-theme-config.dto.ts`      | Validates design-system inputs: `primary_color`, `border_radius_style`, `shadow_style`, `section_spacing`, `container_width`, `heading_scale`. |
 
 ### 2. Edusphere — the renderer
 
-| File | What it does |
-|------|-------------|
-| `edusphere/components/ui-blocks/blocks-renderer.tsx` | Sorts blocks by `order`, dispatches each `block.type` to the right component. |
-| `edusphere/components/ui-blocks/<name>-block.tsx` | One file per block type. Reads `config` and renders using only `var(--theme-*)` variables. |
-| `edusphere/components/ui-blocks/section-media.tsx` | Shared image primitive. Resolves `mediaSize`/`mediaAspect` enums into sized containers. |
-| `edusphere/app/globals.css` | Applies `--theme-*` CSS variables to `.ui-blocks-root` (scope for all blocks). |
+| File                                                 | What it does                                                                               |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `edusphere/components/ui-blocks/blocks-renderer.tsx` | Sorts blocks by `order`, dispatches each `block.type` to the right component.              |
+| `edusphere/components/ui-blocks/<name>-block.tsx`    | One file per block type. Reads `config` and renders using only `var(--theme-*)` variables. |
+| `edusphere/components/ui-blocks/section-media.tsx`   | Shared image primitive. Resolves `mediaSize`/`mediaAspect` enums into sized containers.    |
+| `edusphere/app/globals.css`                          | Applies `--theme-*` CSS variables to `.ui-blocks-root` (scope for all blocks).             |
 
 ### 3. AdminPanel — the editor
 
-| File | What it does |
-|------|-------------|
-| `AdminPanel/components/ui-template/blocks-list.tsx` | Drag-reorder of `draft_blocks[]`. Mutates `order` only — no preset assumptions. |
-| `AdminPanel/components/ui-template/section-library-modal.tsx` | Shows the flat catalog. Owner picks a section from any preset to add to their draft. |
-| `AdminPanel/components/ui-template/block-editor.tsx` | Edits `config` for a single block: text, images, `mediaSize`/`mediaAspect`, slot visibility. |
+| File                                                                   | What it does                                                                                                |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `AdminPanel/components/ui-template/blocks-list.tsx`                    | Drag-reorder of `draft_blocks[]`. Mutates `order` only — no preset assumptions.                             |
+| `AdminPanel/components/ui-template/section-library-modal.tsx`          | Shows the flat catalog. Owner picks a section from any preset to add to their draft.                        |
+| `AdminPanel/components/ui-template/block-editor.tsx`                   | Edits `config` for a single block: text, images, `mediaSize`/`mediaAspect`, slot visibility.                |
 | `AdminPanel/components/ui-template/template-customization-sidebar.tsx` | Global design-system controls: brand color, border radius, shadow, spacing, container width, heading scale. |
-| `AdminPanel/components/ui-template/edusphere-preview-frame.tsx` | Embeds Edusphere as iframe with `?preview=TOKEN&embed=1` for live WYSIWYG. |
+| `AdminPanel/components/ui-template/edusphere-preview-frame.tsx`        | Embeds Edusphere as iframe with `?preview=TOKEN&embed=1` for live WYSIWYG.                                  |
 
 ---
 
@@ -67,6 +67,7 @@ mytemplate: {
 ```
 
 **Rules every block must follow:**
+
 - All image fields (`backgroundImage`, `illustration`, `logo`, etc.) must default to `null`
 - Use only `--theme-*` CSS variables — no hardcoded hex, px, or rem
 - Render full-width — no cross-section layout assumptions
@@ -104,6 +105,7 @@ Every block component must use only CSS variables:
 ```
 
 Available theme variables:
+
 - Colors: `--theme-primary`, `--theme-secondary`, `--theme-accent`, `--theme-background`, `--theme-foreground`
 - Spacing: `--theme-section-padding-y`, `--theme-container-max-width`
 - Typography: `--theme-heading-size-sm`, `--theme-heading-size-md`, `--theme-heading-size-lg`
@@ -137,7 +139,7 @@ const items = list<FeatureItem>(config, 'items', d.items);
   {items.map((item, index) => (
     <h3 {...editableItem('items', index, 'title')}>{item.title}</h3>
   ))}
-</div>
+</div>;
 ```
 
 Editing one cell saves the **whole array**, so sibling items and non-text
@@ -181,19 +183,19 @@ The section-library modal reads the catalog from `GET /ui-template/sections` —
 
 ## Existing Block Types
 
-| Type | Dynamic? | Style variants |
-|------|----------|---------------|
-| `header` | No | sticky/non-sticky |
-| `hero` | No | `flow`, `creative`, `dark-programmer`, + more |
-| `features` | No | `flow-cards`, `flow-stats`, `stats`, `creative-pillars`, `instructors`, + more |
-| `course-grid` | Yes (live data) | default |
-| `courses` | Yes (live data) | default |
-| `testimonials` | No | `flow`, + more |
-| `membership` | Yes (live data) | default |
-| `pricing` | No | default |
-| `cta` | No | default |
-| `footer` | No | default |
-| `marquee` | No | default |
-| `categories` | Yes (live data) | default |
-| `projects` | No | default |
-| `sidebar` | Yes (live data) | default |
+| Type           | Dynamic?        | Style variants                                                                 |
+| -------------- | --------------- | ------------------------------------------------------------------------------ |
+| `header`       | No              | sticky/non-sticky                                                              |
+| `hero`         | No              | `flow`, `creative`, `dark-programmer`, + more                                  |
+| `features`     | No              | `flow-cards`, `flow-stats`, `stats`, `creative-pillars`, `instructors`, + more |
+| `course-grid`  | Yes (live data) | default                                                                        |
+| `courses`      | Yes (live data) | default                                                                        |
+| `testimonials` | No              | `flow`, + more                                                                 |
+| `membership`   | Yes (live data) | default                                                                        |
+| `pricing`      | No              | default                                                                        |
+| `cta`          | No              | default                                                                        |
+| `footer`       | No              | default                                                                        |
+| `marquee`      | No              | default                                                                        |
+| `categories`   | Yes (live data) | default                                                                        |
+| `projects`     | No              | default                                                                        |
+| `sidebar`      | Yes (live data) | default                                                                        |

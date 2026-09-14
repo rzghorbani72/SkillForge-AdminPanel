@@ -9,25 +9,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel
-} from '@/components/ui/form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -38,7 +27,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -60,7 +49,7 @@ export default function TeacherPayoutsPage() {
 
   const rejectForm = useForm<RejectValues>({
     resolver: zodResolver(rejectSchema),
-    defaultValues: { notes: '' }
+    defaultValues: { notes: '' },
   });
 
   async function load(status?: string) {
@@ -108,22 +97,15 @@ export default function TeacherPayoutsPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('teacherPayouts.title')}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {t('teacherPayouts.description')}
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('teacherPayouts.title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('teacherPayouts.description')}</p>
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('teacherPayouts.requests')}</CardTitle>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger
-              className="w-36"
-              aria-label={t('teacherPayouts.statusFilter')}
-            >
+            <SelectTrigger className="w-36" aria-label={t('teacherPayouts.statusFilter')}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -157,33 +139,23 @@ export default function TeacherPayoutsPage() {
                   <TableHead>{t('teacherPayouts.bankInfo')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
                   <TableHead>{t('teacherPayouts.requestedAt')}</TableHead>
-                  <TableHead className="text-right">
-                    {t('common.actions')}
-                  </TableHead>
+                  <TableHead className="text-right">{t('common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {payouts.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell>
-                      {p.profile?.display_name ?? p.teacher?.name ?? '—'}
-                    </TableCell>
+                    <TableCell>{p.profile?.display_name ?? p.teacher?.name ?? '—'}</TableCell>
                     <TableCell>{p.academy?.name ?? '—'}</TableCell>
-                    <TableCell>
-                      {p.amount != null ? formatNumber(p.amount) : ''}
-                    </TableCell>
+                    <TableCell>{p.amount != null ? formatNumber(p.amount) : ''}</TableCell>
                     <TableCell className="max-w-[140px] truncate text-xs">
                       {p.bank_info ?? '—'}
                     </TableCell>
                     <TableCell>
-                      <StatusBadge
-                        status={p.status?.toLowerCase() ?? 'pending'}
-                      />
+                      <StatusBadge status={p.status?.toLowerCase() ?? 'pending'} />
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {p.requested_at
-                        ? new Date(p.requested_at).toLocaleDateString()
-                        : '—'}
+                      {p.requested_at ? new Date(p.requested_at).toLocaleDateString() : '—'}
                     </TableCell>
                     <TableCell className="space-x-2 text-right">
                       {p.status === 'PENDING' && (
@@ -220,10 +192,7 @@ export default function TeacherPayoutsPage() {
         </CardContent>
       </Card>
 
-      <Dialog
-        open={!!rejectDialog}
-        onOpenChange={(open) => !open && setRejectDialog(null)}
-      >
+      <Dialog open={!!rejectDialog} onOpenChange={(open) => !open && setRejectDialog(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
@@ -231,15 +200,12 @@ export default function TeacherPayoutsPage() {
                 teacher:
                   rejectDialog?.profile?.display_name ??
                   rejectDialog?.teacher?.name ??
-                  t('users.unnamedUser')
+                  t('users.unnamedUser'),
               })}
             </DialogTitle>
           </DialogHeader>
           <Form {...rejectForm}>
-            <form
-              onSubmit={rejectForm.handleSubmit(onReject)}
-              className="space-y-4"
-            >
+            <form onSubmit={rejectForm.handleSubmit(onReject)} className="space-y-4">
               <FormField
                 control={rejectForm.control}
                 name="notes"
@@ -253,18 +219,10 @@ export default function TeacherPayoutsPage() {
                 )}
               />
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setRejectDialog(null)}
-                >
+                <Button type="button" variant="outline" onClick={() => setRejectDialog(null)}>
                   {t('common.cancel')}
                 </Button>
-                <Button
-                  type="submit"
-                  variant="destructive"
-                  disabled={submitting}
-                >
+                <Button type="submit" variant="destructive" disabled={submitting}>
                   {submitting ? t('common.saving') : t('teacherPayouts.reject')}
                 </Button>
               </div>

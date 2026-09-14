@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Building2, Globe, Info } from 'lucide-react';
 import Link from '@/components/ui/link';
@@ -26,7 +20,7 @@ import { isPlatformAdmin } from '@/lib/roles';
 import {
   AcademyEditForm,
   buildAcademyThemePatch,
-  type AcademyEditPayload
+  type AcademyEditPayload,
 } from '@/components/academies/academy-edit-form';
 
 export default function AcademySettingsPage() {
@@ -43,7 +37,7 @@ export default function AcademySettingsPage() {
         public_address: data.publicAddress.trim() || null,
         description: data.description || undefined,
         logo_id: data.logoId,
-        favicon_id: data.faviconId
+        favicon_id: data.faviconId,
       });
       if (data.primaryColor) {
         await apiClient
@@ -95,9 +89,7 @@ export default function AcademySettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>{t('stores.editModalHeading')}</CardTitle>
-              <CardDescription>
-                {t('settings.generalInformationDescription')}
-              </CardDescription>
+              <CardDescription>{t('settings.generalInformationDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <AcademyEditForm academy={academy} onSubmit={handleSave} t={t} />
@@ -117,8 +109,7 @@ export default function AcademySettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                <Building2 className="h-4 w-4" />{' '}
-                {t('settings.currentOverview')}
+                <Building2 className="h-4 w-4" /> {t('settings.currentOverview')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
@@ -136,21 +127,15 @@ export default function AcademySettingsPage() {
               </div>
               <div className="flex justify-between">
                 <span>{t('settings.students')}</span>
-                <span className="font-medium text-foreground">
-                  {academy.students_count ?? '—'}
-                </span>
+                <span className="font-medium text-foreground">{academy.students_count ?? '—'}</span>
               </div>
               <div className="flex justify-between">
                 <span>{t('settings.teachers')}</span>
-                <span className="font-medium text-foreground">
-                  {academy.teachers_count ?? '—'}
-                </span>
+                <span className="font-medium text-foreground">{academy.teachers_count ?? '—'}</span>
               </div>
               <div className="flex justify-between">
                 <span>{t('settings.managers')}</span>
-                <span className="font-medium text-foreground">
-                  {academy.managers_count ?? '—'}
-                </span>
+                <span className="font-medium text-foreground">{academy.managers_count ?? '—'}</span>
               </div>
             </CardContent>
           </Card>
@@ -165,9 +150,7 @@ export default function AcademySettingsPage() {
               <p>{t('settings.domainTipsText1')}</p>
               <p>{t('settings.domainTipsText2')}</p>
               <Button variant="outline" size="sm" asChild>
-                <Link href="/settings/domain">
-                  {t('settings.domainTipsCta')}
-                </Link>
+                <Link href="/settings/domain">{t('settings.domainTipsCta')}</Link>
               </Button>
             </CardContent>
           </Card>

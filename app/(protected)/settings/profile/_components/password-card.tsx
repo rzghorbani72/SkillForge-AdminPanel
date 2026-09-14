@@ -2,13 +2,7 @@
 
 import { useState } from 'react';
 import { KeyRound, Loader2, ShieldCheck } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
@@ -25,8 +19,7 @@ export function PasswordCard() {
   const [isSaving, setIsSaving] = useState(false);
 
   const isStrong = isPasswordValid(newPassword);
-  const isMismatch =
-    confirmPassword.length > 0 && newPassword !== confirmPassword;
+  const isMismatch = confirmPassword.length > 0 && newPassword !== confirmPassword;
   const canSubmit = isStrong && !isMismatch && confirmPassword.length > 0;
 
   const handleSubmit = async () => {
@@ -35,7 +28,7 @@ export function PasswordCard() {
       setIsSaving(true);
       await apiClient.changeProfilePassword({
         new_password: newPassword,
-        confirm_new_password: confirmPassword
+        confirm_new_password: confirmPassword,
       });
       ErrorHandler.showSuccess(t('settings.passwordUpdatedSuccess'));
       setNewPassword('');
@@ -56,9 +49,7 @@ export function PasswordCard() {
           </span>
           {t('settings.changePassword')}
         </CardTitle>
-        <CardDescription>
-          {t('settings.changePasswordDescription')}
-        </CardDescription>
+        <CardDescription>{t('settings.changePasswordDescription')}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-5">
@@ -76,9 +67,7 @@ export function PasswordCard() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">
-              {t('settings.confirmNewPassword')}
-            </Label>
+            <Label htmlFor="confirmPassword">{t('settings.confirmNewPassword')}</Label>
             <PasswordInput
               id="confirmPassword"
               autoComplete="new-password"
@@ -87,9 +76,7 @@ export function PasswordCard() {
               placeholder={t('settings.confirmNewPasswordPlaceholder')}
             />
             {isMismatch && (
-              <p className="text-xs text-destructive">
-                {t('settings.newPasswordsDoNotMatch')}
-              </p>
+              <p className="text-xs text-destructive">{t('settings.newPasswordsDoNotMatch')}</p>
             )}
           </div>
         </div>

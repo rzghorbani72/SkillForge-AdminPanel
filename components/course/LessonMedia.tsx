@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Video,
   X,
-  type LucideIcon
+  type LucideIcon,
 } from 'lucide-react';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
@@ -52,9 +52,7 @@ function ProgressBar({ value }: { value: number }) {
   useEffect(() => {
     if (ref.current) ref.current.style.width = `${value}%`;
   }, [value]);
-  return (
-    <div ref={ref} className="h-full rounded-full bg-current transition-all" />
-  );
+  return <div ref={ref} className="h-full rounded-full bg-current transition-all" />;
 }
 
 interface UploadSlotProps {
@@ -85,7 +83,7 @@ function UploadSlot({
   hint,
   boxClass = LESSON_MEDIA_SLOT_CLASS,
   onSelect,
-  onCancel
+  onCancel,
 }: UploadSlotProps) {
   const { t } = useTranslation();
   const percentLabel = usePercentLabel();
@@ -104,7 +102,7 @@ function UploadSlot({
   const frameClass = cn(
     'flex shrink-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border border-dashed px-3 text-center transition-colors',
     boxClass,
-    toneClass
+    toneClass,
   );
 
   return (
@@ -126,9 +124,7 @@ function UploadSlot({
       ) : uploading ? (
         <div className={frameClass} role="status" aria-live="polite">
           <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-          <span className="text-sm font-semibold tabular-nums">
-            {percentLabel(progress)}
-          </span>
+          <span className="text-sm font-semibold tabular-nums">{percentLabel(progress)}</span>
           <div className="bg-current/15 h-1.5 w-24 overflow-hidden rounded-full">
             <ProgressBar value={progress} />
           </div>
@@ -143,16 +139,11 @@ function UploadSlot({
           )}
         </div>
       ) : (
-        <label
-          onClick={handleActivate}
-          className={cn(frameClass, 'cursor-pointer')}
-        >
+        <label onClick={handleActivate} className={cn(frameClass, 'cursor-pointer')}>
           <span className="bg-current/10 flex h-10 w-10 items-center justify-center rounded-full">
             <Icon className="h-5 w-5" aria-hidden />
           </span>
-          <span className="max-w-[16rem] text-xs font-medium leading-snug">
-            {uploadLabel}
-          </span>
+          <span className="max-w-[16rem] text-xs font-medium leading-snug">{uploadLabel}</span>
           <input
             ref={inputRef}
             type="file"
@@ -180,20 +171,17 @@ const ZERO: Record<SlotKey, number> = {
   video: 0,
   audio: 0,
   document: 0,
-  cover: 0
+  cover: 0,
 };
 const FALSE: Record<SlotKey, boolean> = {
   video: false,
   audio: false,
   document: false,
-  cover: false
+  cover: false,
 };
 
 function toneFor(type: LessonType): string {
-  return (
-    LESSON_TYPE_BY_KEY[type]?.dropzoneClass ??
-    LESSON_TYPE_BY_KEY.VIDEO.dropzoneClass
-  );
+  return LESSON_TYPE_BY_KEY[type]?.dropzoneClass ?? LESSON_TYPE_BY_KEY.VIDEO.dropzoneClass;
 }
 
 function revokeIfBlob(url: string | undefined) {
@@ -211,14 +199,14 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     video: null,
     audio: null,
     document: null,
-    cover: null
+    cover: null,
   });
   // Keep blob URLs so we can revoke them after the server URL replaces them.
   const blobRefs = useRef<Record<SlotKey, string | null>>({
     video: null,
     audio: null,
     document: null,
-    cover: null
+    cover: null,
   });
 
   useEffect(() => {
@@ -241,11 +229,8 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
 
   async function runUpload(
     key: SlotKey,
-    uploader: (
-      abort: AbortController,
-      onProgress: (n: number) => void
-    ) => Promise<unknown>,
-    apply: (data: Record<string, unknown>) => void
+    uploader: (abort: AbortController, onProgress: (n: number) => void) => Promise<unknown>,
+    apply: (data: Record<string, unknown>) => void,
   ) {
     const abort = new AbortController();
     abortRefs.current[key] = abort;
@@ -253,7 +238,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     setProgress((p) => ({ ...p, [key]: 0 }));
     try {
       const result = (await uploader(abort, (n) =>
-        setProgress((p) => ({ ...p, [key]: n }))
+        setProgress((p) => ({ ...p, [key]: n })),
       )) as Record<string, unknown> | null;
       const data = (result?.data ?? result ?? {}) as Record<string, unknown>;
       if (data.id != null) apply(data);
@@ -268,12 +253,11 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     }
   }
 
-  const PREVIEW_FIELD: Record<'video' | 'audio' | 'cover', keyof LessonDraft> =
-    {
-      video: 'videoPreviewUrl',
-      audio: 'audioPreviewUrl',
-      cover: 'coverPreviewUrl'
-    };
+  const PREVIEW_FIELD: Record<'video' | 'audio' | 'cover', keyof LessonDraft> = {
+    video: 'videoPreviewUrl',
+    audio: 'audioPreviewUrl',
+    cover: 'coverPreviewUrl',
+  };
 
   function startLocalPreview(key: 'video' | 'audio' | 'cover', file: File) {
     revokeIfBlob(blobRefs.current[key] ?? undefined);
@@ -283,10 +267,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     return blobUrl;
   }
 
-  function replacePreview(
-    key: 'video' | 'audio' | 'cover',
-    patch: Partial<LessonDraft>
-  ) {
+  function replacePreview(key: 'video' | 'audio' | 'cover', patch: Partial<LessonDraft>) {
     const prevBlob = blobRefs.current[key];
     blobRefs.current[key] = null;
     onUpdate(patch);
@@ -316,8 +297,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   // a minute). Only a legacy video migrated in as SKIPPED, or one whose
   // conversion errored out (FAILED), ever needs this manual nudge.
   const needsSecuring =
-    lesson.video_id &&
-    (lesson.videoHlsStatus === 'SKIPPED' || lesson.videoHlsStatus === 'FAILED');
+    lesson.video_id && (lesson.videoHlsStatus === 'SKIPPED' || lesson.videoHlsStatus === 'FAILED');
 
   async function secureVideo() {
     if (!lesson.video_id) return;
@@ -325,7 +305,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
     try {
       const result = await apiClient.secureVideo(lesson.video_id);
       onUpdate({
-        videoHlsStatus: result?.hls_status as LessonDraft['videoHlsStatus']
+        videoHlsStatus: result?.hls_status as LessonDraft['videoHlsStatus'],
       });
       toast.success(t('courses.videoSecuringQueued'));
     } catch (err) {
@@ -361,17 +341,15 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     { title: lesson.title || file.name },
                     undefined,
                     onP,
-                    abort
+                    abort,
                   ),
                 (data) => {
                   onVideoAttached(String(data.id));
                   replacePreview('video', {
                     video_id: String(data.id),
-                    videoPreviewUrl: apiClient.getVideoStreamUrl(
-                      String(data.id)
-                    )
+                    videoPreviewUrl: apiClient.getVideoStreamUrl(String(data.id)),
                   });
-                }
+                },
               );
             })();
           }}
@@ -380,11 +358,10 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
               <div
                 className={cn(
                   'relative shrink-0 overflow-hidden rounded-lg border bg-black',
-                  LESSON_MEDIA_SLOT_CLASS
+                  LESSON_MEDIA_SLOT_CLASS,
                 )}
               >
-                {lesson.videoPreviewUrl.startsWith('blob:') ||
-                !lesson.video_id ? (
+                {lesson.videoPreviewUrl.startsWith('blob:') || !lesson.video_id ? (
                   // The file the teacher just picked, still on their disk. Kept
                   // native because reading its duration is the whole point and
                   // there is nothing to protect yet.
@@ -444,7 +421,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     onUpdate({
                       video_id: undefined,
                       videoPreviewUrl: undefined,
-                      duration: DEFAULT_DURATION
+                      duration: DEFAULT_DURATION,
                     });
                   }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
@@ -472,21 +449,16 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
             void runUpload(
               'audio',
               (abort, onP) =>
-                apiClient.uploadAudio(
-                  file,
-                  { title: lesson.title || file.name },
-                  onP,
-                  abort
-                ),
+                apiClient.uploadAudio(file, { title: lesson.title || file.name }, onP, abort),
               (data) => {
                 const url =
                   (data.publicUrl as string) ||
                   `${getBrowserApiBaseUrl()}/audios/fetch-audio-by-id/${data.id}`;
                 replacePreview('audio', {
                   audio_id: String(data.id),
-                  audioPreviewUrl: url
+                  audioPreviewUrl: url,
                 });
-              }
+              },
             );
           }}
           filled={
@@ -495,7 +467,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                 className={cn(
                   'relative flex shrink-0 flex-col items-center justify-center gap-2 rounded-lg border px-3',
                   LESSON_MEDIA_SLOT_CLASS,
-                  tone
+                  tone,
                 )}
               >
                 <span className="bg-current/10 flex h-9 w-9 items-center justify-center rounded-full">
@@ -510,9 +482,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   className="h-8 w-full max-w-[20rem]"
                 />
                 {uploading.audio && (
-                  <span className="text-[10px] opacity-70">
-                    {percentLabel(progress.audio)}
-                  </span>
+                  <span className="text-[10px] opacity-70">{percentLabel(progress.audio)}</span>
                 )}
                 <button
                   type="button"
@@ -523,7 +493,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     onUpdate({
                       audio_id: undefined,
                       audioPreviewUrl: undefined,
-                      duration: DEFAULT_DURATION
+                      duration: DEFAULT_DURATION,
                     });
                   }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
@@ -553,21 +523,16 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
             void runUpload(
               'cover',
               (abort, onP) =>
-                apiClient.uploadImage(
-                  file,
-                  { title: lesson.title || file.name },
-                  onP,
-                  abort
-                ),
+                apiClient.uploadImage(file, { title: lesson.title || file.name }, onP, abort),
               (data) => {
                 const url = data.publicUrl as string | undefined;
                 replacePreview('cover', {
                   cover_id: String(data.id),
                   coverPreviewUrl: url?.startsWith('http')
                     ? url
-                    : `${getBrowserApiBaseUrl()}/images/fetch-image-by-id/${data.id}`
+                    : `${getBrowserApiBaseUrl()}/images/fetch-image-by-id/${data.id}`,
                 });
-              }
+              },
             );
           }}
           filled={
@@ -575,7 +540,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
               <div
                 className={cn(
                   'relative shrink-0 overflow-hidden rounded-lg border bg-muted',
-                  LESSON_MEDIA_SLOT_CLASS
+                  LESSON_MEDIA_SLOT_CLASS,
                 )}
               >
                 <Image
@@ -599,7 +564,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                     blobRefs.current.cover = null;
                     onUpdate({
                       cover_id: undefined,
-                      coverPreviewUrl: undefined
+                      coverPreviewUrl: undefined,
                     });
                   }}
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
@@ -628,17 +593,12 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
             void runUpload(
               'document',
               (abort, onP) =>
-                apiClient.uploadDocument(
-                  file,
-                  { title: lesson.title || file.name },
-                  onP,
-                  abort
-                ),
+                apiClient.uploadDocument(file, { title: lesson.title || file.name }, onP, abort),
               (data) =>
                 onUpdate({
                   document_id: String(data.id),
-                  documentPreviewName: (data.title as string) || file.name
-                })
+                  documentPreviewName: (data.title as string) || file.name,
+                }),
             );
           }}
           filled={
@@ -647,7 +607,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                 className={cn(
                   'relative flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border px-3 text-center',
                   LESSON_INFO_SLOT_CLASS,
-                  tone
+                  tone,
                 )}
               >
                 <span className="bg-current/10 flex h-9 w-9 items-center justify-center rounded-full">
@@ -669,9 +629,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   </Link>
                 )}
                 {uploading.document && (
-                  <span className="text-[10px] opacity-70">
-                    {percentLabel(progress.document)}
-                  </span>
+                  <span className="text-[10px] opacity-70">{percentLabel(progress.document)}</span>
                 )}
                 <button
                   type="button"
@@ -679,7 +637,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
                   onClick={() =>
                     onUpdate({
                       document_id: undefined,
-                      documentPreviewName: undefined
+                      documentPreviewName: undefined,
                     })
                   }
                   className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"

@@ -6,7 +6,7 @@ import {
   CONTENT_REVIEW_STATUS,
   ENAMAD_STATUS,
   type ContentReviewStatus,
-  type EnamadStatus
+  type EnamadStatus,
 } from '@/types/compliance';
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
@@ -15,7 +15,7 @@ const REVIEW_VARIANT: Record<ContentReviewStatus, BadgeVariant> = {
   [CONTENT_REVIEW_STATUS.PENDING]: 'secondary',
   [CONTENT_REVIEW_STATUS.APPROVED]: 'default',
   [CONTENT_REVIEW_STATUS.FLAGGED]: 'destructive',
-  [CONTENT_REVIEW_STATUS.SUSPENDED]: 'destructive'
+  [CONTENT_REVIEW_STATUS.SUSPENDED]: 'destructive',
 };
 
 const ENAMAD_VARIANT: Record<EnamadStatus, BadgeVariant> = {
@@ -23,7 +23,7 @@ const ENAMAD_VARIANT: Record<EnamadStatus, BadgeVariant> = {
   [ENAMAD_STATUS.REQUIRED]: 'secondary',
   [ENAMAD_STATUS.PENDING]: 'secondary',
   [ENAMAD_STATUS.VERIFIED]: 'default',
-  [ENAMAD_STATUS.REJECTED]: 'destructive'
+  [ENAMAD_STATUS.REJECTED]: 'destructive',
 };
 
 export function ReviewStatusBadge({ status }: { status: ContentReviewStatus }) {

@@ -39,7 +39,7 @@ export function getPasswordChecks(password: string): PasswordChecks {
     minLength: normalized.length >= MIN_PASSWORD_LENGTH,
     hasLetter: /[a-zA-Z]/.test(normalized),
     hasNumber: /[0-9]/.test(normalized),
-    hasSymbol: SYMBOL.test(normalized)
+    hasSymbol: SYMBOL.test(normalized),
   };
 }
 
@@ -70,15 +70,8 @@ function shuffle<T>(items: T[]): T[] {
  * avoids visually ambiguous characters so it's easy to read aloud or retype.
  */
 export function generateTempPassword(length = 10): string {
-  const required = [
-    randomChar(LOWER),
-    randomChar(UPPER),
-    randomChar(DIGITS),
-    randomChar(SYMBOLS)
-  ];
-  const rest = Array.from({ length: length - required.length }, () =>
-    randomChar(ALL)
-  );
+  const required = [randomChar(LOWER), randomChar(UPPER), randomChar(DIGITS), randomChar(SYMBOLS)];
+  const rest = Array.from({ length: length - required.length }, () => randomChar(ALL));
   return shuffle([...required, ...rest]).join('');
 }
 

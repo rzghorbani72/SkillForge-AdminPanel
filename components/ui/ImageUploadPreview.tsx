@@ -1,13 +1,7 @@
 'use client';
 
 import React, { useCallback, useRef, useState } from 'react';
-import {
-  Image as ImageIcon,
-  Loader2,
-  Pencil,
-  UploadCloud,
-  X
-} from 'lucide-react';
+import { Image as ImageIcon, Loader2, Pencil, UploadCloud, X } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { imageByIdSrc as fetchImageByIdSrc } from '@/lib/image-src';
@@ -51,7 +45,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   placeholderSubtext,
   selectedImageId,
   disabled = false,
-  onFileSelected
+  onFileSelected,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -61,7 +55,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
     title: title ?? t('media.imagePreview'),
     description: description ?? t('media.imagePreview'),
     onSuccess,
-    onError
+    onError,
   });
 
   const handleFile = useCallback(
@@ -70,7 +64,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
       onFileSelected?.(file);
       imageUpload.selectAndUpload(file);
     },
-    [imageUpload, onFileSelected]
+    [imageUpload, onFileSelected],
   );
 
   const currentSrc = imageUpload.preview
@@ -98,7 +92,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
         'relative h-64 w-full max-w-md overflow-hidden rounded-lg border-2 border-dashed transition-colors',
         isDragging ? 'border-primary bg-primary/5' : 'border-border',
         !disabled && 'cursor-pointer hover:border-primary/60',
-        className
+        className,
       )}
       onClick={() => !disabled && inputRef.current?.click()}
       onDragOver={(e) => {
@@ -170,15 +164,9 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/85 px-6">
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
-            <p className="text-xs font-medium text-foreground">
-              {t('common.uploading')}
-            </p>
+            <p className="text-xs font-medium text-foreground">{t('common.uploading')}</p>
           </div>
-          <ProgressBar
-            progress={imageUpload.uploadProgress}
-            size="sm"
-            className="max-w-[220px]"
-          />
+          <ProgressBar progress={imageUpload.uploadProgress} size="sm" className="max-w-[220px]" />
         </div>
       )}
 

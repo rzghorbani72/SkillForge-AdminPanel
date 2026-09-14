@@ -16,13 +16,7 @@ interface UseUsersListParams {
   enabled: boolean;
 }
 
-export function useUsersList({
-  page,
-  limit,
-  search,
-  role,
-  enabled
-}: UseUsersListParams) {
+export function useUsersList({ page, limit, search, role, enabled }: UseUsersListParams) {
   const [users, setUsers] = useState<User[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +31,7 @@ export function useUsersList({
         page,
         limit,
         search: search || undefined,
-        role: role === ALL_ROLES ? undefined : role
+        role: role === ALL_ROLES ? undefined : role,
       });
       const list: User[] = data?.users ?? data?.profiles ?? [];
       setUsers(list);

@@ -15,9 +15,7 @@ export function LowScoreItem({ item, onUseForNote }: LowScoreItemProps) {
 
   return (
     <div className="rounded-lg border p-3 text-sm">
-      <p className="font-medium">
-        {item.Assignment?.title ?? t('assignmentsPage.notAvailable')}
-      </p>
+      <p className="font-medium">{item.Assignment?.title ?? t('assignmentsPage.notAvailable')}</p>
       <p className="text-muted-foreground">
         {item.Profile?.display_name || t('users.unnamedUser')}
       </p>

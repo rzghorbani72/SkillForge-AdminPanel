@@ -9,7 +9,7 @@ export function SettlementSignalCell({
   academy,
   formatNumber,
   tomanLabel,
-  labels
+  labels,
 }: {
   academy: AcademyHealthView;
   formatNumber: FormatNumber;
@@ -34,9 +34,7 @@ export function SettlementSignalCell({
     <div
       className={cn(
         'min-w-[11rem] space-y-1.5 rounded-md border px-2.5 py-2',
-        needsPay
-          ? 'border-amber-500/50 bg-amber-500/10'
-          : 'border-border/60 bg-muted/30'
+        needsPay ? 'border-amber-500/50 bg-amber-500/10' : 'border-border/60 bg-muted/30',
       )}
     >
       <MetricLine
@@ -54,20 +52,14 @@ export function SettlementSignalCell({
         <MetricLine
           label={labels.pending}
           value={`${formatNumber(pendingAmount)} ${tomanLabel}${
-            pendingCount > 0
-              ? ` · ${formatNumber(pendingCount)} ${labels.requests}`
-              : ''
+            pendingCount > 0 ? ` · ${formatNumber(pendingCount)} ${labels.requests}` : ''
           }`}
           tone="info"
         />
       )}
-      {!needsPay && (
-        <p className="text-[11px] text-muted-foreground">{labels.clear}</p>
-      )}
+      {!needsPay && <p className="text-[11px] text-muted-foreground">{labels.clear}</p>}
       {needsPay && !bankOk && (
-        <p className="text-[11px] font-medium text-destructive">
-          {labels.bankMissing}
-        </p>
+        <p className="text-[11px] font-medium text-destructive">{labels.bankMissing}</p>
       )}
     </div>
   );
@@ -76,16 +68,13 @@ export function SettlementSignalCell({
 export function TicketSignalCell({
   academy,
   formatNumber,
-  labels
+  labels,
 }: {
   academy: AcademyHealthView;
   formatNumber: FormatNumber;
   labels: { open: string; closed: string };
 }) {
-  if (
-    academy.open_ticket_count == null &&
-    academy.closed_ticket_count == null
-  ) {
+  if (academy.open_ticket_count == null && academy.closed_ticket_count == null) {
     return <span className="text-muted-foreground">—</span>;
   }
 
@@ -96,9 +85,7 @@ export function TicketSignalCell({
     <div
       className={cn(
         'min-w-[8.5rem] space-y-1.5 rounded-md border px-2.5 py-2',
-        open > 0
-          ? 'border-sky-500/40 bg-sky-500/10'
-          : 'border-border/60 bg-muted/30'
+        open > 0 ? 'border-sky-500/40 bg-sky-500/10' : 'border-border/60 bg-muted/30',
       )}
     >
       <MetricLine
@@ -107,11 +94,7 @@ export function TicketSignalCell({
         strong={open > 0}
         tone={open > 0 ? 'info' : 'muted'}
       />
-      <MetricLine
-        label={labels.closed}
-        value={formatNumber(closed)}
-        tone="muted"
-      />
+      <MetricLine label={labels.closed} value={formatNumber(closed)} tone="muted" />
     </div>
   );
 }
@@ -120,7 +103,7 @@ function MetricLine({
   label,
   value,
   strong,
-  tone
+  tone,
 }: {
   label: string;
   value: string;
@@ -136,7 +119,7 @@ function MetricLine({
           strong && 'font-semibold',
           tone === 'warn' && 'text-amber-700 dark:text-amber-400',
           tone === 'info' && 'text-sky-700 dark:text-sky-400',
-          tone === 'muted' && 'text-muted-foreground'
+          tone === 'muted' && 'text-muted-foreground',
         )}
       >
         {value}

@@ -45,7 +45,7 @@ export function SecureVideoPlayer({
   onEnded,
   autoPlay = false,
   fill = false,
-  className
+  className,
 }: SecureVideoPlayerProps) {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -59,10 +59,7 @@ export function SecureVideoPlayer({
         video.currentTime = initialPosition;
         return;
       }
-      video.currentTime = Math.min(
-        initialPosition,
-        Math.max(0, video.duration - 1)
-      );
+      video.currentTime = Math.min(initialPosition, Math.max(0, video.duration - 1));
     };
     if (video.readyState >= 1) {
       resume();
@@ -87,9 +84,7 @@ export function SecureVideoPlayer({
   }
 
   return (
-    <div
-      className={`relative overflow-hidden rounded-l bg-black ${className ?? ''}`}
-    >
+    <div className={`relative overflow-hidden rounded-l bg-black ${className ?? ''}`}>
       <video
         ref={videoRef}
         controls
@@ -106,9 +101,7 @@ export function SecureVideoPlayer({
           if (event.currentTarget.paused) return;
           onHeartbeat?.(event.currentTarget.currentTime);
         }}
-        className={
-          fill ? 'h-full w-full object-contain' : 'aspect-video w-full'
-        }
+        className={fill ? 'h-full w-full object-contain' : 'aspect-video w-full'}
       />
 
       {session?.watermark ? (

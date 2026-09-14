@@ -10,9 +10,9 @@ export const useSidebar = create<SidebarStore>()(
   persist(
     (set) => ({
       isMinimized: false,
-      toggle: () => set((state) => ({ isMinimized: !state.isMinimized }))
+      toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
     }),
     // Rehydrated after mount by the sidebar, so SSR markup always matches.
-    { name: 'sidebar-minimized', skipHydration: true }
-  )
+    { name: 'sidebar-minimized', skipHydration: true },
+  ),
 );

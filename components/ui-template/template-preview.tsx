@@ -19,7 +19,7 @@ const BLOCK_STYLE: Record<string, { bar: string; h: string }> = {
   categories: { bar: 'bg-green-400', h: 'h-4' },
   projects: { bar: 'bg-lime-400', h: 'h-16' },
   slideshow: { bar: 'bg-indigo-400', h: 'h-16' },
-  footer: { bar: 'bg-gray-600', h: 'h-6' }
+  footer: { bar: 'bg-gray-600', h: 'h-6' },
 };
 
 // Single renderer for a block's visual output — gallery preview cards and the
@@ -34,10 +34,7 @@ export function BlockThumbnail({ block }: { block: UIBlockConfig }) {
       : typeof cfg.backgroundImage === 'string' && cfg.backgroundImage
         ? cfg.backgroundImage
         : null;
-  const bgColor =
-    cfg.bgType === 'solid' && typeof cfg.bgColor === 'string'
-      ? cfg.bgColor
-      : null;
+  const bgColor = cfg.bgType === 'solid' && typeof cfg.bgColor === 'string' ? cfg.bgColor : null;
   const title =
     typeof cfg.title === 'string' && cfg.title
       ? cfg.title
@@ -79,15 +76,13 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
     features: t('sitePreview.blockFeatures'),
     courses: t('sitePreview.blockCourses'),
     testimonials: t('sitePreview.blockTestimonials'),
-    footer: t('sitePreview.blockFooter')
+    footer: t('sitePreview.blockFooter'),
   };
 
   return (
     <div className="w-full bg-white">
       <div className="border-b border-gray-100 px-2 py-1.5">
-        <p className="truncate text-[9px] font-semibold text-gray-800">
-          {preset.name}
-        </p>
+        <p className="truncate text-[9px] font-semibold text-gray-800">{preset.name}</p>
       </div>
       <div className="divide-y divide-gray-50">
         {blocks.length > 0 ? (
@@ -100,9 +95,7 @@ function SimpleBlockPreview({ preset }: { preset: TemplatePreset }) {
             </div>
           ))
         ) : (
-          <p className="px-2 py-4 text-center text-[8px] text-gray-400">
-            بدون بلوک
-          </p>
+          <p className="px-2 py-4 text-center text-[8px] text-gray-400">بدون بلوک</p>
         )}
       </div>
     </div>

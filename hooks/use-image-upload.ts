@@ -44,7 +44,7 @@ export function useImageUpload(): ImageUploadState {
         setUploading(false);
       }
     },
-    [preview]
+    [preview],
   );
 
   const reset = useCallback((next = '') => {

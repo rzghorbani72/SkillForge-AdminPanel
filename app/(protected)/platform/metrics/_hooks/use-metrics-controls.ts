@@ -8,9 +8,7 @@ export type MetricsSource = 'live' | 'snapshot';
 /** Trailing twelve months, the window an investor expects by default. */
 function defaultFrom(): string {
   const now = new Date();
-  return new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11, 1)
-  ).toISOString();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11, 1)).toISOString();
 }
 
 /**
@@ -23,10 +21,7 @@ export function useMetricsControls() {
   const [currency, setCurrency] = useState<MetricsCurrency>('TOMAN');
   const [source, setSource] = useState<MetricsSource>('snapshot');
 
-  const query = useMemo<MetricsQuery>(
-    () => ({ from, to, currency }),
-    [from, to, currency]
-  );
+  const query = useMemo<MetricsQuery>(() => ({ from, to, currency }), [from, to, currency]);
 
   const setRange = useCallback((next: { from: string; to: string }) => {
     setFrom(next.from);
@@ -41,6 +36,6 @@ export function useMetricsControls() {
     setSource,
     setRange,
     from,
-    to
+    to,
   };
 }

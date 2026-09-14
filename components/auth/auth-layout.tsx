@@ -15,7 +15,7 @@ const MAX_WIDTH_CLASS = {
   sm: 'max-w-[526px]',
   md: 'max-w-md',
   lg: 'max-w-3xl',
-  xl: 'max-w-5xl'
+  xl: 'max-w-5xl',
 } as const;
 
 export function AuthLayout({
@@ -23,7 +23,7 @@ export function AuthLayout({
   maxWidth = 'sm',
   scrollable = false,
   dir = 'rtl',
-  align = 'left'
+  align = 'left',
 }: AuthLayoutProps) {
   return (
     <>
@@ -33,7 +33,7 @@ export function AuthLayout({
           'auth-theme auth-glow relative flex flex-col p-4 text-foreground',
           scrollable
             ? 'fixed inset-0 z-0 overflow-y-auto overscroll-y-contain py-8'
-            : 'min-h-screen justify-center'
+            : 'min-h-screen justify-center',
         )}
         dir={dir}
       >
@@ -45,7 +45,7 @@ export function AuthLayout({
           className={cn(
             'mx-auto w-full',
             MAX_WIDTH_CLASS[maxWidth],
-            align === 'left' && 'lg:ml-[4.3%] lg:mr-auto'
+            align === 'left' && 'lg:ml-[4.3%] lg:mr-auto',
           )}
         >
           {children}

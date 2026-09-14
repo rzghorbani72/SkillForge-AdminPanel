@@ -3,11 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle } from 'lucide-react';
-import {
-  apiClient,
-  SUBSCRIPTION_REQUIRED_EVENT,
-  type SubscriptionRequiredDetail
-} from '@/lib/api';
+import { apiClient, SUBSCRIPTION_REQUIRED_EVENT, type SubscriptionRequiredDetail } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   AlertDialog,
@@ -17,7 +13,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
 export function SubscriptionRequiredGate() {
@@ -31,8 +27,7 @@ export function SubscriptionRequiredGate() {
       setMessage(detail?.message ?? t('subscription.expiredWarning'));
     };
     window.addEventListener(SUBSCRIPTION_REQUIRED_EVENT, onRequired);
-    return () =>
-      window.removeEventListener(SUBSCRIPTION_REQUIRED_EVENT, onRequired);
+    return () => window.removeEventListener(SUBSCRIPTION_REQUIRED_EVENT, onRequired);
   }, [t]);
 
   function dismiss() {
@@ -63,9 +58,7 @@ export function SubscriptionRequiredGate() {
           </AlertDialogTitle>
         </AlertDialogHeader>
 
-        <AlertDialogDescription className="mt-4">
-          {message}
-        </AlertDialogDescription>
+        <AlertDialogDescription className="mt-4">{message}</AlertDialogDescription>
 
         <AlertDialogFooter className="flex-col gap-2 sm:flex-col sm:justify-start sm:space-x-0">
           <AlertDialogAction onClick={goToPlans} className="w-full">

@@ -8,7 +8,7 @@ const PANEL_ROLES: PanelRole[] = [
   'SUPPORT',
   'MANAGER',
   'TEACHER',
-  'STUDENT'
+  'STUDENT',
 ];
 
 function isPanelRole(role: string): role is PanelRole {
@@ -23,8 +23,7 @@ export function getUserRole(): PanelRole | null {
     const currentUser = authService.getCurrentUser();
     if (currentUser?.currentProfile) {
       const role =
-        (currentUser.currentProfile as { role?: { name?: string } }).role
-          ?.name ||
+        (currentUser.currentProfile as { role?: { name?: string } }).role?.name ||
         (currentUser.currentProfile as { role_name?: string }).role_name ||
         (currentUser.currentProfile as { role?: string }).role;
 

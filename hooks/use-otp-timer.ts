@@ -38,6 +38,6 @@ export function useOtpTimer() {
   return {
     formatted: `${mm}:${ss}`,
     canResend: seconds === 0,
-    start
+    start,
   };
 }

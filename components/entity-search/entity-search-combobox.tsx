@@ -9,13 +9,9 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useEntitySearch } from '@/hooks/use-entity-search';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
@@ -24,10 +20,7 @@ import type { EntitySearchOption } from '@/types/entity-search';
 export interface EntitySearchComboboxProps {
   value: string;
   onValueChange: (value: string) => void;
-  fetchOptions: (
-    query: string,
-    signal?: AbortSignal
-  ) => Promise<EntitySearchOption[]>;
+  fetchOptions: (query: string, signal?: AbortSignal) => Promise<EntitySearchOption[]>;
   resolveOption?: (id: string) => Promise<EntitySearchOption | null>;
   placeholder?: string;
   emptyMessage?: string;
@@ -47,7 +40,7 @@ export function EntitySearchCombobox({
   disabled = false,
   clearable = false,
   id,
-  className
+  className,
 }: EntitySearchComboboxProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -55,7 +48,7 @@ export function EntitySearchCombobox({
 
   const { options, loading, query, setQuery, refresh } = useEntitySearch({
     fetchOptions,
-    enabled: open && !disabled
+    enabled: open && !disabled,
   });
 
   useEffect(() => {
@@ -98,7 +91,7 @@ export function EntitySearchCombobox({
       onValueChange(option.value);
       setOpen(false);
     },
-    [onValueChange]
+    [onValueChange],
   );
 
   const handleClear = useCallback(
@@ -108,11 +101,10 @@ export function EntitySearchCombobox({
       setSelected(null);
       onValueChange('');
     },
-    [onValueChange]
+    [onValueChange],
   );
 
-  const resolvedPlaceholder =
-    placeholder ?? t('entitySearch.searchPlaceholder');
+  const resolvedPlaceholder = placeholder ?? t('entitySearch.searchPlaceholder');
   const resolvedEmptyMessage = emptyMessage ?? t('entitySearch.noResults');
 
   return (
@@ -137,12 +129,10 @@ export function EntitySearchCombobox({
           className={cn(
             'h-10 w-full justify-between font-normal',
             !selected && 'text-muted-foreground',
-            className
+            className,
           )}
         >
-          <span className="truncate text-start">
-            {selected?.label ?? resolvedPlaceholder}
-          </span>
+          <span className="truncate text-start">{selected?.label ?? resolvedPlaceholder}</span>
           <span className="ms-2 flex shrink-0 items-center gap-1">
             {clearable && value ? (
               <span
@@ -172,11 +162,7 @@ export function EntitySearchCombobox({
         collisionPadding={16}
       >
         <Command shouldFilter={false}>
-          <CommandInput
-            placeholder={resolvedPlaceholder}
-            value={query}
-            onValueChange={setQuery}
-          />
+          <CommandInput placeholder={resolvedPlaceholder} value={query} onValueChange={setQuery} />
           <CommandList className="max-h-[min(300px,calc(var(--radix-popover-content-available-height)-3rem))]">
             {loading ? (
               <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
@@ -196,7 +182,7 @@ export function EntitySearchCombobox({
                       <Check
                         className={cn(
                           'me-2 h-4 w-4',
-                          value === option.value ? 'opacity-100' : 'opacity-0'
+                          value === option.value ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       <div className="min-w-0 flex-1">

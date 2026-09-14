@@ -4,13 +4,7 @@ import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { CourseSearchCombobox } from '@/components/entity-search';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -29,7 +23,7 @@ export function TutoringEngagementsCard({
   loading,
   courseFilter,
   onCourseFilterChange,
-  onRefresh
+  onRefresh,
 }: TutoringEngagementsCardProps) {
   const { t } = useTranslation();
 
@@ -37,9 +31,7 @@ export function TutoringEngagementsCard({
     <Card>
       <CardHeader>
         <CardTitle>{t('tutoring.engagements')}</CardTitle>
-        <CardDescription>
-          {t('tutoring.engagementsDescription')}
-        </CardDescription>
+        <CardDescription>{t('tutoring.engagementsDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -62,9 +54,7 @@ export function TutoringEngagementsCard({
             <span className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
           </div>
         ) : engagements.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('tutoring.noEngagements')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('tutoring.noEngagements')}</p>
         ) : (
           <div className="space-y-3">
             {engagements.map((engagement) => (
@@ -74,12 +64,10 @@ export function TutoringEngagementsCard({
               >
                 <div>
                   <p className="font-medium">
-                    {engagement.Course?.title ??
-                      t('assignmentsPage.notAvailable')}
+                    {engagement.Course?.title ?? t('assignmentsPage.notAvailable')}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {engagement.Student?.display_name ?? t('users.unnamedUser')}{' '}
-                    ↔{' '}
+                    {engagement.Student?.display_name ?? t('users.unnamedUser')} ↔{' '}
                     {engagement.Tutor?.display_name ?? t('users.unnamedUser')}
                   </p>
                 </div>

@@ -7,10 +7,7 @@ export type TranslateFn = (key: string, params?: InterpolationParams) => string;
  * `t()` echoes the key back, which is how we detect it and fall back to the
  * role's own name instead of printing `common.roles.SOMETHING`.
  */
-export function getRoleLabel(
-  roleName: string | null | undefined,
-  t: TranslateFn
-) {
+export function getRoleLabel(roleName: string | null | undefined, t: TranslateFn) {
   if (!roleName) return t('common.none');
 
   const key = `common.roles.${roleName.toUpperCase()}`;
@@ -22,10 +19,7 @@ export function getRoleLabel(
  * Same rule for a loaded role record: a built-in role is translated by name, a
  * custom role shows the label its creator typed.
  */
-export function getRoleDisplayLabel(
-  role: { name: string; label?: string | null },
-  t: TranslateFn
-) {
+export function getRoleDisplayLabel(role: { name: string; label?: string | null }, t: TranslateFn) {
   const translated = getRoleLabel(role.name, t);
   return translated === role.name ? role.label || role.name : translated;
 }

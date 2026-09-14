@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  DataList,
-  DataPanel,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { formatCurrencyWithStore, formatNumber } from '@/lib/utils';
@@ -19,49 +15,40 @@ type Props = {
   onPayoutRecorded: () => void;
 };
 
-export default function TeacherMoneyTable({
-  rows,
-  isLoading,
-  onPayoutRecorded
-}: Props) {
+export default function TeacherMoneyTable({ rows, isLoading, onPayoutRecorded }: Props) {
   const { t, language } = useTranslation();
   const academy = useCurrentAcademy();
   const [paying, setPaying] = useState<TeacherMoneyRow | null>(null);
 
-  const money = (value: number) =>
-    formatCurrencyWithStore(value, academy, undefined, language);
+  const money = (value: number) => formatCurrencyWithStore(value, academy, undefined, language);
 
   const columns: DataColumn<TeacherMoneyRow>[] = [
     {
       id: 'name',
       header: t('dashboard.money.colTeacher'),
       cell: (row) => (
-        <span className="font-medium">
-          {row.name ?? t('dashboard.money.unnamed')}
-        </span>
-      )
+        <span className="font-medium">{row.name ?? t('dashboard.money.unnamed')}</span>
+      ),
     },
     {
       id: 'courses',
       header: t('dashboard.money.colCourses'),
-      cell: (row) => formatNumber(row.courses, language)
+      cell: (row) => formatNumber(row.courses, language),
     },
     {
       id: 'students',
       header: t('dashboard.money.colStudents'),
-      cell: (row) => formatNumber(row.students, language)
+      cell: (row) => formatNumber(row.students, language),
     },
     {
       id: 'gross',
       header: t('dashboard.money.colGross'),
-      cell: (row) => money(row.gross)
+      cell: (row) => money(row.gross),
     },
     {
       id: 'earnings',
       header: t('dashboard.money.colEarnings'),
-      cell: (row) => (
-        <span className="font-semibold">{money(row.earnings)}</span>
-      )
+      cell: (row) => <span className="font-semibold">{money(row.earnings)}</span>,
     },
     {
       id: 'pending',
@@ -70,17 +57,15 @@ export default function TeacherMoneyTable({
       cell: (row) =>
         row.pending_payout > 0 ? (
           <span className="inline-flex items-center gap-2">
-            <span className="text-amber-600 dark:text-amber-400">
-              {money(row.pending_payout)}
-            </span>
+            <span className="text-amber-600 dark:text-amber-400">{money(row.pending_payout)}</span>
             <Button size="sm" variant="outline" onClick={() => setPaying(row)}>
               {t('dashboard.money.payTeacher')}
             </Button>
           </span>
         ) : (
           <span className="text-muted-foreground">{money(0)}</span>
-        )
-    }
+        ),
+    },
   ];
 
   return (

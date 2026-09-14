@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 
@@ -47,7 +47,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
   modalTitle = 'Upload Image',
   modalDescription = 'Click to browse or drag an image here',
   selectedImageId,
-  disabled = false
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isControlled = open !== undefined;

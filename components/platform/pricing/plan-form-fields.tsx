@@ -7,11 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { PriceInput } from '@/components/ui/price-input';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { StructuredPlanLimits } from '@/lib/api';
-import {
-  PLAN_LIMIT_KEYS,
-  planDefaults,
-  planRevenueForMargin
-} from './pricing-helpers';
+import { PLAN_LIMIT_KEYS, planDefaults, planRevenueForMargin } from './pricing-helpers';
 import { PlanMarginPreviewCard } from './plan-margin-preview-card';
 import type { MarginCosts } from './plan-margin-preview';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -48,15 +44,14 @@ export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
   const hint = (value: number | undefined) =>
     value === undefined ? undefined : formatNumber(value);
 
-  const set = (patch: Partial<PlanFormState>) =>
-    onChange({ ...form, ...patch });
+  const set = (patch: Partial<PlanFormState>) => onChange({ ...form, ...patch });
 
   const setLimit = (key: keyof StructuredPlanLimits, value: string) =>
     set({
       limits: {
         ...form.limits,
-        [key]: Number(value) || 0
-      }
+        [key]: Number(value) || 0,
+      },
     });
 
   return (
@@ -80,15 +75,10 @@ export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
         </div>
         <div className="space-y-1">
           <Label className="text-xs">{t('pricing.planLimits.slug')} *</Label>
-          <Input
-            value={form.slug}
-            onChange={(e) => set({ slug: e.target.value })}
-          />
+          <Input value={form.slug} onChange={(e) => set({ slug: e.target.value })} />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">
-            {t('pricing.planLimits.monthlyToman')}
-          </Label>
+          <Label className="text-xs">{t('pricing.planLimits.monthlyToman')}</Label>
           <PriceInput
             value={form.price_monthly_toman}
             onChange={(raw) => set({ price_monthly_toman: raw })}
@@ -96,22 +86,15 @@ export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">
-            {t('pricing.planLimits.yearlyToman')}
-          </Label>
+          <Label className="text-xs">{t('pricing.planLimits.yearlyToman')}</Label>
           <PriceInput
             value={form.price_yearly_toman}
             onChange={(raw) => set({ price_yearly_toman: raw })}
-            placeholder={
-              hint(defaults?.price_quarterly_toman) ??
-              t('pricing.planLimits.optional')
-            }
+            placeholder={hint(defaults?.price_quarterly_toman) ?? t('pricing.planLimits.optional')}
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">
-            {t('pricing.planLimits.storageLimitGb')}
-          </Label>
+          <Label className="text-xs">{t('pricing.planLimits.storageLimitGb')}</Label>
           <NumberInput
             value={form.storage_limit_gb}
             onChange={(raw) => set({ storage_limit_gb: raw })}
@@ -119,9 +102,7 @@ export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">
-            {t('pricing.planLimits.annualMonthsIncluded')}
-          </Label>
+          <Label className="text-xs">{t('pricing.planLimits.annualMonthsIncluded')}</Label>
           <NumberInput
             value={form.annual_months_included}
             onChange={(raw) => set({ annual_months_included: raw })}
@@ -129,19 +110,13 @@ export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
         </div>
         <div className="space-y-1">
           <Label className="text-xs">{t('pricing.planLimits.sortOrder')}</Label>
-          <NumberInput
-            value={form.sort_order}
-            onChange={(raw) => set({ sort_order: raw })}
-          />
+          <NumberInput value={form.sort_order} onChange={(raw) => set({ sort_order: raw })} />
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
         <label className="flex items-center gap-2 text-xs">
-          <Switch
-            checked={form.is_active}
-            onCheckedChange={(v) => set({ is_active: v })}
-          />
+          <Switch checked={form.is_active} onCheckedChange={(v) => set({ is_active: v })} />
           {t('pricing.planLimits.active')}
         </label>
         <label className="flex items-center gap-2 text-xs">
@@ -158,9 +133,7 @@ export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
           {PLAN_LIMIT_KEYS.map((key) => (
             <div key={key} className="space-y-1">
-              <Label className="text-[11px]">
-                {t(`pricing.planLimits.keys.${key}`)}
-              </Label>
+              <Label className="text-[11px]">{t(`pricing.planLimits.keys.${key}`)}</Label>
               <NumberInput
                 value={String(form.limits[key])}
                 onChange={(raw) => setLimit(key, raw)}
@@ -172,10 +145,7 @@ export function PlanFormFields({ form, isNew, onChange, costs }: Props) {
       </div>
 
       <PlanMarginPreviewCard
-        revenueToman={planRevenueForMargin(
-          form.slug,
-          Number(form.price_monthly_toman) || 0
-        )}
+        revenueToman={planRevenueForMargin(form.slug, Number(form.price_monthly_toman) || 0)}
         limits={form.limits}
         costs={costs}
       />

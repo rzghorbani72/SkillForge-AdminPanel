@@ -34,33 +34,23 @@ export function SlidesEditor({ cfg, set }: SlidesEditorProps) {
   const write = (next: SlideConfig[]) => set('slides', next);
 
   const patch = (index: number, changes: Partial<SlideConfig>) =>
-    write(
-      slides.map((slide, i) => (i === index ? { ...slide, ...changes } : slide))
-    );
+    write(slides.map((slide, i) => (i === index ? { ...slide, ...changes } : slide)));
 
-  const handleUpload = async (
-    index: number,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleUpload = async (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
       setUploadingIndex(index);
       setProgress(0);
-      const result = (await apiClient.uploadImage(
-        file,
-        { title: 'Slide' },
-        (percent) => setProgress(percent)
+      const result = (await apiClient.uploadImage(file, { title: 'Slide' }, (percent) =>
+        setProgress(percent),
       )) as unknown as Record<string, unknown>;
       const id =
         (result?.id as string | number | undefined) ??
-        ((result?.data as Record<string, unknown>)?.id as
-          | string
-          | number
-          | undefined);
+        ((result?.data as Record<string, unknown>)?.id as string | number | undefined);
       if (id !== undefined) {
         patch(index, {
-          backgroundImage: `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`
+          backgroundImage: `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`,
         });
       }
     } catch (error) {
@@ -86,9 +76,7 @@ export function SlidesEditor({ cfg, set }: SlidesEditorProps) {
           {t('sitePreview.slidesAdd')}
         </button>
       </div>
-      <p className="text-[11px] leading-relaxed text-zinc-500">
-        {t('sitePreview.slidesCaption')}
-      </p>
+      <p className="text-[11px] leading-relaxed text-zinc-500">{t('sitePreview.slidesCaption')}</p>
 
       {slides.length === 0 ? (
         <p className="rounded-lg border border-dashed border-zinc-300 py-4 text-center text-[11px] text-zinc-500">
@@ -96,14 +84,9 @@ export function SlidesEditor({ cfg, set }: SlidesEditorProps) {
         </p>
       ) : (
         slides.map((slide, index) => (
-          <div
-            key={index}
-            className="space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-2.5"
-          >
+          <div key={index} className="space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-zinc-600">
-                {index + 1}
-              </span>
+              <span className="text-[11px] font-medium text-zinc-600">{index + 1}</span>
               <SectionItemControls
                 index={index}
                 count={slides.length}
@@ -160,9 +143,7 @@ export function SlidesEditor({ cfg, set }: SlidesEditorProps) {
             />
             <Input
               value={slide.subtitle ?? ''}
-              onChange={(event) =>
-                patch(index, { subtitle: event.target.value })
-              }
+              onChange={(event) => patch(index, { subtitle: event.target.value })}
               placeholder={t('sitePreview.slideSubtitle')}
               className="h-8 border-zinc-300 bg-white text-xs"
             />

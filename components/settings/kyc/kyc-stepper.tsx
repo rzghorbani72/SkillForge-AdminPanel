@@ -5,10 +5,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 import type { KycStepIndex } from './use-kyc-wizard';
 
-const STEP_LABEL_KEYS = [
-  'settings.kyc.sectionIdentity',
-  'settings.kyc.sectionFinancial'
-] as const;
+const STEP_LABEL_KEYS = ['settings.kyc.sectionIdentity', 'settings.kyc.sectionFinancial'] as const;
 
 type Props = {
   current: KycStepIndex;
@@ -18,15 +15,9 @@ type Props = {
 };
 
 /** Clickable progress rail: finished steps stay open for review. */
-export function KycStepper({
-  current,
-  doneUpto,
-  maxReachable,
-  onSelect
-}: Props) {
+export function KycStepper({ current, doneUpto, maxReachable, onSelect }: Props) {
   const { t, language } = useTranslation();
-  const digit = (index: number) =>
-    language === 'fa' ? ['۱', '۲'][index] : String(index + 1);
+  const digit = (index: number) => (language === 'fa' ? ['۱', '۲'][index] : String(index + 1));
 
   return (
     <ol className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-3">
@@ -47,9 +38,7 @@ export function KycStepper({
                   : done
                     ? 'border-success/40 bg-success/5'
                     : 'border-border bg-muted/30',
-                reachable
-                  ? 'hover:border-primary/60'
-                  : 'cursor-not-allowed opacity-60'
+                reachable ? 'hover:border-primary/60' : 'cursor-not-allowed opacity-60',
               )}
             >
               <span
@@ -59,7 +48,7 @@ export function KycStepper({
                     ? 'bg-success text-success-foreground'
                     : active
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
+                      : 'bg-muted text-muted-foreground',
                 )}
               >
                 {done ? (

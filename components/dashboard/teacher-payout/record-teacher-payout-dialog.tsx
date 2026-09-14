@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,11 +33,7 @@ type Props = {
  * code is the teacher's evidence, so it is required; amount defaults to the
  * full owed balance and can never exceed it.
  */
-export function RecordTeacherPayoutDialog({
-  teacher,
-  onOpenChange,
-  onRecorded
-}: Props) {
+export function RecordTeacherPayoutDialog({ teacher, onOpenChange, onRecorded }: Props) {
   const { t, language } = useTranslation();
   const academy = useCurrentAcademy();
   const [amount, setAmount] = useState('');
@@ -48,10 +44,7 @@ export function RecordTeacherPayoutDialog({
   const owed = teacher?.pending_payout ?? 0;
   const parsedAmount = Number(amount || owed);
   const canSubmit =
-    !!teacher &&
-    parsedAmount > 0 &&
-    parsedAmount <= owed &&
-    trackingCode.trim().length > 0;
+    !!teacher && parsedAmount > 0 && parsedAmount <= owed && trackingCode.trim().length > 0;
 
   const reset = () => {
     setAmount('');
@@ -67,7 +60,7 @@ export function RecordTeacherPayoutDialog({
         teacher_profile_id: teacher.profile_id,
         amount: parsedAmount,
         tracking_code: trackingCode.trim(),
-        bank_response: bankResponse.trim() || undefined
+        bank_response: bankResponse.trim() || undefined,
       });
       logger.ok('TeacherPayout', 'Recorded', { amount: parsedAmount });
       toast.success(t('dashboard.teacherPayout.success'));
@@ -87,21 +80,19 @@ export function RecordTeacherPayoutDialog({
         <DialogHeader>
           <DialogTitle>
             {t('dashboard.teacherPayout.title', {
-              name: teacher?.name ?? t('dashboard.money.unnamed')
+              name: teacher?.name ?? t('dashboard.money.unnamed'),
             })}
           </DialogTitle>
           <DialogDescription>
             {t('dashboard.teacherPayout.description', {
-              owed: formatCurrencyWithStore(owed, academy, undefined, language)
+              owed: formatCurrencyWithStore(owed, academy, undefined, language),
             })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="payout-amount">
-              {t('dashboard.teacherPayout.amount')}
-            </Label>
+            <Label htmlFor="payout-amount">{t('dashboard.teacherPayout.amount')}</Label>
             <PriceInput
               id="payout-amount"
               value={amount}
@@ -111,9 +102,7 @@ export function RecordTeacherPayoutDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="payout-tracking">
-              {t('dashboard.teacherPayout.trackingCode')}
-            </Label>
+            <Label htmlFor="payout-tracking">{t('dashboard.teacherPayout.trackingCode')}</Label>
             <Input
               id="payout-tracking"
               value={trackingCode}
@@ -122,9 +111,7 @@ export function RecordTeacherPayoutDialog({
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="payout-bank">
-              {t('dashboard.teacherPayout.bankResponse')}
-            </Label>
+            <Label htmlFor="payout-bank">{t('dashboard.teacherPayout.bankResponse')}</Label>
             <Input
               id="payout-bank"
               value={bankResponse}
@@ -135,11 +122,7 @@ export function RecordTeacherPayoutDialog({
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={saving}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
             {t('common.cancel')}
           </Button>
           <Button onClick={submit} disabled={!canSubmit || saving}>

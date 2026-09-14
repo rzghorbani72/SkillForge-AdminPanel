@@ -1,13 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -49,16 +43,14 @@ export function AbuseReportsCard() {
   }, [load]);
 
   const decide = async (report: AbuseReport, actioned: boolean) => {
-    const note = actioned
-      ? undefined
-      : (window.prompt(t('compliance.abuse.dismissReason')) ?? '');
+    const note = actioned ? undefined : (window.prompt(t('compliance.abuse.dismissReason')) ?? '');
     if (!actioned && !note?.trim()) return;
 
     setBusy(report.id);
     try {
       await apiClient.resolveAbuseReport(report.id, {
         status: actioned ? ABUSE_STATUS.ACTIONED : ABUSE_STATUS.DISMISSED,
-        note: note || undefined
+        note: note || undefined,
       });
       await load();
     } catch (error) {
@@ -71,18 +63,14 @@ export function AbuseReportsCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          {t('compliance.abuse.title')}
-        </CardTitle>
+        <CardTitle className="text-base">{t('compliance.abuse.title')}</CardTitle>
         <CardDescription>{t('compliance.abuse.description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {overdue > 0 ? (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              {t('compliance.abuse.overdue', { count: overdue })}
-            </AlertDescription>
+            <AlertDescription>{t('compliance.abuse.overdue', { count: overdue })}</AlertDescription>
           </Alert>
         ) : null}
 
@@ -114,7 +102,7 @@ export function AbuseReportsCard() {
                     {report.overdue
                       ? t('compliance.abuse.pastDue')
                       : t('compliance.abuse.dueBy', {
-                          date: formatDate(report.due_at)
+                          date: formatDate(report.due_at),
                         })}
                   </Badge>
                 </div>

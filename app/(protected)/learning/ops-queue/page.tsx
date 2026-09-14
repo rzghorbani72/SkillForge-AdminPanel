@@ -12,13 +12,8 @@ import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 export default function OpsQueuePage() {
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
-  const {
-    featureEnabled,
-    checkingFeature,
-    enablingFeature,
-    isManager,
-    enableLearningFollowUp
-  } = useTutorLedFeature();
+  const { featureEnabled, checkingFeature, enablingFeature, isManager, enableLearningFollowUp } =
+    useTutorLedFeature();
   const opsQueue = useOpsQueue(featureEnabled);
 
   const showQueue = !checkingFeature && featureEnabled !== false;
@@ -31,10 +26,7 @@ export default function OpsQueuePage() {
         aria-labelledby="ops-queue-title"
       >
         <div>
-          <h1
-            id="ops-queue-title"
-            className="text-3xl font-bold tracking-tight"
-          >
+          <h1 id="ops-queue-title" className="text-3xl font-bold tracking-tight">
             {t('opsQueue.title')}
           </h1>
           <p className="text-muted-foreground">{t('opsQueue.description')}</p>

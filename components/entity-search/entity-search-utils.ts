@@ -3,7 +3,7 @@ import { getRoleLabel, type TranslateFn } from '@/lib/i18n/role-label';
 import type {
   EntitySearchOption,
   EntitySearchProfilesResponse,
-  EntitySearchUsersResponse
+  EntitySearchUsersResponse,
 } from '@/types/entity-search';
 
 export function mapUserToEntityOption(user: {
@@ -14,19 +14,18 @@ export function mapUserToEntityOption(user: {
   email?: string | null;
   phone_number?: string | null;
 }): EntitySearchOption {
-  const label =
-    user.display_name ?? user.full_name ?? user.name ?? String(user.id);
+  const label = user.display_name ?? user.full_name ?? user.name ?? String(user.id);
   const description = user.email ?? user.phone_number ?? undefined;
 
   return {
     value: String(user.id),
     label,
-    description
+    description,
   };
 }
 
 export function mapUsersResponse(
-  response: EntitySearchUsersResponse | null | undefined
+  response: EntitySearchUsersResponse | null | undefined,
 ): EntitySearchOption[] {
   return (response?.users ?? []).map(mapUserToEntityOption);
 }
@@ -34,7 +33,7 @@ export function mapUsersResponse(
 /** Drop the logged-in profile from pickers (group / role / access / enroll). */
 export function withoutSelfProfile(
   options: EntitySearchOption[],
-  selfProfileId?: string | number | null
+  selfProfileId?: string | number | null,
 ): EntitySearchOption[] {
   if (selfProfileId == null || selfProfileId === '') return options;
   const selfId = String(selfProfileId);
@@ -44,20 +43,17 @@ export function withoutSelfProfile(
 export async function fetchStudentOptions(
   query: string,
   selfProfileId?: string | number | null,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
   const response = await apiClient.getStudentUsers(
     {
       ...(search ? { search } : {}),
-      limit: 20
+      limit: 20,
     },
-    { signal }
+    { signal },
   );
-  return withoutSelfProfile(
-    mapUsersResponse(response as EntitySearchUsersResponse),
-    selfProfileId
-  );
+  return withoutSelfProfile(mapUsersResponse(response as EntitySearchUsersResponse), selfProfileId);
 }
 
 /**
@@ -71,34 +67,28 @@ export async function fetchStudentOptions(
  */
 export function createAcademyUserOptionsFetcher(
   t: TranslateFn,
-  selfProfileId?: string | number | null
+  selfProfileId?: string | number | null,
 ) {
-  return async (
-    query: string,
-    signal?: AbortSignal
-  ): Promise<EntitySearchOption[]> => {
+  return async (query: string, signal?: AbortSignal): Promise<EntitySearchOption[]> => {
     const search = query.trim();
     const response = (await apiClient.getUsers(
       {
         ...(search ? { search } : {}),
-        limit: 20
+        limit: 20,
       },
-      { signal }
+      { signal },
     )) as EntitySearchProfilesResponse | null;
 
     const options = (response?.profiles ?? []).map((profile) => ({
       value: profile.id,
-      label:
-        profile.display_name ??
-        profile.full_name ??
-        t('entitySearch.unnamedUser'),
+      label: profile.display_name ?? profile.full_name ?? t('entitySearch.unnamedUser'),
       description:
         [
           profile.role_name ? getRoleLabel(profile.role_name, t) : null,
-          profile.email ?? profile.phone_number
+          profile.email ?? profile.phone_number,
         ]
           .filter(Boolean)
-          .join(' · ') || undefined
+          .join(' · ') || undefined,
     }));
 
     return withoutSelfProfile(options, selfProfileId);
@@ -107,25 +97,24 @@ export function createAcademyUserOptionsFetcher(
 
 export async function fetchTeacherOptions(
   query: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
   const response = await apiClient.getTeacherUsers(
     {
       ...(search ? { search } : {}),
-      limit: 20
+      limit: 20,
     },
-    { signal }
+    { signal },
   );
   return mapUsersResponse(response as EntitySearchUsersResponse);
 }
 
 export async function resolveUserOption(
   id: string,
-  role: 'student' | 'teacher'
+  role: 'student' | 'teacher',
 ): Promise<EntitySearchOption | null> {
-  const fetcher =
-    role === 'student' ? fetchStudentOptions : fetchTeacherOptions;
+  const fetcher = role === 'student' ? fetchStudentOptions : fetchTeacherOptions;
   // Resolve without excluding self so existing selections still label correctly.
   const options = await fetcher(id);
   return options.find((option) => option.value === id) ?? null;
@@ -133,32 +122,30 @@ export async function resolveUserOption(
 
 export async function fetchCourseOptions(
   query: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<EntitySearchOption[]> {
   const search = query.trim();
   const response = await apiClient.getCourses(
     {
       ...(search ? { search } : {}),
-      limit: 20
+      limit: 20,
     },
-    { signal }
+    { signal },
   );
   return (response.courses ?? []).map((course) => ({
     value: String(course.id),
     label: course.title,
-    description: course.slug ? `#${course.slug}` : undefined
+    description: course.slug ? `#${course.slug}` : undefined,
   }));
 }
 
-export async function resolveCourseOption(
-  id: string
-): Promise<EntitySearchOption | null> {
+export async function resolveCourseOption(id: string): Promise<EntitySearchOption | null> {
   const course = await apiClient.getCourse(id);
   if (!course) {
     return null;
   }
   return {
     value: String(course.id),
-    label: course.title
+    label: course.title,
   };
 }

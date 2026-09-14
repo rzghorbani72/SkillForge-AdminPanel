@@ -13,9 +13,7 @@ const submit = (page: import('@playwright/test').Page) =>
   page.locator('form button:not([type="button"])').last();
 
 test.describe('AdminPanel manager login — step 1 (no backend)', () => {
-  test('asks for the phone only, never a password up front', async ({
-    page
-  }) => {
+  test('asks for the phone only, never a password up front', async ({ page }) => {
     await page.goto('/login');
 
     await expect(page.locator('input[type="tel"]')).toBeVisible();
@@ -34,9 +32,7 @@ test.describe('AdminPanel manager login — step 1 (no backend)', () => {
   test('offers signup from the login screen', async ({ page }) => {
     await page.goto('/login');
 
-    await page
-      .locator('a[href^="/register"]', { hasText: /ثبت‌نام|Sign Up/i })
-      .click();
+    await page.locator('a[href^="/register"]', { hasText: /ثبت‌نام|Sign Up/i }).click();
     await expect(page).toHaveURL(/\/register/);
   });
 });
@@ -46,10 +42,7 @@ test.describe('AdminPanel manager login — step 1 (no backend)', () => {
  * Run with: E2E_BACKEND=1 E2E_MANAGER_PHONE=09... E2E_MANAGER_PASSWORD=... pnpm test:e2e
  */
 test.describe('AdminPanel manager login — happy path @backend', () => {
-  test.skip(
-    !process.env.E2E_BACKEND,
-    'set E2E_BACKEND=1 to run against the API'
-  );
+  test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
 
   test('logs in and leaves the login page', async ({ page }) => {
     const phone = process.env.E2E_MANAGER_PHONE;
@@ -61,7 +54,7 @@ test.describe('AdminPanel manager login — happy path @backend', () => {
     await submit(page).click();
 
     await expect(page.locator('input[type="password"]')).toBeVisible({
-      timeout: 15_000
+      timeout: 15_000,
     });
     await page.locator('input[type="password"]').pressSequentially(password!);
     await submit(page).click();
@@ -69,15 +62,13 @@ test.describe('AdminPanel manager login — happy path @backend', () => {
     await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
   });
 
-  test('an unknown phone is sent to signup, not to a password box', async ({
-    page
-  }) => {
+  test('an unknown phone is sent to signup, not to a password box', async ({ page }) => {
     await page.goto('/login');
     await page.locator('input[type="tel"]').fill('09120000000');
     await submit(page).click();
 
     await expect(page.locator('a[href^="/register"]')).toBeVisible({
-      timeout: 15_000
+      timeout: 15_000,
     });
     await expect(page.locator('input[type="password"]')).toHaveCount(0);
   });
@@ -91,11 +82,9 @@ test.describe('AdminPanel manager login — happy path @backend', () => {
     await submit(page).click();
 
     await expect(page.locator('input[type="password"]')).toBeVisible({
-      timeout: 15_000
+      timeout: 15_000,
     });
-    await page
-      .locator('input[type="password"]')
-      .pressSequentially('definitely-wrong-pass');
+    await page.locator('input[type="password"]').pressSequentially('definitely-wrong-pass');
     await submit(page).click();
 
     await expect(page).toHaveURL(/\/login/);

@@ -23,14 +23,10 @@ export function CourseFactsCard({ course, offers = [] }: CourseFactsCardProps) {
   const priceOf = (kind: 'GROUP' | 'SOLO') =>
     offers.find((offer) => offer.kind === kind)?.price ?? null;
   const money = (value: number) =>
-    value > 0
-      ? `${formatNumber(value)} ${t('common.toman')}`
-      : t('courses.free');
+    value > 0 ? `${formatNumber(value)} ${t('common.toman')}` : t('courses.free');
 
   const hasDiscount =
-    !course.is_free &&
-    course.original_price > 0 &&
-    course.original_price > course.price;
+    !course.is_free && course.original_price > 0 && course.original_price > course.price;
 
   return (
     <Card>
@@ -51,13 +47,9 @@ export function CourseFactsCard({ course, offers = [] }: CourseFactsCardProps) {
             </Fact>
             <Fact label={t('courses.live.soloPrice')}>
               {priceOf('SOLO') === null ? (
-                <span className="text-muted-foreground">
-                  {t('courseDetail.notSelling')}
-                </span>
+                <span className="text-muted-foreground">{t('courseDetail.notSelling')}</span>
               ) : (
-                <span className="text-emerald-600">
-                  {money(priceOf('SOLO') as number)}
-                </span>
+                <span className="text-emerald-600">{money(priceOf('SOLO') as number)}</span>
               )}
             </Fact>
           </>
@@ -81,13 +73,9 @@ export function CourseFactsCard({ course, offers = [] }: CourseFactsCardProps) {
           </Fact>
         )}
 
-        {!isLive &&
-          course.discount_percent != null &&
-          course.discount_percent > 0 && (
-            <Fact label={t('courseDetail.discount')}>
-              {percentLabel(course.discount_percent)}
-            </Fact>
-          )}
+        {!isLive && course.discount_percent != null && course.discount_percent > 0 && (
+          <Fact label={t('courseDetail.discount')}>{percentLabel(course.discount_percent)}</Fact>
+        )}
       </CardContent>
     </Card>
   );

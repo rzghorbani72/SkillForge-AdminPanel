@@ -3,21 +3,12 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { CourseFormData } from './schema';
 
-export default function CourseSettingsCard({
-  form
-}: {
-  form: UseFormReturn<CourseFormData>;
-}) {
+export default function CourseSettingsCard({ form }: { form: UseFormReturn<CourseFormData> }) {
   const { t } = useTranslation();
 
   return (
@@ -34,19 +25,14 @@ export default function CourseSettingsCard({
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-500" />
                 <div>
-                  <FormLabel className="text-sm font-medium">
-                    {t('courses.featured')}
-                  </FormLabel>
+                  <FormLabel className="text-sm font-medium">{t('courses.featured')}</FormLabel>
                   <p className="text-xs text-muted-foreground">
                     {t('courses.highlightedOnHomepage')}
                   </p>
                 </div>
               </div>
               <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
             </FormItem>
           )}

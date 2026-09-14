@@ -13,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -37,7 +37,7 @@ import { MEDIA_KINDS, type MediaKind } from './media-kinds';
 const formSchema = z.object({
   file: z.any().refine((files) => files?.length > 0, 'validation.fileRequired'),
   title: z.string().min(3, 'validation.titleMin3'),
-  description: z.string().min(10, 'validation.descriptionMin10')
+  description: z.string().min(10, 'validation.descriptionMin10'),
 });
 
 type MediaFormData = z.infer<typeof formSchema>;
@@ -51,10 +51,7 @@ interface UploadMediaDialogProps {
  * One dialog for video/audio/document uploads: the API accepts the same
  * payload (file + title + description) for all three.
  */
-export function UploadMediaDialog({
-  kind,
-  onUploaded
-}: UploadMediaDialogProps) {
+export function UploadMediaDialog({ kind, onUploaded }: UploadMediaDialogProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
@@ -64,7 +61,7 @@ export function UploadMediaDialog({
 
   const form = useForm<MediaFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: { title: '', description: '' }
+    defaultValues: { title: '', description: '' },
   });
 
   const onSubmit = async (data: MediaFormData) => {
@@ -77,7 +74,7 @@ export function UploadMediaDialog({
         data.file[0],
         { title: data.title, description: data.description },
         setProgress,
-        abortController
+        abortController,
       );
       toast.success(t(config.successKey));
       form.reset();
@@ -146,10 +143,7 @@ export function UploadMediaDialog({
                   <FormItem>
                     <FormLabel>{t('media.title')}</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder={t(config.titlePlaceholderKey)}
-                        {...field}
-                      />
+                      <Input placeholder={t(config.titlePlaceholderKey)} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -188,11 +182,7 @@ export function UploadMediaDialog({
             </div>
 
             <DialogFooter className="gap-2 sm:gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleOpenChange(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                 {isUploading ? t('media.cancelUpload') : t('media.cancel')}
               </Button>
               <Button type="submit" disabled={isUploading}>

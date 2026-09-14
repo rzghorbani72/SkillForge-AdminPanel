@@ -2,13 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringOffer } from '@/types/learning-operations';
 
@@ -23,7 +17,7 @@ export function TutoringOffersCard({
   offers,
   loading,
   saving,
-  onToggleActive
+  onToggleActive,
 }: TutoringOffersCardProps) {
   const { t, language } = useTranslation();
   const priceFormatter = new Intl.NumberFormat(language);
@@ -40,9 +34,7 @@ export function TutoringOffersCard({
             <span className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
           </div>
         ) : offers.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('tutoring.noOffers')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('tutoring.noOffers')}</p>
         ) : (
           offers.map((offer) => (
             <div
@@ -59,16 +51,14 @@ export function TutoringOffersCard({
                   {priceFormatter.format(offer.price)} {offer.currency}
                   {offer.duration_days
                     ? ` · ${t('tutoring.durationDaysLabel', {
-                        days: String(offer.duration_days)
+                        days: String(offer.duration_days),
                       })}`
                     : ''}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={offer.is_active ? 'default' : 'outline'}>
-                  {offer.is_active
-                    ? t('tutoring.offerActive')
-                    : t('tutoring.offerInactive')}
+                  {offer.is_active ? t('tutoring.offerActive') : t('tutoring.offerInactive')}
                 </Badge>
                 <Button
                   variant="outline"
@@ -76,9 +66,7 @@ export function TutoringOffersCard({
                   disabled={saving}
                   onClick={() => void onToggleActive(offer)}
                 >
-                  {offer.is_active
-                    ? t('tutoring.deactivate')
-                    : t('tutoring.activate')}
+                  {offer.is_active ? t('tutoring.deactivate') : t('tutoring.activate')}
                 </Button>
               </div>
             </div>

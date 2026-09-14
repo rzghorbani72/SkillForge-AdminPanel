@@ -3,23 +3,10 @@
 import { useRef, useState } from 'react';
 import { ImagePlus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-  apiClient,
-  type DashboardBanner,
-  type DashboardBannerState
-} from '@/lib/api';
-import {
-  dashboardBannerSrc,
-  uploadedImageId
-} from '@/lib/dashboard-banner-url';
+import { apiClient, type DashboardBanner, type DashboardBannerState } from '@/lib/api';
+import { dashboardBannerSrc, uploadedImageId } from '@/lib/dashboard-banner-url';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -35,8 +22,7 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
   const [busy, setBusy] = useState(false);
   const [linkDrafts, setLinkDrafts] = useState<Record<string, string>>({});
 
-  const linkValue = (banner: DashboardBanner) =>
-    linkDrafts[banner.id] ?? banner.link_url ?? '';
+  const linkValue = (banner: DashboardBanner) => linkDrafts[banner.id] ?? banner.link_url ?? '';
 
   const handleSaveLink = async (banner: DashboardBanner) => {
     const value = linkValue(banner).trim();
@@ -61,7 +47,7 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
     for (const file of files) {
       try {
         const uploaded = await apiClient.uploadImage(file, {
-          title: `dashboard-banner-${state}`
+          title: `dashboard-banner-${state}`,
         });
         const imageId = uploadedImageId(uploaded);
         if (!imageId) {
@@ -75,9 +61,7 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
     }
 
     if (uploadedCount > 0) {
-      ErrorHandler.showSuccess(
-        t('dashboardBanners.uploadedCount', { count: uploadedCount })
-      );
+      ErrorHandler.showSuccess(t('dashboardBanners.uploadedCount', { count: uploadedCount }));
     }
     setBusy(false);
     await onChanged();
@@ -100,9 +84,7 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
     <Card>
       <CardHeader>
         <CardTitle>{t(`dashboardBanners.states.${state}`)}</CardTitle>
-        <CardDescription>
-          {t(`dashboardBanners.stateHelp.${state}`)}
-        </CardDescription>
+        <CardDescription>{t(`dashboardBanners.stateHelp.${state}`)}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <input
@@ -127,16 +109,11 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
           {t('dashboardBanners.upload')}
         </Button>
         {banners.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('dashboardBanners.empty')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('dashboardBanners.empty')}</p>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2">
             {banners.map((banner) => (
-              <li
-                key={banner.id}
-                className="overflow-hidden rounded-xl border bg-muted/30"
-              >
+              <li key={banner.id} className="overflow-hidden rounded-xl border bg-muted/30">
                 <div className="relative aspect-[4/3]">
                   <img
                     src={dashboardBannerSrc(banner.image_id)}
@@ -152,7 +129,7 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
                     onChange={(event) =>
                       setLinkDrafts((prev) => ({
                         ...prev,
-                        [banner.id]: event.target.value
+                        [banner.id]: event.target.value,
                       }))
                     }
                     className="h-8 text-xs"
@@ -162,9 +139,7 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
                       type="button"
                       variant="outline"
                       size="sm"
-                      disabled={
-                        busy || linkValue(banner) === (banner.link_url ?? '')
-                      }
+                      disabled={busy || linkValue(banner) === (banner.link_url ?? '')}
                       onClick={() => void handleSaveLink(banner)}
                     >
                       {t('dashboardBanners.saveLink')}

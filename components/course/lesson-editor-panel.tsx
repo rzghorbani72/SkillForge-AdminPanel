@@ -11,7 +11,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -21,7 +21,7 @@ import {
   DEFAULT_DURATION,
   clearIncompatibleMedia,
   hasTimedMedia,
-  isTimedLessonType
+  isTimedLessonType,
 } from './course-drafts';
 import { LessonMedia, LESSON_INFO_SLOT_CLASS } from './LessonMedia';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
@@ -31,16 +31,12 @@ import { LessonDurationInfo } from './lesson-duration-info';
  * Switching type drops the media the old type owned, so a length measured from
  * that media would keep claiming a file the lesson no longer has.
  */
-function patchForType(
-  lesson: LessonDraft,
-  type: LessonDraft['lesson_type']
-): Partial<LessonDraft> {
-  const losesItsLength =
-    isTimedLessonType(lesson.lesson_type) && type !== lesson.lesson_type;
+function patchForType(lesson: LessonDraft, type: LessonDraft['lesson_type']): Partial<LessonDraft> {
+  const losesItsLength = isTimedLessonType(lesson.lesson_type) && type !== lesson.lesson_type;
   return {
     lesson_type: type,
     ...clearIncompatibleMedia(type),
-    ...(losesItsLength ? { duration: DEFAULT_DURATION } : {})
+    ...(losesItsLength ? { duration: DEFAULT_DURATION } : {}),
   };
 }
 
@@ -57,23 +53,17 @@ interface LessonEditorPanelProps {
   onAssign: (seasonClientKey: string) => void;
 }
 
-export function LessonEditorPanel({
-  lesson,
-  seasons,
-  onUpdate,
-  onAssign
-}: LessonEditorPanelProps) {
+export function LessonEditorPanel({ lesson, seasons, onUpdate, onAssign }: LessonEditorPanelProps) {
   const { t } = useTranslation();
   const { course_id: courseId } = useParams<{ course_id: string }>();
   // Quizzes, live times and the download rule need a screen each, so an
   // unsaved lesson has nowhere to link to yet.
-  const settingsHref =
-    lesson.id && courseId ? `/courses/${courseId}/lessons/${lesson.id}` : null;
+  const settingsHref = lesson.id && courseId ? `/courses/${courseId}/lessons/${lesson.id}` : null;
 
   // Live teaching is a live course with its own timetable, so a recorded
   // course can no longer make a live lesson; ones that exist stay editable.
   const typeOptions = LESSON_TYPE_OPTIONS.filter(
-    (option) => option.type !== 'LIVE' || lesson.lesson_type === 'LIVE'
+    (option) => option.type !== 'LIVE' || lesson.lesson_type === 'LIVE',
   );
 
   return (
@@ -103,7 +93,7 @@ export function LessonEditorPanel({
                     'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors',
                     selected
                       ? chipActiveClass
-                      : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
+                      : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground',
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -124,7 +114,7 @@ export function LessonEditorPanel({
                 <div
                   className={cn(
                     'flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-rose-200 bg-rose-50/60 px-4 text-center text-xs leading-snug text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200',
-                    LESSON_INFO_SLOT_CLASS
+                    LESSON_INFO_SLOT_CLASS,
                   )}
                 >
                   {settingsHref ? (
@@ -150,9 +140,7 @@ export function LessonEditorPanel({
 
           {/* One list of "label → value" rows, stretched to whatever height the
               media column takes so the two columns end level. */}
-          <div
-            className={cn(LESSON_SETTINGS_COLUMN_CLASS, 'flex flex-col gap-2')}
-          >
+          <div className={cn(LESSON_SETTINGS_COLUMN_CLASS, 'flex flex-col gap-2')}>
             <Label className="min-h-8 text-xs font-medium leading-5 text-muted-foreground">
               {t('courses.lessonSectionSettings')}
             </Label>
@@ -161,13 +149,8 @@ export function LessonEditorPanel({
 
               {seasons.length > 0 && (
                 <div className={SETTING_ROW_CLASS}>
-                  <span className="text-sm text-muted-foreground">
-                    {t('courses.season')}
-                  </span>
-                  <Select
-                    value={lesson.seasonClientKey}
-                    onValueChange={(value) => onAssign(value)}
-                  >
+                  <span className="text-sm text-muted-foreground">{t('courses.season')}</span>
+                  <Select value={lesson.seasonClientKey} onValueChange={(value) => onAssign(value)}>
                     <SelectTrigger className="h-9 w-[11rem] bg-background text-sm">
                       <SelectValue />
                     </SelectTrigger>

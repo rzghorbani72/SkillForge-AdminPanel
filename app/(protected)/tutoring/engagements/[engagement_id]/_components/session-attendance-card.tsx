@@ -4,27 +4,18 @@ import { useState } from 'react';
 import { UserCheck } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
-import type {
-  ClassSession,
-  TutoringAttendanceStatus
-} from '@/types/learning-operations';
+import type { ClassSession, TutoringAttendanceStatus } from '@/types/learning-operations';
 
 interface SessionAttendanceCardProps {
   sessions: ClassSession[];
@@ -35,11 +26,7 @@ interface SessionAttendanceCardProps {
 const STATUSES: TutoringAttendanceStatus[] = ['PRESENT', 'ABSENT', 'JOINED'];
 
 /** One student, so attendance is just "which meeting, was she there". */
-export function SessionAttendanceCard({
-  sessions,
-  saving,
-  onSubmit
-}: SessionAttendanceCardProps) {
+export function SessionAttendanceCard({ sessions, saving, onSubmit }: SessionAttendanceCardProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const open = sessions.filter((session) => session.status !== 'CANCELLED');
@@ -50,7 +37,7 @@ export function SessionAttendanceCard({
   const statusLabel: Record<TutoringAttendanceStatus, string> = {
     PRESENT: t('tutoring.attendancePresent'),
     ABSENT: t('tutoring.attendanceAbsent'),
-    JOINED: t('tutoring.attendanceJoined')
+    JOINED: t('tutoring.attendanceJoined'),
   };
 
   return (
@@ -85,9 +72,7 @@ export function SessionAttendanceCard({
           <Label>{t('tutoring.attendanceStatus')}</Label>
           <Select
             value={status}
-            onValueChange={(value) =>
-              setStatus(value as TutoringAttendanceStatus)
-            }
+            onValueChange={(value) => setStatus(value as TutoringAttendanceStatus)}
           >
             <SelectTrigger className="sm:w-36">
               <SelectValue />

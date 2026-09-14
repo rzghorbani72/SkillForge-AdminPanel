@@ -39,45 +39,40 @@ export interface StudentGroupDetail extends StudentGroupRecord {
 }
 
 export const studentGroupsApi = {
-  list: () =>
-    call<{ status: string; data: StudentGroupRecord[] }>('/student-groups'),
-  get: (id: string) =>
-    call<{ status: string; data: StudentGroupDetail }>(`/student-groups/${id}`),
+  list: () => call<{ status: string; data: StudentGroupRecord[] }>('/student-groups'),
+  get: (id: string) => call<{ status: string; data: StudentGroupDetail }>(`/student-groups/${id}`),
   create: (body: { name: string; description?: string }) =>
     call<{ status: string; data: StudentGroupRecord }>('/student-groups', {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     }),
-  update: (
-    id: string,
-    body: { name?: string; description?: string; is_active?: boolean }
-  ) =>
+  update: (id: string, body: { name?: string; description?: string; is_active?: boolean }) =>
     call(`/student-groups/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     }),
   remove: (id: string) => call(`/student-groups/${id}`, { method: 'DELETE' }),
   addMembers: (id: string, profile_ids: string[]) =>
     call(`/student-groups/${id}/members`, {
       method: 'POST',
-      body: JSON.stringify({ profile_ids })
+      body: JSON.stringify({ profile_ids }),
     }),
   removeMember: (id: string, profileId: string) =>
     call(`/student-groups/${id}/members/${profileId}`, { method: 'DELETE' }),
   grantCourses: (id: string, course_ids: string[]) =>
     call(`/student-groups/${id}/courses`, {
       method: 'POST',
-      body: JSON.stringify({ course_ids })
+      body: JSON.stringify({ course_ids }),
     }),
   revokeCourse: (id: string, courseId: string) =>
     call(`/student-groups/${id}/courses/${courseId}`, { method: 'DELETE' }),
   grantLessons: (id: string, lesson_ids: string[]) =>
     call(`/student-groups/${id}/lessons`, {
       method: 'POST',
-      body: JSON.stringify({ lesson_ids })
+      body: JSON.stringify({ lesson_ids }),
     }),
   revokeLesson: (id: string, lessonId: string) =>
-    call(`/student-groups/${id}/lessons/${lessonId}`, { method: 'DELETE' })
+    call(`/student-groups/${id}/lessons/${lessonId}`, { method: 'DELETE' }),
 };
 
 // ---------- Manager → student messaging -----------------------------------
@@ -102,11 +97,10 @@ export const academyMessagesApi = {
   }) =>
     call<{ status: string; data: SendMessageResult }>('/academy-messages', {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     }),
   list: () => call<{ status: string; data: unknown[] }>('/academy-messages'),
-  get: (id: string) =>
-    call<{ status: string; data: unknown }>(`/academy-messages/${id}`)
+  get: (id: string) => call<{ status: string; data: unknown }>(`/academy-messages/${id}`),
 };
 
 // ---------- Academy plans (Mig 4) -----------------------------------------
@@ -114,11 +108,8 @@ export type AcademyPlanKind = 'SUBSCRIPTION' | 'PACKAGE';
 
 export const academyPlansApi = {
   list: (kind?: AcademyPlanKind) =>
-    call<{ status: string; data: any[] }>(
-      `/academy-plans${kind ? `?kind=${kind}` : ''}`
-    ),
-  get: (id: number) =>
-    call<{ status: string; data: any }>(`/academy-plans/${id}`),
+    call<{ status: string; data: any[] }>(`/academy-plans${kind ? `?kind=${kind}` : ''}`),
+  get: (id: number) => call<{ status: string; data: any }>(`/academy-plans/${id}`),
   create: (body: {
     kind: AcademyPlanKind;
     name: string;
@@ -137,20 +128,20 @@ export const academyPlansApi = {
       duration_days?: number;
       is_active?: boolean;
       course_ids?: number[];
-    }
+    },
   ) =>
     call(`/academy-plans/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     }),
   remove: (id: number) => call(`/academy-plans/${id}`, { method: 'DELETE' }),
   subscribe: (id: number, profile_id: number, payment_id?: number) =>
     call(`/academy-plans/${id}/subscribe`, {
       method: 'POST',
-      body: JSON.stringify({ profile_id, payment_id })
+      body: JSON.stringify({ profile_id, payment_id }),
     }),
   cancelSubscription: (subscriptionId: number) =>
-    call(`/academy-plans/subscriptions/${subscriptionId}`, { method: 'DELETE' })
+    call(`/academy-plans/subscriptions/${subscriptionId}`, { method: 'DELETE' }),
 };
 
 // ---------- Auth: default academy + payment status -----------------------
@@ -158,8 +149,8 @@ export const userPrefsApi = {
   setDefaultAcademy: (academyId: string | null) =>
     call('/auth/me/default-academy', {
       method: 'PATCH',
-      body: JSON.stringify({ academy_id: academyId })
-    })
+      body: JSON.stringify({ academy_id: academyId }),
+    }),
 };
 
 export const paymentsExtraApi = {
@@ -167,7 +158,7 @@ export const paymentsExtraApi = {
     call<{
       status: string;
       data: { id: number; status: string; amount: number };
-    }>(`/payments/${id}/status`)
+    }>(`/payments/${id}/status`),
 };
 
 // ---------- Access grants --------------------------------------------------
@@ -239,16 +230,13 @@ export const accessGrantsApi = {
   create: (body: CreateAccessGrantBody) =>
     call<AccessGrantSummary>('/access-grants', {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     }),
   list: (courseId: string) =>
     call<{
       status: string;
       data: { students: StudentAccessGrant[]; groups: GroupAccessGrant[] };
     }>(`/access-grants?course_id=${encodeURIComponent(courseId)}`),
-  revoke: (body: {
-    course_id: string;
-    profile_id?: string;
-    group_id?: string;
-  }) => call('/access-grants', { method: 'DELETE', body: JSON.stringify(body) })
+  revoke: (body: { course_id: string; profile_id?: string; group_id?: string }) =>
+    call('/access-grants', { method: 'DELETE', body: JSON.stringify(body) }),
 };

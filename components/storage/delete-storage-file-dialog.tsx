@@ -8,7 +8,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { formatFileSize } from '@/components/shared/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -26,7 +26,7 @@ export function DeleteStorageFileDialog({
   file,
   isDeleting,
   onCancel,
-  onConfirm
+  onConfirm,
 }: DeleteStorageFileDialogProps) {
   const { t } = useTranslation();
 
@@ -38,14 +38,12 @@ export function DeleteStorageFileDialog({
           <AlertDialogDescription>
             {t('storage.deleteConfirm', {
               name: file?.title ?? '',
-              size: formatFileSize(file?.size) || ''
+              size: formatFileSize(file?.size) || '',
             })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>
-            {t('common.cancel')}
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{t('common.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}

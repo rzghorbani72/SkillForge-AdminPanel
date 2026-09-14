@@ -1,13 +1,6 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useRef
-} from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { clearLegacyAuthStorage } from '@/lib/clear-legacy-auth-storage';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
@@ -22,14 +15,7 @@ export interface AuthUser {
   displayName: string;
   email: string;
   phone: string;
-  role:
-    | 'PLATFORM_OWNER'
-    | 'ADMIN'
-    | 'FINANCE'
-    | 'SUPPORT'
-    | 'MANAGER'
-    | 'TEACHER'
-    | 'STUDENT';
+  role: 'PLATFORM_OWNER' | 'ADMIN' | 'FINANCE' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT';
   lastLogin?: string | null;
   avatarUrl?: string | null;
   academyId?: string | null;
@@ -46,14 +32,7 @@ export interface AuthUser {
   onboardingSeen: boolean;
   profiles: AcademyProfile[];
   profile?: {
-    role?:
-      | 'PLATFORM_OWNER'
-      | 'ADMIN'
-      | 'FINANCE'
-      | 'SUPPORT'
-      | 'MANAGER'
-      | 'TEACHER'
-      | 'STUDENT';
+    role?: 'PLATFORM_OWNER' | 'ADMIN' | 'FINANCE' | 'SUPPORT' | 'MANAGER' | 'TEACHER' | 'STUDENT';
     academy_id?: string | null;
     academyId?: string | null;
     [key: string]: unknown;
@@ -127,19 +106,15 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         }
 
         // Extract store information
-        const academyId =
-          currentUser?.academyId ?? currentUser?.academy_id ?? null;
+        const academyId = currentUser?.academyId ?? currentUser?.academy_id ?? null;
         const currentAcademy = currentUser?.currentAcademy ?? null;
 
         const isAdminProfile = currentUser?.isAdminProfile ?? false;
         const platformLevel = currentUser?.platformLevel ?? false;
         const canManageAllAcademies =
-          currentUser?.canManageAllAcademies ??
-          currentUser?.canManageAllStores ??
-          false;
+          currentUser?.canManageAllAcademies ?? currentUser?.canManageAllStores ?? false;
         const canManagePlatform = currentUser?.canManagePlatform ?? false;
-        const granularPermissions: string[] =
-          currentUser?.granularPermissions ?? [];
+        const granularPermissions: string[] = currentUser?.granularPermissions ?? [];
 
         const rawProfiles: AcademyProfile[] = (
           currentUser?.availableProfiles ??
@@ -147,13 +122,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           []
         ).map((p: any) => ({
           academy_id: p.academy_id ?? null,
-          role: (p.Role?.name ?? p.role?.name ?? p.role ?? '') as string
+          role: (p.Role?.name ?? p.role?.name ?? p.role ?? '') as string,
         }));
 
         setUser({
           id: (currentUser as any)?.id || 0,
-          displayName:
-            currentUser?.full_name ?? currentUser?.display_name ?? '',
+          displayName: currentUser?.full_name ?? currentUser?.display_name ?? '',
           email: currentUser?.email ?? '',
           phone: currentUser?.phone_number ?? '',
           role: role as AuthUser['role'],
@@ -168,8 +142,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           granularPermissions: granularPermissions,
           // Defaulting both to the "nothing to show" side keeps an older API payload
           // from popping the onboarding dialog at someone who never signed up.
-          isSelfRegisteredManager:
-            currentUser?.isSelfRegisteredManager === true,
+          isSelfRegisteredManager: currentUser?.isSelfRegisteredManager === true,
           onboardingSeen: currentUser?.onboardingSeen !== false,
           profiles: rawProfiles,
           profile: {
@@ -178,8 +151,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             academy: currentAcademy || null,
             role: role as AuthUser['role'],
             isAdminProfile: isAdminProfile,
-            platformLevel: platformLevel
-          }
+            platformLevel: platformLevel,
+          },
         });
       } catch (err: any) {
         console.error('Error fetching authenticated user:', err);
@@ -201,7 +174,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         hasFetchedRef.current = true;
       }
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {
@@ -215,7 +188,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     user,
     isLoading,
     error,
-    refetch: fetchUser
+    refetch: fetchUser,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

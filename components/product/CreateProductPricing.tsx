@@ -2,13 +2,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PriceInput } from '@/components/ui/price-input';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
@@ -72,9 +66,7 @@ const CreateProductPricing = ({ form }: Props) => {
           )}
         />
 
-        <p className="text-sm text-muted-foreground">
-          {t('products.enterWholeNumbers')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('products.enterWholeNumbers')}</p>
       </CardContent>
     </Card>
   );

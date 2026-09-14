@@ -1,30 +1,12 @@
 'use client';
 
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Edit,
-  Eye,
-  Plus,
-  Trash2,
-  Package,
-  ShoppingCart,
-  Star,
-  Box
-} from 'lucide-react';
+import { Edit, Eye, Plus, Trash2, Package, ShoppingCart, Star, Box } from 'lucide-react';
 import { Product } from '@/types/api';
-import {
-  AccessControlBadge,
-  AccessControlActions
-} from '@/components/ui/access-control-badge';
+import { AccessControlBadge, AccessControlActions } from '@/components/ui/access-control-badge';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { formatCurrencyWithStore, cn } from '@/lib/utils';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -40,19 +22,10 @@ type Props = {
   onDelete?: (product: Product) => void;
 };
 
-const ProductsGrid = ({
-  products,
-  searchTerm,
-  onCreate,
-  onView,
-  onEdit,
-  onDelete
-}: Props) => {
+const ProductsGrid = ({ products, searchTerm, onCreate, onView, onEdit, onDelete }: Props) => {
   const { t } = useTranslation();
   const currentAcademy = useCurrentAcademy();
-  const [productToDelete, setProductToDelete] = React.useState<Product | null>(
-    null
-  );
+  const [productToDelete, setProductToDelete] = React.useState<Product | null>(null);
 
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
@@ -74,7 +47,7 @@ const ProductsGrid = ({
   const headerDescription = searchTerm
     ? t('products.showingMatching', {
         count: products.length,
-        term: searchTerm
+        term: searchTerm,
       })
     : t('products.showingCount', { count: products.length });
 
@@ -91,9 +64,7 @@ const ProductsGrid = ({
               <Package className="h-10 w-10" />
             </div>
           </div>
-          <h3 className="text-xl font-semibold tracking-tight">
-            {t('products.noProducts')}
-          </h3>
+          <h3 className="text-xl font-semibold tracking-tight">{t('products.noProducts')}</h3>
           <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
             {searchTerm
               ? t('products.noProductsMatch', { term: searchTerm })
@@ -120,9 +91,7 @@ const ProductsGrid = ({
         style={{ animationDelay: '0.15s' }}
       >
         <div>
-          <h2 className="text-lg font-semibold text-foreground">
-            {t('products.title')}
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground">{t('products.title')}</h2>
           <p className="text-sm text-muted-foreground">{headerDescription}</p>
         </div>
       </div>
@@ -138,7 +107,7 @@ const ProductsGrid = ({
             <Card
               className={cn(
                 'group flex h-full flex-col overflow-hidden border-border/50 transition-all duration-300',
-                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5'
+                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
               )}
             >
               {/* Product Cover */}
@@ -171,7 +140,7 @@ const ProductsGrid = ({
                       'rounded-full backdrop-blur-sm',
                       product.product_type === 'PHYSICAL'
                         ? 'bg-blue-500/90 text-white'
-                        : 'bg-purple-500/90 text-white'
+                        : 'bg-purple-500/90 text-white',
                     )}
                   >
                     {product.product_type === 'PHYSICAL' ? (
@@ -223,31 +192,22 @@ const ProductsGrid = ({
               <CardContent className="flex flex-1 flex-col gap-3 pt-0">
                 {/* Stock and rating info */}
                 <div className="flex items-center justify-between rounded-xl bg-muted/50 px-3 py-2 text-xs">
-                  {product.product_type === 'PHYSICAL' &&
-                    product.stock_quantity !== null && (
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Package className="h-3.5 w-3.5" />
-                        <span className="font-medium">
-                          {product.stock_quantity} in stock
-                        </span>
-                      </div>
-                    )}
+                  {product.product_type === 'PHYSICAL' && product.stock_quantity !== null && (
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <Package className="h-3.5 w-3.5" />
+                      <span className="font-medium">{product.stock_quantity} in stock</span>
+                    </div>
+                  )}
                   {product.rating > 0 ? (
                     <div className="flex items-center gap-1 text-amber-500">
                       <Star className="h-3.5 w-3.5 fill-current" />
-                      <span className="font-semibold">
-                        {product.rating.toFixed(1)}
-                      </span>
+                      <span className="font-semibold">{product.rating.toFixed(1)}</span>
                       {product.rating_count > 0 && (
-                        <span className="text-muted-foreground">
-                          ({product.rating_count})
-                        </span>
+                        <span className="text-muted-foreground">({product.rating_count})</span>
                       )}
                     </div>
                   ) : (
-                    <div className="text-muted-foreground/60">
-                      No reviews yet
-                    </div>
+                    <div className="text-muted-foreground/60">No reviews yet</div>
                   )}
                 </div>
 
@@ -259,12 +219,10 @@ const ProductsGrid = ({
                       'rounded-full text-[10px] font-semibold',
                       product.is_published
                         ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                        : 'bg-muted text-muted-foreground'
+                        : 'bg-muted text-muted-foreground',
                     )}
                   >
-                    {product.is_published
-                      ? t('courses.published')
-                      : t('courses.draft')}
+                    {product.is_published ? t('courses.published') : t('courses.draft')}
                   </Badge>
                 </div>
 
@@ -275,9 +233,7 @@ const ProductsGrid = ({
                       accessControl={product.access_control}
                       onView={() => onView(product)}
                       onEdit={() => onEdit(product)}
-                      onDelete={
-                        onDelete ? () => handleDeleteClick(product) : undefined
-                      }
+                      onDelete={onDelete ? () => handleDeleteClick(product) : undefined}
                       className="flex w-full justify-between gap-2"
                     />
                   ) : (

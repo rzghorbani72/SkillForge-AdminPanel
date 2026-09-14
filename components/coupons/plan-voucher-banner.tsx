@@ -7,18 +7,14 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { useRedeemablePlanVouchers } from '@/hooks/use-redeemable-plan-vouchers';
-import {
-  COUPON_TYPE_LABEL_KEY,
-  couponTypeOf,
-  type CouponSummary
-} from '@/lib/coupons';
+import { COUPON_TYPE_LABEL_KEY, couponTypeOf, type CouponSummary } from '@/lib/coupons';
 import { cn } from '@/lib/utils';
 
 function offerLabel(
   voucher: CouponSummary,
   t: (key: string, params?: Record<string, string | number>) => string,
   formatNumber: (n: number) => string,
-  formatPercent: (n: number) => string
+  formatPercent: (n: number) => string,
 ): string {
   const type = couponTypeOf(voucher);
   if (type === 'FREE_TRIAL') {
@@ -87,7 +83,7 @@ export function PlanVoucherBanner({ className }: { className?: string }) {
       role="status"
       className={cn(
         'flex min-h-8 items-center gap-2 border-b border-brandGreen/25 bg-brandGreen/15 px-4 py-1.5 text-xs text-foreground backdrop-blur-sm md:px-6',
-        className
+        className,
       )}
     >
       <Ticket className="h-3.5 w-3.5 shrink-0 text-brandGreen" aria-hidden />
@@ -104,9 +100,7 @@ export function PlanVoucherBanner({ className }: { className?: string }) {
             {t('coupons.bannerMultiIntro', { count: vouchers.length })}{' '}
             {vouchers.slice(0, 3).map((voucher, index) => (
               <span key={voucher.id} className="inline-flex items-center">
-                {index > 0 ? (
-                  <span className="mx-1 text-muted-foreground">·</span>
-                ) : null}
+                {index > 0 ? <span className="mx-1 text-muted-foreground">·</span> : null}
                 <CodeChip code={voucher.code} />
               </span>
             ))}
@@ -122,9 +116,7 @@ export function PlanVoucherBanner({ className }: { className?: string }) {
         href={redeemHref}
         className="shrink-0 font-semibold text-brandGreen underline-offset-2 hover:underline"
       >
-        {vouchers.length === 1
-          ? t('coupons.bannerUseOnPlans')
-          : t('coupons.bannerViewAll')}
+        {vouchers.length === 1 ? t('coupons.bannerUseOnPlans') : t('coupons.bannerViewAll')}
       </Link>
     </div>
   );

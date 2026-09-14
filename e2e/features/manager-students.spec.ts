@@ -9,19 +9,14 @@ import { managerLogin } from '../helpers/auth';
  * Run: E2E_BACKEND=1 pnpm test:e2e e2e/features/manager-students.spec.ts
  */
 test.describe('Manager people management @backend', () => {
-  test.skip(
-    !process.env.E2E_BACKEND,
-    'set E2E_BACKEND=1 to run against the API'
-  );
+  test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
 
   test.beforeEach(async ({ page }) => {
     await managerLogin(page);
   });
 
   async function expectNoServerError(page: import('@playwright/test').Page) {
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
+    await expect(page.locator('body')).not.toContainText('Internal Server Error');
   }
 
   test('old students routes redirect into the users hub', async ({ page }) => {

@@ -32,11 +32,7 @@ interface WizardSaveButtonProps {
  * `saved` and stays `saved` — so the click handler flashes directly off its
  * own resolved result, which is the only way that click gets any feedback.
  */
-export function WizardSaveButton({
-  saveStatus,
-  onSave,
-  onRetry
-}: WizardSaveButtonProps) {
+export function WizardSaveButton({ saveStatus, onSave, onRetry }: WizardSaveButtonProps) {
   const { t } = useTranslation();
   const [prevStatus, setPrevStatus] = useState(saveStatus);
   const [showSavedFlash, setShowSavedFlash] = useState(false);

@@ -11,9 +11,7 @@
  *   Safari) or it threw for any other reason — caller should fall back to a
  *   classic <input type="file"> click.
  */
-export async function pickFile(
-  accept: string
-): Promise<File | null | undefined> {
+export async function pickFile(accept: string): Promise<File | null | undefined> {
   if (typeof window === 'undefined' || !window.showOpenFilePicker) {
     return undefined;
   }
@@ -21,7 +19,7 @@ export async function pickFile(
   try {
     const [handle] = await window.showOpenFilePicker({
       types: acceptToPickerTypes(accept),
-      multiple: false
+      multiple: false,
     });
     return await handle.getFile();
   } catch (err) {
@@ -32,9 +30,7 @@ export async function pickFile(
   }
 }
 
-function acceptToPickerTypes(
-  accept: string
-): FilePickerAcceptType[] | undefined {
+function acceptToPickerTypes(accept: string): FilePickerAcceptType[] | undefined {
   const trimmed = accept.trim();
   if (!trimmed) return undefined;
 

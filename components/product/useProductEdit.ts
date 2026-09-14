@@ -42,8 +42,8 @@ export const useProductEdit = () => {
       is_featured: false,
       weight: '',
       dimensions: '',
-      course_ids: []
-    }
+      course_ids: [],
+    },
   });
 
   const imageUpload = useImageUpload({
@@ -51,7 +51,7 @@ export const useProductEdit = () => {
     description: form.watch('description') || 'Product cover image',
     onSuccess: (image) => {
       form.setValue('cover_id', image.id.toString());
-    }
+    },
   });
 
   useEffect(() => {
@@ -72,10 +72,7 @@ export const useProductEdit = () => {
           title: response.title || '',
           description: response.description || '',
           short_description: response.short_description || '',
-          price:
-            typeof response.price === 'number'
-              ? Math.trunc(response.price).toString()
-              : '0',
+          price: typeof response.price === 'number' ? Math.trunc(response.price).toString() : '0',
           original_price:
             typeof response.original_price === 'number'
               ? Math.trunc(response.original_price).toString()
@@ -92,7 +89,7 @@ export const useProductEdit = () => {
           course_ids:
             (response as any).productCourses
               ?.map((pc: any) => pc.course_id?.toString())
-              .filter(Boolean) || []
+              .filter(Boolean) || [],
         });
       }
     } catch (error) {
@@ -124,15 +121,8 @@ export const useProductEdit = () => {
       }
 
       const price = Number(data.price);
-      if (
-        isNaN(price) ||
-        !Number.isInteger(price) ||
-        price < 0 ||
-        price > 999999999
-      ) {
-        toast.error(
-          'Price must be a valid whole number between 0 and 999,999,999'
-        );
+      if (isNaN(price) || !Number.isInteger(price) || price < 0 || price > 999999999) {
+        toast.error('Price must be a valid whole number between 0 and 999,999,999');
         return;
       }
 
@@ -142,7 +132,7 @@ export const useProductEdit = () => {
         price: price,
         product_type: data.product_type,
         published: !!data.published,
-        is_featured: !!data.is_featured
+        is_featured: !!data.is_featured,
       };
 
       if (data.short_description?.trim()) {
@@ -151,11 +141,7 @@ export const useProductEdit = () => {
 
       if (data.original_price && data.original_price.trim()) {
         const originalPrice = Number(data.original_price);
-        if (
-          !isNaN(originalPrice) &&
-          Number.isInteger(originalPrice) &&
-          originalPrice >= price
-        ) {
+        if (!isNaN(originalPrice) && Number.isInteger(originalPrice) && originalPrice >= price) {
           productData.original_price = originalPrice;
         }
       }
@@ -229,6 +215,6 @@ export const useProductEdit = () => {
     uploadCoverImage: imageUpload.uploadImage,
     cancelUpload: imageUpload.cancelUpload,
     onSubmit,
-    handleBack
+    handleBack,
   };
 };

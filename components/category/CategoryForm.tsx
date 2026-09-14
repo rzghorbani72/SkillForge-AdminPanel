@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { CategoryType } from './category-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -25,11 +25,7 @@ interface CategoryFormProps {
   isEdit?: boolean;
 }
 
-export function CategoryForm({
-  formData,
-  onFormDataChange,
-  isEdit = false
-}: CategoryFormProps) {
+export function CategoryForm({ formData, onFormDataChange, isEdit = false }: CategoryFormProps) {
   const { t } = useTranslation();
   const updateFormData = (field: keyof CategoryFormData, value: any) => {
     onFormDataChange({ ...formData, [field]: value });
@@ -38,9 +34,7 @@ export function CategoryForm({
   return (
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
-        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>
-          {t('common.name')} *
-        </Label>
+        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>{t('common.name')} *</Label>
         <Input
           id={isEdit ? 'edit-name' : 'name'}
           value={formData.name}
@@ -61,9 +55,7 @@ export function CategoryForm({
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor={isEdit ? 'edit-type' : 'type'}>
-          {t('categories.type')}
-        </Label>
+        <Label htmlFor={isEdit ? 'edit-type' : 'type'}>{t('categories.type')}</Label>
         <Select
           value={formData.type}
           onValueChange={(value: CategoryType) => updateFormData('type', value)}

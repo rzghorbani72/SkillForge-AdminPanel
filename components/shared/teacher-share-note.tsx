@@ -20,16 +20,11 @@ export function TeacherShareNote({ className }: Props) {
   if (rate === undefined || rate === null) return null;
 
   return (
-    <p
-      className={cn(
-        'flex items-center gap-1.5 text-xs text-muted-foreground',
-        className
-      )}
-    >
+    <p className={cn('flex items-center gap-1.5 text-xs text-muted-foreground', className)}>
       <Info className="h-3.5 w-3.5 shrink-0" />
       {t('teacherShare.note', {
         teacher: percent(rate * 100),
-        academy: percent((1 - rate) * 100)
+        academy: percent((1 - rate) * 100),
       })}
     </p>
   );

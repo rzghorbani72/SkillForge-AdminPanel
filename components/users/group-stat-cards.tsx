@@ -13,17 +13,13 @@ type GroupStatCardsProps = {
  * much content it unlocks. Lesson grants are shown separately from course
  * grants because they are a narrower, per-lesson unlock.
  */
-export function GroupStatCards({
-  members,
-  courses,
-  lessons
-}: GroupStatCardsProps) {
+export function GroupStatCards({ members, courses, lessons }: GroupStatCardsProps) {
   const { t } = useTranslation();
 
   const stats = [
     { label: t('users.groupMembers'), value: members },
     { label: t('users.groupCourseAccess'), value: courses },
-    { label: t('users.groupLessonAccess'), value: lessons }
+    { label: t('users.groupLessonAccess'), value: lessons },
   ];
 
   return (

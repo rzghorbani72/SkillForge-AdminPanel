@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -38,10 +38,7 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
   const [saving, setSaving] = useState(false);
 
   const usesSeat = role.hierarchy_level >= MANAGER_LEVEL;
-  const fetchUsers = useMemo(
-    () => createAcademyUserOptionsFetcher(t, user?.id),
-    [t, user?.id]
-  );
+  const fetchUsers = useMemo(() => createAcademyUserOptionsFetcher(t, user?.id), [t, user?.id]);
 
   const submit = async () => {
     if (!profileId) return;
@@ -49,7 +46,7 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
       setSaving(true);
       const result = await apiClient.assignPlatformRole(role.id, profileId);
       ErrorHandler.showSuccess(
-        t(result.changed ? 'roles.roleAssigned' : 'roles.roleAlreadyAssigned')
+        t(result.changed ? 'roles.roleAssigned' : 'roles.roleAlreadyAssigned'),
       );
       onAssigned();
       onClose();
@@ -65,9 +62,7 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {t('roles.assignTitle', { role: getRoleMeta(role, t).label })}
-          </DialogTitle>
+          <DialogTitle>{t('roles.assignTitle', { role: getRoleMeta(role, t).label })}</DialogTitle>
           <DialogDescription>{t('roles.assignHint')}</DialogDescription>
         </DialogHeader>
 

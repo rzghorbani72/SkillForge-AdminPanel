@@ -10,11 +10,7 @@ interface UnansweredThreadItemProps {
   onUseForNote: (profileId: string) => void;
 }
 
-export function UnansweredThreadItem({
-  item,
-  language,
-  onUseForNote
-}: UnansweredThreadItemProps) {
+export function UnansweredThreadItem({ item, language, onUseForNote }: UnansweredThreadItemProps) {
   const { t } = useTranslation();
 
   return (

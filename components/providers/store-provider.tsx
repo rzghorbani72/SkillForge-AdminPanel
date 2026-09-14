@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ import {
   setCachedAcademies,
   clearAcademyData,
   validateAcademyCurrencyFields,
-  autoSelectAcademy
+  autoSelectAcademy,
 } from '@/lib/store-utils';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { useSessionAcademyRescope } from '@/hooks/use-session-academy-rescope';
@@ -60,10 +60,7 @@ function parseAcademiesResponse(data: unknown): Academy[] | null {
 }
 
 /** Panel UI never lists a student/public seat, even from a stale cache. */
-function panelVisibleAcademies(
-  list: Academy[],
-  isPlatformStaff: boolean
-): Academy[] {
+function panelVisibleAcademies(list: Academy[], isPlatformStaff: boolean): Academy[] {
   if (isPlatformStaff) return list;
   return list.filter((academy) => !isStudentRankSeat(academy));
 }
@@ -96,14 +93,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const hasFetchedRef = useRef(false);
 
-  const preferredAcademyId =
-    user?.academyId ?? user?.profile?.academy_id ?? null;
+  const preferredAcademyId = user?.academyId ?? user?.profile?.academy_id ?? null;
 
   useEffect(() => {
     setLogContext({
       user_id: user?.id,
       academy_id: selectedAcademy?.id ?? preferredAcademyId,
-      role: user?.role
+      role: user?.role,
     });
   }, [user?.id, user?.role, selectedAcademy?.id, preferredAcademyId]);
 
@@ -125,9 +121,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         if (process.env.NODE_ENV === 'development') {
           list.forEach((a) => {
             if (!a.currency && !a.currency_symbol) {
-              console.warn(
-                `Academy ${a.id} (${a.name}) missing currency fields`
-              );
+              console.warn(`Academy ${a.id} (${a.name}) missing currency fields`);
             }
           });
         }
@@ -148,7 +142,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         hasFetchedRef.current = true;
       }
     },
-    [router, isPlatformStaff]
+    [router, isPlatformStaff],
   );
 
   const loadAcademies = useCallback(async () => {
@@ -186,7 +180,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // so the session is re-scoped instead of letting every request 401/403.
   useSessionAcademyRescope({
     enabled: !!user && !isPlatformStaff && !preferredAcademyId,
-    academies
+    academies,
   });
 
   useEffect(() => {
@@ -194,9 +188,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     // but honor an explicit academy selection persisted from the mode switcher.
     if (user && isPlatformStaff && !preferredAcademyId) {
       const selectedId = getSelectedAcademyId();
-      const chosen = selectedId
-        ? (academies.find((a) => a.id === selectedId) ?? null)
-        : null;
+      const chosen = selectedId ? (academies.find((a) => a.id === selectedId) ?? null) : null;
       setSelectedAcademy(chosen);
       return;
     }
@@ -223,7 +215,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         setSelectedAcademy(found);
       }
     },
-    [academies, queryClient]
+    [academies, queryClient],
   );
 
   const clearAcademies = useCallback(() => {
@@ -243,22 +235,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       error,
       refreshAcademies,
       selectAcademy,
-      clearAcademies
+      clearAcademies,
     }),
-    [
-      academies,
-      selectedAcademy,
-      isLoading,
-      error,
-      refreshAcademies,
-      selectAcademy,
-      clearAcademies
-    ]
+    [academies, selectedAcademy, isLoading, error, refreshAcademies, selectAcademy, clearAcademies],
   );
 
-  return (
-    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
-  );
+  return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
 
 export function useStore(): StoreContextValue {

@@ -1,19 +1,11 @@
-import type {
-  TeacherBalance,
-  TeacherPayoutRecord
-} from '@/types/teacher-earnings';
+import type { TeacherBalance, TeacherPayoutRecord } from '@/types/teacher-earnings';
 import { OtpType } from '@/constants/data';
-import type {
-  Article,
-  ArticleInput,
-  ArticleTransition,
-  BlogScope
-} from '@/types/blog';
+import type { Article, ArticleInput, ArticleTransition, BlogScope } from '@/types/blog';
 import type { CourseType } from '@/components/course/course-drafts';
 import type {
   ContactMessageItem,
   Responsible,
-  StaffTicketDetail
+  StaffTicketDetail,
 } from '@/components/support/staff-support-types';
 import {
   Academy,
@@ -26,13 +18,9 @@ import {
   PlatformStaffListResponse,
   PlatformStaffLookup,
   PlatformStaffRecord,
-  UserResetMode
+  UserResetMode,
 } from '@/types/api';
-import type {
-  AnalyticsCourses,
-  AnalyticsOverview,
-  AnalyticsRevenue
-} from '@/types/analytics';
+import type { AnalyticsCourses, AnalyticsOverview, AnalyticsRevenue } from '@/types/analytics';
 import type { DashboardPeriodKey, ManagerDashboard } from '@/types/dashboard';
 import type { LedgerPaymentsResponse, SettlementDesk } from '@/types/financial';
 import type {
@@ -43,38 +31,28 @@ import type {
   ModerationPolicy,
   ModerationPolicyMap,
   ReviewQueueItem,
-  ReviewQueueResponse
+  ReviewQueueResponse,
 } from '@/types/compliance';
-import type {
-  SellerIdentity,
-  UpdateSellerIdentityPayload
-} from '@/types/seller-identity';
+import type { SellerIdentity, UpdateSellerIdentityPayload } from '@/types/seller-identity';
 import type {
   KycState,
   VerifiedIban,
   VerifyKycIdentityPayload,
-  VerifyKycShebaPayload
+  VerifyKycShebaPayload,
 } from '@/types/kyc';
-import type {
-  CustomDomainSetupResponse,
-  VerifyDnsResponse
-} from '@/types/custom-domain-setup';
+import type { CustomDomainSetupResponse, VerifyDnsResponse } from '@/types/custom-domain-setup';
 import { toast } from 'react-toastify';
 import { getBrowserApiBaseUrl } from './api-base-url';
 import { csrfHeader, selectedAcademyHeader } from './browser-request-headers';
 import { ensureCsrfToken, isCsrfRequiredError } from './csrf';
-import {
-  ApiResponseError,
-  parseApiError,
-  resolveApiErrorMessage
-} from './api-error';
+import { ApiResponseError, parseApiError, resolveApiErrorMessage } from './api-error';
 import { currentLanguage } from './current-language';
 import { assertUploadSize, MAX_IMAGE_UPLOAD_BYTES } from './upload-limits';
 import { isAuthPagePath } from './auth-routes';
 import { isPanelAccessBlockedError } from './auth-login-errors';
 import {
   createSellerIdentityIncompleteError,
-  SELLER_IDENTITY_INCOMPLETE
+  SELLER_IDENTITY_INCOMPLETE,
 } from './seller-identity-error';
 import type { SellerIdentityField } from '@/types/seller-identity';
 import { logger } from '@/lib/logging/app-logger';
@@ -85,13 +63,13 @@ import {
   KYC_IDENTITY_PATH,
   KYC_INCOMPLETE,
   KYC_PROFILE_PATH,
-  parseKycMissingFields
+  parseKycMissingFields,
 } from './kyc-error';
 import type {
   AcademyPage,
   AcademyPagePayload,
   AcademyPageSlug,
-  ContactLink
+  ContactLink,
 } from '@/types/academy-site';
 import type {
   AssignmentListResponse,
@@ -127,7 +105,7 @@ import type {
   TutoringSession,
   TutoringSessionListItem,
   UpdateLessonDownloadPolicyPayload,
-  UpdateTutoringOfferPayload
+  UpdateTutoringOfferPayload,
 } from '@/types/learning-operations';
 import type { AccountIdentity, MemberAcademy } from '@/types/auth';
 import type { UserDetailsResponse } from '@/types/user-details';
@@ -137,17 +115,11 @@ import type {
   PermissionCatalog,
   RolePermission,
   RolesListResponse,
-  UpdateRolePayload
+  UpdateRolePayload,
 } from '@/types/roles';
 
-import {
-  uploadFileParts,
-  type DirectUploadTicket
-} from '@/lib/uploads/video-direct-upload';
-import {
-  readMediaDurationSeconds,
-  readVideoDurationSeconds
-} from '@/lib/media-duration';
+import { uploadFileParts, type DirectUploadTicket } from '@/lib/uploads/video-direct-upload';
+import { readMediaDurationSeconds, readVideoDurationSeconds } from '@/lib/media-duration';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -295,13 +267,12 @@ class ApiClient {
    * of throwing, which would freeze the panel with a dev error overlay.
    */
   private notifySubscriptionRequired(message: string): void {
-    if (typeof window === 'undefined' || this.subscriptionRequiredNotified)
-      return;
+    if (typeof window === 'undefined' || this.subscriptionRequiredNotified) return;
     this.subscriptionRequiredNotified = true;
     window.dispatchEvent(
       new CustomEvent<SubscriptionRequiredDetail>(SUBSCRIPTION_REQUIRED_EVENT, {
-        detail: { message }
-      })
+        detail: { message },
+      }),
     );
   }
 
@@ -319,21 +290,16 @@ class ApiClient {
    * Pause non-allowlisted calls when pending legal docs are known
    * (from status check or a 403 LEGAL_CONSENT_REQUIRED response).
    */
-  pauseForLegalConsent(
-    pending: LegalConsentRequiredDetail['pending'] = []
-  ): void {
+  pauseForLegalConsent(pending: LegalConsentRequiredDetail['pending'] = []): void {
     this.enterPause('legal', pending);
   }
 
   private enterPause(
     reason: ApiPauseReason,
-    pending?: LegalConsentRequiredDetail['pending']
+    pending?: LegalConsentRequiredDetail['pending'],
   ): void {
     // First pause wins. Allow legal→legal so we can refresh the pending payload/event.
-    if (
-      this.pauseReason !== null &&
-      !(this.pauseReason === 'legal' && reason === 'legal')
-    ) {
+    if (this.pauseReason !== null && !(this.pauseReason === 'legal' && reason === 'legal')) {
       return;
     }
     this.pauseReason = reason;
@@ -344,10 +310,9 @@ class ApiClient {
       pending.length > 0
     ) {
       window.dispatchEvent(
-        new CustomEvent<LegalConsentRequiredDetail>(
-          LEGAL_CONSENT_REQUIRED_EVENT,
-          { detail: { pending } }
-        )
+        new CustomEvent<LegalConsentRequiredDetail>(LEGAL_CONSENT_REQUIRED_EVENT, {
+          detail: { pending },
+        }),
       );
     }
   }
@@ -380,18 +345,14 @@ class ApiClient {
    * session-carrying route we sign out and wipe storage; auth-flow routes
    * are just blocked until the window cools down.
    */
-  private handleRequestStorm(
-    endpoint: string,
-    method: string,
-    count: number
-  ): never {
+  private handleRequestStorm(endpoint: string, method: string, count: number): never {
     const isProtected = !this.isAuthFlowEndpoint(endpoint);
     logger.error('RequestStorm', 'Tripped', {
       route: endpoint.split('?')[0] ?? endpoint,
       method,
       count,
       window_ms: STORM_WINDOW_MS,
-      is_protected: isProtected
+      is_protected: isProtected,
     });
 
     if (isProtected && this.pauseReason === null) {
@@ -422,8 +383,8 @@ class ApiClient {
           method: 'POST',
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         if (response.ok) {
@@ -493,7 +454,7 @@ class ApiClient {
   private browserContextHeaders(
     endpoint: string,
     method: string,
-    csrfToken?: string | null
+    csrfToken?: string | null,
   ): Record<string, string> {
     if (typeof window === 'undefined') return {};
 
@@ -509,7 +470,7 @@ class ApiClient {
     options: RequestInit = {},
     retryAfterRefresh: boolean = true,
     lang?: string | null,
-    retryAfterCsrf: boolean = true
+    retryAfterCsrf: boolean = true,
   ): Promise<ApiResponse<T>> {
     this.throwIfPaused(endpoint);
 
@@ -529,16 +490,14 @@ class ApiClient {
         ? { ...(options.headers as Record<string, string>) } // No Content-Type for FormData
         : {
             'Content-Type': 'application/json',
-            ...(options.headers as Record<string, string>)
+            ...(options.headers as Record<string, string>),
           };
 
     // SECURITY: JWT is automatically sent via HttpOnly cookie with credentials: 'include'
     // No need to manually add Authorization header for cookie-based auth
 
     const isAuthFlowEndpoint = this.isAuthFlowEndpoint(endpoint);
-    const needsCsrf =
-      typeof window !== 'undefined' &&
-      !['GET', 'HEAD', 'OPTIONS'].includes(method);
+    const needsCsrf = typeof window !== 'undefined' && !['GET', 'HEAD', 'OPTIONS'].includes(method);
 
     // Fresh / incognito tabs have no csrf cookie yet — bootstrap quietly so
     // the first write does not 403 with a scary toast.
@@ -546,20 +505,20 @@ class ApiClient {
 
     const headers: HeadersInit = {
       ...this.browserContextHeaders(endpoint, method, csrfToken),
-      ...headersObj
+      ...headersObj,
     };
 
     const config: RequestInit = {
       headers,
       credentials: 'include',
-      ...options
+      ...options,
     };
 
     if (process.env.NODE_ENV !== 'production') {
       config.cache = 'no-store';
       (config as any).next = {
         ...(options as any)?.next,
-        revalidate: 0
+        revalidate: 0,
       };
     }
 
@@ -584,13 +543,7 @@ class ApiClient {
 
           if (refreshSuccess) {
             // Retry the original request with the new token
-            return this.request<T>(
-              endpoint,
-              options,
-              false,
-              lang,
-              retryAfterCsrf
-            );
+            return this.request<T>(endpoint, options, false, lang, retryAfterCsrf);
           }
         }
 
@@ -598,21 +551,15 @@ class ApiClient {
         // Same on an auth page: a visitor there is already logging in, so "please log
         // in again" toasts, a redirect to /login and the session pause are all noise.
         const onAuthPage =
-          typeof window !== 'undefined' &&
-          isAuthPagePath(window.location.pathname);
+          typeof window !== 'undefined' && isAuthPagePath(window.location.pathname);
 
         if (isAuthEndpoint || onAuthPage) {
           throw new ApiResponseError(parseApiError(response.status, data));
         }
 
         // Refresh failed - redirect to login
-        const sessionError = new ApiResponseError(
-          parseApiError(response.status, data)
-        );
-        const errorMessage = resolveApiErrorMessage(
-          sessionError,
-          currentLanguage()
-        );
+        const sessionError = new ApiResponseError(parseApiError(response.status, data));
+        const errorMessage = resolveApiErrorMessage(sessionError, currentLanguage());
 
         // Pause further calls before redirect so parallel mounts do not hammer auth
         this.enterPause('session');
@@ -626,19 +573,9 @@ class ApiClient {
       }
 
       // Stale / missing CSRF after a new tab — mint once and retry silently.
-      if (
-        retryAfterCsrf &&
-        needsCsrf &&
-        isCsrfRequiredError(data, response.status)
-      ) {
+      if (retryAfterCsrf && needsCsrf && isCsrfRequiredError(data, response.status)) {
         await ensureCsrfToken(true);
-        return this.request<T>(
-          endpoint,
-          options,
-          retryAfterRefresh,
-          lang,
-          false
-        );
+        return this.request<T>(endpoint, options, retryAfterRefresh, lang, false);
       }
 
       // Handle forbidden responses (403) - legal consent modal or redirect to dashboard
@@ -649,8 +586,7 @@ class ApiClient {
             : (data as Record<string, unknown> | null);
         const legalConsentCode =
           payload?.code === 'LEGAL_CONSENT_REQUIRED' ||
-          (data as Record<string, unknown> | null)?.code ===
-            'LEGAL_CONSENT_REQUIRED';
+          (data as Record<string, unknown> | null)?.code === 'LEGAL_CONSENT_REQUIRED';
 
         if (legalConsentCode) {
           const pendingRaw = (payload?.pending ??
@@ -670,8 +606,7 @@ class ApiClient {
 
         const sellerIdentityCode =
           payload?.code === SELLER_IDENTITY_INCOMPLETE ||
-          (data as Record<string, unknown> | null)?.code ===
-            SELLER_IDENTITY_INCOMPLETE;
+          (data as Record<string, unknown> | null)?.code === SELLER_IDENTITY_INCOMPLETE;
 
         if (sellerIdentityCode) {
           const missingRaw = (payload?.missing ??
@@ -680,13 +615,12 @@ class ApiClient {
             'legal_entity_name',
             'national_id',
             'contact_address',
-            'permit_declared'
+            'permit_declared',
           ]);
           const missing = Array.isArray(missingRaw)
             ? missingRaw.filter(
                 (item): item is SellerIdentityField =>
-                  typeof item === 'string' &&
-                  allowed.has(item as SellerIdentityField)
+                  typeof item === 'string' && allowed.has(item as SellerIdentityField),
               )
             : [];
           throw createSellerIdentityIncompleteError(missing);
@@ -703,7 +637,7 @@ class ApiClient {
           const kycError = createKycIncompleteError(missing);
           const errorMessage = resolveApiErrorMessage(
             new ApiResponseError(parseApiError(response.status, data)),
-            currentLanguage()
+            currentLanguage(),
           );
           if (
             typeof window !== 'undefined' &&
@@ -714,16 +648,14 @@ class ApiClient {
               toastId: `kyc-incomplete:${errorMessage}`,
               onClick: () => {
                 window.location.assign(KYC_IDENTITY_PATH);
-              }
+              },
             });
             window.location.assign(KYC_IDENTITY_PATH);
           }
           throw kycError;
         }
 
-        const forbiddenError = new ApiResponseError(
-          parseApiError(response.status, data)
-        );
+        const forbiddenError = new ApiResponseError(parseApiError(response.status, data));
         if (isPanelAccessBlockedError(forbiddenError)) {
           if (
             typeof window !== 'undefined' &&
@@ -734,20 +666,14 @@ class ApiClient {
           }
           throw forbiddenError;
         }
-        const errorMessage = resolveApiErrorMessage(
-          forbiddenError,
-          currentLanguage()
-        );
+        const errorMessage = resolveApiErrorMessage(forbiddenError, currentLanguage());
 
         // A denied action is not a broken session: tell the user what happened and
         // leave them on the page. Pages the user may not open at all are blocked by
         // the route guards, not by this handler.
         // CSRF_REQUIRED should already have been retried above — if it still
         // lands here, skip the scary toast so a race does not annoy the user.
-        if (
-          typeof window !== 'undefined' &&
-          !isCsrfRequiredError(data, response.status)
-        ) {
+        if (typeof window !== 'undefined' && !isCsrfRequiredError(data, response.status)) {
           const onAuthPage = isAuthPagePath(window.location.pathname);
           if (!isAuthFlowEndpoint && !onAuthPage) {
             // Same denial from parallel requests shows one toast, not a stack of them.
@@ -763,20 +689,15 @@ class ApiClient {
       // Surface a toast + dismissible warning + Upgrade CTA and leave the panel
       // usable, instead of throwing (freezes the panel) or force-redirecting.
       if (response.status === 402) {
-        const subscriptionError = new ApiResponseError(
-          parseApiError(response.status, data)
-        );
-        const errorMessage = resolveApiErrorMessage(
-          subscriptionError,
-          currentLanguage()
-        );
+        const subscriptionError = new ApiResponseError(parseApiError(response.status, data));
+        const errorMessage = resolveApiErrorMessage(subscriptionError, currentLanguage());
         if (
           typeof window !== 'undefined' &&
           !isAuthFlowEndpoint &&
           !isAuthPagePath(window.location.pathname)
         ) {
           toast.error(errorMessage, {
-            toastId: `subscription:${errorMessage}`
+            toastId: `subscription:${errorMessage}`,
           });
           this.notifySubscriptionRequired(errorMessage);
           // The blocked write is intentionally left unresolved: the caller keeps
@@ -792,7 +713,7 @@ class ApiClient {
 
       return {
         data,
-        status: response.status
+        status: response.status,
       };
     } catch (error) {
       console.error('API request failed:', error);
@@ -813,7 +734,7 @@ class ApiClient {
   }) {
     const response = this.request('/auth/staff/login', {
       method: 'POST',
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     });
     return response;
   }
@@ -822,14 +743,10 @@ class ApiClient {
    * Public login for STUDENT/USER (store-specific)
    * academy_id is REQUIRED
    */
-  async publicLogin(credentials: {
-    identifier: string;
-    password: string;
-    academy_id: string;
-  }) {
+  async publicLogin(credentials: { identifier: string; password: string; academy_id: string }) {
     const response = this.request('/auth/public/login', {
       method: 'POST',
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     });
     return response;
   }
@@ -838,14 +755,10 @@ class ApiClient {
    * Admin login for ADMIN role (platform-level)
    * Requires email + phone + password
    */
-  async adminLogin(credentials: {
-    email: string;
-    phone_number: string;
-    password: string;
-  }) {
+  async adminLogin(credentials: { email: string; phone_number: string; password: string }) {
     const response = this.request('/auth/admin/login', {
       method: 'POST',
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     });
     return response;
   }
@@ -868,7 +781,7 @@ class ApiClient {
   }) {
     return this.request('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
   }
 
@@ -881,8 +794,8 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({
         identifier,
-        ...(captcha_token ? { captcha_token } : {})
-      })
+        ...(captcha_token ? { captcha_token } : {}),
+      }),
     });
   }
 
@@ -892,20 +805,17 @@ class ApiClient {
    * private, so only the person holding the phone may see it.
    */
   async sendAcademyLookupOtp(phone_number: string) {
-    return this.request<{ message: string }>(
-      '/auth/academies/lookup/send-otp',
-      {
-        method: 'POST',
-        body: JSON.stringify({ phone_number })
-      }
-    );
+    return this.request<{ message: string }>('/auth/academies/lookup/send-otp', {
+      method: 'POST',
+      body: JSON.stringify({ phone_number }),
+    });
   }
 
   /** The academies this phone belongs to, once its one-time code checks out. */
   async lookupMyAcademies(phone_number: string, otp: string) {
     return this.request<MemberAcademy[]>('/auth/academies/lookup', {
       method: 'POST',
-      body: JSON.stringify({ phone_number, otp })
+      body: JSON.stringify({ phone_number, otp }),
     });
   }
 
@@ -913,14 +823,17 @@ class ApiClient {
   async checkSignupPhone(phone_number: string) {
     return this.request<{ taken: boolean }>('/auth/register/check-phone', {
       method: 'POST',
-      body: JSON.stringify({ phone_number })
+      body: JSON.stringify({ phone_number }),
     });
   }
 
   async getLegalDocuments(lang?: string) {
-    return this.request<
-      { type: string; version: string; title: string; published_at: string }[]
-    >(`/legal/documents`, { method: 'GET' }, true, lang);
+    return this.request<{ type: string; version: string; title: string; published_at: string }[]>(
+      `/legal/documents`,
+      { method: 'GET' },
+      true,
+      lang,
+    );
   }
 
   async getLegalDocument(type: string, lang?: string) {
@@ -930,12 +843,7 @@ class ApiClient {
       version: string;
       type: string;
       locale: string;
-    }>(
-      `/legal/documents/${encodeURIComponent(type)}`,
-      { method: 'GET' },
-      true,
-      lang
-    );
+    }>(`/legal/documents/${encodeURIComponent(type)}`, { method: 'GET' }, true, lang);
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
 
@@ -951,7 +859,7 @@ class ApiClient {
       `/legal/acceptances/diff`,
       { method: 'GET' },
       true,
-      lang
+      lang,
     );
   }
 
@@ -960,10 +868,10 @@ class ApiClient {
       `/legal/acceptances/platform`,
       {
         method: 'POST',
-        body: JSON.stringify({})
+        body: JSON.stringify({}),
       },
       true,
-      lang
+      lang,
     );
   }
 
@@ -1000,19 +908,11 @@ class ApiClient {
         created_at: string;
         content_hash: string;
       }[];
-    }>(
-      `/legal/admin/documents/${encodeURIComponent(type)}`,
-      { method: 'GET' },
-      true,
-      lang
-    );
+    }>(`/legal/admin/documents/${encodeURIComponent(type)}`, { method: 'GET' }, true, lang);
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
 
-  async saveLegalDraft(
-    type: string,
-    payload: { title: string; body: string; locale?: string }
-  ) {
+  async saveLegalDraft(type: string, payload: { title: string; body: string; locale?: string }) {
     const lang = payload.locale;
     const res = await this.request<{
       id: string;
@@ -1025,18 +925,15 @@ class ApiClient {
       `/legal/admin/documents/${encodeURIComponent(type)}/draft`,
       {
         method: 'PUT',
-        body: JSON.stringify({ title: payload.title, body: payload.body })
+        body: JSON.stringify({ title: payload.title, body: payload.body }),
       },
       true,
-      lang
+      lang,
     );
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
 
-  async publishLegalDocument(
-    type: string,
-    payload: { version: string; locale?: string }
-  ) {
+  async publishLegalDocument(type: string, payload: { version: string; locale?: string }) {
     const lang = payload.locale;
     const res = await this.request<{
       id: string;
@@ -1052,10 +949,10 @@ class ApiClient {
       `/legal/admin/documents/${encodeURIComponent(type)}/publish`,
       {
         method: 'POST',
-        body: JSON.stringify({ version: payload.version })
+        body: JSON.stringify({ version: payload.version }),
       },
       true,
-      lang
+      lang,
     );
     return (res.data as { data?: typeof res.data })?.data ?? res.data;
   }
@@ -1070,7 +967,7 @@ class ApiClient {
   }) {
     return this.request('/auth/create-user', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
@@ -1103,7 +1000,7 @@ class ApiClient {
   }) {
     return this.request('/users/members', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
@@ -1117,7 +1014,7 @@ class ApiClient {
 
   async logout() {
     return this.request('/auth/logout', {
-      method: 'POST'
+      method: 'POST',
     });
   }
 
@@ -1131,62 +1028,51 @@ class ApiClient {
 
   async revokeSession(sessionId: string) {
     return this.request(`/auth/sessions/${sessionId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
   /** Terminates every other device; the current one stays signed in. */
   async logoutOtherDevices() {
-    const res = await this.request<{ message: string; revokedCount: number }>(
-      '/auth/logout-all',
-      {
-        method: 'POST',
-        body: JSON.stringify({ keep_current: true })
-      }
-    );
+    const res = await this.request<{ message: string; revokedCount: number }>('/auth/logout-all', {
+      method: 'POST',
+      body: JSON.stringify({ keep_current: true }),
+    });
     return res.data?.revokedCount ?? 0;
   }
 
-  async loginPhoneByOtp(credentials: {
-    phone_number: string;
-    otp: string;
-    academy_id?: string;
-  }) {
+  async loginPhoneByOtp(credentials: { phone_number: string; otp: string; academy_id?: string }) {
     return this.request('/auth/login-by-phone-otp', {
       method: 'POST',
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     });
   }
 
   async sendAdminLoginOtp(email: string, phone_number: string) {
     return this.request('/auth/admin/login-otp/send', {
       method: 'POST',
-      body: JSON.stringify({ email, phone_number })
+      body: JSON.stringify({ email, phone_number }),
     });
   }
 
-  async loginEmailByOtp(credentials: {
-    email: string;
-    otp: string;
-    academy_id?: string;
-  }) {
+  async loginEmailByOtp(credentials: { email: string; otp: string; academy_id?: string }) {
     return this.request('/auth/login-by-email-otp', {
       method: 'POST',
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     });
   }
 
   async selectAcademy(data: { temp_token: string; academy_id: string }) {
     return this.request('/auth/select-academy', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
   async switchAcademy(academy_id: string) {
     return this.request('/auth/switch-academy', {
       method: 'POST',
-      body: JSON.stringify({ academy_id })
+      body: JSON.stringify({ academy_id }),
     });
   }
 
@@ -1197,16 +1083,14 @@ class ApiClient {
   async consumePanelHandoff(code: string) {
     return this.request('/auth/panel-handoff/consume', {
       method: 'POST',
-      body: JSON.stringify({ code })
+      body: JSON.stringify({ code }),
     });
   }
 
   // Note: These enhanced auth endpoints have been removed
   // Use the standard auth endpoints instead
   async switchProfile() {
-    throw new Error(
-      'switchProfile endpoint not available - use standard auth flow'
-    );
+    throw new Error('switchProfile endpoint not available - use standard auth flow');
   }
 
   async getUserAcademies() {
@@ -1224,7 +1108,7 @@ class ApiClient {
   }) {
     return this.request('/profiles', {
       method: 'POST',
-      body: JSON.stringify(profileData)
+      body: JSON.stringify(profileData),
     });
   }
 
@@ -1232,28 +1116,28 @@ class ApiClient {
   async sendPhoneOtp(phone_number: string, type: OtpType) {
     return this.request('/auth/otp/send-phone', {
       method: 'POST',
-      body: JSON.stringify({ phone_number, type })
+      body: JSON.stringify({ phone_number, type }),
     }) as any;
   }
 
   async sendEmailOtp(email: string, type: OtpType) {
     return this.request('/auth/otp/send-email', {
       method: 'POST',
-      body: JSON.stringify({ email, type })
+      body: JSON.stringify({ email, type }),
     }) as any;
   }
 
   async verifyPhoneOtp(phone_number: string, otp: string, type: OtpType) {
     return this.request('/auth/otp/verify-phone', {
       method: 'POST',
-      body: JSON.stringify({ phone_number, otp, type })
+      body: JSON.stringify({ phone_number, otp, type }),
     }) as any;
   }
 
   async verifyEmailOtp(email: string, otp: string, type: OtpType) {
     return this.request('/auth/otp/verify-email', {
       method: 'POST',
-      body: JSON.stringify({ email, otp, type })
+      body: JSON.stringify({ email, otp, type }),
     }) as any;
   }
 
@@ -1268,7 +1152,7 @@ class ApiClient {
   }) {
     return this.request('/auth/forget-password', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
@@ -1281,7 +1165,7 @@ class ApiClient {
   }) {
     return this.request('/auth/admin/forget-password', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
@@ -1308,10 +1192,7 @@ class ApiClient {
 
   // ── Offers (one purchasable option over one or more courses) ───────────────
   async getCourseOffers(courseId: string, opts?: ReadOptions) {
-    const response = await this.request(
-      `/offers/manage/course/${courseId}`,
-      opts
-    );
+    const response = await this.request(`/offers/manage/course/${courseId}`, opts);
     return (response.data as Offer[]) ?? [];
   }
 
@@ -1323,7 +1204,7 @@ class ApiClient {
   async createOffer(body: OfferInput) {
     const response = await this.request('/offers', {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return response.data as Offer;
   }
@@ -1331,7 +1212,7 @@ class ApiClient {
   async updateOffer(id: string, body: Partial<OfferInput>) {
     const response = await this.request(`/offers/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return response.data as Offer;
   }
@@ -1356,9 +1237,7 @@ class ApiClient {
     if (params?.page) qs.append('page', String(params.page));
     if (params?.limit) qs.append('limit', String(params.limit));
     const query = qs.toString();
-    const response = await this.request(
-      `/support-access-logs${query ? `?${query}` : ''}`
-    );
+    const response = await this.request(`/support-access-logs${query ? `?${query}` : ''}`);
     return response.data as {
       message: string;
       status: string;
@@ -1380,50 +1259,44 @@ class ApiClient {
   // ----- Support tickets (staff) -----
   private supportQuery(params?: Record<string, string | undefined>) {
     const qs = new URLSearchParams();
-    if (params)
-      for (const [k, v] of Object.entries(params)) if (v) qs.append(k, v);
+    if (params) for (const [k, v] of Object.entries(params)) if (v) qs.append(k, v);
     const s = qs.toString();
     return s ? `?${s}` : '';
   }
 
   async getSupportInbox(params?: SupportInboxQuery) {
     const res = await this.request(
-      `/support/inbox${this.supportQuery(this.supportInboxQueryParams(params))}`
+      `/support/inbox${this.supportQuery(this.supportInboxQueryParams(params))}`,
     );
     return unwrapSupportInbox(res);
   }
 
   async getSupportPlatformInbox(params?: SupportInboxQuery) {
     const res = await this.request(
-      `/support/platform/inbox${this.supportQuery(this.supportInboxQueryParams(params))}`
+      `/support/platform/inbox${this.supportQuery(this.supportInboxQueryParams(params))}`,
     );
     return unwrapSupportInbox(res);
   }
 
   async getSupportInboxSummary(
     scope: 'academy' | 'platform',
-    params?: SupportInboxQuery
+    params?: SupportInboxQuery,
   ): Promise<SupportInboxSummary> {
-    const path =
-      scope === 'academy'
-        ? '/support/inbox/summary'
-        : '/support/platform/inbox/summary';
+    const path = scope === 'academy' ? '/support/inbox/summary' : '/support/platform/inbox/summary';
     const res = await this.request(
-      `${path}${this.supportQuery(this.supportInboxQueryParams(params))}`
+      `${path}${this.supportQuery(this.supportInboxQueryParams(params))}`,
     );
     return unwrapEnvelope<SupportInboxSummary>(res);
   }
 
   async claimSupportTicket(id: string) {
     const res = await this.request(`/support/tickets/${id}/claim`, {
-      method: 'POST'
+      method: 'POST',
     });
     return unwrapEnvelope<unknown>(res);
   }
 
-  private supportInboxQueryParams(
-    params?: SupportInboxQuery
-  ): Record<string, string | undefined> {
+  private supportInboxQueryParams(params?: SupportInboxQuery): Record<string, string | undefined> {
     if (!params) return {};
     return {
       status: params.status,
@@ -1436,7 +1309,7 @@ class ApiClient {
       mine: params.mine ? 'true' : undefined,
       search: params.search,
       page: params.page != null ? String(params.page) : undefined,
-      limit: params.limit != null ? String(params.limit) : undefined
+      limit: params.limit != null ? String(params.limit) : undefined,
     };
   }
 
@@ -1452,8 +1325,8 @@ class ApiClient {
         status: params?.status,
         search: params?.search,
         page: params?.page != null ? String(params.page) : undefined,
-        limit: params?.limit != null ? String(params.limit) : undefined
-      })}`
+        limit: params?.limit != null ? String(params.limit) : undefined,
+      })}`,
     );
     return (res as any).data as {
       items: ContactMessageItem[];
@@ -1463,13 +1336,10 @@ class ApiClient {
     };
   }
 
-  async updateContactMessage(
-    id: string,
-    body: { status?: string; staff_note?: string }
-  ) {
+  async updateContactMessage(id: string, body: { status?: string; staff_note?: string }) {
     const res = await this.request(`/support/contact-messages/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return (res as any).data as ContactMessageItem;
   }
@@ -1497,18 +1367,18 @@ class ApiClient {
   }) {
     const res = await this.request(`/support/platform/tickets`, {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return unwrapEnvelope<unknown>(res);
   }
 
   async replySupportTicket(
     id: string,
-    body: { body: string; image_ids?: string[]; internal_note?: boolean }
+    body: { body: string; image_ids?: string[]; internal_note?: boolean },
   ) {
     const res = await this.request(`/support/tickets/${id}/reply`, {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return unwrapEnvelope<unknown>(res);
   }
@@ -1516,19 +1386,15 @@ class ApiClient {
   async reassignSupportTicket(id: string, responsible_id: string) {
     const res = await this.request(`/support/tickets/${id}/reassign`, {
       method: 'POST',
-      body: JSON.stringify({ responsible_id })
+      body: JSON.stringify({ responsible_id }),
     });
     return unwrapEnvelope<unknown>(res);
   }
 
-  async changeSupportStatus(
-    id: string,
-    status: string,
-    resolution_summary?: string
-  ) {
+  async changeSupportStatus(id: string, status: string, resolution_summary?: string) {
     const res = await this.request(`/support/tickets/${id}/status`, {
       method: 'PATCH',
-      body: JSON.stringify({ status, resolution_summary })
+      body: JSON.stringify({ status, resolution_summary }),
     });
     return unwrapEnvelope<unknown>(res);
   }
@@ -1536,18 +1402,18 @@ class ApiClient {
   async changeSupportPriority(id: string, priority: string) {
     const res = await this.request(`/support/tickets/${id}/priority`, {
       method: 'PATCH',
-      body: JSON.stringify({ priority })
+      body: JSON.stringify({ priority }),
     });
     return unwrapEnvelope<unknown>(res);
   }
 
   async logSupportCall(
     id: string,
-    body: { status: string; outcome_note?: string; called_at?: string }
+    body: { status: string; outcome_note?: string; called_at?: string },
   ) {
     const res = await this.request(`/support/tickets/${id}/log-call`, {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return unwrapEnvelope<unknown>(res);
   }
@@ -1555,7 +1421,7 @@ class ApiClient {
   async logSupportEmail(id: string, body: { outcome_note?: string }) {
     const res = await this.request(`/support/tickets/${id}/log-email`, {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return unwrapEnvelope<unknown>(res);
   }
@@ -1589,21 +1455,21 @@ class ApiClient {
 
   async getUnreadNotificationCount() {
     const data = unwrapEnvelope<{ count?: number }>(
-      await this.request('/notifications/unread-count')
+      await this.request('/notifications/unread-count'),
     );
     return typeof data?.count === 'number' ? data.count : 0;
   }
 
   async markNotificationRead(id: string) {
     const res = await this.request(`/notifications/${id}/read`, {
-      method: 'PATCH'
+      method: 'PATCH',
     });
     return (res as { data?: unknown }).data;
   }
 
   async markAllNotificationsRead() {
     const res = await this.request('/notifications/read-all', {
-      method: 'POST'
+      method: 'POST',
     });
     return (res as { data?: unknown }).data;
   }
@@ -1624,7 +1490,7 @@ class ApiClient {
   async createPlatformBroadcast(body: CreatePlatformBroadcastPayload) {
     const res = await this.request('/platform/broadcasts', {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     const payload = (
       res as {
@@ -1639,7 +1505,7 @@ class ApiClient {
 
   async sendPlatformBroadcast(id: string) {
     const res = await this.request(`/platform/broadcasts/${id}/send`, {
-      method: 'POST'
+      method: 'POST',
     });
     const payload = (
       res as {
@@ -1654,7 +1520,7 @@ class ApiClient {
 
   async listDashboardBanners() {
     const data = unwrapEnvelope<{ banners?: DashboardBanner[] }>(
-      await this.request('/platform/dashboard-banners')
+      await this.request('/platform/dashboard-banners'),
     );
     return data?.banners ?? [];
   }
@@ -1663,8 +1529,8 @@ class ApiClient {
     const data = unwrapEnvelope<{ banner?: DashboardBanner }>(
       await this.request('/platform/dashboard-banners', {
         method: 'POST',
-        body: JSON.stringify(body)
-      })
+        body: JSON.stringify(body),
+      }),
     );
     return data?.banner;
   }
@@ -1673,50 +1539,46 @@ class ApiClient {
     const data = unwrapEnvelope<{ banner?: DashboardBanner }>(
       await this.request(`/platform/dashboard-banners/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify(body)
-      })
+        body: JSON.stringify(body),
+      }),
     );
     return data?.banner;
   }
 
   async deleteDashboardBanner(id: string) {
     await this.request(`/platform/dashboard-banners/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
   async listStorageObjects() {
-    return unwrapEnvelope<StorageInventory>(
-      await this.request('/platform/storage/objects')
-    );
+    return unwrapEnvelope<StorageInventory>(await this.request('/platform/storage/objects'));
   }
 
   async deleteStorageObjects(keys: string[]) {
     return unwrapEnvelope<DeleteStorageObjectsResult>(
       await this.request('/platform/storage/objects', {
         method: 'DELETE',
-        body: JSON.stringify({ keys })
-      })
+        body: JSON.stringify({ keys }),
+      }),
     );
   }
 
   async deleteAllUnusedStorageObjects() {
     return unwrapEnvelope<DeleteStorageObjectsResult>(
       await this.request('/platform/storage/objects/unused', {
-        method: 'DELETE'
-      })
+        method: 'DELETE',
+      }),
     );
   }
 
   async getAcademyDashboardBanners() {
     return (
-      unwrapEnvelope<AcademyDashboardBanners>(
-        await this.request('/dashboard/banners')
-      ) ?? {
+      unwrapEnvelope<AcademyDashboardBanners>(await this.request('/dashboard/banners')) ?? {
         state: 'INCOMPLETE',
         has_template: false,
         has_course: false,
-        banners: []
+        banners: [],
       }
     );
   }
@@ -1728,20 +1590,15 @@ class ApiClient {
 
   /** The current academy already unwrapped, for forms that hydrate from it. */
   async getCurrentAcademyDetail(): Promise<Academy> {
-    const response = await this.request<Academy | { data: Academy }>(
-      '/academies/current'
-    );
+    const response = await this.request<Academy | { data: Academy }>('/academies/current');
     const payload = response.data as Academy | { data: Academy };
     return ((payload as { data?: Academy })?.data ?? payload) as Academy;
   }
 
-  async checkSlugAvailability(
-    slug: string,
-    opts?: ReadOptions
-  ): Promise<{ available: boolean }> {
+  async checkSlugAvailability(slug: string, opts?: ReadOptions): Promise<{ available: boolean }> {
     const res = await this.request<{ available: boolean }>(
       `/academies/slug-available?slug=${encodeURIComponent(slug)}`,
-      opts
+      opts,
     );
     return (res as any)?.data ?? res;
   }
@@ -1755,7 +1612,7 @@ class ApiClient {
   async disableAcademySite(payload: DisableAcademySitePayload) {
     return this.request('/academies/current/site/disable', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 
@@ -1772,7 +1629,7 @@ class ApiClient {
   }) {
     return this.request('/academies', {
       method: 'POST',
-      body: JSON.stringify(storeData)
+      body: JSON.stringify(storeData),
     });
   }
 
@@ -1792,70 +1649,63 @@ class ApiClient {
   }) {
     return this.request('/academies/current', {
       method: 'PATCH',
-      body: JSON.stringify(storeData)
+      body: JSON.stringify(storeData),
     });
   }
 
   async getCurrentAcademyFeatures(): Promise<AcademyFeatureFlags> {
-    const res = await this.request<
-      AcademyFeatureFlags | { data: AcademyFeatureFlags }
-    >('/academies/current/features');
-    return unwrapDataEnvelope(res.data);
-  }
-
-  async updateCurrentAcademyFeatures(
-    data: Partial<AcademyFeatureFlags>
-  ): Promise<AcademyFeatureFlags> {
-    const res = await this.request<
-      AcademyFeatureFlags | { data: AcademyFeatureFlags }
-    >('/academies/current/features', {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
-    return unwrapDataEnvelope(res.data);
-  }
-
-  async getAcademyPages(): Promise<AcademyPage[]> {
-    const res = await this.request<AcademyPage[] | { data: AcademyPage[] }>(
-      '/academy-site/pages'
+    const res = await this.request<AcademyFeatureFlags | { data: AcademyFeatureFlags }>(
+      '/academies/current/features',
     );
     return unwrapDataEnvelope(res.data);
   }
 
-  async updateAcademyPage(
-    slug: AcademyPageSlug,
-    data: AcademyPagePayload
-  ): Promise<AcademyPage> {
+  async updateCurrentAcademyFeatures(
+    data: Partial<AcademyFeatureFlags>,
+  ): Promise<AcademyFeatureFlags> {
+    const res = await this.request<AcademyFeatureFlags | { data: AcademyFeatureFlags }>(
+      '/academies/current/features',
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      },
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getAcademyPages(): Promise<AcademyPage[]> {
+    const res = await this.request<AcademyPage[] | { data: AcademyPage[] }>('/academy-site/pages');
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async updateAcademyPage(slug: AcademyPageSlug, data: AcademyPagePayload): Promise<AcademyPage> {
     const res = await this.request<AcademyPage | { data: AcademyPage }>(
       `/academy-site/pages/${slug}`,
-      { method: 'PUT', body: JSON.stringify(data) }
+      { method: 'PUT', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async getAcademyContactLinks(): Promise<ContactLink[]> {
     const res = await this.request<ContactLink[] | { data: ContactLink[] }>(
-      '/academy-site/contact-links'
+      '/academy-site/contact-links',
     );
     return unwrapDataEnvelope(res.data);
   }
 
-  async updateAcademyContactLinks(
-    links: ContactLink[]
-  ): Promise<ContactLink[]> {
+  async updateAcademyContactLinks(links: ContactLink[]): Promise<ContactLink[]> {
     const res = await this.request<ContactLink[] | { data: ContactLink[] }>(
       '/academy-site/contact-links',
-      { method: 'PUT', body: JSON.stringify({ links }) }
+      { method: 'PUT', body: JSON.stringify({ links }) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
-  async getLearningNavCapabilities(
-    opts?: ReadOptions
-  ): Promise<LearningNavCapabilities> {
-    const res = await this.request<
-      LearningNavCapabilities | { data: LearningNavCapabilities }
-    >('/staff/me/learning-capabilities', opts);
+  async getLearningNavCapabilities(opts?: ReadOptions): Promise<LearningNavCapabilities> {
+    const res = await this.request<LearningNavCapabilities | { data: LearningNavCapabilities }>(
+      '/staff/me/learning-capabilities',
+      opts,
+    );
     return unwrapDataEnvelope(res.data);
   }
 
@@ -1868,7 +1718,7 @@ class ApiClient {
       description?: string;
       logo_id?: string;
       favicon_id?: string;
-    }
+    },
   ) {
     return this.updateAcademy(data);
   }
@@ -1876,7 +1726,7 @@ class ApiClient {
   async setAcademyPublicListing(id: string, listed_publicly: boolean) {
     return this.request(`/academies/${id}/public-listing`, {
       method: 'PATCH',
-      body: JSON.stringify({ listed_publicly })
+      body: JSON.stringify({ listed_publicly }),
     });
   }
 
@@ -1885,11 +1735,11 @@ class ApiClient {
     data: {
       showcase_desktop_id?: string | null;
       showcase_mobile_id?: string | null;
-    }
+    },
   ) {
     return this.request(`/academies/${id}/showcase`, {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
@@ -1898,22 +1748,14 @@ class ApiClient {
   }
 
   async getCurrentAcademySubscription(opts?: ReadOptions) {
-    const response = await this.request(
-      '/academies/current/subscription',
-      opts
-    );
+    const response = await this.request('/academies/current/subscription', opts);
     const payload = response.data as any;
     return payload?.data ?? payload;
   }
 
   /** What each media kind takes of this academy's storage quota. */
-  async getCurrentAcademyStorageUsage(
-    opts?: ReadOptions
-  ): Promise<AcademyStorageUsage> {
-    const response = await this.request(
-      '/academies/current/storage-usage',
-      opts
-    );
+  async getCurrentAcademyStorageUsage(opts?: ReadOptions): Promise<AcademyStorageUsage> {
+    const response = await this.request('/academies/current/storage-usage', opts);
     const payload = response.data as { data?: AcademyStorageUsage };
     if (!payload?.data) throw new Error('Unexpected storage usage response');
     return payload.data;
@@ -1922,7 +1764,7 @@ class ApiClient {
   /** Files filling the quota, biggest first. */
   async getStorageFiles(
     params: { kind?: StorageMediaType; page?: number; limit?: number } = {},
-    opts?: ReadOptions
+    opts?: ReadOptions,
   ): Promise<StorageFilesPage> {
     const query = new URLSearchParams();
     if (params.kind) query.set('kind', params.kind);
@@ -1945,7 +1787,7 @@ class ApiClient {
     freed_bytes: number;
   }> {
     const response = await this.request('/storage/unused', {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     const payload = response.data as {
       data?: { deleted: number; freed_bytes: number };
@@ -1965,7 +1807,7 @@ class ApiClient {
   /** Claim the owner's one free trial for this academy, or move it here. */
   async claimAcademyTrial(academyId: string): Promise<TrialClaimResult> {
     const response = await this.request(`/academies/${academyId}/trial`, {
-      method: 'POST'
+      method: 'POST',
     });
     const payload = response.data as { data?: TrialClaimResult };
     if (!payload?.data) throw new Error('Unexpected trial response');
@@ -2002,13 +1844,10 @@ class ApiClient {
     };
     [key: string]: unknown;
   }> {
-    const response = await this.request(
-      '/academies/current/subscription/renew',
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request('/academies/current/subscription/renew', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     const payload = response.data as {
       data?: Record<string, unknown>;
       [key: string]: unknown;
@@ -2045,13 +1884,10 @@ class ApiClient {
     available_gateways?: Array<{ provider: string; display_name: string }>;
     [key: string]: unknown;
   }> {
-    const response = await this.request(
-      '/academies/current/subscription/storage-addon',
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request('/academies/current/subscription/storage-addon', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     const payload = response.data as {
       data?: Record<string, unknown>;
       [key: string]: unknown;
@@ -2072,7 +1908,7 @@ class ApiClient {
    */
   async getAcademyUpgradeQuote(planSlug: string): Promise<AcademyUpgradeQuote> {
     const response = await this.request(
-      `/academies/current/subscription/upgrade-quote?plan=${encodeURIComponent(planSlug)}`
+      `/academies/current/subscription/upgrade-quote?plan=${encodeURIComponent(planSlug)}`,
     );
     const payload = response.data as { data?: AcademyUpgradeQuote };
     return (payload?.data ?? payload) as AcademyUpgradeQuote;
@@ -2091,7 +1927,7 @@ class ApiClient {
       callback_url?: string;
       provider?: PaymentGatewayProvider;
       coupon_code?: string;
-    }
+    },
   ): Promise<{
     academy?: unknown;
     payment_id?: string;
@@ -2105,13 +1941,10 @@ class ApiClient {
     }>;
     [key: string]: unknown;
   }> {
-    const response = await this.request(
-      '/academies/current/subscription/upgrade',
-      {
-        method: 'POST',
-        body: JSON.stringify({ plan_slug: planSlug, ...options })
-      }
-    );
+    const response = await this.request('/academies/current/subscription/upgrade', {
+      method: 'POST',
+      body: JSON.stringify({ plan_slug: planSlug, ...options }),
+    });
     const payload = response.data as { data?: Record<string, unknown> };
     return (payload?.data ?? payload) as {
       academy?: unknown;
@@ -2129,9 +1962,7 @@ class ApiClient {
   }
 
   /** Auth is cookie-based, so this URL can be opened directly (e.g. `window.open`). */
-  getCurrentAcademySubscriptionInvoicePdfUrl(
-    invoiceId: string | number
-  ): string {
+  getCurrentAcademySubscriptionInvoicePdfUrl(invoiceId: string | number): string {
     return `${this.baseURL}/academies/current/subscription/invoices/${invoiceId}/pdf`;
   }
 
@@ -2144,7 +1975,7 @@ class ApiClient {
       category_id?: number;
       academy_id?: string;
     },
-    opts?: ReadOptions
+    opts?: ReadOptions,
   ) {
     const queryParams = new URLSearchParams();
     if (params) {
@@ -2156,10 +1987,7 @@ class ApiClient {
       });
     }
 
-    const response = (await this.request(
-      `/courses?${queryParams.toString()}`,
-      opts
-    )) as any;
+    const response = (await this.request(`/courses?${queryParams.toString()}`, opts)) as any;
     if (response.data.data && response.data.status === 'ok') {
       return response.data.data as { courses: any[]; pagination?: any };
     }
@@ -2234,14 +2062,14 @@ class ApiClient {
   }) {
     return this.request('/courses', {
       method: 'POST',
-      body: JSON.stringify(courseData)
+      body: JSON.stringify(courseData),
     });
   }
 
   async updateCourse(id: string, courseData: unknown) {
     return this.request(`/courses/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(courseData)
+      body: JSON.stringify(courseData),
     });
   }
 
@@ -2286,11 +2114,11 @@ class ApiClient {
       }>;
       deleted_season_ids?: string[];
       deleted_lesson_ids?: string[];
-    }
+    },
   ) {
     return this.request(`/courses/${id}/content`, {
       method: 'PUT',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 
@@ -2298,8 +2126,7 @@ class ApiClient {
   async getCourseQnAs(courseId: number) {
     const response = await this.request(`/courses/${courseId}/qna`);
     const payload = response.data as { data?: unknown } | undefined;
-    const nested =
-      payload && typeof payload === 'object' ? payload.data : undefined;
+    const nested = payload && typeof payload === 'object' ? payload.data : undefined;
     if (Array.isArray(nested)) return nested;
     if (
       nested &&
@@ -2314,35 +2141,32 @@ class ApiClient {
   async createCourseQnA(courseId: number, question: string) {
     return this.request(`/courses/${courseId}/qna`, {
       method: 'POST',
-      body: JSON.stringify({ question })
+      body: JSON.stringify({ question }),
     });
   }
 
   async answerCourseQnA(courseId: number, qnaId: number, answer: string) {
     return this.request(`/courses/${courseId}/qna/${qnaId}/answer`, {
       method: 'PUT',
-      body: JSON.stringify({ answer })
+      body: JSON.stringify({ answer }),
     });
   }
 
   async approveCourseQnA(courseId: number, qnaId: number, isApproved: boolean) {
     return this.request(`/courses/${courseId}/qna/${qnaId}/approve`, {
       method: 'PUT',
-      body: JSON.stringify({ is_approved: isApproved })
+      body: JSON.stringify({ is_approved: isApproved }),
     });
   }
 
   async deleteCourse(id: string) {
     return this.request(`/courses/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
   // ----- Quiz, Assessment & Discussion (checklist 5.19) -----
-  private async quizData<T>(
-    endpoint: string,
-    options?: RequestInit
-  ): Promise<T> {
+  private async quizData<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await this.request<{ data: T }>(endpoint, options);
     return (response.data as { data: T }).data;
   }
@@ -2359,17 +2183,17 @@ class ApiClient {
   }) {
     return this.quizData(`/quizzes`, {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 
   async updateQuiz(
     id: string,
-    payload: { title?: string; description?: string; passing_score?: number }
+    payload: { title?: string; description?: string; passing_score?: number },
   ) {
     return this.quizData(`/quizzes/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 
@@ -2381,11 +2205,11 @@ class ApiClient {
       points?: number;
       correct_boolean?: boolean;
       options?: { text: string; is_correct: boolean }[];
-    }
+    },
   ) {
     return this.quizData(`/quizzes/${quizId}/questions`, {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 
@@ -2396,11 +2220,11 @@ class ApiClient {
       points?: number;
       correct_boolean?: boolean;
       options?: { text: string; is_correct: boolean }[];
-    }
+    },
   ) {
     return this.quizData(`/quiz-questions/${questionId}`, {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 
@@ -2411,15 +2235,14 @@ class ApiClient {
   async reorderQuizQuestions(quizId: string, questionIds: string[]) {
     return this.quizData(`/quizzes/${quizId}/questions/reorder`, {
       method: 'PATCH',
-      body: JSON.stringify({ question_ids: questionIds })
+      body: JSON.stringify({ question_ids: questionIds }),
     });
   }
 
   async setQuizPublished(quizId: string, publish: boolean) {
-    return this.quizData(
-      `/quizzes/${quizId}/${publish ? 'publish' : 'unpublish'}`,
-      { method: 'POST' }
-    );
+    return this.quizData(`/quizzes/${quizId}/${publish ? 'publish' : 'unpublish'}`, {
+      method: 'POST',
+    });
   }
 
   async listQuizAttempts<T = unknown>(quizId: string) {
@@ -2433,14 +2256,14 @@ class ApiClient {
   async gradeQuizAnswer(answerId: string, awardedPoints: number) {
     return this.quizData(`/quiz-answers/${answerId}/grade`, {
       method: 'PATCH',
-      body: JSON.stringify({ awarded_points: awardedPoints })
+      body: JSON.stringify({ awarded_points: awardedPoints }),
     });
   }
 
   async reviewQuizAttempt(attemptId: string, feedback?: string) {
     return this.quizData(`/quiz-attempts/${attemptId}/review`, {
       method: 'POST',
-      body: JSON.stringify({ feedback })
+      body: JSON.stringify({ feedback }),
     });
   }
 
@@ -2450,26 +2273,19 @@ class ApiClient {
 
   async findDiscussionThread<T = unknown>(parent: DiscussionParent) {
     const query = new URLSearchParams(
-      Object.entries(parent).filter(([, value]) => Boolean(value)) as [
-        string,
-        string
-      ][]
+      Object.entries(parent).filter(([, value]) => Boolean(value)) as [string, string][],
     );
     return this.quizData<T>(`/discussions/thread?${query.toString()}`);
   }
 
-  async postDiscussionMessage(
-    parent: DiscussionParent,
-    body: string,
-    documentId?: string
-  ) {
+  async postDiscussionMessage(parent: DiscussionParent, body: string, documentId?: string) {
     return this.quizData(`/discussions/messages`, {
       method: 'POST',
       body: JSON.stringify({
         ...parent,
         body,
-        ...(documentId ? { document_id: documentId } : {})
-      })
+        ...(documentId ? { document_id: documentId } : {}),
+      }),
     });
   }
 
@@ -2477,10 +2293,7 @@ class ApiClient {
   async uploadDiscussionAttachment(file: File): Promise<{ id: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    const res = await this.uploadFileWithProgress(
-      '/discussions/attachments',
-      formData
-    );
+    const res = await this.uploadFileWithProgress('/discussions/attachments', formData);
     return unwrapDataEnvelope(res as { data: { id: string } });
   }
 
@@ -2555,20 +2368,20 @@ class ApiClient {
   }) {
     return this.request('/products', {
       method: 'POST',
-      body: JSON.stringify(productData)
+      body: JSON.stringify(productData),
     });
   }
 
   async updateProduct(id: number, productData: unknown) {
     return this.request(`/products/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(productData)
+      body: JSON.stringify(productData),
     });
   }
 
   async deleteProduct(id: number) {
     return this.request(`/products/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -2594,20 +2407,20 @@ class ApiClient {
   }) {
     return this.request('/shipping/addresses', {
       method: 'POST',
-      body: JSON.stringify(addressData)
+      body: JSON.stringify(addressData),
     });
   }
 
   async updateShippingAddress(id: number, addressData: unknown) {
     return this.request(`/shipping/addresses/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(addressData)
+      body: JSON.stringify(addressData),
     });
   }
 
   async deleteShippingAddress(id: number) {
     return this.request(`/shipping/addresses/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -2640,7 +2453,7 @@ class ApiClient {
   }) {
     return this.request('/shipping/orders', {
       method: 'POST',
-      body: JSON.stringify(orderData)
+      body: JSON.stringify(orderData),
     });
   }
 
@@ -2716,20 +2529,20 @@ class ApiClient {
   }) {
     return this.request('/lessons', {
       method: 'POST',
-      body: JSON.stringify(lessonData)
+      body: JSON.stringify(lessonData),
     });
   }
 
   async updateLesson(id: string, lessonData: unknown) {
     return this.request(`/lessons/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(lessonData)
+      body: JSON.stringify(lessonData),
     });
   }
 
   async deleteLesson(id: string) {
     return this.request(`/lessons/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -2747,17 +2560,17 @@ class ApiClient {
       recurrence_until?: string | null;
       provider_label?: string | null;
       notes?: string | null;
-    }
+    },
   ) {
     return this.request(`/lessons/${lessonId}/live-session`, {
       method: 'PUT',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
   }
 
   async deleteLiveSession(lessonId: string) {
     return this.request(`/lessons/${lessonId}/live-session`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -2813,20 +2626,20 @@ class ApiClient {
   }) {
     return this.request('/seasons', {
       method: 'POST',
-      body: JSON.stringify(seasonData)
+      body: JSON.stringify(seasonData),
     });
   }
 
   async updateSeason(id: string, seasonData: unknown) {
     return this.request(`/seasons/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(seasonData)
+      body: JSON.stringify(seasonData),
     });
   }
 
   async deleteSeason(id: string) {
     return this.request(`/seasons/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -2862,7 +2675,7 @@ class ApiClient {
   }) {
     return this.request('/categories', {
       method: 'POST',
-      body: JSON.stringify(categoryData)
+      body: JSON.stringify(categoryData),
     });
   }
 
@@ -2886,17 +2699,17 @@ class ApiClient {
       color?: string;
       sort_order?: number;
       is_active?: boolean;
-    }
+    },
   ) {
     return this.request(`/categories/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(categoryData)
+      body: JSON.stringify(categoryData),
     });
   }
 
   async deleteCategory(id: number) {
     return this.request(`/categories/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -2907,7 +2720,7 @@ class ApiClient {
     endpoint: string,
     formData: FormData,
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ): Promise<{ data?: unknown } & Record<string, unknown>> {
     const csrfToken = await ensureCsrfToken();
 
@@ -2950,15 +2763,13 @@ class ApiClient {
         }
       });
       xhr.addEventListener('error', () => reject(new Error('Upload failed')));
-      xhr.addEventListener('abort', () =>
-        reject(new Error('Upload cancelled'))
-      );
+      xhr.addEventListener('abort', () => reject(new Error('Upload cancelled')));
       xhr.ontimeout = () => reject(new Error('Upload timeout'));
 
       xhr.open('POST', `${this.baseURL}${endpoint}`);
       xhr.withCredentials = true;
       for (const [key, value] of Object.entries(
-        this.browserContextHeaders(endpoint, 'POST', csrfToken)
+        this.browserContextHeaders(endpoint, 'POST', csrfToken),
       )) {
         xhr.setRequestHeader(key, value);
       }
@@ -2978,7 +2789,7 @@ class ApiClient {
     file: File,
     metadata?: { title?: string; description?: string },
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ) {
     assertUploadSize(file, MAX_IMAGE_UPLOAD_BYTES);
 
@@ -2990,7 +2801,7 @@ class ApiClient {
       '/images/upload',
       formData,
       onProgress,
-      abortController
+      abortController,
     );
     return (response.data ?? null) as any;
   }
@@ -3002,7 +2813,7 @@ class ApiClient {
   async uploadAvatarImage(
     file: File,
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ) {
     assertUploadSize(file, MAX_IMAGE_UPLOAD_BYTES);
 
@@ -3014,7 +2825,7 @@ class ApiClient {
       '/images/avatar',
       formData,
       onProgress,
-      abortController
+      abortController,
     );
     return (response.data ?? null) as any;
   }
@@ -3023,7 +2834,7 @@ class ApiClient {
     file: File,
     metadata?: { title?: string; description?: string },
     posterFile?: File,
-    durationSeconds?: number
+    durationSeconds?: number,
   ): FormData {
     const formData = new FormData();
     formData.append('videofile', file); // Backend expects 'videofile'
@@ -3050,7 +2861,7 @@ class ApiClient {
     metadata?: { title?: string; description?: string },
     posterFile?: File,
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ) {
     const title = metadata?.title || file.name;
     const durationSeconds = await readVideoDurationSeconds(file);
@@ -3060,8 +2871,8 @@ class ApiClient {
         body: JSON.stringify({
           filename: file.name,
           size_bytes: file.size,
-          mime_type: file.type || 'video/mp4'
-        })
+          mime_type: file.type || 'video/mp4',
+        }),
       })
     ).data;
 
@@ -3072,7 +2883,7 @@ class ApiClient {
         posterFile,
         onProgress,
         abortController,
-        durationSeconds
+        durationSeconds,
       );
     }
 
@@ -3083,14 +2894,14 @@ class ApiClient {
         file,
         { part_size: ticket.part_size, part_urls: ticket.part_urls },
         onProgress,
-        abortController?.signal
+        abortController?.signal,
       );
     } catch (error) {
       // Fire-and-forget: the user already failed or cancelled, so releasing the
       // unfinished chunks must not delay or mask the original error.
       void this.request('/videos/upload/abort', {
         method: 'POST',
-        body: JSON.stringify({ key: ticket.key, upload_id: ticket.upload_id })
+        body: JSON.stringify({ key: ticket.key, upload_id: ticket.upload_id }),
       }).catch(() => undefined);
       throw error;
     }
@@ -3104,8 +2915,8 @@ class ApiClient {
           parts,
           title,
           description: metadata?.description,
-          duration_seconds: durationSeconds
-        })
+          duration_seconds: durationSeconds,
+        }),
       })
     ).data;
 
@@ -3124,13 +2935,13 @@ class ApiClient {
     posterFile?: File,
     onProgress?: (progress: number) => void,
     abortController?: AbortController,
-    durationSeconds?: number
+    durationSeconds?: number,
   ): Promise<{ id: string }> {
     const response = await this.uploadFileWithProgress(
       '/videos/upload',
       this.buildVideoFormData(file, metadata, posterFile, durationSeconds),
       onProgress,
-      abortController
+      abortController,
     );
     return (response.data ?? response) as { id: string };
   }
@@ -3140,22 +2951,16 @@ class ApiClient {
     metadata?: { title?: string; description?: string },
     posterFile?: File,
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ) {
-    return this.uploadVideoWithProgress(
-      file,
-      metadata,
-      posterFile,
-      onProgress,
-      abortController
-    );
+    return this.uploadVideoWithProgress(file, metadata, posterFile, onProgress, abortController);
   }
 
   async uploadAudio(
     file: File,
     metadata?: { title?: string; description?: string },
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ) {
     const formData = new FormData();
     formData.append('audioFile', file); // Backend expects 'audioFile'
@@ -3169,19 +2974,14 @@ class ApiClient {
       formData.append('duration_seconds', String(durationSeconds));
     }
 
-    return this.uploadFileWithProgress(
-      '/audios/upload',
-      formData,
-      onProgress,
-      abortController
-    );
+    return this.uploadFileWithProgress('/audios/upload', formData, onProgress, abortController);
   }
 
   async uploadDocument(
     file: File,
     metadata?: { title?: string; description?: string },
     onProgress?: (progress: number) => void,
-    abortController?: AbortController
+    abortController?: AbortController,
   ) {
     const formData = new FormData();
     formData.append('documentfile', file);
@@ -3190,12 +2990,7 @@ class ApiClient {
       formData.append('description', metadata.description || '');
     }
 
-    return this.uploadFileWithProgress(
-      '/files/upload',
-      formData,
-      onProgress,
-      abortController
-    );
+    return this.uploadFileWithProgress('/files/upload', formData, onProgress, abortController);
   }
 
   async getImages() {
@@ -3227,10 +3022,9 @@ class ApiClient {
 
   /** Re-queues a legacy or failed video for HLS conversion. */
   async secureVideo(videoId: string) {
-    const response = await this.request<{ hls_status: string }>(
-      `/videos/${videoId}/secure`,
-      { method: 'PATCH' }
-    );
+    const response = await this.request<{ hls_status: string }>(`/videos/${videoId}/secure`, {
+      method: 'PATCH',
+    });
     return response.data;
   }
 
@@ -3286,11 +3080,11 @@ class ApiClient {
 
   async updateAudio(
     audioId: number,
-    audioData: { title?: string; description?: string; is_public?: boolean }
+    audioData: { title?: string; description?: string; is_public?: boolean },
   ) {
     const response = await this.request(`/audios/${audioId}`, {
       method: 'PATCH',
-      body: JSON.stringify(audioData)
+      body: JSON.stringify(audioData),
     });
 
     return response.data as any;
@@ -3298,7 +3092,7 @@ class ApiClient {
 
   async deleteAudio(audioId: number) {
     return this.request(`/audios/${audioId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -3341,8 +3135,8 @@ class ApiClient {
     return this.request(endpoint, {
       method: 'GET',
       headers: {
-        Accept: 'image/*'
-      }
+        Accept: 'image/*',
+      },
     });
   }
 
@@ -3350,7 +3144,7 @@ class ApiClient {
   async updateImage(imageId: string, data: { alt?: string }) {
     const response = await this.request(`/images/${imageId}`, {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     if (response.data) {
       return response.data as any;
@@ -3361,7 +3155,7 @@ class ApiClient {
   // Image deletion endpoint
   async deleteImage(imageId: string) {
     return this.request(`/images/${imageId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -3381,7 +3175,7 @@ class ApiClient {
   }) {
     return this.request('/profiles/me', {
       method: 'PATCH',
-      body: JSON.stringify(profileData)
+      body: JSON.stringify(profileData),
     }) as any;
   }
 
@@ -3400,11 +3194,9 @@ class ApiClient {
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
-    if (params?.id !== undefined)
-      queryParams.append('id', params.id.toString());
+    if (params?.id !== undefined) queryParams.append('id', params.id.toString());
     if (params?.uuid) queryParams.append('uuid', params.uuid);
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
     if (params?.status) queryParams.append('status', params.status);
 
     const queryString = queryParams.toString();
@@ -3452,19 +3244,17 @@ class ApiClient {
       group_by_role?: boolean;
       filter?: 'none';
     },
-    opts?: ReadOptions
+    opts?: ReadOptions,
   ) {
     const queryParams = new URLSearchParams();
 
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
-    if (params?.id !== undefined)
-      queryParams.append('id', params.id.toString());
+    if (params?.id !== undefined) queryParams.append('id', params.id.toString());
     if (params?.uuid) queryParams.append('uuid', params.uuid);
     if (params?.role) queryParams.append('role', params.role);
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
     if (params?.status) queryParams.append('status', params.status);
     if (params?.is_active !== undefined)
       queryParams.append('is_active', params.is_active.toString());
@@ -3492,7 +3282,7 @@ class ApiClient {
       academy_id?: string;
       status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
     },
-    opts?: ReadOptions
+    opts?: ReadOptions,
   ) {
     const query = this.buildUserQuery(params);
     const response = await this.request(`/users/students${query}`, opts);
@@ -3507,7 +3297,7 @@ class ApiClient {
       academy_id?: string;
       status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BANNED';
     },
-    opts?: ReadOptions
+    opts?: ReadOptions,
   ) {
     const query = this.buildUserQuery(params);
     const response = await this.request(`/users/teachers${query}`, opts);
@@ -3536,13 +3326,12 @@ class ApiClient {
 
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
     if (params?.status) queryParams.append('status', params.status);
 
     const queryString = queryParams.toString();
     const response = await this.request(
-      `/users/teacher-requests${queryString ? `?${queryString}` : ''}`
+      `/users/teacher-requests${queryString ? `?${queryString}` : ''}`,
     );
 
     const payload = response.data as any;
@@ -3550,13 +3339,10 @@ class ApiClient {
     if (payload?.status === 'ok' && payload?.data) {
       const normalizedRequests = Array.isArray(payload.data.requests)
         ? payload.data.requests.map((request: any) => {
-            const profile =
-              request.profile ||
-              request.Profile_TeacherRequest_profile_idToProfile;
+            const profile = request.profile || request.Profile_TeacherRequest_profile_idToProfile;
             const store = request.store || request.Academy;
             const reviewer =
-              request.reviewer ||
-              request.Profile_TeacherRequest_reviewed_byToProfile;
+              request.reviewer || request.Profile_TeacherRequest_reviewed_byToProfile;
 
             return {
               ...request,
@@ -3565,7 +3351,7 @@ class ApiClient {
                     id: profile.id,
                     display_name: profile.display_name,
                     role: profile.role || profile.Role || null,
-                    user: profile.user || profile.User || null
+                    user: profile.user || profile.User || null,
                   }
                 : null,
               store,
@@ -3573,17 +3359,17 @@ class ApiClient {
                 ? {
                     ...reviewer,
                     user: reviewer.user || {
-                      name: reviewer.display_name || null
-                    }
+                      name: reviewer.display_name || null,
+                    },
                   }
-                : null
+                : null,
             };
           })
         : [];
 
       return {
         ...payload.data,
-        requests: normalizedRequests
+        requests: normalizedRequests,
       };
     }
 
@@ -3595,11 +3381,11 @@ class ApiClient {
     payload: {
       status: 'PENDING' | 'APPROVED' | 'REJECTED';
       notes?: string;
-    }
+    },
   ) {
     const response = await this.request(`/teacher-requests/${id}/review`, {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     return response.data as any;
@@ -3611,16 +3397,9 @@ class ApiClient {
     >(`/users/${id}`);
     const body = response.data;
     // findOne answers HTTP 200 with {status:'fail'} instead of a 4xx.
-    if (
-      body &&
-      typeof body === 'object' &&
-      'status' in body &&
-      body.status === 'fail'
-    ) {
+    if (body && typeof body === 'object' && 'status' in body && body.status === 'fail') {
       throw new Error(
-        typeof body.data === 'string'
-          ? body.data
-          : body.message || 'Failed to retrieve user'
+        typeof body.data === 'string' ? body.data : body.message || 'Failed to retrieve user',
       );
     }
     const profile = unwrapDataEnvelope(body as UserType | { data: UserType });
@@ -3631,53 +3410,45 @@ class ApiClient {
   }
 
   async getUserDetails(id: string): Promise<UserDetailsResponse> {
-    const response = await this.request<
-      UserDetailsResponse | { data: UserDetailsResponse }
-    >(`/users/${id}/details`);
+    const response = await this.request<UserDetailsResponse | { data: UserDetailsResponse }>(
+      `/users/${id}/details`,
+    );
     return unwrapDataEnvelope(response.data);
   }
 
   /** Rename yourself. `updateUser` cannot do this: it only reaches profiles
    *  below the caller's own rank, so it never matches the caller. */
-  async updateMe(data: {
-    full_name?: string;
-    email?: string;
-    phone_number?: string;
-  }) {
+  async updateMe(data: { full_name?: string; email?: string; phone_number?: string }) {
     return this.request('/users/me', {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
   async sendMyContactOtp(channel: 'phone' | 'email', value: string) {
     return this.request('/users/me/contact/otp', {
       method: 'POST',
-      body: JSON.stringify({ channel, value })
+      body: JSON.stringify({ channel, value }),
     });
   }
 
-  async verifyMyContactOtp(
-    channel: 'phone' | 'email',
-    value: string,
-    otp: string
-  ) {
+  async verifyMyContactOtp(channel: 'phone' | 'email', value: string, otp: string) {
     return this.request<{ success?: boolean }>('/users/me/contact/otp/verify', {
       method: 'POST',
-      body: JSON.stringify({ channel, value, otp })
+      body: JSON.stringify({ channel, value, otp }),
     });
   }
 
   async updateUser(id: string, userData: unknown) {
     return this.request(`/users/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
   }
 
   async deleteUser(id: string) {
     return this.request(`/users/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -3690,8 +3461,8 @@ class ApiClient {
     return this.request(
       `/users/${adminId}/disconnect-store${queryString ? `?${queryString}` : ''}`,
       {
-        method: 'PATCH'
-      }
+        method: 'PATCH',
+      },
     );
   }
 
@@ -3706,12 +3477,10 @@ class ApiClient {
     auto_confirm_email?: boolean;
     auto_confirm_phone?: boolean;
   }) {
-    const endpoint = userData.platform_role
-      ? '/users/platform-staff'
-      : '/users/admin';
+    const endpoint = userData.platform_role ? '/users/platform-staff' : '/users/admin';
     const response = await this.request(endpoint, {
       method: 'POST',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
     return response.data as any;
   }
@@ -3730,9 +3499,7 @@ class ApiClient {
       queryParams.append('is_active', String(params.is_active));
     }
     const qs = queryParams.toString();
-    const response = await this.request(
-      `/users/platform-staff${qs ? `?${qs}` : ''}`
-    );
+    const response = await this.request(`/users/platform-staff${qs ? `?${qs}` : ''}`);
     const payload = response.data as
       | PlatformStaffListResponse
       | { data?: PlatformStaffListResponse }
@@ -3751,18 +3518,15 @@ class ApiClient {
         total: 0,
         totalPages: 0,
         hasNextPage: false,
-        hasPreviousPage: false
-      }
+        hasPreviousPage: false,
+      },
     };
   }
 
   async lookupPlatformStaffCandidate(phone: string) {
     const qs = new URLSearchParams({ phone }).toString();
     const response = await this.request(`/users/platform-staff/lookup?${qs}`);
-    const body = response.data as
-      | PlatformStaffLookup
-      | { data?: PlatformStaffLookup }
-      | null;
+    const body = response.data as PlatformStaffLookup | { data?: PlatformStaffLookup } | null;
     if (body && 'found' in body) return body;
     if (body && 'data' in body && body.data) return body.data;
     return { found: false };
@@ -3776,12 +3540,9 @@ class ApiClient {
   }) {
     const response = await this.request('/users/platform-staff/promote', {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
-    const payload = response.data as
-      | PlatformStaffRecord
-      | { data?: PlatformStaffRecord }
-      | null;
+    const payload = response.data as PlatformStaffRecord | { data?: PlatformStaffRecord } | null;
     if (payload && 'id' in payload) return payload;
     if (payload && 'data' in payload && payload.data) return payload.data;
     throw new Error('Failed to promote platform staff');
@@ -3793,11 +3554,11 @@ class ApiClient {
       platform_role?: 'ADMIN' | 'FINANCE' | 'SUPPORT';
       is_active?: boolean;
       reason?: string;
-    }
+    },
   ) {
     const response = await this.request(`/users/platform-staff/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return response.data as any;
   }
@@ -3805,14 +3566,14 @@ class ApiClient {
   async banUserPlatformWide(userId: string, reason: string) {
     const response = await this.request(`/platform-admin/users/${userId}/ban`, {
       method: 'POST',
-      body: JSON.stringify({ reason })
+      body: JSON.stringify({ reason }),
     });
     return response.data;
   }
 
   async unbanUserPlatformWide(userId: string) {
     const response = await this.request(`/platform-admin/users/${userId}/ban`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return response.data;
   }
@@ -3823,60 +3584,56 @@ class ApiClient {
       mode: UserResetMode;
       confirm_identifier?: string;
       academy_id?: string;
-    }
+    },
   ) {
-    const response = await this.request(
-      `/platform-admin/users/${userId}/reset`,
-      { method: 'POST', body: JSON.stringify(body) }
-    );
+    const response = await this.request(`/platform-admin/users/${userId}/reset`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
     return response.data;
   }
 
   async suspendAcademy(academyId: string, reason: string) {
-    const response = await this.request(
-      `/platform-admin/academies/${academyId}/suspend`,
-      { method: 'POST', body: JSON.stringify({ reason }) }
-    );
+    const response = await this.request(`/platform-admin/academies/${academyId}/suspend`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
     return response.data;
   }
 
   async unsuspendAcademy(academyId: string) {
-    const response = await this.request(
-      `/platform-admin/academies/${academyId}/suspend`,
-      { method: 'DELETE' }
-    );
+    const response = await this.request(`/platform-admin/academies/${academyId}/suspend`, {
+      method: 'DELETE',
+    });
     return response.data;
   }
 
   async banAcademyMember(profileId: string, reason: string) {
     const response = await this.request(`/users/${profileId}/ban`, {
       method: 'POST',
-      body: JSON.stringify({ reason })
+      body: JSON.stringify({ reason }),
     });
     return response.data;
   }
 
   async unbanAcademyMember(profileId: string) {
     const response = await this.request(`/users/${profileId}/ban`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return response.data;
   }
 
   async revokePlatformStaffSessions(id: string) {
-    const response = await this.request(
-      `/users/platform-staff/${id}/sessions`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request(`/users/platform-staff/${id}/sessions`, {
+      method: 'DELETE',
+    });
     return response.data as any;
   }
 
   async resetUserPassword(id: string, newPassword: string) {
     const response = await this.request(`/users/${id}/reset-password`, {
       method: 'POST',
-      body: JSON.stringify({ new_password: newPassword })
+      body: JSON.stringify({ new_password: newPassword }),
     });
     return response.data as any;
   }
@@ -3906,7 +3663,7 @@ class ApiClient {
   async createPlatformRole(payload: CreateRolePayload) {
     const response = await this.request('/platform/roles', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data as { id: string; name: string };
   }
@@ -3914,7 +3671,7 @@ class ApiClient {
   async updatePlatformRole(id: string, payload: UpdateRolePayload) {
     const response = await this.request(`/platform/roles/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data as { id: string };
   }
@@ -3922,7 +3679,7 @@ class ApiClient {
   async setPlatformRolePermissions(id: string, permissions: RolePermission[]) {
     const response = await this.request(`/platform/roles/${id}/permissions`, {
       method: 'PUT',
-      body: JSON.stringify({ permissions })
+      body: JSON.stringify({ permissions }),
     });
     return response.data as { id: string; permission_count: number };
   }
@@ -3930,7 +3687,7 @@ class ApiClient {
   async assignPlatformRole(id: string, profileId: string) {
     const response = await this.request(`/platform/roles/${id}/assign`, {
       method: 'POST',
-      body: JSON.stringify({ profile_id: profileId })
+      body: JSON.stringify({ profile_id: profileId }),
     });
     return response.data as {
       profile_id: string;
@@ -3941,19 +3698,16 @@ class ApiClient {
 
   async deletePlatformRole(id: string) {
     const response = await this.request(`/platform/roles/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return response.data as { id: string };
   }
 
   /** course_id is a cuid STRING — Number() on it yields NaN and the call 400s. */
-  async grantCourseAccess(
-    id: string,
-    payload: { course_id: string; note?: string }
-  ) {
+  async grantCourseAccess(id: string, payload: { course_id: string; note?: string }) {
     const response = await this.request(`/users/${id}/grant-course`, {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data as any;
   }
@@ -3966,11 +3720,11 @@ class ApiClient {
       discount_value: number;
       expires_at?: string;
       max_discount_amount?: number;
-    }
+    },
   ) {
     const response = await this.request(`/users/${id}/assign-voucher`, {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data as any;
   }
@@ -4000,7 +3754,7 @@ class ApiClient {
   async validatePrivateDomain(domain: string) {
     return this.request('/domain/is-valid-private-domain', {
       method: 'POST',
-      body: JSON.stringify({ domain })
+      body: JSON.stringify({ domain }),
     });
   }
 
@@ -4009,9 +3763,7 @@ class ApiClient {
   }
 
   async getCustomDomainSetup(): Promise<CustomDomainSetupResponse> {
-    const response = await this.request(
-      '/academies/current/custom-domain-setup'
-    );
+    const response = await this.request('/academies/current/custom-domain-setup');
     const payload = response.data as
       | CustomDomainSetupResponse
       | { data: CustomDomainSetupResponse };
@@ -4028,15 +3780,12 @@ class ApiClient {
       acme_records: Array<{ host: string; value: string }>;
       acme_confirmed: boolean;
       ssl_confirmed: boolean;
-    }>
+    }>,
   ): Promise<CustomDomainSetupResponse> {
-    const response = await this.request(
-      '/academies/current/custom-domain-setup',
-      {
-        method: 'PATCH',
-        body: JSON.stringify(body)
-      }
-    );
+    const response = await this.request('/academies/current/custom-domain-setup', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
     const payload = response.data as
       | CustomDomainSetupResponse
       | { data: CustomDomainSetupResponse };
@@ -4047,24 +3796,16 @@ class ApiClient {
   }
 
   async verifyCustomDomainDns(): Promise<VerifyDnsResponse> {
-    const response = await this.request(
-      '/academies/current/custom-domain-setup/verify-dns',
-      {
-        method: 'POST'
-      }
-    );
-    const payload = response.data as
-      | VerifyDnsResponse
-      | { data: VerifyDnsResponse };
-    return (
-      (payload as { data?: VerifyDnsResponse }).data ??
-      (payload as VerifyDnsResponse)
-    );
+    const response = await this.request('/academies/current/custom-domain-setup/verify-dns', {
+      method: 'POST',
+    });
+    const payload = response.data as VerifyDnsResponse | { data: VerifyDnsResponse };
+    return (payload as { data?: VerifyDnsResponse }).data ?? (payload as VerifyDnsResponse);
   }
 
   async getRecentEnrollments(limit = 10) {
     const response = await this.request(
-      `/enrollments/recent?limit=${encodeURIComponent(String(limit))}`
+      `/enrollments/recent?limit=${encodeURIComponent(String(limit))}`,
     );
 
     // Return the enrollments data directly
@@ -4076,7 +3817,7 @@ class ApiClient {
 
   async getRecentPayments(limit = 10) {
     const response = await this.request(
-      `/payments/recent?limit=${encodeURIComponent(String(limit))}`
+      `/payments/recent?limit=${encodeURIComponent(String(limit))}`,
     );
 
     // Return the payments data directly
@@ -4087,30 +3828,28 @@ class ApiClient {
   }
 
   async getManagerDashboard(period: DashboardPeriodKey = '30d') {
-    const res = await this.request<
-      ManagerDashboard | { data: ManagerDashboard }
-    >(`/dashboard/manager?period=${period}`);
+    const res = await this.request<ManagerDashboard | { data: ManagerDashboard }>(
+      `/dashboard/manager?period=${period}`,
+    );
     return unwrapDataEnvelope(res.data);
   }
 
   async getAnalyticsOverview() {
-    const res = await this.request<
-      AnalyticsOverview | { data: AnalyticsOverview }
-    >('/analytics');
+    const res = await this.request<AnalyticsOverview | { data: AnalyticsOverview }>('/analytics');
     return unwrapDataEnvelope(res.data);
   }
 
   async getAnalyticsRevenue() {
-    const res = await this.request<
-      AnalyticsRevenue | { data: AnalyticsRevenue }
-    >('/analytics/revenue?group_by=month');
+    const res = await this.request<AnalyticsRevenue | { data: AnalyticsRevenue }>(
+      '/analytics/revenue?group_by=month',
+    );
     return unwrapDataEnvelope(res.data);
   }
 
   async getAnalyticsCourses() {
-    const res = await this.request<
-      AnalyticsCourses | { data: AnalyticsCourses }
-    >('/analytics/courses?limit=50');
+    const res = await this.request<AnalyticsCourses | { data: AnalyticsCourses }>(
+      '/analytics/courses?limit=50',
+    );
     return unwrapDataEnvelope(res.data);
   }
 
@@ -4136,13 +3875,10 @@ class ApiClient {
     return this.blogPayload<Article>(response.data);
   }
 
-  async createBlogArticle(
-    scope: BlogScope,
-    input: ArticleInput
-  ): Promise<Article | null> {
+  async createBlogArticle(scope: BlogScope, input: ArticleInput): Promise<Article | null> {
     const response = await this.request(this.blogBase(scope), {
       method: 'POST',
-      body: JSON.stringify(input)
+      body: JSON.stringify(input),
     });
     return this.blogPayload<Article>(response.data);
   }
@@ -4150,11 +3886,11 @@ class ApiClient {
   async updateBlogArticle(
     scope: BlogScope,
     id: string,
-    input: Partial<ArticleInput>
+    input: Partial<ArticleInput>,
   ): Promise<Article | null> {
     const response = await this.request(`${this.blogBase(scope)}/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(input)
+      body: JSON.stringify(input),
     });
     return this.blogPayload<Article>(response.data);
   }
@@ -4163,15 +3899,12 @@ class ApiClient {
     scope: BlogScope,
     id: string,
     transition: ArticleTransition,
-    reviewNote?: string
+    reviewNote?: string,
   ): Promise<Article | null> {
-    const response = await this.request(
-      `${this.blogBase(scope)}/${id}/${transition}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify(reviewNote ? { review_note: reviewNote } : {})
-      }
-    );
+    const response = await this.request(`${this.blogBase(scope)}/${id}/${transition}`, {
+      method: 'PATCH',
+      body: JSON.stringify(reviewNote ? { review_note: reviewNote } : {}),
+    });
     return this.blogPayload<Article>(response.data);
   }
 
@@ -4196,13 +3929,10 @@ class ApiClient {
     if (params?.limit) queryParams.append('limit', String(params.limit));
     if (params?.search) queryParams.append('search', params.search);
     if (params?.uuid) queryParams.append('uuid', params.uuid);
-    if (params?.transaction_ref)
-      queryParams.append('transaction_ref', params.transaction_ref);
+    if (params?.transaction_ref) queryParams.append('transaction_ref', params.transaction_ref);
     if (params?.status) queryParams.append('status', params.status);
-    if (params?.academy_id)
-      queryParams.append('academy_id', String(params.academy_id));
-    if (params?.course_id)
-      queryParams.append('course_id', String(params.course_id));
+    if (params?.academy_id) queryParams.append('academy_id', String(params.academy_id));
+    if (params?.course_id) queryParams.append('course_id', String(params.course_id));
     if (params?.start_date) queryParams.append('start_date', params.start_date);
     if (params?.end_date) queryParams.append('end_date', params.end_date);
     const query = queryParams.toString();
@@ -4238,9 +3968,7 @@ class ApiClient {
     }
     if (params?.status) queryParams.append('status', params.status);
     const query = queryParams.toString();
-    const response = await this.request(
-      `/payments/transactions${query ? `?${query}` : ''}`
-    );
+    const response = await this.request(`/payments/transactions${query ? `?${query}` : ''}`);
     return response.data || [];
   }
 
@@ -4288,9 +4016,7 @@ class ApiClient {
     const url = queryString ? `/enrollments?${queryString}` : '/enrollments';
 
     const response = await this.request<
-      | Enrollment[]
-      | EnrollmentListResponse
-      | { data: Enrollment[] | EnrollmentListResponse }
+      Enrollment[] | EnrollmentListResponse | { data: Enrollment[] | EnrollmentListResponse }
     >(url);
     const payload = unwrapDataEnvelope(response.data);
     return Array.isArray(payload) ? { enrollments: payload } : payload;
@@ -4313,7 +4039,7 @@ class ApiClient {
   }) {
     return this.request('/enrollments', {
       method: 'POST',
-      body: JSON.stringify(enrollmentData)
+      body: JSON.stringify(enrollmentData),
     });
   }
 
@@ -4321,17 +4047,17 @@ class ApiClient {
     id: number,
     enrollmentData: {
       status?: 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
-    }
+    },
   ) {
     return this.request(`/enrollments/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(enrollmentData)
+      body: JSON.stringify(enrollmentData),
     });
   }
 
   async deleteEnrollment(id: number) {
     return this.request(`/enrollments/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -4378,7 +4104,7 @@ class ApiClient {
 
   async deleteProfile(id: number) {
     return this.request(`/profiles/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 
@@ -4393,7 +4119,7 @@ class ApiClient {
   }) {
     return this.request('/auth/change-password', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 
@@ -4424,7 +4150,7 @@ class ApiClient {
   }) {
     const response = await this.request('/theme/current/config', {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data;
   }
@@ -4456,21 +4182,21 @@ class ApiClient {
   }) {
     const response = await this.request('/theme/current/config/draft', {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data;
   }
 
   async publishThemeConfig() {
     const response = await this.request('/theme/current/config/publish', {
-      method: 'POST'
+      method: 'POST',
     });
     return response.data;
   }
 
   async getUserProfiles() {
     return this.request('/auth/profiles', {
-      method: 'POST'
+      method: 'POST',
     });
   }
 
@@ -4492,7 +4218,7 @@ class ApiClient {
   }) {
     const response = await this.request('/ui-template/current', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return (response.data as any)?.data ?? null;
   }
@@ -4510,7 +4236,7 @@ class ApiClient {
   }) {
     const response = await this.request('/ui-template/current', {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return (response.data as any)?.data ?? null;
   }
@@ -4528,21 +4254,21 @@ class ApiClient {
   }) {
     const response = await this.request('/ui-template/current/draft', {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return (response.data as any)?.data ?? null;
   }
 
   async publishUITemplate() {
     const response = await this.request('/ui-template/current/publish', {
-      method: 'POST'
+      method: 'POST',
     });
     return (response.data as any)?.data ?? null;
   }
 
   async publishSite() {
     const response = await this.request('/ui-template/current/publish-site', {
-      method: 'POST'
+      method: 'POST',
     });
     return response.data;
   }
@@ -4555,7 +4281,7 @@ class ApiClient {
   async updateSellerIdentity(payload: UpdateSellerIdentityPayload) {
     const response = await this.request('/academies/current/seller-identity', {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data as SellerIdentity;
   }
@@ -4566,50 +4292,43 @@ class ApiClient {
   }
 
   async verifyKycIdentity(payload: VerifyKycIdentityPayload) {
-    const response = await this.request(
-      '/academies/current/kyc/verify-identity',
-      {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      }
-    );
+    const response = await this.request('/academies/current/kyc/verify-identity', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
     return response.data as KycState;
   }
 
   async verifyKycSheba(payload: VerifyKycShebaPayload) {
     const response = await this.request('/academies/current/kyc/verify-sheba', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data as KycState;
   }
 
   async confirmKycIban() {
     const response = await this.request('/academies/current/kyc/confirm-iban', {
-      method: 'POST'
+      method: 'POST',
     });
     return response.data as KycState;
   }
 
   async getVerifiedKycIbans() {
-    const response = await this.request(
-      '/academies/current/kyc/verified-ibans'
-    );
+    const response = await this.request('/academies/current/kyc/verified-ibans');
     return response.data as VerifiedIban[];
   }
 
   async selectKycIban(shebaNumber: string) {
     const response = await this.request('/academies/current/kyc/select-iban', {
       method: 'POST',
-      body: JSON.stringify({ sheba_number: shebaNumber })
+      body: JSON.stringify({ sheba_number: shebaNumber }),
     });
     return response.data as KycState;
   }
 
   async getAcademyKyc(academyId: string) {
-    const response = await this.request(
-      `/compliance/review-queue/${academyId}/kyc`
-    );
+    const response = await this.request(`/compliance/review-queue/${academyId}/kyc`);
     return response.data as KycState;
   }
 
@@ -4625,28 +4344,21 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({
         enamad_code,
-        ...(enamad_seal_id ? { enamad_seal_id } : {})
-      })
+        ...(enamad_seal_id ? { enamad_seal_id } : {}),
+      }),
     });
     return response.data as EnamadState;
   }
 
-  async updateEnamadHosting(body: {
-    enamad_seal_id?: string;
-    enamad_title_verify?: boolean;
-  }) {
+  async updateEnamadHosting(body: { enamad_seal_id?: string; enamad_title_verify?: boolean }) {
     const response = await this.request('/compliance/current/enamad', {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return response.data as EnamadState;
   }
 
-  async getReviewQueue(params: {
-    status?: string;
-    public_domain_only?: boolean;
-    page?: number;
-  }) {
+  async getReviewQueue(params: { status?: string; public_domain_only?: boolean; page?: number }) {
     const query = new URLSearchParams();
     if (params.status) query.set('status', params.status);
     if (params.public_domain_only) query.set('public_domain_only', 'true');
@@ -4656,17 +4368,11 @@ class ApiClient {
     return response.data as ReviewQueueResponse;
   }
 
-  async reviewAcademyContent(
-    academyId: string,
-    body: { status: string; note?: string }
-  ) {
-    const response = await this.request(
-      `/compliance/review-queue/${academyId}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify(body)
-      }
-    );
+  async reviewAcademyContent(academyId: string, body: { status: string; note?: string }) {
+    const response = await this.request(`/compliance/review-queue/${academyId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
     return response.data as ReviewQueueItem;
   }
 
@@ -4679,13 +4385,10 @@ class ApiClient {
     };
   }
 
-  async resolveAbuseReport(
-    id: string,
-    body: { status: string; note?: string }
-  ) {
+  async resolveAbuseReport(id: string, body: { status: string; note?: string }) {
     const response = await this.request(`/compliance/abuse-reports/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return response.data as AbuseReport;
   }
@@ -4698,33 +4401,28 @@ class ApiClient {
   async updateModerationDefaults(patch: Partial<ModerationPolicyMap>) {
     const response = await this.request('/compliance/moderation-defaults', {
       method: 'PATCH',
-      body: JSON.stringify(patch)
+      body: JSON.stringify(patch),
     });
     return response.data as ModerationPolicyMap;
   }
 
   async getAcademyModerationPolicy(academyId: string) {
-    const response = await this.request(
-      `/compliance/review-queue/${academyId}/moderation-policy`
-    );
+    const response = await this.request(`/compliance/review-queue/${academyId}/moderation-policy`);
     return response.data as Partial<ModerationPolicyMap>;
   }
 
   async setAcademyModerationPolicy(
     academyId: string,
-    body: { content_kind: ContentKind; policy: ModerationPolicy | null }
+    body: { content_kind: ContentKind; policy: ModerationPolicy | null },
   ) {
-    const response = await this.request(
-      `/compliance/review-queue/${academyId}/moderation-policy`,
-      { method: 'PATCH', body: JSON.stringify(body) }
-    );
+    const response = await this.request(`/compliance/review-queue/${academyId}/moderation-policy`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
     return response.data as Partial<ModerationPolicyMap>;
   }
 
-  async getContentQueue(params: {
-    content_kind?: ContentKind;
-    status?: string;
-  }) {
+  async getContentQueue(params: { content_kind?: ContentKind; status?: string }) {
     const query = new URLSearchParams();
     if (params.content_kind) query.set('content_kind', params.content_kind);
     if (params.status) query.set('status', params.status);
@@ -4735,29 +4433,26 @@ class ApiClient {
 
   async reviewContentItem(
     id: string,
-    body: { content_kind: ContentKind; status: string; note?: string }
+    body: { content_kind: ContentKind; status: string; note?: string },
   ) {
     const response = await this.request(`/compliance/content-queue/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return response.data;
   }
 
-  async reviewAcademyEnamad(
-    academyId: string,
-    body: { approved: boolean; note?: string }
-  ) {
-    const response = await this.request(
-      `/compliance/review-queue/${academyId}/enamad`,
-      { method: 'PATCH', body: JSON.stringify(body) }
-    );
+  async reviewAcademyEnamad(academyId: string, body: { approved: boolean; note?: string }) {
+    const response = await this.request(`/compliance/review-queue/${academyId}/enamad`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
     return response.data as EnamadState;
   }
 
   async createTemplatePreviewToken() {
     const response = await this.request('/ui-template/preview-token', {
-      method: 'POST'
+      method: 'POST',
     });
     return response.data as {
       token: string;
@@ -4785,29 +4480,23 @@ class ApiClient {
 
   /** One vote per academy — calling again replaces the previous stars. */
   async rateTemplate(key: string, stars: number) {
-    const response = await this.request(
-      `/ui-template/templates/${key}/rating`,
-      {
-        method: 'PUT',
-        body: JSON.stringify({ stars })
-      }
-    );
+    const response = await this.request(`/ui-template/templates/${key}/rating`, {
+      method: 'PUT',
+      body: JSON.stringify({ stars }),
+    });
     return (response.data as any)?.data ?? null;
   }
 
   async clearTemplateRating(key: string) {
-    const response = await this.request(
-      `/ui-template/templates/${key}/rating`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request(`/ui-template/templates/${key}/rating`, {
+      method: 'DELETE',
+    });
     return (response.data as any)?.data ?? null;
   }
 
   async applyTemplatePreset(presetId: string) {
     const response = await this.request(`/ui-template/presets/${presetId}`, {
-      method: 'POST'
+      method: 'POST',
     });
     return (response.data as any)?.data ?? null;
   }
@@ -4815,7 +4504,7 @@ class ApiClient {
   async generateTemplate(payload: { field: string; presetId?: string }) {
     const response = await this.request('/ui-template/current/generate', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return (response.data as any)?.data ?? null;
   }
@@ -4828,7 +4517,7 @@ class ApiClient {
   }) {
     const response = await this.request('/ui-template/templates', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return (response.data as any)?.data ?? null;
   }
@@ -4840,29 +4529,26 @@ class ApiClient {
       name?: string;
       description?: string;
       preview?: string;
-    } = {}
+    } = {},
   ) {
-    const response = await this.request(
-      '/ui-template/current/save-as-template',
-      {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      }
-    );
+    const response = await this.request('/ui-template/current/save-as-template', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
     return (response.data as { data?: unknown })?.data ?? null;
   }
 
   // Drops this academy's dedicated copy and re-applies the original preset.
   async resetTemplateToOriginal() {
     const response = await this.request('/ui-template/current/copy', {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return (response.data as any)?.data as { presetId: string } | undefined;
   }
 
   async deleteDedicatedTemplate(key: string) {
     const response = await this.request(`/ui-template/templates/${key}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return (response.data as any) ?? null;
   }
@@ -4873,74 +4559,59 @@ class ApiClient {
     return Array.isArray(data) ? data : [];
   }
 
-  async overridePublicTemplate(
-    key: string,
-    payload: { blocks: unknown[]; preview?: string }
-  ) {
+  async overridePublicTemplate(key: string, payload: { blocks: unknown[]; preview?: string }) {
     const response = await this.request(`/ui-template/templates/${key}`, {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return (response.data as any) ?? null;
   }
 
   async setOwnedTemplateCover(image: string) {
-    const response = await this.request(
-      '/ui-template/current/dedicated/cover',
-      { method: 'PATCH', body: JSON.stringify({ image }) }
-    );
+    const response = await this.request('/ui-template/current/dedicated/cover', {
+      method: 'PATCH',
+      body: JSON.stringify({ image }),
+    });
     return (response.data as any) ?? null;
   }
 
   async setTemplateCover(key: string, image: string) {
     const response = await this.request(`/ui-template/templates/${key}/cover`, {
       method: 'PATCH',
-      body: JSON.stringify({ image })
+      body: JSON.stringify({ image }),
     });
     return (response.data as any) ?? null;
   }
 
   async setSectionCover(key: string, blockId: string, image: string) {
-    const response = await this.request(
-      `/ui-template/templates/${key}/sections/${blockId}/cover`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ image })
-      }
-    );
+    const response = await this.request(`/ui-template/templates/${key}/sections/${blockId}/cover`, {
+      method: 'PATCH',
+      body: JSON.stringify({ image }),
+    });
     return (response.data as any) ?? null;
   }
 
   async setTemplateVisibility(key: string, visibility: 'PUBLIC' | 'DEDICATED') {
-    const response = await this.request(
-      `/ui-template/templates/${key}/visibility`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ visibility })
-      }
-    );
+    const response = await this.request(`/ui-template/templates/${key}/visibility`, {
+      method: 'PATCH',
+      body: JSON.stringify({ visibility }),
+    });
     return (response.data as any) ?? null;
   }
 
   async importSectionToDraft(payload: { presetId: string; blockId: string }) {
     const response = await this.request('/ui-template/current/draft/sections', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return (response.data as { data?: unknown })?.data ?? null;
   }
 
-  async swapSectionInDraft(
-    blockId: string,
-    payload: { presetId: string; blockId: string }
-  ) {
-    const response = await this.request(
-      `/ui-template/current/draft/sections/${blockId}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify(payload)
-      }
-    );
+  async swapSectionInDraft(blockId: string, payload: { presetId: string; blockId: string }) {
+    const response = await this.request(`/ui-template/current/draft/sections/${blockId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
     return (response.data as { data?: unknown })?.data ?? null;
   }
 
@@ -4956,7 +4627,7 @@ class ApiClient {
   }) {
     const response = await this.request('/academies/current/pricing-config', {
       method: 'PATCH',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return response.data;
   }
@@ -4975,13 +4646,10 @@ class ApiClient {
     if (params?.search) queryParams.append('search', params.search);
     if (params?.is_active !== undefined)
       queryParams.append('is_active', params.is_active.toString());
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
 
     const query = queryParams.toString();
-    const response = await this.request<any>(
-      `/discounts${query ? `?${query}` : ''}`
-    );
+    const response = await this.request<any>(`/discounts${query ? `?${query}` : ''}`);
 
     // Backend returns { message, status, data: { discounts, pagination } };
     // unwrap to the payload so callers read `.discounts` directly.
@@ -4990,13 +4658,11 @@ class ApiClient {
 
   /** Platform plan vouchers the signed-in manager may redeem (read-only). */
   async getRedeemablePlanVouchers(): Promise<{ vouchers: CouponSummary[] }> {
-    const response = await this.request<{ vouchers: CouponSummary[] }>(
-      '/discounts/plan-vouchers'
-    );
+    const response = await this.request<{ vouchers: CouponSummary[] }>('/discounts/plan-vouchers');
 
     return (
       unwrapDataEnvelope<{ vouchers: CouponSummary[] }>(response.data) ?? {
-        vouchers: []
+        vouchers: [],
       }
     );
   }
@@ -5016,7 +4682,7 @@ class ApiClient {
     if (params.exclude_id) queryParams.append('exclude_id', params.exclude_id);
 
     const response = await this.request<{ available: boolean }>(
-      `/discounts/check-code?${queryParams.toString()}`
+      `/discounts/check-code?${queryParams.toString()}`,
     );
 
     return unwrapDataEnvelope<{ available: boolean }>(response.data);
@@ -5046,7 +4712,7 @@ class ApiClient {
   }) {
     const response = await this.request<any>('/discounts', {
       method: 'POST',
-      body: JSON.stringify(discountData)
+      body: JSON.stringify(discountData),
     });
 
     return unwrapDataEnvelope<any>(response.data);
@@ -5067,11 +4733,11 @@ class ApiClient {
       is_active?: boolean;
       min_purchase_amount?: number;
       max_discount_amount?: number;
-    }
+    },
   ) {
     const response = await this.request<any>(`/discounts/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(discountData)
+      body: JSON.stringify(discountData),
     });
 
     return unwrapDataEnvelope<any>(response.data);
@@ -5079,7 +4745,7 @@ class ApiClient {
 
   async deleteDiscount(id: string) {
     const response = await this.request<any>(`/discounts/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
 
     // Backend returns { message, status }
@@ -5090,7 +4756,7 @@ class ApiClient {
     code: string,
     amount: number,
     user_id?: number,
-    options?: { academy_id?: string | null; profile_id?: string }
+    options?: { academy_id?: string | null; profile_id?: string },
   ) {
     const response = await this.request<{
       discount_code_id: string;
@@ -5109,8 +4775,8 @@ class ApiClient {
         amount,
         user_id,
         academy_id: options?.academy_id,
-        profile_id: options?.profile_id
-      })
+        profile_id: options?.profile_id,
+      }),
     });
 
     return unwrapDataEnvelope(response.data) ?? (response.data as any);
@@ -5123,44 +4789,34 @@ class ApiClient {
   // Cost Categories
   async getCostCategories() {
     const response = await this.request<any>('/financial/cost-categories', {
-      method: 'GET'
+      method: 'GET',
     });
     return response.data as any[];
   }
 
-  async createCostCategory(data: {
-    name: string;
-    description?: string;
-    is_active?: boolean;
-  }) {
+  async createCostCategory(data: { name: string; description?: string; is_active?: boolean }) {
     const response = await this.request<any>('/financial/cost-categories', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return response.data as any;
   }
 
   async updateCostCategory(
     id: number,
-    data: Partial<{ name: string; description?: string; is_active?: boolean }>
+    data: Partial<{ name: string; description?: string; is_active?: boolean }>,
   ) {
-    const response = await this.request<any>(
-      `/financial/cost-categories/${id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>(`/financial/cost-categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
     return response.data as any;
   }
 
   async deleteCostCategory(id: number) {
-    const response = await this.request<any>(
-      `/financial/cost-categories/${id}`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request<any>(`/financial/cost-categories/${id}`, {
+      method: 'DELETE',
+    });
     return response.data as any;
   }
 
@@ -5173,15 +4829,10 @@ class ApiClient {
     month?: number;
   }) {
     const queryParams = new URLSearchParams();
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
     if (params?.cost_category_id)
-      queryParams.append(
-        'cost_category_id',
-        params.cost_category_id.toString()
-      );
-    if (params?.period_start)
-      queryParams.append('period_start', params.period_start);
+      queryParams.append('cost_category_id', params.cost_category_id.toString());
+    if (params?.period_start) queryParams.append('period_start', params.period_start);
     if (params?.period_end) queryParams.append('period_end', params.period_end);
     if (params?.year) queryParams.append('year', params.year.toString());
     if (params?.month) queryParams.append('month', params.month.toString());
@@ -5197,11 +4848,7 @@ class ApiClient {
     return response.data as any;
   }
 
-  async getAcademyRevenueFromPayments(
-    academyId?: string,
-    startDate?: string,
-    endDate?: string
-  ) {
+  async getAcademyRevenueFromPayments(academyId?: string, startDate?: string, endDate?: string) {
     const queryParams = new URLSearchParams();
     if (academyId) queryParams.append('academy_id', academyId.toString());
     if (startDate) queryParams.append('start_date', startDate);
@@ -5250,11 +4897,7 @@ class ApiClient {
     }
     const url = `/financial/settlement${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data
-    ) {
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
       return (response.data as any).data;
     }
     return response.data as any;
@@ -5278,10 +4921,9 @@ class ApiClient {
   }
 
   async getAcademySettlementDetail(academyId: string) {
-    const response = await this.request<any>(
-      `/financial/academies/${academyId}/settlement`,
-      { method: 'GET' }
-    );
+    const response = await this.request<any>(`/financial/academies/${academyId}/settlement`, {
+      method: 'GET',
+    });
     if ((response.data as any)?.data) return (response.data as any).data;
     return response.data as any;
   }
@@ -5292,14 +4934,14 @@ class ApiClient {
       bank_transaction_code: string;
       amount?: number;
       note?: string;
-    }
+    },
   ) {
     const response = await this.request<any>(
       `/financial/settlement/academies/${academyId}/settle`,
       {
         method: 'POST',
-        body: JSON.stringify(payload)
-      }
+        body: JSON.stringify(payload),
+      },
     );
     if ((response.data as any)?.data) return (response.data as any).data;
     return response.data as any;
@@ -5311,8 +4953,7 @@ class ApiClient {
     end_date?: string;
   }) {
     const queryParams = new URLSearchParams();
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
     if (params?.start_date) queryParams.append('start_date', params.start_date);
     if (params?.end_date) queryParams.append('end_date', params.end_date);
     const url = `/financial/settlement/reconciliation${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
@@ -5320,13 +4961,10 @@ class ApiClient {
     return response.data as any;
   }
 
-  async lockIranFinancialPeriod(data: {
-    academy_id: string;
-    lock_until: string;
-  }) {
+  async lockIranFinancialPeriod(data: { academy_id: string; lock_until: string }) {
     const response = await this.request<any>('/financial/settlement/lock', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return response.data as any;
   }
@@ -5336,13 +4974,10 @@ class ApiClient {
     teacher_id: number;
     is_visible: boolean;
   }) {
-    const response = await this.request<any>(
-      '/financial/teacher-revenue-visibility',
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>('/financial/teacher-revenue-visibility', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return response.data as any;
   }
 
@@ -5361,9 +4996,7 @@ class ApiClient {
   }
 
   private async metrics<T>(path: string, query: MetricsQuery = {}): Promise<T> {
-    const res = await this.request<T>(
-      `/platform-metrics/${path}${this.metricsQuery(query)}`
-    );
+    const res = await this.request<T>(`/platform-metrics/${path}${this.metricsQuery(query)}`);
     return res.data as T;
   }
 
@@ -5455,7 +5088,7 @@ class ApiClient {
       months_skipped: number;
       academies: number;
     }>(`/platform-metrics/snapshot/tick${months ? `?months=${months}` : ''}`, {
-      method: 'POST'
+      method: 'POST',
     });
     return res.data;
   }
@@ -5473,16 +5106,15 @@ class ApiClient {
   }) {
     const res = await this.request<PlatformCostRow>('/platform-metrics/costs', {
       method: 'POST',
-      body: JSON.stringify(input)
+      body: JSON.stringify(input),
     });
     return res.data;
   }
 
   async deletePlatformCost(id: string) {
-    const res = await this.request<{ deleted: true }>(
-      `/platform-metrics/costs/${id}`,
-      { method: 'DELETE' }
-    );
+    const res = await this.request<{ deleted: true }>(`/platform-metrics/costs/${id}`, {
+      method: 'DELETE',
+    });
     return res.data;
   }
 
@@ -5497,10 +5129,10 @@ class ApiClient {
     channel: string;
     note?: string;
   }) {
-    const res = await this.request<MarketingSpendRow>(
-      '/platform-metrics/marketing-spend',
-      { method: 'POST', body: JSON.stringify(input) }
-    );
+    const res = await this.request<MarketingSpendRow>('/platform-metrics/marketing-spend', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
     return res.data;
   }
 
@@ -5510,14 +5142,14 @@ class ApiClient {
    */
   async downloadMetricsDataRoom(
     query: MetricsQuery = {},
-    format: 'csv' | 'json' = 'csv'
+    format: 'csv' | 'json' = 'csv',
   ): Promise<Blob> {
     const params = this.metricsQuery(query);
     const separator = params ? '&' : '?';
     const url = `${this.baseURL}/platform-metrics/export/data-room${params}${separator}format=${format}`;
     const response = await fetch(url, {
       method: 'GET',
-      credentials: 'include'
+      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error(`Failed to export metrics: ${response.status}`);
@@ -5525,16 +5157,13 @@ class ApiClient {
     return response.blob();
   }
 
-  async downloadMetricsSection(
-    section: string,
-    query: MetricsQuery = {}
-  ): Promise<Blob> {
+  async downloadMetricsSection(section: string, query: MetricsQuery = {}): Promise<Blob> {
     const params = this.metricsQuery(query);
     const separator = params ? '&' : '?';
     const url = `${this.baseURL}/platform-metrics/export${params}${separator}section=${section}`;
     const response = await fetch(url, {
       method: 'GET',
-      credentials: 'include'
+      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error(`Failed to export section: ${response.status}`);
@@ -5548,8 +5177,7 @@ class ApiClient {
     end_date?: string;
   }): Promise<Blob> {
     const queryParams = new URLSearchParams();
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
     if (params?.start_date) queryParams.append('start_date', params.start_date);
     if (params?.end_date) queryParams.append('end_date', params.end_date);
     const endpoint = `/financial/settlement/export${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
@@ -5557,7 +5185,7 @@ class ApiClient {
 
     const response = await fetch(url, {
       method: 'GET',
-      credentials: 'include'
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -5567,11 +5195,7 @@ class ApiClient {
     return response.blob();
   }
 
-  async getAcademyFinancialOverview(
-    academyId?: string,
-    startDate?: string,
-    endDate?: string
-  ) {
+  async getAcademyFinancialOverview(academyId?: string, startDate?: string, endDate?: string) {
     const queryParams = new URLSearchParams();
     if (academyId) queryParams.append('academy_id', academyId.toString());
     if (startDate) queryParams.append('start_date', startDate);
@@ -5594,7 +5218,7 @@ class ApiClient {
   }) {
     const response = await this.request<any>('/financial/academy-records', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return response.data as any;
   }
@@ -5610,25 +5234,19 @@ class ApiClient {
       cost?: number;
       currency?: string;
       notes?: string;
-    }>
+    }>,
   ) {
-    const response = await this.request<any>(
-      `/financial/academy-records/${id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>(`/financial/academy-records/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
     return response.data as any;
   }
 
   async deleteAcademyFinancialRecord(id: number) {
-    const response = await this.request<any>(
-      `/financial/academy-records/${id}`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request<any>(`/financial/academy-records/${id}`, {
+      method: 'DELETE',
+    });
     return response.data as any;
   }
 
@@ -5642,12 +5260,8 @@ class ApiClient {
   }) {
     const queryParams = new URLSearchParams();
     if (params?.cost_category_id)
-      queryParams.append(
-        'cost_category_id',
-        params.cost_category_id.toString()
-      );
-    if (params?.period_start)
-      queryParams.append('period_start', params.period_start);
+      queryParams.append('cost_category_id', params.cost_category_id.toString());
+    if (params?.period_start) queryParams.append('period_start', params.period_start);
     if (params?.period_end) queryParams.append('period_end', params.period_end);
     if (params?.year) queryParams.append('year', params.year.toString());
     if (params?.month) queryParams.append('month', params.month.toString());
@@ -5658,12 +5272,9 @@ class ApiClient {
   }
 
   async getPlatformFinancialSummary() {
-    const response = await this.request<any>(
-      '/financial/platform-records/summary',
-      {
-        method: 'GET'
-      }
-    );
+    const response = await this.request<any>('/financial/platform-records/summary', {
+      method: 'GET',
+    });
     return response.data as any;
   }
 
@@ -5678,7 +5289,7 @@ class ApiClient {
   }) {
     const response = await this.request<any>('/financial/platform-records', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return response.data as any;
   }
@@ -5693,25 +5304,19 @@ class ApiClient {
       cost?: number;
       currency?: string;
       notes?: string;
-    }>
+    }>,
   ) {
-    const response = await this.request<any>(
-      `/financial/platform-records/${id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>(`/financial/platform-records/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
     return response.data as any;
   }
 
   async deletePlatformFinancialRecord(id: number) {
-    const response = await this.request<any>(
-      `/financial/platform-records/${id}`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request<any>(`/financial/platform-records/${id}`, {
+      method: 'DELETE',
+    });
     return response.data as any;
   }
 
@@ -5724,7 +5329,7 @@ class ApiClient {
 
   async getFinancialFormula(id: number) {
     const response = await this.request<any>(`/financial/formulas/${id}`, {
-      method: 'GET'
+      method: 'GET',
     });
     return response.data as any;
   }
@@ -5732,20 +5337,9 @@ class ApiClient {
   async createFinancialFormula(data: {
     name: string;
     description?: string;
-    template:
-      | 'SIMPLE'
-      | 'PERCENTAGE_OF'
-      | 'FIXED_AMOUNT'
-      | 'PERCENTAGE_BONUS'
-      | 'CUSTOM';
+    template: 'SIMPLE' | 'PERCENTAGE_OF' | 'FIXED_AMOUNT' | 'PERCENTAGE_BONUS' | 'CUSTOM';
     steps: Array<{
-      operation:
-        | 'ADD'
-        | 'SUBTRACT'
-        | 'MULTIPLY'
-        | 'DIVIDE'
-        | 'PERCENTAGE'
-        | 'FIXED';
+      operation: 'ADD' | 'SUBTRACT' | 'MULTIPLY' | 'DIVIDE' | 'PERCENTAGE' | 'FIXED';
       value?: number | string;
       variable?: 'REVENUE' | 'COST' | 'PROFIT' | 'FINAL_PROFIT';
       percentage?: number;
@@ -5756,7 +5350,7 @@ class ApiClient {
   }) {
     const response = await this.request<any>('/financial/formulas', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return response.data as any;
   }
@@ -5766,50 +5360,36 @@ class ApiClient {
     data: Partial<{
       name?: string;
       description?: string;
-      template?:
-        | 'SIMPLE'
-        | 'PERCENTAGE_OF'
-        | 'FIXED_AMOUNT'
-        | 'PERCENTAGE_BONUS'
-        | 'CUSTOM';
+      template?: 'SIMPLE' | 'PERCENTAGE_OF' | 'FIXED_AMOUNT' | 'PERCENTAGE_BONUS' | 'CUSTOM';
       steps?: Array<{
-        operation:
-          | 'ADD'
-          | 'SUBTRACT'
-          | 'MULTIPLY'
-          | 'DIVIDE'
-          | 'PERCENTAGE'
-          | 'FIXED';
+        operation: 'ADD' | 'SUBTRACT' | 'MULTIPLY' | 'DIVIDE' | 'PERCENTAGE' | 'FIXED';
         value?: number | string;
         variable?: 'REVENUE' | 'COST' | 'PROFIT' | 'FINAL_PROFIT';
         percentage?: number;
       }>;
       type?: 'REVENUE' | 'COST' | 'BENEFIT';
       is_active?: boolean;
-    }>
+    }>,
   ) {
     const response = await this.request<any>(`/financial/formulas/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return response.data as any;
   }
 
   async deleteFinancialFormula(id: number) {
     const response = await this.request<any>(`/financial/formulas/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return response.data as any;
   }
 
   async executeFormula(name: string, variables: Record<string, any>) {
-    const response = await this.request<any>(
-      `/financial/formulas/${name}/execute`,
-      {
-        method: 'POST',
-        body: JSON.stringify(variables)
-      }
-    );
+    const response = await this.request<any>(`/financial/formulas/${name}/execute`, {
+      method: 'POST',
+      body: JSON.stringify(variables),
+    });
     return response.data as { result: number };
   }
 
@@ -5825,25 +5405,17 @@ class ApiClient {
     reason?: string;
     apply_immediately?: boolean;
   }) {
-    const response = await this.request<any>(
-      '/financial/formula-applications',
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>('/financial/formula-applications', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return response.data as any;
   }
 
-  async getFormulaApplications(params?: {
-    academy_id?: string;
-    formula_id?: number;
-  }) {
+  async getFormulaApplications(params?: { academy_id?: string; formula_id?: number }) {
     const queryParams = new URLSearchParams();
-    if (params?.academy_id)
-      queryParams.append('academy_id', params.academy_id.toString());
-    if (params?.formula_id)
-      queryParams.append('formula_id', params.formula_id.toString());
+    if (params?.academy_id) queryParams.append('academy_id', params.academy_id.toString());
+    if (params?.formula_id) queryParams.append('formula_id', params.formula_id.toString());
 
     const url = `/financial/formula-applications${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await this.request<any>(url, { method: 'GET' });
@@ -5851,22 +5423,16 @@ class ApiClient {
   }
 
   async applyFormulaApplication(id: number) {
-    const response = await this.request<any>(
-      `/financial/formula-applications/${id}/apply`,
-      {
-        method: 'POST'
-      }
-    );
+    const response = await this.request<any>(`/financial/formula-applications/${id}/apply`, {
+      method: 'POST',
+    });
     return response.data as any;
   }
 
   async deleteFormulaApplication(id: number) {
-    const response = await this.request<any>(
-      `/financial/formula-applications/${id}`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request<any>(`/financial/formula-applications/${id}`, {
+      method: 'DELETE',
+    });
     return response.data as any;
   }
 
@@ -5876,18 +5442,15 @@ class ApiClient {
 
   async getDatabaseModels() {
     const response = await this.request<any>('/database/models', {
-      method: 'GET'
+      method: 'GET',
     });
     return response.data as string[];
   }
 
   async getModelFields(modelName: string) {
-    const response = await this.request<any>(
-      `/database/models/${modelName}/fields`,
-      {
-        method: 'GET'
-      }
-    );
+    const response = await this.request<any>(`/database/models/${modelName}/fields`, {
+      method: 'GET',
+    });
     return response.data as { fields: any[]; sample: any };
   }
 
@@ -5898,7 +5461,7 @@ class ApiClient {
       limit?: number;
       where?: string;
       orderBy?: string;
-    }
+    },
   ) {
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -5917,44 +5480,32 @@ class ApiClient {
   }
 
   async getModelRecord(modelName: string, id: number) {
-    const response = await this.request<any>(
-      `/database/models/${modelName}/records/${id}`,
-      {
-        method: 'GET'
-      }
-    );
+    const response = await this.request<any>(`/database/models/${modelName}/records/${id}`, {
+      method: 'GET',
+    });
     return response.data as any;
   }
 
   async createModelRecord(modelName: string, data: any) {
-    const response = await this.request<any>(
-      `/database/models/${modelName}/records`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>(`/database/models/${modelName}/records`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return response.data as any;
   }
 
   async updateModelRecord(modelName: string, id: number, data: any) {
-    const response = await this.request<any>(
-      `/database/models/${modelName}/records/${id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data)
-      }
-    );
+    const response = await this.request<any>(`/database/models/${modelName}/records/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
     return response.data as any;
   }
 
   async deleteModelRecord(modelName: string, id: number) {
-    const response = await this.request<any>(
-      `/database/models/${modelName}/records/${id}`,
-      {
-        method: 'DELETE'
-      }
-    );
+    const response = await this.request<any>(`/database/models/${modelName}/records/${id}`, {
+      method: 'DELETE',
+    });
     return response.data as any;
   }
 
@@ -5974,9 +5525,7 @@ class ApiClient {
         if (v !== undefined) qs.append(k, String(v));
       });
     const url = qs.toString() ? `/assignments?${qs}` : '/assignments';
-    const res = await this.request<
-      AssignmentListResponse | { data: AssignmentListResponse }
-    >(url);
+    const res = await this.request<AssignmentListResponse | { data: AssignmentListResponse }>(url);
     return unwrapDataEnvelope(res.data);
   }
 
@@ -5991,12 +5540,13 @@ class ApiClient {
     max_score?: number;
     is_required?: boolean;
   }): Promise<LearningAssignment> {
-    const res = await this.request<
-      LearningAssignment | { data: LearningAssignment }
-    >('/assignments', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    const res = await this.request<LearningAssignment | { data: LearningAssignment }>(
+      '/assignments',
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      },
+    );
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6008,14 +5558,15 @@ class ApiClient {
       due_date: string;
       max_score: number;
       is_required: boolean;
-    }>
+    }>,
   ): Promise<LearningAssignment> {
-    const res = await this.request<
-      LearningAssignment | { data: LearningAssignment }
-    >(`/assignments/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
+    const res = await this.request<LearningAssignment | { data: LearningAssignment }>(
+      `/assignments/${id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      },
+    );
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6033,25 +5584,22 @@ class ApiClient {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) qs.append(k, String(v));
       });
-    const url = qs.toString()
-      ? `/assignments/submissions?${qs}`
-      : '/assignments/submissions';
-    const res = await this.request<
-      SubmissionListResponse | { data: SubmissionListResponse }
-    >(url);
+    const url = qs.toString() ? `/assignments/submissions?${qs}` : '/assignments/submissions';
+    const res = await this.request<SubmissionListResponse | { data: SubmissionListResponse }>(url);
     return unwrapDataEnvelope(res.data);
   }
 
   async gradeSubmission(
     submissionId: string,
-    data: { score: number; feedback?: string }
+    data: { score: number; feedback?: string },
   ): Promise<AssignmentSubmission> {
-    const res = await this.request<
-      AssignmentSubmission | { data: AssignmentSubmission }
-    >(`/assignments/submissions/${submissionId}/grade`, {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
+    const res = await this.request<AssignmentSubmission | { data: AssignmentSubmission }>(
+      `/assignments/submissions/${submissionId}/grade`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      },
+    );
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6070,12 +5618,10 @@ class ApiClient {
         if (value !== undefined) qs.append(key, String(value));
       });
     }
-    const url = qs.toString()
-      ? `/learning-record/timeline?${qs}`
-      : '/learning-record/timeline';
-    const res = await this.request<
-      LearningTimelineResponse | { data: LearningTimelineResponse }
-    >(url);
+    const url = qs.toString() ? `/learning-record/timeline?${qs}` : '/learning-record/timeline';
+    const res = await this.request<LearningTimelineResponse | { data: LearningTimelineResponse }>(
+      url,
+    );
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6089,12 +5635,10 @@ class ApiClient {
         if (value !== undefined) qs.append(key, String(value));
       });
     }
-    const url = qs.toString()
-      ? `/learning-record/summary?${qs}`
-      : '/learning-record/summary';
-    const res = await this.request<
-      LearningSummaryResponse | { data: LearningSummaryResponse }
-    >(url);
+    const url = qs.toString() ? `/learning-record/summary?${qs}` : '/learning-record/summary';
+    const res = await this.request<LearningSummaryResponse | { data: LearningSummaryResponse }>(
+      url,
+    );
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6109,12 +5653,8 @@ class ApiClient {
         if (value !== undefined) qs.append(key, String(value));
       });
     }
-    const url = qs.toString()
-      ? `/learning-record/ops/queue?${qs}`
-      : '/learning-record/ops/queue';
-    const res = await this.request<
-      OpsQueueResponse | { data: OpsQueueResponse }
-    >(url);
+    const url = qs.toString() ? `/learning-record/ops/queue?${qs}` : '/learning-record/ops/queue';
+    const res = await this.request<OpsQueueResponse | { data: OpsQueueResponse }>(url);
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6126,11 +5666,10 @@ class ApiClient {
     enrollment_id?: string;
   }): Promise<{ id: string; created_at: string }> {
     const res = await this.request<
-      | { id: string; created_at: string }
-      | { data: { id: string; created_at: string } }
+      { id: string; created_at: string } | { data: { id: string; created_at: string } }
     >('/learning-record/ops/intervention-notes', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return unwrapDataEnvelope(res.data);
   }
@@ -6138,32 +5677,31 @@ class ApiClient {
   // ─── Certificates ──────────────────────────────────────────────────────────
 
   async getCertificateRoster(courseId: string): Promise<CertificateRoster> {
-    const res = await this.request<
-      CertificateRoster | { data: CertificateRoster }
-    >(`/courses/${courseId}/certificates/roster`);
+    const res = await this.request<CertificateRoster | { data: CertificateRoster }>(
+      `/courses/${courseId}/certificates/roster`,
+    );
     return unwrapDataEnvelope(res.data) as CertificateRoster;
   }
 
   async issueCertificate(enrollmentId: string): Promise<IssuedCertificate> {
-    const res = await this.request<
-      IssuedCertificate | { data: IssuedCertificate }
-    >('/certificates', {
-      method: 'POST',
-      body: JSON.stringify({ enrollment_id: enrollmentId })
-    });
+    const res = await this.request<IssuedCertificate | { data: IssuedCertificate }>(
+      '/certificates',
+      {
+        method: 'POST',
+        body: JSON.stringify({ enrollment_id: enrollmentId }),
+      },
+    );
     return unwrapDataEnvelope(res.data) as IssuedCertificate;
   }
 
-  async revokeCertificate(
-    certificateId: string,
-    reason?: string
-  ): Promise<IssuedCertificate> {
-    const res = await this.request<
-      IssuedCertificate | { data: IssuedCertificate }
-    >(`/certificates/${certificateId}/revoke`, {
-      method: 'POST',
-      body: JSON.stringify({ reason })
-    });
+  async revokeCertificate(certificateId: string, reason?: string): Promise<IssuedCertificate> {
+    const res = await this.request<IssuedCertificate | { data: IssuedCertificate }>(
+      `/certificates/${certificateId}/revoke`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ reason }),
+      },
+    );
     return unwrapDataEnvelope(res.data) as IssuedCertificate;
   }
 
@@ -6171,18 +5709,18 @@ class ApiClient {
 
   async getCourseTopics(courseId: string): Promise<CourseTopic[]> {
     const res = await this.request<CourseTopic[] | { data: CourseTopic[] }>(
-      `/courses/${courseId}/topics`
+      `/courses/${courseId}/topics`,
     );
     return unwrapDataEnvelope(res.data) ?? [];
   }
 
   async replaceCourseTopics(
     courseId: string,
-    topics: { id?: string; title: string; description?: string | null }[]
+    topics: { id?: string; title: string; description?: string | null }[],
   ): Promise<CourseTopic[]> {
     const res = await this.request<CourseTopic[] | { data: CourseTopic[] }>(
       `/courses/${courseId}/topics`,
-      { method: 'PUT', body: JSON.stringify({ topics }) }
+      { method: 'PUT', body: JSON.stringify({ topics }) },
     );
     return unwrapDataEnvelope(res.data) ?? [];
   }
@@ -6191,14 +5729,14 @@ class ApiClient {
 
   async getClassSessions(groupId: string): Promise<ClassSession[]> {
     const res = await this.request<ClassSession[] | { data: ClassSession[] }>(
-      `/tutoring/groups/${groupId}/sessions`
+      `/tutoring/groups/${groupId}/sessions`,
     );
     return unwrapDataEnvelope(res.data) ?? [];
   }
 
   async getEngagementSessions(engagementId: string): Promise<ClassSession[]> {
     const res = await this.request<ClassSession[] | { data: ClassSession[] }>(
-      `/tutoring/engagements/${engagementId}/sessions`
+      `/tutoring/engagements/${engagementId}/sessions`,
     );
     return unwrapDataEnvelope(res.data) ?? [];
   }
@@ -6210,36 +5748,37 @@ class ApiClient {
       topic_id?: string | null;
       notes?: string | null;
       meeting_url?: string | null;
-    }
+    },
   ): Promise<ClassSession> {
     const res = await this.request<ClassSession | { data: ClassSession }>(
       `/tutoring/class-sessions/${sessionId}`,
-      { method: 'PATCH', body: JSON.stringify(data) }
+      { method: 'PATCH', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async rescheduleClassSession(
     sessionId: string,
-    data: { starts_at: string; ends_at?: string | null }
+    data: { starts_at: string; ends_at?: string | null },
   ): Promise<ClassSession> {
     const res = await this.request<ClassSession | { data: ClassSession }>(
       `/tutoring/class-sessions/${sessionId}/reschedule`,
-      { method: 'PATCH', body: JSON.stringify(data) }
+      { method: 'PATCH', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async setSessionRecording(
     sessionId: string,
-    data: { video_id: string | null; allow_download?: boolean }
+    data: { video_id: string | null; allow_download?: boolean },
   ): Promise<SessionRecording | null> {
-    const res = await this.request<
-      SessionRecording | null | { data: SessionRecording | null }
-    >(`/tutoring/class-sessions/${sessionId}/recording`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
+    const res = await this.request<SessionRecording | null | { data: SessionRecording | null }>(
+      `/tutoring/class-sessions/${sessionId}/recording`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      },
+    );
     return unwrapDataEnvelope(res.data) ?? null;
   }
 
@@ -6250,11 +5789,11 @@ class ApiClient {
       video_id?: string;
       title?: string;
       allow_download?: boolean;
-    }
+    },
   ): Promise<SessionMaterial> {
     const res = await this.request<SessionMaterial | { data: SessionMaterial }>(
       `/tutoring/class-sessions/${sessionId}/materials`,
-      { method: 'POST', body: JSON.stringify(data) }
+      { method: 'POST', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
@@ -6263,16 +5802,12 @@ class ApiClient {
   async addSessionMaterialFile(
     sessionId: string,
     file: File,
-    onProgress?: (progress: number) => void
+    onProgress?: (progress: number) => void,
   ): Promise<SessionMaterial> {
-    const uploaded = await this.uploadDocument(
-      file,
-      { title: file.name },
-      onProgress
-    );
+    const uploaded = await this.uploadDocument(file, { title: file.name }, onProgress);
     return this.addSessionMaterial(sessionId, {
       document_id: uploadedFileId(uploaded),
-      title: file.name
+      title: file.name,
     });
   }
 
@@ -6280,50 +5815,39 @@ class ApiClient {
   async addSessionMaterialVideo(
     sessionId: string,
     file: File,
-    onProgress?: (progress: number) => void
+    onProgress?: (progress: number) => void,
   ): Promise<SessionMaterial> {
-    const uploaded = await this.uploadVideo(
-      file,
-      { title: file.name },
-      undefined,
-      onProgress
-    );
+    const uploaded = await this.uploadVideo(file, { title: file.name }, undefined, onProgress);
     return this.addSessionMaterial(sessionId, {
       video_id: uploadedFileId(uploaded),
-      title: file.name
+      title: file.name,
     });
   }
 
-  async removeSessionMaterial(
-    sessionId: string,
-    materialId: string
-  ): Promise<void> {
-    await this.request(
-      `/tutoring/class-sessions/${sessionId}/materials/${materialId}`,
-      { method: 'DELETE' }
-    );
+  async removeSessionMaterial(sessionId: string, materialId: string): Promise<void> {
+    await this.request(`/tutoring/class-sessions/${sessionId}/materials/${materialId}`, {
+      method: 'DELETE',
+    });
   }
 
   async cancelClassSession(
     sessionId: string,
     resolution: ClassSessionCancelResolution,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     await this.request(`/tutoring/class-sessions/${sessionId}/cancel`, {
       method: 'PATCH',
-      body: JSON.stringify({ resolution, reason })
+      body: JSON.stringify({ resolution, reason }),
     });
   }
 
   // ─── Group classes ─────────────────────────────────────────────────────────
 
-  async createTutoringGroup(
-    data: CreateTutoringGroupPayload
-  ): Promise<TutoringGroup> {
-    const res = await this.request<TutoringGroup | { data: TutoringGroup }>(
-      '/tutoring/groups',
-      { method: 'POST', body: JSON.stringify(data) }
-    );
+  async createTutoringGroup(data: CreateTutoringGroupPayload): Promise<TutoringGroup> {
+    const res = await this.request<TutoringGroup | { data: TutoringGroup }>('/tutoring/groups', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6335,49 +5859,46 @@ class ApiClient {
     if (params?.course_id) qs.append('course_id', params.course_id);
     if (params?.status) qs.append('status', params.status);
     const url = qs.toString() ? `/tutoring/groups?${qs}` : '/tutoring/groups';
-    const res = await this.request<TutoringGroup[] | { data: TutoringGroup[] }>(
-      url
-    );
+    const res = await this.request<TutoringGroup[] | { data: TutoringGroup[] }>(url);
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];
   }
 
   async getTutoringGroup(groupId: string): Promise<TutoringGroup> {
     const res = await this.request<TutoringGroup | { data: TutoringGroup }>(
-      `/tutoring/groups/${groupId}`
+      `/tutoring/groups/${groupId}`,
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async updateTutoringGroup(
     groupId: string,
-    data: UpdateTutoringGroupPayload
+    data: UpdateTutoringGroupPayload,
   ): Promise<TutoringGroup> {
     const res = await this.request<TutoringGroup | { data: TutoringGroup }>(
       `/tutoring/groups/${groupId}`,
-      { method: 'PATCH', body: JSON.stringify(data) }
+      { method: 'PATCH', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async replaceTutoringGroupSlots(
     groupId: string,
-    slots: TutoringGroupSlot[]
+    slots: TutoringGroupSlot[],
   ): Promise<TutoringGroupSlot[]> {
-    const writableSlots = slots.map(
-      ({ weekday, start_minute, duration_minutes, lesson_id }) => ({
-        weekday,
-        start_minute,
-        duration_minutes,
-        ...(lesson_id ? { lesson_id } : {})
-      })
+    const writableSlots = slots.map(({ weekday, start_minute, duration_minutes, lesson_id }) => ({
+      weekday,
+      start_minute,
+      duration_minutes,
+      ...(lesson_id ? { lesson_id } : {}),
+    }));
+    const res = await this.request<TutoringGroupSlot[] | { data: TutoringGroupSlot[] }>(
+      `/tutoring/groups/${groupId}/slots`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ slots: writableSlots }),
+      },
     );
-    const res = await this.request<
-      TutoringGroupSlot[] | { data: TutoringGroupSlot[] }
-    >(`/tutoring/groups/${groupId}/slots`, {
-      method: 'PUT',
-      body: JSON.stringify({ slots: writableSlots })
-    });
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];
   }
@@ -6392,7 +5913,7 @@ class ApiClient {
     if (params.engagement_id) query.set('engagement_id', params.engagement_id);
     if (params.status) query.set('status', params.status);
     const res = await this.request<ClassRequest[] | { data: ClassRequest[] }>(
-      `/class-requests?${query.toString()}`
+      `/class-requests?${query.toString()}`,
     );
     return unwrapDataEnvelope(res.data);
   }
@@ -6400,35 +5921,35 @@ class ApiClient {
   async acceptClassRequest(requestId: string, groupId: string): Promise<void> {
     await this.request(`/class-requests/${requestId}/accept`, {
       method: 'PATCH',
-      body: JSON.stringify({ group_id: groupId })
+      body: JSON.stringify({ group_id: groupId }),
     });
   }
 
   async declineClassRequest(requestId: string): Promise<void> {
     await this.request(`/class-requests/${requestId}/decline`, {
       method: 'PATCH',
-      body: JSON.stringify({})
+      body: JSON.stringify({}),
     });
   }
 
   async publishTutoringGroup(groupId: string): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/publish`, {
       method: 'POST',
-      body: JSON.stringify({})
+      body: JSON.stringify({}),
     });
   }
 
   async confirmTutoringGroup(groupId: string): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/confirm`, {
       method: 'POST',
-      body: JSON.stringify({})
+      body: JSON.stringify({}),
     });
   }
 
   async cancelTutoringGroup(groupId: string, reason?: string): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/cancel`, {
       method: 'POST',
-      body: JSON.stringify({ reason })
+      body: JSON.stringify({ reason }),
     });
   }
 
@@ -6436,47 +5957,39 @@ class ApiClient {
     groupId: string,
     meetingUrl: string | null,
     notify = true,
-    regenerate = false
+    regenerate = false,
   ): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/meeting-link`, {
       method: 'PATCH',
       body: JSON.stringify({
         meeting_url: meetingUrl || undefined,
         notify,
-        regenerate
-      })
+        regenerate,
+      }),
     });
   }
 
   async addTutoringGroupMember(
     groupId: string,
     studentProfileId: string,
-    seats = 1
+    seats = 1,
   ): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/members`, {
       method: 'POST',
-      body: JSON.stringify({ student_profile_id: studentProfileId, seats })
+      body: JSON.stringify({ student_profile_id: studentProfileId, seats }),
     });
   }
 
-  async removeTutoringGroupMember(
-    groupId: string,
-    studentProfileId: string
-  ): Promise<void> {
-    await this.request(
-      `/tutoring/groups/${groupId}/members/${studentProfileId}`,
-      { method: 'DELETE' }
-    );
+  async removeTutoringGroupMember(groupId: string, studentProfileId: string): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/members/${studentProfileId}`, {
+      method: 'DELETE',
+    });
   }
 
-  async announceToTutoringGroup(
-    groupId: string,
-    body: string,
-    sendSms = false
-  ): Promise<void> {
+  async announceToTutoringGroup(groupId: string, body: string, sendSms = false): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/announce`, {
       method: 'POST',
-      body: JSON.stringify({ body, send_sms: sendSms })
+      body: JSON.stringify({ body, send_sms: sendSms }),
     });
   }
 
@@ -6487,67 +6000,57 @@ class ApiClient {
    * academy as part of this call, so the caller can report the change.
    */
   async createTutoringOffer(
-    data: CreateTutoringOfferPayload
+    data: CreateTutoringOfferPayload,
   ): Promise<TutoringOffer & { feature_enabled_now?: boolean }> {
     const res = await this.request<
       TutoringOffer | { data: TutoringOffer; feature_enabled_now?: boolean }
     >('/tutoring/offers', { method: 'POST', body: JSON.stringify(data) });
     const body = res.data;
-    const featureEnabledNow =
-      'feature_enabled_now' in body ? body.feature_enabled_now : undefined;
+    const featureEnabledNow = 'feature_enabled_now' in body ? body.feature_enabled_now : undefined;
     return {
       ...unwrapDataEnvelope(body),
-      feature_enabled_now: featureEnabledNow
+      feature_enabled_now: featureEnabledNow,
     };
   }
 
-  async getTutoringOffers(params?: {
-    course_id?: string;
-  }): Promise<TutoringOffer[]> {
+  async getTutoringOffers(params?: { course_id?: string }): Promise<TutoringOffer[]> {
     const qs = new URLSearchParams();
     if (params?.course_id) qs.append('course_id', params.course_id);
     const url = qs.toString() ? `/tutoring/offers?${qs}` : '/tutoring/offers';
-    const res = await this.request<TutoringOffer[] | { data: TutoringOffer[] }>(
-      url
-    );
+    const res = await this.request<TutoringOffer[] | { data: TutoringOffer[] }>(url);
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];
   }
 
   async updateTutoringOffer(
     offerId: string,
-    data: UpdateTutoringOfferPayload
+    data: UpdateTutoringOfferPayload,
   ): Promise<TutoringOffer> {
     const res = await this.request<TutoringOffer | { data: TutoringOffer }>(
       `/tutoring/offers/${offerId}`,
-      { method: 'PATCH', body: JSON.stringify(data) }
+      { method: 'PATCH', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async createTutoringEngagement(
-    data: CreateTutoringEngagementPayload
+    data: CreateTutoringEngagementPayload,
   ): Promise<TutoringEngagement> {
-    const res = await this.request<
-      TutoringEngagement | { data: TutoringEngagement }
-    >('/tutoring/engagements', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    const res = await this.request<TutoringEngagement | { data: TutoringEngagement }>(
+      '/tutoring/engagements',
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      },
+    );
     return unwrapDataEnvelope(res.data);
   }
 
-  async getTutoringEngagements(params?: {
-    course_id?: string;
-  }): Promise<TutoringEngagement[]> {
+  async getTutoringEngagements(params?: { course_id?: string }): Promise<TutoringEngagement[]> {
     const qs = new URLSearchParams();
     if (params?.course_id) qs.append('course_id', params.course_id);
-    const url = qs.toString()
-      ? `/tutoring/engagements?${qs}`
-      : '/tutoring/engagements';
-    const res = await this.request<
-      TutoringEngagement[] | { data: TutoringEngagement[] }
-    >(url);
+    const url = qs.toString() ? `/tutoring/engagements?${qs}` : '/tutoring/engagements';
+    const res = await this.request<TutoringEngagement[] | { data: TutoringEngagement[] }>(url);
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];
   }
@@ -6561,69 +6064,66 @@ class ApiClient {
     if (params?.search) qs.append('search', params.search);
     if (params?.engagement_id) qs.append('engagement_id', params.engagement_id);
     if (params?.limit) qs.append('limit', String(params.limit));
-    const url = qs.toString()
-      ? `/tutoring/sessions?${qs}`
-      : '/tutoring/sessions';
-    const res = await this.request<
-      TutoringSessionListItem[] | { data: TutoringSessionListItem[] }
-    >(url);
+    const url = qs.toString() ? `/tutoring/sessions?${qs}` : '/tutoring/sessions';
+    const res = await this.request<TutoringSessionListItem[] | { data: TutoringSessionListItem[] }>(
+      url,
+    );
     const payload = unwrapDataEnvelope(res.data);
     return Array.isArray(payload) ? payload : [];
   }
 
   async updateLessonDownloadPolicy(
     lessonId: string,
-    data: UpdateLessonDownloadPolicyPayload
+    data: UpdateLessonDownloadPolicyPayload,
   ): Promise<LessonDownloadPolicy> {
-    const res = await this.request<
-      LessonDownloadPolicy | { data: LessonDownloadPolicy }
-    >(`/lessons/${lessonId}/download-policy`, {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
+    const res = await this.request<LessonDownloadPolicy | { data: LessonDownloadPolicy }>(
+      `/lessons/${lessonId}/download-policy`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      },
+    );
     return unwrapDataEnvelope(res.data);
   }
 
-  async scheduleTutoringSession(
-    data: ScheduleTutoringSessionPayload
-  ): Promise<TutoringSession> {
+  async scheduleTutoringSession(data: ScheduleTutoringSessionPayload): Promise<TutoringSession> {
     const res = await this.request<TutoringSession | { data: TutoringSession }>(
       '/tutoring/sessions',
-      { method: 'POST', body: JSON.stringify(data) }
+      { method: 'POST', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async rescheduleTutoringSession(
     sessionId: string,
-    data: RescheduleTutoringSessionPayload
+    data: RescheduleTutoringSessionPayload,
   ): Promise<TutoringSession> {
     const res = await this.request<TutoringSession | { data: TutoringSession }>(
       `/tutoring/sessions/${sessionId}/reschedule`,
-      { method: 'PATCH', body: JSON.stringify(data) }
+      { method: 'PATCH', body: JSON.stringify(data) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async cancelTutoringSession(
     sessionId: string,
-    data?: { reason?: string }
+    data?: { reason?: string },
   ): Promise<TutoringSession> {
     const res = await this.request<TutoringSession | { data: TutoringSession }>(
       `/tutoring/sessions/${sessionId}/cancel`,
-      { method: 'PATCH', body: JSON.stringify(data ?? {}) }
+      { method: 'PATCH', body: JSON.stringify(data ?? {}) },
     );
     return unwrapDataEnvelope(res.data);
   }
 
   async markTutoringAttendance(
     sessionId: string,
-    data: { profile_id: string; status?: TutoringAttendanceStatus }
+    data: { profile_id: string; status?: TutoringAttendanceStatus },
   ): Promise<unknown> {
-    const res = await this.request(
-      `/tutoring/sessions/${sessionId}/attendance`,
-      { method: 'POST', body: JSON.stringify(data) }
-    );
+    const res = await this.request(`/tutoring/sessions/${sessionId}/attendance`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return unwrapDataEnvelope(res.data);
   }
 
@@ -6637,7 +6137,7 @@ class ApiClient {
   }) {
     const res = await this.request('/enrollments/manual', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -6656,9 +6156,7 @@ class ApiClient {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) qs.append(k, String(v));
       });
-    const url = qs.toString()
-      ? `/student-lesson-access?${qs}`
-      : '/student-lesson-access';
+    const url = qs.toString() ? `/student-lesson-access?${qs}` : '/student-lesson-access';
     const res = await this.request(url);
     const payload = res.data as any;
     return payload?.data ?? payload;
@@ -6672,14 +6170,14 @@ class ApiClient {
   }) {
     const res = await this.request('/student-lesson-access', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async deleteStudentLessonAccess(id: number) {
     const res = await this.request(`/student-lesson-access/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return res.data;
   }
@@ -6689,16 +6187,12 @@ class ApiClient {
   // -------------------------------------------------------------------------
 
   async getPlatformSettings() {
-    const res = await this.request<
-      PlatformSettingsData & { data?: PlatformSettingsData }
-    >('/platform-settings');
+    const res = await this.request<PlatformSettingsData & { data?: PlatformSettingsData }>(
+      '/platform-settings',
+    );
     const body = res.data;
     const settings = body?.data ?? body;
-    if (
-      !settings ||
-      typeof settings !== 'object' ||
-      !('vat_rate' in settings)
-    ) {
+    if (!settings || typeof settings !== 'object' || !('vat_rate' in settings)) {
       throw new Error('Invalid platform settings response');
     }
     return settings as PlatformSettingsData;
@@ -6707,15 +6201,15 @@ class ApiClient {
   async updatePlatformSettings(data: Partial<PlatformSettingsData>) {
     const res = await this.request<PlatformSettingsData>('/platform-settings', {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async getSubscriptionPlans() {
-    const res = await this.request<
-      SubscriptionPlanData[] | { data?: SubscriptionPlanData[] }
-    >('/platform-settings/plans');
+    const res = await this.request<SubscriptionPlanData[] | { data?: SubscriptionPlanData[] }>(
+      '/platform-settings/plans',
+    );
     const body = res.data;
     if (Array.isArray(body)) return body;
     if (body && typeof body === 'object' && Array.isArray(body.data)) {
@@ -6733,38 +6227,25 @@ class ApiClient {
       PublicSubscriptionPlanData[] | { data?: PublicSubscriptionPlanData[] }
     >('/platform-settings/plans/active');
     const body = res.data;
-    const list = Array.isArray(body)
-      ? body
-      : Array.isArray(body?.data)
-        ? body.data
-        : [];
+    const list = Array.isArray(body) ? body : Array.isArray(body?.data) ? body.data : [];
     return list.map(mapPublicPlanToSubscriptionPlan);
   }
 
   async createSubscriptionPlan(
-    data: Omit<SubscriptionPlanData, 'id' | 'created_at' | 'updated_at'>
+    data: Omit<SubscriptionPlanData, 'id' | 'created_at' | 'updated_at'>,
   ) {
-    const res = await this.request<SubscriptionPlanData>(
-      '/platform-settings/plans',
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+    const res = await this.request<SubscriptionPlanData>('/platform-settings/plans', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return (res.data as any)?.data ?? res.data;
   }
 
-  async updateSubscriptionPlan(
-    id: string,
-    data: Partial<SubscriptionPlanData>
-  ) {
-    const res = await this.request<SubscriptionPlanData>(
-      `/platform-settings/plans/${id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data)
-      }
-    );
+  async updateSubscriptionPlan(id: string, data: Partial<SubscriptionPlanData>) {
+    const res = await this.request<SubscriptionPlanData>(`/platform-settings/plans/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
     return (res.data as any)?.data ?? res.data;
   }
 
@@ -6776,18 +6257,15 @@ class ApiClient {
       data?: PlanEconomicsPreview;
     }>('/platform-settings/plans/economics-preview', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     const body = res.data;
-    return (
-      (body as { data?: PlanEconomicsPreview })?.data ??
-      (body as PlanEconomicsPreview)
-    );
+    return (body as { data?: PlanEconomicsPreview })?.data ?? (body as PlanEconomicsPreview);
   }
 
   async deleteSubscriptionPlan(id: string) {
     const res = await this.request(`/platform-settings/plans/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return res.data;
   }
@@ -6829,18 +6307,18 @@ class ApiClient {
       is_active?: boolean;
       is_sandbox?: boolean;
       extra?: Record<string, unknown>;
-    }
+    },
   ) {
     const res = await this.request(`/payments/gateways/${id}/config`, {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as { data?: unknown })?.data ?? res.data;
   }
 
   async ensurePayPingGateway() {
     const res = await this.request('/payments/gateways/payping/ensure', {
-      method: 'POST'
+      method: 'POST',
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -6860,9 +6338,7 @@ class ApiClient {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) qs.append(k, String(v));
       });
-    const res = await this.request<any>(
-      `/stores${qs.toString() ? `?${qs}` : ''}`
-    );
+    const res = await this.request<any>(`/stores${qs.toString() ? `?${qs}` : ''}`);
     return (res.data as any)?.data ?? res.data;
   }
 
@@ -6871,15 +6347,10 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
-  async createStore(data: {
-    name: string;
-    slug: string;
-    country?: string;
-    is_active?: boolean;
-  }) {
+  async createStore(data: { name: string; slug: string; country?: string; is_active?: boolean }) {
     const res = await this.request<any>('/academies', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -6891,23 +6362,20 @@ class ApiClient {
       slug: string;
       country: string;
       is_active: boolean;
-    }>
+    }>,
   ) {
     const res = await this.request<any>(`/academies/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async updateAcademyCommissionRate(id: number, commission_rate: number) {
-    const res = await this.request<any>(
-      `/financial/academies/${id}/commission-rate`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ commission_rate })
-      }
-    );
+    const res = await this.request<any>(`/financial/academies/${id}/commission-rate`, {
+      method: 'PATCH',
+      body: JSON.stringify({ commission_rate }),
+    });
     return (res.data as any)?.data ?? res.data;
   }
 
@@ -6926,26 +6394,24 @@ class ApiClient {
       price_yearly_toman?: number;
       note?: string;
       margin_override?: boolean;
-    }
+    },
   ) {
     const res = await this.request<any>(`/academies/${id}/custom-plan`, {
       method: 'PUT',
-      body: JSON.stringify(dto)
+      body: JSON.stringify(dto),
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async clearAcademyCustomPlan(id: string) {
     const res = await this.request<any>(`/academies/${id}/custom-plan`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async getAcademyWallet(academyId: string) {
-    const res = await this.request<any>(
-      `/financial/academies/${academyId}/wallet`
-    );
+    const res = await this.request<any>(`/financial/academies/${academyId}/wallet`);
     return (res.data as any)?.data ?? res.data;
   }
 
@@ -6961,7 +6427,7 @@ class ApiClient {
   async setStoreSetting(academyId: string, key: string, value: string) {
     const res = await this.request<any>(`/academies/${academyId}/settings`, {
       method: 'POST',
-      body: JSON.stringify({ key, value })
+      body: JSON.stringify({ key, value }),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -6981,11 +6447,11 @@ class ApiClient {
       installment_count: number;
       amount_per_installment: number;
       interval_days: number;
-    }
+    },
   ) {
     const res = await this.request<any>(`/payment-plans/courses/${courseId}`, {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -6996,11 +6462,11 @@ class ApiClient {
       is_active: boolean;
       amount_per_installment: number;
       interval_days: number;
-    }>
+    }>,
   ) {
     const res = await this.request<any>(`/payment-plans/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7024,11 +6490,11 @@ class ApiClient {
       refund_amount?: number;
       reason: string;
       revoke_enrollment?: boolean;
-    }
+    },
   ) {
     const res = await this.request<any>(`/refunds/payments/${paymentId}`, {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7049,16 +6515,11 @@ class ApiClient {
         if (v !== undefined) qs.append(k, String(v));
       });
     const query = qs.toString();
-    const res = await this.request<any>(
-      `/financial/withdrawals${query ? `?${query}` : ''}`
-    );
+    const res = await this.request<any>(`/financial/withdrawals${query ? `?${query}` : ''}`);
     return (res.data as any)?.data ?? res.data;
   }
 
-  async getSettlementWithdrawals(params?: {
-    academy_id?: string;
-    status?: string;
-  }) {
+  async getSettlementWithdrawals(params?: { academy_id?: string; status?: string }) {
     const qs = new URLSearchParams();
     if (params)
       Object.entries(params).forEach(([k, v]) => {
@@ -7066,46 +6527,37 @@ class ApiClient {
       });
     const query = qs.toString();
     const res = await this.request<any>(
-      `/financial/settlement/withdrawals${query ? `?${query}` : ''}`
+      `/financial/settlement/withdrawals${query ? `?${query}` : ''}`,
     );
     return (res.data as any)?.data ?? res.data;
   }
 
-  async approveWithdrawal(
-    id: string,
-    data: { bank_transaction_code: string; notes?: string }
-  ) {
-    const res = await this.request<any>(
-      `/financial/settlement/withdrawals/${id}/approve`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+  async approveWithdrawal(id: string, data: { bank_transaction_code: string; notes?: string }) {
+    const res = await this.request<any>(`/financial/settlement/withdrawals/${id}/approve`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return (res.data as any)?.data ?? res.data;
   }
 
   async rejectWithdrawal(id: string, data: { notes?: string }) {
-    const res = await this.request<any>(
-      `/financial/settlement/withdrawals/${id}/reject`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data)
-      }
-    );
+    const res = await this.request<any>(`/financial/settlement/withdrawals/${id}/reject`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
     return (res.data as any)?.data ?? res.data;
   }
 
   async getPendingSettlementCount() {
-    const res = await this.request<
-      { count: number } | { data: { count: number } }
-    >('/financial/settlement/withdrawals/pending-count');
+    const res = await this.request<{ count: number } | { data: { count: number } }>(
+      '/financial/settlement/withdrawals/pending-count',
+    );
     return unwrapDataEnvelope(res.data).count;
   }
 
   async getSettlementDesk() {
     const res = await this.request<SettlementDesk | { data: SettlementDesk }>(
-      '/financial/settlement/desk'
+      '/financial/settlement/desk',
     );
     return unwrapDataEnvelope(res.data);
   }
@@ -7114,15 +6566,15 @@ class ApiClient {
     const qs = new URLSearchParams();
     if (params?.page) qs.append('page', String(params.page));
     if (params?.limit) qs.append('limit', String(params.limit));
-    const res = await this.request<
-      LedgerPaymentsResponse | { data: LedgerPaymentsResponse }
-    >(`/financial/settlement/payments${qs.toString() ? `?${qs}` : ''}`);
+    const res = await this.request<LedgerPaymentsResponse | { data: LedgerPaymentsResponse }>(
+      `/financial/settlement/payments${qs.toString() ? `?${qs}` : ''}`,
+    );
     return unwrapDataEnvelope(res.data);
   }
 
   async notifySettlementManager(id: string) {
     await this.request(`/financial/settlement/withdrawals/${id}/notify`, {
-      method: 'POST'
+      method: 'POST',
     });
   }
 
@@ -7136,21 +6588,19 @@ class ApiClient {
   }
 
   async getTeacherPayoutRecords() {
-    const res = await this.request<TeacherPayoutRecord[]>(
-      '/teacher-wallet/payout-requests'
-    );
+    const res = await this.request<TeacherPayoutRecord[]>('/teacher-wallet/payout-requests');
     return res.data;
   }
 
   async confirmTeacherPayout(id: string) {
     await this.request(`/teacher-wallet/payouts/${id}/confirm`, {
-      method: 'POST'
+      method: 'POST',
     });
   }
 
   async rejectRecordedTeacherPayout(id: string) {
     await this.request(`/teacher-wallet/payouts/${id}/reject`, {
-      method: 'POST'
+      method: 'POST',
     });
   }
 
@@ -7166,7 +6616,7 @@ class ApiClient {
         if (v !== undefined) qs.append(k, String(v));
       });
     const res = await this.request<any>(
-      `/teacher-wallet/payout-requests${qs.toString() ? `?${qs}` : ''}`
+      `/teacher-wallet/payout-requests${qs.toString() ? `?${qs}` : ''}`,
     );
     return (res.data as any)?.data ?? res.data;
   }
@@ -7179,27 +6629,23 @@ class ApiClient {
   }) {
     const res = await this.request<{ id: string }>('/teacher-wallet/payouts', {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     return res.data;
   }
 
   async approveTeacherPayout(id: number) {
-    const res = await this.request<any>(
-      `/teacher-wallet/payout-requests/${id}/approve`,
-      { method: 'POST' }
-    );
+    const res = await this.request<any>(`/teacher-wallet/payout-requests/${id}/approve`, {
+      method: 'POST',
+    });
     return (res.data as any)?.data ?? res.data;
   }
 
   async rejectTeacherPayout(id: number, notes?: string) {
-    const res = await this.request<any>(
-      `/teacher-wallet/payout-requests/${id}/reject`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ notes })
-      }
-    );
+    const res = await this.request<any>(`/teacher-wallet/payout-requests/${id}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ notes }),
+    });
     return (res.data as any)?.data ?? res.data;
   }
 
@@ -7207,11 +6653,9 @@ class ApiClient {
   // Affiliates
   // -------------------------------------------------------------------------
 
-  async checkAffiliatePhone(
-    phone: string
-  ): Promise<{ exists: boolean; name?: string }> {
+  async checkAffiliatePhone(phone: string): Promise<{ exists: boolean; name?: string }> {
     const res = await this.request<any>(
-      `/affiliates/check-phone?phone=${encodeURIComponent(phone)}`
+      `/affiliates/check-phone?phone=${encodeURIComponent(phone)}`,
     );
     return res.data ?? res;
   }
@@ -7225,7 +6669,7 @@ class ApiClient {
   }) {
     const res = await this.request<any>('/affiliates/accounts', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7233,7 +6677,7 @@ class ApiClient {
   async confirmPhoneOtp(temp_token: string, otp: string) {
     const res = await this.request<any>('/auth/confirm-phone', {
       method: 'POST',
-      body: JSON.stringify({ temp_token, otp })
+      body: JSON.stringify({ temp_token, otp }),
     });
     return res.data;
   }
@@ -7241,7 +6685,7 @@ class ApiClient {
   async setNewPassword(temp_token: string, new_password: string) {
     const res = await this.request<any>('/auth/set-new-password', {
       method: 'POST',
-      body: JSON.stringify({ temp_token, new_password })
+      body: JSON.stringify({ temp_token, new_password }),
     });
     return res.data;
   }
@@ -7249,7 +6693,7 @@ class ApiClient {
   async deactivateAffiliate(id: number) {
     const res = await this.request<any>(`/affiliates/${id}/deactivate`, {
       method: 'PATCH',
-      body: '{}'
+      body: '{}',
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7267,7 +6711,7 @@ class ApiClient {
   async requestAffiliateWithdrawal(linkId: number, amount: number) {
     const res = await this.request<any>(`/affiliates/my/${linkId}/withdraw`, {
       method: 'POST',
-      body: JSON.stringify({ amount })
+      body: JSON.stringify({ amount }),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7281,14 +6725,14 @@ class ApiClient {
   async processAffiliateWithdrawal(id: number, status: string, notes?: string) {
     const res = await this.request<any>(`/affiliates/withdrawals/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify({ status, notes })
+      body: JSON.stringify({ status, notes }),
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async searchAffiliateCandidates(search: string) {
     const res = await this.request<any>(
-      `/affiliates/candidates?search=${encodeURIComponent(search)}`
+      `/affiliates/candidates?search=${encodeURIComponent(search)}`,
     );
     return (res.data as any)?.data ?? res.data ?? [];
   }
@@ -7305,7 +6749,7 @@ class ApiClient {
   }) {
     const res = await this.request<any>('/affiliates', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7318,18 +6762,18 @@ class ApiClient {
       affiliate_phone: string;
       is_active: boolean;
       commission_rate: number;
-    }>
+    }>,
   ) {
     const res = await this.request<any>(`/affiliates/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async deleteAffiliate(id: number) {
     const res = await this.request<any>(`/affiliates/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7358,7 +6802,7 @@ class ApiClient {
   }) {
     const res = await this.request<any>('/academy-plans', {
       method: 'POST',
-      body: JSON.stringify(dto)
+      body: JSON.stringify(dto),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7371,25 +6815,25 @@ class ApiClient {
       price?: number;
       duration_days?: number;
       is_active?: boolean;
-    }
+    },
   ) {
     const res = await this.request<any>(`/academy-plans/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(dto)
+      body: JSON.stringify(dto),
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async deleteAcademyPlan(id: number) {
     const res = await this.request<any>(`/academy-plans/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     return (res.data as any)?.data ?? res.data;
   }
 
   async triggerSubscriptionLifecycle() {
     const res = await this.request<any>('/subscriptions/lifecycle/tick', {
-      method: 'POST'
+      method: 'POST',
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7406,7 +6850,7 @@ class ApiClient {
   }) {
     const res = await this.request<any>('/payments/checkout', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     return (res.data as any)?.data ?? res.data;
   }
@@ -7629,7 +7073,7 @@ export interface PublicSubscriptionPlanData {
 // every screen that consumes this normalized data, so they're left blank.
 function mapPublicPlanToSubscriptionPlan(
   plan: PublicSubscriptionPlanData,
-  index: number
+  index: number,
 ): SubscriptionPlanData {
   return {
     id: plan.slug,
@@ -7647,7 +7091,7 @@ function mapPublicPlanToSubscriptionPlan(
     annual_months_included: plan.annual_months_included,
     vat_rate: plan.vat_rate,
     created_at: '',
-    updated_at: ''
+    updated_at: '',
   };
 }
 
@@ -7729,10 +7173,7 @@ export interface NotificationListResponse {
   };
 }
 
-export type PlatformBroadcastAudience =
-  | 'ALL_MANAGERS'
-  | 'ALL_TEACHERS'
-  | 'SELECTED_ACADEMIES';
+export type PlatformBroadcastAudience = 'ALL_MANAGERS' | 'ALL_TEACHERS' | 'SELECTED_ACADEMIES';
 
 export interface PlatformBroadcast {
   id: string;
@@ -7825,9 +7266,7 @@ function unwrapEnvelope<T>(res: unknown): T {
 }
 
 function unwrapSupportInbox(res: unknown): SupportInboxResult {
-  const payload = (
-    res as { data?: SupportInboxResult | { data?: SupportInboxResult } }
-  ).data;
+  const payload = (res as { data?: SupportInboxResult | { data?: SupportInboxResult } }).data;
   if (payload && 'items' in payload) return payload;
   if (payload && typeof payload === 'object' && 'data' in payload) {
     return (payload as { data: SupportInboxResult }).data;

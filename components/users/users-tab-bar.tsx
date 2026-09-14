@@ -38,9 +38,7 @@ export function UsersTabBar({ tabs, value, onChange }: UsersTabBarProps) {
           {tab.count != null && (
             <span
               className={`ms-1.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${
-                tab.urgent && tab.count > 0
-                  ? 'bg-amber-500 text-white'
-                  : 'opacity-50'
+                tab.urgent && tab.count > 0 ? 'bg-amber-500 text-white' : 'opacity-50'
               }`}
             >
               {formatNumber(tab.count)}

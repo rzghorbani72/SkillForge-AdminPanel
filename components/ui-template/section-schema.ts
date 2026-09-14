@@ -58,7 +58,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         placeholder: 'نام آکادمی خود را وارد کنید',
         // Mirrors the renderer, which falls back to the academy's own name.
         defaultFrom: 'academyName',
-        defaultValue: 'آکادمی من'
+        defaultValue: 'آکادمی من',
       },
       {
         key: 'loginText',
@@ -66,9 +66,9 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         placeholder: 'مثلاً: ورود',
         defaultValue: 'ورود',
-        hint: 'دکمه ورود همیشه در سمت چپ نوار می‌ماند و حذف یا جابه‌جا نمی‌شود'
-      }
-    ]
+        hint: 'دکمه ورود همیشه در سمت چپ نوار می‌ماند و حذف یا جابه‌جا نمی‌شود',
+      },
+    ],
   },
 
   hero: {
@@ -80,28 +80,28 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'پیام اصلی صفحه',
-        defaultValue: 'به آکادمی ما خوش آمدید'
+        defaultValue: 'به آکادمی ما خوش آمدید',
       },
       {
         key: 'subtitle',
         label: 'متن پشتیبان',
         kind: 'textarea',
         placeholder: 'توضیح کوتاه زیر عنوان',
-        defaultValue: 'بهترین دوره‌های آموزشی را اینجا بیابید'
+        defaultValue: 'بهترین دوره‌های آموزشی را اینجا بیابید',
       },
       {
         key: 'ctaText',
         label: 'متن دکمه اصلی',
         kind: 'text',
         placeholder: 'مثلاً: شروع کنید',
-        defaultValue: 'شروع کنید'
+        defaultValue: 'شروع کنید',
       },
       {
         key: 'ctaSecondary',
         label: 'متن دکمه دوم',
         kind: 'text',
         advanced: true,
-        placeholder: 'مثلاً: بیشتر بدانید'
+        placeholder: 'مثلاً: بیشتر بدانید',
       },
       // Extra fields used by flow / code / creative hero styles.
       // Hidden under "Advanced" so the default hero keeps a clean panel.
@@ -110,21 +110,21 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         label: 'برچسب بالای عنوان',
         kind: 'text',
         advanced: true,
-        placeholder: 'مثلاً: جدید — ویژگی تازه'
+        placeholder: 'مثلاً: جدید — ویژگی تازه',
       },
       {
         key: 'titleEm',
         label: 'کلمه کلیدی برجسته (میانه عنوان)',
         kind: 'text',
         advanced: true,
-        placeholder: 'بخش رنگی وسط عنوان'
+        placeholder: 'بخش رنگی وسط عنوان',
       },
       {
         key: 'titleEnd',
         label: 'ادامه عنوان (بعد از کلمه برجسته)',
         kind: 'text',
         advanced: true,
-        placeholder: 'پایان جمله عنوان'
+        placeholder: 'پایان جمله عنوان',
       },
       {
         key: 'trustCount',
@@ -132,19 +132,19 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         advanced: true,
         placeholder: 'مثلاً: ۱۲٬۰۰۰+',
-        hint: 'اگر «نمایش آمار واقعی» فعال باشد این مقدار از API جایگزین می‌شود'
+        hint: 'اگر «نمایش آمار واقعی» فعال باشد این مقدار از API جایگزین می‌شود',
       },
       {
         key: 'useLiveData',
         label: 'نمایش آمار واقعی آکادمی',
         kind: 'toggle',
         defaultOn: false,
-        hint: 'تعداد واقعی دوره‌ها و دانشجویان به‌جای اعداد نمونه نمایش داده می‌شود'
+        hint: 'تعداد واقعی دوره‌ها و دانشجویان به‌جای اعداد نمونه نمایش داده می‌شود',
       },
-      { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true }
+      { key: 'showCTA', label: 'نمایش دکمه', kind: 'toggle', advanced: true },
     ],
     hasBackground: true,
-    hasHeight: true
+    hasHeight: true,
   },
 
   features: {
@@ -156,19 +156,19 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'ویژگی‌های کلیدی ما'
+        defaultValue: 'ویژگی‌های کلیدی ما',
       },
       {
         key: 'subtitle',
         label: 'توضیحات زیر عنوان',
         kind: 'textarea',
         placeholder: 'چرا ما را انتخاب کنید',
-        defaultValue: 'آنچه یادگیری در آکادمی ما را خاص می‌کند'
-      }
+        defaultValue: 'آنچه یادگیری در آکادمی ما را خاص می‌کند',
+      },
     ],
     hasColumns: true,
     dynamicContentNote:
-      'کارت‌های ویژگی از محتوای پیش‌فرض قالب نمایش داده می‌شوند. برای تغییر طرح‌بندی یا نوع کارت‌ها، می‌توانید این بخش را با یک سبک جدید جایگزین کنید.'
+      'کارت‌های ویژگی از محتوای پیش‌فرض قالب نمایش داده می‌شوند. برای تغییر طرح‌بندی یا نوع کارت‌ها، می‌توانید این بخش را با یک سبک جدید جایگزین کنید.',
   },
 
   courses: {
@@ -180,12 +180,12 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'دوره‌های آموزشی'
-      }
+        defaultValue: 'دوره‌های آموزشی',
+      },
     ],
     hasColumns: true,
     dynamicContentNote:
-      'کارت‌های دوره به‌صورت زنده از دوره‌های واقعی آکادمی شما بارگذاری می‌شوند. مدیریت دوره‌ها از بخش «دوره‌ها» در داشبورد انجام می‌شود.'
+      'کارت‌های دوره به‌صورت زنده از دوره‌های واقعی آکادمی شما بارگذاری می‌شوند. مدیریت دوره‌ها از بخش «دوره‌ها» در داشبورد انجام می‌شود.',
   },
 
   testimonials: {
@@ -197,11 +197,11 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'نظرات دانشجویان ما'
-      }
+        defaultValue: 'نظرات دانشجویان ما',
+      },
     ],
     dynamicContentNote:
-      'نظرات به‌صورت زنده از بازخوردهای ثبت‌شده دانشجویان آکادمی شما نمایش داده می‌شوند.'
+      'نظرات به‌صورت زنده از بازخوردهای ثبت‌شده دانشجویان آکادمی شما نمایش داده می‌شوند.',
   },
 
   cta: {
@@ -213,23 +213,23 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'دعوت به اقدام',
-        defaultValue: 'همین حالا شروع کنید'
+        defaultValue: 'همین حالا شروع کنید',
       },
       {
         key: 'subtitle',
         label: 'متن پشتیبان',
         kind: 'textarea',
         placeholder: 'توضیح تکمیلی',
-        defaultValue: 'به جمع یادگیرندگان ما بپیوندید'
+        defaultValue: 'به جمع یادگیرندگان ما بپیوندید',
       },
       {
         key: 'ctaText',
         label: 'متن دکمه',
         kind: 'text',
         placeholder: 'مثلاً: ثبت‌نام کنید',
-        defaultValue: 'ثبت‌نام کنید'
-      }
-    ]
+        defaultValue: 'ثبت‌نام کنید',
+      },
+    ],
   },
 
   categories: {
@@ -241,11 +241,11 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'دسته‌بندی‌های آموزشی'
-      }
+        defaultValue: 'دسته‌بندی‌های آموزشی',
+      },
     ],
     dynamicContentNote:
-      'دسته‌بندی‌ها به‌صورت زنده از دسته‌بندی‌های دوره‌های آکادمی شما بارگذاری می‌شوند.'
+      'دسته‌بندی‌ها به‌صورت زنده از دسته‌بندی‌های دوره‌های آکادمی شما بارگذاری می‌شوند.',
   },
 
   projects: {
@@ -257,9 +257,9 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'نمونه‌کارهای برگزیده'
-      }
-    ]
+        defaultValue: 'نمونه‌کارهای برگزیده',
+      },
+    ],
   },
 
   'course-grid': {
@@ -271,11 +271,10 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'همه دوره‌ها'
-      }
+        defaultValue: 'همه دوره‌ها',
+      },
     ],
-    dynamicContentNote:
-      'دوره‌ها به‌صورت زنده از کاتالوگ دوره‌های آکادمی شما نمایش داده می‌شوند.'
+    dynamicContentNote: 'دوره‌ها به‌صورت زنده از کاتالوگ دوره‌های آکادمی شما نمایش داده می‌شوند.',
   },
 
   teachers: {
@@ -286,7 +285,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         label: 'برچسب بالای عنوان',
         kind: 'text',
         advanced: true,
-        placeholder: 'مثلاً: تیم مدرسان'
+        placeholder: 'مثلاً: تیم مدرسان',
       },
       {
         key: 'title',
@@ -294,17 +293,17 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'مدرسان ما'
+        defaultValue: 'مدرسان ما',
       },
       {
         key: 'subtitle',
         label: 'توضیحات زیر عنوان',
         kind: 'textarea',
-        placeholder: 'یک جمله دربارهٔ تیم مدرسان'
-      }
+        placeholder: 'یک جمله دربارهٔ تیم مدرسان',
+      },
     ],
     dynamicContentNote:
-      'کارت مدرسان از محتوای پیش‌فرض قالب نمایش داده می‌شود. تا زمانی که عکسی بارگذاری نشود، حرف اول نام مدرس نمایش داده می‌شود.'
+      'کارت مدرسان از محتوای پیش‌فرض قالب نمایش داده می‌شود. تا زمانی که عکسی بارگذاری نشود، حرف اول نام مدرس نمایش داده می‌شود.',
   },
 
   showcase: {
@@ -315,7 +314,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         label: 'برچسب بالای عنوان',
         kind: 'text',
         advanced: true,
-        placeholder: 'مثلاً: تقویم برنامه‌ها'
+        placeholder: 'مثلاً: تقویم برنامه‌ها',
       },
       {
         key: 'title',
@@ -323,17 +322,17 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'برنامهٔ پیش‌رو'
+        defaultValue: 'برنامهٔ پیش‌رو',
       },
       {
         key: 'subtitle',
         label: 'توضیحات زیر عنوان',
         kind: 'textarea',
-        placeholder: 'توضیح کوتاه دربارهٔ این بخش'
-      }
+        placeholder: 'توضیح کوتاه دربارهٔ این بخش',
+      },
     ],
     dynamicContentNote:
-      'هر قالب یک بخش ویژه دارد: جدول تقویم، مسیر سطح‌بندی، نردبان پیشرفت یا نمونه‌سؤال. ساختار آن با قالب تعیین می‌شود و متن‌های بالا قابل ویرایش‌اند.'
+      'هر قالب یک بخش ویژه دارد: جدول تقویم، مسیر سطح‌بندی، نردبان پیشرفت یا نمونه‌سؤال. ساختار آن با قالب تعیین می‌شود و متن‌های بالا قابل ویرایش‌اند.',
   },
 
   footer: { name: 'فوتر', content: [] },
@@ -342,7 +341,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     content: [],
     hasHeight: true,
     dynamicContentNote:
-      'تصویر، عنوان و متن هر اسلاید را در همین پنل، بخش «اسلایدها» تنظیم کنید. تا زمانی که اسلایدی اضافه نشود این بخش در سایت نمایش داده نمی‌شود.'
+      'تصویر، عنوان و متن هر اسلاید را در همین پنل، بخش «اسلایدها» تنظیم کنید. تا زمانی که اسلایدی اضافه نشود این بخش در سایت نمایش داده نمی‌شود.',
   },
 
   videos: {
@@ -354,23 +353,22 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         kind: 'text',
         required: true,
         placeholder: 'عنوان این بخش',
-        defaultValue: 'ویدیوهای آکادمی'
+        defaultValue: 'ویدیوهای آکادمی',
       },
       {
         key: 'subtitle',
         label: 'توضیحات زیر عنوان',
         kind: 'textarea',
         placeholder: 'یک جمله دربارهٔ ویدیوها',
-        defaultValue:
-          'معرفی کوتاه دوره‌ها، کلاس‌ها و فضای آموزشی ما را تماشا کنید.'
-      }
+        defaultValue: 'معرفی کوتاه دوره‌ها، کلاس‌ها و فضای آموزشی ما را تماشا کنید.',
+      },
     ],
     dynamicContentNote:
-      'ویدیوها از کتابخانه رسانه آکادمی انتخاب می‌شوند و تا زمان کلیک بازدیدکننده پخش نمی‌شوند. تا زمانی که ویدیویی انتخاب نشود این بخش در سایت نمایش داده نمی‌شود.'
+      'ویدیوها از کتابخانه رسانه آکادمی انتخاب می‌شوند و تا زمان کلیک بازدیدکننده پخش نمی‌شوند. تا زمانی که ویدیویی انتخاب نشود این بخش در سایت نمایش داده نمی‌شود.',
   },
   marquee: { name: 'عناوین متحرک', content: [] },
   membership: { name: 'اشتراک', content: [] },
-  placeholder: { name: 'جایگاه خالی', content: [] }
+  placeholder: { name: 'جایگاه خالی', content: [] },
 };
 
 export function getSectionSchema(type: string): SectionSchema {
@@ -381,12 +379,11 @@ export function getSectionSchema(type: string): SectionSchema {
 // an amber warning in the panel and an amber dot wherever the section is listed.
 export function isSectionIncomplete(
   type: string,
-  config: Record<string, unknown> | undefined
+  config: Record<string, unknown> | undefined,
 ): boolean {
   const schema = getSectionSchema(type);
   return schema.content.some(
     (field) =>
-      field.required &&
-      !String((config ?? {})[field.key] ?? field.defaultValue ?? '').trim()
+      field.required && !String((config ?? {})[field.key] ?? field.defaultValue ?? '').trim(),
   );
 }

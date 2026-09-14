@@ -18,19 +18,12 @@ type Props = {
   onPublish: (groupId: string) => void;
 };
 
-export const GroupsListCard = ({
-  groups,
-  loading,
-  saving,
-  onPublish
-}: Props) => {
+export const GroupsListCard = ({ groups, loading, saving, onPublish }: Props) => {
   const { t, language } = useTranslation();
 
   /** A class is run inside its course; the old address only forwards there. */
   const classHref = (group: TutoringGroup) =>
-    group.Course
-      ? `/courses/${group.Course.id}/live/${group.id}`
-      : `/tutoring/groups/${group.id}`;
+    group.Course ? `/courses/${group.Course.id}/live/${group.id}` : `/tutoring/groups/${group.id}`;
 
   const seats = (group: TutoringGroup) =>
     `${formatNumber(group.seats_taken, language)} / ${formatNumber(group.capacity, language)}${
@@ -41,21 +34,13 @@ export const GroupsListCard = ({
 
   const publishButton = (group: TutoringGroup) =>
     group.status === 'DRAFT' ? (
-      <Button
-        size="sm"
-        variant="outline"
-        disabled={saving}
-        onClick={() => onPublish(group.id)}
-      >
+      <Button size="sm" variant="outline" disabled={saving} onClick={() => onPublish(group.id)}>
         {t('tutoring.groups.publish')}
       </Button>
     ) : null;
 
   return (
-    <DataPanel
-      title={t('tutoring.groups.listTitle')}
-      subtitle={t('tutoring.groups.listSubtitle')}
-    >
+    <DataPanel title={t('tutoring.groups.listTitle')} subtitle={t('tutoring.groups.listSubtitle')}>
       <DataList
         items={groups}
         isLoading={loading}
@@ -70,13 +55,10 @@ export const GroupsListCard = ({
             id: 'title',
             header: t('tutoring.groups.columnTitle'),
             cell: (group) => (
-              <Link
-                href={classHref(group)}
-                className="font-medium hover:underline"
-              >
+              <Link href={classHref(group)} className="font-medium hover:underline">
                 {group.title}
               </Link>
-            )
+            ),
           },
           {
             id: 'schedule',
@@ -87,40 +69,37 @@ export const GroupsListCard = ({
                 startsOn={termStart(group)}
                 timezone={group.timezone}
               />
-            )
+            ),
           },
           {
             id: 'seats',
             header: t('tutoring.groups.columnSeats'),
             cell: (group) => seats(group),
-            align: 'center'
+            align: 'center',
           },
           {
             id: 'min',
             header: t('tutoring.groups.columnMin'),
             cell: (group) => formatNumber(group.min_students, language),
-            align: 'center'
+            align: 'center',
           },
           {
             id: 'status',
             header: t('tutoring.groups.columnStatus'),
             cell: (group) => <GroupStatusBadge status={group.status} />,
-            align: 'center'
+            align: 'center',
           },
           {
             id: 'actions',
             header: '',
             cell: publishButton,
-            align: 'end'
-          }
+            align: 'end',
+          },
         ]}
         renderCard={(group) => (
           <div className="space-y-2 rounded-xl border p-4">
             <div className="flex items-center justify-between gap-2">
-              <Link
-                href={classHref(group)}
-                className="font-medium hover:underline"
-              >
+              <Link href={classHref(group)} className="font-medium hover:underline">
                 {group.title}
               </Link>
               <GroupStatusBadge status={group.status} />
@@ -131,8 +110,7 @@ export const GroupsListCard = ({
               timezone={group.timezone}
             />
             <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.columnSeats')}: {seats(group)} ·{' '}
-              {t('tutoring.groups.columnMin')}:{' '}
+              {t('tutoring.groups.columnSeats')}: {seats(group)} · {t('tutoring.groups.columnMin')}:{' '}
               {formatNumber(group.min_students, language)}
             </p>
             {publishButton(group)}

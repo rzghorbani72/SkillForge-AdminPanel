@@ -1,13 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 export function QueueCard({
@@ -16,7 +10,7 @@ export function QueueCard({
   icon,
   count,
   empty,
-  children
+  children,
 }: {
   title: string;
   description: string;
@@ -38,11 +32,7 @@ export function QueueCard({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {count === 0 ? (
-          <p className="text-sm text-muted-foreground">{empty}</p>
-        ) : (
-          children
-        )}
+        {count === 0 ? <p className="text-sm text-muted-foreground">{empty}</p> : children}
       </CardContent>
     </Card>
   );

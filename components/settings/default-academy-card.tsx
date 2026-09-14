@@ -1,13 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -43,20 +37,15 @@ export function DefaultAcademyCard() {
     <Card>
       <CardHeader>
         <CardTitle>{t('settings.defaultAcademy.title')}</CardTitle>
-        <CardDescription>
-          {t('settings.defaultAcademy.description')}
-        </CardDescription>
+        <CardDescription>{t('settings.defaultAcademy.description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {isLoading ? (
           <div className="flex h-10 items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />{' '}
-            {t('settings.defaultAcademy.loading')}
+            <Loader2 className="h-4 w-4 animate-spin" /> {t('settings.defaultAcademy.loading')}
           </div>
         ) : options.length <= 1 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('settings.defaultAcademy.single')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('settings.defaultAcademy.single')}</p>
         ) : (
           <>
             <Label className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -68,9 +57,7 @@ export function DefaultAcademyCard() {
                 value={selected}
                 onChange={(e) => setSelected(e.target.value)}
               >
-                <option value="">
-                  {t('settings.defaultAcademy.noDefault')}
-                </option>
+                <option value="">{t('settings.defaultAcademy.noDefault')}</option>
                 {options.map((o) => (
                   <option key={o.id} value={o.id}>
                     {o.name}

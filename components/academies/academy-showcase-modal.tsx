@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { apiClient } from '@/lib/api';
@@ -19,10 +19,7 @@ import { resolveMediaUrl } from '@/lib/media-url';
 import type { Academy } from '@/types/api';
 
 type AcademyShowcaseModalProps = {
-  academy: Pick<
-    Academy,
-    'id' | 'name' | 'showcase_desktop' | 'showcase_mobile'
-  >;
+  academy: Pick<Academy, 'id' | 'name' | 'showcase_desktop' | 'showcase_mobile'>;
   open: boolean;
   onClose: () => void;
   onSaved: () => void;
@@ -32,7 +29,7 @@ export function AcademyShowcaseModal({
   academy,
   open,
   onClose,
-  onSaved
+  onSaved,
 }: AcademyShowcaseModalProps) {
   const { t } = useTranslation();
   const desktop = useImageUpload();
@@ -54,7 +51,7 @@ export function AcademyShowcaseModal({
     try {
       await apiClient.setAcademyShowcase(academy.id, {
         ...(desktop.id ? { showcase_desktop_id: desktop.id } : {}),
-        ...(mobile.id ? { showcase_mobile_id: mobile.id } : {})
+        ...(mobile.id ? { showcase_mobile_id: mobile.id } : {}),
       });
       ErrorHandler.showSuccess(t('settings.showcaseSaved'));
       onSaved();

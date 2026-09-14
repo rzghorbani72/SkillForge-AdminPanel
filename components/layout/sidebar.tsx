@@ -44,7 +44,7 @@ export default function Sidebar({ className }: SidebarProps) {
       role: userRole,
       hasStore,
       learningVisibility,
-      hasAcademy
+      hasAcademy,
     });
     return withPendingSettlementBadge(items, pendingSettlements);
   }, [userRole, hasStore, learningVisibility, hasAcademy, pendingSettlements]);
@@ -55,7 +55,7 @@ export default function Sidebar({ className }: SidebarProps) {
         className={cn(
           'relative hidden h-full flex-none border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:block',
           !isMinimized ? 'w-[228px]' : 'w-[64px]',
-          className
+          className,
         )}
       >
         <div className="flex h-full items-center justify-center">
@@ -72,23 +72,18 @@ export default function Sidebar({ className }: SidebarProps) {
       className={cn(
         'relative hidden h-full flex-none flex-col border-e border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] transition-all duration-300 ease-out md:flex',
         !isMinimized ? 'w-[228px]' : 'w-[64px]',
-        className
+        className,
       )}
     >
       {/* Product brand — academy identity lives in the header switcher */}
       <div
         className={cn(
           'flex items-center gap-2.5 border-b border-[hsl(var(--sidebar-border))] px-3 py-3 transition-all duration-300',
-          isMinimized && 'justify-center px-2'
+          isMinimized && 'justify-center px-2',
         )}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo-mark.svg"
-          alt=""
-          aria-hidden
-          className="h-8 w-8 shrink-0"
-        />
+        <img src="/logo-mark.svg" alt="" aria-hidden className="h-8 w-8 shrink-0" />
         {!isMinimized && (
           <div className="min-w-0 flex-1">
             <span
@@ -96,14 +91,12 @@ export default function Sidebar({ className }: SidebarProps) {
               className="block h-[18px] w-[44px] bg-foreground"
               style={{
                 WebkitMask: 'url(/logo-type.png) center / contain no-repeat',
-                mask: 'url(/logo-type.png) center / contain no-repeat'
+                mask: 'url(/logo-type.png) center / contain no-repeat',
               }}
             />
             <span className="sr-only">{t('auth.brandName')}</span>
             <p className="truncate text-[10px] leading-tight text-muted-foreground">
-              {isPlatformMode
-                ? t('sidebar.managementConsole')
-                : t('auth.brandTagline')}
+              {isPlatformMode ? t('sidebar.managementConsole') : t('auth.brandTagline')}
             </p>
           </div>
         )}
@@ -115,7 +108,7 @@ export default function Sidebar({ className }: SidebarProps) {
         onClick={toggle}
         className={cn(
           'absolute -end-3 top-[3.75rem] z-50 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-md transition-all duration-300 hover:bg-primary hover:text-white',
-          !isMinimized && 'rotate-180'
+          !isMinimized && 'rotate-180',
         )}
         aria-label="Toggle sidebar"
       >

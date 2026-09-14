@@ -10,10 +10,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function StaffTermsPage() {
   const cookieStore = await cookies();
-  const locale = getAdminLanguage(
-    cookieStore.get('preferred_language')?.value,
-    null
-  );
+  const locale = getAdminLanguage(cookieStore.get('preferred_language')?.value, null);
   const document = await fetchLegalDocument('STAFF_TERMS', locale);
 
   if (!document) {
@@ -24,9 +21,7 @@ export default async function StaffTermsPage() {
     <LegalDocumentPage
       document={document}
       requestedLocale={locale}
-      html={markdownToHtml(
-        prepareLegalMarkdown(document.body, document.locale)
-      )}
+      html={markdownToHtml(prepareLegalMarkdown(document.body, document.locale))}
     />
   );
 }

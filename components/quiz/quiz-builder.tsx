@@ -45,7 +45,7 @@ interface QuizBuilderProps {
 
 const BLANK_OPTIONS = () => [
   { text: '', is_correct: true },
-  { text: '', is_correct: false }
+  { text: '', is_correct: false },
 ];
 
 /** Teacher quiz authoring: create the quiz, add/remove questions, publish. */
@@ -65,8 +65,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
   const [prompt, setPrompt] = useState('');
   const [points, setPoints] = useState(1);
   const [tfAnswer, setTfAnswer] = useState(true);
-  const [options, setOptions] =
-    useState<{ text: string; is_correct: boolean }[]>(BLANK_OPTIONS());
+  const [options, setOptions] = useState<{ text: string; is_correct: boolean }[]>(BLANK_OPTIONS());
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -99,7 +98,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
       await apiClient.createQuiz({
         lesson_id: lessonId,
         title,
-        passing_score: passingScore
+        passing_score: passingScore,
       });
     });
 
@@ -118,15 +117,10 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
       setOptions(BLANK_OPTIONS());
     });
 
-  const deleteQuestion = (id: string) =>
-    run(() => apiClient.deleteQuizQuestion(id));
-  const togglePublish = () =>
-    run(() => apiClient.setQuizPublished(quiz!.id, !quiz!.is_published));
+  const deleteQuestion = (id: string) => run(() => apiClient.deleteQuizQuestion(id));
+  const togglePublish = () => run(() => apiClient.setQuizPublished(quiz!.id, !quiz!.is_published));
 
-  if (loading)
-    return (
-      <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-    );
+  if (loading) return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>;
 
   if (!quiz) {
     return (
@@ -172,7 +166,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
               {t('quiz.summary', {
                 questions: quiz.Question.length,
                 points: totalPoints,
-                passing: quiz.passing_score
+                passing: quiz.passing_score,
               })}
             </p>
           </div>
@@ -191,16 +185,12 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
         </CardHeader>
         <CardContent className="space-y-3">
           {quiz.Question.map((q, i) => (
-            <div
-              key={q.id}
-              className="flex items-start justify-between rounded-md border p-3"
-            >
+            <div key={q.id} className="flex items-start justify-between rounded-md border p-3">
               <div>
                 <p className="text-sm font-medium">
                   {i + 1}. {q.prompt}{' '}
                   <span className="text-xs text-muted-foreground">
-                    ({t(`quiz.type.${q.type}`)} ·{' '}
-                    {t('quiz.pointsValue', { count: q.points })})
+                    ({t(`quiz.type.${q.type}`)} · {t('quiz.pointsValue', { count: q.points })})
                   </span>
                 </p>
                 {q.type === 'MULTIPLE_CHOICE' && (
@@ -215,8 +205,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                 )}
                 {q.type === 'TRUE_FALSE' && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {t('quiz.answer')}:{' '}
-                    {q.correct_boolean ? t('common.yes') : t('common.no')}
+                    {t('quiz.answer')}: {q.correct_boolean ? t('common.yes') : t('common.no')}
                   </p>
                 )}
               </div>
@@ -231,9 +220,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
             </div>
           ))}
           {quiz.Question.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              {t('quiz.noQuestions')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('quiz.noQuestions')}</p>
           )}
         </CardContent>
       </Card>
@@ -251,9 +238,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                 onChange={(e) => setQType(e.target.value as QType)}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="MULTIPLE_CHOICE">
-                  {t('quiz.type.MULTIPLE_CHOICE')}
-                </option>
+                <option value="MULTIPLE_CHOICE">{t('quiz.type.MULTIPLE_CHOICE')}</option>
                 <option value="TRUE_FALSE">{t('quiz.type.TRUE_FALSE')}</option>
                 <option value="SHORT_TEXT">{t('quiz.type.SHORT_TEXT')}</option>
               </select>
@@ -269,11 +254,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
 
           <div className="space-y-2">
             <Label>{t('quiz.prompt')}</Label>
-            <Textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              rows={2}
-            />
+            <Textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows={2} />
           </div>
 
           {qType === 'MULTIPLE_CHOICE' && (
@@ -286,18 +267,14 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                     name="correct-option"
                     checked={o.is_correct}
                     onChange={() =>
-                      setOptions((prev) =>
-                        prev.map((p, i) => ({ ...p, is_correct: i === idx }))
-                      )
+                      setOptions((prev) => prev.map((p, i) => ({ ...p, is_correct: i === idx })))
                     }
                   />
                   <Input
                     value={o.text}
                     onChange={(e) =>
                       setOptions((prev) =>
-                        prev.map((p, i) =>
-                          i === idx ? { ...p, text: e.target.value } : p
-                        )
+                        prev.map((p, i) => (i === idx ? { ...p, text: e.target.value } : p)),
                       )
                     }
                     placeholder={t('quiz.optionNumber', { number: idx + 1 })}
@@ -306,9 +283,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() =>
-                        setOptions((prev) => prev.filter((_, i) => i !== idx))
-                      }
+                      onClick={() => setOptions((prev) => prev.filter((_, i) => i !== idx))}
                     >
                       <Trash2 className="h-4 w-4" />
                       <span className="sr-only">{t('common.delete')}</span>
@@ -319,12 +294,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() =>
-                  setOptions((prev) => [
-                    ...prev,
-                    { text: '', is_correct: false }
-                  ])
-                }
+                onClick={() => setOptions((prev) => [...prev, { text: '', is_correct: false }])}
               >
                 <Plus className="me-1 h-4 w-4" /> {t('quiz.addOption')}
               </Button>
@@ -336,10 +306,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
               <Label>{t('quiz.correctAnswer')}</Label>
               <div className="flex gap-4">
                 {[true, false].map((v) => (
-                  <label
-                    key={String(v)}
-                    className="flex items-center gap-2 text-sm"
-                  >
+                  <label key={String(v)} className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="tf"
@@ -354,10 +321,7 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
           )}
 
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button
-            onClick={addQuestion}
-            disabled={prompt.trim().length < 1 || hasAttemptsLock}
-          >
+          <Button onClick={addQuestion} disabled={prompt.trim().length < 1 || hasAttemptsLock}>
             <Plus className="me-1 h-4 w-4" /> {t('quiz.addQuestion')}
           </Button>
         </CardContent>

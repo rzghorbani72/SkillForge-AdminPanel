@@ -5,7 +5,7 @@ import type { Academy } from '@/types/api';
 const ACADEMY_STORAGE_KEYS = {
   SELECTED_ACADEMY_ID: 'skillforge_selected_academy_id',
   ACADEMIES_CACHE: 'skillforge_academies_cache',
-  LAST_FETCH: 'skillforge_academies_last_fetch'
+  LAST_FETCH: 'skillforge_academies_last_fetch',
 };
 
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
@@ -58,14 +58,8 @@ export function setCachedAcademies(academies: Academy[]): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.setItem(
-      ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE,
-      JSON.stringify(academies)
-    );
-    localStorage.setItem(
-      ACADEMY_STORAGE_KEYS.LAST_FETCH,
-      Date.now().toString()
-    );
+    localStorage.setItem(ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE, JSON.stringify(academies));
+    localStorage.setItem(ACADEMY_STORAGE_KEYS.LAST_FETCH, Date.now().toString());
   } catch (error) {
     console.error('Error caching academies:', error);
   }
@@ -100,17 +94,11 @@ export function validateAcademyCurrencyFields(academies: Academy[]): boolean {
   return academies.every((a) => a.currency || a.currency_symbol);
 }
 
-export function hasAcademyAccess(
-  academyId: string,
-  academies: Academy[]
-): boolean {
+export function hasAcademyAccess(academyId: string, academies: Academy[]): boolean {
   return academies.some((a) => a.id === academyId);
 }
 
-export function getAcademyById(
-  academyId: string,
-  academies: Academy[]
-): Academy | null {
+export function getAcademyById(academyId: string, academies: Academy[]): Academy | null {
   return academies.find((a) => a.id === academyId) || null;
 }
 
@@ -123,7 +111,7 @@ export function validateAcademySelection(academies: Academy[]): boolean {
 
 export function autoSelectAcademy(
   academies: Academy[],
-  preferredAcademyId?: string | null
+  preferredAcademyId?: string | null,
 ): Academy | null {
   if (academies.length === 0) return null;
 
@@ -156,9 +144,7 @@ export function autoSelectAcademy(
 
 export function extractDomainPart(domain: string): string {
   if (!domain) return '';
-  const cleanDomain = domain
-    .replace(/\.skillforge\.com$/i, '')
-    .replace(/\./g, '');
+  const cleanDomain = domain.replace(/\.skillforge\.com$/i, '').replace(/\./g, '');
 
   if (!cleanDomain) return '';
   return cleanDomain

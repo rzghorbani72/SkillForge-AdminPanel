@@ -33,7 +33,7 @@ export function AcademyEditForm({
   onSubmit,
   onCancel,
   t,
-  compact = false
+  compact = false,
 }: AcademyEditFormProps) {
   const state = useAcademyEditState(academy);
   const stepKeys = STEPS.map((k) => t(`stores.${k}`));
@@ -61,10 +61,10 @@ export function AcademyEditForm({
               'flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
               i === state.step
                 ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'text-foreground hover:bg-background/50'
+                : 'text-foreground hover:bg-background/50',
             )}
           >
-            <span className="me-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-current/20 text-xs font-bold">
+            <span className="bg-current/20 me-1 inline-flex h-4 w-4 items-center justify-center rounded-full text-xs font-bold">
               {i + 1}
             </span>{' '}
             {label}
@@ -85,12 +85,7 @@ export function AcademyEditForm({
             />
           </div>
 
-          <div
-            className={cn(
-              'grid gap-3',
-              compact ? 'grid-cols-2' : 'md:grid-cols-2'
-            )}
-          >
+          <div className={cn('grid gap-3', compact ? 'grid-cols-2' : 'md:grid-cols-2')}>
             <SlugField
               value={state.slug}
               status={state.slugStatus}
@@ -98,9 +93,7 @@ export function AcademyEditForm({
               t={t}
             />
             <div className="space-y-2">
-              <Label htmlFor="public-domain">
-                {t('stores.publicDomainOptional')}
-              </Label>
+              <Label htmlFor="public-domain">{t('stores.publicDomainOptional')}</Label>
               <Input
                 id="public-domain"
                 value={state.publicAddress}
@@ -108,16 +101,12 @@ export function AcademyEditForm({
                 placeholder={t('stores.publicDomainPlaceholder')}
                 dir="ltr"
               />
-              {!compact ? (
-                <VisitSiteLink academy={academy} variant="ghost" />
-              ) : null}
+              {!compact ? <VisitSiteLink academy={academy} variant="ghost" /> : null}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="academy-description">
-              {t('stores.shortDescription')}
-            </Label>
+            <Label htmlFor="academy-description">{t('stores.shortDescription')}</Label>
             <Textarea
               id="academy-description"
               value={state.description}
@@ -157,12 +146,7 @@ export function AcademyEditForm({
         </div>
       )}
 
-      <div
-        className={cn(
-          'flex items-center pt-2',
-          onCancel ? 'justify-between' : 'justify-end'
-        )}
-      >
+      <div className={cn('flex items-center pt-2', onCancel ? 'justify-between' : 'justify-end')}>
         {onCancel ? (
           <button
             type="button"

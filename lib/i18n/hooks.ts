@@ -17,9 +17,8 @@ export function useTranslation() {
   const { language } = useI18n();
 
   const t = useCallback(
-    (key: string, params?: InterpolationParams) =>
-      translate(key, language, params),
-    [language]
+    (key: string, params?: InterpolationParams) => translate(key, language, params),
+    [language],
   );
 
   return { t, language, translations: getTranslations(language) };
@@ -36,6 +35,6 @@ export function useLanguage() {
     direction,
     isRTL,
     config,
-    locale: getLocaleForLanguage(language)
+    locale: getLocaleForLanguage(language),
   };
 }

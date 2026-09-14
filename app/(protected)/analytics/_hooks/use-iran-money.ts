@@ -14,17 +14,14 @@ export function useIranMoney() {
   const formatNumber = useNumberFormat();
 
   const formatToman = useCallback(
-    (toman: number) =>
-      `${formatNumber(Math.round(toman))} ${t('common.toman')}`,
-    [formatNumber, t]
+    (toman: number) => `${formatNumber(Math.round(toman))} ${t('common.toman')}`,
+    [formatNumber, t],
   );
 
   const formatRial = useCallback(
     (rial: number | null) =>
-      rial === null
-        ? '—'
-        : `${formatNumber(Math.round(rial))} ${t('common.rial')}`,
-    [formatNumber, t]
+      rial === null ? '—' : `${formatNumber(Math.round(rial))} ${t('common.rial')}`,
+    [formatNumber, t],
   );
 
   return { formatToman, formatRial };

@@ -14,7 +14,7 @@ export const BRAND_COLORS = [
   '#eab308',
   '#22c55e',
   '#06b6d4',
-  '#1e293b'
+  '#1e293b',
 ] as const;
 
 export const DEFAULT_BRAND_COLOR = BRAND_COLORS[0];
@@ -28,12 +28,7 @@ export interface BrandColorPickerProps {
 
 // Preset swatches plus a native color-wheel swatch, so a manager can pick an
 // exact brand hex instead of settling for the closest preset.
-export function BrandColorPicker({
-  value,
-  onChange,
-  label,
-  customLabel
-}: BrandColorPickerProps) {
+export function BrandColorPicker({ value, onChange, label, customLabel }: BrandColorPickerProps) {
   const wheelRef = useRef<HTMLInputElement>(null);
   const isPreset = BRAND_COLORS.some((hex) => hex === value);
 
@@ -62,9 +57,7 @@ export function BrandColorPicker({
             style={{ backgroundColor: hex }}
             className={cn(
               'h-7 w-7 rounded-full border-2 transition-transform hover:scale-110',
-              value === hex
-                ? 'scale-110 border-foreground shadow-md'
-                : 'border-transparent'
+              value === hex ? 'scale-110 border-foreground shadow-md' : 'border-transparent',
             )}
           />
         ))}
@@ -74,16 +67,10 @@ export function BrandColorPicker({
           title={customLabel}
           aria-label={customLabel}
           onClick={() => wheelRef.current?.click()}
-          style={
-            isPreset
-              ? undefined
-              : { backgroundColor: value, backgroundImage: 'none' }
-          }
+          style={isPreset ? undefined : { backgroundColor: value, backgroundImage: 'none' }}
           className={cn(
             'h-7 w-7 rounded-full border-2 bg-[conic-gradient(#ef4444,#eab308,#22c55e,#06b6d4,#3b82f6,#8b5cf6,#ec4899,#ef4444)] transition-transform hover:scale-110',
-            !isPreset
-              ? 'scale-110 border-foreground shadow-md'
-              : 'border-transparent'
+            !isPreset ? 'scale-110 border-foreground shadow-md' : 'border-transparent',
           )}
         />
       </div>

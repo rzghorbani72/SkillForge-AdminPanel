@@ -1,9 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import {
-  buildTrustedBackendUrl,
-  buildInternalBackendHeaders
-} from '@/lib/security/ssrf';
+import { buildTrustedBackendUrl, buildInternalBackendHeaders } from '@/lib/security/ssrf';
 import { paymentResultUrl } from '@/lib/payment-callback-url';
 
 /**
@@ -50,7 +47,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.redirect(
       paymentResultUrl({ success: 'false', error: 'invalid_callback' }),
-      { status: 303 }
+      { status: 303 },
     );
   }
 
@@ -60,9 +57,9 @@ export async function POST(request: NextRequest) {
       paymentResultUrl({
         success: 'false',
         error: reason,
-        status: statusCode ?? undefined
+        status: statusCode ?? undefined,
       }),
-      { status: 303 }
+      { status: 303 },
     );
   }
 
@@ -71,17 +68,14 @@ export async function POST(request: NextRequest) {
     const token = cookieStore.get('jwt')?.value;
     const academyId = cookieStore.get('academy_id')?.value;
 
-    const verifyRes = await fetch(
-      buildTrustedBackendUrl('/payments/verify/saman'),
-      {
-        method: 'POST',
-        headers: buildInternalBackendHeaders({
-          ...(token && { Authorization: `Bearer ${token}` }),
-          ...(academyId && { 'X-Academy-ID': academyId })
-        }),
-        body: JSON.stringify({ payment_id: resNum, ref_num: refNum })
-      }
-    );
+    const verifyRes = await fetch(buildTrustedBackendUrl('/payments/verify/saman'), {
+      method: 'POST',
+      headers: buildInternalBackendHeaders({
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(academyId && { 'X-Academy-ID': academyId }),
+      }),
+      body: JSON.stringify({ payment_id: resNum, ref_num: refNum }),
+    });
 
     const data = (await verifyRes.json()) as {
       status?: string;
@@ -93,23 +87,22 @@ export async function POST(request: NextRequest) {
         paymentResultUrl({
           success: 'true',
           refid: refNum,
-          clientrefid: data.data?.payment_id ?? resNum
+          clientrefid: data.data?.payment_id ?? resNum,
         }),
-        { status: 303 }
+        { status: 303 },
       );
     }
 
     return NextResponse.redirect(
       paymentResultUrl({
         success: 'false',
-        error: data.data?.reason ?? 'verification_failed'
+        error: data.data?.reason ?? 'verification_failed',
       }),
-      { status: 303 }
+      { status: 303 },
     );
   } catch {
-    return NextResponse.redirect(
-      paymentResultUrl({ success: 'false', error: 'server_error' }),
-      { status: 303 }
-    );
+    return NextResponse.redirect(paymentResultUrl({ success: 'false', error: 'server_error' }), {
+      status: 303,
+    });
   }
 }

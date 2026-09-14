@@ -15,11 +15,7 @@ import type { TutoringGroup } from '@/types/learning-operations';
 type Props = {
   group: TutoringGroup;
   busy: boolean;
-  onUpdateLink: (
-    url: string | null,
-    notify: boolean,
-    regenerate?: boolean
-  ) => void;
+  onUpdateLink: (url: string | null, notify: boolean, regenerate?: boolean) => void;
   onAnnounce: (body: string, sendSms: boolean) => void;
   onConfirm: () => void;
   onCancel: (reason: string) => void;
@@ -32,12 +28,12 @@ export const GroupActionsCard = ({
   onUpdateLink,
   onAnnounce,
   onConfirm,
-  onCancel
+  onCancel,
 }: Props) => {
   const { t } = useTranslation();
   const [link, setLink] = useState(group.meeting_url ?? '');
   const [manualEntry, setManualEntry] = useState(
-    Boolean(group.meeting_url) && group.meeting_url_source !== 'AUTO_JITSI'
+    Boolean(group.meeting_url) && group.meeting_url_source !== 'AUTO_JITSI',
   );
   const [notify, setNotify] = useState(true);
   const [message, setMessage] = useState('');
@@ -46,15 +42,11 @@ export const GroupActionsCard = ({
 
   useEffect(() => {
     setLink(group.meeting_url ?? '');
-    setManualEntry(
-      Boolean(group.meeting_url) && group.meeting_url_source !== 'AUTO_JITSI'
-    );
+    setManualEntry(Boolean(group.meeting_url) && group.meeting_url_source !== 'AUTO_JITSI');
   }, [group.meeting_url, group.meeting_url_source]);
 
-  const canStartNow =
-    group.status === 'WAITING' && group.seats_taken < group.min_students;
-  const canCancel =
-    group.status !== 'CANCELLED' && group.status !== 'COMPLETED';
+  const canStartNow = group.status === 'WAITING' && group.seats_taken < group.min_students;
+  const canCancel = group.status !== 'CANCELLED' && group.status !== 'COMPLETED';
 
   return (
     <DataPanel
@@ -63,9 +55,7 @@ export const GroupActionsCard = ({
     >
       <div className="space-y-6 p-5">
         <div className="space-y-2">
-          <Label htmlFor="group-meeting-url">
-            {t('tutoring.groups.meetingUrl')}
-          </Label>
+          <Label htmlFor="group-meeting-url">{t('tutoring.groups.meetingUrl')}</Label>
           {manualEntry ? (
             <>
               <Input
@@ -135,9 +125,7 @@ export const GroupActionsCard = ({
                 disabled={busy}
                 onClick={() => onUpdateLink(null, notify)}
               >
-                {busy
-                  ? t('tutoring.groups.generating')
-                  : t('tutoring.groups.generateLink')}
+                {busy ? t('tutoring.groups.generating') : t('tutoring.groups.generateLink')}
               </Button>
               <div>
                 <Button
@@ -152,11 +140,7 @@ export const GroupActionsCard = ({
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Switch
-              id="group-link-notify"
-              checked={notify}
-              onCheckedChange={setNotify}
-            />
+            <Switch id="group-link-notify" checked={notify} onCheckedChange={setNotify} />
             <Label htmlFor="group-link-notify" className="text-sm font-normal">
               {t('tutoring.groups.notifyOnLinkChange')}
             </Label>
@@ -173,20 +157,14 @@ export const GroupActionsCard = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="group-announcement">
-            {t('tutoring.groups.announceLabel')}
-          </Label>
+          <Label htmlFor="group-announcement">{t('tutoring.groups.announceLabel')}</Label>
           <Textarea
             id="group-announcement"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
           <div className="flex items-center gap-2">
-            <Switch
-              id="group-announce-sms"
-              checked={sendSms}
-              onCheckedChange={setSendSms}
-            />
+            <Switch id="group-announce-sms" checked={sendSms} onCheckedChange={setSendSms} />
             <Label htmlFor="group-announce-sms" className="text-sm font-normal">
               {t('tutoring.groups.announceSms')}
             </Label>
@@ -205,15 +183,8 @@ export const GroupActionsCard = ({
 
         {canStartNow ? (
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              {t('tutoring.groups.startNowHint')}
-            </p>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={busy}
-              onClick={onConfirm}
-            >
+            <p className="text-sm text-muted-foreground">{t('tutoring.groups.startNowHint')}</p>
+            <Button size="sm" variant="outline" disabled={busy} onClick={onConfirm}>
               {t('tutoring.groups.startNow')}
             </Button>
           </div>
@@ -221,17 +192,13 @@ export const GroupActionsCard = ({
 
         {canCancel ? (
           <div className="space-y-2 rounded-md border border-destructive/40 p-3">
-            <Label htmlFor="group-cancel-reason">
-              {t('tutoring.groups.cancelLabel')}
-            </Label>
+            <Label htmlFor="group-cancel-reason">{t('tutoring.groups.cancelLabel')}</Label>
             <Input
               id="group-cancel-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.cancelHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('tutoring.groups.cancelHint')}</p>
             <Button
               size="sm"
               variant="destructive"

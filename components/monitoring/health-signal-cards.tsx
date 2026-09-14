@@ -7,7 +7,7 @@ import {
   Gauge,
   LogIn,
   PlayCircle,
-  ServerCrash
+  ServerCrash,
 } from 'lucide-react';
 import { StatsCard } from '@/components/shared/stats-card';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -49,9 +49,7 @@ export function HealthSignalCards({ signals }: { signals: HealthSignals }) {
         title={t('monitoring.failedPayments24h')}
         value={formatNumber(signals.failed_payments_24h)}
         icon={AlertTriangle}
-        iconColor={
-          hasFailedPayments ? 'text-destructive' : 'text-muted-foreground'
-        }
+        iconColor={hasFailedPayments ? 'text-destructive' : 'text-muted-foreground'}
         changeType={hasFailedPayments ? 'negative' : 'neutral'}
       />
       <StatsCard
@@ -65,22 +63,20 @@ export function HealthSignalCards({ signals }: { signals: HealthSignals }) {
         iconColor={rateIsBad ? 'text-destructive' : 'text-muted-foreground'}
         changeType={rateIsBad ? 'negative' : 'neutral'}
         description={t('monitoring.requestsCounted', {
-          value: formatNumber(signals.requests_24h)
+          value: formatNumber(signals.requests_24h),
         })}
       />
       <StatsCard
         title={t('monitoring.serverErrors24h')}
         value={formatNumber(signals.server_errors_24h)}
         icon={ServerCrash}
-        iconColor={
-          hasServerErrors ? 'text-destructive' : 'text-muted-foreground'
-        }
+        iconColor={hasServerErrors ? 'text-destructive' : 'text-muted-foreground'}
         changeType={hasServerErrors ? 'negative' : 'neutral'}
       />
       <StatsCard
         title={t('monitoring.dbLatency')}
         value={t('monitoring.msValue', {
-          value: formatNumber(signals.db_latency_ms)
+          value: formatNumber(signals.db_latency_ms),
         })}
         icon={Database}
         iconColor="text-muted-foreground"

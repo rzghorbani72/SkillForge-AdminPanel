@@ -17,10 +17,7 @@ function groupDigits(raw: string, isFa: boolean): string {
 }
 
 export interface NumberInputProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    'value' | 'onChange' | 'type'
-  > {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> {
   /** Raw digit string (no separators) — what gets stored */
   value: string | number | null | undefined;
   /** Receives the raw digit string; caller decides how to parse it (Number(raw), or keep empty) */
@@ -48,9 +45,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       if (allowDecimal) {
         const firstDot = cleaned.indexOf('.');
         if (firstDot !== -1) {
-          cleaned =
-            cleaned.slice(0, firstDot + 1) +
-            cleaned.slice(firstDot + 1).replace(/\./g, '');
+          cleaned = cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
         }
       }
       onChange(cleaned);
@@ -78,6 +73,6 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         </span>
       </div>
     );
-  }
+  },
 );
 NumberInput.displayName = 'NumberInput';

@@ -44,7 +44,7 @@ export function AcademiesList({
   onCreate,
   platformControls,
   onStaffChanged,
-  t
+  t,
 }: AcademiesListProps) {
   const formatNumber = useNumberFormat();
 
@@ -53,11 +53,7 @@ export function AcademiesList({
   } ${t('stores.title')} · ${t('stores.manageStoresDescription')}`;
 
   return (
-    <DataPanel
-      title={t('navigation.stores')}
-      subtitle={subtitle}
-      filters={filters}
-    >
+    <DataPanel title={t('navigation.stores')} subtitle={subtitle} filters={filters}>
       <DataList
         items={academies}
         rowKey={(academy) => academy.id}
@@ -77,9 +73,7 @@ export function AcademiesList({
             t={t}
           />
         )}
-        cardExtra={
-          canCreate ? <AddAcademyCard onClick={onCreate} t={t} /> : undefined
-        }
+        cardExtra={canCreate ? <AddAcademyCard onClick={onCreate} t={t} /> : undefined}
         emptyState={
           <div className="py-12">
             <EmptyState
@@ -90,19 +84,9 @@ export function AcademiesList({
                   <GraduationCap className="h-10 w-10" />
                 )
               }
-              title={
-                isFiltered ? t('stores.noStoresFound') : t('stores.emptyTitle')
-              }
-              description={
-                isFiltered
-                  ? t('common.tryAdjustingFilters')
-                  : t('stores.emptyDesc')
-              }
-              actionLabel={
-                !isFiltered && canCreate
-                  ? t('auth.createAcademyBtn')
-                  : undefined
-              }
+              title={isFiltered ? t('stores.noStoresFound') : t('stores.emptyTitle')}
+              description={isFiltered ? t('common.tryAdjustingFilters') : t('stores.emptyDesc')}
+              actionLabel={!isFiltered && canCreate ? t('auth.createAcademyBtn') : undefined}
               onAction={!isFiltered && canCreate ? onCreate : undefined}
             />
           </div>

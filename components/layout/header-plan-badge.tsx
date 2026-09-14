@@ -4,10 +4,7 @@ import Link from '@/components/ui/link';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { canManageSubscription } from '@/lib/subscription-access';
-import {
-  getSubscriptionStatusDisplay,
-  SUBSCRIPTION_TONE_CLASSES
-} from '@/lib/subscription-status';
+import { getSubscriptionStatusDisplay, SUBSCRIPTION_TONE_CLASSES } from '@/lib/subscription-status';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
@@ -60,7 +57,7 @@ export function HeaderPlanBadge() {
       title={label}
       className={cn(
         'inline-flex h-9 items-center gap-1.5 rounded-xl border border-transparent px-2 text-xs font-semibold transition-opacity hover:opacity-90 sm:max-w-[13rem] sm:px-3 sm:text-sm',
-        SUBSCRIPTION_TONE_CLASSES[display.tone]
+        SUBSCRIPTION_TONE_CLASSES[display.tone],
       )}
     >
       <Crown className="h-3.5 w-3.5 shrink-0" />

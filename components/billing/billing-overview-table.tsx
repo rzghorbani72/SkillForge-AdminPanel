@@ -12,7 +12,7 @@ import { getPlanDisplayName } from '@/lib/plan-display-name';
 import {
   getSubscriptionStatusDisplay,
   SUBSCRIPTION_TONE_CLASSES,
-  type SubscriptionStatusValue
+  type SubscriptionStatusValue,
 } from '@/lib/subscription-status';
 import { cn } from '@/lib/utils';
 import { apiClient, type AcademySubscriptionOverviewRow } from '@/lib/api';
@@ -25,10 +25,7 @@ interface BillingOverviewTableProps {
   isLoading: boolean;
 }
 
-export function BillingOverviewTable({
-  rows,
-  isLoading
-}: BillingOverviewTableProps) {
+export function BillingOverviewTable({ rows, isLoading }: BillingOverviewTableProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const formatNumber = useNumberFormat();
@@ -55,23 +52,17 @@ export function BillingOverviewTable({
   function statusBadge(row: AcademySubscriptionOverviewRow) {
     const display = getSubscriptionStatusDisplay(
       row.status as SubscriptionStatusValue,
-      row.is_trial
+      row.is_trial,
     );
     return (
-      <Badge
-        variant="outline"
-        className={cn('text-xs', SUBSCRIPTION_TONE_CLASSES[display.tone])}
-      >
+      <Badge variant="outline" className={cn('text-xs', SUBSCRIPTION_TONE_CLASSES[display.tone])}>
         {t(display.labelKey)}
       </Badge>
     );
   }
 
   return (
-    <DataPanel
-      title={t('billing.overviewTitle')}
-      subtitle={t('billing.overviewSubtitle')}
-    >
+    <DataPanel title={t('billing.overviewTitle')} subtitle={t('billing.overviewSubtitle')}>
       <DataList
         items={rows}
         rowKey={(row) => row.academy_id}
@@ -81,35 +72,30 @@ export function BillingOverviewTable({
           {
             id: 'name',
             header: t('billing.academyColumn'),
-            cell: (row) => <span className="font-semibold">{row.name}</span>
+            cell: (row) => <span className="font-semibold">{row.name}</span>,
           },
           {
             id: 'plan',
             header: t('billing.planColumn'),
-            cell: (row) => planLabel(row)
+            cell: (row) => planLabel(row),
           },
           {
             id: 'status',
             header: t('billing.statusColumn'),
-            cell: (row) => statusBadge(row)
+            cell: (row) => statusBadge(row),
           },
           {
             id: 'days',
             header: t('billing.daysRemainingColumn'),
             align: 'center',
-            cell: (row) =>
-              row.days_remaining === null
-                ? '—'
-                : formatNumber(row.days_remaining)
+            cell: (row) => (row.days_remaining === null ? '—' : formatNumber(row.days_remaining)),
           },
           {
             id: 'storage',
             header: t('billing.storageColumn'),
             align: 'center',
             cell: (row) =>
-              `${formatNumber(row.storage_usage_gb)} / ${formatNumber(
-                row.included_storage_gb
-              )} GB`
+              `${formatNumber(row.storage_usage_gb)} / ${formatNumber(row.included_storage_gb)} GB`,
           },
           {
             id: 'action',
@@ -126,8 +112,8 @@ export function BillingOverviewTable({
               >
                 {t('billing.managePlan')}
               </Button>
-            )
-          }
+            ),
+          },
         ]}
         emptyState={
           <div className="py-12">

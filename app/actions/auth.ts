@@ -26,10 +26,10 @@ export async function logout(): Promise<{ success: boolean; error?: string }> {
           headers: {
             'Content-Type': 'application/json',
             Cookie: cookieHeader,
-            'x-csrf-token': cookieStore.get('csrf-token')?.value ?? ''
+            'x-csrf-token': cookieStore.get('csrf-token')?.value ?? '',
           },
           cache: 'no-store',
-          signal: AbortSignal.timeout(3000)
+          signal: AbortSignal.timeout(3000),
         });
       } catch {
         // Cookie deletion below is the source of truth — backend call is best-effort
@@ -43,7 +43,7 @@ export async function logout(): Promise<{ success: boolean; error?: string }> {
     console.error('Logout error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Logout failed'
+      error: error instanceof Error ? error.message : 'Logout failed',
     };
   }
 }

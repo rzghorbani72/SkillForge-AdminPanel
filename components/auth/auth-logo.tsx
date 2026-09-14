@@ -22,7 +22,7 @@ export function AuthLogo({ className }: { className?: string }) {
         className="inline-block h-7 w-[69px] bg-foreground"
         style={{
           WebkitMask: 'url(/logo-type.png) center / contain no-repeat',
-          mask: 'url(/logo-type.png) center / contain no-repeat'
+          mask: 'url(/logo-type.png) center / contain no-repeat',
         }}
       />
     </div>

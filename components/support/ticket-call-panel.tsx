@@ -7,11 +7,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  CALL_STATUSES,
-  StaffTicketDetail,
-  TicketCallRequest
-} from './staff-support-types';
+import { CALL_STATUSES, StaffTicketDetail, TicketCallRequest } from './staff-support-types';
 
 interface Props {
   ticket: StaffTicketDetail;
@@ -22,7 +18,7 @@ interface Props {
 function CallRow({
   call,
   t,
-  formatDate
+  formatDate,
 }: {
   call: TicketCallRequest;
   t: (k: string) => string;
@@ -33,21 +29,17 @@ function CallRow({
       <p className="flex items-center gap-1.5 font-medium">
         <Phone className="h-3 w-3 text-muted-foreground" />
         <span dir="ltr">{call.phone}</span>
-        <span className="text-muted-foreground">
-          · {t(`support.callStatuses.${call.status}`)}
-        </span>
+        <span className="text-muted-foreground">· {t(`support.callStatuses.${call.status}`)}</span>
       </p>
       {call.called_at && (
         <p className="text-muted-foreground">
           {formatDate(call.called_at, {
             hour: '2-digit',
-            minute: '2-digit'
+            minute: '2-digit',
           })}
         </p>
       )}
-      {call.outcome_note && (
-        <p className="mt-1 whitespace-pre-wrap">{call.outcome_note}</p>
-      )}
+      {call.outcome_note && <p className="mt-1 whitespace-pre-wrap">{call.outcome_note}</p>}
     </div>
   );
 }
@@ -90,7 +82,7 @@ export function TicketCallPanel({ ticket, busy, onAct }: Props) {
                 onAct(async () => {
                   await apiClient.logSupportCall(ticket.id, {
                     status: cs,
-                    outcome_note: callNote || undefined
+                    outcome_note: callNote || undefined,
                   });
                   setCallNote('');
                 })
@@ -118,7 +110,7 @@ export function TicketCallPanel({ ticket, busy, onAct }: Props) {
             onClick={() =>
               onAct(async () => {
                 await apiClient.logSupportEmail(ticket.id, {
-                  outcome_note: emailNote || undefined
+                  outcome_note: emailNote || undefined,
                 });
                 setEmailNote('');
               })

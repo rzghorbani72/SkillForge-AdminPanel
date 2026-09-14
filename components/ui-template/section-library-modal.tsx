@@ -5,12 +5,7 @@ import { Check, ImageIcon, LayoutTemplate, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -41,7 +36,7 @@ const SLOT_LABELS: Record<string, string> = {
   avatar: 'avatar',
   logo: 'logo',
   image: 'image',
-  slides: 'slide image'
+  slides: 'slide image',
 };
 
 function summarizeImageSlots(slots: ImageSlot[]): string {
@@ -88,7 +83,7 @@ function SectionTypeThumb({ type }: { type: string }) {
         <div className="h-4 w-20 rounded-md bg-primary/40" />
       </div>
     ),
-    footer: <div className={`h-4 w-full rounded-sm bg-muted-foreground/15`} />
+    footer: <div className={`h-4 w-full rounded-sm bg-muted-foreground/15`} />,
   };
 
   return (
@@ -116,7 +111,7 @@ export function SectionLibraryModal({
   open,
   onClose,
   onImported,
-  swapTarget
+  swapTarget,
 }: SectionLibraryModalProps) {
   const { t } = useTranslation();
   const blockLabel = (type: string) => {
@@ -177,11 +172,7 @@ export function SectionLibraryModal({
       if (swapTarget && section.blockType !== swapTarget.type) {
         return false;
       }
-      if (
-        !swapTarget &&
-        typeFilter !== 'all' &&
-        section.blockType !== typeFilter
-      ) {
+      if (!swapTarget && typeFilter !== 'all' && section.blockType !== typeFilter) {
         return false;
       }
       if (!query) return true;
@@ -206,7 +197,7 @@ export function SectionLibraryModal({
       presetId: items[0].presetId,
       presetName: items[0].presetName,
       presetPreview: items[0].presetPreview,
-      items
+      items,
     }));
   }, [filtered]);
 
@@ -219,13 +210,13 @@ export function SectionLibraryModal({
       if (swapTarget) {
         await apiClient.swapSectionInDraft(swapTarget.blockId, {
           presetId: selected.presetId,
-          blockId: selected.blockId
+          blockId: selected.blockId,
         });
         ErrorHandler.showSuccess(t('settings.sectionSwappedSuccess'));
       } else {
         await apiClient.importSectionToDraft({
           presetId: selected.presetId,
-          blockId: selected.blockId
+          blockId: selected.blockId,
         });
         ErrorHandler.showSuccess(t('settings.sectionImportedSuccess'));
       }
@@ -241,11 +232,7 @@ export function SectionLibraryModal({
   // One card, shared by the add-from-library grid and the swap "section style"
   // grid. `title`/`sublabel` differ per mode so swap mode reads as design
   // options (no "from template X" framing).
-  const renderCard = (
-    section: SectionCatalogEntry,
-    title: string,
-    sublabel: string | null
-  ) => {
+  const renderCard = (section: SectionCatalogEntry, title: string, sublabel: string | null) => {
     const isSelected = selected?.id === section.id;
     return (
       <button
@@ -253,9 +240,7 @@ export function SectionLibraryModal({
         type="button"
         onClick={() => setSelected(section)}
         className={`group/card overflow-hidden rounded-lg border text-right transition-colors ${
-          isSelected
-            ? 'border-primary ring-2 ring-primary/40'
-            : 'hover:border-primary/40'
+          isSelected ? 'border-primary ring-2 ring-primary/40' : 'hover:border-primary/40'
         }`}
       >
         <div className="relative aspect-[16/9] w-full border-b bg-muted/30">
@@ -302,8 +287,7 @@ export function SectionLibraryModal({
           {section.imageSlots.length > 0 && (
             <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
               <ImageIcon className="h-2.5 w-2.5 shrink-0" />
-              {t('settings.sectionNeedsImages')}:{' '}
-              {summarizeImageSlots(section.imageSlots)}
+              {t('settings.sectionNeedsImages')}: {summarizeImageSlots(section.imageSlots)}
             </p>
           )}
         </div>
@@ -334,9 +318,7 @@ export function SectionLibraryModal({
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div>
             <DialogTitle className="text-lg font-semibold">
-              {swapTarget
-                ? t('settings.sectionReplaceTitle')
-                : t('settings.sectionLibraryTitle')}
+              {swapTarget ? t('settings.sectionReplaceTitle') : t('settings.sectionLibraryTitle')}
             </DialogTitle>
             <DialogDescription className="text-xs">
               {swapTarget
@@ -406,9 +388,7 @@ export function SectionLibraryModal({
 
         <div className="min-h-0 flex-1 overflow-y-auto p-3">
           {isLoading ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t('common.loading')}</p>
           ) : filtered.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
               {t('settings.sectionLibraryEmpty')}
@@ -421,8 +401,8 @@ export function SectionLibraryModal({
                 renderCard(
                   section,
                   `${t('settings.sectionStyleLabel')} ${(i + 1).toLocaleString('fa-IR')}`,
-                  null
-                )
+                  null,
+                ),
               )}
             </div>
           ) : (
@@ -449,9 +429,9 @@ export function SectionLibraryModal({
                         section,
                         blockLabel(section.blockType),
                         t('settings.sectionFromTemplate', {
-                          name: section.presetName
-                        })
-                      )
+                          name: section.presetName,
+                        }),
+                      ),
                     )}
                   </div>
                 </div>

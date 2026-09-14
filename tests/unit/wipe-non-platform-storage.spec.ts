@@ -1,8 +1,5 @@
 import { expect, test } from '@playwright/test';
-import {
-  isPlatformCookieName,
-  isPlatformStorageKey
-} from '@/lib/wipe-non-platform-storage';
+import { isPlatformCookieName, isPlatformStorageKey } from '@/lib/wipe-non-platform-storage';
 
 test.describe('platform storage keep-list', () => {
   test('keeps language, theme, and sidebar chrome', () => {

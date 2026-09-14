@@ -2,11 +2,7 @@
 
 import { useState } from 'react';
 import { AuthShell } from '@/components/auth/auth-shell';
-import {
-  AuthField,
-  AuthSubmit,
-  AuthSecondaryButton
-} from '@/components/auth/auth-fields';
+import { AuthField, AuthSubmit, AuthSecondaryButton } from '@/components/auth/auth-fields';
 import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import Link from '@/components/ui/link';
 import { sanitizePasswordInput } from '@/lib/password-utils';
@@ -47,7 +43,7 @@ export function PasswordStep({
   onPasswordChange,
   onUseOtp,
   onChangeIdentifier,
-  onSubmit
+  onSubmit,
 }: PasswordStepProps) {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -82,18 +78,13 @@ export function PasswordStep({
           autoComplete="current-password"
           autoFocus
           value={password}
-          onChange={(e) =>
-            onPasswordChange(sanitizePasswordInput(e.target.value))
-          }
+          onChange={(e) => onPasswordChange(sanitizePasswordInput(e.target.value))}
           error={error}
           disabled={isLoading}
         />
 
         <div className="px-3 text-end">
-          <Link
-            href={forgotPasswordHref}
-            className="text-base text-[#181C20] hover:underline"
-          >
+          <Link href={forgotPasswordHref} className="text-base text-[#181C20] hover:underline">
             {t('auth.forgotPassword')}
           </Link>
         </div>

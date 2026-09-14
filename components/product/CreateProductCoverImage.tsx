@@ -29,9 +29,7 @@ const CreateProductCoverImage = ({ form }: Props) => {
       <CardContent className="space-y-4">
         <ImageUploadPreview
           title={form.watch('title') || t('products.productCover')}
-          description={
-            form.watch('description') || t('products.productCoverImage')
-          }
+          description={form.watch('description') || t('products.productCoverImage')}
           onSuccess={(image) => {
             form.setValue('cover_id', image.id.toString());
           }}

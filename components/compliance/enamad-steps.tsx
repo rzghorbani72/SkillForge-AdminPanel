@@ -12,13 +12,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 export function EnamadSteps({ domain }: { domain: string | null }) {
   const { t } = useTranslation();
 
-  const steps = [
-    'ownership',
-    'businessInfo',
-    'contactInfo',
-    'commitment',
-    'technical'
-  ] as const;
+  const steps = ['ownership', 'businessInfo', 'contactInfo', 'commitment', 'technical'] as const;
 
   return (
     <div className="space-y-4">
@@ -37,9 +31,7 @@ export function EnamadSteps({ domain }: { domain: string | null }) {
               {index + 1}
             </Badge>
             <div className="space-y-1">
-              <p className="text-sm font-medium">
-                {t(`compliance.enamad.step.${step}.title`)}
-              </p>
+              <p className="text-sm font-medium">{t(`compliance.enamad.step.${step}.title`)}</p>
               <p className="text-sm text-muted-foreground">
                 {t(`compliance.enamad.step.${step}.body`)}
               </p>
@@ -51,9 +43,7 @@ export function EnamadSteps({ domain }: { domain: string | null }) {
       {domain ? (
         <Alert>
           <Info className="h-4 w-4" />
-          <AlertDescription>
-            {t('compliance.enamad.technicalHelp', { domain })}
-          </AlertDescription>
+          <AlertDescription>{t('compliance.enamad.technicalHelp', { domain })}</AlertDescription>
         </Alert>
       ) : null}
     </div>

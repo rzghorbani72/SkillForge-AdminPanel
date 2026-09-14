@@ -26,20 +26,15 @@ function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
   const formatNumber = useNumberFormat();
   const periodLabel = usePeriodLabel();
   const cohorts = Array.from(new Set(cells.map((cell) => cell.cohort)));
-  const maxIndex = cells.reduce(
-    (max, cell) => Math.max(max, cell.month_index),
-    0
-  );
+  const maxIndex = cells.reduce((max, cell) => Math.max(max, cell.month_index), 0);
   const lookup = new Map(
-    cells.map((cell) => [`${cell.cohort}:${cell.month_index}`, cell.retention])
+    cells.map((cell) => [`${cell.cohort}:${cell.month_index}`, cell.retention]),
   );
 
   if (cohorts.length === 0) {
     return (
       <DataPanel title={title}>
-        <p className="p-6 text-sm text-muted-foreground">
-          {t('platformMetrics.empty')}
-        </p>
+        <p className="p-6 text-sm text-muted-foreground">{t('platformMetrics.empty')}</p>
       </DataPanel>
     );
   }
@@ -54,10 +49,7 @@ function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
                 {t('platformMetrics.columns.cohort')}
               </th>
               {Array.from({ length: maxIndex + 1 }, (_, index) => (
-                <th
-                  key={index}
-                  className="p-1 text-center font-medium text-muted-foreground"
-                >
+                <th key={index} className="p-1 text-center font-medium text-muted-foreground">
                   {formatNumber(index)}
                 </th>
               ))}
@@ -77,9 +69,7 @@ function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
                       className="rounded p-1 text-center text-base font-semibold"
                       style={{ background: shade(retention) }}
                     >
-                      {retention === null
-                        ? ''
-                        : `${formatNumber(Math.round(retention * 100))}%`}
+                      {retention === null ? '' : `${formatNumber(Math.round(retention * 100))}%`}
                     </td>
                   );
                 })}
@@ -94,23 +84,13 @@ function Heatmap({ cells, title }: { cells: Cell[]; title: string }) {
 
 export function CohortsTab({ query }: Props) {
   const { t } = useTranslation();
-  const { data } = useMetricsFetch(query, (q) =>
-    apiClient.getMetricsCohorts(q)
-  );
+  const { data } = useMetricsFetch(query, (q) => apiClient.getMetricsCohorts(q));
 
   return (
     <div className="space-y-6">
-      <Heatmap
-        cells={data?.revenue_cohorts ?? []}
-        title={t('platformMetrics.tabs.revenue')}
-      />
-      <Heatmap
-        cells={data?.login_cohorts ?? []}
-        title={t('platformMetrics.tabs.users')}
-      />
-      <p className="text-xs text-muted-foreground">
-        {t('platformMetrics.caveats.loginHistory')}
-      </p>
+      <Heatmap cells={data?.revenue_cohorts ?? []} title={t('platformMetrics.tabs.revenue')} />
+      <Heatmap cells={data?.login_cohorts ?? []} title={t('platformMetrics.tabs.users')} />
+      <p className="text-xs text-muted-foreground">{t('platformMetrics.caveats.loginHistory')}</p>
     </div>
   );
 }

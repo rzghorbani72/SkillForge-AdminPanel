@@ -15,7 +15,7 @@ export const lokiSink =
     ? createLokiSink({
         url: lokiUrl,
         user: process.env.LOKI_USER,
-        token: process.env.LOKI_TOKEN
+        token: process.env.LOKI_TOKEN,
       })
     : null;
 
@@ -34,5 +34,5 @@ export const logger = createLogger({
   catalog: LOG_CATALOG,
   release: process.env.NEXT_PUBLIC_RELEASE,
   getContext: isBrowser ? getBrowserContext : undefined,
-  sink: resolveSink()
+  sink: resolveSink(),
 });

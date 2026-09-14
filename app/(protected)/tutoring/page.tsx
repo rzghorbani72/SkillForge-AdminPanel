@@ -16,13 +16,8 @@ export default function TutoringPage() {
   const isRtl = language === 'fa' || language === 'ar';
   const tutoring = useTutoringPage();
   const offers = useTutoringOffers();
-  const {
-    featureEnabled,
-    checkingFeature,
-    enablingFeature,
-    isManager,
-    enableLearningFollowUp
-  } = useTutorLedFeature();
+  const { featureEnabled, checkingFeature, enablingFeature, isManager, enableLearningFollowUp } =
+    useTutorLedFeature();
 
   const showTutoring = !checkingFeature && featureEnabled !== false;
 

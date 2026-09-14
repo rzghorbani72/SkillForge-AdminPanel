@@ -63,6 +63,6 @@ export function useMemberAcademies(phoneE164: string) {
       setStep('intro');
       setOtp('');
       setError('');
-    }
+    },
   };
 }

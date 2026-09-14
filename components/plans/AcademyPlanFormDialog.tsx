@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
@@ -36,16 +36,14 @@ export function AcademyPlanFormDialog({
   onClose,
   onChange,
   onSave,
-  t
+  t,
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {editingPlan
-              ? t('plans.editAcademyPlan')
-              : t('plans.createAcademyPlan')}
+            {editingPlan ? t('plans.editAcademyPlan') : t('plans.createAcademyPlan')}
           </DialogTitle>
           <DialogDescription>{t('plans.dialogSubtitle')}</DialogDescription>
         </DialogHeader>
@@ -72,10 +70,7 @@ export function AcademyPlanFormDialog({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t('plans.priceLabel')}</Label>
-              <PriceInput
-                value={form.price}
-                onChange={(raw) => onChange('price', raw)}
-              />
+              <PriceInput value={form.price} onChange={(raw) => onChange('price', raw)} />
             </div>
             <div className="space-y-1.5">
               <Label>{t('plans.durationDays')}</Label>
@@ -89,10 +84,7 @@ export function AcademyPlanFormDialog({
 
           {editingPlan && (
             <div className="flex items-center gap-3 rounded-lg border p-3">
-              <Switch
-                checked={form.is_active}
-                onCheckedChange={(v) => onChange('is_active', v)}
-              />
+              <Switch checked={form.is_active} onCheckedChange={(v) => onChange('is_active', v)} />
               <p className="text-sm font-medium">{t('plans.toggleActive')}</p>
             </div>
           )}
@@ -104,9 +96,7 @@ export function AcademyPlanFormDialog({
           </Button>
           <Button onClick={onSave} disabled={isSaving || !form.name}>
             {isSaving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-            {editingPlan
-              ? t('plans.editAcademyPlan')
-              : t('plans.createAcademyPlan')}
+            {editingPlan ? t('plans.editAcademyPlan') : t('plans.createAcademyPlan')}
           </Button>
         </DialogFooter>
       </DialogContent>

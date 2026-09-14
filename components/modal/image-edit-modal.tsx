@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,12 +32,7 @@ interface ImageEditModalProps {
   onSave: (data: { alt?: string }) => Promise<void>;
 }
 
-const ImageEditModal: React.FC<ImageEditModalProps> = ({
-  open,
-  onOpenChange,
-  image,
-  onSave
-}) => {
+const ImageEditModal: React.FC<ImageEditModalProps> = ({ open, onOpenChange, image, onSave }) => {
   const [alt, setAlt] = useState(image.alt || '');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -64,21 +59,14 @@ const ImageEditModal: React.FC<ImageEditModalProps> = ({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Edit Image</DialogTitle>
-          <DialogDescription>
-            Update the image metadata and details
-          </DialogDescription>
+          <DialogDescription>Update the image metadata and details</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Filename (read-only) */}
           <div className="space-y-2">
             <Label htmlFor="filename">Filename</Label>
-            <Input
-              id="filename"
-              value={image.filename || 'N/A'}
-              disabled
-              className="bg-muted"
-            />
+            <Input id="filename" value={image.filename || 'N/A'} disabled className="bg-muted" />
           </div>
 
           {/* Alt Text */}
@@ -98,11 +86,7 @@ const ImageEditModal: React.FC<ImageEditModalProps> = ({
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isSaving}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={isSaving}>

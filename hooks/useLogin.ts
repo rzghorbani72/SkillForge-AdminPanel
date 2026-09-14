@@ -12,17 +12,14 @@ export function useLogin() {
     setError(null);
 
     try {
-      const response = await fetch(
-        `${getBrowserApiBaseUrl()}/auth/login-by-pass`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ identifier, password }),
-          credentials: 'include'
-        }
-      );
+      const response = await fetch(`${getBrowserApiBaseUrl()}/auth/login-by-pass`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ identifier, password }),
+        credentials: 'include',
+      });
 
       if (response.ok) {
         router.push('/user/academies');

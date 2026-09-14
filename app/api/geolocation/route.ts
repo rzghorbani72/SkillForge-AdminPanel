@@ -10,13 +10,13 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       country: country.code,
       countryName: country.name,
-      language
+      language,
     });
   } catch (error) {
     console.error('Geolocation error:', error);
     return NextResponse.json(
       { country: 'US', countryName: 'United States', language: 'en' },
-      { status: 200 }
+      { status: 200 },
     );
   }
 }

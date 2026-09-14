@@ -6,14 +6,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   academySiteHost,
   academySiteUrl,
   resolveAcademySiteUrls,
-  type AcademyAddress
+  type AcademyAddress,
 } from '@/lib/academy-site-url';
 import { cn } from '@/lib/utils';
 
@@ -33,7 +33,7 @@ function SiteLinkAnchor({
   iconOnly,
   variant,
   size,
-  className
+  className,
 }: {
   href: string;
   label: string;
@@ -63,7 +63,7 @@ export function VisitSiteLink({
   variant = 'outline',
   size = 'sm',
   iconOnly = false,
-  className
+  className,
 }: VisitSiteLinkProps) {
   const { t } = useTranslation();
   const urls = resolveAcademySiteUrls(academy);
@@ -111,12 +111,8 @@ export function VisitSiteLink({
             rel="noopener noreferrer"
             className="flex cursor-pointer flex-col items-start gap-0.5"
           >
-            <span className="font-medium">
-              {t('academy.visitSiteSubdomain')}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {subdomainHost}
-            </span>
+            <span className="font-medium">{t('academy.visitSiteSubdomain')}</span>
+            <span className="text-xs text-muted-foreground">{subdomainHost}</span>
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -126,9 +122,7 @@ export function VisitSiteLink({
             rel="noopener noreferrer"
             className="flex cursor-pointer flex-col items-start gap-0.5"
           >
-            <span className="font-medium">
-              {t('academy.visitSiteCustomDomain')}
-            </span>
+            <span className="font-medium">{t('academy.visitSiteCustomDomain')}</span>
             <span className="text-xs text-muted-foreground">{publicHost}</span>
           </a>
         </DropdownMenuItem>

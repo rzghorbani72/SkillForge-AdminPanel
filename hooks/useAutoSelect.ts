@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 export function useAutoSelect(
   options: { value: string }[],
   onChange: (value: string) => void,
-  currentValue?: string
+  currentValue?: string,
 ) {
   useEffect(() => {
     if (options.length === 1 && !currentValue) {

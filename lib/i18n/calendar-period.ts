@@ -26,7 +26,7 @@ function partsOf(date: Date, calendar: string) {
   const parts = new Intl.DateTimeFormat(`en-US-u-ca-${calendar}`, {
     year: 'numeric',
     month: 'numeric',
-    day: 'numeric'
+    day: 'numeric',
   }).formatToParts(date);
 
   const read = (type: 'year' | 'month' | 'day') =>
@@ -55,11 +55,11 @@ export function buildCalendarMonths(language: LanguageCode): CalendarMonth[] {
   const locale = getLocaleForLanguage(language);
   const longName = new Intl.DateTimeFormat(locale, {
     month: 'long',
-    calendar
+    calendar,
   });
   const shortName = new Intl.DateTimeFormat(locale, {
     month: 'short',
-    calendar
+    calendar,
   });
 
   const oldestYear = partsOf(new Date(), calendar).year - YEARS_BACK;
@@ -79,7 +79,7 @@ export function buildCalendarMonths(language: LanguageCode): CalendarMonth[] {
       label: longName.format(start),
       shortLabel: shortName.format(start),
       startIso: start.toISOString(),
-      endIso: end.toISOString()
+      endIso: end.toISOString(),
     });
 
     start = startOfMonth(addDays(start, -1), calendar);
@@ -96,7 +96,7 @@ export function yearsOf(months: CalendarMonth[]): number[] {
 export function rangeFor(
   months: CalendarMonth[],
   year: number,
-  month: number | null
+  month: number | null,
 ): { startIso: string; endIso: string } {
   const inYear = months.filter((entry) => entry.year === year);
   const fallback = months[0];

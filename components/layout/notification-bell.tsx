@@ -2,11 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BellIcon } from '@animateicons/react/lucide/bell-icon';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { AnimatedHoverIcon } from '@/components/layout/animated-hover-icon';
@@ -61,9 +57,7 @@ export function NotificationBell() {
 
   const markRead = async (id: string) => {
     await apiClient.markNotificationRead(id);
-    setItems((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
-    );
+    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
     await refreshCount();
   };
 
@@ -101,20 +95,11 @@ export function NotificationBell() {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent
-        align="end"
-        className="w-80 p-0"
-        dir={isRTL ? 'rtl' : 'ltr'}
-      >
+      <PopoverContent align="end" className="w-80 p-0" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="flex items-center justify-between border-b px-3 py-2">
           <p className="text-sm font-medium">{t('notifications.bell.title')}</p>
           {unread > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={markAllRead}
-            >
+            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={markAllRead}>
               {t('notifications.bell.markAllRead')}
             </Button>
           )}
@@ -136,7 +121,7 @@ export function NotificationBell() {
                 onClick={() => !n.is_read && markRead(n.id)}
                 className={cn(
                   'block w-full border-b px-3 py-2 text-start text-sm transition-colors hover:bg-muted/50',
-                  !n.is_read && 'bg-primary/5'
+                  !n.is_read && 'bg-primary/5',
                 )}
               >
                 <p className="font-medium">
@@ -148,7 +133,7 @@ export function NotificationBell() {
                 <p className="mt-1 text-[10px] text-muted-foreground">
                   {formatDate(n.created_at, {
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
                   })}
                 </p>
               </button>

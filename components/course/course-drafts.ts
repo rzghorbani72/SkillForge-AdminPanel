@@ -10,13 +10,7 @@ import type { VideoHlsStatus } from '@/types/api';
 
 export type CourseType = 'OFFLINE' | 'LIVE';
 
-export type LessonType =
-  | 'VIDEO'
-  | 'AUDIO'
-  | 'TEXT'
-  | 'QUIZ'
-  | 'ASSIGNMENT'
-  | 'LIVE';
+export type LessonType = 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
 
 export interface LessonDraft {
   id?: string;
@@ -82,9 +76,7 @@ export function secondsToDuration(total?: number | null): string {
   const hours = Math.floor(whole / 3600);
   const mins = Math.floor((whole % 3600) / 60);
   const secs = whole % 60;
-  return hours > 0
-    ? `${pad(hours)}:${pad(mins)}:${pad(secs)}`
-    : `${pad(mins)}:${pad(secs)}`;
+  return hours > 0 ? `${pad(hours)}:${pad(mins)}:${pad(secs)}` : `${pad(mins)}:${pad(secs)}`;
 }
 
 /** Total playtime of a set of lessons, in whole seconds. */
@@ -118,7 +110,7 @@ export function hasTimedMedia(lesson: LessonDraft): boolean {
 export function prepareCurriculumForSave(
   seasons: SeasonDraft[],
   lessons: LessonDraft[],
-  deletedSeasonIds: string[]
+  deletedSeasonIds: string[],
 ): {
   seasons: SeasonDraft[];
   lessons: LessonDraft[];
@@ -126,9 +118,7 @@ export function prepareCurriculumForSave(
 } {
   const lessonsToSave = lessons.filter((l) => l.title.trim());
   const seasonKeysWithLessons = new Set(
-    lessonsToSave
-      .map((l) => l.seasonClientKey)
-      .filter((key): key is string => !!key)
+    lessonsToSave.map((l) => l.seasonClientKey).filter((key): key is string => !!key),
   );
 
   const orphanSeasonIds = seasons
@@ -138,16 +128,14 @@ export function prepareCurriculumForSave(
   return {
     seasons: seasons.filter((s) => seasonKeysWithLessons.has(s.clientKey)),
     lessons: lessonsToSave,
-    deletedSeasonIds: Array.from(
-      new Set([...deletedSeasonIds, ...orphanSeasonIds])
-    )
+    deletedSeasonIds: Array.from(new Set([...deletedSeasonIds, ...orphanSeasonIds])),
   };
 }
 
 export function validateForPublish(
   seasons: SeasonDraft[],
   lessons: LessonDraft[],
-  courseType: CourseType = 'OFFLINE'
+  courseType: CourseType = 'OFFLINE',
 ): string | null {
   // A live course has no uploaded lessons at all — it promises a timetable
   // instead, and the backend checks that promise on publish.
@@ -158,7 +146,7 @@ export function validateForPublish(
     return 'courses.publishLessonTitleRequired';
   }
   const hasEmptySeason = seasons.some(
-    (s) => !lessons.some((l) => l.seasonClientKey === s.clientKey)
+    (s) => !lessons.some((l) => l.seasonClientKey === s.clientKey),
   );
   if (hasEmptySeason) return 'courses.publishEmptySeason';
   if (lessons.length === 0) return 'courses.publishNeedsLesson';
@@ -181,9 +169,7 @@ export interface LiveCourseReadiness {
  * trusting the page. A free class is allowed: what counts is an active offer,
  * not a non-zero price.
  */
-export function validateLiveForPublish(
-  readiness: LiveCourseReadiness
-): string | null {
+export function validateLiveForPublish(readiness: LiveCourseReadiness): string | null {
   if (readiness.topics === 0) return 'courses.live.publishNeedsTopic';
   if (readiness.sellingOffers === 0) return 'courses.live.publishNeedsPrice';
   if (readiness.classes === 0) return 'courses.live.publishNeedsClass';
@@ -203,7 +189,7 @@ export function clearIncompatibleMedia(type: LessonType): Partial<LessonDraft> {
     videoPreviewUrl: undefined,
     audioPreviewUrl: undefined,
     coverPreviewUrl: undefined,
-    documentPreviewName: undefined
+    documentPreviewName: undefined,
   };
 
   // The attachment survives a type change between VIDEO/AUDIO/TEXT: it is a
@@ -221,7 +207,7 @@ export function clearIncompatibleMedia(type: LessonType): Partial<LessonDraft> {
       audio_id: undefined,
       audioPreviewUrl: undefined,
       cover_id: undefined,
-      coverPreviewUrl: undefined
+      coverPreviewUrl: undefined,
     };
   }
   // LIVE — no media upload
@@ -236,10 +222,10 @@ export const emptyLesson = (seasonClientKey?: string): LessonDraft => ({
   is_free: false,
   published: false,
   clientKey: newKey(),
-  seasonClientKey
+  seasonClientKey,
 });
 
 export const emptySeason = (): SeasonDraft => ({
   title: '',
-  clientKey: newKey()
+  clientKey: newKey(),
 });

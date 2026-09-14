@@ -8,10 +8,7 @@ interface UsersPendingBannerProps {
   onReview: () => void;
 }
 
-export function UsersPendingBanner({
-  count,
-  onReview
-}: UsersPendingBannerProps) {
+export function UsersPendingBanner({ count, onReview }: UsersPendingBannerProps) {
   const { t } = useTranslation();
 
   return (
@@ -23,9 +20,7 @@ export function UsersPendingBanner({
         <div className="text-[13.5px] font-semibold">
           {t('users.pendingBannerTitle', { count })}
         </div>
-        <div className="text-[12px] text-muted-foreground">
-          {t('users.pendingBannerDesc')}
-        </div>
+        <div className="text-[12px] text-muted-foreground">{t('users.pendingBannerDesc')}</div>
       </div>
       <button
         type="button"

@@ -26,9 +26,7 @@ export function RequirementPill({ label, tally }: RequirementPillProps) {
     <span
       className={cn(
         'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px]',
-        complete
-          ? 'bg-emerald-500/15 text-emerald-600'
-          : 'bg-muted text-muted-foreground'
+        complete ? 'bg-emerald-500/15 text-emerald-600' : 'bg-muted text-muted-foreground',
       )}
       title={label}
     >

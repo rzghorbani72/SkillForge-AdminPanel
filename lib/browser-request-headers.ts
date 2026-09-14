@@ -16,7 +16,7 @@ export function readCsrfTokenFromDocument(): string | undefined {
 
 export function csrfHeader(
   method: string = 'GET',
-  tokenOverride?: string | null
+  tokenOverride?: string | null,
 ): Record<string, string> {
   if (typeof document === 'undefined') return {};
   if (SAFE_METHODS.includes(method.toUpperCase())) return {};
@@ -32,15 +32,14 @@ export function selectedAcademyHeader(): Record<string, string> {
   const academyId = window.localStorage.getItem(SELECTED_ACADEMY_STORAGE_KEY);
   // Platform mode (admin with no academy selected) clears the id, so an absent
   // selection means "do not scope this request to an academy".
-  const hasSelectedAcademy =
-    !!academyId && academyId !== 'null' && academyId !== '';
+  const hasSelectedAcademy = !!academyId && academyId !== 'null' && academyId !== '';
 
   return hasSelectedAcademy ? { 'X-Academy-ID': academyId } : {};
 }
 
 export function browserRequestHeaders(
   method: string = 'GET',
-  csrfToken?: string | null
+  csrfToken?: string | null,
 ): Record<string, string> {
   return { ...csrfHeader(method, csrfToken), ...selectedAcademyHeader() };
 }

@@ -5,12 +5,7 @@ import { HardDrive } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { StorageObjectsTable } from './_components/storage-objects-table';
 import { StorageSummary } from './_components/storage-summary';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { apiClient, type StorageInventory } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -42,22 +37,16 @@ export default function PlatformStoragePage() {
 
   const handleDelete = async (keys: string[]) => {
     const result = await apiClient.deleteStorageObjects(keys);
-    toast.success(
-      t('platformStorage.deleted', { count: result.deleted.length })
-    );
+    toast.success(t('platformStorage.deleted', { count: result.deleted.length }));
     if (result.refused.length > 0) {
-      toast.warning(
-        t('platformStorage.refused', { count: result.refused.length })
-      );
+      toast.warning(t('platformStorage.refused', { count: result.refused.length }));
     }
     await load();
   };
 
   const handleDeleteAll = async () => {
     const result = await apiClient.deleteAllUnusedStorageObjects();
-    toast.success(
-      t('platformStorage.deleted', { count: result?.deleted.length ?? 0 })
-    );
+    toast.success(t('platformStorage.deleted', { count: result?.deleted.length ?? 0 }));
     await load();
   };
 
@@ -69,9 +58,7 @@ export default function PlatformStoragePage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('platformStorage.title')}</CardTitle>
-            <CardDescription>
-              {t('platformStorage.accessDenied')}
-            </CardDescription>
+            <CardDescription>{t('platformStorage.accessDenied')}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -90,11 +77,7 @@ export default function PlatformStoragePage() {
         </p>
       </div>
 
-      <StorageSummary
-        inventory={inventory}
-        onRefresh={load}
-        loading={loading}
-      />
+      <StorageSummary inventory={inventory} onRefresh={load} loading={loading} />
 
       <StorageObjectsTable
         objects={inventory?.objects ?? []}

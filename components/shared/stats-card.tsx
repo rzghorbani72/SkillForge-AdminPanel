@@ -21,7 +21,7 @@ export function StatsCard({
   icon: Icon,
   iconColor = 'text-primary',
   description,
-  className
+  className,
 }: StatsCardProps) {
   return (
     <Card className={cn('relative overflow-hidden', className)}>
@@ -33,18 +33,15 @@ export function StatsCard({
             {change && (
               <p
                 className={cn('text-xs font-medium', {
-                  'text-emerald-600 dark:text-emerald-400':
-                    changeType === 'positive',
+                  'text-emerald-600 dark:text-emerald-400': changeType === 'positive',
                   'text-destructive': changeType === 'negative',
-                  'text-muted-foreground': changeType === 'neutral'
+                  'text-muted-foreground': changeType === 'neutral',
                 })}
               >
                 {change}
               </p>
             )}
-            {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
-            )}
+            {description && <p className="text-xs text-muted-foreground">{description}</p>}
           </div>
           <div className="rounded-xl bg-muted p-2.5">
             <Icon className={cn('h-5 w-5', iconColor)} />

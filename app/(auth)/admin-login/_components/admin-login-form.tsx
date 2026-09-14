@@ -1,11 +1,7 @@
 'use client';
 
 import { AuthShell } from '@/components/auth/auth-shell';
-import {
-  AuthField,
-  AuthPhoneField,
-  AuthSubmit
-} from '@/components/auth/auth-fields';
+import { AuthField, AuthPhoneField, AuthSubmit } from '@/components/auth/auth-fields';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toE164Iran } from '@/lib/phone-utils';
 import Link from '@/components/ui/link';
@@ -46,12 +42,10 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
               'h-12 flex-1 rounded-2xl text-base transition-colors',
               login.loginMethod === m
                 ? 'bg-white/50 font-medium text-[#181C20]'
-                : 'text-[#727272] hover:bg-white/30'
+                : 'text-[#727272] hover:bg-white/30',
             )}
           >
-            {m === 'password'
-              ? t('auth.loginWithPassword')
-              : t('auth.loginWithOtp')}
+            {m === 'password' ? t('auth.loginWithPassword') : t('auth.loginWithOtp')}
           </button>
         ))}
       </div>
@@ -88,9 +82,7 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
               dir="ltr"
               autoComplete="current-password"
               value={login.formData.password}
-              onChange={(e) =>
-                login.handleInputChange('password', e.target.value)
-              }
+              onChange={(e) => login.handleInputChange('password', e.target.value)}
               error={login.errors.password}
               disabled={login.isLoading}
             />
@@ -105,10 +97,7 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
           </>
         )}
 
-        <AuthSubmit
-          loading={login.isLoading}
-          disabled={login.isLoading || !allFieldsFilled}
-        >
+        <AuthSubmit loading={login.isLoading} disabled={login.isLoading || !allFieldsFilled}>
           {login.isLoading
             ? login.loginMethod === 'otp'
               ? t('auth.sendingCode')
@@ -121,10 +110,7 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         {t('auth.notAdmin')}{' '}
-        <Link
-          href="/login"
-          className="font-semibold text-primary hover:underline"
-        >
+        <Link href="/login" className="font-semibold text-primary hover:underline">
           {t('auth.regularLogin')}
         </Link>
       </p>

@@ -1,20 +1,14 @@
 'use client';
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent
+  ChartTooltipContent,
 } from '@/components/ui/chart';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -28,12 +22,12 @@ export function ActivityChart({ points }: { points: HealthDailyPoint[] }) {
     logins: { label: t('monitoring.logins'), color: 'hsl(var(--chart-1))' },
     registrations: {
       label: t('monitoring.registrations'),
-      color: 'hsl(var(--chart-2))'
+      color: 'hsl(var(--chart-2))',
     },
     active_watchers: {
       label: t('monitoring.watchers'),
-      color: 'hsl(var(--chart-3))'
-    }
+      color: 'hsl(var(--chart-3))',
+    },
   };
 
   const shortDay = (day: string) =>
@@ -42,12 +36,8 @@ export function ActivityChart({ points }: { points: HealthDailyPoint[] }) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">
-          {t('monitoring.activityChartTitle')}
-        </CardTitle>
-        <CardDescription>
-          {t('monitoring.activityChartSubtitle')}
-        </CardDescription>
+        <CardTitle className="text-base">{t('monitoring.activityChartTitle')}</CardTitle>
+        <CardDescription>{t('monitoring.activityChartSubtitle')}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={config} className="h-[260px] w-full">
@@ -61,33 +51,22 @@ export function ActivityChart({ points }: { points: HealthDailyPoint[] }) {
               minTickGap={24}
               tickFormatter={shortDay}
             />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              width={32}
-              allowDecimals={false}
-            />
+            <YAxis tickLine={false} axisLine={false} width={32} allowDecimals={false} />
             <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(v) => shortDay(String(v))}
-                />
-              }
+              content={<ChartTooltipContent labelFormatter={(v) => shortDay(String(v))} />}
             />
             <ChartLegend content={<ChartLegendContent />} />
-            {(['logins', 'registrations', 'active_watchers'] as const).map(
-              (key) => (
-                <Area
-                  key={key}
-                  dataKey={key}
-                  type="monotone"
-                  stroke={`var(--color-${key})`}
-                  fill={`var(--color-${key})`}
-                  fillOpacity={0.15}
-                  strokeWidth={2}
-                />
-              )
-            )}
+            {(['logins', 'registrations', 'active_watchers'] as const).map((key) => (
+              <Area
+                key={key}
+                dataKey={key}
+                type="monotone"
+                stroke={`var(--color-${key})`}
+                fill={`var(--color-${key})`}
+                fillOpacity={0.15}
+                strokeWidth={2}
+              />
+            ))}
           </AreaChart>
         </ChartContainer>
       </CardContent>

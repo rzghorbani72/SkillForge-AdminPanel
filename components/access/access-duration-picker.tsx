@@ -19,7 +19,7 @@ type AccessDurationPickerProps = {
 const MODE_ICONS = {
   days: Timer,
   until: CalendarDays,
-  forever: InfinityIcon
+  forever: InfinityIcon,
 } as const;
 
 /**
@@ -29,14 +29,14 @@ const MODE_ICONS = {
 export function AccessDurationPicker({
   value,
   onChange,
-  disabled = false
+  disabled = false,
 }: AccessDurationPickerProps) {
   const { t } = useTranslation();
 
   const modes = [
     { mode: 'days', label: t('accessGrants.durationDays') },
     { mode: 'until', label: t('accessGrants.durationUntil') },
-    { mode: 'forever', label: t('accessGrants.durationForever') }
+    { mode: 'forever', label: t('accessGrants.durationForever') },
   ] as const;
 
   return (
@@ -55,9 +55,7 @@ export function AccessDurationPicker({
               onClick={() => onChange(defaultForMode(mode))}
               className={cn(
                 'flex items-center justify-center gap-1.5 rounded-md border px-2 py-2 text-sm transition-colors disabled:opacity-50',
-                isActive
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'hover:bg-muted/40'
+                isActive ? 'border-primary bg-primary/10 text-primary' : 'hover:bg-muted/40',
               )}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -80,7 +78,7 @@ export function AccessDurationPicker({
                   'rounded-full border px-3 py-1 text-xs transition-colors disabled:opacity-50',
                   value.days === preset
                     ? 'border-primary bg-primary/10 text-primary'
-                    : 'hover:bg-muted/40'
+                    : 'hover:bg-muted/40',
                 )}
               >
                 {t('accessGrants.dayCount', { count: preset })}
@@ -90,9 +88,7 @@ export function AccessDurationPicker({
           <NumberInput
             disabled={disabled}
             value={value.days}
-            onChange={(raw) =>
-              onChange({ mode: 'days', days: raw === '' ? 0 : Number(raw) })
-            }
+            onChange={(raw) => onChange({ mode: 'days', days: raw === '' ? 0 : Number(raw) })}
             aria-label={t('accessGrants.durationDays')}
             className="h-9 max-w-[8.5rem]"
           />
@@ -106,7 +102,7 @@ export function AccessDurationPicker({
           onChange={(pickedValue: string) =>
             onChange({
               mode: 'until',
-              until: new Date(`${pickedValue}T23:59:59`).toISOString()
+              until: new Date(`${pickedValue}T23:59:59`).toISOString(),
             })
           }
           aria-label={t('accessGrants.durationUntil')}

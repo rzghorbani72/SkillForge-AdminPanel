@@ -28,7 +28,7 @@ export function AddUserLookupStep({
   result,
   canContinue,
   onNext,
-  onCancel
+  onCancel,
 }: AddUserLookupStepProps) {
   const { t } = useTranslation();
 
@@ -58,7 +58,7 @@ export function AddUserLookupStep({
 
 function LookupStatus({
   isSearching,
-  result
+  result,
 }: {
   isSearching: boolean;
   result: PersonLookup | null;

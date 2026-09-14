@@ -1,24 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Building2,
-  Search,
-  ExternalLink,
-  Loader2,
-  AlertCircle
-} from 'lucide-react';
+import { Building2, Search, ExternalLink, Loader2, AlertCircle } from 'lucide-react';
 import { authService } from '@/lib/auth';
 import type { Academy } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -82,16 +70,14 @@ export default function SelectStorePage() {
     const filtered = stores.filter(
       (store) =>
         store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        store.slug.toLowerCase().includes(searchTerm.toLowerCase())
+        store.slug.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredStores(filtered);
   }, [searchTerm, stores]);
 
   const handleStoreSelect = (academy: Academy) => {
     const storeUrl = authService.getAcademyDashboardUrl(academy);
-    ErrorHandler.showInfo(
-      t('selectSchool.redirectingTo', { name: academy.name })
-    );
+    ErrorHandler.showInfo(t('selectSchool.redirectingTo', { name: academy.name }));
     window.location.href = storeUrl;
   };
 
@@ -112,11 +98,7 @@ export default function SelectStorePage() {
 
   return (
     <AuthWideLayout>
-      <AuthBrand
-        large
-        title={t('selectSchool.title')}
-        subtitle={t('selectSchool.subtitle')}
-      />
+      <AuthBrand large title={t('selectSchool.title')} subtitle={t('selectSchool.subtitle')} />
       <div>
         {user &&
         typeof user === 'object' &&
@@ -126,7 +108,7 @@ export default function SelectStorePage() {
         'name' in user.user ? (
           <p className="mb-6 text-center text-sm text-muted-foreground">
             {t('selectSchool.welcomeBack', {
-              name: (user.user as { name?: string }).name ?? 'User'
+              name: (user.user as { name?: string }).name ?? 'User',
             })}
           </p>
         ) : null}
@@ -164,33 +146,25 @@ export default function SelectStorePage() {
                   </div>
                   <div>
                     <CardTitle className="text-lg">{academy.name}</CardTitle>
-                    <CardDescription>
-                      {academy.slug}.skillforge.com
-                    </CardDescription>
+                    <CardDescription>{academy.slug}.skillforge.com</CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {t('selectSchool.status')}
-                    </span>
-                    <span className="font-medium text-success">
-                      {t('selectSchool.active')}
-                    </span>
+                    <span className="text-muted-foreground">{t('selectSchool.status')}</span>
+                    <span className="font-medium text-success">{t('selectSchool.active')}</span>
                   </div>
                   {(academy.domain?.public_address ||
                     (academy as { Domain?: { public_address?: string } }).Domain
                       ?.public_address) && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t('selectSchool.domain')}
-                      </span>
+                      <span className="text-muted-foreground">{t('selectSchool.domain')}</span>
                       <span className="font-medium text-primary">
                         {academy.domain?.public_address ||
-                          (academy as { Domain?: { public_address?: string } })
-                            .Domain?.public_address}
+                          (academy as { Domain?: { public_address?: string } }).Domain
+                            ?.public_address}
                       </span>
                     </div>
                   )}
@@ -224,11 +198,7 @@ export default function SelectStorePage() {
 
         {/* Actions */}
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button
-            variant="outline"
-            onClick={handleLogout}
-            className="w-full sm:w-auto"
-          >
+          <Button variant="outline" onClick={handleLogout} className="w-full sm:w-auto">
             {t('selectSchool.signOut')}
           </Button>
           <Button
@@ -246,12 +216,8 @@ export default function SelectStorePage() {
         <Alert className="mt-8">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            <strong>{t('selectSchool.needHelp')}</strong>{' '}
-            {t('selectSchool.needHelpText')}{' '}
-            <a
-              href="/support"
-              className="text-primary underline hover:text-primary"
-            >
+            <strong>{t('selectSchool.needHelp')}</strong> {t('selectSchool.needHelpText')}{' '}
+            <a href="/support" className="text-primary underline hover:text-primary">
               {t('selectSchool.contactSupport')}
             </a>
             .

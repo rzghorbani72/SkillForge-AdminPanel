@@ -5,7 +5,7 @@ import type { PaymentGatewayProvider } from '@/types/api';
 export const GATEWAY_CALLBACK_PATHS: Record<PaymentGatewayProvider, string> = {
   BITPAY: '/payment/bitpay-callback',
   SAMAN_SEP: '/payment/saman-callback',
-  MELLAT_BP: '/payment/mellat-callback'
+  MELLAT_BP: '/payment/mellat-callback',
 };
 
 const LOOPBACK_HOST = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\]|::1)$/i;
@@ -19,9 +19,7 @@ function stripTrailingSlash(value: string): string {
  * registered HTTPS host — never the tab's 0.0.0.0 / localhost origin.
  */
 export function panelPublicOrigin(): string {
-  const raw = stripTrailingSlash(
-    process.env.NEXT_PUBLIC_HOST || API_PRODUCTION_DEFAULTS.panelHost
-  );
+  const raw = stripTrailingSlash(process.env.NEXT_PUBLIC_HOST || API_PRODUCTION_DEFAULTS.panelHost);
   try {
     const url = new URL(raw.includes('://') ? raw : `https://${raw}`);
     if (LOOPBACK_HOST.test(url.hostname)) {
@@ -33,16 +31,12 @@ export function panelPublicOrigin(): string {
   }
 }
 
-export function paymentGatewayCallbackUrl(
-  provider: PaymentGatewayProvider
-): string {
+export function paymentGatewayCallbackUrl(provider: PaymentGatewayProvider): string {
   return `${panelPublicOrigin()}${GATEWAY_CALLBACK_PATHS[provider]}`;
 }
 
 /** Success/failure page after the gateway-specific verify route finishes. */
-export function paymentResultUrl(
-  params: Record<string, string | undefined>
-): string {
+export function paymentResultUrl(params: Record<string, string | undefined>): string {
   const url = new URL('/payment/callback', `${panelPublicOrigin()}/`);
   for (const [key, value] of Object.entries(params)) {
     if (value) url.searchParams.set(key, value);

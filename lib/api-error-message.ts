@@ -7,7 +7,5 @@ import { currentLanguage } from '@/lib/current-language';
  * own fallback, which is more specific than a generic unknown-error text.
  */
 export function apiErrorMessage(error: unknown, fallback: string): string {
-  return isApiResponseError(error)
-    ? resolveApiErrorMessage(error, currentLanguage())
-    : fallback;
+  return isApiResponseError(error) ? resolveApiErrorMessage(error, currentLanguage()) : fallback;
 }

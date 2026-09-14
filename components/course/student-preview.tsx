@@ -46,7 +46,7 @@ export type StudentPreviewCourse = {
 export function CourseStudentPreview({
   course,
   /** Off for a live course: its classes are a timetable, not a lesson tree. */
-  showCurriculum = true
+  showCurriculum = true,
 }: {
   course: StudentPreviewCourse;
   showCurriculum?: boolean;
@@ -55,8 +55,7 @@ export function CourseStudentPreview({
   const formatNumber = useNumberFormat();
   const formatCurrency = useFormatCurrency();
 
-  const localDigits = (value: string) =>
-    language === 'fa' ? toPersianDigits(value) : value;
+  const localDigits = (value: string) => (language === 'fa' ? toPersianDigits(value) : value);
   const length = localDigits(secondsToDuration(course.totalSeconds));
 
   return (
@@ -79,9 +78,7 @@ export function CourseStudentPreview({
         </div>
         <CardContent className="space-y-4 pt-5">
           <div className="flex flex-wrap items-center gap-2">
-            {course.categoryName && (
-              <Badge variant="secondary">{course.categoryName}</Badge>
-            )}
+            {course.categoryName && <Badge variant="secondary">{course.categoryName}</Badge>}
             <Badge variant={course.published ? 'default' : 'outline'}>
               {course.published ? (
                 <Globe className="me-1 h-3 w-3" />
@@ -91,7 +88,7 @@ export function CourseStudentPreview({
               {t(
                 course.published
                   ? 'courses.wizard.visibilityPublicTitle'
-                  : 'courses.wizard.visibilityPrivateTitle'
+                  : 'courses.wizard.visibilityPrivateTitle',
               )}
             </Badge>
           </div>
@@ -102,23 +99,20 @@ export function CourseStudentPreview({
 
           <div className="flex flex-wrap items-baseline gap-3">
             <span className="text-xl font-semibold">
-              {course.price === 0
-                ? t('courses.offeringFREE')
-                : formatCurrency(course.price)}
+              {course.price === 0 ? t('courses.offeringFREE') : formatCurrency(course.price)}
             </span>
-            {course.beforeDiscount !== null &&
-              course.beforeDiscount > course.price && (
-                <span className="text-sm text-muted-foreground line-through">
-                  {formatCurrency(course.beforeDiscount)}
-                </span>
-              )}
+            {course.beforeDiscount !== null && course.beforeDiscount > course.price && (
+              <span className="text-sm text-muted-foreground line-through">
+                {formatCurrency(course.beforeDiscount)}
+              </span>
+            )}
           </div>
 
           {course.description.trim() && (
             <div
               className="prose-description text-sm leading-6 text-muted-foreground"
               dangerouslySetInnerHTML={{
-                __html: renderMarkdown(course.description)
+                __html: renderMarkdown(course.description),
               }}
             />
           )}
@@ -129,7 +123,7 @@ export function CourseStudentPreview({
             </span>
             <span>
               {t('courseDetail.sections', {
-                count: formatNumber(course.seasons.length)
+                count: formatNumber(course.seasons.length),
               })}
             </span>
             {course.totalSeconds > 0 && (
@@ -150,23 +144,18 @@ export function CourseStudentPreview({
             {course.seasons.map((season, index) => (
               <div key={season.key} className="rounded-lg border">
                 <div className="border-b bg-muted/40 px-4 py-2 text-sm font-medium">
-                  {season.title.trim() ||
-                    t('courses.seasonNumber', { n: index + 1 })}
+                  {season.title.trim() || t('courses.seasonNumber', { n: index + 1 })}
                 </div>
                 <ul className="divide-y">
                   {season.lessons.map((lesson) => (
-                    <li
-                      key={lesson.key}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm"
-                    >
+                    <li key={lesson.key} className="flex items-center gap-3 px-4 py-2.5 text-sm">
                       {lesson.isFree ? (
                         <PlayCircle className="h-4 w-4 shrink-0 text-primary" />
                       ) : (
                         <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
                       )}
                       <span className="min-w-0 flex-1 truncate">
-                        {lesson.title.trim() ||
-                          t('courses.wizard.previewUntitledLesson')}
+                        {lesson.title.trim() || t('courses.wizard.previewUntitledLesson')}
                       </span>
                       {lesson.isFree && (
                         <Badge variant="secondary" className="text-[11px]">

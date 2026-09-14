@@ -1,13 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SubscriptionInvoicesList } from '@/components/plans/subscription-invoices-list';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
@@ -22,9 +16,7 @@ interface PlatformInvoicesCardProps {
  * Money the manager pays the platform for their subscription — deliberately kept
  * apart from academy income, because it is a cost, not revenue.
  */
-export function PlatformInvoicesCard({
-  showHeader = true
-}: PlatformInvoicesCardProps) {
+export function PlatformInvoicesCard({ showHeader = true }: PlatformInvoicesCardProps) {
   const { t } = useTranslation();
   const { subscription, isLoading } = useAcademySubscription(true);
 
@@ -34,9 +26,9 @@ export function PlatformInvoicesCard({
         (invoice) =>
           invoice.status === 'PAID' ||
           invoice.status === 'FAILED' ||
-          invoice.status === 'DUPLICATE'
+          invoice.status === 'DUPLICATE',
       ),
-    [subscription?.invoices]
+    [subscription?.invoices],
   );
 
   const body = isLoading ? (
@@ -52,12 +44,8 @@ export function PlatformInvoicesCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">
-          {t('financial.store.overview.platformPayments')}
-        </CardTitle>
-        <CardDescription>
-          {t('financial.store.overview.platformPaymentsHint')}
-        </CardDescription>
+        <CardTitle className="text-lg">{t('financial.store.overview.platformPayments')}</CardTitle>
+        <CardDescription>{t('financial.store.overview.platformPaymentsHint')}</CardDescription>
       </CardHeader>
       <CardContent>{body}</CardContent>
     </Card>

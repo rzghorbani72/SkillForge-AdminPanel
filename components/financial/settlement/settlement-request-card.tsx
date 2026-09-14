@@ -27,7 +27,7 @@ interface SettlementRequestCardProps {
 export function SettlementRequestCard({
   academyId,
   summary,
-  onRequested
+  onRequested,
 }: SettlementRequestCardProps) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
@@ -39,15 +39,14 @@ export function SettlementRequestCard({
 
   const parsedAmount = Number(toEnglishDigits(amount).replace(/[^\d]/g, ''));
   const isAmountValid =
-    parsedAmount >= summary.min_amount &&
-    parsedAmount <= summary.balance.available;
+    parsedAmount >= summary.min_amount && parsedAmount <= summary.balance.available;
 
   async function submit() {
     setIsSubmitting(true);
     try {
       await settlementApi.requestSettlement(academyId, {
         amount: parsedAmount,
-        notes: notes.trim() || undefined
+        notes: notes.trim() || undefined,
       });
       toast.success(t('settlement.request.submitted'));
       setAmount('');
@@ -67,27 +66,22 @@ export function SettlementRequestCard({
           <ArrowUpRight className="h-5 w-5" />
           {t('settlement.request.title')}
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {t('settlement.request.description')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('settlement.request.description')}</p>
       </CardHeader>
       <CardContent className="space-y-4">
         {summary.blockers.length > 0 ? (
           <ul className="space-y-2">
             {summary.blockers.map((blocker) => (
-              <li
-                key={blocker}
-                className="flex items-start gap-2 rounded-md bg-muted p-3 text-sm"
-              >
+              <li key={blocker} className="flex items-start gap-2 rounded-md bg-muted p-3 text-sm">
                 <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                 <span>
                   {blocker === 'COOLDOWN' && summary.next_request_at
                     ? t('settlement.blockers.COOLDOWN_UNTIL', {
-                        date: formatDate(summary.next_request_at)
+                        date: formatDate(summary.next_request_at),
                       })
                     : blocker === 'BELOW_MINIMUM'
                       ? t('settlement.blockers.BELOW_MINIMUM', {
-                          amount: formatCurrency(summary.min_amount)
+                          amount: formatCurrency(summary.min_amount),
                         })
                       : t(`settlement.blockers.${blocker}`)}
                 </span>
@@ -96,8 +90,7 @@ export function SettlementRequestCard({
           </ul>
         ) : null}
 
-        {summary.blockers.includes('KYC_REQUIRED') ||
-        summary.blockers.includes('KYC_PENDING') ? (
+        {summary.blockers.includes('KYC_REQUIRED') || summary.blockers.includes('KYC_PENDING') ? (
           <Button asChild variant="outline" size="sm" className="gap-2">
             <Link href={KYC_IDENTITY_PATH}>
               <ShieldCheck className="h-4 w-4" />
@@ -108,9 +101,7 @@ export function SettlementRequestCard({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="settlement-amount">
-              {t('settlement.request.amountLabel')}
-            </Label>
+            <Label htmlFor="settlement-amount">{t('settlement.request.amountLabel')}</Label>
             <PriceInput
               id="settlement-amount"
               value={amount}
@@ -124,14 +115,12 @@ export function SettlementRequestCard({
               onClick={() => setAmount(String(summary.balance.available))}
             >
               {t('settlement.request.useMax', {
-                amount: formatCurrency(summary.balance.available)
+                amount: formatCurrency(summary.balance.available),
               })}
             </button>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="settlement-notes">
-              {t('settlement.request.notesLabel')}
-            </Label>
+            <Label htmlFor="settlement-notes">{t('settlement.request.notesLabel')}</Label>
             <Textarea
               id="settlement-notes"
               rows={3}
@@ -142,15 +131,10 @@ export function SettlementRequestCard({
           </div>
         </div>
 
-        <Button
-          onClick={submit}
-          disabled={!summary.can_request || !isAmountValid || isSubmitting}
-        >
+        <Button onClick={submit} disabled={!summary.can_request || !isAmountValid || isSubmitting}>
           {t('settlement.request.submit')}
         </Button>
-        <p className="text-xs text-muted-foreground">
-          {t('settlement.request.manualHint')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('settlement.request.manualHint')}</p>
       </CardContent>
     </Card>
   );

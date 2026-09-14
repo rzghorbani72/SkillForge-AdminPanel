@@ -20,28 +20,24 @@ export async function uploadCanvasMedia(
   kind: CanvasMediaKind,
   file: File,
   fieldKey: string,
-  onProgress: (percent: number) => void
+  onProgress: (percent: number) => void,
 ): Promise<Record<string, unknown> | null> {
   if (kind === 'video') {
     const result = await apiClient.uploadVideoWithProgress(
       file,
       { title: file.name },
       undefined,
-      onProgress
+      onProgress,
     );
     const id = readId(result);
     if (id === null) return null;
     return {
       [fieldKey]: videoStreamPath({ id: String(id), title: file.name }),
-      heroVideoPoster: null
+      heroVideoPoster: null,
     };
   }
 
-  const result = await apiClient.uploadImage(
-    file,
-    { title: 'Section Media' },
-    onProgress
-  );
+  const result = await apiClient.uploadImage(file, { title: 'Section Media' }, onProgress);
   const id = readId(result);
   if (id === null) return null;
   return { [fieldKey]: `${getBrowserApiBaseUrl()}/images/get-image?id=${id}` };

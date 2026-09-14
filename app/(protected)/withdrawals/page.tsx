@@ -9,26 +9,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel
-} from '@/components/ui/form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -39,7 +28,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -47,7 +36,7 @@ import { apiErrorMessage } from '@/lib/api-error-message';
 
 const approveSchema = z.object({
   bank_transaction_code: z.string().min(1, 'validation.required'),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 const rejectSchema = z.object({ notes: z.string().optional() });
 type ApproveValues = z.infer<typeof approveSchema>;
@@ -58,7 +47,7 @@ const STATUS_FILTER_LABEL_KEYS: Record<string, string> = {
   PENDING: 'withdrawals.statusPending',
   APPROVED: 'withdrawals.statusApproved',
   REJECTED: 'withdrawals.statusRejected',
-  PAID: 'withdrawals.statusPaid'
+  PAID: 'withdrawals.statusPaid',
 };
 
 export default function WithdrawalsPage() {
@@ -75,11 +64,11 @@ export default function WithdrawalsPage() {
 
   const approveForm = useForm<ApproveValues>({
     resolver: zodResolver(approveSchema),
-    defaultValues: { bank_transaction_code: '', notes: '' }
+    defaultValues: { bank_transaction_code: '', notes: '' },
   });
   const rejectForm = useForm<RejectValues>({
     resolver: zodResolver(rejectSchema),
-    defaultValues: { notes: '' }
+    defaultValues: { notes: '' },
   });
 
   async function load(status?: string) {
@@ -132,22 +121,15 @@ export default function WithdrawalsPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('withdrawals.title')}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {t('withdrawals.description')}
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('withdrawals.title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('withdrawals.description')}</p>
       </div>
 
       <Card>
         <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>{t('withdrawals.requests')}</CardTitle>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger
-              className="w-full sm:w-36"
-              aria-label={t('withdrawals.statusFilter')}
-            >
+            <SelectTrigger className="w-full sm:w-36" aria-label={t('withdrawals.statusFilter')}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -180,34 +162,24 @@ export default function WithdrawalsPage() {
                   <TableHead>{t('common.status')}</TableHead>
                   <TableHead>{t('withdrawals.requestedAt')}</TableHead>
                   <TableHead>{t('withdrawals.bankRef')}</TableHead>
-                  <TableHead className="text-right">
-                    {t('common.actions')}
-                  </TableHead>
+                  <TableHead className="text-right">{t('common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {withdrawals.map((w) => (
                   <TableRow key={w.id}>
                     <TableCell>{w.academy?.name ?? '—'}</TableCell>
-                    <TableCell>
-                      {w.amount != null ? formatNumber(w.amount) : ''}
-                    </TableCell>
+                    <TableCell>{w.amount != null ? formatNumber(w.amount) : ''}</TableCell>
                     <TableCell>
                       <StatusBadge
                         status={w.status?.toLowerCase() ?? 'pending'}
-                        label={t(
-                          STATUS_FILTER_LABEL_KEYS[w.status ?? 'PENDING']
-                        )}
+                        label={t(STATUS_FILTER_LABEL_KEYS[w.status ?? 'PENDING'])}
                       />
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {w.requested_at
-                        ? new Date(w.requested_at).toLocaleDateString('fa-IR')
-                        : '—'}
+                      {w.requested_at ? new Date(w.requested_at).toLocaleDateString('fa-IR') : '—'}
                     </TableCell>
-                    <TableCell className="text-xs">
-                      {w.bank_transaction_code ?? '—'}
-                    </TableCell>
+                    <TableCell className="text-xs">{w.bank_transaction_code ?? '—'}</TableCell>
                     <TableCell className="space-x-2 text-right">
                       {w.status === 'PENDING' && (
                         <>
@@ -246,39 +218,29 @@ export default function WithdrawalsPage() {
         </CardContent>
       </Card>
 
-      <Dialog
-        open={!!approveDialog}
-        onOpenChange={(open) => !open && setApproveDialog(null)}
-      >
+      <Dialog open={!!approveDialog} onOpenChange={(open) => !open && setApproveDialog(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {t('withdrawals.approveWithdrawal', {
-                academy: approveDialog?.academy?.name ?? '—'
+                academy: approveDialog?.academy?.name ?? '—',
               })}
             </DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
             {t('withdrawals.amount')}:{' '}
             <strong>
-              {approveDialog?.amount != null
-                ? formatNumber(approveDialog.amount)
-                : ''}
+              {approveDialog?.amount != null ? formatNumber(approveDialog.amount) : ''}
             </strong>
           </p>
           <Form {...approveForm}>
-            <form
-              onSubmit={approveForm.handleSubmit(onApprove)}
-              className="space-y-4"
-            >
+            <form onSubmit={approveForm.handleSubmit(onApprove)} className="space-y-4">
               <FormField
                 control={approveForm.control}
                 name="bank_transaction_code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t('withdrawals.bankTransactionCode')}
-                    </FormLabel>
+                    <FormLabel>{t('withdrawals.bankTransactionCode')}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -298,11 +260,7 @@ export default function WithdrawalsPage() {
                 )}
               />
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setApproveDialog(null)}
-                >
+                <Button type="button" variant="outline" onClick={() => setApproveDialog(null)}>
                   {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={submitting}>
@@ -314,23 +272,17 @@ export default function WithdrawalsPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={!!rejectDialog}
-        onOpenChange={(open) => !open && setRejectDialog(null)}
-      >
+      <Dialog open={!!rejectDialog} onOpenChange={(open) => !open && setRejectDialog(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {t('withdrawals.rejectWithdrawal', {
-                academy: rejectDialog?.academy?.name ?? '—'
+                academy: rejectDialog?.academy?.name ?? '—',
               })}
             </DialogTitle>
           </DialogHeader>
           <Form {...rejectForm}>
-            <form
-              onSubmit={rejectForm.handleSubmit(onReject)}
-              className="space-y-4"
-            >
+            <form onSubmit={rejectForm.handleSubmit(onReject)} className="space-y-4">
               <FormField
                 control={rejectForm.control}
                 name="notes"
@@ -344,18 +296,10 @@ export default function WithdrawalsPage() {
                 )}
               />
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setRejectDialog(null)}
-                >
+                <Button type="button" variant="outline" onClick={() => setRejectDialog(null)}>
                   {t('common.cancel')}
                 </Button>
-                <Button
-                  type="submit"
-                  variant="destructive"
-                  disabled={submitting}
-                >
+                <Button type="submit" variant="destructive" disabled={submitting}>
                   {submitting ? t('common.saving') : t('withdrawals.reject')}
                 </Button>
               </div>

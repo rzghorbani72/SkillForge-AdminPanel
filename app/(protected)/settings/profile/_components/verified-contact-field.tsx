@@ -42,7 +42,7 @@ export function VerifiedContactField({
   onVerify,
   onSend,
   onRevert,
-  children
+  children,
 }: VerifiedContactFieldProps) {
   const { t } = useTranslation();
   const [changing, setChanging] = useState(false);

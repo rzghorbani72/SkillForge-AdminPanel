@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { apiClient } from '@/lib/api';
 import {
   EntitySearchCombobox,
-  type EntitySearchComboboxProps
+  type EntitySearchComboboxProps,
 } from '@/components/entity-search/entity-search-combobox';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { EntitySearchOption } from '@/types/entity-search';
@@ -15,24 +15,18 @@ interface TutoringSessionSearchComboboxProps
   engagementId?: string;
 }
 
-function formatSessionLabel(
-  session: TutoringSessionListItem,
-  locale: string
-): string {
+function formatSessionLabel(session: TutoringSessionListItem, locale: string): string {
   const course = session.Course?.title ?? session.engagement_id;
   const student = session.Student?.display_name ?? '—';
   const startsAt = new Date(session.starts_at).toLocaleString(locale);
   return `${course} · ${student} · ${startsAt}`;
 }
 
-function mapSessionToOption(
-  session: TutoringSessionListItem,
-  locale: string
-): EntitySearchOption {
+function mapSessionToOption(session: TutoringSessionListItem, locale: string): EntitySearchOption {
   return {
     value: session.id,
     label: formatSessionLabel(session, locale),
-    description: session.status
+    description: session.status,
   };
 }
 
@@ -48,11 +42,11 @@ export function TutoringSessionSearchCombobox({
       const sessions = await apiClient.listTutoringSessions({
         search: query || undefined,
         engagement_id: engagementId,
-        limit: 20
+        limit: 20,
       });
       return sessions.map((session) => mapSessionToOption(session, locale));
     },
-    [engagementId, locale]
+    [engagementId, locale],
   );
 
   const resolveOption = useCallback(
@@ -60,19 +54,15 @@ export function TutoringSessionSearchCombobox({
       const sessions = await apiClient.listTutoringSessions({
         search: id,
         engagement_id: engagementId,
-        limit: 20
+        limit: 20,
       });
       const match = sessions.find((session) => session.id === id);
       return match ? mapSessionToOption(match, locale) : null;
     },
-    [engagementId, locale]
+    [engagementId, locale],
   );
 
   return (
-    <EntitySearchCombobox
-      {...props}
-      fetchOptions={fetchOptions}
-      resolveOption={resolveOption}
-    />
+    <EntitySearchCombobox {...props} fetchOptions={fetchOptions} resolveOption={resolveOption} />
   );
 }

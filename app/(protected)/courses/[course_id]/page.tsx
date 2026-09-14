@@ -10,7 +10,7 @@ import { CourseFactsCard } from '@/components/course/detail/course-facts-card';
 import {
   CourseAccessCard,
   CourseIdentityCard,
-  CourseSearchCard
+  CourseSearchCard,
 } from '@/components/course/detail/course-spec-cards';
 import { countLessons } from '@/components/course/detail/types';
 import type { CourseDetail } from '@/components/course/detail/types';
@@ -23,17 +23,13 @@ import { useTranslation } from '@/lib/i18n/hooks';
 function coverUrl(course: CourseDetail): string | null {
   const image = course.Image;
   if (!image) return null;
-  return (
-    image.publicUrl ??
-    `${langApiVersionPath()}/images/fetch-image-by-id/${image.id}`
-  );
+  return image.publicUrl ?? `${langApiVersionPath()}/images/fetch-image-by-id/${image.id}`;
 }
 
 function totalSeconds(course: CourseDetail): number {
   return (course.Season ?? []).reduce(
-    (total, season) =>
-      total + season.Lesson.reduce((sum, lesson) => sum + lesson.duration, 0),
-    0
+    (total, season) => total + season.Lesson.reduce((sum, lesson) => sum + lesson.duration, 0),
+    0,
   );
 }
 
@@ -48,9 +44,7 @@ export default function CourseOverviewPage() {
   const { t } = useTranslation();
   const { course, loading } = useCourseWorkspace();
   // A live course is priced through its tutoring offers, not `course.price`.
-  const offers = useCourseTutoringOffers(
-    course?.course_type === 'LIVE' ? course.id : undefined
-  );
+  const offers = useCourseTutoringOffers(course?.course_type === 'LIVE' ? course.id : undefined);
 
   if (!selectedAcademy) return <NoAcademyState />;
 
@@ -68,11 +62,7 @@ export default function CourseOverviewPage() {
       <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <div className="text-center">
           <p className="text-muted-foreground">{t('courseDetail.notFound')}</p>
-          <Button
-            variant="outline"
-            className="mt-4"
-            onClick={() => router.push('/courses')}
-          >
+          <Button variant="outline" className="mt-4" onClick={() => router.push('/courses')}>
             {t('courseDetail.backToCourses')}
           </Button>
         </div>
@@ -86,9 +76,7 @@ export default function CourseOverviewPage() {
     <div className="mx-auto w-full max-w-[1400px] flex-1 p-4 sm:p-6">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-3">
-          <p className="text-sm text-muted-foreground">
-            {t('courseDetail.overviewHint')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('courseDetail.overviewHint')}</p>
           <CourseStudentPreview
             showCurriculum={course.course_type !== 'LIVE'}
             course={{
@@ -108,9 +96,9 @@ export default function CourseOverviewPage() {
                   key: lesson.id,
                   title: lesson.title,
                   isFree: lesson.is_free,
-                  duration: secondsToDuration(lesson.duration)
-                }))
-              }))
+                  duration: secondsToDuration(lesson.duration),
+                })),
+              })),
             }}
           />
         </div>

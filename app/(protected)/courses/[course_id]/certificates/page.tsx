@@ -5,11 +5,7 @@ import { useParams } from 'next/navigation';
 import { Award, ShieldOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  DataList,
-  DataPanel,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { StatTile } from '@/components/course/detail/stat-tile';
 import { RequirementPill } from '@/components/course/certificates/requirement-pill';
 import { useCertificateRoster } from '@/components/course/certificates/use-certificate-roster';
@@ -32,16 +28,13 @@ export default function CourseCertificatesPage() {
   const formatDate = useDateFormat();
   const percentLabel = usePercentLabel();
   const { course } = useCourseWorkspace();
-  const { roster, isLoading, busyEnrollmentId, issue, revoke } =
-    useCertificateRoster(courseId);
+  const { roster, isLoading, busyEnrollmentId, issue, revoke } = useCertificateRoster(courseId);
 
   const students = useMemo(() => roster?.students ?? [], [roster]);
   const eligibleCount = students.filter(
-    (student) => student.eligibility?.eligible && !student.certificate
+    (student) => student.eligibility?.eligible && !student.certificate,
   ).length;
-  const issuedCount = students.filter(
-    (student) => student.certificate?.is_valid
-  ).length;
+  const issuedCount = students.filter((student) => student.certificate?.is_valid).length;
 
   if (course && !course.is_certificate) {
     return (
@@ -61,10 +54,8 @@ export default function CourseCertificatesPage() {
       id: 'student',
       header: t('students.student'),
       cell: (student) => (
-        <span className="font-medium">
-          {student.display_name ?? t('students.unknownStudent')}
-        </span>
-      )
+        <span className="font-medium">{student.display_name ?? t('students.unknownStudent')}</span>
+      ),
     },
     {
       id: 'lessons',
@@ -76,7 +67,7 @@ export default function CourseCertificatesPage() {
             label={t('certificates.lessonsWatched')}
             tally={student.eligibility.lessons}
           />
-        ) : null
+        ) : null,
     },
     {
       id: 'quizzes',
@@ -88,7 +79,7 @@ export default function CourseCertificatesPage() {
             label={t('certificates.quizzesPassed')}
             tally={student.eligibility.quizzes}
           />
-        ) : null
+        ) : null,
     },
     {
       id: 'assignments',
@@ -100,7 +91,7 @@ export default function CourseCertificatesPage() {
             label={t('certificates.assignmentsPassed')}
             tally={student.eligibility.assignments}
           />
-        ) : null
+        ) : null,
     },
     {
       id: 'certificate',
@@ -109,16 +100,12 @@ export default function CourseCertificatesPage() {
       cell: (student) =>
         student.certificate?.is_valid ? (
           <div className="text-xs">
-            <p className="font-medium text-emerald-600">
-              {student.certificate.certificate_number}
-            </p>
-            <p className="text-muted-foreground">
-              {formatDate(student.certificate.issued_at)}
-            </p>
+            <p className="font-medium text-emerald-600">{student.certificate.certificate_number}</p>
+            <p className="text-muted-foreground">{formatDate(student.certificate.issued_at)}</p>
           </div>
         ) : (
           <span className="text-xs text-muted-foreground">—</span>
-        )
+        ),
     },
     {
       id: 'action',
@@ -133,9 +120,7 @@ export default function CourseCertificatesPage() {
               variant="ghost"
               size="sm"
               disabled={busy}
-              onClick={() =>
-                void revoke(student.certificate!.id, student.enrollment_id)
-              }
+              onClick={() => void revoke(student.certificate!.id, student.enrollment_id)}
             >
               <ShieldOff className="me-1.5 h-3.5 w-3.5" />
               {t('certificates.revoke')}
@@ -153,8 +138,8 @@ export default function CourseCertificatesPage() {
             {busy ? t('common.saving') : t('certificates.issue')}
           </Button>
         );
-      }
-    }
+      },
+    },
   ];
 
   return (
@@ -177,9 +162,7 @@ export default function CourseCertificatesPage() {
         <StatTile
           icon={<Award className="h-4 w-4" />}
           label={t('certificates.passMark')}
-          value={
-            roster ? percentLabel(roster.course.certificate_min_percent) : null
-          }
+          value={roster ? percentLabel(roster.course.certificate_min_percent) : null}
           sub={t('certificates.passMarkHint')}
           color="amber"
         />
@@ -188,10 +171,7 @@ export default function CourseCertificatesPage() {
       {isLoading ? (
         <Skeleton className="h-64 w-full rounded-2xl" />
       ) : (
-        <DataPanel
-          title={t('certificates.rosterTitle')}
-          subtitle={t('certificates.rosterHint')}
-        >
+        <DataPanel title={t('certificates.rosterTitle')} subtitle={t('certificates.rosterHint')}>
           <DataList
             items={students}
             columns={columns}

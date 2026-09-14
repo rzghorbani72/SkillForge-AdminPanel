@@ -11,23 +11,13 @@ import { Pagination } from '@/components/shared/Pagination';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { CreateAdminUserDialog } from '@/app/(protected)/users/_components/create-admin-user-dialog';
 import { PromoteStaffDialog } from '@/components/users/promote-staff-dialog';
-import {
-  AcademyMembersTable,
-  PlatformStaffTable
-} from '@/components/users/platform-users-tables';
-import {
-  UsersRoleFilter,
-  ALL_ROLES
-} from '@/components/users/users-role-filter';
+import { AcademyMembersTable, PlatformStaffTable } from '@/components/users/platform-users-tables';
+import { UsersRoleFilter, ALL_ROLES } from '@/components/users/users-role-filter';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
-import {
-  canManagePlatformStaff,
-  isPlatformOwner,
-  isPlatformStaff
-} from '@/lib/roles';
+import { canManagePlatformStaff, isPlatformOwner, isPlatformStaff } from '@/lib/roles';
 import { useDebouncedValue } from '@/lib/use-debounced-value';
 import type { PlatformRole } from '@/types/roles';
 import type { PlatformStaffRecord, User } from '@/types/api';
@@ -41,7 +31,7 @@ const ACADEMY_ROLE_FILTERS = (
     ['MANAGER', 3],
     ['TEACHER', 2],
     ['STUDENT', 1],
-    ['AFFILIATE', 0]
+    ['AFFILIATE', 0],
   ] as const
 ).map(
   ([name, level]) =>
@@ -56,8 +46,8 @@ const ACADEMY_ROLE_FILTERS = (
       academy_id: null,
       created_at: '',
       user_count: 0,
-      permissions: []
-    }) satisfies PlatformRole
+      permissions: [],
+    }) satisfies PlatformRole,
 );
 
 export default function PlatformUsersPage() {
@@ -90,7 +80,7 @@ export default function PlatformUsersPage() {
         const data = await apiClient.getPlatformStaff({
           page,
           limit: PAGE_SIZE,
-          search: debouncedSearch || undefined
+          search: debouncedSearch || undefined,
         });
         const profiles = data?.profiles ?? [];
         setStaff(profiles);
@@ -101,7 +91,7 @@ export default function PlatformUsersPage() {
           limit: PAGE_SIZE,
           search: debouncedSearch || undefined,
           role: roleFilter === ALL_ROLES ? undefined : roleFilter,
-          filter: 'none'
+          filter: 'none',
         });
         const list: User[] = data?.users ?? data?.profiles ?? [];
         setAcademyUsers(list);
@@ -132,9 +122,9 @@ export default function PlatformUsersPage() {
         PLATFORM_OWNER: t('admins.platformStaff.PLATFORM_OWNER'),
         ADMIN: t('admins.platformStaff.ADMIN'),
         FINANCE: t('admins.platformStaff.FINANCE'),
-        SUPPORT: t('admins.platformStaff.SUPPORT')
+        SUPPORT: t('admins.platformStaff.SUPPORT'),
       }) as Record<string, string>,
-    [t]
+    [t],
   );
 
   if (userLoading || !isPlatformStaff(user)) {
@@ -147,16 +137,8 @@ export default function PlatformUsersPage() {
 
   return (
     <PageContainer>
-      <CreateAdminUserDialog
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        onSuccess={load}
-      />
-      <PromoteStaffDialog
-        open={promoteOpen}
-        onOpenChange={setPromoteOpen}
-        onSuccess={load}
-      />
+      <CreateAdminUserDialog open={createOpen} onOpenChange={setCreateOpen} onSuccess={load} />
+      <PromoteStaffDialog open={promoteOpen} onOpenChange={setPromoteOpen} onSuccess={load} />
 
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -166,9 +148,7 @@ export default function PlatformUsersPage() {
           <h1 className="text-[24px] font-bold leading-none tracking-tight">
             {t('platformUsers.title')}
           </h1>
-          <p className="mt-1 text-[14px] text-muted-foreground">
-            {t('platformUsers.description')}
-          </p>
+          <p className="mt-1 text-[14px] text-muted-foreground">{t('platformUsers.description')}</p>
         </div>
         {canManage && tab === 'staff' && (
           <div className="flex items-center gap-2">
@@ -181,11 +161,7 @@ export default function PlatformUsersPage() {
               <UserPlus className="h-3.5 w-3.5" />
               {t('platformUsers.promote')}
             </Button>
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={() => setCreateOpen(true)}
-            >
+            <Button size="sm" className="gap-1.5" onClick={() => setCreateOpen(true)}>
               <Plus className="h-3.5 w-3.5" />
               {t('platformUsers.addStaff')}
             </Button>
@@ -193,16 +169,10 @@ export default function PlatformUsersPage() {
         )}
       </div>
 
-      <Tabs
-        value={tab}
-        onValueChange={(value) => setTab(value as HubTab)}
-        className="mb-4"
-      >
+      <Tabs value={tab} onValueChange={(value) => setTab(value as HubTab)} className="mb-4">
         <TabsList>
           <TabsTrigger value="staff">{t('platformUsers.staffTab')}</TabsTrigger>
-          <TabsTrigger value="academy">
-            {t('platformUsers.academyTab')}
-          </TabsTrigger>
+          <TabsTrigger value="academy">{t('platformUsers.academyTab')}</TabsTrigger>
         </TabsList>
       </Tabs>
 

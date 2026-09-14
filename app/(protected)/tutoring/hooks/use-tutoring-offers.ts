@@ -20,7 +20,7 @@ const EMPTY_FORM: OfferFormState = {
   title: '',
   price: '',
   duration_days: '',
-  sessions_included: ''
+  sessions_included: '',
 };
 
 export function useTutoringOffers() {
@@ -54,12 +54,8 @@ export function useTutoringOffers() {
         tutor_profile_id: form.tutor_profile_id,
         title: form.title,
         price: form.price ? Number(form.price) : undefined,
-        duration_days: form.duration_days
-          ? Number(form.duration_days)
-          : undefined,
-        sessions_included: form.sessions_included
-          ? Number(form.sessions_included)
-          : undefined
+        duration_days: form.duration_days ? Number(form.duration_days) : undefined,
+        sessions_included: form.sessions_included ? Number(form.sessions_included) : undefined,
       });
       setForm(EMPTY_FORM);
       await loadOffers();
@@ -75,7 +71,7 @@ export function useTutoringOffers() {
       setSaving(true);
       try {
         await apiClient.updateTutoringOffer(offer.id, {
-          is_active: !offer.is_active
+          is_active: !offer.is_active,
         });
         await loadOffers();
       } catch (error) {
@@ -84,7 +80,7 @@ export function useTutoringOffers() {
         setSaving(false);
       }
     },
-    [loadOffers]
+    [loadOffers],
   );
 
   return { offers, loading, saving, form, setForm, createOffer, toggleActive };

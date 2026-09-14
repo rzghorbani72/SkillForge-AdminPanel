@@ -31,9 +31,7 @@ export function UsersStatsBar({ stats }: { stats: readonly UserStat[] }) {
             {s.delta !== undefined && (
               <span
                 className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-                  s.delta >= 0
-                    ? 'bg-emerald-50 text-emerald-700'
-                    : 'bg-red-50 text-red-600'
+                  s.delta >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'
                 }`}
               >
                 <TrendingUp style={{ width: 10, height: 10 }} />

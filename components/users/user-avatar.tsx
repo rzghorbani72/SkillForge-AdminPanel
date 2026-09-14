@@ -13,14 +13,14 @@ export function toneToHsl(tone: number) {
   return {
     bg: `hsl(${tone} 80% 95%)`,
     text: `hsl(${tone} 70% 38%)`,
-    dot: `hsl(${tone} 70% 50%)`
+    dot: `hsl(${tone} 70% 50%)`,
   };
 }
 
 export function UserAvatar({
   name,
   tone = 22,
-  size = 32
+  size = 32,
 }: {
   name?: string;
   tone?: number;
@@ -40,7 +40,7 @@ export function UserAvatar({
         justifyContent: 'center',
         fontWeight: 600,
         fontSize: size * 0.35,
-        flexShrink: 0
+        flexShrink: 0,
       }}
     >
       {getInitials(name)}

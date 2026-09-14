@@ -25,7 +25,7 @@ function readStored(academyId: string): StoredChecklist {
   const empty: StoredChecklist = {
     dismissed: false,
     done: {},
-    fromTrial: false
+    fromTrial: false,
   };
   if (typeof window === 'undefined') return empty;
   try {
@@ -37,7 +37,7 @@ function readStored(academyId: string): StoredChecklist {
     return {
       dismissed: record.dismissed === true,
       fromTrial: record.fromTrial === true,
-      done: record.done && typeof record.done === 'object' ? record.done : {}
+      done: record.done && typeof record.done === 'object' ? record.done : {},
     };
   } catch {
     return empty;
@@ -56,12 +56,7 @@ type Args = {
   enabled: boolean;
 };
 
-export function useSetupChecklist({
-  academyId,
-  hasCourse,
-  hasTemplate,
-  enabled
-}: Args) {
+export function useSetupChecklist({ academyId, hasCourse, hasTemplate, enabled }: Args) {
   const searchParams = useSearchParams();
   const [stored, setStored] = useState<StoredChecklist | null>(null);
 
@@ -88,7 +83,7 @@ export function useSetupChecklist({
       writeStored(academyId, next);
       setStored(next);
     },
-    [academyId]
+    [academyId],
   );
 
   // Template and course are checked off by real account state, not by having
@@ -99,7 +94,7 @@ export function useSetupChecklist({
       website: marks.website === true,
       template: marks.template === true || hasTemplate,
       course: marks.course === true || hasCourse,
-      visit: marks.visit === true
+      visit: marks.visit === true,
     } satisfies Record<SetupStepId, boolean>;
   }, [hasCourse, hasTemplate, stored]);
 
@@ -119,11 +114,11 @@ export function useSetupChecklist({
       if (!stored) return;
       persist({
         ...stored,
-        done: { ...stored.done, [step]: true }
+        done: { ...stored.done, [step]: true },
       });
       logger.ok('Onboarding', 'SetupStepOpened', { step });
     },
-    [persist, stored]
+    [persist, stored],
   );
 
   const dismiss = useCallback(() => {

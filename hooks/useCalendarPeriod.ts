@@ -6,7 +6,7 @@ import {
   buildCalendarMonths,
   rangeFor,
   yearsOf,
-  type CalendarMonth
+  type CalendarMonth,
 } from '@/lib/i18n/calendar-period';
 
 export interface CalendarPeriod {
@@ -32,7 +32,7 @@ export function useCalendarPeriod(): CalendarPeriod {
   const activeYear = years.includes(year) ? year : years[0];
   const { startIso, endIso } = useMemo(
     () => rangeFor(months, activeYear, month),
-    [months, activeYear, month]
+    [months, activeYear, month],
   );
 
   return {
@@ -43,6 +43,6 @@ export function useCalendarPeriod(): CalendarPeriod {
     months,
     years,
     startIso,
-    endIso
+    endIso,
   };
 }

@@ -5,14 +5,14 @@ const INLINE_WRAPS: Readonly<Record<string, string>> = {
   I: '_',
   S: '~~',
   STRIKE: '~~',
-  DEL: '~~'
+  DEL: '~~',
 };
 
 const HEADING_LEVELS: Readonly<Record<string, string>> = {
   H1: '# ',
   H2: '## ',
   H3: '### ',
-  H4: '#### '
+  H4: '#### ',
 };
 
 const BLOCK_TAGS = new Set([
@@ -26,7 +26,7 @@ const BLOCK_TAGS = new Set([
   'OL',
   'LI',
   'BLOCKQUOTE',
-  'PRE'
+  'PRE',
 ]);
 
 function escapeMarkdown(text: string): string {
@@ -71,14 +71,13 @@ function serializeInline(node: Node): string {
 function serializeList(list: HTMLElement, depth: number): string {
   const indent = '  '.repeat(depth);
   const items = Array.from(list.children).filter(
-    (child): child is HTMLElement => child.tagName === 'LI'
+    (child): child is HTMLElement => child.tagName === 'LI',
   );
   return items
     .map((item, index) => {
       const marker = list.tagName === 'OL' ? `${index + 1}. ` : '- ';
       const nested = Array.from(item.children).filter(
-        (child): child is HTMLElement =>
-          child.tagName === 'UL' || child.tagName === 'OL'
+        (child): child is HTMLElement => child.tagName === 'UL' || child.tagName === 'OL',
       );
       nested.forEach((child) => child.remove());
       const text = serializeChildren(item).trim();
@@ -114,14 +113,9 @@ function serializeBlock(node: Node): string {
   }
 
   if (BLOCK_TAGS.has(tag)) {
-    const hasBlockChild = Array.from(node.children).some((child) =>
-      BLOCK_TAGS.has(child.tagName)
-    );
+    const hasBlockChild = Array.from(node.children).some((child) => BLOCK_TAGS.has(child.tagName));
     if (hasBlockChild) {
-      return Array.from(node.childNodes)
-        .map(serializeBlock)
-        .filter(Boolean)
-        .join('\n\n');
+      return Array.from(node.childNodes).map(serializeBlock).filter(Boolean).join('\n\n');
     }
     return serializeChildren(node).trim();
   }

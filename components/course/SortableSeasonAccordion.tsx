@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  ChevronDown,
-  ChevronRight,
-  Clock,
-  GripVertical,
-  Trash2
-} from 'lucide-react';
+import { ChevronDown, ChevronRight, Clock, GripVertical, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
@@ -65,20 +59,15 @@ export function SortableSeasonAccordion({
   onClearLesson,
   onUpdateLesson,
   onAssignLesson,
-  onReorderLessons
+  onReorderLessons,
 }: SeasonAccordionProps) {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: season.clientKey });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: season.clientKey,
+  });
 
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const combinedRef = useCallback(
@@ -86,7 +75,7 @@ export function SortableSeasonAccordion({
       nodeRef.current = node;
       setNodeRef(node);
     },
-    [setNodeRef]
+    [setNodeRef],
   );
   useEffect(() => {
     if (!nodeRef.current) return;
@@ -102,7 +91,7 @@ export function SortableSeasonAccordion({
   // The placeholder doubles as the season's name until one is typed, so the
   // heading never shows a number and an empty field saying the same thing.
   const fallbackTitle = t('courses.seasonNumber', {
-    n: formatNumber(index + 1)
+    n: formatNumber(index + 1),
   });
 
   // A blank season is just an empty slot — there's nothing in it to delete.
@@ -127,7 +116,7 @@ export function SortableSeasonAccordion({
       ref={combinedRef}
       className={cn(
         'rounded-lg border border-border/60 bg-card/40',
-        isDragging && 'opacity-50 shadow-xl ring-1 ring-primary/40'
+        isDragging && 'opacity-50 shadow-xl ring-1 ring-primary/40',
       )}
     >
       <div className="group flex items-center gap-3 px-3 py-2.5" dir="ltr">
@@ -147,7 +136,7 @@ export function SortableSeasonAccordion({
                 ? t('courses.lessonCount', { n: formatNumber(total) })
                 : t('courses.lessonsReady', {
                     n: formatNumber(ready),
-                    total: formatNumber(total)
+                    total: formatNumber(total),
                   })}
             </span>
           )}
@@ -156,9 +145,7 @@ export function SortableSeasonAccordion({
               type="button"
               onClick={handleTrashClick}
               className="rounded p-1 text-muted-foreground/50 opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
-              aria-label={
-                canRemove ? t('courses.removeSeason') : t('courses.clearSeason')
-              }
+              aria-label={canRemove ? t('courses.removeSeason') : t('courses.clearSeason')}
             >
               <Trash2 className="h-3.5 w-3.5" />
             </button>
@@ -182,9 +169,7 @@ export function SortableSeasonAccordion({
             type="button"
             onClick={onToggle}
             className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground"
-            aria-label={
-              open ? t('courses.collapseAll') : t('courses.expandAll')
-            }
+            aria-label={open ? t('courses.collapseAll') : t('courses.expandAll')}
           >
             {open ? (
               <ChevronDown className="h-4 w-4" />

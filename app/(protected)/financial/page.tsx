@@ -22,11 +22,7 @@ export default function FinancialPage() {
 
     if (role === 'MANAGER' || role === 'TEACHER') {
       router.replace('/financial/academy');
-    } else if (
-      role === 'PLATFORM_OWNER' ||
-      role === 'ADMIN' ||
-      role === 'FINANCE'
-    ) {
+    } else if (role === 'PLATFORM_OWNER' || role === 'ADMIN' || role === 'FINANCE') {
       router.replace('/financial/platform');
     } else {
       router.replace('/dashboard');

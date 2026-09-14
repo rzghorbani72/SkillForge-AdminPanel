@@ -3,13 +3,7 @@
 import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,23 +11,19 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  CONTACT_CHANNELS,
-  isContactChannel,
-  type ContactLink
-} from '@/types/academy-site';
+import { CONTACT_CHANNELS, isContactChannel, type ContactLink } from '@/types/academy-site';
 
 const MAX_LINKS = 20;
 
 const emptyLink = (): ContactLink => ({
   type: 'instagram',
   value: '',
-  label: null
+  label: null,
 });
 
 type ContactLinksEditorProps = {
@@ -45,18 +35,13 @@ type ContactLinksEditorProps = {
  * The whole channel list is edited as one ordered list and saved in one call —
  * the public site shows them in exactly this order.
  */
-export function ContactLinksEditor({
-  links,
-  onSaved
-}: ContactLinksEditorProps) {
+export function ContactLinksEditor({ links, onSaved }: ContactLinksEditorProps) {
   const { t } = useTranslation();
   const [rows, setRows] = useState<ContactLink[]>(links);
   const [isSaving, setIsSaving] = useState(false);
 
   const updateRow = (index: number, patch: Partial<ContactLink>) => {
-    setRows((current) =>
-      current.map((row, i) => (i === index ? { ...row, ...patch } : row))
-    );
+    setRows((current) => current.map((row, i) => (i === index ? { ...row, ...patch } : row)));
   };
 
   const handleSave = async () => {
@@ -85,15 +70,11 @@ export function ContactLinksEditor({
     <Card>
       <CardHeader>
         <CardTitle>{t('settings.sitePages.linksTitle')}</CardTitle>
-        <CardDescription>
-          {t('settings.sitePages.linksDescription')}
-        </CardDescription>
+        <CardDescription>{t('settings.sitePages.linksDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {rows.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('settings.sitePages.emptyLinks')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('settings.sitePages.emptyLinks')}</p>
         ) : null}
 
         <div className="space-y-3">
@@ -105,8 +86,7 @@ export function ContactLinksEditor({
               <Select
                 value={row.type}
                 onValueChange={(value) => {
-                  if (isContactChannel(value))
-                    updateRow(index, { type: value });
+                  if (isContactChannel(value)) updateRow(index, { type: value });
                 }}
               >
                 <SelectTrigger>
@@ -127,9 +107,7 @@ export function ContactLinksEditor({
                 dir="auto"
                 placeholder={t('settings.sitePages.linkValuePlaceholder')}
                 aria-label={t('settings.sitePages.linkValueLabel')}
-                onChange={(event) =>
-                  updateRow(index, { value: event.target.value })
-                }
+                onChange={(event) => updateRow(index, { value: event.target.value })}
               />
 
               <Input
@@ -137,9 +115,7 @@ export function ContactLinksEditor({
                 maxLength={100}
                 placeholder={t('settings.sitePages.linkLabelLabel')}
                 aria-label={t('settings.sitePages.linkLabelLabel')}
-                onChange={(event) =>
-                  updateRow(index, { label: event.target.value || null })
-                }
+                onChange={(event) => updateRow(index, { label: event.target.value || null })}
               />
 
               <Button
@@ -147,9 +123,7 @@ export function ContactLinksEditor({
                 variant="ghost"
                 size="icon"
                 aria-label={t('settings.sitePages.removeLink')}
-                onClick={() =>
-                  setRows((current) => current.filter((_, i) => i !== index))
-                }
+                onClick={() => setRows((current) => current.filter((_, i) => i !== index))}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

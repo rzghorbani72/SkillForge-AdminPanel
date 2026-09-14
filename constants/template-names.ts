@@ -32,7 +32,7 @@ export const TEMPLATE_KEYS = [
   'andisheh',
   'shaparak',
   'partow',
-  'pardeh'
+  'pardeh',
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -52,109 +52,109 @@ export const TEMPLATE_IDENTITY: Record<TemplateKey, TemplateIdentity> = {
   keyhan: {
     name: 'کیهان',
     vertical: 'علمی و فنی',
-    tagline: 'علمی · رصدی · تیره'
+    tagline: 'علمی · رصدی · تیره',
   },
   tavan: {
     name: 'توان',
     vertical: 'ورزشی و مهارتی',
-    tagline: 'پرانرژی · مهارتی · داده‌محور'
+    tagline: 'پرانرژی · مهارتی · داده‌محور',
   },
   dastan: {
     name: 'دستان',
     vertical: 'کارگاهی و هنری',
-    tagline: 'گرم · کارگاهی · کلاسیک'
+    tagline: 'گرم · کارگاهی · کلاسیک',
   },
   parastoo: {
     name: 'پرستو',
     vertical: 'کودک و نوجوان',
-    tagline: 'شاد · کودک‌پسند · رنگی'
+    tagline: 'شاد · کودک‌پسند · رنگی',
   },
   nokhbeh: {
     name: 'نخبه',
     vertical: 'درسی و کنکور',
-    tagline: 'درسی · کنکور · دقیق'
+    tagline: 'درسی · کنکور · دقیق',
   },
   zabaneh: {
     name: 'زبانه',
     vertical: 'آموزش زبان',
-    tagline: 'زبان · گفت‌وگومحور · روشن'
+    tagline: 'زبان · گفت‌وگومحور · روشن',
   },
   bikaran: {
     name: 'بی‌کران',
     vertical: 'نجوم و علوم',
-    tagline: 'نجوم · اطلس‌گونه · کاغذی'
+    tagline: 'نجوم · اطلس‌گونه · کاغذی',
   },
   raushan: {
     name: 'روشن',
     vertical: 'عمومی و چندمنظوره',
-    tagline: 'روشن · مینیمال · حرفه‌ای'
+    tagline: 'روشن · مینیمال · حرفه‌ای',
   },
   shabtab: {
     name: 'شب‌تاب',
     vertical: 'عمومی و چندمنظوره',
-    tagline: 'تیره · درخشان · مدرن'
+    tagline: 'تیره · درخشان · مدرن',
   },
   sepid: {
     name: 'سپید',
     vertical: 'عمومی و چندمنظوره',
-    tagline: 'ساده · متمرکز · بی‌آلایش'
+    tagline: 'ساده · متمرکز · بی‌آلایش',
   },
   hamrang: {
     name: 'هم‌رنگ',
     vertical: 'عمومی و چندمنظوره',
-    tagline: 'رنگی · پرانرژی · شاد'
+    tagline: 'رنگی · پرانرژی · شاد',
   },
   baran: {
     name: 'باران',
     vertical: 'عمومی و چندمنظوره',
-    tagline: 'ملایم · آرام · مینیمال'
+    tagline: 'ملایم · آرام · مینیمال',
   },
   shafagh: {
     name: 'شفق',
     vertical: 'عکاسی و رسانهٔ بصری',
-    tagline: 'رنگی · گرم · گالری‌گونه'
+    tagline: 'رنگی · گرم · گالری‌گونه',
   },
   elektron: {
     name: 'الکترون',
     vertical: 'دیجیتال، رسانه و طراحی',
-    tagline: 'رنگی · مدرن · پرانرژی'
+    tagline: 'رنگی · مدرن · پرانرژی',
   },
   rouzan: {
     name: 'روزن',
     vertical: 'مدرس برنامه‌نویسی',
-    tagline: 'روشن · ویدیومحور · مینیمال'
+    tagline: 'روشن · ویدیومحور · مینیمال',
   },
   daneshvar: {
     name: 'دانشور',
     vertical: 'استاد دانشگاه',
-    tagline: 'آکادمیک · مستند · موقر'
+    tagline: 'آکادمیک · مستند · موقر',
   },
   peleh: {
     name: 'پله',
     vertical: 'مدرس کنکور و دبیرستان',
-    tagline: 'انگیزشی · نتیجه‌محور · پلکانی'
+    tagline: 'انگیزشی · نتیجه‌محور · پلکانی',
   },
   andisheh: {
     name: 'اندیشه',
     vertical: 'منتور هوش مصنوعی و دواپس',
-    tagline: 'تیره · فنی · ترمینالی'
+    tagline: 'تیره · فنی · ترمینالی',
   },
   shaparak: {
     name: 'شاپرک',
     vertical: 'مدرس برنامه‌نویسی کودکان',
-    tagline: 'بازی‌گونه · رنگی · بلوکی'
+    tagline: 'بازی‌گونه · رنگی · بلوکی',
   },
   partow: {
     name: 'پرتو',
     vertical: 'مدرس برنامه‌نویسی',
-    tagline: 'متمرکز · کارت‌محور · روشن'
+    tagline: 'متمرکز · کارت‌محور · روشن',
   },
   pardeh: {
     name: 'پرده',
     vertical: 'فیلم، عکاسی و رسانهٔ بصری',
     tagline: 'سینمایی · ویدیویی · تمام‌عرض',
-    heroLabel: 'بنر ویدیویی تمام‌عرض'
-  }
+    heroLabel: 'بنر ویدیویی تمام‌عرض',
+  },
 };
 
 /**
@@ -179,7 +179,7 @@ const CENTERED_HEROES: readonly TemplateKey[] = [
   'shabtab',
   'sepid',
   'partow',
-  'pardeh'
+  'pardeh',
 ];
 
 export function isCenteredHero(style: unknown): boolean {
@@ -197,12 +197,7 @@ export function isCenteredHero(style: unknown): boolean {
  * the page. It keeps those designs from colliding with the institution
  * templates that cover the same subject (nokhbeh vs peleh, parastoo vs shaparak).
  */
-export type TemplateCategory =
-  | 'minimal'
-  | 'creative'
-  | 'professional'
-  | 'dark'
-  | 'personal';
+export type TemplateCategory = 'minimal' | 'creative' | 'professional' | 'dark' | 'personal';
 
 export const TEMPLATE_CATEGORY: Record<TemplateKey, TemplateCategory> = {
   keyhan: 'dark',
@@ -225,7 +220,7 @@ export const TEMPLATE_CATEGORY: Record<TemplateKey, TemplateCategory> = {
   andisheh: 'personal',
   shaparak: 'personal',
   partow: 'personal',
-  pardeh: 'creative'
+  pardeh: 'creative',
 };
 
 export const CATEGORY_LABELS: {
@@ -237,7 +232,7 @@ export const CATEGORY_LABELS: {
   { value: 'creative', label: 'خلاق' },
   { value: 'professional', label: 'حرفه‌ای' },
   { value: 'dark', label: 'تاریک' },
-  { value: 'personal', label: 'برند شخصی' }
+  { value: 'personal', label: 'برند شخصی' },
 ];
 
 export function getTemplateCategoryByKey(key: string): TemplateCategory {
@@ -247,7 +242,7 @@ export function getTemplateCategoryByKey(key: string): TemplateCategory {
 const FALLBACK_IDENTITY: TemplateIdentity = {
   name: 'قالب اختصاصی',
   vertical: 'عمومی',
-  tagline: 'ساده · تمیز · قابل تنظیم'
+  tagline: 'ساده · تمیز · قابل تنظیم',
 };
 
 export function getTemplateIdentity(key: string): TemplateIdentity {

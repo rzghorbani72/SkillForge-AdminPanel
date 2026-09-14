@@ -9,14 +9,14 @@ One rule for every dialog/modal that calls an API from a button:
 Use `edusphere/hooks/use-dialog-action.ts`:
 
 ```tsx
-const { pending, run } = useDialogAction(onClose, t("common.error"));
+const { pending, run } = useDialogAction(onClose, t('common.error'));
 
 const submit = () =>
   void run(async () => {
-    const response = await fetch(url, { method: "POST", body });
+    const response = await fetch(url, { method: 'POST', body });
     return response.ok
-      ? { ok: true, message: t("x.saved") }
-      : { ok: false, message: t("x.failed") };
+      ? { ok: true, message: t('x.saved') }
+      : { ok: false, message: t('x.failed') };
   });
 ```
 

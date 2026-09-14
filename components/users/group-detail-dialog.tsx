@@ -2,21 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  BookOpen,
-  GraduationCap,
-  Loader2,
-  Plus,
-  Send,
-  Users,
-  X
-} from 'lucide-react';
+import { BookOpen, GraduationCap, Loader2, Plus, Send, Users, X } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -47,7 +39,7 @@ function SectionTitle({
   label,
   count,
   actionLabel,
-  onAction
+  onAction,
 }: {
   icon: typeof Users;
   label: string;
@@ -80,7 +72,7 @@ function GrantRow({
   grantedAt,
   onRevoke,
   isRevoking,
-  revokeLabel
+  revokeLabel,
 }: {
   title: string;
   grantedAt: string;
@@ -91,9 +83,7 @@ function GrantRow({
   return (
     <li className="flex items-center justify-between gap-3 px-3 py-2">
       <span className="min-w-0 flex-1 truncate text-[13px]">{title}</span>
-      <span className="shrink-0 text-[11.5px] text-muted-foreground">
-        {grantedAt}
-      </span>
+      <span className="shrink-0 text-[11.5px] text-muted-foreground">{grantedAt}</span>
       <button
         type="button"
         title={revokeLabel}
@@ -119,11 +109,7 @@ function EmptyHint({ label }: { label: string }) {
   );
 }
 
-export function GroupDetailDialog({
-  groupId,
-  onOpenChange,
-  onChanged
-}: GroupDetailDialogProps) {
+export function GroupDetailDialog({ groupId, onOpenChange, onChanged }: GroupDetailDialogProps) {
   const { t } = useTranslation();
   const [group, setGroup] = useState<StudentGroupDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -197,9 +183,7 @@ export function GroupDetailDialog({
                 <div className="flex items-center gap-2">
                   <DialogTitle>{group.name}</DialogTitle>
                   <Badge variant={group.is_active ? 'default' : 'outline'}>
-                    {group.is_active
-                      ? t('common.active')
-                      : t('common.inactive')}
+                    {group.is_active ? t('common.active') : t('common.inactive')}
                   </Badge>
                 </div>
                 <DialogDescription>
@@ -245,15 +229,8 @@ export function GroupDetailDialog({
                       {group.Members.map((member) => {
                         const displayName = member.Profile?.display_name || '—';
                         return (
-                          <li
-                            key={member.id}
-                            className="flex items-center gap-2.5 px-3 py-2"
-                          >
-                            <UserAvatar
-                              name={displayName}
-                              tone={210}
-                              size={26}
-                            />
+                          <li key={member.id} className="flex items-center gap-2.5 px-3 py-2">
+                            <UserAvatar name={displayName} tone={210} size={26} />
                             <Link
                               href={`/user/${member.profile_id}`}
                               className="min-w-0 flex-1 truncate text-[13px] font-medium hover:underline"
@@ -265,10 +242,7 @@ export function GroupDetailDialog({
                               title={t('users.removeFromGroup')}
                               onClick={() =>
                                 runMutation(member.profile_id, () =>
-                                  studentGroupsApi.removeMember(
-                                    group.id,
-                                    member.profile_id
-                                  )
+                                  studentGroupsApi.removeMember(group.id, member.profile_id),
                                 )
                               }
                               disabled={removingId === member.profile_id}
@@ -308,10 +282,7 @@ export function GroupDetailDialog({
                           isRevoking={removingId === grant.id}
                           onRevoke={() =>
                             runMutation(grant.id, () =>
-                              studentGroupsApi.revokeCourse(
-                                group.id,
-                                grant.course_id
-                              )
+                              studentGroupsApi.revokeCourse(group.id, grant.course_id),
                             )
                           }
                         />
@@ -341,10 +312,7 @@ export function GroupDetailDialog({
                           isRevoking={removingId === grant.id}
                           onRevoke={() =>
                             runMutation(grant.id, () =>
-                              studentGroupsApi.revokeLesson(
-                                group.id,
-                                grant.lesson_id
-                              )
+                              studentGroupsApi.revokeLesson(group.id, grant.lesson_id),
                             )
                           }
                         />
@@ -372,9 +340,7 @@ export function GroupDetailDialog({
       />
       <GroupAddMembersDialog
         groupId={addMembersOpen && group ? group.id : null}
-        existingMemberIds={
-          group?.Members.map((member) => member.profile_id) ?? []
-        }
+        existingMemberIds={group?.Members.map((member) => member.profile_id) ?? []}
         onOpenChange={setAddMembersOpen}
         onAdded={reloadAfterDialog}
       />

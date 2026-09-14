@@ -8,13 +8,7 @@ import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -71,12 +65,8 @@ export default function WebhooksPage() {
       await Promise.all([
         apiClient.setStoreSetting(academyId, 'webhook_url', webhookUrl),
         webhookSecret
-          ? apiClient.setStoreSetting(
-              academyId,
-              'webhook_secret',
-              webhookSecret
-            )
-          : Promise.resolve()
+          ? apiClient.setStoreSetting(academyId, 'webhook_secret', webhookSecret)
+          : Promise.resolve(),
       ]);
       toast.success(t('common.success'));
     } catch (err: any) {
@@ -104,9 +94,7 @@ export default function WebhooksPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {t('webhooks.title')}
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('webhooks.title')}</h1>
           <p className="text-sm text-muted-foreground">
             {academyName
               ? t('webhooks.description', { academy: academyName })
@@ -150,22 +138,14 @@ export default function WebhooksPage() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label={
-                  showSecret ? t('common.inactive') : t('common.active')
-                }
+                aria-label={showSecret ? t('common.inactive') : t('common.active')}
                 className="absolute end-1 top-1 h-7 w-7"
                 onClick={() => setShowSecret((v) => !v)}
               >
-                {showSecret ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t('webhooks.secretHint')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('webhooks.secretHint')}</p>
           </div>
 
           <Separator />

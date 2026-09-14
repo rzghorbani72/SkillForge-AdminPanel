@@ -88,7 +88,7 @@ export const EMPTY_OVERVIEW: AnalyticsOverview = {
   laggingEnrollments: 0,
   revenueTrend: [],
   topCourses: [],
-  recentPayments: []
+  recentPayments: [],
 };
 
 export const EMPTY_REVENUE: AnalyticsRevenue = {
@@ -98,10 +98,10 @@ export const EMPTY_REVENUE: AnalyticsRevenue = {
   revenueByMethod: [],
   revenueByCourse: [],
   recentPayments: [],
-  revenueTrend: []
+  revenueTrend: [],
 };
 
 export const EMPTY_COURSES: AnalyticsCourses = {
   courses: [],
-  totalCourses: 0
+  totalCourses: 0,
 };

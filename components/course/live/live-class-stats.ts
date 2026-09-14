@@ -1,14 +1,7 @@
-import type {
-  TutoringGroup,
-  TutoringGroupStatus
-} from '@/types/learning-operations';
+import type { TutoringGroup, TutoringGroupStatus } from '@/types/learning-operations';
 
 /** A class that is selling seats or already teaching — not a draft or an archive. */
-const LIVE_STATUSES: readonly TutoringGroupStatus[] = [
-  'WAITING',
-  'CONFIRMED',
-  'RUNNING'
-];
+const LIVE_STATUSES: readonly TutoringGroupStatus[] = ['WAITING', 'CONFIRMED', 'RUNNING'];
 
 export function activeClassCount(groups: readonly TutoringGroup[]): number {
   return groups.filter((group) => LIVE_STATUSES.includes(group.status)).length;
@@ -28,7 +21,7 @@ export function seatTotals(groups: readonly TutoringGroup[]): SeatTotals {
   return {
     taken,
     capacity,
-    fillPercent: capacity > 0 ? Math.round((taken / capacity) * 100) : null
+    fillPercent: capacity > 0 ? Math.round((taken / capacity) * 100) : null,
   };
 }
 
@@ -39,7 +32,7 @@ export function seatTotals(groups: readonly TutoringGroup[]): SeatTotals {
  */
 export function nextClass(
   groups: readonly TutoringGroup[],
-  now: Date = new Date()
+  now: Date = new Date(),
 ): TutoringGroup | null {
   const running = groups.find((group) => group.status === 'RUNNING');
   if (running) return running;
@@ -49,12 +42,11 @@ export function nextClass(
       (group) =>
         LIVE_STATUSES.includes(group.status) &&
         group.starts_on != null &&
-        new Date(group.starts_on).getTime() >= now.getTime()
+        new Date(group.starts_on).getTime() >= now.getTime(),
     )
     .sort(
       (a, b) =>
-        new Date(a.starts_on as string).getTime() -
-        new Date(b.starts_on as string).getTime()
+        new Date(a.starts_on as string).getTime() - new Date(b.starts_on as string).getTime(),
     );
 
   return upcoming[0] ?? null;

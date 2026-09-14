@@ -1,10 +1,4 @@
-import type {
-  LogApp,
-  LogEntry,
-  LogLevel,
-  LogPrimitive,
-  LogSink
-} from './logger';
+import type { LogApp, LogEntry, LogLevel, LogPrimitive, LogSink } from './logger';
 
 const NAME_RE = /^[A-Z][A-Za-z0-9]{1,40}$/;
 const LEVELS: readonly LogLevel[] = ['info', 'warn', 'error'];
@@ -30,7 +24,7 @@ export function sanitizeEntry(
     release: string;
     ip?: string;
     request_id?: string;
-  }
+  },
 ): LogEntry | null {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const obj = raw as Record<string, unknown>;
@@ -42,12 +36,10 @@ export function sanitizeEntry(
   const details: Record<string, LogPrimitive> = {};
   let keys = 0;
   for (const [key, value] of Object.entries(obj)) {
-    if (RESERVED.has(key) || ['event', 'action', 'level'].includes(key))
-      continue;
+    if (RESERVED.has(key) || ['event', 'action', 'level'].includes(key)) continue;
     if (!isPrimitive(value)) return null;
     if (++keys > MAX_KEYS) return null;
-    details[key] =
-      typeof value === 'string' ? value.slice(0, MAX_STRING) : value;
+    details[key] = typeof value === 'string' ? value.slice(0, MAX_STRING) : value;
   }
   return {
     ...details,
@@ -55,7 +47,7 @@ export function sanitizeEntry(
     ts: new Date().toISOString(),
     level,
     event,
-    action
+    action,
   };
 }
 
@@ -69,20 +61,19 @@ export interface LogRouteInput {
 export function ingestLogBatch(
   input: LogRouteInput,
   sink: LogSink,
-  stamp: { app: LogApp; env: string; release: string }
+  stamp: { app: LogApp; env: string; release: string },
 ): { accepted: number } {
   const entries =
     input.body && typeof input.body === 'object'
       ? (input.body as { entries?: unknown }).entries
       : undefined;
-  if (!Array.isArray(entries) || entries.length > MAX_ENTRIES)
-    return { accepted: 0 };
+  if (!Array.isArray(entries) || entries.length > MAX_ENTRIES) return { accepted: 0 };
   let accepted = 0;
   for (const raw of entries) {
     const entry = sanitizeEntry(raw, {
       ...stamp,
       ip: input.ip,
-      request_id: input.request_id
+      request_id: input.request_id,
     });
     if (!entry) continue;
     sink(entry);

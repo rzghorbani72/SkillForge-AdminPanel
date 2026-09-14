@@ -28,13 +28,13 @@ export function PageHeader({
   badge,
   icon,
   className,
-  scope
+  scope,
 }: PageHeaderProps) {
   return (
     <div
       className={cn(
         'fade-in-up flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4',
-        className
+        className,
       )}
     >
       <div className="min-w-0 space-y-1">
@@ -60,17 +60,11 @@ export function PageHeader({
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {description}
-            </p>
+            <p className="text-sm text-muted-foreground sm:text-base">{description}</p>
           </div>
         </div>
       </div>
-      {children && (
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          {children}
-        </div>
-      )}
+      {children && <div className="flex min-w-0 flex-wrap items-center gap-2">{children}</div>}
     </div>
   );
 }

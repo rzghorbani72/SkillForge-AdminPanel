@@ -11,21 +11,15 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { DeskKpis } from './_components/desk-kpis';
 import { DeskPaymentsTable } from './_components/desk-payments-table';
-import {
-  DeskAcademiesTable,
-  DeskPaidTable
-} from './_components/desk-settlements-table';
+import { DeskAcademiesTable, DeskPaidTable } from './_components/desk-settlements-table';
 import { useFinancialDesk } from './_hooks/use-financial-desk';
 
 const DeskRevenueCharts = dynamic(
-  () =>
-    import('./_components/desk-revenue-charts').then(
-      (mod) => mod.DeskRevenueCharts
-    ),
+  () => import('./_components/desk-revenue-charts').then((mod) => mod.DeskRevenueCharts),
   {
     ssr: false,
-    loading: () => <Skeleton className="h-[320px] w-full" />
-  }
+    loading: () => <Skeleton className="h-[320px] w-full" />,
+  },
 );
 
 const STAFF = new Set(['PLATFORM_OWNER', 'ADMIN', 'FINANCE']);
@@ -33,8 +27,7 @@ const STAFF = new Set(['PLATFORM_OWNER', 'ADMIN', 'FINANCE']);
 export default function FinancialDeskPage() {
   const { t } = useTranslation();
   const { user } = useAuthUser();
-  const { desk, payments, loading, notifyingId, loadMore, notify } =
-    useFinancialDesk();
+  const { desk, payments, loading, notifyingId, loadMore, notify } = useFinancialDesk();
 
   if (user?.role && !STAFF.has(user.role)) {
     return (
@@ -62,15 +55,9 @@ export default function FinancialDeskPage() {
 
       <Tabs defaultValue="payments">
         <TabsList>
-          <TabsTrigger value="payments">
-            {t('financial.desk.paymentsTab')}
-          </TabsTrigger>
-          <TabsTrigger value="settle">
-            {t('financial.desk.settleTab')}
-          </TabsTrigger>
-          <TabsTrigger value="history">
-            {t('financial.desk.historyTab')}
-          </TabsTrigger>
+          <TabsTrigger value="payments">{t('financial.desk.paymentsTab')}</TabsTrigger>
+          <TabsTrigger value="settle">{t('financial.desk.settleTab')}</TabsTrigger>
+          <TabsTrigger value="history">{t('financial.desk.historyTab')}</TabsTrigger>
         </TabsList>
         <TabsContent value="payments">
           <Card>
@@ -78,11 +65,7 @@ export default function FinancialDeskPage() {
               <CardTitle>{t('financial.desk.paymentsTab')}</CardTitle>
             </CardHeader>
             <CardContent>
-              <DeskPaymentsTable
-                data={payments}
-                loading={loading}
-                onLoadMore={loadMore}
-              />
+              <DeskPaymentsTable data={payments} loading={loading} onLoadMore={loadMore} />
             </CardContent>
           </Card>
         </TabsContent>

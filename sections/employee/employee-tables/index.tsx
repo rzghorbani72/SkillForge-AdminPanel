@@ -6,14 +6,11 @@ import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-fil
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { Employee } from '@/constants/data';
 import { columns } from './columns';
-import {
-  GENDER_OPTIONS,
-  useEmployeeTableFilters
-} from './use-employee-table-filters';
+import { GENDER_OPTIONS, useEmployeeTableFilters } from './use-employee-table-filters';
 
 export default function EmployeeTable({
   data,
-  totalData
+  totalData,
 }: {
   data: Employee[];
   totalData: number;
@@ -25,7 +22,7 @@ export default function EmployeeTable({
     resetFilters,
     searchQuery,
     setPage,
-    setSearchQuery
+    setSearchQuery,
   } = useEmployeeTableFilters();
 
   return (
@@ -44,10 +41,7 @@ export default function EmployeeTable({
           setFilterValue={setGenderFilter}
           filterValue={genderFilter}
         />
-        <DataTableResetFilter
-          isFilterActive={isAnyFilterActive}
-          onReset={resetFilters}
-        />
+        <DataTableResetFilter isFilterActive={isAnyFilterActive} onReset={resetFilters} />
       </div>
       <DataTable columns={columns} data={data} totalItems={totalData} />
     </div>

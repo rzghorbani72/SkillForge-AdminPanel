@@ -14,7 +14,7 @@ const EMPTY_STATS: UserStats = {
   total: 0,
   active: 0,
   teachers: 0,
-  pendingRequests: 0
+  pendingRequests: 0,
 };
 
 /**
@@ -32,9 +32,7 @@ export function useUserStats(): {
   const [stats, setStats] = useState<UserStats>(EMPTY_STATS);
 
   const refresh = useCallback(async () => {
-    const totalOf = async (
-      params: Parameters<typeof apiClient.getUsers>[0]
-    ): Promise<number> => {
+    const totalOf = async (params: Parameters<typeof apiClient.getUsers>[0]): Promise<number> => {
       const data = await apiClient.getUsers({ ...params, limit: 1 });
       return data?.pagination?.total ?? 0;
     };
@@ -44,14 +42,14 @@ export function useUserStats(): {
         totalOf({}),
         totalOf({ is_active: true }),
         totalOf({ role: 'TEACHER' }),
-        apiClient.getTeacherRequests({ status: 'PENDING', limit: 1 })
+        apiClient.getTeacherRequests({ status: 'PENDING', limit: 1 }),
       ]);
 
       setStats({
         total,
         active,
         teachers,
-        pendingRequests: requests?.pagination?.total ?? 0
+        pendingRequests: requests?.pagination?.total ?? 0,
       });
     } catch {
       // Non-critical: the list itself still renders without the header counts.

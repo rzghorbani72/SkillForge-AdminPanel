@@ -14,8 +14,7 @@ export function usePercentLabel() {
   const formatNumber = useNumberFormat();
 
   return useCallback(
-    (value: number) =>
-      t('common.percentValue', { value: formatNumber(Math.round(value)) }),
-    [t, formatNumber]
+    (value: number) => t('common.percentValue', { value: formatNumber(Math.round(value)) }),
+    [t, formatNumber],
   );
 }

@@ -11,18 +11,11 @@ const EditProductHeader = ({ product, onBack }: Props) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onBack}
-          className="h-9 w-9"
-        >
+        <Button variant="ghost" size="icon" onClick={onBack} className="h-9 w-9">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-foreground dark:text-foreground">
-            Edit Product
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground dark:text-foreground">Edit Product</h1>
           <p className="text-sm text-muted-foreground">{product.title}</p>
         </div>
       </div>

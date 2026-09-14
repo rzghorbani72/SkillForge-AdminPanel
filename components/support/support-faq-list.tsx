@@ -7,18 +7,11 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger
+  AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-const FAQ_KEYS = [
-  'ticket',
-  'enrollment',
-  'payment',
-  'teacher',
-  'live',
-  'plan'
-] as const;
+const FAQ_KEYS = ['ticket', 'enrollment', 'payment', 'teacher', 'live', 'plan'] as const;
 
 export function SupportFaqList() {
   const { t } = useTranslation();
@@ -31,11 +24,7 @@ export function SupportFaqList() {
           description={t('support.help.faqSubtitle')}
           icon={<CircleHelp className="h-5 w-5" />}
         />
-        <Accordion
-          type="single"
-          collapsible
-          className="rounded-xl border bg-card px-4"
-        >
+        <Accordion type="single" collapsible className="rounded-xl border bg-card px-4">
           {FAQ_KEYS.map((key) => (
             <AccordionItem key={key} value={key}>
               <AccordionTrigger className="text-start">

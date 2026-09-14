@@ -18,10 +18,7 @@ export function resumeStep(state: KycState): KycStepIndex {
   return 1;
 }
 
-export function useKycWizard(
-  initial: KycState,
-  onSubmitted: (next: KycState) => void
-) {
+export function useKycWizard(initial: KycState, onSubmitted: (next: KycState) => void) {
   const { t } = useTranslation();
   const [stepIndex, setStepIndex] = useState<KycStepIndex>(resumeStep(initial));
   const [busy, setBusy] = useState(false);
@@ -29,7 +26,7 @@ export function useKycWizard(
   const [nationalId, setNationalId] = useState(initial.national_id ?? '');
   const [sheba, setSheba] = useState<KycShebaFields>({
     birthDate: initial.birth_date ?? '',
-    shebaNumber: initial.sheba_number ?? ''
+    shebaNumber: initial.sheba_number ?? '',
   });
 
   const step = KYC_STEPS[stepIndex];
@@ -37,12 +34,9 @@ export function useKycWizard(
   // so settlement keeps using the approved one meanwhile.
   const pendingIban = Boolean(state.pending_sheba_number);
   const awaitingIbanConfirm =
-    step === 'iban' &&
-    (pendingIban || (state.iban_matched && !state.iban_info_confirmed));
+    step === 'iban' && (pendingIban || (state.iban_matched && !state.iban_info_confirmed));
   const confirmInfo = pendingIban ? state.pending_iban_info : state.iban_info;
-  const confirmSheba = pendingIban
-    ? state.pending_sheba_number
-    : state.sheba_number;
+  const confirmSheba = pendingIban ? state.pending_sheba_number : state.sheba_number;
   // Each api.ir endpoint locks on its own, so only its step goes read-only.
   const stepLockedUntil =
     step === 'identity'
@@ -51,16 +45,13 @@ export function useKycWizard(
         ? null
         : state.iban_attempts.locked_until;
   const rateLimited = Boolean(stepLockedUntil);
-  const stepEditable =
-    step === 'identity' ? state.can_edit : state.can_change_iban;
+  const stepEditable = step === 'identity' ? state.can_edit : state.can_change_iban;
   const inputsLocked = rateLimited || !stepEditable || busy;
-  const stepAttempts =
-    step === 'identity' ? state.shahkar_attempts : state.iban_attempts;
+  const stepAttempts = step === 'identity' ? state.shahkar_attempts : state.iban_attempts;
 
   const identityReady = nationalId.trim().length >= 10;
   const shebaReady =
-    sheba.birthDate.length === 10 &&
-    SHEBA_PATTERN.test(sheba.shebaNumber.trim().toUpperCase());
+    sheba.birthDate.length === 10 && SHEBA_PATTERN.test(sheba.shebaNumber.trim().toUpperCase());
 
   const applyState = (next: KycState) => {
     setState(next);
@@ -80,15 +71,12 @@ export function useKycWizard(
     setBusy(true);
     try {
       if (step === 'identity') {
-        if (
-          state.shahkar_matched &&
-          nationalId.trim() === (state.national_id ?? '')
-        ) {
+        if (state.shahkar_matched && nationalId.trim() === (state.national_id ?? '')) {
           setStepIndex(1);
           return;
         }
         const next = await apiClient.verifyKycIdentity({
-          national_id: nationalId.trim()
+          national_id: nationalId.trim(),
         });
         ErrorHandler.showSuccess(t('settings.kyc.shahkarMatched'));
         applyState(next);
@@ -102,7 +90,7 @@ export function useKycWizard(
       }
       const next = await apiClient.verifyKycSheba({
         birth_date: sheba.birthDate,
-        sheba_number: sheba.shebaNumber.trim().toUpperCase()
+        sheba_number: sheba.shebaNumber.trim().toUpperCase(),
       });
       ErrorHandler.showSuccess(t('settings.kyc.ibanMatched'));
       applyState(next);
@@ -158,6 +146,6 @@ export function useKycWizard(
     setSheba,
     goNext,
     goBack,
-    goToStep
+    goToStep,
   };
 }

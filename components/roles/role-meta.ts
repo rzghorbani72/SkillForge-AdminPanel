@@ -15,7 +15,7 @@ export interface RoleMeta {
 export function getRoleMeta(
   role: PlatformRole,
   t: TranslateFn,
-  formatNumber: FormatNumberFn = String
+  formatNumber: FormatNumberFn = String,
 ): RoleMeta {
   const hintKey = `roles.hint.${role.name.toUpperCase()}`;
   const builtInHint = t(hintKey);
@@ -27,6 +27,6 @@ export function getRoleMeta(
     hint:
       builtInHint !== hintKey
         ? builtInHint
-        : (description ?? '') || buildAutoHint(role, t, formatNumber)
+        : (description ?? '') || buildAutoHint(role, t, formatNumber),
   };
 }

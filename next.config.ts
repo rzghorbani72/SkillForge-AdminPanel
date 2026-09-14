@@ -3,7 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs/config';
 import {
   API_DEVELOPMENT_DEFAULTS,
   API_PRODUCTION_DEFAULTS,
-  API_REWRITE_SOURCES
+  API_REWRITE_SOURCES,
 } from './lib/api-config';
 import { getAllowedImageRemotePatterns } from './lib/security/config';
 import { buildSecurityHeaders } from './lib/security/headers';
@@ -28,45 +28,41 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       allowedOrigins: getServerActionAllowedOrigins(),
-      bodySizeLimit: '1mb'
-    }
+      bodySizeLimit: '1mb',
+    },
   },
   env: {
-    NEXT_PUBLIC_API_URL:
-      process.env.NEXT_PUBLIC_API_URL || API_PRODUCTION_DEFAULTS.browserApiUrl,
-    NEXT_PUBLIC_HOST:
-      process.env.NEXT_PUBLIC_HOST || API_PRODUCTION_DEFAULTS.panelHost,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || API_PRODUCTION_DEFAULTS.browserApiUrl,
+    NEXT_PUBLIC_HOST: process.env.NEXT_PUBLIC_HOST || API_PRODUCTION_DEFAULTS.panelHost,
     NEXT_PUBLIC_BACKEND_API_URL:
-      process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-      API_PRODUCTION_DEFAULTS.backendApiUrl,
+      process.env.NEXT_PUBLIC_BACKEND_API_URL || API_PRODUCTION_DEFAULTS.backendApiUrl,
     // Falling back to the production storefront in dev pointed the site-builder
     // iframe at the live site, so the local draft preview could never render.
     NEXT_PUBLIC_STOREFRONT_URL:
       process.env.NEXT_PUBLIC_STOREFRONT_URL ||
       (isDevelopment
         ? API_DEVELOPMENT_DEFAULTS.storefrontUrl
-        : API_PRODUCTION_DEFAULTS.storefrontUrl)
+        : API_PRODUCTION_DEFAULTS.storefrontUrl),
   },
   async rewrites() {
-    const rawTarget =
-      process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_BACKEND_API_URL;
+    const rawTarget = process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_BACKEND_API_URL;
     const destination = assertAllowedBackendRewriteTarget(
-      rawTarget || API_PRODUCTION_DEFAULTS.backendApiUrl
+      rawTarget || API_PRODUCTION_DEFAULTS.backendApiUrl,
     );
 
     return [
       {
         source: API_REWRITE_SOURCES.langPrefixed,
-        destination: `${destination.replace(/\/v1\/?$/, '')}/:lang/v1/:path*`
+        destination: `${destination.replace(/\/v1\/?$/, '')}/:lang/v1/:path*`,
       },
       {
         source: API_REWRITE_SOURCES.current,
-        destination: `${destination}/:path*`
+        destination: `${destination}/:path*`,
       },
       {
         source: API_REWRITE_SOURCES.legacy,
-        destination: `${destination}/:path*`
-      }
+        destination: `${destination}/:path*`,
+      },
     ];
   },
   images: {
@@ -74,35 +70,32 @@ const nextConfig: NextConfig = {
     loaderFile: './lib/image-loader.js',
     remotePatterns: getAllowedImageRemotePatterns(),
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384]
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   async headers() {
     return [
       {
         source: '/_next/:slug*',
-        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_APP }]
+        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_APP }],
       },
       {
         source: API_REWRITE_SOURCES.langPrefixed,
-        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_API }]
+        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_API }],
       },
       {
         source: API_REWRITE_SOURCES.legacy,
-        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_API }]
+        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_API }],
       },
       {
         source: API_REWRITE_SOURCES.current,
-        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_API }]
+        headers: [{ key: 'Cache-Control', value: CACHE_CONTROL_API }],
       },
       {
         source: '/(.*)',
-        headers: [
-          ...SECURITY_HEADERS,
-          { key: 'Cache-Control', value: CACHE_CONTROL_APP }
-        ]
-      }
+        headers: [...SECURITY_HEADERS, { key: 'Cache-Control', value: CACHE_CONTROL_APP }],
+      },
     ];
-  }
+  },
 };
 
 export default withSentryConfig(nextConfig, {
@@ -113,5 +106,5 @@ export default withSentryConfig(nextConfig, {
   silent: true,
   // Source maps upload only when a CI token is present; local builds skip it.
   sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },
-  telemetry: false
+  telemetry: false,
 });

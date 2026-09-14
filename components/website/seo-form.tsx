@@ -9,11 +9,7 @@ import { ImageUploadField } from '@/components/academies/image-upload-field';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
-import {
-  META_DESCRIPTION_MAX,
-  META_TITLE_MAX,
-  type SeoFormState
-} from './use-seo-form-state';
+import { META_DESCRIPTION_MAX, META_TITLE_MAX, type SeoFormState } from './use-seo-form-state';
 
 type SeoFormProps = {
   state: SeoFormState;
@@ -22,12 +18,7 @@ type SeoFormProps = {
 function CharCounter({ value, max }: { value: number; max: number }) {
   const formatNumber = useNumberFormat();
   return (
-    <span
-      className={cn(
-        'text-xs',
-        value > max ? 'text-destructive' : 'text-muted-foreground'
-      )}
-    >
+    <span className={cn('text-xs', value > max ? 'text-destructive' : 'text-muted-foreground')}>
       {formatNumber(value)} / {formatNumber(max)}
     </span>
   );
@@ -43,15 +34,13 @@ export function SeoForm({ state }: SeoFormProps) {
     shareImage,
     saving,
     canSave,
-    save
+    save,
   } = state;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          {t('website.seo.formTitle')}
-        </CardTitle>
+        <CardTitle className="text-base">{t('website.seo.formTitle')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="space-y-2">
@@ -66,20 +55,13 @@ export function SeoForm({ state }: SeoFormProps) {
             placeholder={t('website.seo.metaTitlePlaceholder')}
             onChange={(e) => setMetaTitle(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">
-            {t('website.seo.metaTitleHint')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('website.seo.metaTitleHint')}</p>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <Label htmlFor="meta-description">
-              {t('website.seo.metaDescription')}
-            </Label>
-            <CharCounter
-              value={metaDescription.length}
-              max={META_DESCRIPTION_MAX}
-            />
+            <Label htmlFor="meta-description">{t('website.seo.metaDescription')}</Label>
+            <CharCounter value={metaDescription.length} max={META_DESCRIPTION_MAX} />
           </div>
           <Textarea
             id="meta-description"
@@ -89,9 +71,7 @@ export function SeoForm({ state }: SeoFormProps) {
             placeholder={t('website.seo.metaDescriptionPlaceholder')}
             onChange={(e) => setMetaDescription(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground">
-            {t('website.seo.metaDescriptionHint')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('website.seo.metaDescriptionHint')}</p>
         </div>
 
         <ImageUploadField

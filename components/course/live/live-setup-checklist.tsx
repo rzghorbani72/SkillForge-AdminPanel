@@ -5,11 +5,7 @@ import { Check, Sparkles } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
-import {
-  currentLiveSetupStep,
-  liveSetupDoneCount,
-  type LiveSetupStep
-} from './live-setup-steps';
+import { currentLiveSetupStep, liveSetupDoneCount, type LiveSetupStep } from './live-setup-steps';
 
 interface LiveSetupChecklistProps {
   steps: readonly LiveSetupStep[];
@@ -25,11 +21,7 @@ interface LiveSetupChecklistProps {
  * why publishing is still disabled — the three questions the old grey line
  * under the publish button tried to answer at once.
  */
-export function LiveSetupChecklist({
-  steps,
-  action,
-  compact = false
-}: LiveSetupChecklistProps) {
+export function LiveSetupChecklist({ steps, action, compact = false }: LiveSetupChecklistProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const current = currentLiveSetupStep(steps);
@@ -40,23 +32,21 @@ export function LiveSetupChecklist({
     <section
       className={cn(
         'rounded-2xl border p-4 sm:p-5',
-        ready ? 'border-emerald-500/30 bg-emerald-500/5' : 'bg-card'
+        ready ? 'border-emerald-500/30 bg-emerald-500/5' : 'bg-card',
       )}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h2 className="flex items-center gap-2 text-base font-semibold">
             {ready ? <Sparkles className="h-4 w-4 text-emerald-600" /> : null}
-            {ready
-              ? t('courses.live.setupReadyTitle')
-              : t('courses.live.setupTitle')}
+            {ready ? t('courses.live.setupReadyTitle') : t('courses.live.setupTitle')}
           </h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             {ready
               ? t('courses.live.setupReadyHint')
               : t('courses.live.setupProgress', {
                   done: formatNumber(done),
-                  total: formatNumber(steps.length)
+                  total: formatNumber(steps.length),
                 })}
           </p>
         </div>
@@ -71,43 +61,30 @@ export function LiveSetupChecklist({
               <div className="flex items-center gap-2">
                 <span
                   aria-hidden
-                  className={cn(
-                    'h-px flex-1',
-                    index === 0 ? 'opacity-0' : 'bg-border'
-                  )}
+                  className={cn('h-px flex-1', index === 0 ? 'opacity-0' : 'bg-border')}
                 />
                 <span
                   className={cn(
                     'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold',
-                    step.done &&
-                      'border-emerald-500/40 bg-emerald-500/15 text-emerald-600',
-                    isCurrent &&
-                      'border-primary bg-primary text-primary-foreground',
-                    !step.done &&
-                      !isCurrent &&
-                      'border-dashed text-muted-foreground'
+                    step.done && 'border-emerald-500/40 bg-emerald-500/15 text-emerald-600',
+                    isCurrent && 'border-primary bg-primary text-primary-foreground',
+                    !step.done && !isCurrent && 'border-dashed text-muted-foreground',
                   )}
                 >
-                  {step.done ? (
-                    <Check className="h-3.5 w-3.5" />
-                  ) : (
-                    formatNumber(index + 1)
-                  )}
+                  {step.done ? <Check className="h-3.5 w-3.5" /> : formatNumber(index + 1)}
                 </span>
                 <span
                   aria-hidden
                   className={cn(
                     'h-px flex-1',
-                    index === steps.length - 1 ? 'opacity-0' : 'bg-border'
+                    index === steps.length - 1 ? 'opacity-0' : 'bg-border',
                   )}
                 />
               </div>
               <p
                 className={cn(
                   'mt-1.5 truncate text-center text-xs',
-                  isCurrent
-                    ? 'font-semibold text-foreground'
-                    : 'text-muted-foreground'
+                  isCurrent ? 'font-semibold text-foreground' : 'text-muted-foreground',
                 )}
               >
                 {t(step.labelKey)}

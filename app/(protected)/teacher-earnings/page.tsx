@@ -16,21 +16,19 @@ export default function TeacherEarningsPage() {
     {
       key: 'paid',
       value: balance?.total_paid_out ?? 0,
-      tone: 'text-emerald-600 dark:text-emerald-400'
+      tone: 'text-emerald-600 dark:text-emerald-400',
     },
     {
       key: 'owed',
       value: balance?.available_balance ?? 0,
-      tone: 'text-amber-600 dark:text-amber-400'
-    }
+      tone: 'text-amber-600 dark:text-amber-400',
+    },
   ] as const;
 
   return (
     <div className="w-full space-y-6 p-4 sm:p-6">
       <header className="space-y-1 border-b pb-5">
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('teacherEarnings.title')}
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t('teacherEarnings.title')}</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
           {t('teacherEarnings.description')}
         </p>
@@ -59,11 +57,7 @@ export default function TeacherEarningsPage() {
         ))}
       </div>
 
-      <TeacherPayoutsTable
-        rows={payouts}
-        isLoading={isLoading}
-        onChanged={reload}
-      />
+      <TeacherPayoutsTable rows={payouts} isLoading={isLoading} onChanged={reload} />
     </div>
   );
 }

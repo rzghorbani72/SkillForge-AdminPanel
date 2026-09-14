@@ -6,23 +6,17 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Globe,
-  Link2,
-  ShieldAlert,
-  ExternalLink,
-  SlidersHorizontal
-} from 'lucide-react';
+import { Globe, Link2, ShieldAlert, ExternalLink, SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatDate } from '@/lib/utils';
 import {
   CONTENT_REVIEW_STATUS,
   type ContentReviewStatus,
-  type ReviewQueueItem
+  type ReviewQueueItem,
 } from '@/types/compliance';
 import { EnamadStatusBadge, ReviewStatusBadge } from './review-status-badge';
 
@@ -39,12 +33,7 @@ function siteUrl(item: ReviewQueueItem, storefrontBaseUrl: string | null) {
   return `${storefrontBaseUrl}/${item.academy_slug}`;
 }
 
-export function ReviewQueueTable({
-  items,
-  onAct,
-  onManage,
-  storefrontBaseUrl
-}: Props) {
+export function ReviewQueueTable({ items, onAct, onManage, storefrontBaseUrl }: Props) {
   const { t } = useTranslation();
 
   if (items.length === 0) {
@@ -64,9 +53,7 @@ export function ReviewQueueTable({
             <TableHead>{t('compliance.queue.operator')}</TableHead>
             <TableHead>{t('compliance.queue.signals')}</TableHead>
             <TableHead>{t('compliance.queue.published')}</TableHead>
-            <TableHead className="text-end">
-              {t('compliance.queue.actions')}
-            </TableHead>
+            <TableHead className="text-end">{t('compliance.queue.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -95,9 +82,7 @@ export function ReviewQueueTable({
                       <EnamadStatusBadge status={item.enamad_status} />
                     </div>
                   ) : (
-                    <Badge variant="destructive">
-                      {t('compliance.queue.noIdentity')}
-                    </Badge>
+                    <Badge variant="destructive">{t('compliance.queue.noIdentity')}</Badge>
                   )}
                 </TableCell>
 
@@ -118,9 +103,7 @@ export function ReviewQueueTable({
                 </TableCell>
 
                 <TableCell className="text-xs text-muted-foreground">
-                  {item.last_published_at
-                    ? formatDate(item.last_published_at)
-                    : '—'}
+                  {item.last_published_at ? formatDate(item.last_published_at) : '—'}
                 </TableCell>
 
                 <TableCell>
@@ -143,9 +126,7 @@ export function ReviewQueueTable({
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        onAct(item, CONTENT_REVIEW_STATUS.APPROVED)
-                      }
+                      onClick={() => onAct(item, CONTENT_REVIEW_STATUS.APPROVED)}
                     >
                       {t('compliance.action.APPROVED.short')}
                     </Button>
@@ -159,9 +140,7 @@ export function ReviewQueueTable({
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() =>
-                        onAct(item, CONTENT_REVIEW_STATUS.SUSPENDED)
-                      }
+                      onClick={() => onAct(item, CONTENT_REVIEW_STATUS.SUSPENDED)}
                     >
                       {t('compliance.action.SUSPENDED.short')}
                     </Button>

@@ -15,8 +15,7 @@ export function useCourseTutoringOffers(courseId: string | undefined) {
 
   // The endpoint 403s when the academy turned tutor-led learning off, so the
   // call is skipped instead of firing a request that can only fail.
-  const tutorLedEnabled =
-    academyFeatures === null || academyFeatures.tutor_led_learning_enabled;
+  const tutorLedEnabled = academyFeatures === null || academyFeatures.tutor_led_learning_enabled;
 
   useEffect(() => {
     if (!courseId || !tutorLedEnabled) {

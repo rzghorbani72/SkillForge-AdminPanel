@@ -14,21 +14,20 @@ const EMPTY_DESK: SettlementDesk = {
   platform_share: 0,
   academies: [],
   settlements: [],
-  gross_trend: []
+  gross_trend: [],
 };
 
 const EMPTY_PAYMENTS: LedgerPaymentsResponse = {
   total: 0,
   page: 1,
   limit: 50,
-  payments: []
+  payments: [],
 };
 
 export function useFinancialDesk() {
   const { t } = useTranslation();
   const [desk, setDesk] = useState<SettlementDesk>(EMPTY_DESK);
-  const [payments, setPayments] =
-    useState<LedgerPaymentsResponse>(EMPTY_PAYMENTS);
+  const [payments, setPayments] = useState<LedgerPaymentsResponse>(EMPTY_PAYMENTS);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [notifyingId, setNotifyingId] = useState<string | null>(null);
@@ -39,19 +38,19 @@ export function useFinancialDesk() {
       try {
         const [nextDesk, nextPayments] = await Promise.all([
           apiClient.getSettlementDesk(),
-          apiClient.getSettlementPayments({ page: nextPage, limit: 50 })
+          apiClient.getSettlementPayments({ page: nextPage, limit: 50 }),
         ]);
         setDesk({
           ...EMPTY_DESK,
           ...(nextDesk ?? EMPTY_DESK),
-          gross_trend: nextDesk?.gross_trend ?? []
+          gross_trend: nextDesk?.gross_trend ?? [],
         });
         setPayments((prev) => {
           const incoming = nextPayments ?? EMPTY_PAYMENTS;
           if (!append) return incoming;
           return {
             ...incoming,
-            payments: [...prev.payments, ...incoming.payments]
+            payments: [...prev.payments, ...incoming.payments],
           };
         });
         setPage(nextPage);
@@ -61,7 +60,7 @@ export function useFinancialDesk() {
         setLoading(false);
       }
     },
-    [t]
+    [t],
   );
 
   useEffect(() => {
@@ -85,7 +84,7 @@ export function useFinancialDesk() {
         setNotifyingId(null);
       }
     },
-    [load, page, t]
+    [load, page, t],
   );
 
   return { desk, payments, loading, notifyingId, loadMore, notify };

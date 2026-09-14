@@ -29,9 +29,7 @@ interface FixtureFile {
 }
 
 function loadFixture(fileName: string, mimeType: string): FixtureFile {
-  const base64 = readFileSync(path.join(FIXTURES_DIR, fileName)).toString(
-    'base64'
-  );
+  const base64 = readFileSync(path.join(FIXTURES_DIR, fileName)).toString('base64');
   return { base64, name: fileName, type: mimeType };
 }
 
@@ -49,22 +47,16 @@ async function stubFilePicker(page: Page): Promise<void> {
     win.showOpenFilePicker = async () => {
       const queued = win.__nextPickedFile;
       if (!queued) throw new DOMException('no fixture queued', 'AbortError');
-      const bytes = Uint8Array.from(atob(queued.base64), (c) =>
-        c.charCodeAt(0)
-      );
+      const bytes = Uint8Array.from(atob(queued.base64), (c) => c.charCodeAt(0));
       const file = new File([bytes], queued.name, { type: queued.type });
       return [{ getFile: async () => file }];
     };
   });
 }
 
-async function queuePickedFile(
-  page: Page,
-  fixture: FixtureFile
-): Promise<void> {
+async function queuePickedFile(page: Page, fixture: FixtureFile): Promise<void> {
   await page.evaluate((f) => {
-    (window as unknown as { __nextPickedFile?: FixtureFile }).__nextPickedFile =
-      f;
+    (window as unknown as { __nextPickedFile?: FixtureFile }).__nextPickedFile = f;
   }, fixture);
 }
 
@@ -72,9 +64,7 @@ async function queuePickedFile(
 async function createDraftCourse(page: Page, title: string): Promise<void> {
   await page.goto('/courses/create');
   await page.locator('input[name="title"]').fill(title);
-  await page
-    .locator('textarea[name="description"]')
-    .fill('Created by the media-upload e2e spec.');
+  await page.locator('textarea[name="description"]').fill('Created by the media-upload e2e spec.');
   await page.locator('form button:not([type="button"])').last().click();
   await expect(page).toHaveURL(/\/courses\/.+\/edit/, { timeout: 20_000 });
 }
@@ -85,10 +75,7 @@ async function addSeasonAndLesson(page: Page): Promise<void> {
   await page.locator('button[aria-label="ویرایش"]').last().click();
 }
 
-async function setLessonType(
-  page: Page,
-  typeLabel: 'ویدیو' | 'صدا' | 'متن'
-): Promise<void> {
+async function setLessonType(page: Page, typeLabel: 'ویدیو' | 'صدا' | 'متن'): Promise<void> {
   await page
     .locator('button', { hasText: typeLabel })
     .filter({ hasText: typeLabel })
@@ -97,17 +84,14 @@ async function setLessonType(
 }
 
 test.describe('Course lesson media upload @backend', () => {
-  test.skip(
-    !process.env.E2E_BACKEND,
-    'set E2E_BACKEND=1 to run against the API'
-  );
+  test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
 
   test.beforeEach(async ({ page }) => {
     await managerLogin(page);
   });
 
   test('uploads video, audio and a document across three lessons (File System Access path)', async ({
-    page
+    page,
   }) => {
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
@@ -140,22 +124,21 @@ test.describe('Course lesson media upload @backend', () => {
     await queuePickedFile(page, DOCUMENT_FIXTURE);
     await page.locator('label:has-text("آپلود سند")').click();
     await expect(page.getByText('tiny-document.pdf')).toBeVisible({
-      timeout: 15_000
+      timeout: 15_000,
     });
 
     expect(
       consoleErrors,
-      `expected no console errors, got:\n${consoleErrors.join('\n')}`
+      `expected no console errors, got:\n${consoleErrors.join('\n')}`,
     ).toHaveLength(0);
   });
 
   test('falls back to the classic file input when showOpenFilePicker is unavailable', async ({
-    page
+    page,
   }) => {
     // Simulate a browser without the File System Access API (Firefox/Safari).
     await page.addInitScript(() => {
-      delete (window as unknown as { showOpenFilePicker?: unknown })
-        .showOpenFilePicker;
+      delete (window as unknown as { showOpenFilePicker?: unknown }).showOpenFilePicker;
     });
 
     await createDraftCourse(page, 'E2E Media Upload — classic input');
@@ -163,7 +146,7 @@ test.describe('Course lesson media upload @backend', () => {
 
     const [chooser] = await Promise.all([
       page.waitForEvent('filechooser', { timeout: 5_000 }),
-      page.locator('label:has-text("آپلود ویدیو")').click()
+      page.locator('label:has-text("آپلود ویدیو")').click(),
     ]);
     await chooser.setFiles(path.join(FIXTURES_DIR, 'tiny-video.mp4'));
 

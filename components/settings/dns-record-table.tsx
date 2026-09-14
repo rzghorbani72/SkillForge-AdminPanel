@@ -28,12 +28,7 @@ function CopyCell({ text }: { text: string }) {
 /**
  * Arvan-style DNS table: نوع / عنوان / مقدار / ابر.
  */
-export function DnsRecordTable({
-  rows,
-  t,
-  title,
-  footnote
-}: DnsRecordTableProps) {
+export function DnsRecordTable({ rows, t, title, footnote }: DnsRecordTableProps) {
   return (
     <div className="space-y-2">
       {title ? <p className="text-sm font-medium">{title}</p> : null}
@@ -57,10 +52,7 @@ export function DnsRecordTable({
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr
-                key={`${row.type}-${row.name}-${row.value}`}
-                className="border-t"
-              >
+              <tr key={`${row.type}-${row.name}-${row.value}`} className="border-t">
                 <td className="px-3 py-2 font-mono text-xs">{row.type}</td>
                 <td className="px-3 py-2">
                   <CopyCell text={row.name} />
@@ -74,7 +66,7 @@ export function DnsRecordTable({
                       'inline-flex rounded-full px-2 py-0.5 text-xs font-medium',
                       row.cloud === 'on'
                         ? 'bg-teal-500/15 text-teal-700 dark:text-teal-400'
-                        : 'bg-muted text-muted-foreground'
+                        : 'bg-muted text-muted-foreground',
                     )}
                   >
                     {row.cloud === 'on'
@@ -87,9 +79,7 @@ export function DnsRecordTable({
           </tbody>
         </table>
       </div>
-      {footnote ? (
-        <p className="text-xs text-muted-foreground">{footnote}</p>
-      ) : null}
+      {footnote ? <p className="text-xs text-muted-foreground">{footnote}</p> : null}
     </div>
   );
 }

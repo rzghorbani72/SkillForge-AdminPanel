@@ -11,11 +11,7 @@ interface InlineConfirmProps {
 }
 
 /** Destructive confirm that stays in place instead of opening a dialog. */
-export function InlineConfirm({
-  message,
-  onCancel,
-  onConfirm
-}: InlineConfirmProps) {
+export function InlineConfirm({ message, onCancel, onConfirm }: InlineConfirmProps) {
   const { t } = useTranslation();
 
   return (

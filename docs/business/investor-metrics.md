@@ -8,14 +8,14 @@ Access: `PLATFORM_OWNER`, `ADMIN`, `FINANCE`. `SUPPORT` is excluded.
 
 ## 1. Ground rules
 
-| Rule | Detail |
-| --- | --- |
-| **Storage unit** | Every amount is stored in **Rial**. `TOMAN_TO_RIAL = 10` (`Backend/src/common/services/plan-limits.types.ts`). Conversion happens once, at the response boundary, in `FxService.convert`. |
-| **Display units** | **Toman** (default) or **EUR**. |
-| **FX rate** | `TOMAN_PER_EUR` from configuration, defaulting to `USD_TO_TOMAN_RATE × EUR_USD_RATE` (fallback 1.08). It is **not** a live feed. The rate in force is **stored on every `MetricSnapshot` row**, so a historic EUR figure is reproducible instead of drifting each time the page is opened. |
-| **Population** | Academies with `deleted_at IS NULL`, excluding the internal demo/e2e slugs `demo-showcase` and `e2e-live` (`excludeInternalAcademies()`). These are seeded fixtures, not customers. |
-| **Two different revenues** | **Mentoma revenue** = subscription invoices. **Academy GMV** = student payments. The platform takes **0% commission**, so GMV is never Mentoma income and the two are never added together. |
-| **Timezone** | All month boundaries are UTC. |
+| Rule                       | Detail                                                                                                                                                                                                                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Storage unit**           | Every amount is stored in **Rial**. `TOMAN_TO_RIAL = 10` (`Backend/src/common/services/plan-limits.types.ts`). Conversion happens once, at the response boundary, in `FxService.convert`.                                                                                                  |
+| **Display units**          | **Toman** (default) or **EUR**.                                                                                                                                                                                                                                                            |
+| **FX rate**                | `TOMAN_PER_EUR` from configuration, defaulting to `USD_TO_TOMAN_RATE × EUR_USD_RATE` (fallback 1.08). It is **not** a live feed. The rate in force is **stored on every `MetricSnapshot` row**, so a historic EUR figure is reproducible instead of drifting each time the page is opened. |
+| **Population**             | Academies with `deleted_at IS NULL`, excluding the internal demo/e2e slugs `demo-showcase` and `e2e-live` (`excludeInternalAcademies()`). These are seeded fixtures, not customers.                                                                                                        |
+| **Two different revenues** | **Mentoma revenue** = subscription invoices. **Academy GMV** = student payments. The platform takes **0% commission**, so GMV is never Mentoma income and the two are never added together.                                                                                                |
+| **Timezone**               | All month boundaries are UTC.                                                                                                                                                                                                                                                              |
 
 ---
 
@@ -37,24 +37,24 @@ Each invoice contributes `amount / term_months` to **every month it covers**, fr
 
 Where an academy holds two overlapping invoices in one month (a mid-term plan change writes a separate prorated invoice) the contributions are **summed**.
 
-| Metric | Formula |
-| --- | --- |
-| **MRR** | Sum of recognised MRR across academies in the latest month of the window |
-| **ARR** | `MRR × 12` |
-| **ARPA** | `MRR ÷ paying academies` |
+| Metric   | Formula                                                                  |
+| -------- | ------------------------------------------------------------------------ |
+| **MRR**  | Sum of recognised MRR across academies in the latest month of the window |
+| **ARR**  | `MRR × 12`                                                               |
+| **ARPA** | `MRR ÷ paying academies`                                                 |
 
 ### The MRR bridge
 
 Per month, comparing each academy against the previous month:
 
-| Component | Definition |
-| --- | --- |
-| Starting | Previous month's ending MRR |
-| New | Academies at 0 last month and > 0 this month |
-| Expansion | Increase for an academy present in both months |
+| Component   | Definition                                     |
+| ----------- | ---------------------------------------------- |
+| Starting    | Previous month's ending MRR                    |
+| New         | Academies at 0 last month and > 0 this month   |
+| Expansion   | Increase for an academy present in both months |
 | Contraction | Decrease for an academy present in both months |
-| Churned | Academies > 0 last month and absent this month |
-| Ending | This month's total |
+| Churned     | Academies > 0 last month and absent this month |
+| Ending      | This month's total                             |
 
 **Invariant, asserted in the test suite:** `starting + new + expansion − contraction − churned = ending`, for every month.
 
@@ -73,14 +73,14 @@ Returns `null`, not `0`, when the opening cohort is empty. A null means "not mea
 
 ## 3. Customers
 
-| Metric | Source |
-| --- | --- |
-| Plan, expiry, trial start | `AcademySubscription` — one row per academy |
+| Metric                                              | Source                                                                                                       |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Plan, expiry, trial start                           | `AcademySubscription` — one row per academy                                                                  |
 | Status (`ACTIVE`/`GRACE`/`FROZEN`/`PURGE_ELIGIBLE`) | **Computed**, never stored, by `resolveAcademyLifecycle()`. `INACTIVE` is reported when `expires_at` is null |
-| Price paid, term, dates | The academy's most recent qualifying invoice |
-| Lifetime paid | Sum of all qualifying invoices |
-| Trial conversion | Academies whose `trial_started_at` falls in the window and that later hold a qualifying invoice |
-| Median days to convert | Trial start → first paid invoice, linear-interpolation median |
+| Price paid, term, dates                             | The academy's most recent qualifying invoice                                                                 |
+| Lifetime paid                                       | Sum of all qualifying invoices                                                                               |
+| Trial conversion                                    | Academies whose `trial_started_at` falls in the window and that later hold a qualifying invoice              |
+| Median days to convert                              | Trial start → first paid invoice, linear-interpolation median                                                |
 
 ### Time to value
 
@@ -100,14 +100,14 @@ Academies that have not reached a milestone are excluded from that milestone's s
 
 `Payment` carries no `academy_id` of its own; the buyer's profile belongs to exactly one academy, which makes it the tenant key.
 
-**Excluded:** any payment linked to an `AcademySubscriptionInvoice`. Those are academies paying *us*, and counting them as GMV would double-count our own revenue as customer volume.
+**Excluded:** any payment linked to an `AcademySubscriptionInvoice`. Those are academies paying _us_, and counting them as GMV would double-count our own revenue as customer volume.
 
-| Metric | Formula |
-| --- | --- |
-| Paid volume / count | `Payment.status = 'PAID'` |
+| Metric                | Formula                                   |
+| --------------------- | ----------------------------------------- |
+| Paid volume / count   | `Payment.status = 'PAID'`                 |
 | Checkout success rate | Paid ÷ all payment attempts in the window |
-| Refund rate | `Σ Payment.refund_amount ÷ paid volume` |
-| Open refund requests | `RefundRequest.status = 'PENDING'` |
+| Refund rate           | `Σ Payment.refund_amount ÷ paid volume`   |
+| Open refund requests  | `RefundRequest.status = 'PENDING'`        |
 
 Breakdowns by `status`, `provider` and `payment_method`.
 
@@ -132,12 +132,12 @@ Before it existed, the only login data was `Profile.last_login` and `Profile.log
 
 One row is written per successful login, at the five points in `auth.service.ts` that already increment `login_count`. A **token refresh writes no row** — it renews a session, it is not a login — and there is a test asserting exactly that.
 
-| Metric | Definition |
-| --- | --- |
-| DAU / WAU / MAU | Distinct `user_id` in the last 1 / 7 / 30 days |
-| Stickiness | DAU ÷ MAU |
-| Logins per active user per week | Logins in 7 days ÷ WAU |
-| Login retention cohorts | Cohort = month the profile was created; retained in month *N* if any login occurred in it |
+| Metric                          | Definition                                                                                |
+| ------------------------------- | ----------------------------------------------------------------------------------------- |
+| DAU / WAU / MAU                 | Distinct `user_id` in the last 1 / 7 / 30 days                                            |
+| Stickiness                      | DAU ÷ MAU                                                                                 |
+| Logins per active user per week | Logins in 7 days ÷ WAU                                                                    |
+| Login retention cohorts         | Cohort = month the profile was created; retained in month _N_ if any login occurred in it |
 
 > ⚠️ **This series begins on the day the `LoginEvent` migration was applied.** Nothing before that date exists or can be reconstructed. `login_history_since` on the activity endpoint reports the true start, and it must be shown alongside any retention chart. Every other metric in this document is fully historical.
 
@@ -162,18 +162,18 @@ This is the moat metric. Its growth rate is the evidence that leaving gets more 
 
 ## 7. Unit economics
 
-| Metric | Formula | Input |
-| --- | --- | --- |
-| **CAC** | Marketing spend ÷ new paying academies | `MarketingSpend` (manual) |
-| **Gross margin** | `(revenue − cost) ÷ revenue` | `PlatformFinancialRecord` |
-| **CAC payback** | `CAC ÷ (ARPA × gross margin)` months | derived |
-| **LTV** | `(ARPA × gross margin) ÷ monthly logo churn` | derived |
-| **LTV : CAC** | `LTV ÷ CAC` | derived |
-| **Quick ratio** | `(new + expansion) ÷ (contraction + churned)` | MRR bridge |
-| **MRR growth (annualised)** | `(ending ÷ starting)^(12 / months) − 1` | MRR bridge |
-| **Rule of 40** | `growth% + gross margin%` | derived |
-| **Monthly burn** | `(cost − revenue) ÷ months` | `PlatformFinancialRecord` |
-| **Runway** | **Always null** | — |
+| Metric                      | Formula                                       | Input                     |
+| --------------------------- | --------------------------------------------- | ------------------------- |
+| **CAC**                     | Marketing spend ÷ new paying academies        | `MarketingSpend` (manual) |
+| **Gross margin**            | `(revenue − cost) ÷ revenue`                  | `PlatformFinancialRecord` |
+| **CAC payback**             | `CAC ÷ (ARPA × gross margin)` months          | derived                   |
+| **LTV**                     | `(ARPA × gross margin) ÷ monthly logo churn`  | derived                   |
+| **LTV : CAC**               | `LTV ÷ CAC`                                   | derived                   |
+| **Quick ratio**             | `(new + expansion) ÷ (contraction + churned)` | MRR bridge                |
+| **MRR growth (annualised)** | `(ending ÷ starting)^(12 / months) − 1`       | MRR bridge                |
+| **Rule of 40**              | `growth% + gross margin%`                     | derived                   |
+| **Monthly burn**            | `(cost − revenue) ÷ months`                   | `PlatformFinancialRecord` |
+| **Runway**                  | **Always null**                               | —                         |
 
 ### Declared caveats
 
@@ -190,11 +190,13 @@ The endpoint returns a `caveats` array naming every input it could not observe. 
 A three-way tie-out, in the same shape as the existing `getIranSettlementReconciliation` so staff read one format:
 
 **Leg 1 — Invoice → Payment.** Every non-`MANUAL` qualifying invoice should carry a `PAID` payment.
+
 - `missing` — invoice with no paid payment. **Investigate.**
 - `orphan` — a `PAID` payment whose `notes` begin `platform_` but which no invoice references. **Investigate.**
 - `MANUAL` invoices are counted separately: staff settle them by hand, so they legitimately never touch a gateway.
 
 **Leg 2 — Payment → Gateway.** Every linked payment should carry a `SUCCESS` `PaymentGatewayResponse`.
+
 - `missing` — money recorded as received with no gateway confirmation. **Investigate.**
 
 `balanced: true` means every leg ties out. **A non-zero delta is a defect in the money path, not a reporting artefact.** It is surfaced rather than hidden precisely because an investor will ask, and "we monitor it and here is today's number" is a far stronger answer than a clean-looking figure with no check behind it.
@@ -215,7 +217,7 @@ A three-way tie-out, in the same shape as the existing `getIranSettlementReconci
 
 ### Backfilled rows
 
-On first run the ledger is backfilled from existing invoice history so the series is not empty. A backfilled row is reconstructed, not observed live, and is flagged by `backfilled: true` (`computed_at` more than a day after `period_end`). Backfilled *revenue* is exact, because the invoices are historical. Backfilled *login activity* is not available at all — see §5.
+On first run the ledger is backfilled from existing invoice history so the series is not empty. A backfilled row is reconstructed, not observed live, and is flagged by `backfilled: true` (`computed_at` more than a day after `period_end`). Backfilled _revenue_ is exact, because the invoices are historical. Backfilled _login activity_ is not available at all — see §5.
 
 ---
 

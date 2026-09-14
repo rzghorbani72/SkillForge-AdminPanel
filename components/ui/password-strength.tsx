@@ -16,7 +16,7 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
     { key: 'minLength', label: t('auth.passwordMinLength') },
     { key: 'hasLetter', label: t('auth.passwordHasLetter') },
     { key: 'hasNumber', label: t('auth.passwordHasNumber') },
-    { key: 'hasSymbol', label: t('auth.passwordHasSymbol') }
+    { key: 'hasSymbol', label: t('auth.passwordHasSymbol') },
   ];
 
   return (
@@ -33,11 +33,7 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
             )}
           </span>
           <span
-            className={
-              !untouched && checks[key]
-                ? 'text-emerald-600'
-                : 'text-muted-foreground'
-            }
+            className={!untouched && checks[key] ? 'text-emerald-600' : 'text-muted-foreground'}
           >
             {label}
           </span>

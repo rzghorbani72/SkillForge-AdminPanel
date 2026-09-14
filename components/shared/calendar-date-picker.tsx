@@ -1,18 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  CalendarDays,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
+import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -25,7 +16,7 @@ import {
   isSameInputDay,
   shiftCalendarMonth,
   toInputValue,
-  weekdayLabels
+  weekdayLabels,
 } from '@/lib/i18n/calendar-date';
 import { cn } from '@/lib/utils';
 
@@ -49,7 +40,7 @@ export function CalendarDatePicker({
   maxDate,
   disabled = false,
   className,
-  'aria-label': ariaLabel
+  'aria-label': ariaLabel,
 }: CalendarDatePickerProps) {
   const { t, language } = useTranslation();
   const { isRTL } = useLanguage();
@@ -82,7 +73,7 @@ export function CalendarDatePicker({
 
   const monthCells = useMemo(
     () => buildMonthGrid(viewYear, viewMonth, language),
-    [viewYear, viewMonth, language]
+    [viewYear, viewMonth, language],
   );
   const weekdays = useMemo(() => weekdayLabels(language), [language]);
   const monthLabel = formatMonthYear(viewYear, viewMonth, language);
@@ -100,9 +91,7 @@ export function CalendarDatePicker({
     cn(
       'h-8 w-8 rounded-md text-[13px] transition-colors',
       muted && 'text-muted-foreground/70',
-      active
-        ? 'bg-primary font-medium text-primary-foreground'
-        : 'hover:bg-muted'
+      active ? 'bg-primary font-medium text-primary-foreground' : 'hover:bg-muted',
     );
 
   const selectDate = (date: Date) => {
@@ -122,7 +111,7 @@ export function CalendarDatePicker({
           className={cn(
             'w-full justify-start gap-2 font-normal',
             !value && 'text-muted-foreground',
-            className
+            className,
           )}
         >
           <CalendarDays className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -223,9 +212,7 @@ export function CalendarDatePicker({
 
           <div className="grid grid-cols-7 gap-1">
             {monthCells.map((cell) => {
-              const selectedDay = selected
-                ? isSameInputDay(cell.date, selected)
-                : false;
+              const selectedDay = selected ? isSameInputDay(cell.date, selected) : false;
               const todayDay = isSameInputDay(cell.date, today);
               const dayDisabled = isDayDisabled(cell.date, minDate, maxDate);
               return (
@@ -236,12 +223,8 @@ export function CalendarDatePicker({
                   onClick={() => selectDate(cell.date)}
                   className={cn(
                     dayClass(selectedDay, !cell.inMonth),
-                    dayDisabled &&
-                      'cursor-not-allowed opacity-30 hover:bg-transparent',
-                    !selectedDay &&
-                      todayDay &&
-                      !dayDisabled &&
-                      'ring-1 ring-primary/40'
+                    dayDisabled && 'cursor-not-allowed opacity-30 hover:bg-transparent',
+                    !selectedDay && todayDay && !dayDisabled && 'ring-1 ring-primary/40',
                   )}
                 >
                   {formatNumber(cell.day, { useGrouping: false })}

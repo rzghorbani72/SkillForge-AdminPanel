@@ -22,7 +22,7 @@ export default function ProductsPage() {
     setSearchTerm,
     handleViewProduct,
     handleEditProduct,
-    handleDeleteProduct
+    handleDeleteProduct,
   } = useProducts();
 
   if (!selectedAcademy) {

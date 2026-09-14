@@ -26,23 +26,17 @@ test.describe('AdminPanel public pages (smoke)', () => {
     await expect(page.locator('form')).toBeVisible();
   });
 
-  test('/unauthorized renders a friendly message, not a crash', async ({
-    page
-  }) => {
+  test('/unauthorized renders a friendly message, not a crash', async ({ page }) => {
     const res = await page.goto('/unauthorized');
     expect(res!.status()).toBeLessThan(500);
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
+    await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
 
   test('unknown route renders the 404 page, not a crash', async ({ page }) => {
     const res = await page.goto('/this-route-does-not-exist-xyz', {
-      waitUntil: 'domcontentloaded'
+      waitUntil: 'domcontentloaded',
     });
     expect(res!.status()).toBe(404);
-    await expect(page.locator('body')).not.toContainText(
-      'Internal Server Error'
-    );
+    await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
 });

@@ -9,8 +9,7 @@ import { ApiResponseError } from './api-error';
 const PROXY_BODY_LIMIT_BYTES = 10 * 1024 * 1024;
 const MULTIPART_OVERHEAD_BYTES = 256 * 1024;
 
-export const MAX_IMAGE_UPLOAD_BYTES =
-  PROXY_BODY_LIMIT_BYTES - MULTIPART_OVERHEAD_BYTES;
+export const MAX_IMAGE_UPLOAD_BYTES = PROXY_BODY_LIMIT_BYTES - MULTIPART_OVERHEAD_BYTES;
 
 export function assertUploadSize(file: File, maxBytes: number): void {
   if (file.size <= maxBytes) return;
@@ -22,6 +21,6 @@ export function assertUploadSize(file: File, maxBytes: number): void {
     message: '',
     messageEn: `${file.name} is ${(file.size / (1024 * 1024)).toFixed(1)}MB, over the ${maxMb}MB limit`,
     params: { max: maxMb },
-    fields: []
+    fields: [],
   });
 }

@@ -19,7 +19,7 @@ export function AccessGrantList({
   students,
   groups,
   onRevoke,
-  isBusy = false
+  isBusy = false,
 }: AccessGrantListProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
@@ -90,9 +90,7 @@ function ExpiryBadge({ expiresAt }: { expiresAt: string | null }) {
   const formatDate = useDateFormat();
 
   if (expiresAt === null) {
-    return (
-      <Badge variant="secondary">{t('accessGrants.durationForever')}</Badge>
-    );
+    return <Badge variant="secondary">{t('accessGrants.durationForever')}</Badge>;
   }
   const hasExpired = new Date(expiresAt).getTime() <= Date.now();
   return (

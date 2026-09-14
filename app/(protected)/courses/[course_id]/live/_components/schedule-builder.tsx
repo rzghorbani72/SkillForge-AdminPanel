@@ -22,7 +22,7 @@ import { previewSessionDates } from '@/lib/session-plan-preview';
 const DEFAULT_SLOT: TutoringGroupSlot = {
   weekday: 6,
   start_minute: 9 * 60,
-  duration_minutes: 90
+  duration_minutes: 90,
 };
 
 export interface ScheduleBuilderPrefill {
@@ -50,19 +50,17 @@ export default function ScheduleBuilder({
   courseTitle,
   defaultSeatPrice,
   prefill,
-  onCreated
+  onCreated,
 }: ScheduleBuilderProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
   const [slots, setSlots] = useState<TutoringGroupSlot[]>(
-    prefill?.slots?.length ? prefill.slots : [DEFAULT_SLOT]
+    prefill?.slots?.length ? prefill.slots : [DEFAULT_SLOT],
   );
   const [sessionCount, setSessionCount] = useState('10');
   const [capacity, setCapacity] = useState(String(prefill?.capacity ?? 8));
-  const [minStudents, setMinStudents] = useState(
-    String(prefill?.minStudents ?? 2)
-  );
+  const [minStudents, setMinStudents] = useState(String(prefill?.minStudents ?? 2));
   const [seatPrice, setSeatPrice] = useState('');
   const [wholeClassBooking, setWholeClassBooking] = useState(true);
   const [startsOn, setStartsOn] = useState('');
@@ -99,10 +97,8 @@ export default function ScheduleBuilder({
         whole_class_booking: wholeClassBooking,
         session_count: sessionCountValue,
         starts_on_requested: new Date(startsOn).toISOString(),
-        join_deadline: joinDeadline
-          ? new Date(joinDeadline).toISOString()
-          : undefined,
-        slots
+        join_deadline: joinDeadline ? new Date(joinDeadline).toISOString() : undefined,
+        slots,
       });
       toast.success(t('courses.live.classCreated'));
       onCreated?.(group.id);
@@ -122,9 +118,7 @@ export default function ScheduleBuilder({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="session-count">
-            {t('courses.live.sessionCount')} *
-          </Label>
+          <Label htmlFor="session-count">{t('courses.live.sessionCount')} *</Label>
           <NumberInput
             id="session-count"
             value={sessionCount}
@@ -138,38 +132,20 @@ export default function ScheduleBuilder({
           <DatePicker id="starts-on" value={startsOn} onChange={setStartsOn} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="join-deadline">
-            {t('courses.live.joinDeadline')}
-          </Label>
-          <DatePicker
-            id="join-deadline"
-            value={joinDeadline}
-            onChange={setJoinDeadline}
-          />
+          <Label htmlFor="join-deadline">{t('courses.live.joinDeadline')}</Label>
+          <DatePicker id="join-deadline" value={joinDeadline} onChange={setJoinDeadline} />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="min-students">
-              {t('courses.live.minStudents')}
-            </Label>
-            <NumberInput
-              id="min-students"
-              value={minStudents}
-              min={1}
-              onChange={setMinStudents}
-            />
+            <Label htmlFor="min-students">{t('courses.live.minStudents')}</Label>
+            <NumberInput id="min-students" value={minStudents} min={1} onChange={setMinStudents} />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
               <ClassSizeBadge capacity={Number(capacity) || 1} />
             </div>
-            <NumberInput
-              id="capacity"
-              value={capacity}
-              min={1}
-              onChange={setCapacity}
-            />
+            <NumberInput id="capacity" value={capacity} min={1} onChange={setCapacity} />
           </div>
         </div>
         <ClassSellingFields
@@ -185,19 +161,15 @@ export default function ScheduleBuilder({
 
       {preview.length > 0 && (
         <div className="rounded-xl border bg-muted/30 p-3">
-          <p className="mb-2 text-sm font-medium">
-            {t('courses.live.previewTitle')}
-          </p>
+          <p className="mb-2 text-sm font-medium">{t('courses.live.previewTitle')}</p>
           <ol className="grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
             {preview.map((date, index) => (
               <li key={date.toISOString()} className="flex gap-2">
-                <span className="shrink-0 tabular-nums">
-                  {formatNumber(index + 1)}.
-                </span>
+                <span className="shrink-0 tabular-nums">{formatNumber(index + 1)}.</span>
                 <span>
                   {formatDate(date, {
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
                   })}
                 </span>
               </li>
@@ -206,12 +178,7 @@ export default function ScheduleBuilder({
         </div>
       )}
 
-      <Button
-        type="button"
-        className="w-full sm:w-auto"
-        onClick={create}
-        disabled={isSaving}
-      >
+      <Button type="button" className="w-full sm:w-auto" onClick={create} disabled={isSaving}>
         {isSaving ? t('common.saving') : t('courses.live.createClass')}
       </Button>
     </div>

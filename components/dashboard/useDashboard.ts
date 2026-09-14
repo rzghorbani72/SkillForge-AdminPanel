@@ -13,7 +13,7 @@ import {
   enrollmentsBetween,
   journeySteps,
   percentChange,
-  statusSegments
+  statusSegments,
 } from './dashboard-metrics';
 import { periodWindow, type DashboardPeriod } from './dashboard-periods';
 
@@ -23,16 +23,14 @@ import { periodWindow, type DashboardPeriod } from './dashboard-periods';
 const ENROLLMENTS_PAGE_SIZE = 100;
 const ENROLLMENTS_MAX_PAGES = 5;
 
-const fetchEnrollmentWindow = async (
-  academyId: string | null
-): Promise<Enrollment[]> => {
+const fetchEnrollmentWindow = async (academyId: string | null): Promise<Enrollment[]> => {
   const collected: Enrollment[] = [];
 
   for (let page = 1; page <= ENROLLMENTS_MAX_PAGES; page += 1) {
     const payload = await apiClient.getEnrollments({
       page,
       limit: ENROLLMENTS_PAGE_SIZE,
-      ...(academyId ? { academy_id: academyId } : {})
+      ...(academyId ? { academy_id: academyId } : {}),
     });
     const rows = Array.isArray(payload?.enrollments) ? payload.enrollments : [];
     collected.push(...rows);
@@ -53,24 +51,18 @@ export type DashboardStatsCard = {
   trend: number[];
 };
 
-const useDashboard = (
-  period: DashboardPeriod = '30d',
-  periodLabel: string = ''
-) => {
+const useDashboard = (period: DashboardPeriod = '30d', periodLabel: string = '') => {
   const { t, language } = useTranslation();
-  const { selectedAcademy: currentAcademy, isLoading: storeLoading } =
-    useStore();
+  const { selectedAcademy: currentAcademy, isLoading: storeLoading } = useStore();
   const { user } = useAuthUser();
   const [recentCourses, setRecentCourses] = useState<Course[]>([]);
   /** A wide enrolment window; the recent list is only 10 rows and cannot
       support the weekday, status or period breakdowns. */
-  const [analyticsEnrollments, setAnalyticsEnrollments] = useState<
-    Enrollment[]
-  >([]);
+  const [analyticsEnrollments, setAnalyticsEnrollments] = useState<Enrollment[]>([]);
   const [statsTotals, setStatsTotals] = useState({
     totalCourses: 0,
     totalStudents: 0,
-    activeEnrollments: 0
+    activeEnrollments: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -79,10 +71,8 @@ const useDashboard = (
     if (!user || user.role !== 'ADMIN') return false;
 
     // Use explicit flags from API (preferred)
-    const isAdminProfile =
-      user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
-    const platformLevel =
-      user.platformLevel ?? user.profile?.platformLevel ?? false;
+    const isAdminProfile = user.isAdminProfile ?? user.profile?.isAdminProfile ?? false;
+    const platformLevel = user.platformLevel ?? user.profile?.platformLevel ?? false;
 
     if (isAdminProfile || platformLevel) {
       return true; // Platform-level admin
@@ -90,10 +80,7 @@ const useDashboard = (
 
     // Fallback: Check academyId
     const userStoreId =
-      user.academyId ??
-      user.profile?.academyId ??
-      user.profile?.academy_id ??
-      null;
+      user.academyId ?? user.profile?.academyId ?? user.profile?.academy_id ?? null;
     return !userStoreId;
   }, [user]);
 
@@ -128,7 +115,7 @@ const useDashboard = (
                 status: 'ACTIVE' as const,
                 page: 1,
                 limit: 1,
-                academy_id: effectiveAcademyId
+                academy_id: effectiveAcademyId,
               }
             : { status: 'ACTIVE' as const, page: 1, limit: 1 };
 
@@ -143,13 +130,13 @@ const useDashboard = (
           activeEnrollmentsResult,
           studentsResult,
           analyticsEnrollmentsResult,
-          overviewResult
+          overviewResult,
         ] = await Promise.allSettled([
           apiClient.getCourses(coursesParams),
           apiClient.getEnrollments(enrollmentsParams),
           apiClient.getStudentUsers(studentsParams),
           fetchEnrollmentWindow(effectiveAcademyId),
-          apiClient.getAnalyticsOverview()
+          apiClient.getAnalyticsOverview(),
         ]);
 
         // Courses list & total
@@ -167,7 +154,7 @@ const useDashboard = (
           setRecentCourses(coursesList);
           setStatsTotals((prev) => ({
             ...prev,
-            totalCourses: coursesTotal ?? 0
+            totalCourses: coursesTotal ?? 0,
           }));
         } else {
           setRecentCourses([]);
@@ -177,19 +164,16 @@ const useDashboard = (
         // Active enrollments total
         if (activeEnrollmentsResult.status === 'fulfilled') {
           const activePayload =
-            (activeEnrollmentsResult.value as any)?.data ??
-            activeEnrollmentsResult.value;
+            (activeEnrollmentsResult.value as any)?.data ?? activeEnrollmentsResult.value;
           const activeTotal =
             activePayload?.pagination?.total ??
             activePayload?.data?.pagination?.total ??
             activePayload?.meta?.total ??
-            (Array.isArray(activePayload?.enrollments)
-              ? activePayload.enrollments.length
-              : 0);
+            (Array.isArray(activePayload?.enrollments) ? activePayload.enrollments.length : 0);
 
           setStatsTotals((prev) => ({
             ...prev,
-            activeEnrollments: activeTotal ?? 0
+            activeEnrollments: activeTotal ?? 0,
           }));
         } else {
           setStatsTotals((prev) => ({ ...prev, activeEnrollments: 0 }));
@@ -197,18 +181,15 @@ const useDashboard = (
 
         // Total students (via student users pagination)
         if (studentsResult.status === 'fulfilled') {
-          const studentsPayload =
-            (studentsResult.value as any)?.data ?? studentsResult.value;
+          const studentsPayload = (studentsResult.value as any)?.data ?? studentsResult.value;
           const studentTotal =
             studentsPayload?.pagination?.total ??
             studentsPayload?.data?.pagination?.total ??
-            (Array.isArray(studentsPayload?.users)
-              ? studentsPayload.users.length
-              : 0);
+            (Array.isArray(studentsPayload?.users) ? studentsPayload.users.length : 0);
 
           setStatsTotals((prev) => ({
             ...prev,
-            totalStudents: studentTotal ?? 0
+            totalStudents: studentTotal ?? 0,
           }));
         } else {
           setStatsTotals((prev) => ({ ...prev, totalStudents: 0 }));
@@ -229,8 +210,7 @@ const useDashboard = (
             ...prev,
             totalCourses: overview.totalCourses ?? prev.totalCourses,
             totalStudents: overview.totalStudents ?? prev.totalStudents,
-            activeEnrollments:
-              overview.activeEnrollments ?? prev.activeEnrollments
+            activeEnrollments: overview.activeEnrollments ?? prev.activeEnrollments,
           }));
         }
       } finally {
@@ -257,7 +237,7 @@ const useDashboard = (
   // headline and the numbers under it describe the same span of time.
   const periodEnrollments = useMemo(
     () => enrollmentsBetween(analyticsEnrollments, range.start, range.end),
-    [analyticsEnrollments, range]
+    [analyticsEnrollments, range],
   );
 
   const enrollmentSeries = useMemo(
@@ -265,9 +245,9 @@ const useDashboard = (
       bucketCount(
         periodEnrollments.map((e) => e.enrolled_at),
         range.buckets,
-        range.end
+        range.end,
       ),
-    [periodEnrollments, range]
+    [periodEnrollments, range],
   );
 
   const courseSeries = useMemo(
@@ -275,42 +255,28 @@ const useDashboard = (
       bucketCount(
         recentCourses.map((c) => c.created_at),
         range.buckets,
-        range.end
+        range.end,
       ),
-    [recentCourses, range]
+    [recentCourses, range],
   );
 
-  const statusData = useMemo(
-    () => statusSegments(periodEnrollments),
-    [periodEnrollments]
-  );
+  const statusData = useMemo(() => statusSegments(periodEnrollments), [periodEnrollments]);
 
-  const overallCompletion = useMemo(
-    () => completionRate(periodEnrollments),
-    [periodEnrollments]
-  );
+  const overallCompletion = useMemo(() => completionRate(periodEnrollments), [periodEnrollments]);
 
   // The funnel keeps every known student at its top and narrows to what
   // happened in the period, so it reads "of all students, this many acted".
   const journeyData = useMemo(
     () => journeySteps(periodEnrollments, statsTotals.totalStudents),
-    [periodEnrollments, statsTotals.totalStudents]
+    [periodEnrollments, statsTotals.totalStudents],
   );
 
   const previousEnrollments = useMemo(
-    () =>
-      enrollmentsBetween(
-        analyticsEnrollments,
-        range.previousStart,
-        range.start
-      ),
-    [analyticsEnrollments, range]
+    () => enrollmentsBetween(analyticsEnrollments, range.previousStart, range.start),
+    [analyticsEnrollments, range],
   );
 
-  const courseDates = useMemo(
-    () => recentCourses.map((c) => c.created_at),
-    [recentCourses]
-  );
+  const courseDates = useMemo(() => recentCourses.map((c) => c.created_at), [recentCourses]);
 
   const statsCards: DashboardStatsCard[] = useMemo(() => {
     // A card shows its real move against the previous window of equal length,
@@ -321,15 +287,11 @@ const useDashboard = (
         ? { change: t('dashboard.live'), changeType: 'increase' as const }
         : {
             change: `${change > 0 ? '+' : ''}${formatNumber(change, language)}%`,
-            changeType: (change < 0 ? 'decrease' : 'increase') as
-              | 'increase'
-              | 'decrease'
+            changeType: (change < 0 ? 'decrease' : 'increase') as 'increase' | 'decrease',
           };
     };
 
-    const activeInPeriod = periodEnrollments.filter(
-      (e) => e.status === 'ACTIVE'
-    ).length;
+    const activeInPeriod = periodEnrollments.filter((e) => e.status === 'ACTIVE').length;
 
     // Cards 1 and 2 are stock counters: a total has no window, so the value
     // stays all-time and only its move and sparkline follow the period.
@@ -340,12 +302,12 @@ const useDashboard = (
         icon: BookOpen,
         ...delta(
           countBetween(courseDates, range.start, range.end),
-          countBetween(courseDates, range.previousStart, range.start)
+          countBetween(courseDates, range.previousStart, range.start),
         ),
         description: isAdminWithoutStore
           ? t('dashboard.allPlatformCourses')
           : t('dashboard.cards.coursesHint'),
-        trend: courseSeries
+        trend: courseSeries,
       },
       {
         title: t('dashboard.cards.students'),
@@ -355,33 +317,30 @@ const useDashboard = (
         description: isAdminWithoutStore
           ? t('dashboard.allPlatformStudents')
           : t('dashboard.cards.studentsHint'),
-        trend: enrollmentSeries
+        trend: enrollmentSeries,
       },
       {
         title: t('dashboard.cards.completion'),
         value: t('common.percentValue', {
-          value: formatNumber(overallCompletion, language)
+          value: formatNumber(overallCompletion, language),
         }),
         icon: GraduationCap,
         ...delta(overallCompletion, completionRate(previousEnrollments)),
         description: t('dashboard.cards.completionHint', {
-          period: periodLabel
+          period: periodLabel,
         }),
-        trend: enrollmentSeries
+        trend: enrollmentSeries,
       },
       {
         title: t('dashboard.cards.active'),
         value: formatNumber(activeInPeriod, language),
         icon: TrendingUp,
-        ...delta(
-          activeInPeriod,
-          previousEnrollments.filter((e) => e.status === 'ACTIVE').length
-        ),
+        ...delta(activeInPeriod, previousEnrollments.filter((e) => e.status === 'ACTIVE').length),
         description: t('dashboard.cards.activeHint', {
-          period: periodLabel
+          period: periodLabel,
         }),
-        trend: enrollmentSeries
-      }
+        trend: enrollmentSeries,
+      },
     ];
   }, [
     statsTotals,
@@ -395,7 +354,7 @@ const useDashboard = (
     previousEnrollments,
     overallCompletion,
     courseSeries,
-    enrollmentSeries
+    enrollmentSeries,
   ]);
 
   const safeRecentCourses = Array.isArray(recentCourses) ? recentCourses : [];
@@ -406,7 +365,7 @@ const useDashboard = (
     statsTotals,
     statusData,
     overallCompletion,
-    journeyData
+    journeyData,
   };
 };
 

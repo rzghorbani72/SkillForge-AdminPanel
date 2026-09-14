@@ -29,8 +29,7 @@ export default function LiveCoursePage() {
   const params = useParams();
   const router = useRouter();
   const courseId = params.course_id as string;
-  const { course, topics, offers, groups, isLoading, reload, patch } =
-    useLiveCourse(courseId);
+  const { course, topics, offers, groups, isLoading, reload, patch } = useLiveCourse(courseId);
   const [isPublishing, setIsPublishing] = useState(false);
 
   const groupOffer = offers.find((offer) => offer.kind === 'GROUP');
@@ -39,12 +38,10 @@ export default function LiveCoursePage() {
       liveSetupSteps({
         topics: topics.length,
         classes: groups.length,
-        classesWithSchedule: groups.filter((group) => group.Slots?.length)
-          .length,
-        sellingOffers: offers.filter((offer) => offer.is_active !== false)
-          .length
+        classesWithSchedule: groups.filter((group) => group.Slots?.length).length,
+        sellingOffers: offers.filter((offer) => offer.is_active !== false).length,
       }),
-    [topics, groups, offers]
+    [topics, groups, offers],
   );
   const ready = steps.every((step) => step.done);
 

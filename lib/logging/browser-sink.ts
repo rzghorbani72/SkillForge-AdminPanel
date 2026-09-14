@@ -17,17 +17,14 @@ export function createBrowserSink(endpoint = '/api/log'): LogSink {
     const batch = queue;
     queue = [];
     if (useBeacon && navigator.sendBeacon) {
-      navigator.sendBeacon(
-        endpoint,
-        new Blob([body], { type: 'application/json' })
-      );
+      navigator.sendBeacon(endpoint, new Blob([body], { type: 'application/json' }));
       return;
     }
     fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
-      keepalive: true
+      keepalive: true,
     })
       .then((res) => {
         if (!res.ok) batch.forEach(consoleSink);

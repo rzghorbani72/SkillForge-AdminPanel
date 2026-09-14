@@ -30,7 +30,7 @@ export function TemplateStarRating({
   myRating,
   onRate,
   onClear,
-  disabled = false
+  disabled = false,
 }: TemplateStarRatingProps) {
   const { t } = useTranslation();
   const [hover, setHover] = useState(0);
@@ -62,9 +62,7 @@ export function TemplateStarRating({
           >
             <Star
               className={`h-4 w-4 ${
-                star <= shown
-                  ? 'fill-amber-400 text-amber-400'
-                  : 'text-muted-foreground/40'
+                star <= shown ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/40'
               }`}
             />
           </button>
@@ -75,7 +73,7 @@ export function TemplateStarRating({
         {ratingCount > 0
           ? t('sitePreview.ratingSummary', {
               average: rating.toFixed(1),
-              count: ratingCount
+              count: ratingCount,
             })
           : t('sitePreview.ratingEmpty')}
       </span>

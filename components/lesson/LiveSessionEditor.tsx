@@ -6,13 +6,7 @@ import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Video, Copy, RefreshCw } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -38,15 +32,13 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
         </CardTitle>
         <CardDescription>
           {t('courses.liveSession.description', {
-            timezone: defaultTimezone()
+            timezone: defaultTimezone(),
           })}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="live-meeting-url">
-            {t('courses.liveSession.urlLabel')}
-          </Label>
+          <Label htmlFor="live-meeting-url">{t('courses.liveSession.urlLabel')}</Label>
           {form.manualEntry ? (
             <>
               <Input
@@ -70,12 +62,7 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
           ) : form.meetingUrl ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Input
-                  id="live-meeting-url"
-                  dir="ltr"
-                  readOnly
-                  value={form.meetingUrl}
-                />
+                <Input id="live-meeting-url" dir="ltr" readOnly value={form.meetingUrl} />
                 <Button
                   type="button"
                   variant="outline"
@@ -137,9 +124,7 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="live-label">
-            {t('courses.liveSession.labelLabel')}
-          </Label>
+          <Label htmlFor="live-label">{t('courses.liveSession.labelLabel')}</Label>
           <Input
             id="live-label"
             value={form.label}
@@ -150,8 +135,7 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="live-starts">
-              {t('courses.liveSession.startsLabel')}{' '}
-              <span className="text-destructive">*</span>
+              {t('courses.liveSession.startsLabel')} <span className="text-destructive">*</span>
             </Label>
             <DatePicker
               id="live-starts"
@@ -162,8 +146,7 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
           </div>
           <div className="space-y-2">
             <Label htmlFor="live-duration">
-              {t('courses.liveSession.durationLabel')}{' '}
-              <span className="text-destructive">*</span>
+              {t('courses.liveSession.durationLabel')} <span className="text-destructive">*</span>
             </Label>
             <NumberInput
               id="live-duration"
@@ -182,24 +165,13 @@ const LiveSessionEditor = ({ lessonId, initial, onSaved }: Props) => {
         />
         <div className="flex flex-wrap gap-2">
           {form.manualEntry || form.meetingUrl ? (
-            <Button
-              type="button"
-              onClick={() => form.save()}
-              disabled={form.saving}
-            >
+            <Button type="button" onClick={() => form.save()} disabled={form.saving}>
               {form.saving ? t('common.saving') : t('courses.liveSession.save')}
             </Button>
           ) : null}
           {initial?.id ? (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={form.remove}
-              disabled={form.removing}
-            >
-              {form.removing
-                ? t('courses.liveSession.removing')
-                : t('courses.liveSession.remove')}
+            <Button type="button" variant="outline" onClick={form.remove} disabled={form.removing}>
+              {form.removing ? t('courses.liveSession.removing') : t('courses.liveSession.remove')}
             </Button>
           ) : null}
         </div>

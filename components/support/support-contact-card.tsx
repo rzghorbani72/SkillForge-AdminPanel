@@ -28,26 +28,19 @@ export function SupportContactCard({
   copyValue,
   href,
   actionLabel,
-  hint
+  hint,
 }: SupportContactCardProps) {
   const { t } = useTranslation();
 
   return (
     <PageContainer>
       <div className="space-y-6">
-        <PageHeader
-          title={title}
-          description={description}
-          icon={<Icon className="h-5 w-5" />}
-        />
+        <PageHeader title={title} description={description} icon={<Icon className="h-5 w-5" />} />
         <Card>
           <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0 space-y-1">
               <div className="flex items-center gap-2">
-                <p
-                  dir="ltr"
-                  className="truncate text-start text-lg font-semibold"
-                >
+                <p dir="ltr" className="truncate text-start text-lg font-semibold">
                   {value}
                 </p>
                 <CopyBtn text={copyValue} label={t('common.copy')} />

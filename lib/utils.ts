@@ -18,9 +18,7 @@ export type AcademyCurrencyFormatting =
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export function isAuth(cookieStore: {
-  get: (name: string) => { value?: string } | undefined;
-}) {
+export function isAuth(cookieStore: { get: (name: string) => { value?: string } | undefined }) {
   const token = cookieStore.get('jwt')?.value;
   return !!token;
 }
@@ -30,7 +28,7 @@ export function formatBytes(
   opts: {
     decimals?: number;
     sizeType?: 'accurate' | 'normal';
-  } = {}
+  } = {},
 ) {
   const { decimals = 0, sizeType = 'normal' } = opts;
 
@@ -39,9 +37,7 @@ export function formatBytes(
   if (bytes === 0) return '0 Byte';
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
-    sizeType === 'accurate'
-      ? (accurateSizes[i] ?? 'Bytest')
-      : (sizes[i] ?? 'Bytes')
+    sizeType === 'accurate' ? (accurateSizes[i] ?? 'Bytest') : (sizes[i] ?? 'Bytes')
   }`;
 }
 
@@ -65,14 +61,14 @@ function translateCurrencySymbol(symbol: string, _language?: string): string {
 /** Platform admin views: always show amounts in تومان, never USD/$ */
 export function formatPlatformToman(
   amount: number,
-  options?: { divideBy?: number; language?: string }
+  options?: { divideBy?: number; language?: string },
 ): string {
   return formatCurrency(amount, {
     currency: 'IRR',
     currency_symbol: 'تومان',
     currency_position: 'after',
     divideBy: options?.divideBy ?? 1,
-    language: options?.language
+    language: options?.language,
   });
 }
 
@@ -84,14 +80,14 @@ export function formatCurrency(
     currency_position?: 'before' | 'after';
     divideBy?: number;
     language?: string;
-  }
+  },
 ): string {
   const {
     currency = 'USD',
     currency_symbol,
     currency_position = 'after',
     divideBy = 100,
-    language
+    language,
   } = options || {};
 
   const numericValue = amount / divideBy;
@@ -105,7 +101,7 @@ export function formatCurrency(
 
     const formattedNumber = new Intl.NumberFormat(locale, {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(numericValue);
 
     return currency_position === 'before'
@@ -116,7 +112,7 @@ export function formatCurrency(
   // Use Intl.NumberFormat for standard currencies
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: currency || 'USD'
+    currency: currency || 'USD',
   }).format(numericValue);
 }
 
@@ -131,7 +127,7 @@ export function formatCurrencyWithStore(
   amount: number,
   store?: AcademyCurrencyFormatting,
   divideBy?: number,
-  language?: string
+  language?: string,
 ): string {
   if (!store) {
     // Fallback to USD if no store
@@ -146,8 +142,7 @@ export function formatCurrencyWithStore(
     currency_position?: 'before' | 'after';
   };
 
-  const hasCurrencyConfig =
-    storeWithCurrency.currency || storeWithCurrency.currency_symbol;
+  const hasCurrencyConfig = storeWithCurrency.currency || storeWithCurrency.currency_symbol;
 
   if (!hasCurrencyConfig) {
     // Fallback to default USD formatting if no currency config
@@ -156,7 +151,7 @@ export function formatCurrencyWithStore(
         academyId: 'id' in store ? store.id : undefined,
         storeName: 'name' in store ? store.name : undefined,
         hasCurrency: !!storeWithCurrency.currency,
-        hasCurrencySymbol: !!storeWithCurrency.currency_symbol
+        hasCurrencySymbol: !!storeWithCurrency.currency_symbol,
       });
     }
     return formatCurrency(amount, { divideBy: divideBy || 100, language });
@@ -165,8 +160,7 @@ export function formatCurrencyWithStore(
   // Try to get language from localStorage if not provided (client-side only)
   let currentLanguage = language;
   if (!currentLanguage && typeof window !== 'undefined') {
-    currentLanguage =
-      localStorage.getItem('preferred_language') || DEFAULT_LANGUAGE;
+    currentLanguage = localStorage.getItem('preferred_language') || DEFAULT_LANGUAGE;
   }
   if (!currentLanguage) {
     currentLanguage = DEFAULT_LANGUAGE;
@@ -181,7 +175,7 @@ export function formatCurrencyWithStore(
     currency_symbol: storeWithCurrency.currency_symbol,
     currency_position: storeWithCurrency.currency_position || 'after',
     divideBy: divideBy ?? (isToman ? 1 : 100),
-    language: currentLanguage
+    language: currentLanguage,
   });
 }
 
@@ -191,40 +185,29 @@ export function formatNumber(num: number, language?: string): string {
 }
 
 export function formatDate(date: string | Date, language?: string): string {
-  return new Intl.DateTimeFormat(
-    getLocaleForLanguage(language ?? DEFAULT_LANGUAGE),
-    {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }
-  ).format(new Date(date));
+  return new Intl.DateTimeFormat(getLocaleForLanguage(language ?? DEFAULT_LANGUAGE), {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(new Date(date));
 }
 
 export function formatDateTime(date: string | Date, language?: string): string {
-  return new Intl.DateTimeFormat(
-    getLocaleForLanguage(language ?? DEFAULT_LANGUAGE),
-    {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      // 24-hour everywhere: an academy timetable is never read as 9 AM / 9 PM.
-      hourCycle: 'h23'
-    }
-  ).format(new Date(date));
+  return new Intl.DateTimeFormat(getLocaleForLanguage(language ?? DEFAULT_LANGUAGE), {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    // 24-hour everywhere: an academy timetable is never read as 9 AM / 9 PM.
+    hourCycle: 'h23',
+  }).format(new Date(date));
 }
 
-export function formatRelativeTime(
-  date: string | Date,
-  t?: (key: string) => string
-): string {
+export function formatRelativeTime(date: string | Date, t?: (key: string) => string): string {
   const now = new Date();
   const targetDate = new Date(date);
-  const diffInSeconds = Math.floor(
-    (now.getTime() - targetDate.getTime()) / 1000
-  );
+  const diffInSeconds = Math.floor((now.getTime() - targetDate.getTime()) / 1000);
 
   // If no translation function provided, use English defaults
   const translate = t || ((key: string) => key);
@@ -235,54 +218,36 @@ export function formatRelativeTime(
 
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) {
-    const key =
-      diffInMinutes === 1
-        ? 'dashboard.timeMinutesAgo'
-        : 'dashboard.timeMinutesAgoPlural';
+    const key = diffInMinutes === 1 ? 'dashboard.timeMinutesAgo' : 'dashboard.timeMinutesAgoPlural';
     return translate(key).replace('{{count}}', diffInMinutes.toString());
   }
 
   const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24) {
-    const key =
-      diffInHours === 1
-        ? 'dashboard.timeHoursAgo'
-        : 'dashboard.timeHoursAgoPlural';
+    const key = diffInHours === 1 ? 'dashboard.timeHoursAgo' : 'dashboard.timeHoursAgoPlural';
     return translate(key).replace('{{count}}', diffInHours.toString());
   }
 
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays < 7) {
-    const key =
-      diffInDays === 1
-        ? 'dashboard.timeDaysAgo'
-        : 'dashboard.timeDaysAgoPlural';
+    const key = diffInDays === 1 ? 'dashboard.timeDaysAgo' : 'dashboard.timeDaysAgoPlural';
     return translate(key).replace('{{count}}', diffInDays.toString());
   }
 
   const diffInWeeks = Math.floor(diffInDays / 7);
   if (diffInWeeks < 4) {
-    const key =
-      diffInWeeks === 1
-        ? 'dashboard.timeWeeksAgo'
-        : 'dashboard.timeWeeksAgoPlural';
+    const key = diffInWeeks === 1 ? 'dashboard.timeWeeksAgo' : 'dashboard.timeWeeksAgoPlural';
     return translate(key).replace('{{count}}', diffInWeeks.toString());
   }
 
   const diffInMonths = Math.floor(diffInDays / 30);
   if (diffInMonths < 12) {
-    const key =
-      diffInMonths === 1
-        ? 'dashboard.timeMonthsAgo'
-        : 'dashboard.timeMonthsAgoPlural';
+    const key = diffInMonths === 1 ? 'dashboard.timeMonthsAgo' : 'dashboard.timeMonthsAgoPlural';
     return translate(key).replace('{{count}}', diffInMonths.toString());
   }
 
   const diffInYears = Math.floor(diffInDays / 365);
-  const key =
-    diffInYears === 1
-      ? 'dashboard.timeYearsAgo'
-      : 'dashboard.timeYearsAgoPlural';
+  const key = diffInYears === 1 ? 'dashboard.timeYearsAgo' : 'dashboard.timeYearsAgoPlural';
   return translate(key).replace('{{count}}', diffInYears.toString());
 }
 
@@ -312,7 +277,7 @@ export function isValidPhone(phone: string): boolean {
 
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -323,7 +288,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 
 export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
   return (...args: Parameters<T>) => {

@@ -14,8 +14,7 @@ export function splitMoney(formatted: string): {
   const match = NUMBER_RUN.exec(formatted);
   if (!match) return { amount: formatted, unit: '' };
   const unit = (
-    formatted.slice(0, match.index) +
-    formatted.slice(match.index + match[0].length)
+    formatted.slice(0, match.index) + formatted.slice(match.index + match[0].length)
   ).trim();
   return { amount: match[0], unit };
 }
@@ -26,19 +25,11 @@ type Props = { value: number; className?: string };
 export function MoneyValue({ value, className }: Props) {
   const { language } = useTranslation();
   const academy = useCurrentAcademy();
-  const { amount, unit } = splitMoney(
-    formatCurrencyWithStore(value, academy, undefined, language)
-  );
+  const { amount, unit } = splitMoney(formatCurrencyWithStore(value, academy, undefined, language));
   return (
     <span className="inline-flex items-baseline gap-1">
-      <span className={cn('text-2xl font-bold tracking-tight', className)}>
-        {amount}
-      </span>
-      {unit ? (
-        <span className="text-xs font-normal text-muted-foreground">
-          {unit}
-        </span>
-      ) : null}
+      <span className={cn('text-2xl font-bold tracking-tight', className)}>{amount}</span>
+      {unit ? <span className="text-xs font-normal text-muted-foreground">{unit}</span> : null}
     </span>
   );
 }

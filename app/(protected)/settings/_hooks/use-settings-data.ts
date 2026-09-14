@@ -21,7 +21,7 @@ export function useSettingsData(): SettingsSnapshot {
     selectedAcademy,
     academies,
     isLoading: isLoadingAcademies,
-    refreshAcademies
+    refreshAcademies,
   } = useStore();
 
   const refresh = useCallback(() => {
@@ -61,8 +61,8 @@ export function useSettingsData(): SettingsSnapshot {
       user,
       academy,
       isLoading: isLoadingUser || isLoadingAcademies,
-      refresh
+      refresh,
     }),
-    [user, academy, isLoadingUser, isLoadingAcademies, refresh]
+    [user, academy, isLoadingUser, isLoadingAcademies, refresh],
   );
 }

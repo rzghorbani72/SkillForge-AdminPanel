@@ -26,12 +26,7 @@ export function canRemoveAcademy(academy: Academy): boolean {
 }
 
 export function academyDomain(academy: Academy): string {
-  return (
-    academy.domain?.private_address ??
-    academy.Domain?.private_address ??
-    academy.slug ??
-    ''
-  );
+  return academy.domain?.private_address ?? academy.Domain?.private_address ?? academy.slug ?? '';
 }
 
 export type AcademyStatus = 'active' | 'paused' | 'siteDisabled';
@@ -47,40 +42,35 @@ export function academyStatus(academy: Academy): AcademyStatus {
   return 'active';
 }
 
-const STATUS_STYLE: Record<
-  AcademyStatus,
-  { tone: string; dot: string; label: string }
-> = {
+const STATUS_STYLE: Record<AcademyStatus, { tone: string; dot: string; label: string }> = {
   active: {
     tone: 'bg-success/10 text-success',
     dot: 'bg-success',
-    label: 'stores.statusActive'
+    label: 'stores.statusActive',
   },
   paused: {
     tone: 'bg-muted text-muted-foreground',
     dot: 'bg-muted-foreground',
-    label: 'stores.statusPaused'
+    label: 'stores.statusPaused',
   },
   siteDisabled: {
     tone: 'bg-warning/10 text-warning',
     dot: 'bg-warning',
-    label: 'stores.statusSiteDisabled'
-  }
+    label: 'stores.statusSiteDisabled',
+  },
 };
 
 export function AcademyStatusPill({
   academy,
   dotOnly = false,
-  t
+  t,
 }: {
   academy: Academy;
   dotOnly?: boolean;
   t: (key: string) => string;
 }) {
   const style = STATUS_STYLE[academyStatus(academy)];
-  const dot = (
-    <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', style.dot)} />
-  );
+  const dot = <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', style.dot)} />;
 
   if (dotOnly) return <span title={t(style.label)}>{dot}</span>;
 
@@ -88,7 +78,7 @@ export function AcademyStatusPill({
     <span
       className={cn(
         'inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium',
-        style.tone
+        style.tone,
       )}
     >
       {dot}

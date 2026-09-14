@@ -10,17 +10,13 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  DataList,
-  DataPanel,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { formatFileSize } from '@/components/shared/utils';
 import type { StorageObject } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -41,28 +37,22 @@ export function StorageObjectsTable({
   unusedBytes,
   loading,
   onDelete,
-  onDeleteAll
+  onDeleteAll,
 }: StorageObjectsTableProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const [filter, setFilter] = useState<Filter>('unused');
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [confirmMode, setConfirmMode] = useState<'selected' | 'all' | null>(
-    null
-  );
+  const [confirmMode, setConfirmMode] = useState<'selected' | 'all' | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   const visible = useMemo(
-    () =>
-      objects.filter((o) =>
-        filter === 'all' ? true : filter === 'used' ? o.used : !o.used
-      ),
-    [objects, filter]
+    () => objects.filter((o) => (filter === 'all' ? true : filter === 'used' ? o.used : !o.used)),
+    [objects, filter],
   );
   const unusedVisibleKeys = visible.filter((o) => !o.used).map((o) => o.key);
   const allUnusedSelected =
-    unusedVisibleKeys.length > 0 &&
-    unusedVisibleKeys.every((key) => selected.has(key));
+    unusedVisibleKeys.length > 0 && unusedVisibleKeys.every((key) => selected.has(key));
 
   const toggle = (key: string) =>
     setSelected((prev) => {
@@ -72,8 +62,7 @@ export function StorageObjectsTable({
       return next;
     });
 
-  const toggleAll = () =>
-    setSelected(allUnusedSelected ? new Set() : new Set(unusedVisibleKeys));
+  const toggleAll = () => setSelected(allUnusedSelected ? new Set() : new Set(unusedVisibleKeys));
 
   const confirmDelete = async () => {
     if (!confirmMode) return;
@@ -91,8 +80,7 @@ export function StorageObjectsTable({
     }
   };
 
-  const fileLabel = (o: StorageObject) =>
-    o.title || o.key.slice(o.key.lastIndexOf('/') + 1);
+  const fileLabel = (o: StorageObject) => o.title || o.key.slice(o.key.lastIndexOf('/') + 1);
 
   const columns: DataColumn<StorageObject>[] = [
     {
@@ -113,36 +101,32 @@ export function StorageObjectsTable({
             aria-label={fileLabel(o)}
           />
         ),
-      className: 'w-10'
+      className: 'w-10',
     },
     {
       id: 'file',
       header: t('platformStorage.file'),
       cell: (o) => (
-        <span
-          className="block max-w-[320px] truncate"
-          title={o.title || o.key}
-          dir="auto"
-        >
+        <span className="block max-w-[320px] truncate" title={o.title || o.key} dir="auto">
           {fileLabel(o)}
         </span>
-      )
+      ),
     },
     {
       id: 'academy',
       header: t('platformStorage.academy'),
-      cell: (o) => o.academy_name ?? t('platformStorage.platformScope')
+      cell: (o) => o.academy_name ?? t('platformStorage.platformScope'),
     },
     {
       id: 'size',
       header: t('platformStorage.size'),
       cell: (o) => formatFileSize(o.size) || '—',
-      align: 'end'
+      align: 'end',
     },
     {
       id: 'modified',
       header: t('platformStorage.lastModified'),
-      cell: (o) => (o.last_modified ? formatDate(o.last_modified) : '—')
+      cell: (o) => (o.last_modified ? formatDate(o.last_modified) : '—'),
     },
     {
       id: 'status',
@@ -151,8 +135,8 @@ export function StorageObjectsTable({
         <Badge variant={o.used ? 'secondary' : 'destructive'}>
           {o.used ? t('platformStorage.used') : t('platformStorage.unused')}
         </Badge>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -162,9 +146,7 @@ export function StorageObjectsTable({
       filters={
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
           <TabsList>
-            <TabsTrigger value="unused">
-              {t('platformStorage.unused')}
-            </TabsTrigger>
+            <TabsTrigger value="unused">{t('platformStorage.unused')}</TabsTrigger>
             <TabsTrigger value="used">{t('platformStorage.used')}</TabsTrigger>
             <TabsTrigger value="all">{t('common.all')}</TabsTrigger>
           </TabsList>
@@ -213,23 +195,19 @@ export function StorageObjectsTable({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('platformStorage.confirmTitle')}
-            </AlertDialogTitle>
+            <AlertDialogTitle>{t('platformStorage.confirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
               {confirmMode === 'all'
                 ? t('platformStorage.confirmDeleteAll', {
-                    size: formatFileSize(unusedBytes) || ''
+                    size: formatFileSize(unusedBytes) || '',
                   })
                 : t('platformStorage.confirmDescription', {
-                    count: selected.size
+                    count: selected.size,
                   })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>
-              {t('common.cancel')}
-            </AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} disabled={deleting}>
               {t('common.delete')}
             </AlertDialogAction>

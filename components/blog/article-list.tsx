@@ -11,22 +11,14 @@ import { ArticleStatusBadge } from '@/components/blog/article-status-badge';
 import { ArticleWorkflowActions } from '@/components/blog/article-workflow-actions';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { formatDate, formatNumber } from '@/lib/utils';
-import {
-  articleAuthorName,
-  type Article,
-  type ArticleTransition
-} from '@/types/blog';
+import { articleAuthorName, type Article, type ArticleTransition } from '@/types/blog';
 
 type ArticleListProps = {
   articles: Article[];
   isLoading: boolean;
   canReview: boolean;
   basePath: string;
-  onTransition: (
-    id: string,
-    transition: ArticleTransition,
-    reviewNote?: string
-  ) => Promise<void>;
+  onTransition: (id: string, transition: ArticleTransition, reviewNote?: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 };
 
@@ -40,14 +32,13 @@ export function ArticleList({
   canReview,
   basePath,
   onTransition,
-  onDelete
+  onDelete,
 }: ArticleListProps) {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const router = useRouter();
 
-  const openEditor = (article: Article) =>
-    router.push(`${basePath}/${article.id}/edit`);
+  const openEditor = (article: Article) => router.push(`${basePath}/${article.id}/edit`);
 
   const columns: ReadonlyArray<DataColumn<Article>> = [
     {
@@ -58,29 +49,28 @@ export function ArticleList({
           <p className="font-medium">{article.title}</p>
           <p className="text-xs text-muted-foreground">/{article.slug}</p>
         </div>
-      )
+      ),
     },
     {
       id: 'status',
       header: t('blog.fields.status'),
-      cell: (article) => <ArticleStatusBadge status={article.status} />
+      cell: (article) => <ArticleStatusBadge status={article.status} />,
     },
     {
       id: 'author',
       header: t('blog.fields.author'),
-      cell: (article) => articleAuthorName(article)
+      cell: (article) => articleAuthorName(article),
     },
     {
       id: 'published',
       header: t('blog.fields.publishedAt'),
-      cell: (article) =>
-        article.published_at ? formatDate(article.published_at, language) : '—'
+      cell: (article) => (article.published_at ? formatDate(article.published_at, language) : '—'),
     },
     {
       id: 'views',
       header: t('blog.fields.views'),
       align: 'end',
-      cell: (article) => formatNumber(article.view_count, language)
+      cell: (article) => formatNumber(article.view_count, language),
     },
     {
       id: 'actions',
@@ -95,9 +85,7 @@ export function ArticleList({
           <ArticleWorkflowActions
             article={article}
             canReview={canReview}
-            onRun={(transition, note) =>
-              onTransition(article.id, transition, note)
-            }
+            onRun={(transition, note) => onTransition(article.id, transition, note)}
           />
           <Button
             type="button"
@@ -109,8 +97,8 @@ export function ArticleList({
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   const renderCard = (article: Article) => (
@@ -131,9 +119,7 @@ export function ArticleList({
           <ArticleWorkflowActions
             article={article}
             canReview={canReview}
-            onRun={(transition, note) =>
-              onTransition(article.id, transition, note)
-            }
+            onRun={(transition, note) => onTransition(article.id, transition, note)}
           />
         </div>
       </CardContent>

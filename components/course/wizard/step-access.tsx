@@ -27,14 +27,14 @@ const VISIBILITY = [
     published: true,
     icon: Globe,
     titleKey: 'courses.wizard.visibilityPublicTitle',
-    hintKey: 'courses.wizard.visibilityPublicHint'
+    hintKey: 'courses.wizard.visibilityPublicHint',
   },
   {
     published: false,
     icon: Lock,
     titleKey: 'courses.wizard.visibilityPrivateTitle',
-    hintKey: 'courses.wizard.visibilityPrivateHint'
-  }
+    hintKey: 'courses.wizard.visibilityPrivateHint',
+  },
 ] as const;
 
 /**
@@ -47,7 +47,7 @@ export function StepAccess({
   form,
   isPublic,
   onVisibilityChange,
-  onPendingAccessChange
+  onPendingAccessChange,
 }: StepAccessProps) {
   const { t } = useTranslation();
 
@@ -68,25 +68,20 @@ export function StepAccess({
                 'flex items-start gap-3 rounded-lg border p-4 text-start transition-colors',
                 isPublic === published
                   ? 'border-primary bg-primary/5'
-                  : 'border-input hover:bg-accent'
+                  : 'border-input hover:bg-accent',
               )}
             >
               <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
               <span>
                 <span className="block text-sm font-medium">{t(titleKey)}</span>
-                <span className="mt-1 block text-xs text-muted-foreground">
-                  {t(hintKey)}
-                </span>
+                <span className="mt-1 block text-xs text-muted-foreground">{t(hintKey)}</span>
               </span>
             </button>
           ))}
         </CardContent>
       </Card>
 
-      <CourseAccessSection
-        courseId={courseId}
-        onPendingChange={onPendingAccessChange}
-      />
+      <CourseAccessSection courseId={courseId} onPendingChange={onPendingAccessChange} />
 
       {isPublic && <CourseSeoCard form={form} />}
     </div>

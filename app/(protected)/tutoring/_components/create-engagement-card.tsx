@@ -7,7 +7,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import {
   CourseSearchCombobox,
   StudentProfileSearchCombobox,
-  TeacherProfileSearchCombobox
+  TeacherProfileSearchCombobox,
 } from '@/components/entity-search';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -29,7 +29,7 @@ export function CreateEngagementCard({
   form,
   onChange,
   saving,
-  onSubmit
+  onSubmit,
 }: CreateEngagementCardProps) {
   const { t } = useTranslation();
 
@@ -48,15 +48,11 @@ export function CreateEngagementCard({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="studentProfile">
-            {t('tutoring.studentProfileId')}
-          </Label>
+          <Label htmlFor="studentProfile">{t('tutoring.studentProfileId')}</Label>
           <StudentProfileSearchCombobox
             id="studentProfile"
             value={form.student_profile_id}
-            onValueChange={(value) =>
-              onChange({ ...form, student_profile_id: value })
-            }
+            onValueChange={(value) => onChange({ ...form, student_profile_id: value })}
             placeholder={t('entitySearch.searchPlaceholder')}
           />
         </div>
@@ -65,9 +61,7 @@ export function CreateEngagementCard({
           <TeacherProfileSearchCombobox
             id="tutorProfile"
             value={form.tutor_profile_id}
-            onValueChange={(value) =>
-              onChange({ ...form, tutor_profile_id: value })
-            }
+            onValueChange={(value) => onChange({ ...form, tutor_profile_id: value })}
           />
         </div>
         <div className="space-y-2">
@@ -75,9 +69,7 @@ export function CreateEngagementCard({
           <DatePicker
             id="endsAt"
             value={form.ends_at}
-            onChange={(pickedValue: string) =>
-              onChange({ ...form, ends_at: pickedValue })
-            }
+            onChange={(pickedValue: string) => onChange({ ...form, ends_at: pickedValue })}
             withTime
           />
         </div>

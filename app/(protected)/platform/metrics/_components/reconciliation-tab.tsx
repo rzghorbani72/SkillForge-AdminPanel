@@ -6,7 +6,7 @@ import {
   apiClient,
   type MetricsCurrency,
   type MetricsQuery,
-  type ReconciliationLeg
+  type ReconciliationLeg,
 } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -24,7 +24,7 @@ function Leg({ title, leg }: { title: string; leg: ReconciliationLeg }) {
   const entries = [
     ['matched', leg.matched],
     ['missing', leg.missing],
-    ['orphan', leg.orphan]
+    ['orphan', leg.orphan],
   ] as const;
 
   return (
@@ -50,14 +50,12 @@ function Leg({ title, leg }: { title: string; leg: ReconciliationLeg }) {
       </div>
       {leg.missing_ids.length > 0 ? (
         <p className="mt-3 break-all text-xs text-muted-foreground">
-          {t('platformMetrics.reconciliation.missing')}:{' '}
-          {leg.missing_ids.join(', ')}
+          {t('platformMetrics.reconciliation.missing')}: {leg.missing_ids.join(', ')}
         </p>
       ) : null}
       {leg.orphan_ids.length > 0 ? (
         <p className="mt-1 break-all text-xs text-muted-foreground">
-          {t('platformMetrics.reconciliation.orphan')}:{' '}
-          {leg.orphan_ids.join(', ')}
+          {t('platformMetrics.reconciliation.orphan')}: {leg.orphan_ids.join(', ')}
         </p>
       ) : null}
     </div>
@@ -69,15 +67,13 @@ export function ReconciliationTab({ query, currency }: Props) {
   const formatNumber = useNumberFormat();
   const format = useMetricFormat(currency);
   const { data: report, loading } = useMetricsFetch(query, (q) =>
-    apiClient.getMetricsReconciliation(q)
+    apiClient.getMetricsReconciliation(q),
   );
 
   if (loading || !report) {
     return (
       <DataPanel title={t('platformMetrics.reconciliation.title')}>
-        <p className="p-6 text-sm text-muted-foreground">
-          {t('platformMetrics.empty')}
-        </p>
+        <p className="p-6 text-sm text-muted-foreground">{t('platformMetrics.empty')}</p>
       </DataPanel>
     );
   }
@@ -114,9 +110,7 @@ export function ReconciliationTab({ query, currency }: Props) {
           </p>
           <p>
             {t('platformMetrics.metrics.invoice_count')}:{' '}
-            <span className="text-base font-semibold">
-              {formatNumber(report.invoice_count)}
-            </span>
+            <span className="text-base font-semibold">{formatNumber(report.invoice_count)}</span>
           </p>
           <p>
             {t('platformMetrics.metrics.manual_invoice_count')}:{' '}

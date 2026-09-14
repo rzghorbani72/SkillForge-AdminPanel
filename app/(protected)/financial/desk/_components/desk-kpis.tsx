@@ -19,23 +19,23 @@ export function DeskKpis({ desk, loading }: DeskKpisProps) {
     {
       key: 'toDeposit',
       value: desk.to_deposit,
-      hint: t('financial.desk.toDepositHint')
+      hint: t('financial.desk.toDepositHint'),
     },
     {
       key: 'pending',
       value: desk.pending_amount,
-      hint: t('financial.desk.pendingHint')
+      hint: t('financial.desk.pendingHint'),
     },
     {
       key: 'academyShare',
       value: desk.academy_share,
-      hint: t('financial.desk.academyShareHint')
+      hint: t('financial.desk.academyShareHint'),
     },
     {
       key: 'platformShare',
       value: desk.platform_share,
-      hint: t('financial.desk.platformShareHint')
-    }
+      hint: t('financial.desk.platformShareHint'),
+    },
   ] as const;
 
   return (
@@ -51,9 +51,7 @@ export function DeskKpis({ desk, loading }: DeskKpisProps) {
             {loading ? (
               <Skeleton className="h-8 w-32" />
             ) : (
-              <p className="text-2xl font-semibold tracking-tight">
-                {formatToman(item.value)}
-              </p>
+              <p className="text-2xl font-semibold tracking-tight">{formatToman(item.value)}</p>
             )}
             <p className="mt-1 text-xs text-muted-foreground">{item.hint}</p>
           </CardContent>

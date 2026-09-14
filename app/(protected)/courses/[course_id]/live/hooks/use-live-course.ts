@@ -5,11 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import type { Course } from '@/types/api';
-import type {
-  CourseTopic,
-  TutoringGroup,
-  TutoringOffer
-} from '@/types/learning-operations';
+import type { CourseTopic, TutoringGroup, TutoringOffer } from '@/types/learning-operations';
 
 export interface LiveCourseData {
   course: Course | null;
@@ -22,7 +18,7 @@ const EMPTY: LiveCourseData = {
   course: null,
   topics: [],
   offers: [],
-  groups: []
+  groups: [],
 };
 
 /**
@@ -42,7 +38,7 @@ export function useLiveCourse(courseId: string) {
         apiClient.getCourse(courseId),
         apiClient.getCourseTopics(courseId).catch(() => []),
         apiClient.getTutoringOffers({ course_id: courseId }).catch(() => []),
-        apiClient.getTutoringGroups({ course_id: courseId }).catch(() => [])
+        apiClient.getTutoringGroups({ course_id: courseId }).catch(() => []),
       ]);
       setData({ course: course ?? null, topics, offers, groups });
     } catch (err) {
@@ -57,9 +53,8 @@ export function useLiveCourse(courseId: string) {
   }, [load]);
 
   const patch = useCallback(
-    (next: Partial<LiveCourseData>) =>
-      setData((current) => ({ ...current, ...next })),
-    []
+    (next: Partial<LiveCourseData>) => setData((current) => ({ ...current, ...next })),
+    [],
   );
 
   return { ...data, isLoading, reload: load, patch };

@@ -22,12 +22,12 @@ const PLATFORM_SCOPED_PREFIXES = [
   '/teacher-payouts',
   '/academies',
   '/user/academies',
-  '/onboarding'
+  '/onboarding',
 ];
 
 export function isPlatformScoped(pathname: string): boolean {
   return PLATFORM_SCOPED_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
 }
 
@@ -46,7 +46,7 @@ export function ScopeContextBanner({ className }: { className?: string }) {
     <div
       className={cn(
         'flex items-center gap-2 border-b bg-muted/30 px-4 py-2 text-sm sm:px-6',
-        className
+        className,
       )}
     >
       <Globe2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

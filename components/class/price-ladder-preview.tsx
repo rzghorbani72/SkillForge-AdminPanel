@@ -15,24 +15,15 @@ interface PriceLadderPreviewProps {
  * group, a seat in a public class, and a class bought whole. A 1:1 priced
  * below a seat can never move into a class, so that gets a warning.
  */
-export function PriceLadderPreview({
-  groupPrice,
-  soloPrice
-}: PriceLadderPreviewProps) {
+export function PriceLadderPreview({ groupPrice, soloPrice }: PriceLadderPreviewProps) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
   if (!groupPrice && !soloPrice) return null;
 
   const rows = [
-    soloPrice
-      ? { label: t('courses.live.priceLadderPrivate'), value: soloPrice }
-      : null,
-    groupPrice
-      ? { label: t('courses.live.priceLadderSmall'), value: groupPrice }
-      : null,
-    groupPrice
-      ? { label: t('courses.live.priceLadderPublic'), value: groupPrice }
-      : null
+    soloPrice ? { label: t('courses.live.priceLadderPrivate'), value: soloPrice } : null,
+    groupPrice ? { label: t('courses.live.priceLadderSmall'), value: groupPrice } : null,
+    groupPrice ? { label: t('courses.live.priceLadderPublic'), value: groupPrice } : null,
   ].filter((row): row is { label: string; value: number } => row !== null);
 
   return (
@@ -48,9 +39,7 @@ export function PriceLadderPreview({
           </li>
         ))}
       </ul>
-      <p className="text-xs text-muted-foreground">
-        {t('courses.live.priceLadderWhole')}
-      </p>
+      <p className="text-xs text-muted-foreground">{t('courses.live.priceLadderWhole')}</p>
       {soloPrice > 0 && groupPrice > 0 && soloPrice < groupPrice ? (
         <p className="flex items-start gap-1.5 text-xs text-amber-700">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />

@@ -13,19 +13,16 @@ import { ArvanDomainsLink } from '@/components/settings/arvan-domains-link';
 import { DnsRecordTable } from '@/components/settings/dns-record-table';
 import {
   DomainSetupCheckButton,
-  DomainSetupStepCard
+  DomainSetupStepCard,
 } from '@/components/settings/domain-setup-step-card';
 import { DomainPlatformSteps } from '@/components/settings/domain-platform-steps';
 import {
   toDnsPanelHost,
   toManagerAcmeRows,
   trafficDnsRows,
-  stripDnsDot
+  stripDnsDot,
 } from '@/lib/custom-domain-dns';
-import type {
-  AcmeDnsRecord,
-  CustomDomainSetupResponse
-} from '@/types/custom-domain-setup';
+import type { AcmeDnsRecord, CustomDomainSetupResponse } from '@/types/custom-domain-setup';
 
 export function DomainConnectionWizard() {
   const { t } = useTranslation();
@@ -33,23 +30,19 @@ export function DomainConnectionWizard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hamraveshHost, setHamraveshHost] = useState('');
-  const [acmeRows, setAcmeRows] = useState<AcmeDnsRecord[]>([
-    { host: '', value: '' }
-  ]);
+  const [acmeRows, setAcmeRows] = useState<AcmeDnsRecord[]>([{ host: '', value: '' }]);
 
   const apply = useCallback((next: CustomDomainSetupResponse) => {
     setData(next);
-    setHamraveshHost(
-      next.setup.hamravesh_hostname ?? next.public_address ?? ''
-    );
+    setHamraveshHost(next.setup.hamravesh_hostname ?? next.public_address ?? '');
     const zone = next.public_address ?? '';
     setAcmeRows(
       next.setup.acme_records.length > 0
         ? next.setup.acme_records.map((r) => ({
             host: toDnsPanelHost(r.host, zone),
-            value: stripDnsDot(r.value)
+            value: stripDnsDot(r.value),
           }))
-        : [{ host: '', value: '' }]
+        : [{ host: '', value: '' }],
     );
   }, []);
 
@@ -68,9 +61,7 @@ export function DomainConnectionWizard() {
     void load();
   }, [load]);
 
-  const patch = async (
-    body: Parameters<typeof apiClient.updateCustomDomainSetup>[0]
-  ) => {
+  const patch = async (body: Parameters<typeof apiClient.updateCustomDomainSetup>[0]) => {
     setSaving(true);
     try {
       apply(await apiClient.updateCustomDomainSetup(body));
@@ -94,8 +85,8 @@ export function DomainConnectionWizard() {
       } else {
         ErrorHandler.showError(
           t('settings.domainDns.dnsFail', {
-            resolved: result.resolved_to ?? '—'
-          })
+            resolved: result.resolved_to ?? '—',
+          }),
         );
       }
     } catch (error) {
@@ -106,11 +97,7 @@ export function DomainConnectionWizard() {
   };
 
   if (loading || !data) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        {t('settings.domainDns.loading')}
-      </p>
-    );
+    return <p className="text-sm text-muted-foreground">{t('settings.domainDns.loading')}</p>;
   }
 
   const target = data.cname_target;
@@ -123,9 +110,7 @@ export function DomainConnectionWizard() {
     <div className="space-y-4">
       <Alert>
         <Info className="h-4 w-4" />
-        <AlertDescription>
-          {t('settings.domainDns.wizardIntro')}
-        </AlertDescription>
+        <AlertDescription>{t('settings.domainDns.wizardIntro')}</AlertDescription>
       </Alert>
 
       <ol className="space-y-3">
@@ -139,9 +124,7 @@ export function DomainConnectionWizard() {
         >
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" asChild>
-              <Link href="/settings/academy">
-                {t('settings.domainDns.openAcademySettings')}
-              </Link>
+              <Link href="/settings/academy">{t('settings.domainDns.openAcademySettings')}</Link>
             </Button>
             <DomainSetupCheckButton
               label={t('settings.domainDns.recheck')}
@@ -172,7 +155,7 @@ export function DomainConnectionWizard() {
           onAttach={() =>
             void patch({
               hamravesh_hostname: hamraveshHost.trim(),
-              hamravesh_attached: true
+              hamravesh_attached: true,
             })
           }
           onSaveAcme={() =>
@@ -181,8 +164,8 @@ export function DomainConnectionWizard() {
                 .filter((r) => r.host && r.value)
                 .map((r) => ({
                   host: toDnsPanelHost(r.host, domain),
-                  value: stripDnsDot(r.value)
-                }))
+                  value: stripDnsDot(r.value),
+                })),
             })
           }
         />
@@ -195,8 +178,7 @@ export function DomainConnectionWizard() {
           title={t('settings.domainDns.wizard.traffic.title')}
           body={
             <>
-              {t('settings.domainDns.wizard.traffic.bodyBefore')}{' '}
-              <ArvanDomainsLink />
+              {t('settings.domainDns.wizard.traffic.bodyBefore')} <ArvanDomainsLink />
               {'. '}
               {t('settings.domainDns.wizard.traffic.bodyAfter')}
             </>
@@ -218,7 +200,7 @@ export function DomainConnectionWizard() {
           {setup.dns_resolved_to ? (
             <p className="text-xs text-muted-foreground" dir="ltr">
               {t('settings.domainDns.resolvedTo', {
-                value: setup.dns_resolved_to
+                value: setup.dns_resolved_to,
               })}
             </p>
           ) : null}

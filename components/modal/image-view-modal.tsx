@@ -1,12 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
@@ -32,7 +27,7 @@ const ImageViewModal: React.FC<ImageViewModalProps> = ({
   imageUrl,
   title,
   filename,
-  onDownload
+  onDownload,
 }) => {
   const fullImageUrl = imageUrl.startsWith('/')
     ? `${process.env.NEXT_PUBLIC_HOST || ''}${imageUrl}`

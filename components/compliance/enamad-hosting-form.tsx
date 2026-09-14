@@ -31,12 +31,11 @@ export function EnamadHostingForm({
   onSealIdChange,
   onSubmit,
   onSaveSealId,
-  onTitleVerify
+  onTitleVerify,
 }: Props) {
   const { t } = useTranslation();
   const isVerified = state.status === ENAMAD_STATUS.VERIFIED;
-  const sealDirty =
-    sealId.trim().length > 0 && sealId.trim() !== (state.seal_id ?? '');
+  const sealDirty = sealId.trim().length > 0 && sealId.trim() !== (state.seal_id ?? '');
 
   return (
     <div className="space-y-4">
@@ -54,12 +53,8 @@ export function EnamadHostingForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="enamad-seal-id">
-          {t('compliance.enamad.sealIdLabel')}
-        </Label>
-        <p className="text-sm text-muted-foreground">
-          {t('compliance.enamad.sealIdHelp')}
-        </p>
+        <Label htmlFor="enamad-seal-id">{t('compliance.enamad.sealIdLabel')}</Label>
+        <p className="text-sm text-muted-foreground">{t('compliance.enamad.sealIdHelp')}</p>
         <Input
           id="enamad-seal-id"
           value={sealId}
@@ -72,18 +67,11 @@ export function EnamadHostingForm({
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button
-          onClick={onSubmit}
-          disabled={saving || isVerified || code.trim().length < 4}
-        >
+        <Button onClick={onSubmit} disabled={saving || isVerified || code.trim().length < 4}>
           {t('compliance.enamad.submit')}
         </Button>
         {state.proofs_live && sealDirty ? (
-          <Button
-            variant="secondary"
-            onClick={onSaveSealId}
-            disabled={saving || isVerified}
-          >
+          <Button variant="secondary" onClick={onSaveSealId} disabled={saving || isVerified}>
             {t('compliance.enamad.saveSealId')}
           </Button>
         ) : null}
@@ -98,9 +86,7 @@ export function EnamadHostingForm({
       {state.proofs_live ? (
         <div className="flex items-center justify-between gap-3 rounded-md border p-3">
           <div>
-            <p className="text-sm font-medium">
-              {t('compliance.enamad.titleVerifyLabel')}
-            </p>
+            <p className="text-sm font-medium">{t('compliance.enamad.titleVerifyLabel')}</p>
             <p className="text-sm text-muted-foreground">
               {t('compliance.enamad.titleVerifyHelp')}
             </p>
@@ -115,9 +101,7 @@ export function EnamadHostingForm({
       ) : (
         <Alert>
           <Info className="h-4 w-4" />
-          <AlertDescription>
-            {t('compliance.enamad.submitToPlaceProofs')}
-          </AlertDescription>
+          <AlertDescription>{t('compliance.enamad.submitToPlaceProofs')}</AlertDescription>
         </Alert>
       )}
 

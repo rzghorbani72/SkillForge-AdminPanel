@@ -15,14 +15,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from './ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 interface DashboardNavProps {
@@ -38,7 +33,7 @@ const NavItemContent = React.memo(
     isExpanded,
     isActive,
     isChildItem,
-    translatedTitle
+    translatedTitle,
   }: {
     item: NavItem;
     isMinimized: boolean;
@@ -56,7 +51,7 @@ const NavItemContent = React.memo(
         className={cn(
           'sidebar-item group',
           isActive && (isChildItem ? 'active-child' : 'active'),
-          item.disabled && 'cursor-not-allowed opacity-45 hover:bg-transparent'
+          item.disabled && 'cursor-not-allowed opacity-45 hover:bg-transparent',
         )}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -68,7 +63,7 @@ const NavItemContent = React.memo(
             className={cn(
               'shrink-0 transition-colors duration-200 ease-out',
               isActive ? 'text-primary' : 'text-muted-foreground',
-              !isActive && !item.disabled && 'group-hover:text-primary'
+              !isActive && !item.disabled && 'group-hover:text-primary',
             )}
           />
         )}
@@ -79,22 +74,18 @@ const NavItemContent = React.memo(
                 'truncate text-sm transition-colors duration-150',
                 isActive
                   ? 'font-semibold text-primary'
-                  : 'font-medium text-foreground/75 group-hover:text-primary'
+                  : 'font-medium text-foreground/75 group-hover:text-primary',
               )}
             >
               {translatedTitle}
             </span>
-            {item.disabled && (
-              <Lock className="h-3 w-3 shrink-0 text-muted-foreground" />
-            )}
+            {item.disabled && <Lock className="h-3 w-3 shrink-0 text-muted-foreground" />}
             {item.badge !== undefined && (
               <Badge
                 variant="secondary"
                 className={cn(
                   'h-[18px] rounded-full px-1.5 py-0 text-[10px] font-semibold',
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-primary/10 text-primary'
+                  isActive ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary',
                 )}
               >
                 {item.badge}
@@ -106,13 +97,13 @@ const NavItemContent = React.memo(
           <ChevronRight
             className={cn(
               'h-3.5 w-3.5 shrink-0 text-muted-foreground/60 transition-transform duration-150',
-              isExpanded ? 'rotate-90 text-primary' : 'rotate-180'
+              isExpanded ? 'rotate-90 text-primary' : 'rotate-180',
             )}
           />
         )}
       </div>
     );
-  }
+  },
 );
 
 NavItemContent.displayName = 'NavItemContent';
@@ -121,7 +112,7 @@ const NavItemLink = React.memo(
   ({
     item,
     onClick,
-    children
+    children,
   }: {
     item: NavItem;
     onClick: () => void;
@@ -131,29 +122,23 @@ const NavItemLink = React.memo(
       href={item.disabled ? '/' : item.href || '#'}
       className={cn(
         'block rounded-xl transition-all duration-200',
-        item.disabled && 'cursor-not-allowed opacity-60'
+        item.disabled && 'cursor-not-allowed opacity-60',
       )}
       onClick={onClick}
     >
       {children}
     </Link>
-  )
+  ),
 );
 
 NavItemLink.displayName = 'NavItemLink';
 
 const NavItemButton = React.memo(
-  ({
-    onClick,
-    children
-  }: {
-    onClick: () => void;
-    children: React.ReactNode;
-  }) => (
+  ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
     <button className="w-full text-start" onClick={onClick}>
       {children}
     </button>
-  )
+  ),
 );
 
 NavItemButton.displayName = 'NavItemButton';
@@ -181,15 +166,11 @@ function matchScore(href: string, path: string, query: string): number {
 function collectHrefs(items: NavItem[]): string[] {
   return items.flatMap((item) => [
     ...(item.href ? [item.href] : []),
-    ...(item.children ? collectHrefs(item.children) : [])
+    ...(item.children ? collectHrefs(item.children) : []),
   ]);
 }
 
-export function DashboardNav({
-  items,
-  setOpen,
-  isMobileNav = false
-}: DashboardNavProps) {
+export function DashboardNav({ items, setOpen, isMobileNav = false }: DashboardNavProps) {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const pathname = usePathname();
@@ -201,9 +182,7 @@ export function DashboardNav({
   const { isAboveLg } = useBreakpoint('lg');
 
   // Construct full path with query parameters
-  const fullPath = searchParams.toString()
-    ? `${pathname}?${searchParams.toString()}`
-    : pathname;
+  const fullPath = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
 
   const translateNavTitle = useCallback(
     (label: string, title: string): string => {
@@ -214,15 +193,13 @@ export function DashboardNav({
       }
       return title;
     },
-    [t]
+    [t],
   );
 
   // Accordion: one group open at a time, so the list never grows past the
   // viewport and the next group is always one click away.
   const toggleExpand = useCallback((title: string) => {
-    setExpandedItems((prev) =>
-      prev.has(title) ? new Set<string>() : new Set([title])
-    );
+    setExpandedItems((prev) => (prev.has(title) ? new Set<string>() : new Set([title])));
   }, []);
 
   const handleSetOpen = useCallback(() => {
@@ -241,7 +218,7 @@ export function DashboardNav({
 
   const isPathActive = useCallback(
     (href: string | undefined) => Boolean(href) && href === activeHref,
-    [activeHref]
+    [activeHref],
   );
 
   const hasActiveChild = useCallback(
@@ -249,7 +226,7 @@ export function DashboardNav({
       if (!item.children || item.children.length === 0) return false;
       return item.children.some((child) => isPathActive(child.href));
     },
-    [isPathActive]
+    [isPathActive],
   );
 
   // Open the group holding the current page. A group the user opened by hand
@@ -257,16 +234,13 @@ export function DashboardNav({
   React.useEffect(() => {
     const active = items.find((item) => hasActiveChild(item));
     if (!active) return;
-    setExpandedItems((prev) =>
-      prev.has(active.title) ? prev : new Set([active.title])
-    );
+    setExpandedItems((prev) => (prev.has(active.title) ? prev : new Set([active.title])));
   }, [fullPath, items, hasActiveChild]);
 
   // Nesting is one level deep by construction (see nav-filter), so a plain
   // recursive function is enough — no memo dance around itself.
   function renderNavItem(item: NavItem, depth = 0) {
-    const hasChildren =
-      item.children && Array.isArray(item.children) && item.children.length > 0;
+    const hasChildren = item.children && Array.isArray(item.children) && item.children.length > 0;
     const isExpanded = expandedItems.has(item.title);
 
     const isActive = hasChildren
@@ -305,17 +279,14 @@ export function DashboardNav({
             </DropdownMenuLabel>
             {item.children &&
               item.children.map((child, index) => {
-                const childTranslatedTitle = translateNavTitle(
-                  child.label || '',
-                  child.title
-                );
+                const childTranslatedTitle = translateNavTitle(child.label || '', child.title);
                 const childIsActive = isPathActive(child.href);
                 return (
                   <DropdownMenuItem
                     key={`${child.title}-${index}`}
                     className={cn(
                       'rounded-lg px-3 py-2 transition-colors',
-                      childIsActive && 'bg-primary/10 text-primary'
+                      childIsActive && 'bg-primary/10 text-primary',
                     )}
                     asChild
                   >
@@ -325,15 +296,13 @@ export function DashboardNav({
                         onClick={handleSetOpen}
                         className={cn(
                           'w-full cursor-pointer font-medium',
-                          childIsActive ? 'text-primary' : 'text-foreground/80'
+                          childIsActive ? 'text-primary' : 'text-foreground/80',
                         )}
                       >
                         {childTranslatedTitle}
                       </Link>
                     ) : (
-                      <span className="cursor-pointer">
-                        {childTranslatedTitle}
-                      </span>
+                      <span className="cursor-pointer">{childTranslatedTitle}</span>
                     )}
                   </DropdownMenuItem>
                 );
@@ -375,9 +344,7 @@ export function DashboardNav({
               <div className="relative ms-4 mt-0.5 space-y-px overflow-visible border-s border-border/60 ps-2.5">
                 {item.children &&
                   item.children.map((child, index) => (
-                    <div key={`${child.title}-${index}`}>
-                      {renderNavItem(child, depth + 1)}
-                    </div>
+                    <div key={`${child.title}-${index}`}>{renderNavItem(child, depth + 1)}</div>
                   ))}
               </div>
             );
@@ -399,8 +366,7 @@ export function DashboardNav({
     <nav className="flex flex-col gap-1">
       <TooltipProvider delayDuration={0}>
         {memoizedItems.map((item) => {
-          const showSection =
-            item.section && !renderedSections.has(item.section);
+          const showSection = item.section && !renderedSections.has(item.section);
           if (item.section) renderedSections.add(item.section);
 
           return (
@@ -410,9 +376,7 @@ export function DashboardNav({
                   {t(`navigation.section.${item.section}`) || item.section}
                 </div>
               )}
-              {showSection && isMinimized && (
-                <div className="mx-2 my-1.5 h-px bg-border/50" />
-              )}
+              {showSection && isMinimized && <div className="mx-2 my-1.5 h-px bg-border/50" />}
               <Tooltip>
                 <TooltipTrigger asChild>{renderNavItem(item)}</TooltipTrigger>
                 <TooltipContent
@@ -421,7 +385,7 @@ export function DashboardNav({
                   sideOffset={12}
                   className={cn(
                     'rounded-md border-border/50 bg-popover/95 px-3 py-1.5 text-sm font-medium shadow-lg backdrop-blur-xl',
-                    !isMinimized && 'hidden'
+                    !isMinimized && 'hidden',
                   )}
                 >
                   {translateNavTitle(item.label || '', item.title)}

@@ -6,17 +6,17 @@ Contact page and in the site footer.
 
 ## Why it is not part of the template builder
 
-The template builder composes *layout*. This is *text a manager writes once*.
+The template builder composes _layout_. This is _text a manager writes once_.
 Keeping it separate means a manager can fill in their contact details without
 opening a page editor, and the public pages stay plain server-rendered HTML —
 which matters, because these pages exist to be found by search engines.
 
 ## Data
 
-| Model         | Holds                                                                 |
-| ------------- | --------------------------------------------------------------------- |
+| Model         | Holds                                                                                |
+| ------------- | ------------------------------------------------------------------------------------ |
 | `AcademyPage` | One row per `(academy_id, slug)`, slug ∈ `about` \| `contact`. Body is **Markdown**. |
-| `ContactInfo` | One row per published channel (`type`, `value`, optional `label`, `sort_order`). |
+| `ContactInfo` | One row per published channel (`type`, `value`, optional `label`, `sort_order`).     |
 
 `ContactInfo` already existed in the schema but was unused; this feature is its
 first consumer. Both tables are scoped by `academy_id` and cascade with the
@@ -27,13 +27,13 @@ never returns it and the public route 404s.
 
 ## API — `Backend/src/academy-site`
 
-| Route                                | Access    | Purpose                          |
-| ------------------------------------ | --------- | -------------------------------- |
-| `GET /academy-site/public?slug=`     | public    | Published pages + channels, by academy slug |
-| `GET /academy-site/pages`            | manager   | Both pages, drafts included      |
-| `PUT /academy-site/pages/:slug`      | manager   | Save one page                    |
-| `GET /academy-site/contact-links`    | manager   | Current channel list             |
-| `PUT /academy-site/contact-links`    | manager   | Replace the whole ordered list   |
+| Route                             | Access  | Purpose                                     |
+| --------------------------------- | ------- | ------------------------------------------- |
+| `GET /academy-site/public?slug=`  | public  | Published pages + channels, by academy slug |
+| `GET /academy-site/pages`         | manager | Both pages, drafts included                 |
+| `PUT /academy-site/pages/:slug`   | manager | Save one page                               |
+| `GET /academy-site/contact-links` | manager | Current channel list                        |
+| `PUT /academy-site/contact-links` | manager | Replace the whole ordered list              |
 
 Channels are replaced as one list rather than diffed: the panel edits them as a
 single ordered list, and a partial failure would leave a half-edited public site.

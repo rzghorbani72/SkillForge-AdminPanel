@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   computeSubscriptionDaysRemaining,
-  type SubscriptionUiStatus
+  type SubscriptionUiStatus,
 } from '@/lib/subscription-days';
 
 const TICK_MS = 60_000;
@@ -26,8 +26,8 @@ export function useLiveSubscriptionDays(input: {
         subscriptionExpires: input.subscriptionExpires,
         graceUntil: input.graceUntil,
         status: input.status,
-        now
+        now,
       }),
-    [input.subscriptionExpires, input.graceUntil, input.status, now]
+    [input.subscriptionExpires, input.graceUntil, input.status, now],
   );
 }

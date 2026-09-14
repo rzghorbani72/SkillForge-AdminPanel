@@ -39,7 +39,7 @@ export function TiptapEditor({
   maxLength,
   disabled,
   minRows = 12,
-  onInsertImage
+  onInsertImage,
 }: TiptapEditorProps) {
   const { t } = useTranslation();
   const emittedRef = React.useRef<string | null>(null);
@@ -53,11 +53,11 @@ export function TiptapEditor({
       // StarterKit v3 already ships bold/italic/underline/link, so they are
       // configured here rather than registered a second time.
       StarterKit.configure({
-        link: { openOnClick: false, autolink: true }
+        link: { openOnClick: false, autolink: true },
       }),
       Image.configure({ inline: false }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      Placeholder.configure({ placeholder: placeholder ?? '' })
+      Placeholder.configure({ placeholder: placeholder ?? '' }),
     ],
     content: value,
     onUpdate: ({ editor: instance }) => {
@@ -70,9 +70,9 @@ export function TiptapEditor({
       attributes: {
         class:
           'rich-editor prose-description w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring',
-        style: `min-height: ${minRows * 1.75}rem; unicode-bidi: plaintext;`
-      }
-    }
+        style: `min-height: ${minRows * 1.75}rem; unicode-bidi: plaintext;`,
+      },
+    },
   });
 
   // Only push a value the editor did not just emit, or typing would fight the
@@ -109,9 +109,7 @@ export function TiptapEditor({
 
       <div className="flex items-center justify-between gap-2 text-sm">
         <p className="text-muted-foreground">{t('editor.formattingHint')}</p>
-        {maxLength != null && (
-          <CharacterCounter length={length} maxLength={maxLength} />
-        )}
+        {maxLength != null && <CharacterCounter length={length} maxLength={maxLength} />}
       </div>
     </div>
   );

@@ -3,13 +3,7 @@
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
@@ -18,12 +12,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { ErrorHandler } from '@/lib/error-handler';
 import { apiClient, type PlatformSettingsData } from '@/lib/api';
-import {
-  COST_DEFAULTS,
-  fromPercent,
-  toPercent,
-  type CostSettingKey
-} from './pricing-helpers';
+import { COST_DEFAULTS, fromPercent, toPercent, type CostSettingKey } from './pricing-helpers';
 
 /** Money fields render with thousands separators; small counts do not. */
 const PRICE_FIELDS: CostSettingKey[] = [
@@ -33,7 +22,7 @@ const PRICE_FIELDS: CostSettingKey[] = [
   'cost_compute_base_per_academy_toman',
   'cost_platform_fixed_monthly_toman',
   'storage_addon_price_toman',
-  'traffic_addon_price_toman'
+  'traffic_addon_price_toman',
 ];
 
 const UNIT_COST_FIELDS: CostSettingKey[] = [
@@ -43,31 +32,29 @@ const UNIT_COST_FIELDS: CostSettingKey[] = [
   'cost_compute_base_per_academy_toman',
   'cost_compute_per_student_toman',
   'cost_sms_per_message_toman',
-  'cost_platform_fixed_monthly_toman'
+  'cost_platform_fixed_monthly_toman',
 ];
 
 const ADDON_FIELDS: CostSettingKey[] = [
   'storage_addon_gb',
   'storage_addon_price_toman',
   'traffic_addon_gb',
-  'traffic_addon_price_toman'
+  'traffic_addon_price_toman',
 ];
 
 type FormState = Record<CostSettingKey, string>;
 
 const toForm = (settings: PlatformSettingsData | null): FormState => {
-  const entries = (Object.keys(COST_DEFAULTS) as CostSettingKey[]).map(
-    (key) => {
-      const raw = settings?.[key];
-      const value =
-        key === 'cost_gateway_fee_rate'
-          ? toPercent(typeof raw === 'number' ? raw : COST_DEFAULTS[key])
-          : typeof raw === 'number'
-            ? raw
-            : COST_DEFAULTS[key];
-      return [key, String(value)] as const;
-    }
-  );
+  const entries = (Object.keys(COST_DEFAULTS) as CostSettingKey[]).map((key) => {
+    const raw = settings?.[key];
+    const value =
+      key === 'cost_gateway_fee_rate'
+        ? toPercent(typeof raw === 'number' ? raw : COST_DEFAULTS[key])
+        : typeof raw === 'number'
+          ? raw
+          : COST_DEFAULTS[key];
+    return [key, String(value)] as const;
+  });
   return Object.fromEntries(entries) as FormState;
 };
 
@@ -96,8 +83,7 @@ export function CostAssumptionsCard({ settings, onSaved }: Props) {
     if (settings) setForm(toForm(settings));
   }, [settings]);
 
-  const set = (key: CostSettingKey, raw: string) =>
-    setForm((prev) => ({ ...prev, [key]: raw }));
+  const set = (key: CostSettingKey, raw: string) => setForm((prev) => ({ ...prev, [key]: raw }));
 
   const handleSave = async () => {
     setSaving(true);
@@ -114,15 +100,11 @@ export function CostAssumptionsCard({ settings, onSaved }: Props) {
         return acc;
       }, {});
 
-      await apiClient.updatePlatformSettings(
-        payload as Partial<PlatformSettingsData>
-      );
+      await apiClient.updatePlatformSettings(payload as Partial<PlatformSettingsData>);
       ErrorHandler.showSuccess(t('pricing.costs.saveSuccess'));
       await onSaved();
     } catch (error) {
-      ErrorHandler.showError(
-        apiErrorMessage(error, t('pricing.costs.saveFailed'))
-      );
+      ErrorHandler.showError(apiErrorMessage(error, t('pricing.costs.saveFailed')));
     } finally {
       setSaving(false);
     }
@@ -130,9 +112,7 @@ export function CostAssumptionsCard({ settings, onSaved }: Props) {
 
   const field = (key: CostSettingKey) => {
     const placeholder = formatNumber(
-      key === 'cost_gateway_fee_rate'
-        ? toPercent(COST_DEFAULTS[key])
-        : COST_DEFAULTS[key]
+      key === 'cost_gateway_fee_rate' ? toPercent(COST_DEFAULTS[key]) : COST_DEFAULTS[key],
     );
 
     return (
@@ -173,9 +153,7 @@ export function CostAssumptionsCard({ settings, onSaved }: Props) {
 
         <div className="space-y-2">
           <Label className="text-xs">{t('pricing.costs.addonsTitle')}</Label>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {ADDON_FIELDS.map(field)}
-          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{ADDON_FIELDS.map(field)}</div>
         </div>
 
         <Button onClick={handleSave} disabled={saving}>

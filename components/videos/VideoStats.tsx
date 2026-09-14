@@ -17,7 +17,7 @@ export function VideoStats({
   totalVideos,
   attachedToLessons,
   totalSizeBytes,
-  totalDurationSeconds
+  totalDurationSeconds,
 }: VideoStatsProps) {
   const { t } = useTranslation();
 

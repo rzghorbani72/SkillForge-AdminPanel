@@ -12,19 +12,14 @@ import { Button } from '@/components/ui/button';
 import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -34,7 +29,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -44,7 +39,7 @@ import { apiErrorMessage } from '@/lib/api-error-message';
 const planSchema = z.object({
   installment_count: z.coerce.number().int().min(1),
   amount_per_installment: z.coerce.number().min(0),
-  interval_days: z.coerce.number().int().min(1)
+  interval_days: z.coerce.number().int().min(1),
 });
 type PlanValues = z.infer<typeof planSchema>;
 
@@ -65,8 +60,8 @@ export default function PaymentPlansPage() {
     defaultValues: {
       installment_count: 3,
       amount_per_installment: 0,
-      interval_days: 30
-    }
+      interval_days: 30,
+    },
   });
 
   async function load() {
@@ -102,7 +97,7 @@ export default function PaymentPlansPage() {
   async function toggleActive(plan: any) {
     try {
       await apiClient.updatePaymentPlan(plan.id, {
-        is_active: !plan.is_active
+        is_active: !plan.is_active,
       });
       load();
     } catch (error) {
@@ -114,9 +109,7 @@ export default function PaymentPlansPage() {
     <div className="flex-1 space-y-6 p-4 sm:p-6">
       <div className="flex items-center gap-3">
         <div className="flex-1">
-          <h2 className="text-xl font-bold tracking-tight">
-            {t('paymentPlans.title')}
-          </h2>
+          <h2 className="text-xl font-bold tracking-tight">{t('paymentPlans.title')}</h2>
           <p className="text-sm text-muted-foreground">
             {course?.title
               ? t('paymentPlans.description', { course: course.title })
@@ -156,48 +149,33 @@ export default function PaymentPlansPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('paymentPlans.installments')}</TableHead>
-                  <TableHead>
-                    {t('paymentPlans.amountPerInstallment')}
-                  </TableHead>
+                  <TableHead>{t('paymentPlans.amountPerInstallment')}</TableHead>
                   <TableHead>{t('paymentPlans.intervalDays')}</TableHead>
                   <TableHead>{t('paymentPlans.total')}</TableHead>
                   <TableHead>{t('common.status')}</TableHead>
-                  <TableHead className="text-right">
-                    {t('common.actions')}
-                  </TableHead>
+                  <TableHead className="text-right">{t('common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {plans.map((plan) => (
                   <TableRow key={plan.id}>
-                    <TableCell>
-                      {formatNumber(plan.installment_count ?? 0)}x
-                    </TableCell>
+                    <TableCell>{formatNumber(plan.installment_count ?? 0)}x</TableCell>
                     <TableCell>
                       {plan.amount_per_installment != null
                         ? formatNumber(plan.amount_per_installment)
                         : ''}
                     </TableCell>
-                    <TableCell>
-                      {formatNumber(plan.interval_days ?? 0)}d
-                    </TableCell>
+                    <TableCell>{formatNumber(plan.interval_days ?? 0)}d</TableCell>
                     <TableCell className="font-medium">
                       {formatNumber(
-                        (plan.installment_count ?? 1) *
-                          (plan.amount_per_installment ?? 0)
+                        (plan.installment_count ?? 1) * (plan.amount_per_installment ?? 0),
                       )}
                     </TableCell>
                     <TableCell>
-                      <StatusBadge
-                        status={plan.is_active ? 'active' : 'inactive'}
-                      />
+                      <StatusBadge status={plan.is_active ? 'active' : 'inactive'} />
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => toggleActive(plan)}
-                      >
+                      <Button variant="ghost" size="icon" onClick={() => toggleActive(plan)}>
                         {plan.is_active ? (
                           <ToggleRight className="h-4 w-4 text-emerald-500" />
                         ) : (
@@ -243,9 +221,7 @@ export default function PaymentPlansPage() {
                 name="amount_per_installment"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t('paymentPlans.amountPerInstallment')}
-                    </FormLabel>
+                    <FormLabel>{t('paymentPlans.amountPerInstallment')}</FormLabel>
                     <FormControl>
                       <PriceInput
                         value={field.value}
@@ -277,17 +253,11 @@ export default function PaymentPlansPage() {
                 )}
               />
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={saving}>
-                  {saving
-                    ? t('paymentPlans.creating')
-                    : t('paymentPlans.createPlan')}
+                  {saving ? t('paymentPlans.creating') : t('paymentPlans.createPlan')}
                 </Button>
               </div>
             </form>

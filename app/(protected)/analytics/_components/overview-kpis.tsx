@@ -18,47 +18,31 @@ export function OverviewKpis({ overview }: { overview: AnalyticsOverview }) {
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.totalRevenue')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.totalRevenue')}</CardTitle>
           <Wallet className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {formatToman(overview.totalRevenue)}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {t('analytics.combinedPayments')}
-          </p>
+          <div className="text-2xl font-bold">{formatToman(overview.totalRevenue)}</div>
+          <p className="text-xs text-muted-foreground">{t('analytics.combinedPayments')}</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.totalEnrollments')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.totalEnrollments')}</CardTitle>
           <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {formatNumber(overview.totalEnrollments)}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {t('analytics.recentEnrollmentActivity')}
-          </p>
+          <div className="text-2xl font-bold">{formatNumber(overview.totalEnrollments)}</div>
+          <p className="text-xs text-muted-foreground">{t('analytics.recentEnrollmentActivity')}</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.activeStudents')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.activeStudents')}</CardTitle>
           <Eye className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {formatNumber(overview.activeEnrollments)}
-          </div>
+          <div className="text-2xl font-bold">{formatNumber(overview.activeEnrollments)}</div>
           <p className="text-xs text-muted-foreground">
             {t('analytics.currentlyProgressingCourses')}
           </p>
@@ -66,15 +50,11 @@ export function OverviewKpis({ overview }: { overview: AnalyticsOverview }) {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t('analytics.completionRate')}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">{t('analytics.completionRate')}</CardTitle>
           <Star className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {formatPercent(overview.completionRate)}
-          </div>
+          <div className="text-2xl font-bold">{formatPercent(overview.completionRate)}</div>
           <p className="text-xs text-muted-foreground">
             {t('analytics.shareOfFinishedEnrollments')}
           </p>

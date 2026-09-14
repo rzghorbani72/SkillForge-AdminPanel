@@ -30,6 +30,6 @@ export function useStoreAccess(): {
   return {
     hasAccess: academies.length > 0,
     isLoading,
-    error
+    error,
   };
 }

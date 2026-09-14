@@ -5,7 +5,7 @@ export {
   toEnglishDigits,
   toPersianDigits,
   formatPhoneDisplay,
-  formatIdentifierDisplay
+  formatIdentifierDisplay,
 } from './format-identifier';
 
 /**
@@ -14,10 +14,7 @@ export {
  * @param countryCode - The selected country code
  * @returns Cleaned phone number with only digits
  */
-export const cleanPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): string => {
+export const cleanPhoneNumber = (phoneNumber: string, countryCode: CountryCode): string => {
   if (!phoneNumber) return '';
 
   // Remove all non-digit characters except +
@@ -48,10 +45,7 @@ export const cleanPhoneNumber = (
  * @param countryCode - The selected country code
  * @returns True if the phone number is valid
  */
-export const isValidPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): boolean => {
+export const isValidPhoneNumber = (phoneNumber: string, countryCode: CountryCode): boolean => {
   if (!phoneNumber) return false;
 
   // Basic length validation (most phone numbers are 7-15 digits)
@@ -98,7 +92,7 @@ export const isValidPhoneNumber = (
     SA: /^\d{9}$/, // Saudi Arabia: 9 digits
     AE: /^\d{9}$/, // UAE: 9 digits
     IL: /^\d{9,10}$/, // Israel: 9-10 digits
-    LK: /^\d{9}$/ // Sri Lanka: 9 digits
+    LK: /^\d{9}$/, // Sri Lanka: 9 digits
   };
 
   const pattern = patterns[countryCode.code];
@@ -116,10 +110,7 @@ export const isValidPhoneNumber = (
  * @param countryCode - The selected country code
  * @returns Formatted phone number string
  */
-export const formatPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): string => {
+export const formatPhoneNumber = (phoneNumber: string, countryCode: CountryCode): string => {
   if (!phoneNumber) return '';
 
   // Country-specific formatting
@@ -165,7 +156,7 @@ export const formatPhoneNumber = (
         return `${num.slice(0, 5)} ${num.slice(5)}`;
       }
       return num;
-    }
+    },
   };
 
   const formatter = formatters[countryCode.code];
@@ -183,10 +174,7 @@ export const formatPhoneNumber = (
  * @param countryCode - The selected country code
  * @returns Full international phone number with country code
  */
-export const getFullPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): string => {
+export const getFullPhoneNumber = (phoneNumber: string, countryCode: CountryCode): string => {
   if (!phoneNumber) return '';
   return `${countryCode.dialCode}${phoneNumber}`;
 };

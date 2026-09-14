@@ -39,7 +39,7 @@ export default function AdminPaymentCallbackPage() {
     if (successParam === 'false' || errorParam) {
       setResult({
         success: false,
-        error: errorParam || t('plans.payFailedDefault')
+        error: errorParam || t('plans.payFailedDefault'),
       });
       setProcessing(false);
       return;
@@ -56,9 +56,7 @@ export default function AdminPaymentCallbackPage() {
         <div className="space-y-4 text-center">
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
           <h2 className="text-xl font-semibold">{t('plans.payVerifying')}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t('plans.payPleaseWait')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('plans.payPleaseWait')}</p>
         </div>
       </div>
     );
@@ -78,10 +76,7 @@ export default function AdminPaymentCallbackPage() {
               {t('plans.payTrackingCode')}: {result.refId}
             </div>
           )}
-          <Button
-            onClick={() => router.push('/plans?paid=1')}
-            className="w-full"
-          >
+          <Button onClick={() => router.push('/plans?paid=1')} className="w-full">
             {t('plans.payBackToPlans')}
           </Button>
         </div>
@@ -96,9 +91,7 @@ export default function AdminPaymentCallbackPage() {
           <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
         </div>
         <h1 className="text-2xl font-bold">{t('plans.payFailedTitle')}</h1>
-        <p className="text-muted-foreground">
-          {result?.error || t('plans.payFailedDesc')}
-        </p>
+        <p className="text-muted-foreground">{result?.error || t('plans.payFailedDesc')}</p>
         <Button onClick={() => router.push('/plans')} className="w-full">
           {t('plans.payBackToPlans')}
         </Button>

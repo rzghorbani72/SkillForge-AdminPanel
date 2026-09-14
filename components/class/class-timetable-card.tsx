@@ -2,13 +2,7 @@
 
 import { CalendarDays } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { classProgress } from '@/lib/class-sessions';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -29,7 +23,7 @@ export function ClassTimetableCard({
   topics,
   isLoading,
   onSessionChanged,
-  onCancelSession
+  onCancelSession,
 }: ClassTimetableCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -45,14 +39,14 @@ export function ClassTimetableCard({
         </CardTitle>
         <CardDescription>
           {t('courses.live.meetingsCount', {
-            count: formatNumber(sessions.length)
+            count: formatNumber(sessions.length),
           })}
           {progress.total ? (
             <>
               {' · '}
               {t('courses.live.sessionsDone', {
                 done: formatNumber(progress.done),
-                total: formatNumber(progress.total)
+                total: formatNumber(progress.total),
               })}
             </>
           ) : null}
@@ -62,9 +56,7 @@ export function ClassTimetableCard({
         {isLoading ? (
           <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
         ) : sessions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('courses.live.noSessionsYet')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('courses.live.noSessionsYet')}</p>
         ) : (
           sessions.map((session, index) => (
             <SessionRow
@@ -74,9 +66,7 @@ export function ClassTimetableCard({
               topics={topics}
               isNext={session.id === focusId}
               onChanged={onSessionChanged}
-              onCancel={
-                onCancelSession ? () => onCancelSession(session) : undefined
-              }
+              onCancel={onCancelSession ? () => onCancelSession(session) : undefined}
             />
           ))
         )}

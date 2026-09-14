@@ -5,10 +5,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
-import {
-  ticketResponsible,
-  type StaffTicketListItem
-} from './staff-support-types';
+import { ticketResponsible, type StaffTicketListItem } from './staff-support-types';
 import { TicketPriorityDot, TicketStatusBadge } from './ticket-badges';
 
 interface Props {
@@ -33,14 +30,12 @@ export function TicketListItem({ ticket, active, onSelect }: Props) {
       onClick={onSelect}
       className={cn(
         'w-full rounded-lg border p-3 text-start transition-colors hover:bg-muted/60',
-        active && 'border-primary bg-primary/5 hover:bg-primary/5'
+        active && 'border-primary bg-primary/5 hover:bg-primary/5',
       )}
     >
       <div className="flex items-center gap-2">
         <TicketPriorityDot priority={ticket.priority} />
-        <span className="flex-1 truncate text-sm font-medium">
-          {ticket.subject}
-        </span>
+        <span className="flex-1 truncate text-sm font-medium">{ticket.subject}</span>
         <TicketStatusBadge status={ticket.status} />
       </div>
       <p className="mt-1 truncate text-xs text-muted-foreground">{who}</p>
@@ -54,7 +49,7 @@ export function TicketListItem({ ticket, active, onSelect }: Props) {
             'inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px]',
             responsible
               ? 'text-muted-foreground'
-              : 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'
+              : 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
           )}
         >
           <UserRound className="h-3 w-3" />
@@ -72,7 +67,7 @@ export function TicketListItem({ ticket, active, onSelect }: Props) {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',
-            minute: '2-digit'
+            minute: '2-digit',
           })}
         </span>
       </div>

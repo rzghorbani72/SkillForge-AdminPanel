@@ -4,11 +4,11 @@ Three projects, one rendering pipeline.
 
 ## Responsibilities
 
-| Project | Role |
-|---------|------|
-| **Backend** | Stores draft + published template/theme in DB, validates blocks, issues preview JWT, computes `css_variables`, exposes section catalog |
-| **Edusphere** | Sole block renderer for public site and admin preview |
-| **AdminPanel** | Editor UI; embeds Edusphere iframe for WYSIWYG preview |
+| Project        | Role                                                                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Backend**    | Stores draft + published template/theme in DB, validates blocks, issues preview JWT, computes `css_variables`, exposes section catalog |
+| **Edusphere**  | Sole block renderer for public site and admin preview                                                                                  |
+| **AdminPanel** | Editor UI; embeds Edusphere iframe for WYSIWYG preview                                                                                 |
 
 ## Core concepts
 
@@ -43,11 +43,11 @@ Each draft has one active design system applied at render time through **CSS var
 
 **Size tokens** (added alongside the color/shape tokens):
 
-| Theme key | Values | CSS variable(s) |
-|-----------|--------|-----------------|
-| `section_spacing` | `compact` \| `comfortable` \| `spacious` | `--theme-section-padding-y` |
-| `container_width` | `narrow` \| `standard` \| `wide` \| `full` | `--theme-container-max-width` |
-| `heading_scale` | `compact` \| `standard` \| `large` | `--theme-heading-size-sm` / `-md` / `-lg` |
+| Theme key         | Values                                     | CSS variable(s)                           |
+| ----------------- | ------------------------------------------ | ----------------------------------------- |
+| `section_spacing` | `compact` \| `comfortable` \| `spacious`   | `--theme-section-padding-y`               |
+| `container_width` | `narrow` \| `standard` \| `wide` \| `full` | `--theme-container-max-width`             |
+| `heading_scale`   | `compact` \| `standard` \| `large`         | `--theme-heading-size-sm` / `-md` / `-lg` |
 
 These are bounded enums (not freeform px) so any mix of sections stays coherent. Backend maps them in `Backend/src/theme/theme-css.util.ts`; Edusphere applies them uniformly to every rendered block via `.ui-blocks-root` rules in `edusphere/app/globals.css`; AdminPanel exposes them as segmented controls in the customization sidebar, persisted through `PATCH /theme/current/config/draft`.
 
@@ -59,12 +59,12 @@ These are bounded enums (not freeform px) so any mix of sections stays coherent.
 
 When `primary_color` changes, Backend and AdminPanel derive:
 
-| Token | Rule |
-|-------|------|
-| `secondary_*` | Same hue, reduced saturation, darker lightness |
-| `accent_color` | Triadic offset (~150°) with balanced saturation |
-| `background_*` | Light tint (97% L) / dark base (10% L) from primary hue |
-| `primary_color_dark` | Brighter variant for dark-mode surfaces |
+| Token                | Rule                                                    |
+| -------------------- | ------------------------------------------------------- |
+| `secondary_*`        | Same hue, reduced saturation, darker lightness          |
+| `accent_color`       | Triadic offset (~150°) with balanced saturation         |
+| `background_*`       | Light tint (97% L) / dark base (10% L) from primary hue |
+| `primary_color_dark` | Brighter variant for dark-mode surfaces                 |
 
 Shape tokens (`border_radius_style`, `shadow_style`) come from the chosen preset and remain editable in the Style tab.
 

@@ -14,11 +14,7 @@ interface StorageSummaryProps {
   onRefresh: () => void;
 }
 
-export function StorageSummary({
-  inventory,
-  loading,
-  onRefresh
-}: StorageSummaryProps) {
+export function StorageSummary({ inventory, loading, onRefresh }: StorageSummaryProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
   const objects = inventory?.objects ?? [];
@@ -27,20 +23,20 @@ export function StorageSummary({
   const tiles = [
     {
       label: t('platformStorage.totalObjects'),
-      value: formatNumber(objects.length)
+      value: formatNumber(objects.length),
     },
     {
       label: t('platformStorage.totalSize'),
-      value: formatFileSize(inventory?.total_bytes) || '—'
+      value: formatFileSize(inventory?.total_bytes) || '—',
     },
     {
       label: t('platformStorage.unusedObjects'),
-      value: formatNumber(unusedCount)
+      value: formatNumber(unusedCount),
     },
     {
       label: t('platformStorage.unusedSize'),
-      value: formatFileSize(inventory?.unused_bytes) || '—'
-    }
+      value: formatFileSize(inventory?.unused_bytes) || '—',
+    },
   ];
 
   return (
@@ -53,12 +49,7 @@ export function StorageSummary({
           </CardContent>
         </Card>
       ))}
-      <Button
-        variant="outline"
-        onClick={onRefresh}
-        disabled={loading}
-        className="self-center"
-      >
+      <Button variant="outline" onClick={onRefresh} disabled={loading} className="self-center">
         <RefreshCw className={loading ? 'h-4 w-4 animate-spin' : 'h-4 w-4'} />
         {t('common.refresh')}
       </Button>

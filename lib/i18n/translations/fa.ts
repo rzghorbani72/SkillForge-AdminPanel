@@ -52,12 +52,12 @@ export const fa = {
     uptimeNote:
       'این صفحه نشانه‌های سلامت را نشان می‌دهد، نه درصد آپ‌تایم: اگر سرور خاموش باشد نمی‌تواند پاسخ دهد.',
     loadFailed: 'اطلاعات سلامت آکادمی بارگذاری نشد',
-    retry: 'تلاش دوباره'
+    retry: 'تلاش دوباره',
   },
   meta: {
     title: 'پنل مدیریت منتوما',
     titleTemplate: '%s | پنل منتوما',
-    description: 'پنل مدیریت منتوما — مدیریت آکادمی‌ها، دوره‌ها و دانشجویان'
+    description: 'پنل مدیریت منتوما — مدیریت آکادمی‌ها، دوره‌ها و دانشجویان',
   },
   pageTitles: {
     home: 'خانه',
@@ -93,15 +93,15 @@ export const fa = {
     websiteSeo: 'سئو وب‌سایت',
     websiteDomain: 'دامنهٔ وب‌سایت',
     websiteTrust: 'نمادهای اعتماد',
-    identity: 'احراز هویت'
+    identity: 'احراز هویت',
   },
   panelFooter: {
     poweredBy: 'قدرت‌گرفته از',
-    brand: 'منتوما'
+    brand: 'منتوما',
   },
   header: {
     planDaysLeft: '{{days}} روز مانده',
-    planDaysToPay: '{{days}} روز برای پرداخت'
+    planDaysToPay: '{{days}} روز برای پرداخت',
   },
   weekdays: {
     saturday: 'شنبه',
@@ -110,7 +110,7 @@ export const fa = {
     tuesday: 'سه‌شنبه',
     wednesday: 'چهارشنبه',
     thursday: 'پنجشنبه',
-    friday: 'جمعه'
+    friday: 'جمعه',
   },
   validation: {
     required: 'این فیلد الزامی است',
@@ -147,7 +147,7 @@ export const fa = {
     nameRequired: 'نام الزامی است',
     phoneRequired: 'شماره تماس الزامی است',
     passwordMin6: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
-    fileRequired: 'انتخاب فایل الزامی است'
+    fileRequired: 'انتخاب فایل الزامی است',
   },
   blog: {
     academyTitle: 'بلاگ',
@@ -164,14 +164,14 @@ export const fa = {
       DRAFT: 'پیش‌نویس',
       IN_REVIEW: 'در انتظار بررسی',
       PUBLISHED: 'منتشرشده',
-      ARCHIVED: 'بایگانی‌شده'
+      ARCHIVED: 'بایگانی‌شده',
     },
     actions: {
       submit: 'ارسال برای بررسی',
       approve: 'انتشار',
       reject: 'بازگرداندن',
       archive: 'لغو انتشار',
-      uploadCover: 'بارگذاری کاور'
+      uploadCover: 'بارگذاری کاور',
     },
     fields: {
       title: 'عنوان',
@@ -185,17 +185,17 @@ export const fa = {
       content: 'متن مقاله',
       contentPlaceholder: 'مقالهٔ خود را اینجا بنویسید...',
       metaTitle: 'عنوان در جست‌وجو',
-      metaDescription: 'توضیح در جست‌وجو'
+      metaDescription: 'توضیح در جست‌وجو',
     },
     seo: {
       title: 'سئو',
       description:
-        'چیزی که گوگل و شبکه‌های اجتماعی نشان می‌دهند. خالی بگذارید تا از عنوان و خلاصه استفاده شود.'
+        'چیزی که گوگل و شبکه‌های اجتماعی نشان می‌دهند. خالی بگذارید تا از عنوان و خلاصه استفاده شود.',
     },
     empty: {
       title: 'هنوز مقاله‌ای نیست',
-      description: 'اولین مقالهٔ خود را بنویسید تا بلاگ شما شروع شود.'
-    }
+      description: 'اولین مقالهٔ خود را بنویسید تا بلاگ شما شروع شود.',
+    },
   },
   editor: {
     quote: 'نقل‌قول',
@@ -216,9 +216,8 @@ export const fa = {
     numberedList: 'فهرست شماره‌دار',
     link: 'پیوند',
     linkPrompt: 'نشانی پیوند را وارد کنید',
-    formattingHint:
-      'همان‌طور که می‌نویسید قالب‌بندی اعمال می‌شود؛ جهت هر خط خودکار است.',
-    charactersRemaining: '{{count}} کاراکتر باقی مانده'
+    formattingHint: 'همان‌طور که می‌نویسید قالب‌بندی اعمال می‌شود؛ جهت هر خط خودکار است.',
+    charactersRemaining: '{{count}} کاراکتر باقی مانده',
   },
   toasts: {
     imageNoneSelected: 'تصویری انتخاب نشده است',
@@ -233,8 +232,7 @@ export const fa = {
     videoUploadFailed: 'بارگذاری ویدیو انجام نشد. دوباره تلاش کنید.',
     videoUnreadable: 'این فایل ویدیویی خوانده نمی‌شود. فایل دیگری انتخاب کنید.',
     videoInvalidFormat: 'لطفاً یک فایل ویدیویی MP4 انتخاب کنید',
-    videoTooLarge:
-      'حجم این ویدیو (حدود {{size}}) از ۷۰۰ مگابایت بیشتر است. ابتدا فشرده کنید.',
+    videoTooLarge: 'حجم این ویدیو (حدود {{size}}) از ۷۰۰ مگابایت بیشتر است. ابتدا فشرده کنید.',
     videoTooLong:
       'مدت ویدیو ({{duration}}) بیشتر از ۳۰ دقیقه است. آن را به بخش‌های کوتاه‌تر تقسیم کنید.',
     videoSelected: 'ویدیو انتخاب شد: {{size}}',
@@ -243,8 +241,7 @@ export const fa = {
     singleFileOnly: 'هر بار فقط یک فایل می‌توانید بارگذاری کنید',
     maxFiles: 'حداکثر {{count}} فایل می‌توانید بارگذاری کنید',
     fileRejected: 'فایل {{name}} پذیرفته نشد',
-    fileTooLarge:
-      'حجم این فایل بیشتر از حد مجاز ({{size}}) است. فایل کوچک‌تری انتخاب کنید.',
+    fileTooLarge: 'حجم این فایل بیشتر از حد مجاز ({{size}}) است. فایل کوچک‌تری انتخاب کنید.',
     audioChooseFile: 'لطفاً یک فایل صوتی انتخاب کنید',
     audioChooseFirst: 'ابتدا یک فایل صوتی انتخاب کنید',
     audioBadResponse: 'فایل صوتی بارگذاری شد اما سرور شناسه‌ای برنگرداند',
@@ -291,7 +288,7 @@ export const fa = {
     gatewayUpdated: '{{name}} به‌روزرسانی شد',
     gatewayLoadFailed: 'بارگذاری درگاه‌های پرداخت انجام نشد',
     gatewayUpdateFailed: 'به‌روزرسانی درگاه پرداخت انجام نشد',
-    withdrawalMarked: 'درخواست با وضعیت {{status}} ثبت شد'
+    withdrawalMarked: 'درخواست با وضعیت {{status}} ثبت شد',
   },
   support: {
     title: 'پشتیبانی',
@@ -304,12 +301,12 @@ export const fa = {
       TECHNICAL: 'پشتیبانی فنی',
       BILLING: 'مالی و صورتحساب',
       CONSULTING: 'مشاوره',
-      GENERAL: 'عمومی'
+      GENERAL: 'عمومی',
     },
     views: {
       all: 'همه',
       mine: 'به عهده من',
-      unassigned: 'بدون مسئول'
+      unassigned: 'بدون مسئول',
     },
     unassigned: 'بدون مسئول',
     claim: 'قبول مسئولیت',
@@ -347,7 +344,7 @@ export const fa = {
       SALES: 'فروش و ارتقای پلن',
       CONSULTING: 'مشاوره',
       ONBOARDING: 'راه‌اندازی آکادمی',
-      OTHER: 'سایر'
+      OTHER: 'سایر',
     },
     statuses: {
       OPEN: 'باز',
@@ -355,26 +352,26 @@ export const fa = {
       WAITING_ON_USER: 'در انتظار کاربر',
       RESOLVED: 'حل‌شده',
       CLOSED: 'بسته‌شده',
-      REOPENED: 'بازگشایی‌شده'
+      REOPENED: 'بازگشایی‌شده',
     },
     priorities: { LOW: 'کم', NORMAL: 'عادی', HIGH: 'زیاد', URGENT: 'فوری' },
     callStatuses: {
       REQUESTED: 'درخواست‌شده',
       SCHEDULED: 'زمان‌بندی‌شده',
       COMPLETED: 'انجام‌شده',
-      NO_ANSWER: 'بی‌پاسخ'
+      NO_ANSWER: 'بی‌پاسخ',
     },
     filters: {
       status: 'فیلتر وضعیت',
       priority: 'فیلتر اولویت',
       allStatuses: 'همه وضعیت‌ها',
       allPriorities: 'همه اولویت‌ها',
-      academyId: 'شناسه آکادمی'
+      academyId: 'شناسه آکادمی',
     },
     events: {
       callLogged: 'تماس ثبت شد ({status})',
       emailLogged: 'ایمیل ثبت شد',
-      system: 'رویداد سیستمی'
+      system: 'رویداد سیستمی',
     },
     csat: 'رضایت مشتری',
     callHistory: 'تاریخچه تماس',
@@ -394,13 +391,12 @@ export const fa = {
         NEW: 'جدید',
         IN_PROGRESS: 'در حال بررسی',
         RESOLVED: 'پاسخ داده شد',
-        SPAM: 'اسپم'
-      }
+        SPAM: 'اسپم',
+      },
     },
     help: {
       emailTitle: 'ایمیل',
-      emailSubtitle:
-        'به پشتیبانی منتوما ایمیل بزنید. معمولاً کمتر از یک روز کاری پاسخ می‌دهیم.',
+      emailSubtitle: 'به پشتیبانی منتوما ایمیل بزنید. معمولاً کمتر از یک روز کاری پاسخ می‌دهیم.',
       emailHint: 'برای درخواست‌های عمومی، همکاری و فروش.',
       emailAction: 'باز کردن برنامه ایمیل',
       phoneTitle: 'شماره تلفن',
@@ -415,42 +411,40 @@ export const fa = {
         'بگویید چه چیزی منتوما را برای آکادمی شما بهتر می‌کند. هر پیشنهاد را می‌خوانیم.',
       suggestionPrefix: '[پیشنهاد]',
       suggestionSubjectPlaceholder: 'چه چیزی را بهتر کنیم؟',
-      suggestionBodyPlaceholder:
-        'ایده را شرح دهید، به چه کسی کمک می‌کند و چرا مهم است.',
+      suggestionBodyPlaceholder: 'ایده را شرح دهید، به چه کسی کمک می‌کند و چرا مهم است.',
       sendSuggestion: 'ارسال پیشنهاد',
       suggestionSent: 'ممنون — پیشنهاد شما ارسال شد',
       faq: {
         ticket: {
           q: 'چطور تیکت پشتیبانی ثبت کنم؟',
-          a: 'از پشتیبانی → تیکتینگ، تیکت جدید بزنید. موضوع را انتخاب کنید و بنویسید چه کردید و چه انتظاری داشتید. پاسخ را در همان گفتگو می‌بینید.'
+          a: 'از پشتیبانی → تیکتینگ، تیکت جدید بزنید. موضوع را انتخاب کنید و بنویسید چه کردید و چه انتظاری داشتید. پاسخ را در همان گفتگو می‌بینید.',
         },
         enrollment: {
           q: 'دانشجو چطور به دوره دسترسی پیدا می‌کند؟',
-          a: 'بعد از خرید موفق، یا وقتی خودتان از بخش کاربران او را ثبت‌نام می‌کنید. دسترسی بر اساس نوع فروش دوره است: خرید یک‌باره، اشتراک، یا رزرو کلاس زنده.'
+          a: 'بعد از خرید موفق، یا وقتی خودتان از بخش کاربران او را ثبت‌نام می‌کنید. دسترسی بر اساس نوع فروش دوره است: خرید یک‌باره، اشتراک، یا رزرو کلاس زنده.',
         },
         payment: {
           q: 'پرداخت دانشجویان چطور کار می‌کند؟',
-          a: 'پول دانشجو کامل به آکادمی شما می‌رسد. منتوما ۰٪ کمیسیون می‌گیرد. شما فقط اشتراک پلتفرم را می‌پردازید، به‌علاوه فضای اضافه اگر از سهم پلن بیشتر شوید.'
+          a: 'پول دانشجو کامل به آکادمی شما می‌رسد. منتوما ۰٪ کمیسیون می‌گیرد. شما فقط اشتراک پلتفرم را می‌پردازید، به‌علاوه فضای اضافه اگر از سهم پلن بیشتر شوید.',
         },
         teacher: {
           q: 'چطور معلم اضافه کنم؟',
-          a: 'از بخش کاربران، فرد را با نقش معلم بسازید یا درخواست معلم را تأیید کنید. بعد می‌تواند دوره‌هایی که به او می‌دهید را مدیریت کند.'
+          a: 'از بخش کاربران، فرد را با نقش معلم بسازید یا درخواست معلم را تأیید کنید. بعد می‌تواند دوره‌هایی که به او می‌دهید را مدیریت کند.',
         },
         live: {
           q: 'کلاس زنده چطور کار می‌کند؟',
-          a: 'زمان کلاس و لینک جلسه را روی دوره بگذارید. دانشجو یک زمان رزرو می‌کند. دسترسی درس را برای هر دانشجو، گروه، یا طبق برنامه همان کلاس‌ها می‌دهید.'
+          a: 'زمان کلاس و لینک جلسه را روی دوره بگذارید. دانشجو یک زمان رزرو می‌کند. دسترسی درس را برای هر دانشجو، گروه، یا طبق برنامه همان کلاس‌ها می‌دهید.',
         },
         plan: {
           q: 'تفاوت خرید یک‌باره و اشتراک چیست؟',
-          a: 'خرید یک‌باره فقط همان دوره را باز می‌کند. اشتراک، دوره‌های نشان‌دار را برای ۳، ۶ یا ۱۲ ماه پوشش می‌دهد و دانشجو خودش تمدید می‌کند — شارژ خودکار نیست.'
-        }
-      }
-    }
+          a: 'خرید یک‌باره فقط همان دوره را باز می‌کند. اشتراک، دوره‌های نشان‌دار را برای ۳، ۶ یا ۱۲ ماه پوشش می‌دهد و دانشجو خودش تمدید می‌کند — شارژ خودکار نیست.',
+        },
+      },
+    },
   },
   selectSchool: {
     title: 'آکادمی خود را انتخاب کنید',
-    subtitle:
-      'شما در چند آکادمی عضو هستید. انتخاب کنید به کدام دسترسی می‌خواهید.',
+    subtitle: 'شما در چند آکادمی عضو هستید. انتخاب کنید به کدام دسترسی می‌خواهید.',
     loading: 'در حال بارگذاری آکادمی‌های شما...',
     welcomeBack: 'خوش آمدید، {{name}}',
     noStoresFound: 'هیچ آکادمی‌ای برای حساب شما پیدا نشد',
@@ -469,7 +463,7 @@ export const fa = {
     needHelp: 'کمک می‌خواهید؟',
     needHelpText:
       'اگر آکادمی خود را پیدا نمی‌کنید یا می‌خواهید در آکادمی جدیدی عضو شوید، لطفاً با مدیر آکادمی خود تماس بگیرید یا',
-    contactSupport: 'با پشتیبانی تماس بگیرید'
+    contactSupport: 'با پشتیبانی تماس بگیرید',
   },
   billing: {
     title: 'همهٔ اشتراک‌ها',
@@ -483,18 +477,18 @@ export const fa = {
     storageColumn: 'فضا',
     managePlan: 'مدیریت پلن',
     emptyTitle: 'هنوز آکادمی‌ای ندارید',
-    emptyDesc: 'برای شروع اشتراک، اولین آکادمی خود را بسازید'
+    emptyDesc: 'برای شروع اشتراک، اولین آکادمی خود را بسازید',
   },
   scope: {
     viewingAcademy: 'در حال مشاهدهٔ آکادمی:',
     platformWide: 'این صفحه مربوط به همهٔ آکادمی‌های شماست',
-    noAcademySelected: 'آکادمی‌ای انتخاب نشده است'
+    noAcademySelected: 'آکادمی‌ای انتخاب نشده است',
   },
   academy: {
     visitSite: 'مشاهده سایت',
     visitSiteChoose: 'باز کردن سایت آکادمی',
     visitSiteSubdomain: 'زیردامنه',
-    visitSiteCustomDomain: 'دامنه اختصاصی'
+    visitSiteCustomDomain: 'دامنه اختصاصی',
   },
   common: {
     published: 'منتشر شده',
@@ -572,16 +566,11 @@ export const fa = {
     selected: 'انتخاب شده',
     errorLoading: 'خطا در بارگذاری',
     noStoreSelected: 'آکادمی‌ای انتخاب نشده',
-    selectStoreToView:
-      'لطفاً یک آکادمی از هدر انتخاب کنید تا محتوا را مشاهده کنید.',
-    selectStoreToViewCourses:
-      'برای مشاهده دوره‌ها، از هدر یک آکادمی انتخاب کنید.',
-    selectStoreToCreateProduct:
-      'برای ساخت محصول، از هدر یک آکادمی انتخاب کنید.',
-    selectStoreToViewProducts:
-      'لطفاً یک آکادمی از هدر انتخاب کنید تا محصولات را مشاهده کنید.',
-    selectStoreToManageLessons:
-      'لطفاً یک آکادمی از هدر انتخاب کنید تا درس‌ها را مدیریت کنید.',
+    selectStoreToView: 'لطفاً یک آکادمی از هدر انتخاب کنید تا محتوا را مشاهده کنید.',
+    selectStoreToViewCourses: 'برای مشاهده دوره‌ها، از هدر یک آکادمی انتخاب کنید.',
+    selectStoreToCreateProduct: 'برای ساخت محصول، از هدر یک آکادمی انتخاب کنید.',
+    selectStoreToViewProducts: 'لطفاً یک آکادمی از هدر انتخاب کنید تا محصولات را مشاهده کنید.',
+    selectStoreToManageLessons: 'لطفاً یک آکادمی از هدر انتخاب کنید تا درس‌ها را مدیریت کنید.',
     store: 'آکادمی',
     oneStore: '۱ آکادمی',
     multipleStores: '{{count}} آکادمی',
@@ -611,8 +600,8 @@ export const fa = {
       TEACHER: 'مدرس',
       STUDENT: 'دانشجو',
       USER: 'کاربر',
-      AFFILIATE: 'بازاریاب'
-    }
+      AFFILIATE: 'بازاریاب',
+    },
   },
   roles: {
     title: 'نقش‌ها و دسترسی‌ها',
@@ -639,8 +628,7 @@ export const fa = {
     labelInvalid: 'حداقل ۲ حرف وارد کنید.',
     descriptionLabel: 'توضیح',
     levelLabel: 'سطح دسترسی',
-    levelHint:
-      'سطح دسترسی تعیین می‌کند این نقش هم‌اندازهٔ کدام گروه اختیار دارد.',
+    levelHint: 'سطح دسترسی تعیین می‌کند این نقش هم‌اندازهٔ کدام گروه اختیار دارد.',
     levelCapHint: 'شما فقط می‌توانید نقشی تا سطح «{{level}}» بسازید.',
     level6: 'مالک پلتفرم',
     level5: 'مدیر کل',
@@ -682,8 +670,7 @@ export const fa = {
     viewPermissions: 'مشاهده دسترسی‌ها',
     viewPermissionsFor: 'دسترسی‌های {{role}}',
     readOnlyNoPermission: 'شما فقط می‌توانید این نقش را ببینید، نه تغییر دهید.',
-    readOnlyOwnRole:
-      'این نقشِ خود شماست. می‌توانید آن را ببینید ولی تغییر نمی‌دهید.',
+    readOnlyOwnRole: 'این نقشِ خود شماست. می‌توانید آن را ببینید ولی تغییر نمی‌دهید.',
     readOnlyOwner: 'مالک پلتفرم به همه‌چیز دسترسی دارد و قابل تغییر نیست.',
     readOnlySystem: 'نقش‌های پیش‌فرض قابل ویرایش نیستند.',
     readOnlyRank: 'این نقش بالاتر از سطح دسترسی شماست.',
@@ -696,8 +683,7 @@ export const fa = {
     assignUserLabel: 'کاربر',
     assignUserPlaceholder: 'جستجو با نام، ایمیل یا شماره تماس',
     assignAction: 'اختصاص نقش',
-    assignSeatWarning:
-      'این نقش در سطح مدیر است و یک ظرفیت مدیر از پلن شما را مصرف می‌کند.',
+    assignSeatWarning: 'این نقش در سطح مدیر است و یک ظرفیت مدیر از پلن شما را مصرف می‌کند.',
     roleAssigned: 'نقش اختصاص یافت',
     roleAlreadyAssigned: 'این کاربر همین حالا این نقش را دارد.',
     hint: {
@@ -709,12 +695,12 @@ export const fa = {
       TEACHER: 'تدریس، ساخت درس و آزمون، تصحیح تکالیف و کلاس آنلاین (زنده)',
       STUDENT: 'شرکت در دوره‌ها، آزمون‌ها، تکالیف و گفتگوها',
       USER: 'کاربر ثبت‌نام‌کرده بدون خرید؛ فقط مشاهده دوره‌ها',
-      AFFILIATE: 'معرفی دوره‌ها و مشاهده گزارش عملکرد خودش'
+      AFFILIATE: 'معرفی دوره‌ها و مشاهده گزارش عملکرد خودش',
     },
     action: {
       read: 'مشاهده',
       write: 'ویرایش',
-      delete: 'حذف'
+      delete: 'حذف',
     },
     resource: {
       academies: 'آکادمی‌ها',
@@ -736,8 +722,8 @@ export const fa = {
       notifications: 'اعلان‌ها',
       legal: 'اسناد حقوقی',
       theme: 'قالب',
-      roles: 'نقش‌ها و دسترسی‌ها'
-    }
+      roles: 'نقش‌ها و دسترسی‌ها',
+    },
   },
   accessControl: {
     ownerBadge: 'مالِ شما',
@@ -750,12 +736,11 @@ export const fa = {
     viewOnlyHint: 'فقط می‌توانید این مورد را ببینید',
     readOnly: 'فقط خواندنی',
     deniedTitle: 'دسترسی مجاز نیست',
-    deniedDescription: 'شما مجوز مشاهده این صفحه را ندارید.'
+    deniedDescription: 'شما مجوز مشاهده این صفحه را ندارید.',
   },
   storage: {
     title: 'فضای ذخیره‌سازی',
-    description:
-      'ببینید فایل‌های آکادمی چقدر فضا گرفته‌اند و چقدر از سهم پلن باقی مانده است',
+    description: 'ببینید فایل‌های آکادمی چقدر فضا گرفته‌اند و چقدر از سهم پلن باقی مانده است',
     totalUsed: 'فضای استفاده‌شده',
     remaining: 'فضای باقی‌مانده',
     percentOfPlanUsed: '{{percent}} از فضای پلن استفاده شده است',
@@ -772,8 +757,7 @@ export const fa = {
       'فضای ذخیره‌سازی پر شده است؛ تا آزادسازی فضا یا خرید فضای بیشتر، آپلود انجام نمی‌شود.',
     addStorage: 'افزایش فضا',
     filesTitle: 'فایل‌ها',
-    filesDescription:
-      'بزرگ‌ترین فایل‌ها در ابتدا. حذف فایل، آن را برای همیشه پاک می‌کند.',
+    filesDescription: 'بزرگ‌ترین فایل‌ها در ابتدا. حذف فایل، آن را برای همیشه پاک می‌کند.',
     filterAll: 'همه',
     columnFile: 'فایل',
     columnType: 'نوع',
@@ -791,7 +775,7 @@ export const fa = {
       home_page: 'صفحهٔ اصلی',
       profile_avatar: 'تصویر پروفایل',
       article: 'مقاله',
-      product: 'محصول'
+      product: 'محصول',
     },
     delete: 'حذف',
     deleteTitle: 'این فایل حذف شود؟',
@@ -802,11 +786,10 @@ export const fa = {
     deleteAllUnusedTitle: 'همهٔ فایل‌های بدون استفاده حذف شوند؟',
     deleteAllUnusedConfirm:
       'فایل‌هایی که در درس، دوره، صفحه یا پروفایل استفاده نشده‌اند برای همیشه پاک می‌شوند؛ نسخه‌های تبدیل‌شدهٔ ویدیو هم همراه همان فایل حذف می‌شوند. این کار بازگشت‌پذیر نیست.',
-    deleteAllUnusedSuccess:
-      '{{count}} فایل بدون استفاده حذف شد و فضا آزاد گردید',
+    deleteAllUnusedSuccess: '{{count}} فایل بدون استفاده حذف شد و فضا آزاد گردید',
     deleteAllUnusedEmpty: 'فایل بدون استفاده‌ای برای حذف وجود ندارد',
     noFiles: 'هنوز فایلی وجود ندارد',
-    pageOf: 'صفحهٔ {{page}} از {{total}}'
+    pageOf: 'صفحهٔ {{page}} از {{total}}',
   },
   navigation: {
     contentHub: 'محتوا و قالب‌ها',
@@ -967,15 +950,14 @@ export const fa = {
       templates: 'قالب‌ها',
       configuration: 'پیکربندی',
       governance: 'نظارت و حقوقی',
-      students: 'دانشجویان'
-    }
+      students: 'دانشجویان',
+    },
   },
   gdpr: {
-    message:
-      'ما از کوکی‌ها برای اجرای این پنل و بهبود تجربهٔ شما استفاده می‌کنیم.',
+    message: 'ما از کوکی‌ها برای اجرای این پنل و بهبود تجربهٔ شما استفاده می‌کنیم.',
     learnMore: 'بیشتر بدانید',
     decline: 'رد کردن',
-    accept: 'پذیرفتن'
+    accept: 'پذیرفتن',
   },
   legal: {
     mustAcceptTerms: 'برای ادامه باید قوانین و سیاست حریم خصوصی را بپذیرید.',
@@ -996,18 +978,17 @@ export const fa = {
     changesRemoved: 'موارد حذف‌شده',
     onlyMinorChanges: 'فقط تغییرات جزئی نگارشی بوده و متن قوانین عوض نشده است.',
     firstTimeAcceptance: 'این اولین باری است که باید این سند را بپذیرید.',
-    diffUnavailable:
-      'در حال حاضر نمایش خلاصهٔ تغییرات ممکن نیست. لطفاً سند کامل را مطالعه کنید.',
+    diffUnavailable: 'در حال حاضر نمایش خلاصهٔ تغییرات ممکن نیست. لطفاً سند کامل را مطالعه کنید.',
     viewFullDocument: 'مشاهدهٔ سند کامل',
     declineAndSignOut: 'انصراف و خروج',
-    decliningAndSigningOut: 'در حال خروج...'
+    decliningAndSigningOut: 'در حال خروج...',
   },
   subscription: {
     expiredTitle: 'برای ادامه، پلن را ارتقا دهید',
     expiredWarning:
       'اشتراک آکادمی شما منقضی شده است. برای بازگرداندن دسترسی تمدید کنید — اطلاعات شما محفوظ است.',
     upgradeCta: 'ارتقای پلن',
-    continueViewing: 'ادامهٔ مشاهده'
+    continueViewing: 'ادامهٔ مشاهده',
   },
   legalAdmin: {
     title: 'اسناد حقوقی',
@@ -1032,25 +1013,23 @@ export const fa = {
       TERMS: 'شرایط استفاده',
       PRIVACY: 'سیاست حریم خصوصی',
       REFUND: 'سیاست بازگشت وجه',
-      ACADEMY_AGREEMENT: 'قرارداد سکو و آکادمی'
-    }
+      ACADEMY_AGREEMENT: 'قرارداد سکو و آکادمی',
+    },
   },
   onboarding: {
     bannerTitle: 'اولین آکادمی خود را بسازید',
-    bannerDescription:
-      'برای افزودن مدرس، تعریف دوره و پذیرش دانشجو، ابتدا باید یک آکادمی بسازید.',
+    bannerDescription: 'برای افزودن مدرس، تعریف دوره و پذیرش دانشجو، ابتدا باید یک آکادمی بسازید.',
     bannerAction: 'ساخت آکادمی',
     noAcademyTitle: 'هنوز به آکادمی‌ای متصل نیستید',
     noAcademyDescription:
       'حساب شما توسط مدیر آکادمی ساخته شده است. تا زمانی که مدیر شما را به آکادمی اضافه کند، اینجا چیزی نمایش داده نمی‌شود.',
     setupBannerTitle: 'آکادمی‌ات را آماده کن',
-    setupBannerDescription:
-      '{{done}} از ۴ قدم انجام شده — این کارها را تمام کن تا آموزش شروع شود.',
+    setupBannerDescription: '{{done}} از ۴ قدم انجام شده — این کارها را تمام کن تا آموزش شروع شود.',
     setupStepWebsite: 'ساخت یا ویرایش وب‌سایت آکادمی',
     setupStepTemplate: 'انتخاب قالب',
     setupStepCourse: 'افزودن دوره',
     setupStepVisit: 'مشاهده وب‌سایت',
-    setupDismiss: 'بستن راهنمای راه‌اندازی'
+    setupDismiss: 'بستن راهنمای راه‌اندازی',
   },
 
   auth: {
@@ -1094,8 +1073,7 @@ export const fa = {
     memberAcademiesEmpty: 'در حال حاضر عضو هیچ آکادمی فعالی نیستید.',
     memberAcademiesBecomeManager: 'می‌خواهم آکادمی خودم را بسازم',
     useAnotherNumber: 'ورود با شماره دیگر',
-    phoneAlreadyRegistered:
-      'این شماره موبایل قبلاً ثبت‌نام کرده است. لطفاً وارد شوید.',
+    phoneAlreadyRegistered: 'این شماره موبایل قبلاً ثبت‌نام کرده است. لطفاً وارد شوید.',
     registerToLoginHint: 'ابتدا حساب رایگان بسازید، سپس وارد شوید.',
     createAccountToContinue: 'ایجاد حساب',
     sendingCode: 'در حال ارسال کد...',
@@ -1114,8 +1092,7 @@ export const fa = {
     panelForStaff: 'این پنل مخصوص',
     teachersManagersAdmins: 'معلمان و مدیران ',
     staffOnly: 'است.',
-    studentsLoginThroughStore:
-      'دانشجویان باید از طریق وب‌سایت آکادمی خود وارد شوند.',
+    studentsLoginThroughStore: 'دانشجویان باید از طریق وب‌سایت آکادمی خود وارد شوند.',
     dontHaveAccount: 'حساب مدیریتی ندارید؟',
     registerStore: 'آکادمی خود را ثبت کنید',
     areYouStudent: 'دانشجو هستید؟',
@@ -1127,8 +1104,7 @@ export const fa = {
     phoneRequired: 'شماره تلفن الزامی است',
     emailRequired: 'ایمیل الزامی است',
     passwordTooShort: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
-    passwordAsciiOnly:
-      'رمز عبور فقط می‌تواند شامل حروف انگلیسی، عدد و نماد باشد',
+    passwordAsciiOnly: 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، عدد و نماد باشد',
     passwordHasSymbol: 'شامل نماد باشد',
     passwordTooWeak: 'رمز عبور باید شامل حروف انگلیسی، عدد و نماد باشد',
     passwordMinLength: 'حداقل ۶ کاراکتر',
@@ -1152,8 +1128,7 @@ export const fa = {
     createStoreAccount: 'ایجاد حساب آکادمی',
     verifyContactDescription:
       'ابتدا تلفن (و ایمیل در صورت وجود) را تأیید کنید. سپس اطلاعات پایه را پر کنید.',
-    registerDescription:
-      'به عنوان مدیر آکادمی ثبت‌نام کنید یا به عنوان دانشجو بپیوندید',
+    registerDescription: 'به عنوان مدیر آکادمی ثبت‌نام کنید یا به عنوان دانشجو بپیوندید',
     fullNameRequired: 'نام کامل الزامی است',
     phoneNumberRequired: 'شماره تلفن الزامی است',
     validPhoneNumber: 'لطفاً یک شماره تلفن معتبر وارد کنید (۷ تا ۱۵ رقم)',
@@ -1163,8 +1138,7 @@ export const fa = {
     passwordsDoNotMatch: 'رمزهای عبور مطابقت ندارند',
     storeNameRequired: 'نام آکادمی الزامی است',
     storeSlugRequired: 'نامک آکادمی الزامی است',
-    storeSlugInvalid:
-      'نامک آکادمی فقط می‌تواند شامل حروف کوچک، اعداد و خط تیره باشد',
+    storeSlugInvalid: 'نامک آکادمی فقط می‌تواند شامل حروف کوچک، اعداد و خط تیره باشد',
     selectStoreRequired: 'لطفاً یک آکادمی انتخاب کنید',
     teacherRequestReasonRequired: 'لطفاً توضیح دهید چرا می‌خواهید معلم شوید',
     registering: 'در حال ثبت‌نام کاربر...',
@@ -1184,17 +1158,14 @@ export const fa = {
     resendEmailOtp: 'ارسال مجدد کد تأیید ایمیل',
     sendEmailOtp: 'ارسال کد تأیید ایمیل',
     verifyEmailOtp: 'تأیید کد تأیید ایمیل',
-    verifyPhoneLater:
-      'می‌توانید شماره تلفن خود را بعداً در تنظیمات حساب تأیید کنید',
-    verifyEmailLater:
-      'می‌توانید آدرس ایمیل خود را بعداً در تنظیمات حساب تأیید کنید',
+    verifyPhoneLater: 'می‌توانید شماره تلفن خود را بعداً در تنظیمات حساب تأیید کنید',
+    verifyEmailLater: 'می‌توانید آدرس ایمیل خود را بعداً در تنظیمات حساب تأیید کنید',
     stepVerification: 'تأیید',
     stepBaseData: 'اطلاعات پایه',
     createNewStore: 'ایجاد آکادمی جدید',
     createNewStoreDescription: 'مؤسسه آموزشی خود را به عنوان مدیر شروع کنید',
     joinExistingStore: 'پیوستن به آکادمی موجود',
-    joinExistingStoreDescription:
-      'به عنوان دانشجو بپیوندید و در صورت تمایل درخواست نقش معلم دهید',
+    joinExistingStoreDescription: 'به عنوان دانشجو بپیوندید و در صورت تمایل درخواست نقش معلم دهید',
     fullName: 'نام و نام خانوادگی',
     enterFullName: 'نام کامل خود را وارد کنید',
     createPassword: 'یک رمز عبور ایجاد کنید',
@@ -1208,10 +1179,8 @@ export const fa = {
     adminOnly: 'این پنل مخصوص',
     adminsOnly: 'ادمین‌ها هستند.',
     signInAsAdmin: 'به عنوان ادمین وارد شوید',
-    staffRouteOnly:
-      'این مسیر برای کارکنان ادمین و پشتیبانی است. لطفاً از ورود عادی استفاده کنید.',
-    adminUnauthorizedRole:
-      'شما اجازه دسترسی به پنل ادمین را ندارید. فقط نقش ادمین مجاز است.',
+    staffRouteOnly: 'این مسیر برای کارکنان ادمین و پشتیبانی است. لطفاً از ورود عادی استفاده کنید.',
+    adminUnauthorizedRole: 'شما اجازه دسترسی به پنل ادمین را ندارید. فقط نقش ادمین مجاز است.',
     bySigningIn: 'با ورود، شما با',
     togglePasswordVisibility: 'نمایش/مخفی کردن رمز عبور',
     notAdmin: 'ادمین نیستید؟',
@@ -1248,21 +1217,18 @@ export const fa = {
     redirectingToAdminLogin: 'در حال انتقال به ورود ادمین...',
     dontHaveAccountYet: 'حساب کاربری ندارید؟',
     chooseAcademy: 'آکادمی خود را انتخاب کنید',
-    chooseAcademyDesc:
-      'شما به چندین آکادمی دسترسی دارید. کدام یک را می‌خواهید مدیریت کنید؟',
+    chooseAcademyDesc: 'شما به چندین آکادمی دسترسی دارید. کدام یک را می‌خواهید مدیریت کنید؟',
     setupAcademyTitle: 'آکادمی خود را راه‌اندازی کنید',
     setupAcademySubtitle:
       'یک قدم تا داشبورد شما. درباره آکادمی خود بگویید — همه چیز بعداً قابل تغییر است.',
     step1Heading: 'نام آکادمی خود را انتخاب کنید',
     step1Subtitle: 'نام آکادمی برای همه دانشجویان نمایش داده می‌شود.',
     step2Heading: 'آدرس وب آکادمی خود را انتخاب کنید',
-    step2Subtitle:
-      'دانشجویان از این آدرس برای یافتن آکادمی شما استفاده می‌کنند.',
+    step2Subtitle: 'دانشجویان از این آدرس برای یافتن آکادمی شما استفاده می‌کنند.',
     step3Heading: 'درباره آکادمی خود بگویید',
     step3Subtitle: 'به دانشجویان کمک کنید بفهمند اینجا چه یاد می‌گیرند.',
     step4Heading: 'رنگ برند خود را انتخاب کنید',
-    step4Subtitle:
-      'رنگ اصلی آکادمی خود را انتخاب کنید. هر زمان می‌توانید تغییر دهید.',
+    step4Subtitle: 'رنگ اصلی آکادمی خود را انتخاب کنید. هر زمان می‌توانید تغییر دهید.',
     backBtn: 'بازگشت',
     skipForNow: 'فعلاً رد کن',
     academyName: 'نام آکادمی',
@@ -1290,7 +1256,7 @@ export const fa = {
     and: 'و',
     privacyPolicy: 'سیاست حریم خصوصی',
     staffTerms: 'شرایط کارکنان و مدیران',
-    agree: ' موافقت می‌کنید.'
+    agree: ' موافقت می‌کنید.',
   },
   dashboard: {
     limits: {
@@ -1308,7 +1274,7 @@ export const fa = {
       storage_gb: 'فضای ذخیره‌سازی (گیگابایت)',
       monthly_traffic_gb: 'ترافیک ماهانه (گیگابایت)',
       dedicated_templates: 'قالب سایت اختصاصی',
-      videos: 'ویدیو'
+      videos: 'ویدیو',
     },
     cards: {
       courses: 'دوره‌های ساخته‌شده',
@@ -1316,10 +1282,9 @@ export const fa = {
       students: 'دانشجویان ثبت‌نام‌شده',
       studentsHint: 'تعداد کل دانشجویانی که در آکادمی شما حساب دارند',
       completion: 'نرخ تکمیل دوره',
-      completionHint:
-        'چند درصد از ثبت‌نام‌های {{period}} دوره را تمام کرده‌اند',
+      completionHint: 'چند درصد از ثبت‌نام‌های {{period}} دوره را تمام کرده‌اند',
       active: 'ثبت‌نام‌های فعال',
-      activeHint: 'دانشجویانی که در {{period}} در حال گذراندن دوره هستند'
+      activeHint: 'دانشجویانی که در {{period}} در حال گذراندن دوره هستند',
     },
     teacherPayout: {
       title: 'ثبت پرداخت به {{name}}',
@@ -1331,7 +1296,7 @@ export const fa = {
       bankResponseHint: 'مثلاً شماره پیگیری یا متن رسید',
       submit: 'ثبت پرداخت',
       success: 'پرداخت ثبت شد',
-      failed: 'ثبت پرداخت انجام نشد'
+      failed: 'ثبت پرداخت انجام نشد',
     },
     money: {
       academyRow: 'درآمد آکادمی',
@@ -1339,8 +1304,7 @@ export const fa = {
       platformOwes: 'قابل تسویه از پلتفرم',
       platformOwesHint: '{{pending}} در انتظار واریز است',
       paidToAcademy: 'واریزشده به آکادمی',
-      paidToAcademyHint:
-        'مجموع مبالغی که تاکنون به حساب بانکی آکادمی واریز شده',
+      paidToAcademyHint: 'مجموع مبالغی که تاکنون به حساب بانکی آکادمی واریز شده',
       teacherRate: 'نرخ سهم مدرس',
       teacherRateHint: 'سهم هر مدرس از هر فروش؛ در تنظیمات آکادمی تغییر می‌کند',
       teacherShare: 'سهم مدرسان',
@@ -1378,13 +1342,12 @@ export const fa = {
       sortNet: 'سهم آکادمی',
       sortStudents: 'دانشجو',
       noCourses: 'هنوز دوره‌ای با فروش وجود ندارد',
-      noTeachers: 'هنوز مدرسی با فروش وجود ندارد'
+      noTeachers: 'هنوز مدرسی با فروش وجود ندارد',
     },
     title: 'داشبورد',
     welcome: 'به پنل مدیریت خوش آمدید',
     welcomeBack: 'خوش برگشتید!',
-    whatsHappening:
-      'در اینجا آنچه امروز با آکادمی‌های شما اتفاق می‌افتد را می‌بینید.',
+    whatsHappening: 'در اینجا آنچه امروز با آکادمی‌های شما اتفاق می‌افتد را می‌بینید.',
     overview: 'نمای کلی',
     statistics: 'آمار',
     recentActivity: 'فعالیت‌های اخیر',
@@ -1399,8 +1362,7 @@ export const fa = {
     checkMetrics: 'معیارهای عملکرد خود را بررسی کنید',
     quickActions: 'اقدامات سریع',
     quickActionsDescription: 'کارهای رایج برای شروع',
-    recentActivityDescription:
-      'آخرین به‌روزرسانی‌ها از آکادمی‌ها و دوره‌های شما',
+    recentActivityDescription: 'آخرین به‌روزرسانی‌ها از آکادمی‌ها و دوره‌های شما',
     recentCourses: 'دوره‌های اخیر',
     recentEnrollments: 'ثبت‌نام‌های اخیر',
     recentPayments: 'پرداخت‌های اخیر',
@@ -1495,13 +1457,11 @@ export const fa = {
       'با پلن Pro فضای ذخیره‌سازی بیشتر، دانشجویان بیشتر و پشتیبانی اولویت‌دار دریافت کنید.',
     upgradePlanCta: 'مشاهده پلن‌ها',
     buyPlanTitle: 'پلن خود را انتخاب کنید',
-    buyPlanDesc:
-      'برای استفاده از امکانات منتوما، یکی از پلن‌های زیر را انتخاب و خرید کنید.',
+    buyPlanDesc: 'برای استفاده از امکانات منتوما، یکی از پلن‌های زیر را انتخاب و خرید کنید.',
     buyPlanCta: 'انتخاب و خرید',
     // Business has no higher tier — this card must not invite an upgrade there.
     renewPlanTitle: 'اشتراک خود را تمدید کنید',
-    renewPlanDesc:
-      'پلن شما به‌زودی منقضی می‌شود؛ برای حفظ دسترسی همین حالا تمدید کنید.',
+    renewPlanDesc: 'پلن شما به‌زودی منقضی می‌شود؛ برای حفظ دسترسی همین حالا تمدید کنید.',
     inviteTeamTitle: 'تیم خود را دعوت کنید',
     inviteTeamDesc: 'معلمان و مدیران را برای همکاری در آکادمی اضافه کنید.',
     inviteTeamCta: 'دعوت کاربران',
@@ -1513,7 +1473,7 @@ export const fa = {
     bannerColor: 'رنگ',
     saveBanner: 'ذخیره بنر',
     editBanner: 'ویرایش بنر',
-    addBanner: 'افزودن بنر'
+    addBanner: 'افزودن بنر',
   },
   stores: {
     title: 'آکادمی‌ها',
@@ -1532,8 +1492,7 @@ export const fa = {
     enterStoreName: 'نام آکادمی را وارد کنید',
     domainName: 'نام دامنه',
     mustBeUnique: 'باید یکتا باشد',
-    enterDomainName:
-      'نام دامنه را وارد کنید (به صورت خودکار به حروف کوچک تبدیل می‌شود)',
+    enterDomainName: 'نام دامنه را وارد کنید (به صورت خودکار به حروف کوچک تبدیل می‌شود)',
     storeUrlWillBe: 'آدرس آکادمی شما این خواهد بود:',
     uniqueDomainRequired: 'هر آکادمی باید یک نام دامنه یکتا داشته باشد',
     publicDomain: 'دامنه عمومی',
@@ -1544,8 +1503,7 @@ export const fa = {
     storeDescriptionPlaceholder: 'توضیح مختصری از آکادمی شما...',
     storeUrlSlug: 'نامک آدرس آکادمی',
     storeSlugPlaceholder: 'نام-آکادمی-شما',
-    toggleStatusDescription:
-      'برای فعال یا غیرفعال کردن این آکادمی تغییر وضعیت دهید',
+    toggleStatusDescription: 'برای فعال یا غیرفعال کردن این آکادمی تغییر وضعیت دهید',
     toggleActiveStatus: 'تغییر وضعیت فعال',
     storesManagement: 'مدیریت آکادمی‌ها',
     manageStoresDescription: 'مدیریت آکادمی‌ها و تنظیمات آن‌ها',
@@ -1607,8 +1565,7 @@ export const fa = {
     statusPaused: 'متوقف',
     enter: 'ورود',
     addNewAcademy: 'آکادمی جدید',
-    addNewAcademyDesc:
-      'یک آکادمی جدید بسازید و دوره‌های مخصوص خودتان را اضافه کنید.',
+    addNewAcademyDesc: 'یک آکادمی جدید بسازید و دوره‌های مخصوص خودتان را اضافه کنید.',
     createModalTitle: 'افزودن آکادمی',
     createModalHeading: 'یک آکادمی جدید بسازید',
     stepSpecs: 'مشخصات',
@@ -1632,10 +1589,8 @@ export const fa = {
       'آکادمی را موقتاً ببندید تا دانشجوی جدید نگیرد. سایت و دوره‌ها سر جای خود می‌مانند و فقط دکمه خرید و ثبت‌نام خاموش می‌شود.',
     siteStatusManage: 'غیرفعال کردن آکادمی',
     siteStatusTitleEnable: 'فعال کردن آکادمی',
-    siteStatusCardDescDisabled:
-      'آکادمی در تاریخ {{date}} غیرفعال شده است و دانشجوی جدید نمی‌گیرد.',
-    siteStatusCardDescDisabledNoDate:
-      'آکادمی غیرفعال است و دانشجوی جدید نمی‌گیرد.',
+    siteStatusCardDescDisabled: 'آکادمی در تاریخ {{date}} غیرفعال شده است و دانشجوی جدید نمی‌گیرد.',
+    siteStatusCardDescDisabledNoDate: 'آکادمی غیرفعال است و دانشجوی جدید نمی‌گیرد.',
     siteStatusEnableShort: 'فعال‌سازی مجدد',
     siteDisabledToast: 'آکادمی غیرفعال شد و به دانشجویان اطلاع داده شد.',
     siteEnabledToast: 'آکادمی فعال شد و به دانشجویان اطلاع داده شد.',
@@ -1656,8 +1611,7 @@ export const fa = {
       'شماره تماس همان شماره حساب کاربری شماست و اینجا قابل تغییر نیست. ایمیل اختیاری است.',
     siteContactPhoneMissing: 'شماره‌ای در حساب شما ثبت نشده است',
     siteDisableMessage: 'پیام برای بازدیدکنندگان (اختیاری)',
-    siteDisableMessagePlaceholder:
-      'مثلاً: ثبت‌نام ترم بعد از اول مهر باز می‌شود.',
+    siteDisableMessagePlaceholder: 'مثلاً: ثبت‌نام ترم بعد از اول مهر باز می‌شود.',
     siteDisableAction: 'غیرفعال کردن آکادمی',
     siteDisableConfirmTitle: 'آکادمی غیرفعال شود؟',
     siteDisableConfirmBody:
@@ -1698,7 +1652,7 @@ export const fa = {
     sectionIdentity: 'مشخصات آکادمی',
     sectionBranding: 'هویت بصری',
     categoryPlaceholder: 'انتخاب دسته‌بندی',
-    optionalTag: '(اختیاری)'
+    optionalTag: '(اختیاری)',
   },
   courses: {
     lessonsManagement: 'مدیریت درس‌ها',
@@ -1734,16 +1688,13 @@ export const fa = {
     // Live courses: syllabus, pricing, timetable and per-meeting naming.
     live: {
       stepTopics: 'سرفصل‌ها',
-      stepTopicsHint:
-        'فهرست موضوع‌هایی را بنویسید که در جلسه‌ها آموزش می‌دهید.',
+      stepTopicsHint: 'فهرست موضوع‌هایی را بنویسید که در جلسه‌ها آموزش می‌دهید.',
       stepPricing: 'قیمت',
-      stepPricingHint:
-        'قیمت هر صندلی کلاس گروهی را ثبت کنید تا بتوانید کلاس بسازید.',
+      stepPricingHint: 'قیمت هر صندلی کلاس گروهی را ثبت کنید تا بتوانید کلاس بسازید.',
       stepClass: 'ساخت کلاس',
       stepClassHint: 'یک کلاس بسازید؛ دانشجو صندلی همین کلاس را می‌خرد.',
       stepSchedule: 'زمان‌بندی',
-      stepScheduleHint:
-        'روز و ساعت هفتگی کلاس را مشخص کنید تا تاریخ جلسه‌ها ساخته شود.',
+      stepScheduleHint: 'روز و ساعت هفتگی کلاس را مشخص کنید تا تاریخ جلسه‌ها ساخته شود.',
       setupTitle: 'راه‌اندازی دورهٔ زنده',
       setupProgress: '{{done}} مرحله از {{total}} انجام شده',
       setupReadyTitle: 'این دوره آمادهٔ فروش است',
@@ -1778,13 +1729,11 @@ export const fa = {
       topicsRequired: 'حداقل یک سرفصل بنویسید.',
       topicsSaved: 'سرفصل‌ها ذخیره شد.',
       pricing: 'قیمت‌گذاری',
-      pricingHint:
-        'یک دورهٔ زنده از دو راه فروخته می‌شود: صندلی در کلاس گروهی، یا کلاس خصوصی.',
+      pricingHint: 'یک دورهٔ زنده از دو راه فروخته می‌شود: صندلی در کلاس گروهی، یا کلاس خصوصی.',
       groupPrice: 'قیمت هر صندلی کلاس گروهی',
       groupPriceHint: 'مبلغی که هر دانشجو برای شرکت در کلاس گروهی می‌پردازد.',
       soloPrice: 'قیمت کلاس خصوصی',
-      soloPriceHint:
-        'مبلغ کلاس یک‌به‌یک با مدرس. اگر خالی بماند، خصوصی فروخته نمی‌شود.',
+      soloPriceHint: 'مبلغ کلاس یک‌به‌یک با مدرس. اگر خالی بماند، خصوصی فروخته نمی‌شود.',
       pricesRequired: 'حداقل یکی از دو قیمت را وارد کنید.',
       pricesSaved: 'قیمت‌ها ذخیره شد.',
       pricesSavedAndSellingEnabled:
@@ -1805,17 +1754,14 @@ export const fa = {
       previewTitle: 'تاریخ جلسه‌ها',
       createClass: 'ساخت کلاس',
       classCreated: 'کلاس ساخته شد.',
-      needsPriceBeforeSchedule:
-        'برای ساختن کلاس، اول قیمت گروهی را ذخیره کنید.',
+      needsPriceBeforeSchedule: 'برای ساختن کلاس، اول قیمت گروهی را ذخیره کنید.',
       timetable: 'برنامه جلسه‌ها',
-      noClassesYet:
-        'هنوز کلاسی ساخته نشده است. اول قیمت گروهی را ثبت کنید، بعد کلاس بسازید.',
+      noClassesYet: 'هنوز کلاسی ساخته نشده است. اول قیمت گروهی را ثبت کنید، بعد کلاس بسازید.',
       backToClasses: 'بازگشت به کلاس‌ها',
       publishClass: 'انتشار کلاس',
       classPublished: 'کلاس منتشر شد و تاریخ جلسه‌ها ثبت شد.',
       seatPrice: 'قیمت هر صندلی',
-      seatPriceHint:
-        'خالی بگذارید تا با قیمت هر صندلی دوره فروخته شود. یک صندلی یعنی کلاس خصوصی.',
+      seatPriceHint: 'خالی بگذارید تا با قیمت هر صندلی دوره فروخته شود. یک صندلی یعنی کلاس خصوصی.',
       priceLadderTitle: 'قیمت‌ها همان‌طور که دانشجو می‌بیند',
       priceLadderPrivate: 'کلاس خصوصی (یک‌نفره)',
       priceLadderSmall: 'هر صندلی در گروه کوچک (تا ۱۵ نفر)',
@@ -1837,8 +1783,7 @@ export const fa = {
       requestAccepted: 'کلاس ایجاد شد و به دانشجو پیامک داده شد.',
       requestsHint:
         'ایجاد کلاس از روی درخواست، آن را به کلاس وصل می‌کند و به دانشجو پیامک می‌دهد که کلاس برای رزرو باز است.',
-      noSessionsYet:
-        'هنوز جلسه‌ای ثبت نشده است. کلاس را منتشر کنید تا تاریخ‌ها ساخته شوند.',
+      noSessionsYet: 'هنوز جلسه‌ای ثبت نشده است. کلاس را منتشر کنید تا تاریخ‌ها ساخته شوند.',
       seatsTaken: '{{taken}} از {{capacity}} صندلی',
       meetingsCount: '{{count}} جلسه',
       nextSession: 'جلسهٔ بعدی',
@@ -1867,8 +1812,7 @@ export const fa = {
       cancelWithRefund: 'لغو و بازگشت وجه این جلسه',
       sessionCancelledMakeup:
         'جلسه لغو شد و جلسهٔ جایگزین به انتهای برنامه اضافه شد. به دانشجویان پیامک شد.',
-      sessionCancelledRefund:
-        'جلسه لغو شد و درخواست بازگشت وجه برای دانشجویان ثبت شد.',
+      sessionCancelledRefund: 'جلسه لغو شد و درخواست بازگشت وجه برای دانشجویان ثبت شد.',
       cancelled: 'لغو شده',
       uploadRecording: 'بارگذاری ویدیوی ضبط‌شده',
       uploadRecordingHint: 'ویدیوی این جلسه را برای دانشجویان کلاس بگذارید.',
@@ -1876,15 +1820,12 @@ export const fa = {
       hasRecording: 'ویدیوی ضبط‌شده دارد',
       hasOwnLink: 'لینک اختصاصی',
       meetingUrlPlaceholder: 'https://meet.example.com/your-class',
-      meetingUrlHint:
-        'خالی بگذارید تا لینک کلی کلاس برای این جلسه استفاده شود.',
+      meetingUrlHint: 'خالی بگذارید تا لینک کلی کلاس برای این جلسه استفاده شود.',
       sessionChat: 'گفت‌وگوی این جلسه',
       uploadMaterial: 'بارگذاری جزوه',
       uploadHelperVideo: 'بارگذاری ویدیوی کمک‌آموزشی',
-      uploadHelperVideoHint:
-        'ویدیوی اضافه‌ای که دانشجو در کنار کلاس زنده می‌بیند.',
-      uploadMaterialHint:
-        'اسلاید، تمرین یا یادداشتی که بعد از کلاس به اشتراک می‌گذارید.',
+      uploadHelperVideoHint: 'ویدیوی اضافه‌ای که دانشجو در کنار کلاس زنده می‌بیند.',
+      uploadMaterialHint: 'اسلاید، تمرین یا یادداشتی که بعد از کلاس به اشتراک می‌گذارید.',
       materialAdded: 'فایل به این جلسه اضافه شد',
       allowRecordingDownload: 'اجازهٔ دانلود ویدیو',
       pageSubtitle: 'سرفصل‌ها، قیمت، زمان‌بندی و نام هر جلسه را اینجا بسازید.',
@@ -1892,7 +1833,7 @@ export const fa = {
       publishNeedsTopic: 'پیش از انتشار حداقل یک سرفصل بنویسید.',
       publishNeedsPrice: 'پیش از انتشار قیمت کلاس را وارد کنید.',
       publishNeedsClass: 'پیش از انتشار حداقل یک کلاس بسازید.',
-      publishNeedsSchedule: 'برای کلاس، روزها و تعداد جلسه‌ها را مشخص کنید.'
+      publishNeedsSchedule: 'برای کلاس، روزها و تعداد جلسه‌ها را مشخص کنید.',
     },
     title: 'دوره‌ها',
     pricingTitle: 'قیمت‌گذاری و روش‌های فروش',
@@ -1901,10 +1842,8 @@ export const fa = {
     editSellingWay: 'ویرایش روش فروش',
     sellingWayDialogHint: 'نوع فروش، قیمت و مدت دسترسی این روش را مشخص کنید.',
     editBasePrice: 'ویرایش قیمت پایه دوره',
-    basePriceDialogHint:
-      'این قیمت روی خود دوره ذخیره می‌شود و با ذخیرهٔ صفحه اعمال می‌گردد.',
-    tutoringPricedElsewhere:
-      'تدریس خصوصی — از صفحهٔ تدریس خصوصی قیمت‌گذاری می‌شود',
+    basePriceDialogHint: 'این قیمت روی خود دوره ذخیره می‌شود و با ذخیرهٔ صفحه اعمال می‌گردد.',
+    tutoringPricedElsewhere: 'تدریس خصوصی — از صفحهٔ تدریس خصوصی قیمت‌گذاری می‌شود',
     openTutoringPage: 'رفتن به تدریس خصوصی',
     pricingSectionHintLive:
       'کلاس زنده فقط با رزرو صندلی فروخته می‌شود؛ قیمت صندلی در صفحهٔ کلاس زنده تعیین می‌شود.',
@@ -1917,22 +1856,19 @@ export const fa = {
     openLiveClassPage: 'رفتن به گام کلاس آنلاین',
     includesLive: 'شامل کلاس آنلاین زنده',
     includesLiveOnHint: 'خریدار به لینک کلاس آنلاین (زنده) هم دسترسی دارد',
-    includesLiveOffHint:
-      'فقط ویدیوهای ضبط‌شده؛ لینک کلاس آنلاین (زنده) داده نمی‌شود',
+    includesLiveOffHint: 'فقط ویدیوهای ضبط‌شده؛ لینک کلاس آنلاین (زنده) داده نمی‌شود',
     recordedOnly: 'فقط ضبط‌شده',
     lastSellingWayLocked:
       'این تنها راه ثبت‌نام است؛ برای حذف یا خاموش کردن آن، اول راه دیگری اضافه کنید یا دوره را از انتشار خارج کنید.',
     accessAcademyLifetime: 'به مدت فعالیت آکادمی',
-    accessAcademyLifetimeHint:
-      'خالی بگذارید تا دسترسی به مدت فعالیت آکادمی باشد',
+    accessAcademyLifetimeHint: 'خالی بگذارید تا دسترسی به مدت فعالیت آکادمی باشد',
     basePriceNotRemovable:
       'قیمت پایه روی خود دوره ذخیره شده و حذف نمی‌شود؛ برای فروخته‌نشدن آن را خاموش کنید.',
     allSellingWaysUsed: 'همهٔ روش‌های فروش برای این دوره تعریف شده‌اند',
     salePrice: 'قیمت فروش',
     priceBeforeDiscount: 'قیمت پیش از تخفیف',
     priceBeforeDiscountHint: 'اختیاری — خط‌خورده نمایش داده می‌شود',
-    priceBeforeDiscountInvalid:
-      'قیمت پیش از تخفیف باید بیشتر از قیمت فروش باشد',
+    priceBeforeDiscountInvalid: 'قیمت پیش از تخفیف باید بیشتر از قیمت فروش باشد',
     discountBadge: '{{percent}}٪ تخفیف',
     addOffering: 'افزودن روش فروش دوره',
     offeringType: 'نوع',
@@ -1963,8 +1899,7 @@ export const fa = {
     contentManagement: 'مدیریت محتوا',
     courseNotFoundDesc: 'دوره‌ای که به دنبال آن هستید وجود ندارد.',
     backToCourse: 'بازگشت به دوره',
-    seasonsManagementSubtitle:
-      'فصل‌ها و درس‌های ضبط‌شده‌ای که دانشجو در «{{title}}» می‌بیند',
+    seasonsManagementSubtitle: 'فصل‌ها و درس‌های ضبط‌شده‌ای که دانشجو در «{{title}}» می‌بیند',
     totalSeasons: 'مجموع فصل‌ها',
     totalLessons: 'مجموع درس‌ها',
     noSeasonsMatchSearch: 'هیچ فصلی با جستجوی شما مطابقت ندارد.',
@@ -1995,8 +1930,7 @@ export const fa = {
     seasonDescriptionHint: 'توضیح دهید دانشجو در این فصل چه می‌آموزد',
     seasonDescriptionPlaceholder: 'موضوع‌ها و اهداف یادگیری این فصل',
     selectCourse: 'یک دوره انتخاب کنید',
-    seasonOrderConflict:
-      'فصلی با این ترتیب وجود دارد. ترتیب دیگری انتخاب کنید.',
+    seasonOrderConflict: 'فصلی با این ترتیب وجود دارد. ترتیب دیگری انتخاب کنید.',
     backToSeasons: 'بازگشت به فصل‌ها',
     seasonDetailsSubtitle: 'جزئیات فصل برای «{{title}}»',
     manageLessons: 'مدیریت درس‌ها',
@@ -2037,11 +1971,9 @@ export const fa = {
     wizard: {
       tabBuilder: 'گام‌های دوره',
       stepBasics: 'مشخصات دوره',
-      stepBasicsHint:
-        'نام دوره، توضیح آن، نوع دوره، دسته‌بندی و تصویر جلد را مشخص کنید.',
+      stepBasicsHint: 'نام دوره، توضیح آن، نوع دوره، دسته‌بندی و تصویر جلد را مشخص کنید.',
       stepContent: 'محتوا',
-      stepContentHint:
-        'فصل‌ها و درس‌ها را بسازید: برای هر درس ویدیو و فایل پیوست.',
+      stepContentHint: 'فصل‌ها و درس‌ها را بسازید: برای هر درس ویدیو و فایل پیوست.',
       stepClassroom: 'کلاس آنلاین',
       stepClassroomHint:
         'این دوره زنده را همین‌جا مدیریت کنید: سرفصل‌ها، قیمت، زمان‌بندی هفتگی و هر کلاس.',
@@ -2051,8 +1983,7 @@ export const fa = {
       stepPricing: 'قیمت',
       stepPricingHint: 'قیمت دوره و همهٔ راه‌های ثبت‌نام در آن را مشخص کنید.',
       stepPreview: 'پیش‌نمایش',
-      stepPreviewHint:
-        'این چیزی است که دانشجو می‌بیند. آن را بررسی کنید و سپس دوره را ذخیره کنید.',
+      stepPreviewHint: 'این چیزی است که دانشجو می‌بیند. آن را بررسی کنید و سپس دوره را ذخیره کنید.',
       typeLockedHint: 'نوع دوره یک‌بار انتخاب می‌شود و قابل تغییر نیست.',
       visibilityTitle: 'چه کسی این دوره را می‌بیند',
       visibilityPublicTitle: 'عمومی',
@@ -2065,7 +1996,7 @@ export const fa = {
       previewUntitled: 'دورهٔ بدون عنوان',
       previewUntitledLesson: 'درس بدون عنوان',
       previewEmptySeason: 'هنوز درسی در این فصل نیست',
-      previewNoContent: 'هنوز فصلی ساخته نشده — در گام محتوا درس اضافه کنید.'
+      previewNoContent: 'هنوز فصلی ساخته نشده — در گام محتوا درس اضافه کنید.',
     },
     editCourse: 'ویرایش دوره',
     courseName: 'نام دوره',
@@ -2086,8 +2017,7 @@ export const fa = {
       'این دوره منتشر شده و برای دانشجویان قابل مشاهده است. تغییرات به‌محض ذخیره اعمال می‌شود.',
     updatedToast: 'دوره به‌روزرسانی شد',
     fixErrorsBeforeSaving: 'قبل از ذخیره، خطاهای مشخص‌شده را برطرف کنید',
-    createdDraftToast:
-      'دوره به‌صورت پیش‌نویس ساخته شد — هر وقت آماده بود آن را منتشر کنید',
+    createdDraftToast: 'دوره به‌صورت پیش‌نویس ساخته شد — هر وقت آماده بود آن را منتشر کنید',
     courseTypeLabel: 'نوع دوره',
     typeOfflineTitle: 'ضبط‌شده',
     typeOfflineHint: 'درس‌های ویدئویی که دانشجو در زمان دلخواه خودش می‌بیند.',
@@ -2098,8 +2028,7 @@ export const fa = {
       titleMax: 'عنوان باید کمتر از ۸۰ کاراکتر باشد',
       descriptionRequired: 'توضیحات الزامی است',
       descriptionMax: 'توضیحات باید کمتر از ۴۰۰۰ کاراکتر باشد',
-      learningOutcomesMax:
-        'بخش «پس از این دوره چه یاد می‌گیری» باید کمتر از ۲۰۰۰ کاراکتر باشد',
+      learningOutcomesMax: 'بخش «پس از این دوره چه یاد می‌گیری» باید کمتر از ۲۰۰۰ کاراکتر باشد',
       requirementsMax: 'پیش‌نیازها باید کمتر از ۲۰۰۰ کاراکتر باشند',
       accessDurationWholeNumber: 'مدت دسترسی باید عدد صحیح روز باشد',
       accessDurationRange: 'مدت دسترسی باید بین ۱ تا ۱۸۲۵ روز باشد',
@@ -2108,7 +2037,7 @@ export const fa = {
       primaryPriceRange: 'قیمت فروش باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
       beforeDiscountWholeNumber: 'قیمت پیش از تخفیف باید عدد صحیح باشد',
       beforeDiscountRange: 'قیمت پیش از تخفیف باید بین ۰ تا ۹۹۹,۹۹۹,۹۹۹ باشد',
-      beforeDiscountTooLow: 'قیمت پیش از تخفیف باید بیشتر از قیمت فروش باشد'
+      beforeDiscountTooLow: 'قیمت پیش از تخفیف باید بیشتر از قیمت فروش باشد',
     },
     enterCourseTitle: 'عنوان دوره را وارد کنید (حداقل ۵ کاراکتر)',
     titleLength: 'عنوان باید بین ۵ تا ۸۰ کاراکتر باشد',
@@ -2116,13 +2045,11 @@ export const fa = {
     whatYouWillLearn: 'پس از این دوره چه یاد می‌گیری',
     whatYouWillLearnHint:
       'هر مهارت یا نتیجه را در یک خط بنویس. دانشجو آن را در صفحه معرفی دوره می‌بیند.',
-    whatYouWillLearnPlaceholder:
-      'مکالمه روزمره به انگلیسی\nارائه کوتاه در محیط کار',
+    whatYouWillLearnPlaceholder: 'مکالمه روزمره به انگلیسی\nارائه کوتاه در محیط کار',
     requirements: 'پیش‌نیازها',
     requirementsHint:
       'هر پیش‌نیاز را در یک خط بنویس. دانشجو آن را در صفحه معرفی دوره می‌بیند. اگر پیش‌نیازی نیست خالی بگذار.',
-    requirementsPlaceholder:
-      'هفته‌ای ۳ ساعت زمان برای تمرین\nهدست و اینترنت پایدار برای کلاس زنده',
+    requirementsPlaceholder: 'هفته‌ای ۳ ساعت زمان برای تمرین\nهدست و اینترنت پایدار برای کلاس زنده',
     publicFacts: 'آنچه دانشجو می‌بیند',
     levelHint: 'در صفحه معرفی دوره نمایش داده می‌شود تا سطح دوره مشخص باشد.',
     accessDurationDaysPlaceholder: 'روز (خالی = تا وقتی آکادمی فعال است)',
@@ -2200,8 +2127,7 @@ export const fa = {
     enterLessonTitle: 'عنوان درس را وارد کنید',
     freePreview: 'پیش‌نمایش رایگان',
     allowDownload: 'اجازه دانلود',
-    allowDownloadHint:
-      'دانشجو می‌تواند فایل این درس را ذخیره کند — حدود دو برابر فضا مصرف می‌کند.',
+    allowDownloadHint: 'دانشجو می‌تواند فایل این درس را ذخیره کند — حدود دو برابر فضا مصرف می‌کند.',
     optional: 'اختیاری',
     lessonVideo: 'ویدیو',
     lessonCover: 'تصویر پوشش',
@@ -2211,10 +2137,8 @@ export const fa = {
     removeCover: 'حذف تصویر پوشش',
     videoNeedsSecuring: 'این ویدیو هنوز به نسخه امن تبدیل نشده است.',
     secureThisVideo: 'تبدیل به نسخه امن',
-    videoSecuringQueued:
-      'ویدیو برای تبدیل امن در صف قرار گرفت. چند دقیقه طول می‌کشد.',
-    videoSecuringFailed:
-      'تبدیل امن این ویدیو ناموفق بود. می‌توانید دوباره تلاش کنید.',
+    videoSecuringQueued: 'ویدیو برای تبدیل امن در صف قرار گرفت. چند دقیقه طول می‌کشد.',
+    videoSecuringFailed: 'تبدیل امن این ویدیو ناموفق بود. می‌توانید دوباره تلاش کنید.',
     videoSecuringInProgress: 'در حال تبدیل به نسخه امن…',
     cancelUpload: 'لغو',
     uploadVideo: 'آپلود ویدیو',
@@ -2246,11 +2170,9 @@ export const fa = {
     confirmClearSeason:
       'این تنها فصل دوره است — خالی کردنش درس‌هایش را حذف و عنوانش را پاک می‌کند.',
     clearLesson: 'خالی کردن این درس',
-    confirmClearLesson:
-      'این تنها درسِ این فصل است — خالی کردنش عنوان و رسانه‌اش را پاک می‌کند.',
+    confirmClearLesson: 'این تنها درسِ این فصل است — خالی کردنش عنوان و رسانه‌اش را پاک می‌کند.',
     addSeasonBlocked: 'ابتدا به یک فصل درس اضافه کنید، سپس فصل جدید بسازید.',
-    addLessonBlocked:
-      'ابتدا عنوان درس بی‌نام را بنویسید، سپس درس جدید اضافه کنید.',
+    addLessonBlocked: 'ابتدا عنوان درس بی‌نام را بنویسید، سپس درس جدید اضافه کنید.',
     seasonNumber: 'فصل {{n}}',
     lessonCount: '{{n}} درس',
     addLessonHint: 'عنوان درس، سپس Enter',
@@ -2262,8 +2184,7 @@ export const fa = {
     liveScheduleHint: 'این درس زنده برگزار می‌شود.',
     liveScheduleLink: 'زمان جلسه را تعیین کنید',
     lessonSettingsLink: 'آزمون، زمان جلسه زنده و قانون دانلود',
-    liveSaveFirst:
-      'ابتدا درس را ذخیره کنید، سپس لینک جلسه را در صفحه ویرایش تنظیم کنید.',
+    liveSaveFirst: 'ابتدا درس را ذخیره کنید، سپس لینک جلسه را در صفحه ویرایش تنظیم کنید.',
     saving: 'در حال ذخیره…',
     saved: 'ذخیره شد',
     saveFailed: 'ذخیره نشد',
@@ -2307,8 +2228,7 @@ export const fa = {
     uploading: 'در حال آپلود...',
     uploadClickOrDrag: 'برای آپلود کلیک کنید یا بکشید',
     uploadFileTypes: 'PNG یا JPG · حداکثر ۲ مگابایت',
-    contentHint:
-      'محتوای دوره را به فصل و درس تقسیم کنید. می‌توانید بعداً ویرایش کنید.',
+    contentHint: 'محتوای دوره را به فصل و درس تقسیم کنید. می‌توانید بعداً ویرایش کنید.',
     priceInToman: 'قیمت (تومان)',
     discountPercent: 'تخفیف %',
     pricePlaceholderExample: 'مثلاً ۱,۴۸۰,۰۰۰',
@@ -2335,8 +2255,7 @@ export const fa = {
     categoryNamePlaceholder: 'نام دسته‌بندی',
     addCategory: 'افزودن دسته‌بندی',
     searchCategories: 'جستجوی دسته‌بندی‌ها...',
-    selectCategoryHint:
-      'یک دسته‌بندی انتخاب کنید تا دانشجویان دوره شما را راحت‌تر پیدا کنند',
+    selectCategoryHint: 'یک دسته‌بندی انتخاب کنید تا دانشجویان دوره شما را راحت‌تر پیدا کنند',
     noCategoriesMatch: 'دسته‌بندی‌ای مطابق با "{{term}}" یافت نشد',
     noCategoriesYet: 'هنوز دسته‌بندی‌ای ثبت نشده',
     removeCategoryAria: 'حذف {{name}}',
@@ -2356,7 +2275,7 @@ export const fa = {
       keywords: 'کلیدواژه‌ها',
       keywordsPlaceholder: 'کلیدواژه را بنویسید و Enter بزنید',
       keywordsHint:
-        'کلمه‌هایی که دانشجو جست‌وجو می‌کند. تا {{count}} مورد؛ در متادیتا و دادهٔ جست‌وجوی صفحه استفاده می‌شود.'
+        'کلمه‌هایی که دانشجو جست‌وجو می‌کند. تا {{count}} مورد؛ در متادیتا و دادهٔ جست‌وجوی صفحه استفاده می‌شود.',
     },
     highlightedOnHomepage: 'در صفحه اصلی برجسته نمایش داده می‌شود',
     secureMode: 'حالت امن (جلوگیری از دانلود)',
@@ -2371,8 +2290,7 @@ export const fa = {
       'همه درس‌های این دوره از همین تنظیم پیروی می‌کنند و فقط قابل پخش آنلاین‌اند. تنظیم جداگانهٔ هر درس بازنویسی می‌شود.',
     level: 'سطح',
     shortDescription: 'توضیحات کوتاه',
-    descriptionPlaceholder:
-      'در ۲ تا ۳ جمله توضیح دهید دانشجو در پایان چه یاد می‌گیرد',
+    descriptionPlaceholder: 'در ۲ تا ۳ جمله توضیح دهید دانشجو در پایان چه یاد می‌گیرد',
     removeImage: 'حذف تصویر',
     editCourseDetails: 'ویرایش اطلاعات دوره',
     createCourseTitle: 'یک دوره جدید بسازید',
@@ -2403,8 +2321,7 @@ export const fa = {
     lessonForm: {
       createTitle: 'ساخت درس',
       editTitle: 'ویرایش درس',
-      createSubtitle:
-        'افزودن درس تازه به فصل «{{season}}» از دورهٔ «{{course}}»',
+      createSubtitle: 'افزودن درس تازه به فصل «{{season}}» از دورهٔ «{{course}}»',
       editSubtitle: 'به‌روزرسانی درس فصل «{{season}}» از دورهٔ «{{course}}»',
       createAction: 'ساخت درس',
       updateAction: 'ذخیرهٔ تغییرات',
@@ -2423,8 +2340,7 @@ export const fa = {
       audioMainHint: 'فایل صوتی اصلی این درس. مدیریت همهٔ فایل‌ها در',
       documentMainHint: 'فایل اصلی این درس. مدیریت همهٔ فایل‌ها در',
       quizDocumentHint: 'برگهٔ سؤال یا راهنمای آزمون. کتابخانه:',
-      assignmentDocumentHint:
-        'تکلیفی که دانشجو انجام یا ارسال می‌کند. کتابخانه:',
+      assignmentDocumentHint: 'تکلیفی که دانشجو انجام یا ارسال می‌کند. کتابخانه:',
       categoryHint: 'یک دسته‌بندی برای این درس انتخاب کنید',
       publishedHint: 'این درس برای دانشجویان نمایش داده شود',
       freeLabel: 'درس رایگان',
@@ -2439,7 +2355,7 @@ export const fa = {
       tip2: 'ویدیو، صوت، تصویر یا سند را به درس پیوست کنید.',
       tip3: 'نوع درس را متناسب با محتوایتان انتخاب کنید.',
       tip4: 'برای کلاس آنلاین (زنده) «جلسهٔ زنده» را انتخاب و ذخیره کنید، سپس لینک و زمان را بگذارید.',
-      tip5: 'درس رایگان برای همهٔ دانشجویان قابل مشاهده است.'
+      tip5: 'درس رایگان برای همهٔ دانشجویان قابل مشاهده است.',
     },
     liveSession: {
       title: 'لینک و زمان جلسه',
@@ -2464,8 +2380,8 @@ export const fa = {
       repeatUntilHint: 'معمولاً آخرین روز ترم. خالی بگذارید تا ادامه پیدا کند.',
       save: 'ذخیرهٔ جلسه',
       remove: 'حذف جلسه',
-      removing: 'در حال حذف…'
-    }
+      removing: 'در حال حذف…',
+    },
   },
   members: {
     addMember: 'افزودن شخص',
@@ -2475,13 +2391,12 @@ export const fa = {
     phoneHint: 'شماره کامل را وارد کنید و جستجو بزنید.',
     personFound: 'این شخص از قبل حساب دارد',
     personNotFound: 'حسابی با این شماره نیست — حساب تازه ساخته می‌شود.',
-    alreadyMember:
-      'این شخص از قبل در آکادمی شماست. به‌جای افزودن دوباره، نقش او را تغییر دهید.',
+    alreadyMember: 'این شخص از قبل در آکادمی شماست. به‌جای افزودن دوباره، نقش او را تغییر دهید.',
     roleInAcademy: 'نقش در آکادمی شما',
     optionalPassword: 'رمز تازه برای آکادمی شما (اختیاری)',
     smsNotice:
       'به او پیامک می‌دهیم که به آکادمی شما افزوده شده؛ اگر رمز بگذارید، رمز هم فرستاده می‌شود.',
-    memberAdded: 'شخص به آکادمی شما افزوده شد'
+    memberAdded: 'شخص به آکادمی شما افزوده شد',
   },
   students: {
     title: 'دانشجویان',
@@ -2533,15 +2448,13 @@ export const fa = {
     monitorProgressDescription: 'نظارت بر پیشرفت دانشجویان در تمام دوره‌ها',
     loadingProgressData: 'در حال بارگذاری داده‌های پیشرفت...',
     noProgressData: 'داده پیشرفتی وجود ندارد',
-    progressWillBeTracked:
-      'پیشرفت پس از شروع دوره‌ها توسط دانشجویان ردیابی می‌شود.',
+    progressWillBeTracked: 'پیشرفت پس از شروع دوره‌ها توسط دانشجویان ردیابی می‌شود.',
     enrollments: 'ثبت‌نام در دوره',
     studentEnrollments: 'ثبت‌نام دانشجویان در دوره',
     enrollmentsDescription:
       'فهرست دانشجو × دوره: وضعیت ثبت‌نام، فیلتر، و جزئیات دسترسی به هر دوره.',
     zeroResults: '۰ نتیجه',
-    useSearchAndFilters:
-      'از جستجو و فیلترهای زیر برای محدود کردن رکوردهای خاص استفاده کنید.',
+    useSearchAndFilters: 'از جستجو و فیلترهای زیر برای محدود کردن رکوردهای خاص استفاده کنید.',
     searchByStudentOrCourse: 'جستجو بر اساس دانشجو یا دوره...',
     filterByStatus: 'فیلتر بر اساس وضعیت',
     resultsCount: 'نتیجه',
@@ -2569,8 +2482,7 @@ export const fa = {
     lagging: 'عقب‌مانده (< ۵۰٪)',
     fetchingProgressData: 'در حال دریافت داده‌های پیشرفت...',
     noProgressForFilters: 'داده پیشرفتی برای فیلترهای انتخابی وجود ندارد.',
-    tryAdjustingFilters:
-      'سعی کنید فیلترهای وضعیت یا سطح پیشرفت را تنظیم کنید تا دامنه گسترش یابد.',
+    tryAdjustingFilters: 'سعی کنید فیلترهای وضعیت یا سطح پیشرفت را تنظیم کنید تا دامنه گسترش یابد.',
     allUsers: 'همه کاربران',
     manageAllUsers: 'مدیریت همه کاربران در نقش‌های مختلف',
     addUser: 'افزودن کاربر',
@@ -2595,8 +2507,7 @@ export const fa = {
     noGeneralUsersFound: 'کاربر عمومی در سیستم یافت نشد',
     lessonAccess: {
       title: 'دسترسی درس دانشجو',
-      description:
-        'قفل یا باز کردن درس‌های خاص برای دانشجویان، مستقل از وضعیت انتشار دوره',
+      description: 'قفل یا باز کردن درس‌های خاص برای دانشجویان، مستقل از وضعیت انتشار دوره',
       addOverride: 'افزودن استثنا',
       accessOverrides: 'استثناهای دسترسی',
       accessOverridesDescription:
@@ -2617,28 +2528,25 @@ export const fa = {
       lessonId: 'شناسه درس',
       unlockLesson: 'باز کردن این درس',
       lockLesson: 'قفل کردن این درس',
-      unlockHelp:
-        'دانشجو می‌تواند حتی اگر درس منتشر نشده باشد دسترسی داشته باشد',
+      unlockHelp: 'دانشجو می‌تواند حتی اگر درس منتشر نشده باشد دسترسی داشته باشد',
       lockHelp: 'دانشجو نمی‌تواند حتی اگر درس منتشر شده باشد دسترسی داشته باشد',
       internalNote: 'یادداشت داخلی (اختیاری)',
       saveOverride: 'ذخیره استثنا',
       saving: 'در حال ذخیره...',
-      removeConfirm: 'حذف این استثنای دسترسی؟'
+      removeConfirm: 'حذف این استثنای دسترسی؟',
     },
     manualEnroll: {
       title: 'ثبت‌نام دستی',
       description:
         'ثبت‌نام دانشجویانی که خارج از پلتفرم پرداخت کرده‌اند (نقد، انتقال بانکی یا سایر روش‌های آفلاین)',
       enrollStudent: 'ثبت‌نام دانشجو',
-      enrollStudentDescription:
-        'یک ثبت‌نام فعال ایجاد می‌کند و یک پرداخت دستی ثبت می‌نماید',
+      enrollStudentDescription: 'یک ثبت‌نام فعال ایجاد می‌کند و یک پرداخت دستی ثبت می‌نماید',
       courseId: 'شناسه دوره *',
       studentProfileId: 'شناسه پروفایل دانشجو *',
       amountPaid: 'مبلغ پرداختی (ریال)',
       paymentNote: 'یادداشت پرداخت',
       leaveEmptyIfFree: 'در صورت رایگان بودن خالی بگذارید',
-      manualPaymentNote:
-        'این یک رکورد پرداخت دستی/انتقال بانکی برای سوابق شما ایجاد می‌کند',
+      manualPaymentNote: 'این یک رکورد پرداخت دستی/انتقال بانکی برای سوابق شما ایجاد می‌کند',
       recentEnrollments: 'ثبت‌نام‌های اخیر',
       recentEnrollmentsDescription: 'همه ثبت‌نام‌های آکادمی شما (شامل دستی)',
       noEnrollmentsFound: 'ثبت‌نامی یافت نشد',
@@ -2651,8 +2559,8 @@ export const fa = {
       student: 'دانشجو',
       course: 'دوره',
       payment: 'پرداخت',
-      enrolled: 'ثبت‌نام شده'
-    }
+      enrolled: 'ثبت‌نام شده',
+    },
   },
   teachers: {
     title: 'معلمان',
@@ -2662,21 +2570,21 @@ export const fa = {
     courses: 'دوره‌ها',
     status: 'وضعیت',
     allTeachers: 'همه معلمان',
-    noTeachers: 'معلمی یافت نشد'
+    noTeachers: 'معلمی یافت نشد',
   },
   compliance: {
     reviewStatus: {
       PENDING: 'در انتظار بررسی',
       APPROVED: 'تأییدشده',
       FLAGGED: 'نشانه‌دار',
-      SUSPENDED: 'تعلیق‌شده'
+      SUSPENDED: 'تعلیق‌شده',
     },
     enamadStatus: {
       NOT_REQUIRED: 'نیاز نیست',
       REQUIRED: 'الزامی',
       PENDING: 'در انتظار بررسی',
       VERIFIED: 'تأییدشده',
-      REJECTED: 'ردشده'
+      REJECTED: 'ردشده',
     },
     queue: {
       title: 'بررسی محتوای آکادمی‌ها',
@@ -2696,8 +2604,8 @@ export const fa = {
         PENDING: 'در انتظار',
         FLAGGED: 'نشانه‌دار',
         APPROVED: 'تأییدشده',
-        ALL: 'همه'
-      }
+        ALL: 'همه',
+      },
     },
     action: {
       confirm: 'تأیید و ثبت',
@@ -2710,7 +2618,7 @@ export const fa = {
       APPROVED: { title: 'تأیید محتوای آکادمی', short: 'تأیید' },
       FLAGGED: { title: 'نشانه‌دار کردن آکادمی', short: 'نشانه‌دار' },
       SUSPENDED: { title: 'تعلیق سایت آکادمی', short: 'تعلیق' },
-      PENDING: { title: 'بازگرداندن به صف بررسی', short: 'بازگردانی' }
+      PENDING: { title: 'بازگرداندن به صف بررسی', short: 'بازگردانی' },
     },
     abuse: {
       title: 'گزارش‌های تخلف',
@@ -2723,10 +2631,10 @@ export const fa = {
       anonymous: 'گزارش بی‌نام',
       dismiss: 'رد گزارش',
       actioned: 'اقدام شد',
-      dismissReason: 'دلیل رد شدن گزارش را بنویسید:'
+      dismissReason: 'دلیل رد شدن گزارش را بنویسید:',
     },
     manage: {
-      title: 'مدیریت انطباق آکادمی'
+      title: 'مدیریت انطباق آکادمی',
     },
     override: {
       title: 'سیاست انتشار محتوای این آکادمی',
@@ -2735,17 +2643,16 @@ export const fa = {
       useDefault: 'پیروی از پیش‌فرض',
       inheriting: 'در حال پیروی از پیش‌فرض: {{policy}}',
       PUBLISH_IMMEDIATELY: 'انتشار بلافاصله',
-      HOLD_FOR_REVIEW: 'نگه‌داشتن تا تأیید'
+      HOLD_FOR_REVIEW: 'نگه‌داشتن تا تأیید',
     },
     enamadReview: {
-      notApplicable:
-        'این آکادمی روی زیردامنهٔ منتوما است و نماد اعتماد برای آن موضوعیت ندارد.',
+      notApplicable: 'این آکادمی روی زیردامنهٔ منتوما است و نماد اعتماد برای آن موضوعیت ندارد.',
       awaitingSubmission: 'دامنهٔ اختصاصی متصل شده اما هنوز کدی ثبت نشده است.',
       lookup: 'استعلام در اینماد',
       notePlaceholder: 'یادداشت بررسی (در صورت رد، الزامی است)',
       approve: 'تأیید نماد',
       reject: 'رد نماد',
-      rejectNeedsNote: 'برای رد کردن، نوشتن دلیل الزامی است.'
+      rejectNeedsNote: 'برای رد کردن، نوشتن دلیل الزامی است.',
     },
     moderation: {
       title: 'حالت پیش‌فرض انتشار محتوا',
@@ -2759,7 +2666,7 @@ export const fa = {
         VIDEO: 'ویدیوها',
         AUDIO: 'صوت‌ها',
         DOCUMENT: 'فایل‌ها',
-        ARTICLE: 'متن‌ها و مقاله‌ها'
+        ARTICLE: 'متن‌ها و مقاله‌ها',
       },
       queueTitle: 'محتوای در انتظار تأیید',
       queueDescription:
@@ -2767,7 +2674,7 @@ export const fa = {
       queueEmpty: 'محتوایی در انتظار تأیید نیست.',
       item: 'محتوا',
       reject: 'رد',
-      rejectReason: 'دلیل رد شدن محتوا را بنویسید:'
+      rejectReason: 'دلیل رد شدن محتوا را بنویسید:',
     },
     sellerIdentity: {
       title: 'هویت حقوقی ناشر',
@@ -2785,15 +2692,14 @@ export const fa = {
       complete: 'تکمیل شده',
       incomplete: 'ناقص',
       savedComplete: 'هویت حقوقی ذخیره شد — اکنون می‌توانید دامنه را متصل کنید',
-      savedIncomplete: 'ذخیره شد — فیلدهای باقی‌مانده را تکمیل کنید'
+      savedIncomplete: 'ذخیره شد — فیلدهای باقی‌مانده را تکمیل کنید',
     },
     kyc: {
-      title: 'احراز هویت'
+      title: 'احراز هویت',
     },
     enamad: {
       title: 'نماد اعتماد الکترونیکی',
-      description:
-        'نماد اعتماد برای هر دامنه و به نام مالک همان دامنه صادر می‌شود.',
+      description: 'نماد اعتماد برای هر دامنه و به نام مالک همان دامنه صادر می‌شود.',
       subdomainNotice:
         'آکادمی شما روی زیردامنهٔ منتوما کار می‌کند و نماد اعتماد برای آن قابل دریافت نیست. اگر دامنهٔ اختصاصی خود را متصل کنید، دریافت نماد الزامی و ممکن می‌شود.',
       statusTitle: 'وضعیت نماد',
@@ -2824,33 +2730,32 @@ export const fa = {
       sealIdHelp:
         'پس از صدور نماد، مقدار عددی id= را از قطعه‌کد کپی کنید. ویجت رسمی را در فوتر سایت قرار می‌دهیم.',
       titleVerifyLabel: 'قرار دادن کد در عنوان صفحهٔ اصلی',
-      titleVerifyHelp:
-        'فقط وقتی در اینماد روی «تأیید عنوان» می‌زنید روشن کنید؛ بعد خاموشش کنید.',
+      titleVerifyHelp: 'فقط وقتی در اینماد روی «تأیید عنوان» می‌زنید روشن کنید؛ بعد خاموشش کنید.',
       footerLive: 'نماد رسمی در فوتر سایت عمومی نمایش داده می‌شود',
       saveSealId: 'ذخیرهٔ شناسهٔ نشان',
       step: {
         ownership: {
           title: 'مالکیت دامنه',
-          body: 'دامنه باید به نام همان شخص حقیقی یا حقوقی ثبت شده باشد که در منتوما وارد کرده‌اید.'
+          body: 'دامنه باید به نام همان شخص حقیقی یا حقوقی ثبت شده باشد که در منتوما وارد کرده‌اید.',
         },
         businessInfo: {
           title: 'اطلاعات کسب‌وکار',
-          body: 'کد ملی یا شناسهٔ ملی، و در صورت شرکتی‌بودن، آگهی ثبت و روزنامهٔ رسمی.'
+          body: 'کد ملی یا شناسهٔ ملی، و در صورت شرکتی‌بودن، آگهی ثبت و روزنامهٔ رسمی.',
         },
         contactInfo: {
           title: 'اطلاعات تماس',
-          body: 'تلفن ثابت به نام خودتان، نشانی پستی و کد پستی. تلفن ثابت با تماس تأیید می‌شود.'
+          body: 'تلفن ثابت به نام خودتان، نشانی پستی و کد پستی. تلفن ثابت با تماس تأیید می‌شود.',
         },
         commitment: {
           title: 'تعهدنامه و مجوز فعالیت',
-          body: 'تعهدنامهٔ اینماد و در صورت نیاز، مجوز آموزشگاه از مرجع صالح.'
+          body: 'تعهدنامهٔ اینماد و در صورت نیاز، مجوز آموزشگاه از مرجع صالح.',
         },
         technical: {
           title: 'دسترسی فنی به دامنه',
-          body: 'فایل را در ریشهٔ سایت و متاتگ را در هدر قرار می‌دهیم. شما در اینماد تأیید می‌کنید، info@ را فعال نگه می‌دارید، و شناسهٔ نشان را برای فوتر وارد می‌کنید.'
-        }
-      }
-    }
+          body: 'فایل را در ریشهٔ سایت و متاتگ را در هدر قرار می‌دهیم. شما در اینماد تأیید می‌کنید، info@ را فعال نگه می‌دارید، و شناسهٔ نشان را برای فوتر وارد می‌کنید.',
+        },
+      },
+    },
   },
   settings: {
     title: 'تنظیمات',
@@ -2892,8 +2797,8 @@ export const fa = {
         youtube: 'یوتیوب',
         twitter: 'ایکس',
         aparat: 'آپارات',
-        eitaa: 'ایتا'
-      }
+        eitaa: 'ایتا',
+      },
     },
     defaultAcademy: {
       title: 'آکادمی پیش‌فرض',
@@ -2903,7 +2808,7 @@ export const fa = {
       single: 'شما فقط یک آکادمی دارید — نیازی به انتخاب پیش‌فرض نیست.',
       pickOne: 'یکی را انتخاب کنید',
       noDefault: '— بدون پیش‌فرض —',
-      saved: 'آکادمی پیش‌فرض ذخیره شد'
+      saved: 'آکادمی پیش‌فرض ذخیره شد',
     },
     subscriptionTitle: 'اشتراک',
     loadingSubscription: 'در حال بارگذاری اشتراک...',
@@ -2932,35 +2837,28 @@ export const fa = {
       platform: 'پلتفرم',
       platformDescription: 'پلن اشتراک و تنظیمات آکادمی شما روی پلتفرم',
       academy: 'دانشجویان',
-      academyDescription:
-        'سایت، قیمت‌گذاری و پلن‌هایی که فراگیران می‌بینند و می‌خرند'
+      academyDescription: 'سایت، قیمت‌گذاری و پلن‌هایی که فراگیران می‌بینند و می‌خرند',
     },
     groupPersonal: 'شخصی',
     groupPersonalDescription: 'پروفایل و امنیت حساب کاربری شما',
     groupPlatform: 'آکادمی و اشتراک',
     groupPlatformDescription: 'اشتراک شما، مشخصات آکادمی و سقف‌های پلن',
     groupAcademy: 'سایت و فروش به دانشجو',
-    groupAcademyDescription:
-      'قالب سایت و پلن‌هایی که دانشجویان می‌بینند و می‌خرند',
+    groupAcademyDescription: 'قالب سایت و پلن‌هایی که دانشجویان می‌بینند و می‌خرند',
     platformPlanTitle: 'اشتراک آکادمی',
     platformPlanDescription:
       'اشتراکی که خودتان برای استفاده از سامانه می‌پردازید — مشاهده، ارتقا یا تمدید',
     managePlatformPlan: 'مدیریت اشتراک',
     noPlan: 'بدون پلن',
     daysRemaining: 'روز باقی‌مانده',
-    subscriptionReadOnlyHint:
-      'ارتقا یا تغییر پلن از صفحه اشتراک آکادمی انجام می‌شود',
-    storeSettingsPlatformDescription:
-      'نام، آدرس سایت و معرفی آکادمی شما در سامانه',
+    subscriptionReadOnlyHint: 'ارتقا یا تغییر پلن از صفحه اشتراک آکادمی انجام می‌شود',
+    storeSettingsPlatformDescription: 'نام، آدرس سایت و معرفی آکادمی شما در سامانه',
     studentPricingTitle: 'صفحه قیمت‌گذاری دانشجو',
-    studentPricingDescription:
-      'متن بازاریابی صفحه قیمت‌گذاری که دانشجویان می‌بینند',
+    studentPricingDescription: 'متن بازاریابی صفحه قیمت‌گذاری که دانشجویان می‌بینند',
     studentPlansTitle: 'پلن‌های دانشجو',
-    studentPlansDescription:
-      'پلن‌های اشتراکی و بسته‌ای که به دانشجویان می‌فروشید',
+    studentPlansDescription: 'پلن‌های اشتراکی و بسته‌ای که به دانشجویان می‌فروشید',
     platformPricingTitle: 'قیمت‌گذاری پلتفرم',
-    platformPricingDescription:
-      'سیاست درآمدزایی نمایش‌داده‌شده به مدیران آکادمی',
+    platformPricingDescription: 'سیاست درآمدزایی نمایش‌داده‌شده به مدیران آکادمی',
     paymentGatewayTitle: 'درگاه پرداخت',
     paymentGatewayDescription: 'پیکربندی پی‌پینگ و سایر درگاه‌های پرداخت',
     gateway: {
@@ -2981,13 +2879,11 @@ export const fa = {
       seeDocs: 'طبق مستندات',
       activeAccepting: 'فعال — در حال دریافت پرداخت',
       inactiveDisabled: 'غیرفعال',
-      sandboxMode:
-        'حالت آزمایشی — از اطلاعات تست و درگاه آزمایشی بانک استفاده می‌شود',
+      sandboxMode: 'حالت آزمایشی — از اطلاعات تست و درگاه آزمایشی بانک استفاده می‌شود',
       productionMode: 'حالت عملیاتی — از درگاه واقعی بانک استفاده می‌شود',
       apiToken: 'توکن / کلید API',
       tokenIsSet: 'توکن ثبت شده است',
-      tokenPlaceholderReplace:
-        'برای جایگزینی توکن فعلی، توکن جدید را وارد کنید',
+      tokenPlaceholderReplace: 'برای جایگزینی توکن فعلی، توکن جدید را وارد کنید',
       tokenPlaceholderPaste: 'توکن یا کلید درگاه را اینجا جای‌گذاری کنید',
       hideToken: 'پنهان کردن توکن',
       showToken: 'نمایش توکن',
@@ -3003,17 +2899,13 @@ export const fa = {
       paypingGuide2: 'به تنظیمات API بروید و توکن بسازید',
       paypingGuide3: 'توکن Bearer را کپی کنید (رشته‌ای طولانی از حروف و اعداد)',
       paypingGuide4: 'آن را بالا جای‌گذاری کنید و ذخیره تغییرات را بزنید',
-      paypingGuide5:
-        'سامانه از API نسخه ۳ پی‌پینگ استفاده می‌کند (api.payping.ir/v3)',
+      paypingGuide5: 'سامانه از API نسخه ۳ پی‌پینگ استفاده می‌کند (api.payping.ir/v3)',
       samanNotesTitle: 'نکات راه‌اندازی سامان SEP (بر اساس مستندات پذیرنده)',
       samanRequired: 'برای جریان توکن این موارد لازم است:',
-      samanWhitelist:
-        'پیشنهاد: قبل از محیط عملیاتی، IP سرور خود را در سامان ثبت کنید.',
-      samanKeepDisabled:
-        'تا وقتی جریان شروع و تأیید پرداخت کامل نشده، سامان را غیرفعال نگه دارید.'
+      samanWhitelist: 'پیشنهاد: قبل از محیط عملیاتی، IP سرور خود را در سامان ثبت کنید.',
+      samanKeepDisabled: 'تا وقتی جریان شروع و تأیید پرداخت کامل نشده، سامان را غیرفعال نگه دارید.',
     },
-    description:
-      'پروفایل، پیکربندی آکادمی، برندینگ و تنظیمات امنیتی خود را مدیریت کنید.',
+    description: 'پروفایل، پیکربندی آکادمی، برندینگ و تنظیمات امنیتی خود را مدیریت کنید.',
     refreshData: 'به‌روزرسانی داده‌ها',
     accountSummary: 'خلاصه حساب کاربری',
     accountSummaryDescription: 'اطلاعات کلیدی حساب مدیر شما.',
@@ -3030,18 +2922,15 @@ export const fa = {
     creatingManager: 'مدیر ایجادکننده',
     createdAt: 'تاریخ ایجاد',
     profileSettings: 'تنظیمات پروفایل',
-    profileSettingsDescription:
-      'جزئیات شخصی، اطلاعات تماس و احراز هویت خود را به‌روزرسانی کنید.',
+    profileSettingsDescription: 'جزئیات شخصی، اطلاعات تماس و احراز هویت خود را به‌روزرسانی کنید.',
     kyc: {
       title: 'احراز هویت',
       hubDescription: 'احراز هویت مدیر ایجادکننده با کد ملی و شماره شبا.',
-      description:
-        'احراز هویت را تکمیل کنید تا دامنهٔ اختصاصی و برداشت‌ها قابل تأیید باشند.',
+      description: 'احراز هویت را تکمیل کنید تا دامنهٔ اختصاصی و برداشت‌ها قابل تأیید باشند.',
       formTitle: 'احراز هویت',
       formDescription:
         'کد ملی با موبایل، سپس شبا. پس از تأیید شبا هویت شما تأیید می‌شود و می‌توانید برداشت کنید.',
-      ownerOnly:
-        'فقط مدیر ایجادکنندهٔ آکادمی می‌تواند احراز هویت را ببیند و ویرایش کند.',
+      ownerOnly: 'فقط مدیر ایجادکنندهٔ آکادمی می‌تواند احراز هویت را ببیند و ویرایش کند.',
       stepDone: 'تأیید شد',
       stepCurrent: 'در حال انجام',
       stepPending: 'در انتظار',
@@ -3055,11 +2944,9 @@ export const fa = {
       verifying: 'در حال استعلام…',
       shahkarMatched: 'کد ملی با شماره موبایل ورود مطابقت داشت',
       ibanMatched: 'شبا با کد ملی و تاریخ تولد مطابقت داشت',
-      ibanConfirmed:
-        'اطلاعات حساب تأیید شد. اکنون می‌توانید درخواست تسویه بدهید.',
+      ibanConfirmed: 'اطلاعات حساب تأیید شد. اکنون می‌توانید درخواست تسویه بدهید.',
       confirmedSoFar: 'اطلاعات تأییدشده',
-      identityStepHint:
-        'کد ملی شما با شماره موبایلی که با آن وارد شده‌اید بررسی می‌شود.',
+      identityStepHint: 'کد ملی شما با شماره موبایلی که با آن وارد شده‌اید بررسی می‌شود.',
       shebaStepHint: 'شبا با کد ملی مرحلهٔ قبل و تاریخ تولد شما بررسی می‌شود.',
       ibanInfoTitle: 'اطلاعات حساب بانکی',
       ibanConfirmHint: 'اگر نام و بانک درست است، تأیید کنید.',
@@ -3079,20 +2966,17 @@ export const fa = {
       pendingIbanNotice:
         'یک شبای جدید در انتظار تأیید شماست. تا تأیید، تسویه‌ها به شبای فعلی واریز می‌شوند. برای ادامه «افزودن شبای جدید» را بزنید.',
       usedInAcademies: 'استفاده در: {{names}}',
-      settlementUnlocked:
-        'احراز هویت بانکی کامل شد. می‌توانید درخواست تسویه بدهید.',
+      settlementUnlocked: 'احراز هویت بانکی کامل شد. می‌توانید درخواست تسویه بدهید.',
       serviceDisabled:
         'استعلام خودکار هنوز پیکربندی نشده است. فرم نمایش داده می‌شود ولی تا تنظیم API_IR_TOKEN غیرفعال است.',
       rateLimited:
         'تعداد تلاش‌های ناموفق این مرحله زیاد بود. تا ۲۴ ساعت دیگر صبر کنید. مراحل دیگر همچنان باز است.',
-      attemptsRemaining:
-        '{{count}} تلاش از {{total}} تلاش این مرحله برای امروز باقی مانده',
+      attemptsRemaining: '{{count}} تلاش از {{total}} تلاش این مرحله برای امروز باقی مانده',
       firstName: 'نام',
       lastName: 'نام خانوادگی',
       legalEntityName: 'نام و نام خانوادگی',
       phoneNumber: 'شماره موبایل',
-      phoneLockedHelp:
-        'این شماره با ورود به پنل تأیید شده و قابل تغییر در این فرم نیست.',
+      phoneLockedHelp: 'این شماره با ورود به پنل تأیید شده و قابل تغییر در این فرم نیست.',
       nationalId: 'کد ملی',
       nationalIdHelp: 'کد ملی ۱۰ رقمی یا شناسهٔ ملی ۱۱ رقمی',
       birthDate: 'تاریخ تولد',
@@ -3100,8 +2984,7 @@ export const fa = {
       shebaHelp: 'IR به‌همراه ۲۴ رقم. در این مرحله کد تأیید لازم نیست.',
       accountHolder: 'نام صاحب حساب',
       contactAddress: 'نشانی تماس منتشرشونده',
-      contactAddressHelp:
-        'در صورت الزام قانونی روی سایت عمومی نمایش داده می‌شود.',
+      contactAddressHelp: 'در صورت الزام قانونی روی سایت عمومی نمایش داده می‌شود.',
       permitLabel: 'مجوزهای آموزشی موردنیاز فعالیتم را دارم',
       permitHelp: 'اعلام ناشر طبق توافق‌نامهٔ پلتفرم.',
       verifiedNotice: 'هویت تأیید شد. می‌توانید دامنهٔ اختصاصی متصل کنید.',
@@ -3111,14 +2994,13 @@ export const fa = {
       status: {
         MISSING: 'احراز هویت نشده',
         PARTIAL: 'احراز هویت ناقص',
-        VERIFIED: 'تأیید شده'
-      }
+        VERIFIED: 'تأیید شده',
+      },
     },
     storeSettings: 'مشخصات آکادمی',
     storeSettingsDescription: 'نام آکادمی، معرفی و آدرس سایت را ویرایش کنید.',
     themeBranding: 'تم و برندینگ',
-    themeBrandingDescription:
-      'رنگ‌ها، لوگوها و ظاهر بصری را برای دانشجویان سفارشی کنید.',
+    themeBrandingDescription: 'رنگ‌ها، لوگوها و ظاهر بصری را برای دانشجویان سفارشی کنید.',
     uiTemplateBuilder: 'قالب سایت',
     uiTemplateBuilderDescription:
       'چیدمان و بخش‌های صفحه‌های سایت آکادمی را که دانشجو می‌بیند بچینید.',
@@ -3126,11 +3008,9 @@ export const fa = {
     securityDescription:
       'رمزهای عبور را تغییر دهید، احراز هویت دو مرحله‌ای را فعال کنید و اعلان‌ها را مدیریت کنید.',
     securityTitle: 'امنیت',
-    securitySubtitle:
-      'امنیت حساب خود را با به‌روزرسانی رمز عبور و تنظیم اعلان‌ها تقویت کنید.',
+    securitySubtitle: 'امنیت حساب خود را با به‌روزرسانی رمز عبور و تنظیم اعلان‌ها تقویت کنید.',
     changePassword: 'تغییر رمز عبور',
-    changePasswordDescription:
-      'رمز عبور تازه را مستقیم وارد کنید؛ نیازی به رمز فعلی نیست.',
+    changePasswordDescription: 'رمز عبور تازه را مستقیم وارد کنید؛ نیازی به رمز فعلی نیست.',
     currentPassword: 'رمز عبور فعلی',
     currentPasswordPlaceholder: 'رمز عبور فعلی خود را وارد کنید',
     newPassword: 'رمز عبور جدید',
@@ -3149,31 +3029,24 @@ export const fa = {
     thisDevice: 'همین دستگاه',
     sessionLastActive: 'آخرین فعالیت {{date}}',
     terminateSession: 'خروج از این دستگاه',
-    terminateSessionConfirm:
-      'حساب شما از {{device}} خارج شود؟ برای ورود دوباره باید وارد شود.',
+    terminateSessionConfirm: 'حساب شما از {{device}} خارج شود؟ برای ورود دوباره باید وارد شود.',
     terminateOtherSessions: 'خروج از سایر دستگاه‌ها',
-    terminateOtherSessionsConfirm:
-      'از {{count}} دستگاه دیگر خارج شوید؟ همین دستگاه وارد می‌ماند.',
+    terminateOtherSessionsConfirm: 'از {{count}} دستگاه دیگر خارج شوید؟ همین دستگاه وارد می‌ماند.',
     sessionTerminated: 'نشست بسته شد',
     otherSessionsTerminated: 'سایر دستگاه‌ها خارج شدند',
     twoFactorAuthentication: 'احراز هویت دو مرحله‌ای',
-    twoFactorAuthenticationDescription:
-      'برای افزایش امنیت حساب، یک لایه امنیتی اضافه کنید.',
+    twoFactorAuthenticationDescription: 'برای افزایش امنیت حساب، یک لایه امنیتی اضافه کنید.',
     twoFactorAuthenticationText:
       'احراز هویت دو مرحله‌ای (2FA) را فعال کنید تا هنگام ورود، علاوه بر رمز عبور، کد یک‌بار مصرف نیز لازم باشد.',
     configure2FA: 'پیکربندی 2FA',
     notificationPreferences: 'تنظیمات اعلان‌ها',
-    notificationPreferencesDescription:
-      'مشخص کنید کدام اعلان‌های محصول و پرداخت را دریافت کنید.',
+    notificationPreferencesDescription: 'مشخص کنید کدام اعلان‌های محصول و پرداخت را دریافت کنید.',
     emailNotifications: 'اعلان‌های ایمیلی',
-    emailNotificationsDescription:
-      'به‌روزرسانی‌های مهم حساب و محصول را از طریق ایمیل دریافت کنید.',
+    emailNotificationsDescription: 'به‌روزرسانی‌های مهم حساب و محصول را از طریق ایمیل دریافت کنید.',
     smsAlerts: 'هشدارهای پیامکی',
-    smsAlertsDescription:
-      'برای رویدادهای مهم پرداخت و امنیت، پیامک دریافت کنید.',
+    smsAlertsDescription: 'برای رویدادهای مهم پرداخت و امنیت، پیامک دریافت کنید.',
     courseUpdates: 'به‌روزرسانی دوره‌ها',
-    courseUpdatesDescription:
-      'وقتی دوره یا درس جدیدی اضافه یا به‌روزرسانی می‌شود مطلع شوید.',
+    courseUpdatesDescription: 'وقتی دوره یا درس جدیدی اضافه یا به‌روزرسانی می‌شود مطلع شوید.',
     paymentAlerts: 'هشدارهای پرداخت',
     paymentAlertsDescription: 'رسیدها و اعلان‌های پرداخت را دریافت کنید.',
     savePreferences: 'ذخیره تنظیمات',
@@ -3187,18 +3060,15 @@ export const fa = {
     store: 'آکادمی',
     profile: 'پروفایل',
     profileSettingsTitle: 'تنظیمات پروفایل',
-    profileSettingsSubtitle:
-      'اطلاعات شخصی که سایر مدیران می‌بینند را به‌روزرسانی کنید.',
+    profileSettingsSubtitle: 'اطلاعات شخصی که سایر مدیران می‌بینند را به‌روزرسانی کنید.',
     profileInformation: 'اطلاعات پروفایل',
-    profileInformationDescription:
-      'آواتار، اطلاعات تماس و بیوگرافی خود را مدیریت کنید.',
+    profileInformationDescription: 'آواتار، اطلاعات تماس و بیوگرافی خود را مدیریت کنید.',
     uploadPhoto: 'بارگذاری عکس',
     photoFormatHint: 'JPG، PNG یا GIF حداکثر ۲ مگابایت.',
     photoDropHint: 'عکس را اینجا رها کنید یا برای انتخاب کلیک کنید.',
     photoTooLarge: 'حجم عکس بیشتر از ۲ مگابایت است.',
     photoInvalidType: 'فقط عکس JPG، PNG، GIF یا WebP قابل قبول است.',
-    passwordSessionNote:
-      'رمز عبور تازه بلافاصله جایگزین رمز قبلی می‌شود و شما وارد حساب می‌مانید.',
+    passwordSessionNote: 'رمز عبور تازه بلافاصله جایگزین رمز قبلی می‌شود و شما وارد حساب می‌مانید.',
     fullName: 'نام کامل',
     fullNamePlaceholder: 'نام و نام خانوادگی',
     emailPlaceholder: 'example@skillforge.com',
@@ -3212,12 +3082,10 @@ export const fa = {
     done: 'انجام شد',
     storeSettingsUpdatedSuccess: 'مشخصات آکادمی با موفقیت ذخیره شد',
     pricingCmsTitle: 'مدیریت محتوای قیمت‌گذاری',
-    pricingCmsSubtitle:
-      'محتوای صفحه قیمت‌گذاری عمومی را بدون تغییر کد ویرایش کنید.',
+    pricingCmsSubtitle: 'محتوای صفحه قیمت‌گذاری عمومی را بدون تغییر کد ویرایش کنید.',
     pricingCmsCardDescription: 'مدیریت متن عمومی صفحه قیمت‌گذاری',
     publicPricingContentTitle: 'محتوای عمومی قیمت‌گذاری',
-    publicPricingContentDescription:
-      'این محتوا در صفحه قیمت‌گذاری سطح پلتفرم نمایش داده می‌شود.',
+    publicPricingContentDescription: 'این محتوا در صفحه قیمت‌گذاری سطح پلتفرم نمایش داده می‌شود.',
     pricingPageTitleLabel: 'عنوان صفحه',
     pricingPageTitlePlaceholder: 'پلن‌های قیمت‌گذاری',
     pricingSubtitleLabel: 'زیرعنوان',
@@ -3257,11 +3125,9 @@ export const fa = {
     showcaseMobileHint:
       'اسکرین‌شات سایت موبایل داخل قاب گوشی — اندازهٔ پیشنهادی ۳۹۰ × ۸۴۴ پیکسل، حجم فایل را کم نگه دارید تا سریع‌تر بارگذاری شود',
     showcaseSaved: 'تصویرهای نمایش ذخیره شد',
-    storeSettingsSubtitle:
-      'نام، آدرس سایت و معرفی آکادمی شما را در سامانه تعیین می‌کند.',
+    storeSettingsSubtitle: 'نام، آدرس سایت و معرفی آکادمی شما را در سامانه تعیین می‌کند.',
     academyFeaturesTitle: 'قابلیت‌های آموزشی',
-    academyFeaturesDescription:
-      'فعال یا غیرفعال کردن مسیرهای یادگیری و ابزارهای پیگیری آکادمی.',
+    academyFeaturesDescription: 'فعال یا غیرفعال کردن مسیرهای یادگیری و ابزارهای پیگیری آکادمی.',
     tutorLedLearningEnabled: 'کلاس خصوصی و گروهی',
     tutorLedLearningEnabledDescription:
       'فروش و برگزاری کلاس خصوصی و گروهی، همراه با صف پیگیری و یادداشت‌های دانشجو.',
@@ -3273,15 +3139,13 @@ export const fa = {
     enrollmentEnabled: 'ثبت‌نام یک‌باره',
     enrollmentEnabledDescription: 'فروش و ثبت‌نام دوره با پرداخت یک‌جا.',
     subscriptionEnabled: 'اشتراک دوره',
-    subscriptionEnabledDescription:
-      'دوره‌های با دسترسی دوره‌ای و تمدید اشتراک.',
+    subscriptionEnabledDescription: 'دوره‌های با دسترسی دوره‌ای و تمدید اشتراک.',
     liveClassesEnabled: 'کلاس آنلاین (زنده)',
     liveClassesEnabledDescription: 'زمان‌بندی و برگزاری کلاس‌های آنلاین.',
     featuresUpdatedSuccess: 'قابلیت‌ها با موفقیت به‌روزرسانی شد',
     savingFeatures: 'در حال ذخیره…',
     generalInformation: 'اطلاعات عمومی',
-    generalInformationDescription:
-      'نام، توضیحات و دامنه آکادمی خود را به‌روزرسانی کنید.',
+    generalInformationDescription: 'نام، توضیحات و دامنه آکادمی خود را به‌روزرسانی کنید.',
     storeName: 'نام آکادمی',
     storeNamePlaceholder: 'مثلاً: آکادمی زبان مهر',
     customDomain: 'دامنه اختصاصی',
@@ -3304,11 +3168,9 @@ export const fa = {
       title: 'DNS دامنهٔ اختصاصی',
       description: 'سایت خود را به منتوما وصل کنید. فقط جدول را کپی کنید.',
       targetTitle: 'مقصد ترافیک',
-      targetDescription:
-        'این را در کادر «مقدار» بگذارید. کپی کنید؛ دستی ننویسید.',
+      targetDescription: 'این را در کادر «مقدار» بگذارید. کپی کنید؛ دستی ننویسید.',
       currentDomain: 'دامنهٔ ذخیره‌شده: {{domain}}',
-      noDomainYet:
-        'هنوز دامنه ذخیره نشده. در مشخصات آکادمی بنویسید، بعد برگردید.',
+      noDomainYet: 'هنوز دامنه ذخیره نشده. در مشخصات آکادمی بنویسید، بعد برگردید.',
       openAcademySettings: 'باز کردن مشخصات آکادمی',
       stepsTitle: 'مراحل اتصال',
       stepsDescription:
@@ -3347,7 +3209,7 @@ export const fa = {
         fillTitle: 'عنوان را از ستون «عنوان» کپی کنید.',
         fillValue: 'مقدار را از ستون «مقدار» کپی کنید.',
         setCloud: 'ابر را مثل ستون «ابر» بگذارید: روشن یا خاموش.',
-        save: 'ذخیره کنید. برای ردیف بعدی دوباره «افزودن DNS» بزنید.'
+        save: 'ذخیره کنید. برای ردیف بعدی دوباره «افزودن DNS» بزنید.',
       },
       recommendedTitle: 'پیشنهادی — زیردامنه (www)',
       apexTitle: 'دامنهٔ ریشه (@)',
@@ -3356,74 +3218,71 @@ export const fa = {
       wizard: {
         save: {
           title: 'آدرس سایت را در منتوما بنویسید',
-          body: 'در مشخصات آکادمی آدرس را بنویسید (مثلاً www.maral.ir). بعد برگردید و «بررسی دوباره» بزنید.'
+          body: 'در مشخصات آکادمی آدرس را بنویسید (مثلاً www.maral.ir). بعد برگردید و «بررسی دوباره» بزنید.',
         },
         hamravesh: {
           title: 'افزودن دامنه در هم‌روش',
           body: 'پلتفرم دامنهٔ {{domain}} را در هم‌روش اضافه می‌کند.',
           blank: 'آدرس اضافه‌شده در هم‌روش',
-          check: 'بررسی — دامنه در هم‌روش اضافه شد'
+          check: 'بررسی — دامنه در هم‌روش اضافه شد',
         },
         acmePaste: {
           title: 'چسباندن ردیف‌های قفل از هم‌روش',
           body: 'عنوان را کوتاه بنویسید: _acme-challenge یا _acme-challenge.www. نه دامنهٔ کامل.',
           addRow: 'ردیف جدید',
-          check: 'بررسی — ردیف‌ها برای مدیر ذخیره شد'
+          check: 'بررسی — ردیف‌ها برای مدیر ذخیره شد',
         },
         traffic: {
           title: 'در ابرآروان افزودن DNS بزنید',
           bodyBefore: 'به این آدرس بروید',
-          bodyAfter:
-            'دامنهٔ خود را باز کنید. نوع، عنوان، مقدار و ابر را از جدول کپی کنید.',
-          check: 'بررسی DNS'
+          bodyAfter: 'دامنهٔ خود را باز کنید. نوع، عنوان، مقدار و ابر را از جدول کپی کنید.',
+          check: 'بررسی DNS',
         },
         acmeDns: {
           title: 'ردیف‌های قفل سایت (HTTPS)',
           body: 'دوباره «افزودن DNS» بزنید. عنوان کوتاه است (_acme-challenge). ابر باید خاموش باشد.',
           waitPlatform: 'منتظر مرحله ۳ بمانید. بعد برگردید.',
           check: 'بررسی — ردیف‌های قفل را اضافه کردم',
-          proxyOff: 'ابر این ردیف‌ها باید خاموش باشد.'
+          proxyOff: 'ابر این ردیف‌ها باید خاموش باشد.',
         },
         ssl: {
           title: 'تأیید SSL در هم‌روش',
           body: 'پلتفرم در هم‌روش چک می‌کند که گواهی معتبر است.',
-          check: 'بررسی — SSL معتبر است'
-        }
+          check: 'بررسی — SSL معتبر است',
+        },
       },
       step: {
         saveDomain: {
           title: 'آدرس سایت را در منتوما بنویسید',
-          body: 'در مشخصات آکادمی بنویسید: www.{{example}}'
+          body: 'در مشخصات آکادمی بنویسید: www.{{example}}',
         },
         openDns: {
           title: 'ابرآروان را باز کنید',
           bodyBefore: 'به این آدرس بروید',
-          bodyAfter: 'دامنهٔ {{example}} را باز کنید. نه DNS منتوما.'
+          bodyAfter: 'دامنهٔ {{example}} را باز کنید. نه DNS منتوما.',
         },
         addRecord: {
           title: 'افزودن DNS: نوع، عنوان، مقدار',
-          body: 'عنوان فقط @ یا www. مقدار: {{target}}. ابر: روشن.'
+          body: 'عنوان فقط @ یا www. مقدار: {{target}}. ابر: روشن.',
         },
         noNsChange: {
           title: 'نیم‌سرورها را عوض نکنید',
-          body: 'فقط ردیف DNS اضافه کنید.'
+          body: 'فقط ردیف DNS اضافه کنید.',
         },
         ssl: {
           title: 'ردیف‌های قفل (اگر آمد)',
-          body: 'عنوان: _acme-challenge. ابر: خاموش. ردیف mentoma.ir را کپی نکنید.'
+          body: 'عنوان: _acme-challenge. ابر: خاموش. ردیف mentoma.ir را کپی نکنید.',
         },
         wait: {
           title: 'چند دقیقه صبر کنید',
-          body: 'معمولاً چند دقیقه. گاهی تا دو ساعت.'
-        }
-      }
+          body: 'معمولاً چند دقیقه. گاهی تا دو ساعت.',
+        },
+      },
     },
     themeBrandingTitle: 'تم و برندینگ',
-    themeBrandingSubtitle:
-      'رنگ‌ها، لوگوها و ظاهر بصری دانشجویان را سفارشی کنید.',
+    themeBrandingSubtitle: 'رنگ‌ها، لوگوها و ظاهر بصری دانشجویان را سفارشی کنید.',
     colours: 'رنگ‌ها',
-    coloursDescription:
-      'پالتی را که دانشجویان در سراسر پلتفرم می‌بینند انتخاب کنید.',
+    coloursDescription: 'پالتی را که دانشجویان در سراسر پلتفرم می‌بینند انتخاب کنید.',
     primaryColour: 'رنگ اصلی',
     lightTheme: 'تم روشن',
     darkTheme: 'تم تیره',
@@ -3448,8 +3307,7 @@ export const fa = {
       'لوگوها را بارگذاری کنید و منابع برندینگ برای گواهینامه‌ها و ایمیل‌ها تنظیم کنید.',
     logoUrl: 'آدرس لوگو',
     logoUrlPlaceholder: 'https://cdn.yourstore.com/logo.png',
-    logoUrlHint:
-      'یک آدرس تصویر قابل دسترسی عمومی ارائه دهید. SVG برای نتایج واضح توصیه می‌شود.',
+    logoUrlHint: 'یک آدرس تصویر قابل دسترسی عمومی ارائه دهید. SVG برای نتایج واضح توصیه می‌شود.',
     preview: 'پیش‌نمایش',
     storeLogoPreview: 'پیش‌نمایش لوگوی آکادمی',
     noLogoProvided: 'لوگویی ارائه نشده است',
@@ -3460,8 +3318,7 @@ export const fa = {
     advancedCustomizationDescription:
       'انیمیشن‌ها، الگوها و جلوه‌های بصری وب‌سایت آکادمی خود را سفارشی کنید',
     backgroundAnimation: 'انیمیشن پس‌زمینه',
-    backgroundAnimationHelp:
-      'یک جلوه انیمیشن پس‌زمینه برای وب‌سایت خود انتخاب کنید',
+    backgroundAnimationHelp: 'یک جلوه انیمیشن پس‌زمینه برای وب‌سایت خود انتخاب کنید',
     svgPatternOptional: 'الگوی SVG (اختیاری)',
     svgPatternPlaceholder: 'pattern-dots, pattern-grid, pattern-waves و غیره',
     svgPatternHelper:
@@ -3494,8 +3351,7 @@ export const fa = {
     saveTheme: 'ذخیره تم',
     themePreferencesSaved: 'تنظیمات تم با موفقیت ذخیره شد',
     uiTemplateBuilderTitle: 'قالب سایت',
-    uiTemplateBuilderSubtitle:
-      'چیدمان و بخش‌های صفحه‌های سایت آکادمی را که دانشجو می‌بیند بچینید.',
+    uiTemplateBuilderSubtitle: 'چیدمان و بخش‌های صفحه‌های سایت آکادمی را که دانشجو می‌بیند بچینید.',
     basedOn: 'بر اساس',
     chooseTemplate: 'انتخاب قالب',
     chooseTemplateLayout: 'انتخاب چیدمان قالب',
@@ -3535,11 +3391,9 @@ export const fa = {
     publishing: 'در حال انتشار...',
     previewUpdating: 'در حال به‌روزرسانی پیش‌نمایش...',
     previewLoading: 'در حال بارگذاری پیش‌نمایش...',
-    previewUnavailable:
-      'پیش‌نمایش زنده در حال حاضر در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.',
+    previewUnavailable: 'پیش‌نمایش زنده در حال حاضر در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.',
     templateAppliedSuccess: 'قالب «{presetId}» با موفقیت اعمال شد',
-    selectBlockToEdit:
-      'یک بلوک را از لیست انتخاب کنید تا تنظیمات آن را ویرایش کنید.',
+    selectBlockToEdit: 'یک بلوک را از لیست انتخاب کنید تا تنظیمات آن را ویرایش کنید.',
     editBlock: 'تنظیمات بلوک',
     noBlocksMessage: 'هیچ بلوکی تعریف نشده. یک قالب انتخاب و اعمال کنید.',
     moveUp: 'انتقال به بالا',
@@ -3614,8 +3468,7 @@ export const fa = {
     heroNoIllustration: 'بدون تصویر',
     heroNoIllustrationLabel: 'هیچ',
     heroUploadCustom: 'آپلود تصویر سفارشی',
-    heroIllustrationHint:
-      'فقط تصویر همین طراحی را عوض می‌کند — طرح بنر به کلاسیک تغییر نمی‌کند',
+    heroIllustrationHint: 'فقط تصویر همین طراحی را عوض می‌کند — طرح بنر به کلاسیک تغییر نمی‌کند',
     slideshowBanner: 'بنر (تک تصویر)',
     brandColorLabel: 'رنگ برند',
     brandColorHelper:
@@ -3635,8 +3488,7 @@ export const fa = {
     sectionImportedSuccess: 'بخش به پیش‌نویس اضافه شد',
     sectionStyleLabel: 'طراحی',
     sectionReplaceTitle: 'تغییر طراحی بخش',
-    sectionReplaceDescription:
-      'یک طراحی دیگر برای این بخش انتخاب کنید. محتوای شما حفظ می‌شود.',
+    sectionReplaceDescription: 'یک طراحی دیگر برای این بخش انتخاب کنید. محتوای شما حفظ می‌شود.',
     sectionReplace: 'اعمال طراحی',
     sectionReplacing: 'در حال تغییر…',
     sectionSwappedSuccess: 'طراحی بخش تغییر کرد',
@@ -3671,7 +3523,7 @@ export const fa = {
     bgTypeImage: 'تصویر',
     heroModeLabel: 'بنر اصلی',
     slideshowModeLabel: 'اسلایدشو',
-    slideshowSpeed: 'سرعت اسلاید'
+    slideshowSpeed: 'سرعت اسلاید',
   },
   products: {
     title: 'محصولات',
@@ -3706,8 +3558,7 @@ export const fa = {
     originalPrice: 'قیمت اصلی',
     forDiscount: 'برای تخفیف',
     originalPricePlaceholder: 'اختیاری - بالاتر از قیمت برای تخفیف',
-    originalPriceDescription:
-      'در صورت تنظیم، باید بالاتر از قیمت باشد تا تخفیف نشان داده شود',
+    originalPriceDescription: 'در صورت تنظیم، باید بالاتر از قیمت باشد تا تخفیف نشان داده شود',
     enterWholeNumbers: 'اعداد صحیح بین ۰ تا ۹۹۹،۹۹۹،۹۹۹ وارد کنید',
     productTypeInventory: 'نوع محصول و موجودی',
     productType: 'نوع محصول',
@@ -3723,8 +3574,7 @@ export const fa = {
     dimensionsPlaceholder: 'مثال: ۱۰x۵x۳ سانتی‌متر یا طول×عرض×ارتفاع',
     publishSettings: 'تنظیمات انتشار',
     publishProduct: 'انتشار محصول',
-    publishProductDescription:
-      'این محصول را فوراً برای مشتریان قابل مشاهده کنید',
+    publishProductDescription: 'این محصول را فوراً برای مشتریان قابل مشاهده کنید',
     featuredProduct: 'محصول ویژه',
     featuredProductDescription: 'این محصول را در آکادمی برجسته کنید',
     featured: 'ویژه',
@@ -3734,8 +3584,7 @@ export const fa = {
     noCategoriesAvailable: 'دسته‌بندی‌ای موجود نیست',
     relatedCourses: 'دوره‌های مرتبط',
     filteredByCategory: 'فیلتر شده بر اساس دسته‌بندی انتخابی',
-    selectCategoryFirst:
-      'لطفاً ابتدا یک دسته‌بندی انتخاب کنید تا دوره‌های مرتبط را ببینید',
+    selectCategoryFirst: 'لطفاً ابتدا یک دسته‌بندی انتخاب کنید تا دوره‌های مرتبط را ببینید',
     noCoursesInCategory: 'دوره‌ای در این دسته‌بندی موجود نیست',
     coverImage: 'تصویر کاور',
     productCover: 'کاور محصول',
@@ -3748,7 +3597,7 @@ export const fa = {
     selectImageFirst: 'ابتدا یک تصویر انتخاب کنید',
     inStock: 'موجود',
     outOfStock: 'ناموجود',
-    noReviewsYet: 'هنوز نظری ثبت نشده'
+    noReviewsYet: 'هنوز نظری ثبت نشده',
   },
   categories: {
     title: 'دسته‌بندی‌ها',
@@ -3771,17 +3620,15 @@ export const fa = {
     updateFailed: 'به‌روزرسانی دسته‌بندی ناموفق بود',
     deleteSuccess: 'دسته‌بندی با موفقیت حذف شد',
     deleteFailed: 'حذف دسته‌بندی ناموفق بود',
-    deleteConfirm:
-      'آیا از حذف این دسته‌بندی مطمئن هستید؟ این عمل قابل بازگشت نیست.'
+    deleteConfirm: 'آیا از حذف این دسته‌بندی مطمئن هستید؟ این عمل قابل بازگشت نیست.',
   },
   modal: {
     confirmDelete: 'آیا مطمئن هستید؟',
-    deleteDescription:
-      'این عمل قابل بازگشت نیست. این مورد به طور دائمی حذف خواهد شد',
+    deleteDescription: 'این عمل قابل بازگشت نیست. این مورد به طور دائمی حذف خواهد شد',
     deleteItem: 'حذف',
     cancel: 'لغو',
     confirm: 'تأیید',
-    deleting: 'در حال حذف...'
+    deleting: 'در حال حذف...',
   },
   errors: {
     required: 'این فیلد الزامی است',
@@ -3791,7 +3638,7 @@ export const fa = {
     passwordsDoNotMatch: 'رمزهای عبور مطابقت ندارند',
     somethingWentWrong: 'خطایی رخ داد',
     tryAgain: 'لطفاً دوباره تلاش کنید',
-    networkError: 'خطای شبکه. لطفاً اتصال خود را بررسی کنید.'
+    networkError: 'خطای شبکه. لطفاً اتصال خود را بررسی کنید.',
   },
   success: {
     saved: 'با موفقیت ذخیره شد',
@@ -3809,7 +3656,7 @@ export const fa = {
     exported: 'با موفقیت صادر شد',
     refreshed: 'با موفقیت به‌روزرسانی شد',
     uploaded: 'با موفقیت آپلود شد',
-    operationCompleted: 'عملیات با موفقیت انجام شد'
+    operationCompleted: 'عملیات با موفقیت انجام شد',
   },
   error: {
     unexpected: 'خطای غیرمنتظره‌ای رخ داد. لطفاً دوباره تلاش کنید.',
@@ -3832,36 +3679,33 @@ export const fa = {
     requiredFields: 'لطفاً تمام فیلدهای الزامی را پر کنید',
     noDataToExport: 'داده‌ای برای صدور وجود ندارد',
     accessDenied: 'شما مجوز دسترسی به این منبع را ندارید',
-    roleRequired: 'شما نقش مورد نیاز برای دسترسی به این منبع را ندارید'
+    roleRequired: 'شما نقش مورد نیاز برای دسترسی به این منبع را ندارید',
   },
   unauthorized: {
     title: 'حساب مسدود شده است',
     description:
       'این حساب پنل مدیریت مسدود یا غیرفعال شده است. تا وقتی مدیر آکادمی دسترسی را برنگرداند نمی‌توانید وارد شوید.',
     note: 'توجه:',
-    contactAdmin:
-      'اگر فکر می‌کنید این یک اشتباه است، با مدیر آکادمی خود تماس بگیرید.',
+    contactAdmin: 'اگر فکر می‌کنید این یک اشتباه است، با مدیر آکادمی خود تماس بگیرید.',
     whatYouCanDo: 'چه کاری می‌توانید انجام دهید:',
     accessStudentDashboard: 'به داشبورد دانشجویی آکادمی خود دسترسی داشته باشید',
     contactStoreAdmin: 'برای بازگرداندن دسترسی با مدیر آکادمی خود تماس بگیرید',
-    joinAsTeacher:
-      'به یک آکادمی بپیوندید و درخواست نقش معلم دهید اگر معلم هستید',
+    joinAsTeacher: 'به یک آکادمی بپیوندید و درخواست نقش معلم دهید اگر معلم هستید',
     needHelp: 'کمک می‌خواهید؟',
-    contactSupport:
-      'اگر فکر می‌کنید این یک اشتباه است، با پشتیبانی منتوما تماس بگیرید.',
-    redirectingIn: 'تا {{seconds}} ثانیه دیگر به صفحه ورود منتقل می‌شوید.'
+    contactSupport: 'اگر فکر می‌کنید این یک اشتباه است، با پشتیبانی منتوما تماس بگیرید.',
+    redirectingIn: 'تا {{seconds}} ثانیه دیگر به صفحه ورود منتقل می‌شوید.',
   },
   notFound: {
     title: 'صفحه یافت نشد',
     description: 'صفحه‌ای که به دنبال آن هستید وجود ندارد.',
-    backHome: 'بازگشت به خانه'
+    backHome: 'بازگشت به خانه',
   },
   home: {
     welcomeToSkillForge: 'به آکادمی خوش آمدید',
     description:
       'مسیر یادگیری خود را تقویت کنید. دوره‌های آنلاین خود را به‌راحتی بسازید، مدیریت کنید و بفروشید. آکادمی پلتفرم همه‌کاره شما برای راه‌اندازی یک کسب‌وکار آموزشی آنلاین پربار است.',
     getStarted: 'شروع کنید / ورود',
-    allRightsReserved: 'تمامی حقوق محفوظ است.'
+    allRightsReserved: 'تمامی حقوق محفوظ است.',
   },
   content: {
     course: 'دوره',
@@ -3878,7 +3722,7 @@ export const fa = {
     uploadVideoDescription: 'آپلود محتوای ویدیویی برای دروس',
     selectStoreFirst: 'ابتدا آکادمی را انتخاب کنید',
     createContent: 'ایجاد محتوا',
-    createNewContent: 'ایجاد محتوای جدید'
+    createNewContent: 'ایجاد محتوای جدید',
   },
   forgotPassword: {
     title: 'بازیابی رمز عبور',
@@ -3916,18 +3760,17 @@ export const fa = {
       'رمز عبور شما بازنشانی شد. اکنون می‌توانید با رمز عبور جدید خود وارد شوید.',
     redirectingToLogin: 'در حال انتقال به صفحه ورود...',
     resetAnotherPassword: 'بازنشانی رمز عبور دیگر',
-    goToLogin: 'رفتن به ورود'
+    goToLogin: 'رفتن به ورود',
   },
   fileUploader: {
     dropHere: 'فایل‌ها را اینجا رها کنید',
     dragOrClick: 'فایل را اینجا بکشید و رها کنید، یا برای انتخاب کلیک کنید',
     limitSingle: 'حداکثر حجم مجاز: {{size}}',
-    limitMultiple: 'تا {{count}} فایل، هرکدام حداکثر {{size}}'
+    limitMultiple: 'تا {{count}} فایل، هرکدام حداکثر {{size}}',
   },
   media: {
     videoLoading: 'آماده‌سازی پخش امن…',
-    videoPlaybackFailed:
-      'پخش این ویدیو ممکن نشد. لطفاً صفحه را دوباره بارگذاری کنید.',
+    videoPlaybackFailed: 'پخش این ویدیو ممکن نشد. لطفاً صفحه را دوباره بارگذاری کنید.',
     changeImage: 'تغییر تصویر',
     cancelUpload: 'لغو بارگذاری',
     videoUploaded: 'ویدیو با موفقیت بارگذاری شد',
@@ -3956,8 +3799,7 @@ export const fa = {
     processingVideo: 'در حال پردازش ویدیو…',
     videoFormatsHint: 'فرمت‌های مجاز: MP4، WebM، OGG (حداکثر ۷۰۰ مگابایت)',
     selectFromLibrary: 'انتخاب از کتابخانه',
-    selectFromLibraryHint:
-      'به‌جای بارگذاری نسخهٔ تکراری، یک ویدیوی موجود را انتخاب کنید',
+    selectFromLibraryHint: 'به‌جای بارگذاری نسخهٔ تکراری، یک ویدیوی موجود را انتخاب کنید',
     uploadVideo: 'بارگذاری ویدیو',
     selectVideoFirst: 'ابتدا یک ویدیو انتخاب کنید',
     noVideoSelected: 'ویدیویی انتخاب نشده است',
@@ -3965,8 +3807,7 @@ export const fa = {
     audioLabel: 'صوت',
     audioFile: 'فایل صوتی',
     audioType: 'صوتی',
-    failedToLoadAudioFiles:
-      'بارگذاری فایل‌های صوتی ناموفق بود. دوباره تلاش کنید.',
+    failedToLoadAudioFiles: 'بارگذاری فایل‌های صوتی ناموفق بود. دوباره تلاش کنید.',
     unableToPlayAudioFile: 'پخش فایل صوتی ممکن نیست.',
     audioElementNotSupported: 'مرورگر شما از پخش صوت پشتیبانی نمی‌کند.',
     noStoreSelected: 'آکادمی‌ای انتخاب نشده',
@@ -4057,8 +3898,7 @@ export const fa = {
     loadingCategories: 'در حال بارگذاری دسته‌بندی‌ها...',
     noCategoriesFound: 'دسته‌بندی یافت نشد',
     noCategoriesMatch: 'هیچ دسته‌بندی با معیارهای جستجوی شما مطابقت ندارد.',
-    createFirstCategory:
-      'اولین دسته‌بندی خود را برای سازماندهی محتوا ایجاد کنید.',
+    createFirstCategory: 'اولین دسته‌بندی خود را برای سازماندهی محتوا ایجاد کنید.',
     createCategory: 'ایجاد دسته‌بندی',
     categoryCreated: 'دسته‌بندی با موفقیت ایجاد شد',
     categoryUpdated: 'دسته‌بندی با موفقیت به‌روزرسانی شد',
@@ -4079,11 +3919,9 @@ export const fa = {
     audioFileHint: 'فرمت‌های MP3، WAV، OGG و WebM — حداکثر ۵۰ مگابایت',
     audioTitlePlaceholder: 'عنوان فایل صوتی را وارد کنید',
     audioDescriptionPlaceholder: 'محتوای فایل صوتی و هدف آن را توضیح دهید',
-    uploadDocumentDescription:
-      'بارگذاری سند، PDF، ارائه و سایر فایل‌های دوره‌ها',
+    uploadDocumentDescription: 'بارگذاری سند، PDF، ارائه و سایر فایل‌های دوره‌ها',
     documentFile: 'فایل سند',
-    documentFileHint:
-      'فرمت‌های PDF، DOC، DOCX، PPT، PPTX، XLS، XLSX، TXT و MD — حداکثر ۲۰ مگابایت',
+    documentFileHint: 'فرمت‌های PDF، DOC، DOCX، PPT، PPTX، XLS، XLSX، TXT و MD — حداکثر ۲۰ مگابایت',
     documentTitlePlaceholder: 'عنوان سند را وارد کنید',
     documentDescriptionPlaceholder: 'محتوای سند و هدف آن را توضیح دهید',
     documentPreviewFallback: 'پیش‌نمایش سند',
@@ -4119,8 +3957,7 @@ export const fa = {
     selectCourseOptional: 'یک دوره انتخاب کنید (اختیاری)',
     associatedCourseHint: 'در صورت تمایل این ویدیو را به یک دوره وصل کنید',
     welcomeVideoLabel: 'ویدیوی خوش‌آمدگویی',
-    welcomeVideoHint:
-      'این ویدیو را به‌عنوان ویدیوی پیش‌فرض خوش‌آمدگویی دوره تنظیم کن',
+    welcomeVideoHint: 'این ویدیو را به‌عنوان ویدیوی پیش‌فرض خوش‌آمدگویی دوره تنظیم کن',
     welcomeVideoNotice:
       'این ویدیو به‌عنوان خوش‌آمدگویی پیش‌فرض دوره ذخیره می‌شود و در اولین ورود دانشجو پخش می‌شود.',
     durationMinutes: 'مدت (دقیقه)',
@@ -4129,7 +3966,7 @@ export const fa = {
     tags: 'برچسب‌ها',
     tagsPlaceholder: 'مثلاً مقدمه، آموزش، مرور',
     tagsHint: 'برچسب‌ها به دسته‌بندی ویدیوها کمک می‌کنند',
-    uploading: 'در حال بارگذاری...'
+    uploading: 'در حال بارگذاری...',
   },
   assignmentsPage: {
     title: 'تکالیف',
@@ -4152,8 +3989,7 @@ export const fa = {
     noAssignmentsFound: 'تکلیفی یافت نشد',
     notAvailable: '—',
     studentSubmissions: 'ارسال‌های دانشجو',
-    studentSubmissionsDescription:
-      'بررسی و نمره‌دهی به ارسال‌های تکلیف دانشجویان',
+    studentSubmissionsDescription: 'بررسی و نمره‌دهی به ارسال‌های تکلیف دانشجویان',
     student: 'دانشجو',
     status: 'وضعیت',
     score: 'نمره',
@@ -4176,7 +4012,7 @@ export const fa = {
     filterByCourse: 'فیلتر بر اساس دوره',
     filterByStatus: 'فیلتر بر اساس وضعیت',
     allStatuses: 'همه وضعیت‌ها',
-    clearFilters: 'پاک کردن فیلترها'
+    clearFilters: 'پاک کردن فیلترها',
   },
   learningNav: {
     accessDenied: 'دسترسی در دسترس نیست',
@@ -4185,7 +4021,7 @@ export const fa = {
     noSellingCourses:
       'در محدوده شما دوره‌ای با فروش یک‌باره، اشتراک عمومی یا تدریس خصوصی یافت نشد.',
     privateSubRequired:
-      'حداقل یک دوره باید تدریس خصوصی فعال داشته باشد و کلاس خصوصی و گروهی در آکادمی روشن باشد.'
+      'حداقل یک دوره باید تدریس خصوصی فعال داشته باشد و کلاس خصوصی و گروهی در آکادمی روشن باشد.',
   },
   messages: {
     sendMessage: 'ارسال پیام',
@@ -4201,10 +4037,8 @@ export const fa = {
     channelBale: 'بله',
     recipientCount: 'ارسال به {{count}} نفر',
     sentCount: 'پیام به {{sent}} نفر ارسال شد',
-    sentWithSkipped:
-      'پیام به {{sent}} نفر ارسال شد؛ {{skipped}} نفر قابل دسترسی نبودند',
-    messengerHint:
-      'تلگرام و بله فقط برای دانشجویانی کار می‌کند که ربات را استارت کرده باشند.'
+    sentWithSkipped: 'پیام به {{sent}} نفر ارسال شد؛ {{skipped}} نفر قابل دسترسی نبودند',
+    messengerHint: 'تلگرام و بله فقط برای دانشجویانی کار می‌کند که ربات را استارت کرده باشند.',
   },
   users: {
     allUsers: 'همه کاربران',
@@ -4226,7 +4060,7 @@ export const fa = {
       ACTIVE: 'فعال',
       INACTIVE: 'غیرفعال',
       SUSPENDED: 'تعلیق شده',
-      BANNED: 'مسدود شده'
+      BANNED: 'مسدود شده',
     },
     listTitle: 'فهرست کاربران',
     colUser: 'کاربر',
@@ -4236,8 +4070,7 @@ export const fa = {
     colEmail: 'ایمیل',
     colPhone: 'تلفن',
     colActions: 'عملیات',
-    detailSheetDescription:
-      'جزئیات کاربر، تاریخچه خرید، نقش‌های آکادمی و اقدامات پشتیبانی',
+    detailSheetDescription: 'جزئیات کاربر، تاریخچه خرید، نقش‌های آکادمی و اقدامات پشتیبانی',
     loadingDetails: 'در حال بارگذاری جزئیات...',
     detailName: 'نام',
     resetPassword: 'بازنشانی رمز عبور',
@@ -4306,8 +4139,7 @@ export const fa = {
     revokeAccess: 'لغو دسترسی',
     grantCourseAccessTitle: 'اعطای دسترسی به دوره',
     grantLessonAccessTitle: 'اعطای دسترسی به درس',
-    grantAccessDescription:
-      'دسترسی انتخاب‌شده به همهٔ اعضای این گروه داده می‌شود.',
+    grantAccessDescription: 'دسترسی انتخاب‌شده به همهٔ اعضای این گروه داده می‌شود.',
     groupAccessGranted: 'دسترسی با موفقیت داده شد',
     selectCourses: 'انتخاب دوره‌ها',
     selectLessons: 'انتخاب درس‌ها',
@@ -4323,8 +4155,7 @@ export const fa = {
     activeUsers: 'کاربران فعال',
     pendingApproval: 'در انتظار تأیید',
     pendingBannerTitle: '{{count}} درخواست تأیید مدرسی در انتظار بررسی',
-    pendingBannerDesc:
-      'این درخواست‌ها از طرف دانشجویان ثبت شده‌اند و نیاز به تأیید مدیر دارند',
+    pendingBannerDesc: 'این درخواست‌ها از طرف دانشجویان ثبت شده‌اند و نیاز به تأیید مدیر دارند',
     reviewRequests: 'بررسی',
     showingOf: 'نمایش {{shown}} از {{total}}',
     systemRole: 'سیستمی',
@@ -4363,7 +4194,7 @@ export const fa = {
     roleAdmin: 'ادمین',
     roleSuperAdmin: 'سوپر ادمین',
     roleSupport: 'پشتیبانی',
-    roleUser: 'کاربر'
+    roleUser: 'کاربر',
   },
   userDetails: {
     title: 'جزئیات کاربر',
@@ -4404,7 +4235,7 @@ export const fa = {
     purchasesDescription: 'سابقهٔ خرید و پرداخت این کاربر',
     noPurchases: 'هنوز پرداختی ثبت نشده است',
     sendEmail: 'ارسال ایمیل',
-    sendSms: 'ارسال پیامک'
+    sendSms: 'ارسال پیامک',
   },
   userEdit: {
     title: 'ویرایش کاربر',
@@ -4416,7 +4247,7 @@ export const fa = {
     birthday: 'تاریخ تولد',
     accessDeniedTitle: 'دسترسی غیرمجاز',
     accessDeniedDescription: 'شما مجوز ویرایش این کاربر را ندارید.',
-    backToUsers: 'بازگشت به کاربران'
+    backToUsers: 'بازگشت به کاربران',
   },
   admins: {
     confirmEmail: 'تأیید ایمیل',
@@ -4466,8 +4297,8 @@ export const fa = {
       PLATFORM_OWNER: 'مالک پلتفرم',
       ADMIN: 'ادمین پلتفرم',
       FINANCE: 'مالی',
-      SUPPORT: 'پشتیبانی'
-    }
+      SUPPORT: 'پشتیبانی',
+    },
   },
   accountActions: {
     ban: 'مسدودسازی',
@@ -4506,11 +4337,10 @@ export const fa = {
     modeErase: 'حذف کامل حساب',
     modeEraseHelp:
       'اطلاعات شخصی و سابقهٔ یادگیری حذف و حساب بسته می‌شود. سوابق مالی برای حسابداری نگه داشته می‌شود.',
-    confirmIdentifierLabel:
-      'برای تأیید، شمارهٔ تلفن یا ایمیل این فرد را بنویسید',
+    confirmIdentifierLabel: 'برای تأیید، شمارهٔ تلفن یا ایمیل این فرد را بنویسید',
     confirmIdentifierMismatch: 'مقدار واردشده با حساب این فرد یکی نیست.',
     reset_ok: 'بازنشانی انجام شد',
-    irreversible: 'این کار برگشت‌پذیر نیست.'
+    irreversible: 'این کار برگشت‌پذیر نیست.',
   },
   platformUsers: {
     eyebrow: 'پلتفرم',
@@ -4522,26 +4352,22 @@ export const fa = {
     addStaff: 'افزودن کارمند',
     promote: 'ارتقا کاربر',
     promoteTitle: 'ارتقا کاربر ثبت‌شده',
-    promoteDescription:
-      'با شماره تلفن یک حساب موجود در منتوما را پیدا کنید و نقش کارکنان بدهید.',
+    promoteDescription: 'با شماره تلفن یک حساب موجود در منتوما را پیدا کنید و نقش کارکنان بدهید.',
     promoted: 'کاربر به کارکنان پلتفرم ارتقا یافت',
     notRegistered: 'کاربری با این شماره ثبت نشده است.',
     alreadyStaff: 'این فرد هم‌اکنون کارمند پلتفرم است.',
     emptyStaff: 'کارمند پلتفرمی یافت نشد.',
     emptyAcademy: 'عضو آکادمی یافت نشد.',
-    academy: 'آکادمی'
+    academy: 'آکادمی',
   },
   createAdminUser: {
-    pleaseVerifyPhoneOtp:
-      'کد تأیید شماره تلفن را وارد کنید یا تأیید خودکار را فعال کنید',
-    pleaseVerifyEmailOtp:
-      'کد تأیید ایمیل را وارد کنید یا تأیید خودکار را فعال کنید',
+    pleaseVerifyPhoneOtp: 'کد تأیید شماره تلفن را وارد کنید یا تأیید خودکار را فعال کنید',
+    pleaseVerifyEmailOtp: 'کد تأیید ایمیل را وارد کنید یا تأیید خودکار را فعال کنید',
     autoConfirmEmail: 'تأیید خودکار ایمیل',
     autoConfirmPhone: 'تأیید خودکار شماره تلفن',
     autoConfirmed: 'به‌صورت خودکار تأیید شد',
     title: 'ایجاد کاربر ادمین',
-    description:
-      'ایجاد یک کاربر ادمین جدید. شماره تلفن و ایمیل باید با OTP تأیید شوند.',
+    description: 'ایجاد یک کاربر ادمین جدید. شماره تلفن و ایمیل باید با OTP تأیید شوند.',
     name: 'نام',
     namePlaceholder: 'نام کامل را وارد کنید',
     phoneNumber: 'شماره تلفن',
@@ -4569,7 +4395,7 @@ export const fa = {
     pleaseVerifyBothOtps: 'لطفاً هر دو OTP تلفن و ایمیل را تأیید کنید',
     passwordsDoNotMatch: 'رمزهای عبور مطابقت ندارند',
     adminUserCreatedSuccess: 'کاربر ادمین با موفقیت ایجاد شد',
-    platformRole: 'نقش پلتفرم'
+    platformRole: 'نقش پلتفرم',
   },
   changeUserRole: {
     title: 'تغییر نقش کاربر',
@@ -4578,7 +4404,7 @@ export const fa = {
     newRole: 'نقش جدید',
     selectRole: 'انتخاب نقش',
     noRole: 'بدون نقش',
-    changeRole: 'تغییر نقش'
+    changeRole: 'تغییر نقش',
   },
   teacherRequests: {
     title: 'درخواست‌های معلم',
@@ -4593,7 +4419,7 @@ export const fa = {
     reject: 'رد',
     pending: 'در انتظار',
     approved: 'تأیید شده',
-    rejected: 'رد شده'
+    rejected: 'رد شده',
   },
   analytics: {
     overview: 'نمای کلی تحلیل‌ها',
@@ -4614,11 +4440,9 @@ export const fa = {
     engagementBreakdownDescription: 'توزیع وضعیت‌های ثبت‌نام فعلی.',
     noData: 'بدون داده',
     topPerformingCourses: 'دوره‌های برتر',
-    topPerformingCoursesDescription:
-      'رتبه‌بندی دوره‌ها بر اساس ثبت‌نام‌های اخیر.',
+    topPerformingCoursesDescription: 'رتبه‌بندی دوره‌ها بر اساس ثبت‌نام‌های اخیر.',
     revenueAnalytics: 'تحلیل درآمد',
-    revenueAnalyticsDescription:
-      'نظارت بر روند درآمد، میانگین ارزش تراکنش و سهم دوره‌ها در درآمد.',
+    revenueAnalyticsDescription: 'نظارت بر روند درآمد، میانگین ارزش تراکنش و سهم دوره‌ها در درآمد.',
     acrossAllPayments: 'در تمام پرداخت‌های ثبت شده',
     averageTicket: 'میانگین تراکنش',
     perSuccessfulPayment: 'به ازای هر پرداخت موفق',
@@ -4629,8 +4453,7 @@ export const fa = {
     monthlyRevenueVsEnrollments: 'درآمد ماهانه در برابر ثبت‌نام‌ها',
     monthlyRevenueDescription: 'پیگیری کل درآمد در کنار حجم تراکنش‌ها.',
     revenueByCourse: 'درآمد بر اساس دوره',
-    revenueByCourseDescription:
-      'دوره‌های برتر مشارکت‌کننده در پرداخت‌های ثبت شده.',
+    revenueByCourseDescription: 'دوره‌های برتر مشارکت‌کننده در پرداخت‌های ثبت شده.',
     noCourseRevenueData: 'هنوز داده درآمد دوره‌ای موجود نیست.',
     enrollmentValueByCourse: 'ارزش ثبت‌نام بر اساس دوره',
     enrollmentValueDescription: 'مجموع پرداخت‌های ثبت شده به ازای هر ثبت‌نام.',
@@ -4640,8 +4463,7 @@ export const fa = {
     activeVsCompleted: 'ثبت‌نام‌های فعال در مقابل تکمیل شده',
     activeVsCompletedDescription: 'روند فعالیت یادگیرندگان در ماه‌های اخیر.',
     topCoursesByEnrollments: 'برترین دوره‌ها بر اساس ثبت‌نام',
-    topCoursesByEnrollmentsDescription:
-      'محبوب‌ترین دوره‌ها در میان دانشجویان شما.',
+    topCoursesByEnrollmentsDescription: 'محبوب‌ترین دوره‌ها در میان دانشجویان شما.',
     revenueLeaderboard: 'رتبه‌بندی درآمد',
     revenueLeaderboardDescription: 'دوره‌هایی با بیشترین مجموع پرداخت.',
     studentEngagement: 'تعامل دانشجویان',
@@ -4656,11 +4478,9 @@ export const fa = {
     activeCoursesDescription: 'دوره‌هایی با یادگیرندگان فعال',
     engagementDistributionDescription: 'سهم دانشجویان در هر بخش تعامل.',
     coursesByEngagement: 'دوره‌ها بر اساس تعامل',
-    coursesByEngagementDescription:
-      'وضعیت فعال در مقابل تکمیل شده به ازای هر دوره.',
+    coursesByEngagementDescription: 'وضعیت فعال در مقابل تکمیل شده به ازای هر دوره.',
     paymentDetails: 'جزئیات پرداخت',
-    paymentDetailsDescription:
-      'مبالغ بانک و درگاه به ریال، همان‌طور که درگاه ثبت کرده است.',
+    paymentDetailsDescription: 'مبالغ بانک و درگاه به ریال، همان‌طور که درگاه ثبت کرده است.',
     bankAmount: 'مبلغ بانک (ریال)',
     gateway: 'درگاه',
     noPaymentDetails: 'هنوز پرداختی ثبت نشده است.',
@@ -4672,8 +4492,8 @@ export const fa = {
       PAID: 'پرداخت شده',
       FAILED: 'ناموفق',
       CANCELLED: 'لغو شده',
-      REFUNDED: 'بازگشت وجه'
-    }
+      REFUNDED: 'بازگشت وجه',
+    },
   },
   payments: {
     transactions: 'تراکنش‌ها',
@@ -4735,18 +4555,15 @@ export const fa = {
     inPipeline: 'در خط لوله',
     inPipelineDescription: 'روش‌های برنامه‌ریزی شده یا در حالت آزمایشی.',
     retiredGateways: 'بازنشسته',
-    retiredGatewaysDescription:
-      'درگاه‌هایی که فقط برای پرداخت‌های قدیمی نگه داشته شده‌اند.',
+    retiredGatewaysDescription: 'درگاه‌هایی که فقط برای پرداخت‌های قدیمی نگه داشته شده‌اند.',
     gatewayPerformance: 'عملکرد درگاه',
     gatewayPerformanceDescription: 'سهم درآمد و کل پرداخت‌ها به ازای هر روش.',
     noPaymentsProcessed:
       'هنوز پرداختی پردازش نشده است. پس از انجام تراکنش‌ها، معیارهای سطح روش را اینجا خواهید دید.',
     creditDebitCards: 'کارت‌های اعتباری و بدهی',
-    creditDebitCardsDescription:
-      'پرداخت از همه شبکه‌های کارتی اصلی از طریق Stripe.',
+    creditDebitCardsDescription: 'پرداخت از همه شبکه‌های کارتی اصلی از طریق Stripe.',
     bankTransfer: 'انتقال بانکی',
-    bankTransferDescription:
-      'پشتیبانی از پرداخت‌های ACH و حواله برای مشتریان شرکتی.',
+    bankTransferDescription: 'پشتیبانی از پرداخت‌های ACH و حواله برای مشتریان شرکتی.',
     digitalWallets: 'کیف پول‌های دیجیتال',
     digitalWalletsDescription:
       'به دانشجویان اجازه دهید با PayPal، Google Pay یا کیف پول‌های محلی پرداخت کنند.',
@@ -4775,36 +4592,33 @@ export const fa = {
       IDPAY: 'آیدی‌پی',
       PAYMOB: 'پی‌موب',
       PAYTABS: 'پی‌تبز',
-      CHECKOUT_COM: 'چک‌اوت'
+      CHECKOUT_COM: 'چک‌اوت',
     },
     gatewayBadge: {
       active: 'فعال',
       inactive: 'غیرفعال',
-      planned: 'برنامه‌ریزی‌شده'
+      planned: 'برنامه‌ریزی‌شده',
     },
     gateways: {
       bitpay: {
         title: 'درگاه بیت‌پی (BitPay)',
-        description:
-          'درگاه پشتیبان؛ اگر سامان در دسترس نباشد، از پنل مالک به آن سوئیچ کنید.'
+        description: 'درگاه پشتیبان؛ اگر سامان در دسترس نباشد، از پنل مالک به آن سوئیچ کنید.',
       },
       payping: {
         title: 'درگاه پی‌پینگ',
-        description: 'درگاه قدیمی؛ دیگر برای پرداخت جدید استفاده نمی‌شود.'
+        description: 'درگاه قدیمی؛ دیگر برای پرداخت جدید استفاده نمی‌شود.',
       },
       samanSep: {
         title: 'سداد سامان (Saman SEP)',
-        description:
-          'درگاه پیش‌فرض؛ پرداخت‌های دانشجو و اشتراک آکادمی از این مسیر انجام می‌شود.'
+        description: 'درگاه پیش‌فرض؛ پرداخت‌های دانشجو و اشتراک آکادمی از این مسیر انجام می‌شود.',
       },
       mellatBp: {
         title: 'به‌پرداخت ملت (Mellat BP)',
-        description: 'درگاه قدیمی؛ دیگر برای پرداخت جدید استفاده نمی‌شود.'
-      }
+        description: 'درگاه قدیمی؛ دیگر برای پرداخت جدید استفاده نمی‌شود.',
+      },
     },
     invoices: 'فاکتورها',
-    invoicesDescription:
-      'فاکتورهای مربوط به خرید دوره را ایجاد، نظارت و دانلود کنید.',
+    invoicesDescription: 'فاکتورهای مربوط به خرید دوره را ایجاد، نظارت و دانلود کنید.',
     filters: 'فیلترها',
     createInvoice: 'ایجاد فاکتور',
     issued: 'صادر شده',
@@ -4816,8 +4630,7 @@ export const fa = {
     refunded: 'بازگشت داده شده',
     refundedDescription: 'فاکتورهای بازگشت داده شده به دانشجویان.',
     findInvoice: 'یافتن فاکتور',
-    findInvoiceDescription:
-      'جستجو بر اساس دانشجو، دوره، شماره فاکتور یا وضعیت.',
+    findInvoiceDescription: 'جستجو بر اساس دانشجو، دوره، شماره فاکتور یا وضعیت.',
     searchInvoicesPlaceholder: 'جستجوی فاکتورها...',
     showingInvoices: 'نمایش {{count}} از {{total}}',
     invoiceLedger: 'دفتر فاکتور',
@@ -4826,7 +4639,7 @@ export const fa = {
     createOrAdjust: 'یک فاکتور جدید ایجاد کنید یا فیلترها را تنظیم کنید.',
     download: 'دانلود',
     cancelled: 'لغو شده',
-    unknownStatus: 'نامشخص'
+    unknownStatus: 'نامشخص',
   },
   vouchers: {
     title: 'کوپن‌ها',
@@ -4874,14 +4687,14 @@ export const fa = {
     updatedSuccess: 'کوپن با موفقیت به‌روزرسانی شد',
     updateFailed: 'به‌روزرسانی کوپن ناموفق بود',
     deletedSuccess: 'کوپن با موفقیت حذف شد',
-    deleteFailed: 'حذف کوپن ناموفق بود'
+    deleteFailed: 'حذف کوپن ناموفق بود',
   },
   period: {
     heading: 'بازه زمانی',
     thisMonth: 'این ماه',
     wholeYear: 'کل سال {{year}}',
     olderYear: 'سال قبل',
-    newerYear: 'سال بعد'
+    newerYear: 'سال بعد',
   },
   datePicker: {
     heading: 'انتخاب تاریخ',
@@ -4890,7 +4703,7 @@ export const fa = {
     olderMonth: 'ماه قبل',
     newerMonth: 'ماه بعد',
     olderYear: 'سال قبل',
-    newerYear: 'سال بعد'
+    newerYear: 'سال بعد',
   },
   financial: {
     store: {
@@ -4957,7 +4770,7 @@ export const fa = {
         paid: 'پرداختی',
         net: 'سهم آکادمی',
         coupon: 'کد تخفیف',
-        refunded: 'مسترد'
+        refunded: 'مسترد',
       },
       revenue: {
         title: 'درآمد و مزایا',
@@ -4973,8 +4786,7 @@ export const fa = {
         teacherRevenue: 'درآمد مدرس',
         teacher: 'مدرس',
         teacherRevenueBreakdown: 'تفکیک درآمد مدرس‌ها',
-        teacherRevenueBreakdownDescription:
-          'توزیع سهم درآمد برای هر مدرس در این آکادمی',
+        teacherRevenueBreakdownDescription: 'توزیع سهم درآمد برای هر مدرس در این آکادمی',
         visibility: 'نمایش',
         showAmount: 'نمایش مبلغ',
         hideAmount: 'مخفی کردن مبلغ',
@@ -5001,8 +4813,7 @@ export const fa = {
         courses: 'دوره‌ها',
         coursesWithPayments: 'دوره‌های دارای پرداخت',
         allPayments: 'همه پرداخت‌ها',
-        paymentsDescription:
-          'همه پرداخت‌های دریافت شده از دانشجویان برای دوره‌ها',
+        paymentsDescription: 'همه پرداخت‌های دریافت شده از دانشجویان برای دوره‌ها',
         revenueByCourse: 'درآمد بر اساس دوره',
         revenueByCourseDescription: 'تفکیک کل درآمد بر اساس دوره',
         noCourseRevenue: 'اطلاعات درآمد دوره یافت نشد',
@@ -5011,7 +4822,7 @@ export const fa = {
         student: 'دانشجو',
         course: 'دوره',
         amount: 'مبلغ',
-        noPayments: 'پرداختی یافت نشد'
+        noPayments: 'پرداختی یافت نشد',
       },
       costs: {
         title: 'هزینه‌های آکادمی',
@@ -5040,7 +4851,7 @@ export const fa = {
         revenue: 'درآمد',
         cost: 'هزینه',
         profit: 'سود',
-        uncategorized: 'دسته‌بندی نشده'
+        uncategorized: 'دسته‌بندی نشده',
       },
       payments: {
         title: 'پرداخت‌های دانشجویان',
@@ -5098,7 +4909,7 @@ export const fa = {
         vatRate: 'مالیات',
         takeRate: 'سهم پلتفرم',
         shareRate: 'سهم مدرس',
-        payments: 'پرداخت'
+        payments: 'پرداخت',
       },
       reports: {
         title: 'گزارش‌های مالی',
@@ -5139,8 +4950,8 @@ export const fa = {
         period: 'دوره',
         category: 'دسته',
         finalProfit: 'سود نهایی',
-        uncategorized: 'دسته‌بندی نشده'
-      }
+        uncategorized: 'دسته‌بندی نشده',
+      },
     },
     platform: {
       title: 'مدیریت مالی پلتفرم',
@@ -5172,7 +4983,7 @@ export const fa = {
       tabs: {
         platformRecords: 'سوابق پلتفرم',
         allStores: 'همه آکادمی‌ها',
-        storeRecords: 'سوابق آکادمی'
+        storeRecords: 'سوابق آکادمی',
       },
       platformRecords: {
         title: 'سوابق مالی پلتفرم',
@@ -5188,7 +4999,7 @@ export const fa = {
         noRecords: 'سابقه مالی پلتفرمی یافت نشد',
         deleteConfirm: 'آیا مطمئن هستید که می‌خواهید این سابقه را حذف کنید؟',
         deleteSuccess: 'سابقه با موفقیت حذف شد',
-        deleteError: 'حذف سابقه ناموفق بود'
+        deleteError: 'حذف سابقه ناموفق بود',
       },
       storeRecords: {
         title: 'سوابق مالی آکادمی',
@@ -5205,21 +5016,20 @@ export const fa = {
         margin: 'حاشیه',
         actions: 'عملیات',
         view: 'مشاهده',
-        noRecords: 'سابقه مالی آکادمی یافت نشد'
+        noRecords: 'سابقه مالی آکادمی یافت نشد',
       },
       eyebrow: 'گزارش‌های مالی پلتفرم',
       dateRange: 'بازه زمانی',
       export: 'خروجی اکسل',
       netProfit: 'سود خالص',
-      platformRevenueCount: '{{count}} سابقه'
+      platformRevenueCount: '{{count}} سابقه',
     },
     desk: {
       title: 'مالی پلتفرم',
       description:
         'پرداخت‌های واقعی آکادمی و پلتفرم، سهم هر طرف، و مبلغی که باید به آکادمی واریز شود.',
       toDeposit: 'قابل واریز',
-      toDepositHint:
-        'پول دانشجویان که هنوز نزد منتوما است و به آکادمی تعلق دارد',
+      toDepositHint: 'پول دانشجویان که هنوز نزد منتوما است و به آکادمی تعلق دارد',
       pending: 'در انتظار تسویه',
       pendingHint: 'درخواست‌های برداشت در انتظار واریز بانکی',
       academyShare: 'سهم آکادمی',
@@ -5256,18 +5066,16 @@ export const fa = {
       monthlyGross: 'مبلغ کل ماهانه',
       monthlyGrossHint: 'فروش آکادمی‌ها و پرداخت پلن پلتفرم در هر ماه (تومان)',
       cumulativeGross: 'رشد مبلغ کل در زمان',
-      cumulativeGrossHint:
-        'جمع انباشته فروش آکادمی‌ها و پرداخت پلن پلتفرم (تومان)',
+      cumulativeGrossHint: 'جمع انباشته فروش آکادمی‌ها و پرداخت پلن پلتفرم (تومان)',
       academyGross: 'آکادمی‌ها',
       platformGross: 'پلتفرم',
-      noTrend: 'هنوز پرداخت موفقی برای نمودار نیست'
-    }
+      noTrend: 'هنوز پرداخت موفقی برای نمودار نیست',
+    },
   },
   platform: {
     pricing: {
       title: 'سیاست قیمت‌گذاری پلتفرم',
-      description:
-        'مدیریت متن درآمدزایی پلتفرم برای مدیران آکادمی (نه قیمت‌گذاری دانشجو).',
+      description: 'مدیریت متن درآمدزایی پلتفرم برای مدیران آکادمی (نه قیمت‌گذاری دانشجو).',
       managerContentTitle: 'محتوای درآمدزایی برای مدیران',
       managerContentDescription:
         'پلن‌های گروهی، سیاست مصرف مازاد، یادداشت‌های صورتحساب و پرسش‌های متداول پلتفرم را تعیین کنید.',
@@ -5282,12 +5090,11 @@ export const fa = {
       defaultTitle: 'پلن‌های پلتفرم',
       defaultSubtitle: 'قیمت‌گذاری و سیاست درآمدزایی برای مدیران آکادمی.',
       defaultCtaLabel: 'شروع پلن پلتفرم',
-      defaultBillingNotes:
-        'دوره صورتحساب، شرایط مصرف مازاد، یادداشت‌های مالیات و سیاست تسویه.',
+      defaultBillingNotes: 'دوره صورتحساب، شرایط مصرف مازاد، یادداشت‌های مالیات و سیاست تسویه.',
       defaultFaq: 'پرسش‌های متداول سطح پلتفرم برای مدیران را اینجا اضافه کنید.',
       accessRestrictedTitle: 'دسترسی محدود',
       accessRestrictedDescription:
-        'سیاست قیمت‌گذاری پلتفرم فقط توسط ادمین‌های پلتفرم قابل ویرایش است.'
+        'سیاست قیمت‌گذاری پلتفرم فقط توسط ادمین‌های پلتفرم قابل ویرایش است.',
     },
     academies: {
       title: 'همه آکادمی‌ها',
@@ -5324,12 +5131,11 @@ export const fa = {
       expires: 'انقضا',
       noExpiry: '—',
       pending: 'در انتظار',
-      notAvailable: '-'
+      notAvailable: '-',
     },
     overview: {
       pendingSettlements: '{{count}} درخواست تسویه در انتظار بررسی',
-      pendingSettlementsHint:
-        'مدیران آکادمی منتظر واریز هستند؛ برای بررسی کلیک کنید',
+      pendingSettlementsHint: 'مدیران آکادمی منتظر واریز هستند؛ برای بررسی کلیک کنید',
       noPendingSettlements: 'درخواست تسویه‌ای در انتظار نیست',
       title: 'نمای کلی پلتفرم',
       description: 'مدیریت و نظارت بر تمام آکادمی‌ها و آمارهای سراسر پلتفرم',
@@ -5347,8 +5153,7 @@ export const fa = {
       allSchoolsAccess: 'دسترسی به ابزارهای جامع مدیریت آکادمی',
       platformUsers: 'کاربران پلتفرم',
       platformUsersDescription: 'مدیریت تمام کاربران در سراسر پلتفرم',
-      platformUsersAccess:
-        'مشاهده و مدیریت ادمین‌ها، مدیران و معلمان و دانشجویان',
+      platformUsersAccess: 'مشاهده و مدیریت ادمین‌ها، مدیران و معلمان و دانشجویان',
       platformAnalytics: 'تحلیل‌های پلتفرم',
       platformAnalyticsDescription: 'مشاهده تحلیل‌ها و بینش‌های سراسر پلتفرم',
       platformAnalyticsAccess: 'نظارت بر عملکرد و معیارهای رشد پلتفرم',
@@ -5359,8 +5164,7 @@ export const fa = {
       allUsers: 'همه کاربران',
       platformAnalyticsLink: 'تحلیل‌های پلتفرم',
       accessDenied: 'دسترسی رد شد',
-      accessDeniedDescription:
-        'این صفحه فقط برای مدیران سطح پلتفرم قابل دسترسی است.'
+      accessDeniedDescription: 'این صفحه فقط برای مدیران سطح پلتفرم قابل دسترسی است.',
     },
     stores: {
       title: 'همه آکادمی‌ها',
@@ -5398,8 +5202,7 @@ export const fa = {
         description:
           'برای آکادمی‌های بزرگ، یک پلن با محدودیت‌ها و امکانات سفارشی تنظیم کنید — جایگزین پلن استاندارد.',
         enabledBadge: 'پلن سازمانی فعال است',
-        disabledHint:
-          'این آکادمی هنوز پلن سازمانی ندارد و از پلن استاندارد خود استفاده می‌کند.',
+        disabledHint: 'این آکادمی هنوز پلن سازمانی ندارد و از پلن استاندارد خود استفاده می‌کند.',
         nameLabel: 'نام پلن',
         namePlaceholder: 'مثلاً: سازمانی — آکادمی رها',
         limitsTitle: 'محدودیت‌ها',
@@ -5414,14 +5217,12 @@ export const fa = {
         dedicatedTemplates: 'قالب سایت اختصاصی',
         videos: 'ویدیو',
         marginOverride: 'نادیده گرفتن بررسی حاشیه سود (نیاز به یادداشت)',
-        marginOverrideHint:
-          'فقط برای معاملات سازمانی عمدی. یادداشت الزامی است.',
+        marginOverrideHint: 'فقط برای معاملات سازمانی عمدی. یادداشت الزامی است.',
         featuresLabel: 'امکانات (هر خط یک مورد)',
         featuresPlaceholder: 'مثلاً: پشتیبانی اختصاصی',
         priceMonthlyLabel: 'قیمت ماهانه (تومان)',
         priceYearlyLabel: 'قیمت سالانه (تومان)',
-        priceHint:
-          'این قیمت فقط برای یادداشت داخلی است و به‌صورت خودکار از آکادمی دریافت نمی‌شود.',
+        priceHint: 'این قیمت فقط برای یادداشت داخلی است و به‌صورت خودکار از آکادمی دریافت نمی‌شود.',
         noteLabel: 'یادداشت داخلی',
         notePlaceholder: 'مرجع قرارداد، جزئیات توافق و غیره...',
         save: 'ذخیره پلن سازمانی',
@@ -5433,18 +5234,16 @@ export const fa = {
         clearing: 'در حال لغو...',
         assignedAt: 'تاریخ تنظیم',
         saveSuccess: 'پلن سازمانی ذخیره شد',
-        clearSuccess: 'پلن سازمانی لغو شد'
-      }
-    }
+        clearSuccess: 'پلن سازمانی لغو شد',
+      },
+    },
   },
   accessGrants: {
     title: 'دادن دسترسی به دانشجویان',
-    description:
-      'این دوره را بدون خرید، به دانشجویان یا گروه‌ها بدهید؛ به هر مدتی که بخواهید.',
+    description: 'این دوره را بدون خرید، به دانشجویان یا گروه‌ها بدهید؛ به هر مدتی که بخواهید.',
     stagedDescription:
       'انتخاب کنید چه کسی این دوره را بگیرد. دسترسی هنگام ذخیرهٔ دوره داده می‌شود.',
-    savedWithCourseHint:
-      'با ذخیرهٔ دوره، {{students}} دانشجو و {{groups}} گروه دسترسی می‌گیرند.',
+    savedWithCourseHint: 'با ذخیرهٔ دوره، {{students}} دانشجو و {{groups}} گروه دسترسی می‌گیرند.',
     giveAccess: 'دادن دسترسی',
     stepTargets: 'این دوره را به چه کسی می‌دهید؟',
     stepTargetsHint: 'یک یا چند دانشجو، یا یک گروه کامل را انتخاب کنید.',
@@ -5454,8 +5253,7 @@ export const fa = {
     stepPricing: 'دانشجو پرداختی داشته است؟',
     stepPricingHint:
       'رایگان یعنی هیچ پرداختی ثبت نمی‌شود. غیر از آن، به‌عنوان پرداخت دستی ذخیره می‌شود.',
-    pickTargetHint:
-      'برای فعال شدن این دکمه، حداقل یک دانشجو یا گروه انتخاب کنید.',
+    pickTargetHint: 'برای فعال شدن این دکمه، حداقل یک دانشجو یا گروه انتخاب کنید.',
     pickCourseHint: 'برای فعال شدن این دکمه، حداقل یک دوره انتخاب کنید.',
     blockedHint: 'یکی از موارد بالا هنوز کامل نشده است.',
     readyHint: 'آمادهٔ دادن دسترسی به {{students}} دانشجو و {{groups}} گروه.',
@@ -5505,8 +5303,7 @@ export const fa = {
     until: 'تا {{date}}',
     expired: 'منقضی شده',
     unknownStudent: 'دانشجوی نامشخص',
-    stagedFailed:
-      'دوره ساخته شد اما دسترسی داده نشد. از صفحهٔ دوره دوباره تلاش کنید.'
+    stagedFailed: 'دوره ساخته شد اما دسترسی داده نشد. از صفحهٔ دوره دوباره تلاش کنید.',
   },
   bundles: {
     title: 'بسته‌ها',
@@ -5516,22 +5313,19 @@ export const fa = {
     newBundle: 'بسته جدید',
     allBundles: 'همه بسته‌ها',
     noBundle: 'هنوز بسته‌ای ندارید',
-    noBundleDesc:
-      'دوره‌هایتان را در یک بسته جمع کنید و پیشنهاد بهتری به دانشجویان بدهید.',
+    noBundleDesc: 'دوره‌هایتان را در یک بسته جمع کنید و پیشنهاد بهتری به دانشجویان بدهید.',
     createBundle: 'ایجاد بسته',
     editBundle: 'ویرایش بسته',
     bundleTitle: 'نام بسته',
     titleHelp: 'این نام در صفحه خرید به دانشجویان نمایش داده می‌شود.',
     slug: 'نامک URL',
-    slugHelp:
-      'از نام به‌صورت خودکار ساخته می‌شود. در آدرس بسته استفاده می‌شود.',
+    slugHelp: 'از نام به‌صورت خودکار ساخته می‌شود. در آدرس بسته استفاده می‌شود.',
     price: 'قیمت بسته',
     priceHelp: 'قیمت تخفیف‌داری که دانشجو برای کل بسته می‌پردازد.',
     selectCourses: 'انتخاب دوره‌ها',
     searchCourses: 'جستجوی دوره‌ها…',
     selectedCourses: 'دوره‌های موجود در بسته',
-    coursesHelp:
-      'دوره‌هایی را انتخاب کنید که با خرید این بسته در اختیار دانشجو قرار می‌گیرند.',
+    coursesHelp: 'دوره‌هایی را انتخاب کنید که با خرید این بسته در اختیار دانشجو قرار می‌گیرند.',
     noCourses: 'دوره‌ای یافت نشد',
     removeCourse: 'حذف',
     academy: 'آکادمی',
@@ -5541,7 +5335,7 @@ export const fa = {
     originalTotal: 'قیمت اصلی',
     savings: 'صرفه‌جویی دانشجو',
     active: 'فعال',
-    inactive: 'غیرفعال'
+    inactive: 'غیرفعال',
   },
   refunds: {
     title: 'بازپرداخت‌ها',
@@ -5560,7 +5354,7 @@ export const fa = {
     amount: 'مبلغ',
     date: 'تاریخ',
     action: 'عملیات',
-    searchPlaceholder: 'جستجو بر اساس شناسه، وضعیت یا دانشجو…'
+    searchPlaceholder: 'جستجو بر اساس شناسه، وضعیت یا دانشجو…',
   },
   settlement: {
     eyebrow: 'مالی',
@@ -5569,25 +5363,25 @@ export const fa = {
       'ببینید پول از کدام راه به شما رسیده است، چقدر از آن نزد منتوما مانده و درخواست واریز آن به حساب بانکی آکادمی را ثبت کنید.',
     custody: {
       PLATFORM: 'از درگاه منتوما',
-      ACADEMY: 'مستقیم به آکادمی'
+      ACADEMY: 'مستقیم به آکادمی',
     },
     balance: {
       available: {
         title: 'قابل تسویه',
-        hint: 'مبلغی که همین حالا می‌توانید درخواست واریز آن را بدهید.'
+        hint: 'مبلغی که همین حالا می‌توانید درخواست واریز آن را بدهید.',
       },
       pending: {
         title: 'در حال بررسی',
-        hint: 'درخواست‌هایی که ثبت شده و هنوز به حساب شما واریز نشده است.'
+        hint: 'درخواست‌هایی که ثبت شده و هنوز به حساب شما واریز نشده است.',
       },
       withdrawn: {
         title: 'تسویه‌شده تاکنون',
-        hint: 'مجموع مبالغی که تا امروز به حساب آکادمی واریز شده است.'
+        hint: 'مجموع مبالغی که تا امروز به حساب آکادمی واریز شده است.',
       },
       direct: {
         title: 'دریافت مستقیم شما',
-        hint: 'نقدی، کارت‌خوان و کارت‌به‌کارت؛ این پول از ابتدا نزد خودتان بوده و تسویه نمی‌شود.'
-      }
+        hint: 'نقدی، کارت‌خوان و کارت‌به‌کارت؛ این پول از ابتدا نزد خودتان بوده و تسویه نمی‌شود.',
+      },
     },
     channels: {
       title: 'درآمد به تفکیک روش پرداخت',
@@ -5597,7 +5391,7 @@ export const fa = {
       custody: 'مسیر دریافت',
       count: 'تعداد تراکنش',
       gross: 'مبلغ کل',
-      share: 'سهم'
+      share: 'سهم',
     },
     bank: {
       title: 'حساب بانکی تسویه',
@@ -5620,20 +5414,19 @@ export const fa = {
       status: {
         PENDING: 'در انتظار تأیید',
         APPROVED: 'تأیید شده',
-        REJECTED: 'رد شده'
-      }
+        REJECTED: 'رد شده',
+      },
     },
     request: {
       title: 'درخواست تسویه',
-      description:
-        'مبلغ مورد نظر را وارد کنید تا به حساب تأییدشدهٔ شما واریز شود.',
+      description: 'مبلغ مورد نظر را وارد کنید تا به حساب تأییدشدهٔ شما واریز شود.',
       amountLabel: 'مبلغ درخواستی',
       notesLabel: 'توضیح (اختیاری)',
       useMax: 'کل موجودی: {{amount}}',
       submit: 'ثبت درخواست تسویه',
       submitted: 'درخواست تسویه ثبت شد',
       manualHint:
-        'واریز به‌صورت دستی و در ساعات کاری بانکی انجام می‌شود؛ پس از انجام، کد پیگیری بانکی در همین صفحه نمایش داده می‌شود.'
+        'واریز به‌صورت دستی و در ساعات کاری بانکی انجام می‌شود؛ پس از انجام، کد پیگیری بانکی در همین صفحه نمایش داده می‌شود.',
     },
     panel: {
       heldTitle: 'مبلغ نزد منتوما برای تسویه',
@@ -5641,38 +5434,35 @@ export const fa = {
         'پول دانشجویان که هنوز نزد پلتفرم است. در حال بررسی: {{pending}}. تسویه‌شده تاکنون: {{withdrawn}}.',
       request: 'درخواست تسویه',
       oncePerDay: 'در هر شبانه‌روز فقط یک درخواست می‌توانید بفرستید.',
-      details: 'حساب بانکی و جزئیات تسویه'
+      details: 'حساب بانکی و جزئیات تسویه',
     },
     blockers: {
-      KYC_REQUIRED:
-        'برای ارسال درخواست تسویه، ابتدا احراز هویت باید تکمیل و تأیید شود.',
+      KYC_REQUIRED: 'برای ارسال درخواست تسویه، ابتدا احراز هویت باید تکمیل و تأیید شود.',
       KYC_PENDING: 'احراز هویت شما در انتظار تأیید کارکنان منتوما است.',
       NO_BANK_ACCOUNT: 'هنوز شماره شبایی ثبت نکرده‌اید.',
       BANK_ACCOUNT_PENDING: 'شماره شبای شما در حال بررسی است.',
-      BANK_ACCOUNT_REJECTED:
-        'شماره شبای شما رد شده است؛ لطفاً آن را اصلاح کنید.',
+      BANK_ACCOUNT_REJECTED: 'شماره شبای شما رد شده است؛ لطفاً آن را اصلاح کنید.',
       NO_BALANCE: 'مبلغ قابل تسویه‌ای وجود ندارد.',
       BELOW_MINIMUM: 'حداقل مبلغ قابل درخواست {{amount}} است.',
       REQUEST_IN_PROGRESS: 'یک درخواست تسویه در حال بررسی است.',
       COOLDOWN_UNTIL: 'درخواست بعدی را می‌توانید از {{date}} ثبت کنید.',
-      COOLDOWN: 'هنوز فاصلهٔ لازم تا درخواست بعدی سپری نشده است.'
+      COOLDOWN: 'هنوز فاصلهٔ لازم تا درخواست بعدی سپری نشده است.',
     },
     status: {
       PENDING: 'در انتظار بررسی',
       APPROVED: 'تأیید شده',
       REJECTED: 'رد شده',
-      PAID: 'واریز شده'
+      PAID: 'واریز شده',
     },
     history: {
       title: 'سابقهٔ تسویه‌ها',
-      empty:
-        'هنوز تسویه‌ای ثبت نشده است. واریز کارکنان و درخواست‌های شما اینجا دیده می‌شود.',
+      empty: 'هنوز تسویه‌ای ثبت نشده است. واریز کارکنان و درخواست‌های شما اینجا دیده می‌شود.',
       requestedAt: 'تاریخ درخواست',
       amount: 'مبلغ',
       settledAt: 'زمان واریز',
       destination: 'حساب مقصد',
-      bankRef: 'کد پیگیری بانکی'
-    }
+      bankRef: 'کد پیگیری بانکی',
+    },
   },
   withdrawals: {
     id: 'شناسه',
@@ -5701,10 +5491,10 @@ export const fa = {
     informed: 'اطلاع‌رسانی شد',
     notInformed: 'اطلاع‌رسانی نشده',
     informedSms: 'پیامک ارسال شد',
-    informedEmail: 'ایمیل ارسال شد'
+    informedEmail: 'ایمیل ارسال شد',
   },
   teacherShare: {
-    note: 'سهم مدرس در این آکادمی {{teacher}} از هر فروش است و {{academy}} به آکادمی می‌رسد؛ این نسبت را مدیر آکادمی تعیین می‌کند.'
+    note: 'سهم مدرس در این آکادمی {{teacher}} از هر فروش است و {{academy}} به آکادمی می‌رسد؛ این نسبت را مدیر آکادمی تعیین می‌کند.',
   },
   teacherEarnings: {
     title: 'درآمد من',
@@ -5727,7 +5517,7 @@ export const fa = {
     rejectWaitHint: 'به‌خاطر چرخه تسویه بانکی، رد کردن از {{date}} ممکن است',
     responseNote:
       'تأیید یا رد فقط برای حساب‌وکتاب بین شما و مدیر آکادمی است و ربطی به پلتفرم ندارد. اگر پول نرسید، پس از ۷۲ ساعت می‌توانید رد کنید تا مبلغ دوباره به بدهی آکادمی برگردد.',
-    noPayouts: 'هنوز پرداختی ثبت نشده است'
+    noPayouts: 'هنوز پرداختی ثبت نشده است',
   },
   teacherPayouts: {
     title: 'پرداخت‌های معلمان',
@@ -5743,7 +5533,7 @@ export const fa = {
     bankInfo: 'اطلاعات بانکی',
     requestedAt: 'تاریخ درخواست',
     notes: 'یادداشت (اختیاری)',
-    statusFilter: 'فیلتر وضعیت'
+    statusFilter: 'فیلتر وضعیت',
   },
   affiliates: {
     title: 'بازاریابی',
@@ -5761,8 +5551,7 @@ export const fa = {
     payoutHistory: 'تاریخچه برداشت',
     myDashSubtitle: 'لینک‌های معرفی، بازدیدها و درآمد خود را پیگیری کنید.',
     noLinksYet: 'هنوز لینک بازاریابی ندارید',
-    noLinksDesc:
-      'برای افزوده‌شدن به‌عنوان بازاریاب و دریافت لینک معرفی، با آکادمی تماس بگیرید.',
+    noLinksDesc: 'برای افزوده‌شدن به‌عنوان بازاریاب و دریافت لینک معرفی، با آکادمی تماس بگیرید.',
     totalSales: 'مجموع فروش',
     available: 'موجودی',
     requestPayoutTitle: 'درخواست برداشت',
@@ -5773,15 +5562,12 @@ export const fa = {
     submitRequest: 'ثبت درخواست',
     loadFailed: 'بارگذاری اطلاعات بازاریابی ناموفق بود',
     enterValidAmount: 'یک مبلغ معتبر وارد کنید',
-    payoutRequested:
-      'درخواست برداشت ثبت شد! آکادمی به‌زودی آن را پردازش می‌کند.',
+    payoutRequested: 'درخواست برداشت ثبت شد! آکادمی به‌زودی آن را پردازش می‌کند.',
     requestPayoutFailed: 'درخواست برداشت ناموفق بود',
-    description:
-      'افراد را دعوت کنید تا دوره‌هایتان را تبلیغ کنند و از هر فروش کمیسیون بگیرند.',
+    description: 'افراد را دعوت کنید تا دوره‌هایتان را تبلیغ کنند و از هر فروش کمیسیون بگیرند.',
     newAffiliate: 'افزودن بازاریاب',
     noAffiliates: 'هنوز بازاریابی ندارید',
-    noAffiliatesDesc:
-      'اولین بازاریاب خود را اضافه کنید و از تبلیغات دهان‌به‌دهان بهره ببرید.',
+    noAffiliatesDesc: 'اولین بازاریاب خود را اضافه کنید و از تبلیغات دهان‌به‌دهان بهره ببرید.',
     createAffiliate: 'افزودن بازاریاب',
     editAffiliate: 'ویرایش بازاریاب',
     code: 'کد معرف',
@@ -5795,8 +5581,7 @@ export const fa = {
     selectCourse: 'انتخاب دوره (اختیاری)',
     commission: 'کمیسیون',
     commissionPercent: 'نرخ کمیسیون (٪)',
-    commissionHelp:
-      'درصدی از قیمت فروش که بازاریاب دریافت می‌کند. مثلاً ۲۰ = ۲۰٪.',
+    commissionHelp: 'درصدی از قیمت فروش که بازاریاب دریافت می‌کند. مثلاً ۲۰ = ۲۰٪.',
     clicks: 'کلیک',
     conversions: 'فروش',
     earnings: 'درآمد',
@@ -5860,8 +5645,7 @@ export const fa = {
     previewPanelTitle: 'پنل بازاریاب · منتوما',
     previewBadge: 'پیش‌نمایش',
     previewPhoneTitle: 'ورود به پنل بازاریاب',
-    previewPhoneDesc:
-      'برای ورود، شماره موبایلی که با آن ثبت‌نام کرده‌اید را وارد کنید',
+    previewPhoneDesc: 'برای ورود، شماره موبایلی که با آن ثبت‌نام کرده‌اید را وارد کنید',
     previewPhonePlaceholder: '۰۹۱۲ ۳۴۵ ۶۷۸۹',
     previewSendOtp: 'دریافت کد تأیید',
     previewTerms: 'با ورود، شرایط استفاده و سیاست حریم خصوصی را می‌پذیرید',
@@ -5880,12 +5664,11 @@ export const fa = {
     previewStatTotal: 'درآمد کل',
     previewStatBalance: 'موجودی',
     previewStatClicks: 'کلیک‌ها',
-    previewStatSales: 'فروش'
+    previewStatSales: 'فروش',
   },
   coupons: {
     title: 'کد تخفیف پلن پلتفرم',
-    description:
-      'کدهایی برای تخفیف پرداخت/ارتقای پلن منتوما توسط مدیران آکادمی. فقط مالک و ادمین.',
+    description: 'کدهایی برای تخفیف پرداخت/ارتقای پلن منتوما توسط مدیران آکادمی. فقط مالک و ادمین.',
     newCoupon: 'کوپن جدید',
     allCoupons: 'همه کوپن‌ها',
     noCoupons: 'کوپنی یافت نشد',
@@ -5927,11 +5710,9 @@ export const fa = {
     codeTaken:
       'این کد در بازهٔ انتخاب‌شده برای آکادمی شما قبلاً استفاده شده است. کد دیگری انتخاب کنید یا تاریخ‌ها را تغییر دهید.',
     endBeforeStart: 'تاریخ پایان باید بعد از تاریخ شروع باشد.',
-    platformOnly:
-      'فقط مالک پلتفرم و ادمین‌ها می‌توانند کد تخفیف پرداخت پلن مدیران را بسازند.',
+    platformOnly: 'فقط مالک پلتفرم و ادمین‌ها می‌توانند کد تخفیف پرداخت پلن مدیران را بسازند.',
     platformScope: 'پلتفرم (پرداخت پلن)',
-    platformScopeHint:
-      'کدهای این صفحه برای پرداخت/ارتقای پلن مدیر آکادمی است — نه خرید دانشجو.',
+    platformScopeHint: 'کدهای این صفحه برای پرداخت/ارتقای پلن مدیر آکادمی است — نه خرید دانشجو.',
     academyTitle: 'کدهای تخفیف',
     academyDescription:
       'کدهایی که دانشجو هنگام پرداخت وارد می‌کند. برای کد رایگان (۱۰۰٪ تخفیف) نوع «تخفیف کامل» را انتخاب کنید.',
@@ -5947,7 +5728,7 @@ export const fa = {
     bannerMore: 'و {{count}} مورد دیگر',
     bannerUseOnPlans: 'استفاده در پلن‌ها',
     bannerViewAll: 'مشاهده کدها',
-    bannerCopyCode: 'کپی کد {{code}}'
+    bannerCopyCode: 'کپی کد {{code}}',
   },
   subscriptions: {
     title: 'اشتراک‌ها',
@@ -5968,7 +5749,7 @@ export const fa = {
     expires: 'انقضا',
     expired: 'منقضی شده',
     renewalsPending: 'تمدیدهای معلق',
-    reminders: 'یادآوری‌ها'
+    reminders: 'یادآوری‌ها',
   },
   platformSettings: {
     title: 'تنظیمات پلتفرم',
@@ -5993,11 +5774,10 @@ export const fa = {
     vatRegNo: 'شناسه مالیاتی',
     economicCode: 'کد اقتصادی',
     ownerAlerts: 'هشدار پرداخت مالک',
-    ownerAlertsDesc:
-      'پیامک این شماره وقتی مدیر از پنل ادمین پلن منتوما را می‌خرد',
+    ownerAlertsDesc: 'پیامک این شماره وقتی مدیر از پنل ادمین پلن منتوما را می‌خرد',
     ownerNotifyPhone: 'شماره اطلاع‌رسانی مالک',
     ownerNotifyPhoneHint: 'موبایل ایران، مثلاً ۰۹۱۲۱۲۳۴۵۶۷',
-    saveSettings: 'ذخیره تنظیمات'
+    saveSettings: 'ذخیره تنظیمات',
   },
   paymentPlans: {
     title: 'پلن‌های پرداخت',
@@ -6012,7 +5792,7 @@ export const fa = {
     createPlan: 'ایجاد پلن',
     creating: 'در حال ایجاد…',
     backToCourse: 'بازگشت به دوره',
-    allPlans: 'پلن‌های اقساطی'
+    allPlans: 'پلن‌های اقساطی',
   },
   webhooks: {
     title: 'پیکربندی وب‌هوک',
@@ -6026,7 +5806,7 @@ export const fa = {
     secretHint: 'برای تأیید امضای تحویل‌های وب‌هوک استفاده می‌شود',
     hmacTitle: 'تأیید HMAC (مرجع)',
     saveSettings: 'ذخیره تنظیمات وب‌هوک',
-    backToAcademy: 'بازگشت به آکادمی'
+    backToAcademy: 'بازگشت به آکادمی',
   },
   wizard: {
     backToCourses: 'بازگشت به دوره‌ها',
@@ -6046,8 +5826,7 @@ export const fa = {
     subtitlePlaceholder: 'خلاصه کوتاه یک خطی نمایش‌داده‌شده به دانشجویان',
     subtitleHint: 'اختیاری — در صفحه فروش زیر عنوان نشان داده می‌شود',
     description: 'توضیحات',
-    descriptionPlaceholder:
-      'دانشجویان چه یاد می‌گیرند؟ این دوره را منحصربه‌فرد چه می‌کند؟',
+    descriptionPlaceholder: 'دانشجویان چه یاد می‌گیرند؟ این دوره را منحصربه‌فرد چه می‌کند؟',
     descriptionCounter: '{{count}}/۲۰۰۰',
     category: 'دسته‌بندی',
     selectCategory: 'انتخاب دسته‌بندی',
@@ -6059,8 +5838,7 @@ export const fa = {
     free: 'رایگان',
     freeDesc: 'هر کسی می‌تواند بدون هزینه ثبت‌نام کند',
     oneTime: 'خرید یک‌باره',
-    oneTimeDesc:
-      'دانشجویان یک بار برای دسترسی مادام‌العمر یا محدود پرداخت می‌کنند',
+    oneTimeDesc: 'دانشجویان یک بار برای دسترسی مادام‌العمر یا محدود پرداخت می‌کنند',
     paymentPlan: 'پلن پرداخت',
     paymentPlanDesc: 'مجموع را به اقساط زمان‌بندی‌شده تقسیم کنید',
     subscriptionType: 'اشتراک',
@@ -6073,11 +5851,9 @@ export const fa = {
     amountPerInstallment: 'مبلغ هر قسط',
     interval: 'فاصله (روز)',
     totalAmount: 'جمع کل: {{amount}} تومان',
-    subscriptionNote:
-      'دانشجویانی که اشتراک فعال دارند از طریق پلن آکادمی به این دوره دسترسی دارند',
+    subscriptionNote: 'دانشجویانی که اشتراک فعال دارند از طریق پلن آکادمی به این دوره دسترسی دارند',
     subscriptionManage: 'مدیریت پلن آکادمی',
-    freeNote:
-      'دانشجویان می‌توانند رایگان ثبت‌نام کنند. قیمت‌گذاری را می‌توانید بعداً تغییر دهید.',
+    freeNote: 'دانشجویان می‌توانند رایگان ثبت‌نام کنند. قیمت‌گذاری را می‌توانید بعداً تغییر دهید.',
     publishToggle: 'وضعیت انتشار',
     publishedDesc: 'بلافاصله پس از ایجاد برای دانشجویان نمایش داده می‌شود',
     draftDesc: 'ذخیره به عنوان پیش‌نویس — می‌توانید هر زمان منتشر کنید',
@@ -6101,7 +5877,7 @@ export const fa = {
     cover: 'کاور',
     willPublish: 'منتشر می‌شود',
     draft: 'پیش‌نویس',
-    lifetime: 'مادام‌العمر'
+    lifetime: 'مادام‌العمر',
   },
   certificates: {
     tab: 'گواهی‌نامه',
@@ -6126,7 +5902,7 @@ export const fa = {
       'برای این دوره گواهی‌نامه فعال نیست. در ویرایش دوره، «گواهی پایان دوره» را روشن کنید.',
     minPercentLabel: 'نمرهٔ قبولی تکلیف (درصد)',
     minPercentHint:
-      'هر تکلیف اجباری باید دست‌کم این درصد از نمرهٔ کامل را بگیرد تا گواهی صادر شود.'
+      'هر تکلیف اجباری باید دست‌کم این درصد از نمرهٔ کامل را بگیرد تا گواهی صادر شود.',
   },
   courseDetail: {
     nextClass: 'نزدیک‌ترین کلاس',
@@ -6221,7 +5997,7 @@ export const fa = {
     daysCount: '{{count}} روز',
     lifetimeAccess: 'به مدت فعالیت آکادمی',
     createdAt: 'تاریخ ساخت',
-    updatedAt: 'آخرین ویرایش'
+    updatedAt: 'آخرین ویرایش',
   },
   subscriptionStatus: {
     active: 'فعال',
@@ -6230,17 +6006,14 @@ export const fa = {
     expired: 'منقضی‌شده',
     inactive: 'بدون پلن فعال',
     noPlanTitle: 'هنوز پلنی فعال ندارید',
-    startPlanHint:
-      'برای شروع، یک پلن را از بین گزینه‌های زیر انتخاب و فعال کنید.'
+    startPlanHint: 'برای شروع، یک پلن را از بین گزینه‌های زیر انتخاب و فعال کنید.',
   },
   sidebar: {
     buyPlan: 'خرید پلن',
-    buyPlanDescription:
-      'برای فعال‌سازی آکادمی و شروع کار، یک پلن پلتفرم انتخاب کنید.',
+    buyPlanDescription: 'برای فعال‌سازی آکادمی و شروع کار، یک پلن پلتفرم انتخاب کنید.',
     upgradePlan: 'ارتقای پلن',
     upgradeDescription: 'دوره، فضای ذخیره و امکانات بیشتر با پلن بالاتر',
-    upgradeDescriptionExpiring:
-      'پلن شما تا {{days}} روز دیگر منقضی می‌شود. همین حالا تمدید کنید.',
+    upgradeDescriptionExpiring: 'پلن شما تا {{days}} روز دیگر منقضی می‌شود. همین حالا تمدید کنید.',
     subscriptionExpiring: 'پلن {{plan}}',
     upgradeButton: 'مشاهده پلن‌ها',
     manageSubscription: 'مدیریت پلن',
@@ -6252,7 +6025,7 @@ export const fa = {
     platformAdmin: 'مدیر پلتفرم',
     managementConsole: 'کنسول مدیریت',
     planBadgeFree: 'پلن رایگان',
-    planBadgeExpired: 'منقضی‌شده'
+    planBadgeExpired: 'منقضی‌شده',
   },
   templatesGallery: {
     title: 'گالری قالب‌ها',
@@ -6266,13 +6039,12 @@ export const fa = {
     publish: 'انتشار',
     unpublish: 'لغو انتشار',
     sections: '{{count}} بخش',
-    deleteConfirm: 'حذف قالب «{{name}}»؟'
+    deleteConfirm: 'حذف قالب «{{name}}»؟',
   },
   plans: {
     trial: {
       claimTitle: 'شروع دورهٔ آزمایشی ۱۴ روزه',
-      claimDescription:
-        'شما یک دورهٔ آزمایشی رایگان دارید. آن را برای این آکادمی استفاده کنید.',
+      claimDescription: 'شما یک دورهٔ آزمایشی رایگان دارید. آن را برای این آکادمی استفاده کنید.',
       claimCta: 'شروع دورهٔ آزمایشی',
       claimConfirm:
         'تنها دورهٔ آزمایشی رایگان شما روی {{academy}} آغاز می‌شود و ۱۴ روز اعتبار دارد.',
@@ -6282,11 +6054,10 @@ export const fa = {
         'دورهٔ آزمایشی شما روی {{academy}} در جریان است و {{days}} روز از آن باقی مانده.',
       moveConfirm:
         '{{from}} بلافاصله فقط‌خواندنی می‌شود. {{days}} روز باقی‌مانده به {{to}} منتقل می‌شود — روز تازه‌ای اضافه نمی‌شود و پس از پایان، دیگر قابل انتقال نیست.',
-      applied: 'دورهٔ آزمایشی روی این آکادمی اعمال شد'
+      applied: 'دورهٔ آزمایشی روی این آکادمی اعمال شد',
     },
     title: 'پلن‌های قیمت',
-    subtitle:
-      'پلن مناسب آکادمی خود را انتخاب کنید یا برای دانشجویان خود اشتراک بسازید',
+    subtitle: 'پلن مناسب آکادمی خود را انتخاب کنید یا برای دانشجویان خود اشتراک بسازید',
     badge: 'پلتفرم',
     monthly: 'ماهانه',
     quarterly: '۳ ماهه · تخفیف',
@@ -6310,8 +6081,7 @@ export const fa = {
     extendHint: 'به انتهای دورهٔ فعلی شما اضافه می‌شود؛ همین پلن.',
     storageAlmostFull:
       'فضا تقریباً پر است (٪{{percent}}). قبل از مسدود شدن آپلود، بسته فضای اضافه بخرید یا پلن را ارتقا دهید.',
-    storageFull:
-      'فضا پر است. آپلود جدید تا خرید بسته {{gb}} گیگابایتی یا ارتقای پلن مسدود است.',
+    storageFull: 'فضا پر است. آپلود جدید تا خرید بسته {{gb}} گیگابایتی یا ارتقای پلن مسدود است.',
     buyStorageAddon: 'خرید {{gb}} گیگابایت فضا',
     storageAddonPrice: '{{price}} تومان برای همین دوره',
     includeStorageAddon: 'افزودن {{gb}} گیگابایت فضا به این پرداخت',
@@ -6340,14 +6110,11 @@ export const fa = {
     enterpriseFeature2: 'فضای ذخیره‌سازی اختصاصی',
     enterpriseFeature3: 'پشتیبانی اختصاصی و توافق سطح سرویس (SLA)',
     enterpriseContactDialogTitle: 'درخواست پلن سازمانی',
-    enterpriseContactDialogDesc:
-      'نیاز آموزشگاهتان را بنویسید تا تیم فروش با شما تماس بگیرد.',
-    enterpriseContactPlaceholder:
-      'مثلاً: تعداد معلم‌ها، دانشجویان و امکانات مورد نیاز...',
+    enterpriseContactDialogDesc: 'نیاز آموزشگاهتان را بنویسید تا تیم فروش با شما تماس بگیرد.',
+    enterpriseContactPlaceholder: 'مثلاً: تعداد معلم‌ها، دانشجویان و امکانات مورد نیاز...',
     enterpriseContactSubmit: 'ارسال درخواست',
     enterpriseContactSubject: 'درخواست پلن سازمانی',
-    enterpriseContactSuccess:
-      'درخواست شما ارسال شد. تیم فروش به‌زودی با شما تماس می‌گیرد.',
+    enterpriseContactSuccess: 'درخواست شما ارسال شد. تیم فروش به‌زودی با شما تماس می‌گیرد.',
     noPlanConfigured: 'پلنی تنظیم نشده است.',
     createFirstPlan: 'ایجاد اولین پلن',
     storage: 'فضای ذخیره‌سازی',
@@ -6362,8 +6129,7 @@ export const fa = {
     subscriptionExpired: 'منقضی شده',
     changePlan: 'تغییر پلن',
     confirmChangePlan: 'تأیید تغییر پلن',
-    confirmChangePlanDesc:
-      'مدت اشتراک خود را انتخاب کنید. مبلغ به صورت کامل محاسبه خواهد شد.',
+    confirmChangePlanDesc: 'مدت اشتراک خود را انتخاب کنید. مبلغ به صورت کامل محاسبه خواهد شد.',
     confirmUpgradeDesc:
       'شما در حال ارتقا به یک پلن بالاتر هستید. فقط مابه‌التفاوت روزهای باقی‌ماندهٔ پلن فعلی محاسبه می‌شود.',
     upgradeSummary: 'خلاصهٔ ارتقا',
@@ -6371,8 +6137,7 @@ export const fa = {
     daysUnit: 'روز',
     activationDate: 'تاریخ فعال‌سازی',
     activatesToday: 'همین امروز (بلافاصله)',
-    expiryUnchanged:
-      'تاریخ انقضا تغییری نمی‌کند؛ پلن بهتر برای همان زمانِ باقی‌مانده فعال می‌شود.',
+    expiryUnchanged: 'تاریخ انقضا تغییری نمی‌کند؛ پلن بهتر برای همان زمانِ باقی‌مانده فعال می‌شود.',
     planDiff: 'مابه‌التفاوت پلن',
     storageCredit: 'اعتبار فضای ذخیره‌سازی',
     proratedTotal: 'مبلغ قابل پرداخت (نسبتی)',
@@ -6392,8 +6157,7 @@ export const fa = {
     selectGateway: 'درگاه پرداخت',
     voucherCode: 'کد تخفیف',
     voucherCodePlaceholder: 'مثلاً MENTOMA100',
-    voucherCodeHint:
-      'در صورت صفر شدن مبلغ نهایی، پلن بدون درگاه بانکی فعال می‌شود.',
+    voucherCodeHint: 'در صورت صفر شدن مبلغ نهایی، پلن بدون درگاه بانکی فعال می‌شود.',
     applyVoucher: 'اعمال کد',
     removeVoucher: 'حذف',
     voucherApplied: 'کد تخفیف اعمال شد',
@@ -6447,8 +6211,7 @@ export const fa = {
     platformTabTitle: 'اشتراک آکادمی',
     platformTabDescription: 'انتخاب یا ارتقای اشتراکی که خودتان می‌پردازید',
     academyTabTitle: 'اشتراک دانشجویان',
-    academyTabDescription:
-      'اشتراک‌هایی بسازید که دانشجویان از آکادمی شما می‌خرند',
+    academyTabDescription: 'اشتراک‌هایی بسازید که دانشجویان از آکادمی شما می‌خرند',
     kindLabel: 'نوع',
     kindSubscription: 'اشتراکی',
     kindPackage: 'بسته',
@@ -6458,14 +6221,13 @@ export const fa = {
     nameLabel: 'نام اشتراک',
     namePlaceholder: 'مثلاً دسترسی ماهانه',
     priceLabel: 'قیمت',
-    dialogSubtitle:
-      'اشتراکی بسازید که دانشجویان برای دسترسی به دوره‌های شما می‌خرند',
+    dialogSubtitle: 'اشتراکی بسازید که دانشجویان برای دسترسی به دوره‌های شما می‌خرند',
     createAcademyPlan: 'ایجاد اشتراک',
     editAcademyPlan: 'ویرایش اشتراک',
     noAcademyPlans: 'هنوز اشتراکی ایجاد نشده است.',
     createFirstAcademyPlan: 'اولین اشتراک را بسازید',
     selectAcademyFirst: 'برای مدیریت اشتراک‌ها ابتدا یک آکادمی انتخاب کنید.',
-    subscriptionOnlyDuration: 'فقط برای اشتراک‌ها لازم است'
+    subscriptionOnlyDuration: 'فقط برای اشتراک‌ها لازم است',
   },
   website: {
     title: 'وب‌سایت آکادمی',
@@ -6478,28 +6240,23 @@ export const fa = {
       pages: 'صفحه‌ها',
       seo: 'سئو',
       trust: 'نماد اعتماد',
-      domain: 'دامنه'
+      domain: 'دامنه',
     },
     cards: {
       blogTitle: 'بلاگ',
-      blogDescription:
-        'برای سایت عمومی خود مقاله بنویسید و تصمیم بگیرید چه چیزی منتشر شود.',
+      blogDescription: 'برای سایت عمومی خود مقاله بنویسید و تصمیم بگیرید چه چیزی منتشر شود.',
       appearanceTitle: 'ظاهر سایت',
-      appearanceDescription:
-        'یک قالب انتخاب کنید و بخش‌های سایت عمومی را بچینید.',
+      appearanceDescription: 'یک قالب انتخاب کنید و بخش‌های سایت عمومی را بچینید.',
       pagesTitle: 'صفحه‌ها و تماس',
-      pagesDescription:
-        'صفحهٔ دربارهٔ ما و تماس با ما را بنویسید و راه‌های ارتباطی را وارد کنید.',
+      pagesDescription: 'صفحهٔ دربارهٔ ما و تماس با ما را بنویسید و راه‌های ارتباطی را وارد کنید.',
       seoTitle: 'سئو',
-      seoDescription:
-        'عنوان، توضیح و تصویری که در گوگل و هنگام اشتراک لینک دیده می‌شود.',
+      seoDescription: 'عنوان، توضیح و تصویری که در گوگل و هنگام اشتراک لینک دیده می‌شود.',
       trustTitle: 'نماد اعتماد',
       trustDescription: 'درخواست و نمایش نماد اعتماد الکترونیکی (اینماد).',
       domainTitle: 'دامنه',
-      domainDescription:
-        'دامنهٔ اختصاصی خود را وصل کنید و DNS آن را تنظیم کنید.',
+      domainDescription: 'دامنهٔ اختصاصی خود را وصل کنید و DNS آن را تنظیم کنید.',
       brandingTitle: 'نام و هویت بصری',
-      brandingDescription: 'نام آکادمی، نشانی، لوگو، فاوآیکون و رنگ برند.'
+      brandingDescription: 'نام آکادمی، نشانی، لوگو، فاوآیکون و رنگ برند.',
     },
     seo: {
       title: 'سئو',
@@ -6508,23 +6265,20 @@ export const fa = {
       formTitle: 'مشخصات سئو',
       metaTitle: 'عنوان در جست‌وجو',
       metaTitlePlaceholder: 'مثال: آموزشگاه زبان مارال — آیلتس و زبان عمومی',
-      metaTitleHint:
-        'همان تیتر آبی‌رنگ در گوگل. اگر خالی بماند، نام آکادمی استفاده می‌شود.',
+      metaTitleHint: 'همان تیتر آبی‌رنگ در گوگل. اگر خالی بماند، نام آکادمی استفاده می‌شود.',
       metaDescription: 'توضیح در جست‌وجو',
       metaDescriptionPlaceholder:
         'یک یا دو جمله دربارهٔ اینکه به چه کسانی و چه چیزی آموزش می‌دهید.',
-      metaDescriptionHint:
-        'متن خاکستری زیر تیتر. اگر خالی بماند، توضیح آکادمی استفاده می‌شود.',
+      metaDescriptionHint: 'متن خاکستری زیر تیتر. اگر خالی بماند، توضیح آکادمی استفاده می‌شود.',
       shareImage: 'تصویر اشتراک‌گذاری',
-      shareImageHint:
-        'برای بارگذاری کلیک کنید — اندازهٔ ۱۲۰۰ در ۶۳۰ پیکسل بهترین است',
+      shareImageHint: 'برای بارگذاری کلیک کنید — اندازهٔ ۱۲۰۰ در ۶۳۰ پیکسل بهترین است',
       shareImageReplace: 'برای تعویض کلیک کنید',
       shareImageEmpty: 'هنوز تصویری انتخاب نشده',
       previewSearch: 'پیش‌نمایش گوگل',
       previewShare: 'پیش‌نمایش لینک اشتراکی',
       previewEmptyDescription: 'هنوز توضیحی وارد نشده است.',
-      saved: 'مشخصات سئو ذخیره شد'
-    }
+      saved: 'مشخصات سئو ذخیره شد',
+    },
   },
   sitePreview: {
     academyName: 'آکادمی شما',
@@ -6575,13 +6329,11 @@ export const fa = {
     review1Revenue: '۱۲ میلیون/ماه',
     review2Name: 'محمد ک.',
     review2Role: 'مدیر محصول',
-    review2Text:
-      'بهترین سرمایه‌گذاری برای پیشرفت حرفه‌ای‌ام. بسیار توصیه می‌کنم!',
+    review2Text: 'بهترین سرمایه‌گذاری برای پیشرفت حرفه‌ای‌ام. بسیار توصیه می‌کنم!',
     review2Revenue: '۸ میلیون/ماه',
     review3Name: 'الینا ر.',
     review3Role: 'دانشمند داده',
-    review3Text:
-      'پروژه‌های عملی خیلی تفاوت ایجاد می‌کنند. شغل رویاهایم را پیدا کردم!',
+    review3Text: 'پروژه‌های عملی خیلی تفاوت ایجاد می‌کنند. شغل رویاهایم را پیدا کردم!',
     review3Revenue: '۱۵ میلیون/ماه',
     review4Name: 'داوید ک.',
     review4Role: 'طراح UX',
@@ -6638,8 +6390,7 @@ export const fa = {
     blockMembership: 'اشتراک',
     blockSlideshow: 'اسلایدشو / بنر',
     heroVideoTitle: 'ویدیوی بنر',
-    heroVideoHint:
-      'ویدیو را روی خود بنر بارگذاری کنید یا از کتابخانهٔ رسانه انتخاب کنید.',
+    heroVideoHint: 'ویدیو را روی خود بنر بارگذاری کنید یا از کتابخانهٔ رسانه انتخاب کنید.',
     heroVideoPick: 'انتخاب ویدیو',
     heroVideoSelected: 'ویدیوی انتخاب‌شده',
     heroVideoAutoplay: 'پخش خودکار و بی‌صدا',
@@ -6689,8 +6440,7 @@ export const fa = {
     heroUploadImage: 'بارگذاری تصویر',
     heroUploading: 'در حال بارگذاری…',
     heroNoIllustration: 'حذف تصویر',
-    heroIllustrationHint:
-      'فقط تصویر همین طراحی را عوض می‌کند — طرح بنر به کلاسیک تغییر نمی‌کند',
+    heroIllustrationHint: 'فقط تصویر همین طراحی را عوض می‌کند — طرح بنر به کلاسیک تغییر نمی‌کند',
     panelOverlayOpacity: 'میزان تیرگی پوشش',
     panelTextAlignment: 'تراز متن',
     panelAlignCenter: 'مرکز',
@@ -6706,8 +6456,7 @@ export const fa = {
     panelDuplicateSection: 'کپی بخش',
     panelSectionVisible: 'نمایش این بخش',
     sidebarTitle: 'سفارشی‌سازی قالب',
-    canvasEditHint:
-      'روی متن یا تصویر در پیش‌نمایش کلیک کنید. طرح بنر را از پایین انتخاب کنید.',
+    canvasEditHint: 'روی متن یا تصویر در پیش‌نمایش کلیک کنید. طرح بنر را از پایین انتخاب کنید.',
     emptySlotHint: 'نوع بخش را انتخاب کنید، سپس طرح را از کتابخانه برگزینید.',
     chooseBlockType: 'نوع بخش',
     removeEmptySlot: 'حذف جایگاه خالی',
@@ -6721,8 +6470,7 @@ export const fa = {
     removeDecoration: 'حذف',
     accentColorLabel: 'رنگ برجسته',
     sidebarTitleAdmin: 'ویرایش قالب عمومی',
-    sidebarMasterNotice:
-      'این قالب اصلی است؛ ذخیره، نسخهٔ پایه همه مدیران را به‌روز می‌کند',
+    sidebarMasterNotice: 'این قالب اصلی است؛ ذخیره، نسخهٔ پایه همه مدیران را به‌روز می‌کند',
     tabSections: 'بخش‌ها',
     saveSiteChanges: 'ذخیره',
     saveCopyDone: 'نسخهٔ اختصاصی شما ذخیره شد',
@@ -6841,7 +6589,7 @@ export const fa = {
     panelSlotLive: 'زنده',
     panelSlotPlaceholder: 'جایگزین',
     panelSlotHidden: 'پنهان',
-    panelPlaceholderTextHint: 'متن جایگزین'
+    panelPlaceholderTextHint: 'متن جایگزین',
   },
   learningOperations: {
     workspace: 'فضای کار',
@@ -6875,14 +6623,14 @@ export const fa = {
       QUIZ_ATTEMPTED: 'تلاش آزمون',
       QUIZ_GRADED: 'نمره‌گذاری آزمون',
       ATTENDANCE_MARKED: 'ثبت حضور',
-      ENROLLMENT_ACTIVATED: 'فعال‌سازی ثبت‌نام'
+      ENROLLMENT_ACTIVATED: 'فعال‌سازی ثبت‌نام',
     },
     status: {
       DRAFT: 'پیش‌نویس',
       SUBMITTED: 'ارسال‌شده',
       GRADED: 'نمره‌گذاری‌شده',
-      REJECTED: 'ردشده'
-    }
+      REJECTED: 'ردشده',
+    },
   },
   opsQueue: {
     title: 'پیگیری آموزشی',
@@ -6903,8 +6651,7 @@ export const fa = {
     lowScoreThresholdHint:
       'تکالیف نمره‌گذاری‌شده با نمره خام کمتر از این عدد در صف «نمرات پایین» نمایش داده می‌شوند.',
     refresh: 'بروزرسانی',
-    refreshHint:
-      'تغییرات فیلتر را اعمال کنید و همه صف‌های پیگیری را دوباره بارگذاری کنید.',
+    refreshHint: 'تغییرات فیلتر را اعمال کنید و همه صف‌های پیگیری را دوباره بارگذاری کنید.',
     overdueGrading: 'نمره‌گذاری معوق',
     overdueGradingDescription: 'تکالیف ارسال‌شده در انتظار بررسی.',
     inactivity: 'دانشجویان غیرفعال',
@@ -6914,14 +6661,12 @@ export const fa = {
     missedClasses: 'جلسات خصوصی غایب',
     missedClassesDescription: 'حضور به‌عنوان غایب ثبت شده است.',
     unansweredThreads: 'پرسش‌های بی‌پاسخ',
-    unansweredThreadsDescription:
-      'گفتگوهایی که آخرین پیام آن‌ها از دانشجو است.',
+    unansweredThreadsDescription: 'گفتگوهایی که آخرین پیام آن‌ها از دانشجو است.',
     empty: 'موردی برای پیگیری وجود ندارد.',
     profile: 'پروفایل',
     missedSessionAt: 'زمان جلسه',
     interventionNote: 'یادداشت پیگیری',
-    interventionNoteDescription:
-      'یادداشت پیگیری را در تایم‌لاین یادگیری دانشجو ذخیره کنید.',
+    interventionNoteDescription: 'یادداشت پیگیری را در تایم‌لاین یادگیری دانشجو ذخیره کنید.',
     profileIdPlaceholder: 'جستجوی دانشجو با نام یا شناسه',
     followUpAt: 'تاریخ پیگیری',
     note: 'یادداشت',
@@ -6937,8 +6682,7 @@ export const fa = {
     enableFeature: 'روشن کردن کلاس خصوصی و گروهی',
     enablingFeature: 'در حال فعال‌سازی…',
     featureEnabledSuccess: 'کلاس خصوصی و گروهی روشن شد',
-    contactManager:
-      'برای دسترسی به این بخش از مدیر آکادمی بخواهید کلاس خصوصی و گروهی را روشن کند.'
+    contactManager: 'برای دسترسی به این بخش از مدیر آکادمی بخواهید کلاس خصوصی و گروهی را روشن کند.',
   },
   tutoring: {
     groups: {
@@ -6949,8 +6693,7 @@ export const fa = {
       listSubtitle: 'همهٔ کلاس‌ها به همراه زمان‌های هفتگی و ظرفیت.',
       empty: 'هنوز کلاسی نساخته‌اید. از پایین یکی بسازید.',
       createTitle: 'کلاس جدید',
-      createSubtitle:
-        'زمان‌های هفتگی، ظرفیت و کمترین تعداد دانشجو برای شروع کلاس را مشخص کنید.',
+      createSubtitle: 'زمان‌های هفتگی، ظرفیت و کمترین تعداد دانشجو برای شروع کلاس را مشخص کنید.',
       create: 'ساخت کلاس',
       offer: 'قیمت فروش',
       offerPlaceholder: 'یک پیشنهاد تدریس خصوصی انتخاب کنید',
@@ -6959,8 +6702,7 @@ export const fa = {
       description_: 'توضیحات',
       capacity: 'ظرفیت',
       minStudents: 'کمترین تعداد دانشجو',
-      minStudentsHint:
-        'کلاس تا رسیدن به این تعداد در انتظار می‌ماند و سپس خودکار شروع می‌شود.',
+      minStudentsHint: 'کلاس تا رسیدن به این تعداد در انتظار می‌ماند و سپس خودکار شروع می‌شود.',
       ageMin: 'کمترین سن',
       ageMax: 'بیشترین سن',
       termWeeks: 'طول دوره (هفته)',
@@ -6968,12 +6710,10 @@ export const fa = {
       visibilityPublic: 'همه (نمایش عمومی)',
       visibilityPrivate: 'فقط با لینک اشتراک‌گذاری',
       joinDeadline: 'مهلت ثبت‌نام تا',
-      joinDeadlineHint:
-        'اگر تا آن زمان حد نصاب پر نشود، کلاس لغو و وجه همه بازگردانده می‌شود.',
+      joinDeadlineHint: 'اگر تا آن زمان حد نصاب پر نشود، کلاس لغو و وجه همه بازگردانده می‌شود.',
       meetingUrl: 'لینک جلسه',
       timetable: 'زمان‌های هفتگی',
-      timetableHint:
-        'برای هر جلسهٔ هفتگی یک ردیف اضافه کنید، مثلاً سه‌شنبه ۱۵:۰۰ به مدت ۹۰ دقیقه.',
+      timetableHint: 'برای هر جلسهٔ هفتگی یک ردیف اضافه کنید، مثلاً سه‌شنبه ۱۵:۰۰ به مدت ۹۰ دقیقه.',
       saveTimetable: 'ذخیرهٔ زمان‌های هفتگی',
       timetableSaved: 'زمان‌های هفتگی ذخیره شد.',
       timetableLockedHint:
@@ -7000,8 +6740,7 @@ export const fa = {
       ageRange: 'بازهٔ سنی',
       joinCode: 'کد اشتراک‌گذاری',
       wholeClassBooking: 'اجازهٔ رزرو کل کلاس توسط یک نفر',
-      wholeClassBookingHint:
-        'برای کلاس‌های عمومی بزرگ خاموش کن تا یک نفر همهٔ صندلی‌ها را نگیرد.',
+      wholeClassBookingHint: 'برای کلاس‌های عمومی بزرگ خاموش کن تا یک نفر همهٔ صندلی‌ها را نگیرد.',
       inviteLink: 'لینک دعوت به کلاس',
       sizePrivate: 'خصوصی',
       sizeSmall: 'گروه کوچک',
@@ -7013,8 +6752,7 @@ export const fa = {
       removeStudent: 'حذف',
       manageTitle: 'مدیریت کلاس',
       manageSubtitle: 'تغییر لینک، ارسال پیام به کلاس، شروع یا لغو آن.',
-      editSheetHint:
-        'همهٔ تنظیمات این کلاس در یک‌جا: نامش، قیمتش، ظرفیتش و زمان‌بندی‌اش.',
+      editSheetHint: 'همهٔ تنظیمات این کلاس در یک‌جا: نامش، قیمتش، ظرفیتش و زمان‌بندی‌اش.',
       openFullPage: 'باز کردن صفحهٔ کامل کلاس',
       notifyOnLinkChange: 'تغییر لینک به دانشجویان اطلاع داده شود',
       saveLink: 'ذخیرهٔ لینک',
@@ -7032,8 +6770,7 @@ export const fa = {
       startNow: 'همین حالا شروع کن',
       startNowHint: 'کلاس را با وجود نرسیدن به حد نصاب شروع کنید.',
       cancelLabel: 'دلیل لغو',
-      cancelHint:
-        'با لغو کلاس، برای هر دانشجویی که پرداخت کرده درخواست بازگشت وجه ثبت می‌شود.',
+      cancelHint: 'با لغو کلاس، برای هر دانشجویی که پرداخت کرده درخواست بازگشت وجه ثبت می‌شود.',
       cancel: 'لغو کلاس و بازگشت وجه',
       sessionsTitle: 'جلسه‌ها',
       sessionsEmpty: 'جلسه‌ها پس از شروع کلاس نمایش داده می‌شوند.',
@@ -7043,22 +6780,22 @@ export const fa = {
         CONFIRMED: 'قطعی‌شده',
         RUNNING: 'در حال برگزاری',
         COMPLETED: 'پایان‌یافته',
-        CANCELLED: 'لغوشده'
+        CANCELLED: 'لغوشده',
       },
       memberStatus: {
         PENDING: 'در انتظار',
         ACTIVE: 'فعال',
         PAUSED: 'متوقف',
         COMPLETED: 'پایان‌یافته',
-        CANCELLED: 'لغوشده'
+        CANCELLED: 'لغوشده',
       },
       sessionStatus: {
         SCHEDULED: 'زمان‌بندی‌شده',
         COMPLETED: 'برگزارشده',
         CANCELLED: 'لغوشده',
         RESCHEDULED: 'جابه‌جا شده',
-        NO_SHOW: 'عدم حضور'
-      }
+        NO_SHOW: 'عدم حضور',
+      },
     },
     title: 'تدریس خصوصی',
     description: 'مدیریت تعامل‌های یک‌به‌یک، جلسات و حضور.',
@@ -7119,8 +6856,7 @@ export const fa = {
     requestedTimesHint:
       'ارسال‌شده در {{date}} — با تنظیم اولین جلسه، این درخواست بسته و دانشجو باخبر می‌شود.',
     attendanceTitle: 'ثبت حضور جلسه',
-    attendanceHint:
-      'با ثبت حضور، جلسه «برگزارشده» می‌شود و سرفصل آن برای دانشجو تیک می‌خورد.',
+    attendanceHint: 'با ثبت حضور، جلسه «برگزارشده» می‌شود و سرفصل آن برای دانشجو تیک می‌خورد.',
     attendanceSession: 'جلسه',
     attendanceSubmit: 'ثبت حضور',
     attendancePresent: 'حاضر',
@@ -7135,19 +6871,18 @@ export const fa = {
     status: {
       PRESENT: 'حاضر',
       JOINED: 'پیوست',
-      ABSENT: 'غایب'
-    }
+      ABSENT: 'غایب',
+    },
   },
   downloadPolicy: {
     title: 'سیاست دانلود',
-    description:
-      'کنترل کنید که یادگیرندگان بر اساس منبع دسترسی بتوانند این درس را دانلود کنند.',
+    description: 'کنترل کنید که یادگیرندگان بر اساس منبع دسترسی بتوانند این درس را دانلود کنند.',
     free: 'اجازه دانلود برای دسترسی رایگان',
     enrollment: 'اجازه دانلود برای دسترسی ثبت‌نام',
     subscription: 'اجازه دانلود برای دسترسی اشتراک',
     tutoring: 'اجازه دانلود برای دسترسی تدریس خصوصی',
     save: 'ذخیره سیاست دانلود',
-    saved: 'سیاست دانلود ذخیره شد.'
+    saved: 'سیاست دانلود ذخیره شد.',
   },
   quiz: {
     manager: 'مدیریت آزمون',
@@ -7187,8 +6922,8 @@ export const fa = {
     type: {
       MULTIPLE_CHOICE: 'چندگزینه‌ای',
       TRUE_FALSE: 'درست / نادرست',
-      SHORT_TEXT: 'پاسخ کوتاه'
-    }
+      SHORT_TEXT: 'پاسخ کوتاه',
+    },
   },
   discussion: {
     title: 'گفت‌وگوی آموزشی',
@@ -7200,7 +6935,7 @@ export const fa = {
     attachFile: 'پیوست فایل',
     removeAttachment: 'حذف پیوست',
     uploadFailed: 'بارگذاری فایل ناموفق بود.',
-    openAttachment: 'باز کردن فایل'
+    openAttachment: 'باز کردن فایل',
   },
   pricing: {
     planLimits: {
@@ -7227,7 +6962,7 @@ export const fa = {
         storage_gb: 'فضا (GB)',
         monthly_traffic_gb: 'ترافیک ماهانه (GB)',
         videos: 'ویدیوها',
-        dedicated_templates: 'قالب سایت اختصاصی'
+        dedicated_templates: 'قالب سایت اختصاصی',
       },
       marginOk: 'حاشیه سود {{margin}}٪ — در محدوده هدف (≥۷۰٪)',
       marginLow: 'حاشیه سود {{margin}}٪ — کمتر از حداقل ۷۰٪',
@@ -7237,8 +6972,8 @@ export const fa = {
         egress: 'پهنای باند',
         compute: 'پردازش',
         sms: 'پیامک',
-        gateway: 'درگاه پرداخت'
-      }
+        gateway: 'درگاه پرداخت',
+      },
     },
     calculator: {
       title: 'ماشین‌حساب قیمت پلن',
@@ -7260,7 +6995,7 @@ export const fa = {
       colLive: 'فعلی / ماه',
       colDelta: 'اختلاف',
       colMargin: 'حاشیه @ پیشنهادی',
-      colBreakEven: 'آکادمی تا سر به سر'
+      colBreakEven: 'آکادمی تا سر به سر',
     },
     costs: {
       title: 'مفروضات هزینه و بسته‌های افزودنی',
@@ -7282,16 +7017,15 @@ export const fa = {
         storage_addon_gb: 'بسته فضا (GB)',
         storage_addon_price_toman: 'قیمت بسته فضا (تومان)',
         traffic_addon_gb: 'بسته ترافیک (GB)',
-        traffic_addon_price_toman: 'قیمت بسته ترافیک (تومان)'
-      }
+        traffic_addon_price_toman: 'قیمت بسته ترافیک (تومان)',
+      },
     },
     platform: {
       title: 'قیمت‌گذاری و کمیسیون پلتفرم',
       subtitle:
         'مالیات، کمیسیون پلتفرم، سهم معلم، پلن‌های اشتراک و درگاه‌های پرداخت را مدیریت کنید. تغییرات از درخواست بعدی اعمال می‌شود (کش ۶۰ ثانیه).',
       accessRestricted: 'دسترسی محدود',
-      accessRestrictedDesc:
-        'فقط مدیران پلتفرم می‌توانند تنظیمات قیمت‌گذاری را مدیریت کنند.',
+      accessRestrictedDesc: 'فقط مدیران پلتفرم می‌توانند تنظیمات قیمت‌گذاری را مدیریت کنند.',
       loadFailed: 'بارگذاری تنظیمات پلتفرم ناموفق بود',
       plansLoadFailed: 'بارگذاری پلن‌های اشتراک ناموفق بود',
       gatewaysLoadFailed: 'بارگذاری درگاه‌های پرداخت ناموفق بود',
@@ -7367,8 +7101,8 @@ export const fa = {
       gatewaySaveFailed: 'به‌روزرسانی درگاه ناموفق بود',
       noGateways: 'هیچ درگاه پرداختی در پایگاه داده یافت نشد.',
       manageGatewayDetails: 'مدیریت توکن و جزئیات',
-      refresh: 'بازخوانی'
-    }
+      refresh: 'بازخوانی',
+    },
   },
   platformStorage: {
     title: 'فضای ذخیره‌سازی',
@@ -7402,14 +7136,13 @@ export const fa = {
     confirmDeleteAll:
       '{{size}} از فایل‌های باقی‌مانده که هیچ ویدیو، تصویر، صدا یا سندی از آن‌ها استفاده نمی‌کند برای همیشه حذف می‌شود. این کار قابل بازگشت نیست.',
     deleted: '{{count}} فایل حذف شد.',
-    refused: '{{count}} فایل هنوز در حال استفاده بود و حذف نشد.'
+    refused: '{{count}} فایل هنوز در حال استفاده بود و حذف نشد.',
   },
   dashboardBanners: {
     title: 'بنرهای داشبورد',
     description:
       'این تصاویر به‌آرامی در مرکز داشبورد هر آکادمی می‌چرخند. هر آکادمی مجموعه‌ای را می‌بیند که با وضعیت راه‌اندازی‌اش جور است (آکادمی + قالب + اولین دوره).',
-    accessDenied:
-      'فقط مالک پلتفرم و ادمین‌ها می‌توانند بنرهای داشبورد را مدیریت کنند.',
+    accessDenied: 'فقط مالک پلتفرم و ادمین‌ها می‌توانند بنرهای داشبورد را مدیریت کنند.',
     upload: 'بارگذاری بنرها',
     uploadedCount: '{{count}} بنر بارگذاری شد',
     deleted: 'بنر حذف شد',
@@ -7422,12 +7155,12 @@ export const fa = {
     linkSaved: 'لینک بنر ذخیره شد',
     states: {
       INCOMPLETE: 'راه‌اندازی ناتمام',
-      COMPLETED: 'آکادمی کامل شده'
+      COMPLETED: 'آکادمی کامل شده',
     },
     stateHelp: {
       INCOMPLETE: 'وقتی قالب یا دوره‌ای ساخته نشده نمایش داده می‌شود.',
-      COMPLETED: 'وقتی قالب انتخاب شده و حداقل یک دوره وجود دارد.'
-    }
+      COMPLETED: 'وقتی قالب انتخاب شده و حداقل یک دوره وجود دارد.',
+    },
   },
   broadcasts: {
     title: 'اعلان‌های سراسری',
@@ -7448,24 +7181,24 @@ export const fa = {
       status: 'وضعیت',
       recipients: 'گیرندگان',
       academyIds: 'شناسه آکادمی‌ها',
-      academyIdsPlaceholder: 'شناسه‌ها با کاما جدا شوند'
+      academyIdsPlaceholder: 'شناسه‌ها با کاما جدا شوند',
     },
     audiences: {
       ALL_MANAGERS: 'همه داشبوردهای آکادمی',
       ALL_TEACHERS: 'همه معلمان',
-      SELECTED_ACADEMIES: 'آکادمی‌های انتخاب‌شده'
+      SELECTED_ACADEMIES: 'آکادمی‌های انتخاب‌شده',
     },
     statuses: {
       DRAFT: 'پیش‌نویس',
-      SENT: 'ارسال‌شده'
-    }
+      SENT: 'ارسال‌شده',
+    },
   },
   notifications: {
     bell: {
       title: 'اعلان‌ها',
       empty: 'اعلانی وجود ندارد',
-      markAllRead: 'علامت‌گذاری همه به‌عنوان خوانده‌شده'
-    }
+      markAllRead: 'علامت‌گذاری همه به‌عنوان خوانده‌شده',
+    },
   },
   academiesHealth: {
     title: 'سلامت آکادمی‌ها',
@@ -7535,8 +7268,8 @@ export const fa = {
       lockedNoBalance:
         'فرم قفل است: مبلغی برای واریز وجود ندارد. کیف پول فقط از پرداخت‌های آنلاین تأییدشده پر می‌شود؛ پرداخت‌های نقدی و کارت‌به‌کارت نزد آکادمی می‌مانند.',
       pendingHelp:
-        'درخواست‌هایی که مدیر آکادمی ثبت کرده است. بعد از حواله، کد پیگیری را وارد و تأیید کنید.'
-    }
+        'درخواست‌هایی که مدیر آکادمی ثبت کرده است. بعد از حواله، کد پیگیری را وارد و تأیید کنید.',
+    },
   },
   entitySearch: {
     searchPlaceholder: 'جستجو با نام یا شناسه…',
@@ -7545,7 +7278,7 @@ export const fa = {
     loading: 'در حال جستجو…',
     clear: 'پاک کردن انتخاب',
     selectCourseFirst: 'ابتدا یک دوره انتخاب کنید',
-    unnamedUser: 'کاربر بدون نام'
+    unnamedUser: 'کاربر بدون نام',
   },
   userNav: {
     profile: 'پروفایل',
@@ -7561,8 +7294,8 @@ export const fa = {
       MANAGER: 'مدیر',
       TEACHER: 'مدرس',
       STUDENT: 'دانشجو',
-      USER: 'کاربر'
-    }
+      USER: 'کاربر',
+    },
   },
 
   /**
@@ -7587,8 +7320,7 @@ export const fa = {
       'پیش از ثبت‌نام باید شماره تلفن خود را تأیید کنید. ابتدا کد تأیید را دریافت و وارد کنید.',
     AUTH_MUST_VERIFY_EMAIL:
       'پیش از ثبت‌نام باید ایمیل خود را تأیید کنید. ابتدا کد تأیید را دریافت و وارد کنید.',
-    AUTH_IDENTIFIER_REQUIRED:
-      'برای ادامه باید شماره تلفن یا ایمیل خود را وارد کنید.',
+    AUTH_IDENTIFIER_REQUIRED: 'برای ادامه باید شماره تلفن یا ایمیل خود را وارد کنید.',
     AUTH_ACADEMY_ID_REQUIRED: 'برای ورود باید آکادمی خود را انتخاب کنید.',
     AUTH_ACADEMY_ACCESS_DENIED:
       'شما به این آکادمی دسترسی ندارید. اگر باید دسترسی داشته باشید، با مدیر آکادمی تماس بگیرید.',
@@ -7600,45 +7332,34 @@ export const fa = {
       'رمز عبور فعلی که وارد کردید درست نیست. لطفاً دوباره تلاش کنید.',
     AUTH_ADMIN_ROLE_NOT_ALLOWED: 'ساخت حساب مدیر سیستم از این مسیر ممکن نیست.',
     AUTH_ADMIN_ONLY: 'تنها مدیران سیستم می‌توانند این کار را انجام دهند.',
-    AUTH_NOT_AUTHENTICATED:
-      'نشست شما معتبر نیست. لطفاً دوباره وارد حساب خود شوید.',
-    AUTH_SESSION_EXPIRED:
-      'نشست شما به پایان رسیده است. برای ادامه دوباره وارد شوید.',
-    AUTH_REFRESH_TOKEN_MISSING:
-      'نشست شما یافت نشد. لطفاً دوباره وارد حساب خود شوید.',
-    AUTH_REFRESH_TOKEN_INVALID:
-      'نشست شما دیگر معتبر نیست. برای ادامه دوباره وارد شوید.',
-    AUTH_TEMP_TOKEN_INVALID:
-      'مهلت این مرحله به پایان رسیده است. لطفاً از ابتدا وارد شوید.',
+    AUTH_NOT_AUTHENTICATED: 'نشست شما معتبر نیست. لطفاً دوباره وارد حساب خود شوید.',
+    AUTH_SESSION_EXPIRED: 'نشست شما به پایان رسیده است. برای ادامه دوباره وارد شوید.',
+    AUTH_REFRESH_TOKEN_MISSING: 'نشست شما یافت نشد. لطفاً دوباره وارد حساب خود شوید.',
+    AUTH_REFRESH_TOKEN_INVALID: 'نشست شما دیگر معتبر نیست. برای ادامه دوباره وارد شوید.',
+    AUTH_TEMP_TOKEN_INVALID: 'مهلت این مرحله به پایان رسیده است. لطفاً از ابتدا وارد شوید.',
     AUTH_SESSION_NOT_FOUND: 'این نشست پیدا نشد یا قبلاً بسته شده است.',
     OTP_INVALID:
       'کد تأیید واردشده درست نیست. لطفاً کد را دوباره بررسی کنید یا کد جدیدی درخواست دهید.',
     OTP_EXPIRED:
       'مهلت این کد تأیید به پایان رسیده است. برای دریافت کد جدید روی «ارسال دوباره» بزنید.',
-    OTP_ALREADY_USED:
-      'این کد تأیید قبلاً استفاده شده است. لطفاً کد جدیدی درخواست دهید.',
+    OTP_ALREADY_USED: 'این کد تأیید قبلاً استفاده شده است. لطفاً کد جدیدی درخواست دهید.',
     OTP_COOLDOWN:
       'به‌تازگی برای شما کد ارسال شده است. لطفاً {seconds} ثانیه صبر کنید و دوباره درخواست دهید.',
     OTP_RATE_LIMITED:
       'تعداد درخواست‌های کد تأیید بیش از حد مجاز بود. لطفاً کمی بعد دوباره تلاش کنید.',
-    OTP_PHONE_REQUIRED:
-      'برای دریافت کد تأیید باید شماره تلفن خود را وارد کنید.',
+    OTP_PHONE_REQUIRED: 'برای دریافت کد تأیید باید شماره تلفن خود را وارد کنید.',
     OTP_PHONE_INVALID:
       'شماره تلفن واردشده معتبر نیست. شماره را همراه با کد کشور وارد کنید، مثلاً ۹۸۹۱۲۱۲۳۴۵۶۷+.',
     OTP_TYPE_REQUIRED: 'نوع کد تأیید مشخص نشده است. لطفاً دوباره تلاش کنید.',
     OTP_SEND_FAILED:
       'ارسال کد تأیید انجام نشد. لطفاً چند لحظه بعد دوباره تلاش کنید؛ اگر تکرار شد با پشتیبانی تماس بگیرید.',
-    VALIDATION_FAILED:
-      'برخی از فیلدهای فرم درست پر نشده‌اند. لطفاً موارد مشخص‌شده را اصلاح کنید.',
+    VALIDATION_FAILED: 'برخی از فیلدهای فرم درست پر نشده‌اند. لطفاً موارد مشخص‌شده را اصلاح کنید.',
     VALIDATION_REQUIRED: 'وارد کردن {field} الزامی است.',
     VALIDATION_MIN_LENGTH: '{field} باید حداقل {min} کاراکتر باشد.',
     VALIDATION_MAX_LENGTH: '{field} نباید بیشتر از {max} کاراکتر باشد.',
-    VALIDATION_EMAIL:
-      '{field} یک ایمیل معتبر نیست. نمونهٔ درست: name@example.com',
-    VALIDATION_PHONE:
-      '{field} یک شماره تلفن معتبر نیست. شماره را همراه با کد کشور وارد کنید.',
-    VALIDATION_PATTERN:
-      'قالب {field} درست نیست. لطفاً آن را مطابق راهنمای فیلد وارد کنید.',
+    VALIDATION_EMAIL: '{field} یک ایمیل معتبر نیست. نمونهٔ درست: name@example.com',
+    VALIDATION_PHONE: '{field} یک شماره تلفن معتبر نیست. شماره را همراه با کد کشور وارد کنید.',
+    VALIDATION_PATTERN: 'قالب {field} درست نیست. لطفاً آن را مطابق راهنمای فیلد وارد کنید.',
     VALIDATION_PASSWORD_ASCII:
       '{field} فقط می‌تواند شامل حروف انگلیسی، عدد و نماد باشد. ارقام فارسی به انگلیسی تبدیل می‌شوند.',
     VALIDATION_STRING: '{field} باید متن باشد.',
@@ -7652,24 +7373,19 @@ export const fa = {
       'مقدار انتخاب‌شده برای {field} مجاز نیست. لطفاً یکی از گزینه‌های موجود را انتخاب کنید.',
     VALIDATION_UUID: 'شناسهٔ {field} معتبر نیست.',
     VALIDATION_INVALID: 'مقدار واردشده برای {field} معتبر نیست.',
-    CONFLICT_DUPLICATE:
-      'موردی با این نام یا مشخصات از قبل وجود دارد. لطفاً نام دیگری انتخاب کنید.',
+    CONFLICT_DUPLICATE: 'موردی با این نام یا مشخصات از قبل وجود دارد. لطفاً نام دیگری انتخاب کنید.',
     COURSE_HAS_ACTIVE_ENROLLMENTS:
       'دانشجویانی هستند که برای این دوره پرداخت کرده‌اند و دسترسی‌شان هنوز فعال است؛ تا پایان اعتبار آن‌ها نمی‌توان این دوره را حذف یا از سایت خارج کرد.',
     ACADEMY_HAS_TRANSACTIONS:
       'این آکادمی تراکنش واقعی دارد و حذف‌شدنی نیست؛ به‌جای حذف، آن را تعلیق یا مسدود کنید.',
     ACADEMY_ENROLLMENT_CLOSED: 'این آکادمی فعلاً ثبت‌نام جدید نمی‌پذیرد.',
-    RESOURCE_NOT_FOUND:
-      'موردی که دنبال آن بودید پیدا نشد. ممکن است حذف شده باشد.',
+    RESOURCE_NOT_FOUND: 'موردی که دنبال آن بودید پیدا نشد. ممکن است حذف شده باشد.',
     PERMISSION_DENIED:
       'شما اجازهٔ انجام این کار را ندارید. برای دریافت دسترسی با مدیر آکادمی خود تماس بگیرید.',
     TENANT_MISMATCH: 'این مورد به آکادمی شما تعلق ندارد.',
-    FILE_TOO_LARGE:
-      'حجم فایل بیش از حد مجاز است. لطفاً فایل کوچک‌تری انتخاب کنید.',
-    FILE_TOO_LARGE_MB:
-      'حجم فایل باید کمتر از {max} مگابایت باشد. لطفاً فایل کوچک‌تری انتخاب کنید.',
-    FILE_TYPE_NOT_ALLOWED:
-      'این نوع فایل مجاز نیست. لطفاً فایلی با قالب پشتیبانی‌شده انتخاب کنید.',
+    FILE_TOO_LARGE: 'حجم فایل بیش از حد مجاز است. لطفاً فایل کوچک‌تری انتخاب کنید.',
+    FILE_TOO_LARGE_MB: 'حجم فایل باید کمتر از {max} مگابایت باشد. لطفاً فایل کوچک‌تری انتخاب کنید.',
+    FILE_TYPE_NOT_ALLOWED: 'این نوع فایل مجاز نیست. لطفاً فایلی با قالب پشتیبانی‌شده انتخاب کنید.',
     EXTERNAL_SERVICE_FAILED:
       'ارتباط با سرویس بیرونی برقرار نشد. لطفاً چند لحظه بعد دوباره تلاش کنید.',
     SUBSCRIPTION_EXPIRED:
@@ -7683,48 +7399,33 @@ export const fa = {
     PAYMENT_GATEWAY_NOT_CONFIGURED:
       'درگاه پرداخت روشن است اما کلید API آن ذخیره نشده. از «مدیریت توکن و جزئیات» کلید بیت‌پی را ذخیره کنید.',
     PAYMENT_GATEWAY_REJECTED: 'درگاه پرداخت این تراکنش را نپذیرفت. {reason}',
-    HTTP_400:
-      'اطلاعات ارسال‌شده کامل یا درست نیست. لطفاً فرم را بررسی کنید و دوباره تلاش کنید.',
-    BAD_REQUEST:
-      'اطلاعات ارسال‌شده کامل یا درست نیست. لطفاً فرم را بررسی کنید و دوباره تلاش کنید.',
-    HTTP_401:
-      'برای انجام این کار باید وارد حساب خود شوید. لطفاً دوباره وارد شوید.',
-    UNAUTHENTICATED:
-      'برای انجام این کار باید وارد حساب خود شوید. لطفاً دوباره وارد شوید.',
+    HTTP_400: 'اطلاعات ارسال‌شده کامل یا درست نیست. لطفاً فرم را بررسی کنید و دوباره تلاش کنید.',
+    BAD_REQUEST: 'اطلاعات ارسال‌شده کامل یا درست نیست. لطفاً فرم را بررسی کنید و دوباره تلاش کنید.',
+    HTTP_401: 'برای انجام این کار باید وارد حساب خود شوید. لطفاً دوباره وارد شوید.',
+    UNAUTHENTICATED: 'برای انجام این کار باید وارد حساب خود شوید. لطفاً دوباره وارد شوید.',
     HTTP_403:
       'شما اجازهٔ انجام این کار را ندارید. اگر فکر می‌کنید اشتباهی رخ داده، با مدیر آکادمی خود تماس بگیرید.',
     FORBIDDEN:
       'شما اجازهٔ انجام این کار را ندارید. اگر فکر می‌کنید اشتباهی رخ داده، با مدیر آکادمی خود تماس بگیرید.',
-    HTTP_404:
-      'موردی که دنبال آن بودید پیدا نشد. ممکن است حذف شده باشد یا آدرس درست نباشد.',
-    NOT_FOUND:
-      'موردی که دنبال آن بودید پیدا نشد. ممکن است حذف شده باشد یا آدرس درست نباشد.',
-    HTTP_409:
-      'این مورد از قبل وجود دارد. لطفاً نام یا مقدار دیگری انتخاب کنید.',
-    CONFLICT:
-      'این مورد از قبل وجود دارد. لطفاً نام یا مقدار دیگری انتخاب کنید.',
-    HTTP_413:
-      'حجم فایل ارسالی بیش از حد مجاز است. لطفاً فایل کوچک‌تری انتخاب کنید.',
-    PAYLOAD_TOO_LARGE:
-      'حجم فایل ارسالی بیش از حد مجاز است. لطفاً فایل کوچک‌تری انتخاب کنید.',
-    HTTP_415:
-      'نوع فایل انتخاب‌شده پشتیبانی نمی‌شود. لطفاً فایل دیگری با قالب مجاز انتخاب کنید.',
+    HTTP_404: 'موردی که دنبال آن بودید پیدا نشد. ممکن است حذف شده باشد یا آدرس درست نباشد.',
+    NOT_FOUND: 'موردی که دنبال آن بودید پیدا نشد. ممکن است حذف شده باشد یا آدرس درست نباشد.',
+    HTTP_409: 'این مورد از قبل وجود دارد. لطفاً نام یا مقدار دیگری انتخاب کنید.',
+    CONFLICT: 'این مورد از قبل وجود دارد. لطفاً نام یا مقدار دیگری انتخاب کنید.',
+    HTTP_413: 'حجم فایل ارسالی بیش از حد مجاز است. لطفاً فایل کوچک‌تری انتخاب کنید.',
+    PAYLOAD_TOO_LARGE: 'حجم فایل ارسالی بیش از حد مجاز است. لطفاً فایل کوچک‌تری انتخاب کنید.',
+    HTTP_415: 'نوع فایل انتخاب‌شده پشتیبانی نمی‌شود. لطفاً فایل دیگری با قالب مجاز انتخاب کنید.',
     UNSUPPORTED_MEDIA_TYPE:
       'نوع فایل انتخاب‌شده پشتیبانی نمی‌شود. لطفاً فایل دیگری با قالب مجاز انتخاب کنید.',
-    HTTP_422:
-      'اطلاعات واردشده قابل پردازش نیست. لطفاً مقادیر را بازبینی کنید و دوباره تلاش کنید.',
+    HTTP_422: 'اطلاعات واردشده قابل پردازش نیست. لطفاً مقادیر را بازبینی کنید و دوباره تلاش کنید.',
     UNPROCESSABLE:
       'اطلاعات واردشده قابل پردازش نیست. لطفاً مقادیر را بازبینی کنید و دوباره تلاش کنید.',
-    HTTP_429:
-      'تعداد تلاش‌های شما بیش از حد مجاز بود. لطفاً کمی صبر کنید و دوباره تلاش کنید.',
-    RATE_LIMITED:
-      'تعداد تلاش‌های شما بیش از حد مجاز بود. لطفاً کمی صبر کنید و دوباره تلاش کنید.',
+    HTTP_429: 'تعداد تلاش‌های شما بیش از حد مجاز بود. لطفاً کمی صبر کنید و دوباره تلاش کنید.',
+    RATE_LIMITED: 'تعداد تلاش‌های شما بیش از حد مجاز بود. لطفاً کمی صبر کنید و دوباره تلاش کنید.',
     HTTP_500:
       'مشکلی در سرور رخ داد و این خطا برای بررسی ثبت شد. لطفاً چند لحظه بعد دوباره تلاش کنید؛ اگر تکرار شد با پشتیبانی تماس بگیرید.',
     INTERNAL_ERROR:
       'مشکلی در سرور رخ داد و این خطا برای بررسی ثبت شد. لطفاً چند لحظه بعد دوباره تلاش کنید؛ اگر تکرار شد با پشتیبانی تماس بگیرید.',
-    HTTP_502:
-      'ارتباط با یکی از سرویس‌های بیرونی برقرار نشد. لطفاً چند لحظه بعد دوباره تلاش کنید.',
+    HTTP_502: 'ارتباط با یکی از سرویس‌های بیرونی برقرار نشد. لطفاً چند لحظه بعد دوباره تلاش کنید.',
     UPSTREAM_ERROR:
       'ارتباط با یکی از سرویس‌های بیرونی برقرار نشد. لطفاً چند لحظه بعد دوباره تلاش کنید.',
     HTTP_503:
@@ -7732,10 +7433,8 @@ export const fa = {
     SERVICE_UNAVAILABLE:
       'سرویس در حال حاضر در دسترس نیست و احتمالاً در حال به‌روزرسانی است. لطفاً چند دقیقه بعد دوباره تلاش کنید.',
     HTTP_504: 'پاسخ سرویس بیرونی بیش از حد طول کشید. لطفاً دوباره تلاش کنید.',
-    UPSTREAM_TIMEOUT:
-      'پاسخ سرویس بیرونی بیش از حد طول کشید. لطفاً دوباره تلاش کنید.',
-    NETWORK_ERROR:
-      'ارتباط با سرور برقرار نشد. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.',
+    UPSTREAM_TIMEOUT: 'پاسخ سرویس بیرونی بیش از حد طول کشید. لطفاً دوباره تلاش کنید.',
+    NETWORK_ERROR: 'ارتباط با سرور برقرار نشد. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.',
     UNKNOWN:
       'خطای پیش‌بینی‌نشده‌ای رخ داد و برای بررسی ثبت شد. لطفاً دوباره تلاش کنید؛ اگر تکرار شد با پشتیبانی تماس بگیرید.',
     fields: {
@@ -7767,8 +7466,8 @@ export const fa = {
       starts_at: 'تاریخ شروع',
       ends_at: 'تاریخ پایان',
       file: 'فایل',
-      image_id: 'تصویر'
-    }
+      image_id: 'تصویر',
+    },
   },
   platformCosts: {
     title: 'هزینه‌های پلتفرم',
@@ -7788,7 +7487,7 @@ export const fa = {
       infrastructure: 'زیرساخت',
       people: 'نیروی انسانی',
       operations: 'عملیات',
-      other: 'سایر'
+      other: 'سایر',
     },
     subcategories: {
       social: 'تبلیغات شبکه‌های اجتماعی',
@@ -7808,8 +7507,8 @@ export const fa = {
       accounting: 'حسابداری',
       tools: 'ابزار نرم‌افزاری',
       office: 'دفتر',
-      other: 'سایر'
-    }
+      other: 'سایر',
+    },
   },
   platformMetrics: {
     title: 'گزارش سرمایه‌گذاران',
@@ -7823,7 +7522,7 @@ export const fa = {
       users: 'کاربران و فعالیت',
       catalog: 'دوره‌ها و سابقهٔ یادگیری',
       economics: 'اقتصاد واحد',
-      reconciliation: 'مغایرت‌گیری'
+      reconciliation: 'مغایرت‌گیری',
     },
     currency: { label: 'واحد پول', toman: 'تومان', eur: 'یورو' },
     source: { label: 'منبع داده', live: 'زنده', snapshot: 'ثبت‌شدهٔ ماهانه' },
@@ -7909,7 +7608,7 @@ export const fa = {
       invoiced_amount: 'مبلغ فاکتور',
       invoice_count: 'فاکتورهای پرداخت‌شده',
       manual_invoice_count: 'فاکتورهای دستی',
-      manual_invoice_amount: 'مبلغ فاکتور دستی'
+      manual_invoice_amount: 'مبلغ فاکتور دستی',
     },
     bridge: {
       title: 'تغییرات ماهانهٔ درآمد',
@@ -7918,7 +7617,7 @@ export const fa = {
       expansion: 'رشد',
       contraction: 'کاهش',
       churned: 'ریزش',
-      ending: 'پایان ماه'
+      ending: 'پایان ماه',
     },
     columns: {
       month: 'ماه',
@@ -7948,7 +7647,7 @@ export const fa = {
       churnedAcademies: 'ریزش',
       measured: 'آکادمی‌های اندازه‌گیری‌شده',
       medianDays: 'میانهٔ روز',
-      p75Days: 'صدک ۷۵ (روز)'
+      p75Days: 'صدک ۷۵ (روز)',
     },
     sections: {
       byStatus: 'بر اساس وضعیت',
@@ -7965,12 +7664,12 @@ export const fa = {
       timeToValue: 'زمان تا اولین ارزش',
       learningRecord: 'سابقهٔ یادگیری',
       activity: 'فعالیت ورود',
-      registrations: 'ثبت‌نام‌ها'
+      registrations: 'ثبت‌نام‌ها',
     },
     ttv: {
       first_course_created: 'اولین دوره ساخته‌شده',
       first_enrollment: 'اولین دانشجوی ثبت‌نام‌شده',
-      first_paid_invoice: 'اولین فاکتور پرداخت‌شده'
+      first_paid_invoice: 'اولین فاکتور پرداخت‌شده',
     },
     reconciliation: {
       title: 'تطبیق فاکتور، پرداخت و درگاه',
@@ -7981,26 +7680,22 @@ export const fa = {
       orphan: 'بی‌صاحب',
       manual: 'تسویهٔ دستی',
       invoiceToPayment: 'فاکتور ← پرداخت',
-      paymentToGateway: 'پرداخت ← درگاه'
+      paymentToGateway: 'پرداخت ← درگاه',
     },
     caveats: {
       title: 'محدودیت‌های داده',
-      loginHistory:
-        'آمار ورود و نگه‌داشت از تاریخ راه‌اندازی این جدول شروع می‌شود.',
-      marketingSpend:
-        'هزینهٔ بازاریابی دستی وارد می‌شود؛ بدون آن CAC محاسبه نمی‌شود.',
-      runway:
-        'مانده نقدی در سامانه ذخیره نمی‌شود، پس «مدت دوام» محاسبه‌شدنی نیست.',
-      financialRecords:
-        'در این بازه رکورد مالی پلتفرم نیست، پس حاشیهٔ سود معلوم نیست.',
-      zeroChurn: 'ریزش مشاهده‌شده صفر است، پس LTV تعریف‌پذیر نیست.'
+      loginHistory: 'آمار ورود و نگه‌داشت از تاریخ راه‌اندازی این جدول شروع می‌شود.',
+      marketingSpend: 'هزینهٔ بازاریابی دستی وارد می‌شود؛ بدون آن CAC محاسبه نمی‌شود.',
+      runway: 'مانده نقدی در سامانه ذخیره نمی‌شود، پس «مدت دوام» محاسبه‌شدنی نیست.',
+      financialRecords: 'در این بازه رکورد مالی پلتفرم نیست، پس حاشیهٔ سود معلوم نیست.',
+      zeroChurn: 'ریزش مشاهده‌شده صفر است، پس LTV تعریف‌پذیر نیست.',
     },
     spend: {
       title: 'هزینهٔ بازاریابی',
       channel: 'کانال',
       amount: 'مبلغ',
       add: 'ثبت هزینه',
-      saved: 'ثبت شد'
+      saved: 'ثبت شد',
     },
     guides: {
       overview:
@@ -8020,124 +7715,124 @@ export const fa = {
       economics:
         'اقتصاد واحد از هزینهٔ بازاریابی و رکوردهای هزینه‌ای که وارد می‌کنید. CAC و LTV و مدت دوام تا ورود این داده‌ها خالی می‌مانند.',
       reconciliation:
-        'کنترل سه‌طرفه: هر فاکتور پرداخت‌شده یک پرداخت دارد و هر پرداخت تأیید درگاه دارد. مغایرت نقص مسیر پول است، نه خطای گزارش.'
+        'کنترل سه‌طرفه: هر فاکتور پرداخت‌شده یک پرداخت دارد و هر پرداخت تأیید درگاه دارد. مغایرت نقص مسیر پول است، نه خطای گزارش.',
     },
     terms: {
       mrr: {
         abbr: 'MRR',
         full: 'Monthly Recurring Revenue',
-        hint: 'درآمد تکرارشونده ماهانه؛ مبلغ فاکتور تقسیم بر مدت پلن، برای هر ماه پوشش‌داده‌شده.'
+        hint: 'درآمد تکرارشونده ماهانه؛ مبلغ فاکتور تقسیم بر مدت پلن، برای هر ماه پوشش‌داده‌شده.',
       },
       arr: {
         abbr: 'ARR',
         full: 'Annual Recurring Revenue',
-        hint: 'درآمد تکرارشونده سالانه؛ MRR × ۱۲.'
+        hint: 'درآمد تکرارشونده سالانه؛ MRR × ۱۲.',
       },
       arpa: {
         abbr: 'ARPA',
         full: 'Average Revenue Per Account',
-        hint: 'میانگین درآمد هر حساب؛ MRR تقسیم بر آکادمی‌های پرداخت‌کننده.'
+        hint: 'میانگین درآمد هر حساب؛ MRR تقسیم بر آکادمی‌های پرداخت‌کننده.',
       },
       nrr: {
         abbr: 'NRR',
         full: 'Net Revenue Retention',
-        hint: 'نگه‌داشت خالص درآمد؛ MRR ماه آخر همان کوهورت تقسیم بر MRR ماه اول. با ارتقا می‌تواند از ۱۰۰٪ بیشتر شود.'
+        hint: 'نگه‌داشت خالص درآمد؛ MRR ماه آخر همان کوهورت تقسیم بر MRR ماه اول. با ارتقا می‌تواند از ۱۰۰٪ بیشتر شود.',
       },
       grr: {
         abbr: 'GRR',
         full: 'Gross Revenue Retention',
-        hint: 'نگه‌داشت ناخالص درآمد؛ مثل NRR ولی بدون رشد؛ هرگز از ۱۰۰٪ بیشتر نمی‌شود.'
+        hint: 'نگه‌داشت ناخالص درآمد؛ مثل NRR ولی بدون رشد؛ هرگز از ۱۰۰٪ بیشتر نمی‌شود.',
       },
       cohort: {
         abbr: 'کوهورت',
         full: 'Cohort',
-        hint: 'گروهی که در یک ماه شروع کرده‌اند و ماه‌به‌ماه با هم دنبال می‌شوند.'
+        hint: 'گروهی که در یک ماه شروع کرده‌اند و ماه‌به‌ماه با هم دنبال می‌شوند.',
       },
       logoRetention: {
         abbr: 'نگه‌داشت مشتری',
         full: 'Logo Retention',
-        hint: 'سهم کوهورت شروع که این ماه هنوز مبلغی می‌پردازد.'
+        hint: 'سهم کوهورت شروع که این ماه هنوز مبلغی می‌پردازد.',
       },
       gmv: {
         abbr: 'GMV',
         full: 'Gross Merchandise Value',
-        hint: 'گردش مالی ناخالص؛ پرداخت دانشجویان به آکادمی‌ها. درآمد منتوما نیست (کمیسیون صفر).'
+        hint: 'گردش مالی ناخالص؛ پرداخت دانشجویان به آکادمی‌ها. درآمد منتوما نیست (کمیسیون صفر).',
       },
       dau: {
         abbr: 'DAU',
         full: 'Daily Active Users',
-        hint: 'کاربر فعال روزانه؛ کاربران یکتایی که در ۱ روز گذشته وارد شده‌اند.'
+        hint: 'کاربر فعال روزانه؛ کاربران یکتایی که در ۱ روز گذشته وارد شده‌اند.',
       },
       wau: {
         abbr: 'WAU',
         full: 'Weekly Active Users',
-        hint: 'کاربر فعال هفتگی؛ کاربران یکتایی که در ۷ روز گذشته وارد شده‌اند.'
+        hint: 'کاربر فعال هفتگی؛ کاربران یکتایی که در ۷ روز گذشته وارد شده‌اند.',
       },
       mau: {
         abbr: 'MAU',
         full: 'Monthly Active Users',
-        hint: 'کاربر فعال ماهانه؛ کاربران یکتایی که در ۳۰ روز گذشته وارد شده‌اند.'
+        hint: 'کاربر فعال ماهانه؛ کاربران یکتایی که در ۳۰ روز گذشته وارد شده‌اند.',
       },
       stickiness: {
         abbr: 'چسبندگی',
         full: 'DAU / MAU',
-        hint: 'چند وقت یک‌بار کاربران ماهانه در یک روز برمی‌گردند.'
+        hint: 'چند وقت یک‌بار کاربران ماهانه در یک روز برمی‌گردند.',
       },
       cac: {
         abbr: 'CAC',
         full: 'Customer Acquisition Cost',
-        hint: 'هزینهٔ جذب مشتری؛ هزینهٔ بازاریابی تقسیم بر آکادمی‌های پرداخت‌کنندهٔ جدید.'
+        hint: 'هزینهٔ جذب مشتری؛ هزینهٔ بازاریابی تقسیم بر آکادمی‌های پرداخت‌کنندهٔ جدید.',
       },
       ltv: {
         abbr: 'LTV',
         full: 'Lifetime Value',
-        hint: 'ارزش طول عمر مشتری؛ (ARPA × حاشیهٔ سود ناخالص) تقسیم بر ریزش ماهانهٔ مشتری.'
+        hint: 'ارزش طول عمر مشتری؛ (ARPA × حاشیهٔ سود ناخالص) تقسیم بر ریزش ماهانهٔ مشتری.',
       },
       ltvCac: {
         abbr: 'LTV : CAC',
         full: 'Lifetime Value to Customer Acquisition Cost',
-        hint: 'چند برابر ارزش طول عمر، هزینهٔ جذب را پوشش می‌دهد. بالای ۳ معمولاً سالم است.'
+        hint: 'چند برابر ارزش طول عمر، هزینهٔ جذب را پوشش می‌دهد. بالای ۳ معمولاً سالم است.',
       },
       ttv: {
         abbr: 'TTV',
         full: 'Time To Value',
-        hint: 'زمان تا ارزش؛ روز از ساخت آکادمی تا اولین دوره، اولین ثبت‌نام، یا اولین فاکتور پرداخت‌شده.'
+        hint: 'زمان تا ارزش؛ روز از ساخت آکادمی تا اولین دوره، اولین ثبت‌نام، یا اولین فاکتور پرداخت‌شده.',
       },
       ruleOf40: {
         abbr: 'قاعدهٔ ۴۰',
         full: 'Rule of 40',
-        hint: 'رشد سالانهٔ MRR به‌درصد + حاشیهٔ سود ناخالص به‌درصد. SaaS سالم روی ۴۰ یا بالاتر است.'
+        hint: 'رشد سالانهٔ MRR به‌درصد + حاشیهٔ سود ناخالص به‌درصد. SaaS سالم روی ۴۰ یا بالاتر است.',
       },
       quickRatio: {
         abbr: 'نسبت سریع',
         full: 'Quick Ratio',
-        hint: '(MRR جدید + رشد) تقسیم بر (کاهش + ریزش). بالای ۴ قوی است.'
+        hint: '(MRR جدید + رشد) تقسیم بر (کاهش + ریزش). بالای ۴ قوی است.',
       },
       expansion: {
         abbr: 'رشد',
         full: 'Expansion',
-        hint: 'MRR اضافه از آکادمی‌هایی که ماه قبل هم می‌پرداختند و این ماه بیشتر می‌پردازند.'
+        hint: 'MRR اضافه از آکادمی‌هایی که ماه قبل هم می‌پرداختند و این ماه بیشتر می‌پردازند.',
       },
       contraction: {
         abbr: 'کاهش',
         full: 'Contraction',
-        hint: 'MRR ازدست‌رفته از آکادمی‌هایی که هنوز می‌پردازند، ولی کمتر از ماه قبل.'
+        hint: 'MRR ازدست‌رفته از آکادمی‌هایی که هنوز می‌پردازند، ولی کمتر از ماه قبل.',
       },
       churn: {
         abbr: 'ریزش',
         full: 'Churn',
-        hint: 'MRR (یا آکادمی‌هایی) که ماه قبل می‌پرداختند و این ماه هیچ نمی‌پردازند.'
+        hint: 'MRR (یا آکادمی‌هایی) که ماه قبل می‌پرداختند و این ماه هیچ نمی‌پردازند.',
       },
       learningRecord: {
         abbr: 'سابقهٔ یادگیری',
         full: 'Learning Record',
-        hint: 'آزمون، تکلیف، نمره، بحث، حضور و گواهی. شاخص هزینهٔ جابه‌جایی.'
+        hint: 'آزمون، تکلیف، نمره، بحث، حضور و گواهی. شاخص هزینهٔ جابه‌جایی.',
       },
       orphan: {
         abbr: 'بی‌صاحب',
         full: 'Orphan',
-        hint: 'پرداخت موفق بدون فاکتور متناظر — باید بررسی شود.'
-      }
-    }
-  }
+        hint: 'پرداخت موفق بدون فاکتور متناظر — باید بررسی شود.',
+      },
+    },
+  },
 };

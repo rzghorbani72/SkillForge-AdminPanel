@@ -1,13 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Line,
@@ -18,7 +12,7 @@ import {
   XAxis,
   YAxis,
   BarChart,
-  Bar
+  Bar,
 } from 'recharts';
 import { useAnalyticsData } from '../_hooks/use-analytics-data';
 import { Progress } from '@/components/ui/progress';
@@ -42,9 +36,9 @@ export default function RevenueAnalyticsPage() {
       revenue.revenueTrend.map((point) => ({
         month: formatTrendPeriod(point.period, language),
         revenue: point.revenue,
-        transactions: point.transactions
+        transactions: point.transactions,
       })),
-    [revenue.revenueTrend, language]
+    [revenue.revenueTrend, language],
   );
 
   const averageTicket =
@@ -55,15 +49,13 @@ export default function RevenueAnalyticsPage() {
   const lastTwo = monthlyRevenue.slice(-2);
   const monthOverMonth =
     lastTwo.length === 2 && lastTwo[0].revenue > 0
-      ? Math.round(
-          ((lastTwo[1].revenue - lastTwo[0].revenue) / lastTwo[0].revenue) * 100
-        )
+      ? Math.round(((lastTwo[1].revenue - lastTwo[0].revenue) / lastTwo[0].revenue) * 100)
       : 0;
 
   const topCourses = revenue.revenueByCourse;
   const methodBars = revenue.revenueByMethod.map((row) => ({
     name: row.method,
-    value: row.revenue
+    value: row.revenue,
   }));
 
   if (isLoading) return <AnalyticsLoading />;
@@ -71,12 +63,8 @@ export default function RevenueAnalyticsPage() {
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('analytics.revenueAnalytics')}
-        </h1>
-        <p className="text-muted-foreground">
-          {t('analytics.revenueAnalyticsDescription')}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('analytics.revenueAnalytics')}</h1>
+        <p className="text-muted-foreground">{t('analytics.revenueAnalyticsDescription')}</p>
       </div>
 
       <RevenueKpis
@@ -89,9 +77,7 @@ export default function RevenueAnalyticsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('analytics.monthlyRevenueVsEnrollments')}</CardTitle>
-          <CardDescription>
-            {t('analytics.monthlyRevenueDescription')}
-          </CardDescription>
+          <CardDescription>{t('analytics.monthlyRevenueDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={360}>
@@ -102,10 +88,7 @@ export default function RevenueAnalyticsPage() {
               <Tooltip
                 formatter={(value: number, name: string) =>
                   name === 'revenue'
-                    ? [
-                        `${formatNumber(value)} ${t('common.toman')}`,
-                        t('analytics.totalRevenue')
-                      ]
+                    ? [`${formatNumber(value)} ${t('common.toman')}`, t('analytics.totalRevenue')]
                     : [formatNumber(value), t('payments.transactions')]
                 }
               />
@@ -132,21 +115,14 @@ export default function RevenueAnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('analytics.revenueByCourse')}</CardTitle>
-            <CardDescription>
-              {t('analytics.revenueByCourseDescription')}
-            </CardDescription>
+            <CardDescription>{t('analytics.revenueByCourseDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {topCourses.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                {t('analytics.noCourseRevenueData')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t('analytics.noCourseRevenueData')}</p>
             ) : (
               topCourses.map((course, index) => (
-                <div
-                  key={course.name}
-                  className="flex flex-col gap-2 rounded-md border p-4"
-                >
+                <div key={course.name} className="flex flex-col gap-2 rounded-md border p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
@@ -155,21 +131,16 @@ export default function RevenueAnalyticsPage() {
                       <div>
                         <p className="text-sm font-medium">{course.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {formatNumber(course.count)}{' '}
-                          {t('financial.store.payments.payments')}
+                          {formatNumber(course.count)} {t('financial.store.payments.payments')}
                         </p>
                       </div>
                     </div>
-                    <Badge variant="outline">
-                      {formatToman(course.amount)}
-                    </Badge>
+                    <Badge variant="outline">{formatToman(course.amount)}</Badge>
                   </div>
                   <Progress
                     value={
                       topCourses[0]?.amount
-                        ? Math.round(
-                            (course.amount / topCourses[0].amount) * 100
-                          )
+                        ? Math.round((course.amount / topCourses[0].amount) * 100)
                         : 0
                     }
                     className="h-2"
@@ -183,9 +154,7 @@ export default function RevenueAnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('analytics.revenueByMethod')}</CardTitle>
-            <CardDescription>
-              {t('analytics.revenueByMethodDescription')}
-            </CardDescription>
+            <CardDescription>{t('analytics.revenueByMethodDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={320}>
@@ -194,9 +163,7 @@ export default function RevenueAnalyticsPage() {
                 <XAxis dataKey="name" hide />
                 <YAxis tickFormatter={(value: number) => formatNumber(value)} />
                 <Tooltip
-                  formatter={(value: number) =>
-                    `${formatNumber(value)} ${t('common.toman')}`
-                  }
+                  formatter={(value: number) => `${formatNumber(value)} ${t('common.toman')}`}
                 />
                 <Bar dataKey="value" fill="#8b5cf6" />
               </BarChart>

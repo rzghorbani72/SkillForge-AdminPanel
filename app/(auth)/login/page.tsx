@@ -45,9 +45,7 @@ export default function LoginPage() {
         }
         return resetAnonymousAuthClient().then(() => setCheckingSession(false));
       })
-      .catch(() =>
-        resetAnonymousAuthClient().then(() => setCheckingSession(false))
-      );
+      .catch(() => resetAnonymousAuthClient().then(() => setCheckingSession(false)));
   }, [router]);
 
   if (checkingSession) {
@@ -89,10 +87,7 @@ export default function LoginPage() {
         {login.registrationRequired && (
           <div className="space-y-1 rounded-md border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
             <p>{t('auth.registerToLoginHint')}</p>
-            <Link
-              href={login.registerHref}
-              className="font-semibold text-primary hover:underline"
-            >
+            <Link href={login.registerHref} className="font-semibold text-primary hover:underline">
               {t('auth.createAccountToContinue')} →
             </Link>
           </div>
@@ -136,8 +131,7 @@ export default function LoginPage() {
         onCaptchaVerify={login.setCaptchaToken}
         onPasswordChange={(v) => {
           login.setPassword(v);
-          if (login.errors.password)
-            login.setErrors((p) => ({ ...p, password: '' }));
+          if (login.errors.password) login.setErrors((p) => ({ ...p, password: '' }));
         }}
         onUseOtp={login.useOtpInstead}
         onChangeIdentifier={login.changeIdentifier}

@@ -14,7 +14,7 @@ function partsOf(date: Date, calendar: string) {
   const parts = new Intl.DateTimeFormat(`en-US-u-ca-${calendar}`, {
     year: 'numeric',
     month: 'numeric',
-    day: 'numeric'
+    day: 'numeric',
   }).formatToParts(date);
 
   const read = (type: 'year' | 'month' | 'day') =>
@@ -77,7 +77,7 @@ export function findCalendarDate(
   year: number,
   month: number,
   day: number,
-  language: LanguageCode
+  language: LanguageCode,
 ): Date {
   const calendar = calendarFor(language);
   let probe = startOfMonth(new Date(), calendar);
@@ -85,11 +85,7 @@ export function findCalendarDate(
 
   for (let guard = 0; guard < 50_000; guard++) {
     const current = partsOf(probe, calendar);
-    if (
-      current.year === year &&
-      current.month === month &&
-      current.day === day
-    ) {
+    if (current.year === year && current.month === month && current.day === day) {
       return probe;
     }
     const cmp =
@@ -108,7 +104,7 @@ export function shiftCalendarMonth(
   year: number,
   month: number,
   delta: number,
-  _language: LanguageCode
+  _language: LanguageCode,
 ): { year: number; month: number } {
   let nextMonth = month + delta;
   let nextYear = year;
@@ -127,13 +123,13 @@ export function shiftCalendarMonth(
 
 export function buildMonthsForYear(
   year: number,
-  language: LanguageCode
+  language: LanguageCode,
 ): Array<{ month: number; shortLabel: string }> {
   const locale = getLocaleForLanguage(language);
   const calendar = calendarFor(language);
   const shortName = new Intl.DateTimeFormat(locale, {
     month: 'short',
-    calendar
+    calendar,
   });
 
   return Array.from({ length: 12 }, (_, index) => {
@@ -146,13 +142,10 @@ export function buildMonthsForYear(
 export function buildMonthGrid(
   year: number,
   month: number,
-  language: LanguageCode
+  language: LanguageCode,
 ): CalendarDayCell[] {
   const calendar = calendarFor(language);
-  const monthStart = startOfMonth(
-    findCalendarDate(year, month, 1, language),
-    calendar
-  );
+  const monthStart = startOfMonth(findCalendarDate(year, month, 1, language), calendar);
   const nextMonthStart = startOfMonth(addDays(monthStart, 35), calendar);
   const daysInMonth = partsOf(addDays(nextMonthStart, -1), calendar).day;
   const weekStart = language === 'fa' ? 6 : 0;
@@ -177,18 +170,14 @@ export function buildMonthGrid(
   return cells;
 }
 
-export function formatMonthYear(
-  year: number,
-  month: number,
-  language: LanguageCode
-): string {
+export function formatMonthYear(year: number, month: number, language: LanguageCode): string {
   const locale = getLocaleForLanguage(language);
   const calendar = calendarFor(language);
   const date = findCalendarDate(year, month, 1, language);
   return new Intl.DateTimeFormat(locale, {
     month: 'long',
     year: 'numeric',
-    calendar
+    calendar,
   }).format(date);
 }
 
@@ -197,14 +186,11 @@ export function weekdayLabels(language: LanguageCode): string[] {
   const calendar = calendarFor(language);
   const fmt = new Intl.DateTimeFormat(locale, {
     weekday: 'narrow',
-    calendar
+    calendar,
   });
-  const anchor =
-    language === 'fa' ? new Date(2024, 0, 6, 12) : new Date(2024, 0, 7, 12);
+  const anchor = language === 'fa' ? new Date(2024, 0, 6, 12) : new Date(2024, 0, 7, 12);
 
-  return Array.from({ length: 7 }, (_, index) =>
-    fmt.format(addDays(anchor, index))
-  );
+  return Array.from({ length: 7 }, (_, index) => fmt.format(addDays(anchor, index)));
 }
 
 export function isSameInputDay(a: Date, b: Date): boolean {
@@ -225,11 +211,7 @@ export function isInputDayBefore(a: string, b: string): boolean {
   return a < b;
 }
 
-export function isDayDisabled(
-  date: Date,
-  minDate?: string,
-  maxDate?: string
-): boolean {
+export function isDayDisabled(date: Date, minDate?: string, maxDate?: string): boolean {
   const value = toInputValue(date);
   if (minDate && value < minDate) return true;
   if (maxDate && value > maxDate) return true;

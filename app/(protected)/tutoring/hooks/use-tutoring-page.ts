@@ -14,14 +14,14 @@ export function useTutoringPage() {
     course_id: '',
     student_profile_id: '',
     tutor_profile_id: '',
-    ends_at: ''
+    ends_at: '',
   });
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const engagementsResponse = await apiClient.getTutoringEngagements(
-        courseFilter ? { course_id: courseFilter } : undefined
+        courseFilter ? { course_id: courseFilter } : undefined,
       );
       setEngagements(engagementsResponse);
     } catch (error) {
@@ -50,13 +50,13 @@ export function useTutoringPage() {
         course_id: engagementForm.course_id,
         student_profile_id: engagementForm.student_profile_id,
         tutor_profile_id: engagementForm.tutor_profile_id,
-        ends_at: engagementForm.ends_at || undefined
+        ends_at: engagementForm.ends_at || undefined,
       });
       setEngagementForm({
         course_id: '',
         student_profile_id: '',
         tutor_profile_id: '',
-        ends_at: ''
+        ends_at: '',
       });
       await loadData();
     } catch (error) {
@@ -75,6 +75,6 @@ export function useTutoringPage() {
     engagementForm,
     setEngagementForm,
     loadData,
-    createEngagement
+    createEngagement,
   };
 }

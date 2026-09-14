@@ -4,15 +4,13 @@
 export const en = {
   monitoring: {
     title: 'Academy health',
-    subtitle:
-      'See that your site is working and students are using it without errors',
+    subtitle: 'See that your site is working and students are using it without errors',
     statusOk: 'Your academy is running normally',
     statusDegraded: 'Some people are hitting errors',
     statusQuiet: 'No activity in the last 24 hours',
     statusOkHint: 'No server errors and no payment trouble.',
     statusDegradedHint: 'Check the errors below to see what is failing.',
-    statusQuietHint:
-      'That is normal for a new academy and does not mean anything is down.',
+    statusQuietHint: 'That is normal for a new academy and does not mean anything is down.',
     checkedJustNow: 'Refreshes automatically every minute',
     activeLearners: 'Learning now (last 60 min)',
     logins24h: 'Logins (24h)',
@@ -54,13 +52,12 @@ export const en = {
     uptimeNote:
       'This page shows health signals, not an uptime percentage: a server that is down cannot report on itself.',
     loadFailed: 'Could not load academy health',
-    retry: 'Try again'
+    retry: 'Try again',
   },
   meta: {
     title: 'Mentoma Panel',
     titleTemplate: '%s | Mentoma Panel',
-    description:
-      'Manage academies, courses, and students on the Mentoma admin panel.'
+    description: 'Manage academies, courses, and students on the Mentoma admin panel.',
   },
   pageTitles: {
     home: 'Home',
@@ -96,15 +93,15 @@ export const en = {
     websiteSeo: 'Website SEO',
     websiteDomain: 'Website domain',
     websiteTrust: 'Trust badges',
-    identity: 'Identity verification'
+    identity: 'Identity verification',
   },
   panelFooter: {
     poweredBy: 'Powered by',
-    brand: 'Mentoma'
+    brand: 'Mentoma',
   },
   header: {
     planDaysLeft: '{{days}} days left',
-    planDaysToPay: '{{days}} days to pay'
+    planDaysToPay: '{{days}} days to pay',
   },
   weekdays: {
     saturday: 'Saturday',
@@ -113,7 +110,7 @@ export const en = {
     tuesday: 'Tuesday',
     wednesday: 'Wednesday',
     thursday: 'Thursday',
-    friday: 'Friday'
+    friday: 'Friday',
   },
   validation: {
     required: 'This field is required',
@@ -137,8 +134,7 @@ export const en = {
     descriptionMin10: 'Description must be at least 10 characters',
     descriptionMax400: 'Description must be less than 400 characters',
     descriptionMax2000: 'Description must be less than 2,000 characters',
-    shortDescriptionMax400:
-      'Short description must be less than 400 characters',
+    shortDescriptionMax400: 'Short description must be less than 400 characters',
     seasonRequired: 'Season is required',
     courseRequired: 'Course is required',
     durationPositive: 'Duration must be a positive number',
@@ -151,7 +147,7 @@ export const en = {
     nameRequired: 'Name is required',
     phoneRequired: 'Phone number is required',
     passwordMin6: 'Password must be at least 6 characters',
-    fileRequired: 'A file is required'
+    fileRequired: 'A file is required',
   },
   blog: {
     academyTitle: 'Blog',
@@ -168,14 +164,14 @@ export const en = {
       DRAFT: 'Draft',
       IN_REVIEW: 'In review',
       PUBLISHED: 'Published',
-      ARCHIVED: 'Archived'
+      ARCHIVED: 'Archived',
     },
     actions: {
       submit: 'Send for review',
       approve: 'Publish',
       reject: 'Send back',
       archive: 'Unpublish',
-      uploadCover: 'Upload cover'
+      uploadCover: 'Upload cover',
     },
     fields: {
       title: 'Title',
@@ -189,17 +185,17 @@ export const en = {
       content: 'Article',
       contentPlaceholder: 'Write your article here...',
       metaTitle: 'Search title',
-      metaDescription: 'Search description'
+      metaDescription: 'Search description',
     },
     seo: {
       title: 'Search & sharing',
       description:
-        'What Google and social networks show. Leave empty to use the title and summary.'
+        'What Google and social networks show. Leave empty to use the title and summary.',
     },
     empty: {
       title: 'No articles yet',
-      description: 'Write your first article to start filling your blog.'
-    }
+      description: 'Write your first article to start filling your blog.',
+    },
   },
   editor: {
     quote: 'Quote',
@@ -220,9 +216,8 @@ export const en = {
     numberedList: 'Numbered list',
     link: 'Link',
     linkPrompt: 'Enter the link address',
-    formattingHint:
-      'Formatting applies as you type; each line picks its own direction.',
-    charactersRemaining: '{{count}} characters remaining'
+    formattingHint: 'Formatting applies as you type; each line picks its own direction.',
+    charactersRemaining: '{{count}} characters remaining',
   },
   toasts: {
     imageNoneSelected: 'No image selected',
@@ -247,15 +242,13 @@ export const en = {
     singleFileOnly: 'You can upload only one file at a time',
     maxFiles: 'You can upload at most {{count}} files',
     fileRejected: 'The file {{name}} was rejected',
-    fileTooLarge:
-      'This file is larger than the {{size}} limit. Please choose a smaller file.',
+    fileTooLarge: 'This file is larger than the {{size}} limit. Please choose a smaller file.',
     audioChooseFile: 'Please choose an audio file',
     audioChooseFirst: 'Choose an audio file first',
     audioBadResponse: 'The audio was uploaded but the server sent no audio id',
     audioUploaded: 'Audio uploaded and linked to this lesson',
     documentChooseFirst: 'Choose a document file first',
-    documentBadResponse:
-      'The document was uploaded but the server sent no document id',
+    documentBadResponse: 'The document was uploaded but the server sent no document id',
     documentUploaded: 'Document uploaded and linked to this lesson',
     documentPreviewUnavailable: 'Preview is not available for this document.',
     documentDownloadUnavailable: 'Download is not available for this document.',
@@ -296,7 +289,7 @@ export const en = {
     gatewayUpdated: '{{name}} updated',
     gatewayLoadFailed: 'Could not load the payment gateways',
     gatewayUpdateFailed: 'Could not update the payment gateway',
-    withdrawalMarked: 'Request marked as {{status}}'
+    withdrawalMarked: 'Request marked as {{status}}',
   },
   support: {
     title: 'Support',
@@ -309,12 +302,12 @@ export const en = {
       TECHNICAL: 'Technical support',
       BILLING: 'Billing',
       CONSULTING: 'Consulting',
-      GENERAL: 'General'
+      GENERAL: 'General',
     },
     views: {
       all: 'All',
       mine: 'Assigned to me',
-      unassigned: 'Unassigned'
+      unassigned: 'Unassigned',
     },
     unassigned: 'Unassigned',
     claim: 'Take this ticket',
@@ -352,7 +345,7 @@ export const en = {
       SALES: 'Sales & plan upgrade',
       CONSULTING: 'Consulting',
       ONBOARDING: 'Academy setup',
-      OTHER: 'Other'
+      OTHER: 'Other',
     },
     statuses: {
       OPEN: 'Open',
@@ -360,31 +353,31 @@ export const en = {
       WAITING_ON_USER: 'Waiting on user',
       RESOLVED: 'Resolved',
       CLOSED: 'Closed',
-      REOPENED: 'Reopened'
+      REOPENED: 'Reopened',
     },
     priorities: {
       LOW: 'Low',
       NORMAL: 'Normal',
       HIGH: 'High',
-      URGENT: 'Urgent'
+      URGENT: 'Urgent',
     },
     callStatuses: {
       REQUESTED: 'Requested',
       SCHEDULED: 'Scheduled',
       COMPLETED: 'Completed',
-      NO_ANSWER: 'No answer'
+      NO_ANSWER: 'No answer',
     },
     filters: {
       status: 'Status filter',
       priority: 'Priority filter',
       allStatuses: 'All statuses',
       allPriorities: 'All priorities',
-      academyId: 'Academy ID'
+      academyId: 'Academy ID',
     },
     events: {
       callLogged: 'Call logged ({status})',
       emailLogged: 'Email logged',
-      system: 'System event'
+      system: 'System event',
     },
     csat: 'Customer satisfaction',
     callHistory: 'Call history',
@@ -404,18 +397,16 @@ export const en = {
         NEW: 'New',
         IN_PROGRESS: 'In progress',
         RESOLVED: 'Answered',
-        SPAM: 'Spam'
-      }
+        SPAM: 'Spam',
+      },
     },
     help: {
       emailTitle: 'Email',
-      emailSubtitle:
-        'Write to Mentoma support. We reply within one business day.',
+      emailSubtitle: 'Write to Mentoma support. We reply within one business day.',
       emailHint: 'Best for general questions, sales, and partnership requests.',
       emailAction: 'Open email app',
       phoneTitle: 'Phone number',
-      phoneSubtitle:
-        'Call only for urgent outages. Everyday requests belong in a ticket.',
+      phoneSubtitle: 'Call only for urgent outages. Everyday requests belong in a ticket.',
       phoneHint: 'Urgent issues and service outages only.',
       phoneAction: 'Call now',
       faqTitle: 'FAQ',
@@ -425,42 +416,40 @@ export const en = {
         'Tell us what would make Mentoma better for your academy. We read every note.',
       suggestionPrefix: '[Suggestion]',
       suggestionSubjectPlaceholder: 'What should we improve?',
-      suggestionBodyPlaceholder:
-        'Describe the idea, who it helps, and why it matters.',
+      suggestionBodyPlaceholder: 'Describe the idea, who it helps, and why it matters.',
       sendSuggestion: 'Send suggestion',
       suggestionSent: 'Thanks — your suggestion was sent',
       faq: {
         ticket: {
           q: 'How do I open a support ticket?',
-          a: 'Open Support → Ticketing, then New ticket. Pick a category, describe what you tried and what you expected. You can follow the reply in the same thread.'
+          a: 'Open Support → Ticketing, then New ticket. Pick a category, describe what you tried and what you expected. You can follow the reply in the same thread.',
         },
         enrollment: {
           q: 'How does a student get access to a course?',
-          a: 'After a successful purchase, or when you enroll them by hand from Users. Access follows the course selling type: one-time, subscription, or live class slot.'
+          a: 'After a successful purchase, or when you enroll them by hand from Users. Access follows the course selling type: one-time, subscription, or live class slot.',
         },
         payment: {
           q: 'How do student payments work?',
-          a: 'Student money is remitted to your academy in full. Mentoma charges 0% commission. You pay only the platform plan, plus storage overage if you go past the included space.'
+          a: 'Student money is remitted to your academy in full. Mentoma charges 0% commission. You pay only the platform plan, plus storage overage if you go past the included space.',
         },
         teacher: {
           q: 'How do I add a teacher?',
-          a: 'Go to Users, add the person with the Teacher role, or approve a teacher request. They can then manage the courses you give them.'
+          a: 'Go to Users, add the person with the Teacher role, or approve a teacher request. They can then manage the courses you give them.',
         },
         live: {
           q: 'How do live classes work?',
-          a: 'Set class times and a meeting link on the course. Students reserve a slot. You grant lesson access per student, group, or on the schedule tied to those class times.'
+          a: 'Set class times and a meeting link on the course. Students reserve a slot. You grant lesson access per student, group, or on the schedule tied to those class times.',
         },
         plan: {
           q: 'What is the difference between one-time and subscription?',
-          a: 'One-time is a single purchase for that course. A subscription covers tagged courses for 3, 6, or 12 months and is renewed by the student — it is not auto-charged.'
-        }
-      }
-    }
+          a: 'One-time is a single purchase for that course. A subscription covers tagged courses for 3, 6, or 12 months and is renewed by the student — it is not auto-charged.',
+        },
+      },
+    },
   },
   selectSchool: {
     title: 'Select Your Academy',
-    subtitle:
-      "You're enrolled in multiple academies. Choose which one you'd like to access.",
+    subtitle: "You're enrolled in multiple academies. Choose which one you'd like to access.",
     loading: 'Loading your academies...',
     welcomeBack: 'Welcome back, {{name}}',
     noStoresFound: 'No academies found for your account',
@@ -479,7 +468,7 @@ export const en = {
     needHelp: 'Need help?',
     needHelpText:
       "If you can't find your academy or need to enroll in a new one, please contact your academy administrator or",
-    contactSupport: 'contact support'
+    contactSupport: 'contact support',
   },
   billing: {
     title: 'All Subscriptions',
@@ -493,18 +482,18 @@ export const en = {
     storageColumn: 'Storage',
     managePlan: 'Manage plan',
     emptyTitle: 'No academies yet',
-    emptyDesc: 'Create your first academy to start a subscription'
+    emptyDesc: 'Create your first academy to start a subscription',
   },
   scope: {
     viewingAcademy: 'Viewing academy:',
     platformWide: 'This page covers all your academies',
-    noAcademySelected: 'No academy selected'
+    noAcademySelected: 'No academy selected',
   },
   academy: {
     visitSite: 'Visit site',
     visitSiteChoose: 'Open academy site',
     visitSiteSubdomain: 'Subdomain',
-    visitSiteCustomDomain: 'Custom domain'
+    visitSiteCustomDomain: 'Custom domain',
   },
   common: {
     published: 'Published',
@@ -582,16 +571,11 @@ export const en = {
     errorLoading: 'Error loading',
     viewAll: 'View All',
     noStoreSelected: 'No Academy Selected',
-    selectStoreToView:
-      'Please select an academy from the header to view content.',
-    selectStoreToViewCourses:
-      'Please select an academy from the header to view courses.',
-    selectStoreToCreateProduct:
-      'Please select an academy from the header to create a product.',
-    selectStoreToViewProducts:
-      'Please select an academy from the header to view products.',
-    selectStoreToManageLessons:
-      'Please select an academy from the header to manage lessons.',
+    selectStoreToView: 'Please select an academy from the header to view content.',
+    selectStoreToViewCourses: 'Please select an academy from the header to view courses.',
+    selectStoreToCreateProduct: 'Please select an academy from the header to create a product.',
+    selectStoreToViewProducts: 'Please select an academy from the header to view products.',
+    selectStoreToManageLessons: 'Please select an academy from the header to manage lessons.',
     store: 'Academy',
     oneStore: '1 academy',
     multipleStores: '{{count}} academies',
@@ -621,13 +605,12 @@ export const en = {
       TEACHER: 'Instructor',
       STUDENT: 'Student',
       USER: 'User',
-      AFFILIATE: 'Affiliate'
-    }
+      AFFILIATE: 'Affiliate',
+    },
   },
   roles: {
     title: 'Roles & Permissions',
-    description:
-      'Create roles and control what each role can access across the platform',
+    description: 'Create roles and control what each role can access across the platform',
     addRole: 'Add role',
     systemBadge: 'System',
     customBadge: 'Custom',
@@ -641,8 +624,7 @@ export const en = {
     permissionsHintLevel:
       'This role sits at the "{{level}}" access level. Pick what it may do in each area.',
     applyLevelDefaults: 'Default permissions for "{{level}}"',
-    ownerLockedHint:
-      'The platform owner has full access and cannot be changed.',
+    ownerLockedHint: 'The platform owner has full access and cannot be changed.',
     permissionsSaved: 'Permissions saved',
     roleUpdated: 'Role saved',
     createTitle: 'Create a new role',
@@ -651,8 +633,7 @@ export const en = {
     labelInvalid: 'Enter at least 2 characters.',
     descriptionLabel: 'Description',
     levelLabel: 'Access level',
-    levelHint:
-      'The access level says which group this role has the same authority as.',
+    levelHint: 'The access level says which group this role has the same authority as.',
     levelCapHint: 'You can only create roles up to "{{level}}".',
     level6: 'Platform owner',
     level5: 'System admin',
@@ -694,8 +675,7 @@ export const en = {
     viewPermissions: 'View permissions',
     viewPermissionsFor: '{{role}} permissions',
     readOnlyNoPermission: 'You can view this role but not change it.',
-    readOnlyOwnRole:
-      'This is your own role. You can view it but not change it.',
+    readOnlyOwnRole: 'This is your own role. You can view it but not change it.',
     readOnlyOwner: 'The platform owner has full access and cannot be changed.',
     readOnlySystem: 'Built-in roles cannot be edited.',
     readOnlyRank: 'This role is above your rank.',
@@ -708,26 +688,24 @@ export const en = {
     assignUserLabel: 'User',
     assignUserPlaceholder: 'Search by name, email or phone',
     assignAction: 'Assign role',
-    assignSeatWarning:
-      'This role has manager-level access and uses one manager seat of your plan.',
+    assignSeatWarning: 'This role has manager-level access and uses one manager seat of your plan.',
     roleAssigned: 'Role assigned',
     roleAlreadyAssigned: 'This user already has that role.',
     hint: {
       PLATFORM_OWNER: 'Unrestricted access to every area of the platform',
-      ADMIN:
-        'Runs the platform and all academies, except deleting system roles',
+      ADMIN: 'Runs the platform and all academies, except deleting system roles',
       FINANCE: 'Payments, settlements, discounts and financial reports',
       SUPPORT: 'Answers tickets and resolves user problems',
       MANAGER: 'Runs one academy: courses, teachers, students and sales',
       TEACHER: 'Teaches: lessons, quizzes, grading and live classes',
       STUDENT: 'Takes courses, quizzes, assignments and discussions',
       USER: 'Registered visitor with no purchase; can only browse courses',
-      AFFILIATE: 'Promotes courses and sees their own performance report'
+      AFFILIATE: 'Promotes courses and sees their own performance report',
     },
     action: {
       read: 'View',
       write: 'Edit',
-      delete: 'Delete'
+      delete: 'Delete',
     },
     resource: {
       academies: 'Academies',
@@ -749,8 +727,8 @@ export const en = {
       notifications: 'Notifications',
       legal: 'Legal documents',
       theme: 'Theme',
-      roles: 'Roles & permissions'
-    }
+      roles: 'Roles & permissions',
+    },
   },
   accessControl: {
     ownerBadge: 'Yours',
@@ -763,18 +741,16 @@ export const en = {
     viewOnlyHint: 'You can only view this resource',
     readOnly: 'Read Only',
     deniedTitle: 'Access denied',
-    deniedDescription: 'You do not have permission to view this page.'
+    deniedDescription: 'You do not have permission to view this page.',
   },
   storage: {
     title: 'Storage',
-    description:
-      'See what your academy files take up, and how much of your plan is left',
+    description: 'See what your academy files take up, and how much of your plan is left',
     totalUsed: 'Used',
     remaining: 'Remaining',
     percentOfPlanUsed: '{{percent}} of your plan storage used',
     breakdownTitle: 'Usage by file type',
-    breakdownDescription:
-      'How much of the used space each kind of file takes up',
+    breakdownDescription: 'How much of the used space each kind of file takes up',
     typeVideo: 'Videos',
     typeImage: 'Images',
     typeAudio: 'Audio',
@@ -782,8 +758,7 @@ export const en = {
     fileCount: '{{count}} files',
     shareOfTotal: '{{percent}} of total',
     nearFullWarning: 'Your storage is almost full.',
-    fullWarning:
-      'Your storage is full — uploads are blocked until you free space or add more.',
+    fullWarning: 'Your storage is full — uploads are blocked until you free space or add more.',
     addStorage: 'Add storage',
     filesTitle: 'Files',
     filesDescription: 'Biggest first. Deleting a file removes it for good.',
@@ -804,7 +779,7 @@ export const en = {
       home_page: 'Home page',
       profile_avatar: 'Profile photo',
       article: 'Article',
-      product: 'Product'
+      product: 'Product',
     },
     delete: 'Delete',
     deleteTitle: 'Delete this file?',
@@ -818,7 +793,7 @@ export const en = {
     deleteAllUnusedSuccess: '{{count}} unused files deleted and space freed',
     deleteAllUnusedEmpty: 'No unused files to delete',
     noFiles: 'No files yet',
-    pageOf: 'Page {{page}} of {{total}}'
+    pageOf: 'Page {{page}} of {{total}}',
   },
   navigation: {
     contentHub: 'Content & templates',
@@ -976,18 +951,17 @@ export const en = {
       templates: 'Templates',
       configuration: 'Configuration',
       governance: 'Trust & legal',
-      students: 'Students'
-    }
+      students: 'Students',
+    },
   },
   gdpr: {
     message: 'We use cookies to run this panel and to improve your experience.',
     learnMore: 'Learn more',
     decline: 'Decline',
-    accept: 'Accept'
+    accept: 'Accept',
   },
   legal: {
-    mustAcceptTerms:
-      'You must accept the Terms and Privacy Policy to continue.',
+    mustAcceptTerms: 'You must accept the Terms and Privacy Policy to continue.',
     documentsUnavailable:
       'Legal documents are not available yet. Please try again later or contact support.',
     lastUpdated: 'Last updated',
@@ -1005,20 +979,19 @@ export const en = {
     changesRemoved: 'Removed',
     onlyMinorChanges:
       'Only small wording or formatting fixes — the rules themselves did not change.',
-    firstTimeAcceptance:
-      'This is the first time you need to accept this document.',
+    firstTimeAcceptance: 'This is the first time you need to accept this document.',
     diffUnavailable:
       'The change summary is not available right now. Please read the full document.',
     viewFullDocument: 'View full document',
     declineAndSignOut: 'Cancel and sign out',
-    decliningAndSigningOut: 'Signing out...'
+    decliningAndSigningOut: 'Signing out...',
   },
   subscription: {
     expiredTitle: 'Upgrade to continue',
     expiredWarning:
       'Your academy subscription has expired. Renew to restore access — your data is safe.',
     upgradeCta: 'Upgrade plan',
-    continueViewing: 'Continue viewing'
+    continueViewing: 'Continue viewing',
   },
   legalAdmin: {
     title: 'Legal Documents',
@@ -1043,8 +1016,8 @@ export const en = {
       TERMS: 'Terms of Service',
       PRIVACY: 'Privacy Policy',
       REFUND: 'Refund Policy',
-      ACADEMY_AGREEMENT: 'Platform–Academy Agreement'
-    }
+      ACADEMY_AGREEMENT: 'Platform–Academy Agreement',
+    },
   },
   onboarding: {
     bannerTitle: 'Create your first academy',
@@ -1055,13 +1028,12 @@ export const en = {
     noAcademyDescription:
       'Your account was created by an academy manager. Nothing shows here until they add you to their academy.',
     setupBannerTitle: 'Get your academy live',
-    setupBannerDescription:
-      '{done} of 4 steps done — finish these to start teaching.',
+    setupBannerDescription: '{done} of 4 steps done — finish these to start teaching.',
     setupStepWebsite: 'Create or edit your academy website',
     setupStepTemplate: 'Choose a template',
     setupStepCourse: 'Add a course',
     setupStepVisit: 'Visit your website',
-    setupDismiss: 'Dismiss setup checklist'
+    setupDismiss: 'Dismiss setup checklist',
   },
 
   auth: {
@@ -1091,8 +1063,7 @@ export const en = {
       'This account has no way to sign in yet. Please contact your academy manager or support.',
     changeIdentifier: 'Change number',
     useOtpInstead: 'Sign in with a one-time code',
-    accountNotRegisteredForLogin:
-      'No account is registered with this phone number.',
+    accountNotRegisteredForLogin: 'No account is registered with this phone number.',
     memberAcademiesTitle: 'You are a student of an academy',
     memberAcademiesSubtitle:
       'This panel is for managers and teachers. Students sign in on their own academy site.',
@@ -1103,12 +1074,10 @@ export const en = {
     memberAcademiesShowList: 'Show my academies',
     memberAcademiesListTitle: 'Your academies',
     memberAcademiesListSubtitle: 'Tap your academy to sign in.',
-    memberAcademiesEmpty:
-      'You are not a member of any active academy right now.',
+    memberAcademiesEmpty: 'You are not a member of any active academy right now.',
     memberAcademiesBecomeManager: 'I want to create my own academy',
     useAnotherNumber: 'Sign in with another number',
-    phoneAlreadyRegistered:
-      'This phone number is already registered. Please sign in.',
+    phoneAlreadyRegistered: 'This phone number is already registered. Please sign in.',
     registerToLoginHint: 'Create a free account first, then sign in.',
     createAccountToContinue: 'Create account',
     sendingCode: 'Sending code...',
@@ -1127,8 +1096,7 @@ export const en = {
     panelForStaff: 'This panel is for',
     teachersManagersAdmins: 'Teachers, Managers, and Administrators',
     staffOnly: 'only.',
-    studentsLoginThroughStore:
-      "Students should login through their academy's website.",
+    studentsLoginThroughStore: "Students should login through their academy's website.",
     dontHaveAccount: "Don't have an admin account?",
     registerStore: 'Register your Academy',
     areYouStudent: 'Are you a student?',
@@ -1140,11 +1108,9 @@ export const en = {
     phoneRequired: 'Phone number is required',
     emailRequired: 'Email is required',
     passwordTooShort: 'Password must be at least 6 characters',
-    passwordAsciiOnly:
-      'Password may only contain English letters, numbers, and symbols',
+    passwordAsciiOnly: 'Password may only contain English letters, numbers, and symbols',
     passwordHasSymbol: 'Contains a symbol',
-    passwordTooWeak:
-      'Password must contain an English letter, a number, and a symbol',
+    passwordTooWeak: 'Password must contain an English letter, a number, and a symbol',
     passwordMinLength: 'At least 6 characters',
     showPassword: 'Show password',
     hidePassword: 'Hide password',
@@ -1164,8 +1130,7 @@ export const en = {
     setPasswordAndContinue: 'Set password & continue',
     verifyYourContact: 'Verify Your Contact',
     createStoreAccount: 'Create Academy Account',
-    verifyContactDescription:
-      'Verify phone (and email if provided) first. Then fill base data.',
+    verifyContactDescription: 'Verify phone (and email if provided) first. Then fill base data.',
     registerDescription: 'Register as an academy manager or join as a student',
     fullNameRequired: 'Full name is required',
     phoneNumberRequired: 'Phone number is required',
@@ -1176,8 +1141,7 @@ export const en = {
     passwordsDoNotMatch: 'Passwords do not match',
     storeNameRequired: 'Academy name is required',
     storeSlugRequired: 'Academy slug is required',
-    storeSlugInvalid:
-      'Academy slug can only contain lowercase letters, numbers, and hyphens',
+    storeSlugInvalid: 'Academy slug can only contain lowercase letters, numbers, and hyphens',
     selectStoreRequired: 'Please select an academy',
     teacherRequestReasonRequired: 'Please explain why you want to be a teacher',
     registering: 'Registering User...',
@@ -1197,18 +1161,14 @@ export const en = {
     resendEmailOtp: 'Resend Email OTP',
     sendEmailOtp: 'Send Email OTP',
     verifyEmailOtp: 'Verify Email OTP',
-    verifyPhoneLater:
-      'You can verify your phone number later in account settings',
-    verifyEmailLater:
-      'You can verify your email address later in account settings',
+    verifyPhoneLater: 'You can verify your phone number later in account settings',
+    verifyEmailLater: 'You can verify your email address later in account settings',
     stepVerification: 'Verification',
     stepBaseData: 'Base Data',
     createNewStore: 'Create New Academy',
-    createNewStoreDescription:
-      'Start your own educational institution as a manager',
+    createNewStoreDescription: 'Start your own educational institution as a manager',
     joinExistingStore: 'Join Existing Academy',
-    joinExistingStoreDescription:
-      'Join as a student and optionally request teacher role',
+    joinExistingStoreDescription: 'Join as a student and optionally request teacher role',
     fullName: 'Full Name',
     enterFullName: 'Enter your full name',
     createPassword: 'Create a password',
@@ -1222,8 +1182,7 @@ export const en = {
     adminOnly: 'This panel is for',
     adminsOnly: 'admins only.',
     signInAsAdmin: 'Sign in as administrator',
-    staffRouteOnly:
-      'This route is for Admin and Support staff. Please use the regular login.',
+    staffRouteOnly: 'This route is for Admin and Support staff. Please use the regular login.',
     adminUnauthorizedRole:
       'You do not have permission to access the admin dashboard. Only ADMIN role is allowed.',
     bySigningIn: 'By signing in, you agree to our',
@@ -1262,8 +1221,7 @@ export const en = {
     redirectingToAdminLogin: 'Redirecting to admin sign in...',
     dontHaveAccountYet: "Don't have an account?",
     chooseAcademy: 'Choose your academy',
-    chooseAcademyDesc:
-      'You have access to multiple academies. Which one do you want to manage?',
+    chooseAcademyDesc: 'You have access to multiple academies. Which one do you want to manage?',
     setupAcademyTitle: 'Set up your academy',
     setupAcademySubtitle:
       "You're one step away from your dashboard. Tell us about your academy — you can change everything later.",
@@ -1274,8 +1232,7 @@ export const en = {
     step3Heading: 'Tell us about your academy',
     step3Subtitle: "Help students understand what they'll learn here.",
     step4Heading: 'Choose your brand color',
-    step4Subtitle:
-      'Pick a primary color for your academy. You can change it anytime.',
+    step4Subtitle: 'Pick a primary color for your academy. You can change it anytime.',
     backBtn: 'Back',
     skipForNow: 'Skip for now',
     academyName: 'Academy name',
@@ -1286,8 +1243,7 @@ export const en = {
     slugAvailable: 'This address is available',
     slugTaken: 'This address is already taken',
     academyDescriptionLabel: 'Description',
-    academyDescriptionPlaceholder:
-      'What does your academy teach? A brief overview for students…',
+    academyDescriptionPlaceholder: 'What does your academy teach? A brief overview for students…',
     createAcademyBtn: 'Create academy',
     creatingAcademy: 'Creating academy...',
     academyCreatedTitle: 'Academy created!',
@@ -1297,14 +1253,13 @@ export const en = {
     onboardingStep1: 'Your academy is created and you become its manager',
     onboardingStep2: 'Add courses, invite teachers, set up pricing',
     onboardingStep3: 'Invite students or connect your custom domain',
-    onboardingStep4:
-      'Manage multiple academies from one account — switch anytime',
+    onboardingStep4: 'Manage multiple academies from one account — switch anytime',
     byCreatingAccount: 'By creating an account, you agree to our',
     termsOfService: 'Terms of Service',
     and: 'and',
     privacyPolicy: 'Privacy Policy',
     staffTerms: 'Staff Terms',
-    agree: '.'
+    agree: '.',
   },
   dashboard: {
     limits: {
@@ -1322,7 +1277,7 @@ export const en = {
       storage_gb: 'Storage (GB)',
       monthly_traffic_gb: 'Monthly traffic (GB)',
       dedicated_templates: 'Dedicated site templates',
-      videos: 'Videos'
+      videos: 'Videos',
     },
     cards: {
       courses: 'Courses created',
@@ -1332,7 +1287,7 @@ export const en = {
       completion: 'Course completion rate',
       completionHint: 'Share of {{period}} enrolments that finished the course',
       active: 'Active enrolments',
-      activeHint: 'Students still working through a course in {{period}}'
+      activeHint: 'Students still working through a course in {{period}}',
     },
     teacherPayout: {
       title: 'Record payment to {{name}}',
@@ -1344,7 +1299,7 @@ export const en = {
       bankResponseHint: 'e.g. reference number or receipt text',
       submit: 'Record payment',
       success: 'Payment recorded',
-      failed: 'Could not record the payment'
+      failed: 'Could not record the payment',
     },
     money: {
       academyRow: 'Academy revenue',
@@ -1352,15 +1307,12 @@ export const en = {
       platformOwes: 'Ready to settle',
       platformOwesHint: '{{pending}} is pending transfer',
       paidToAcademy: 'Paid to academy',
-      paidToAcademyHint:
-        'Everything transferred to the academy bank account so far',
+      paidToAcademyHint: 'Everything transferred to the academy bank account so far',
       teacherRate: 'Teacher share rate',
-      teacherRateHint:
-        'Each teacher’s share of every sale; change it in academy settings',
+      teacherRateHint: 'Each teacher’s share of every sale; change it in academy settings',
       teacherShare: 'Teacher share',
       teacherPaid: 'Paid to teachers',
-      teacherPaidHint:
-        'What you transferred to teachers and recorded in this period',
+      teacherPaidHint: 'What you transferred to teachers and recorded in this period',
       payTeacher: 'Record payment',
       teacherShareHint: 'What teachers earned from sales in this period',
       flowTitle: 'Money flow',
@@ -1393,7 +1345,7 @@ export const en = {
       sortNet: 'Net',
       sortStudents: 'Students',
       noCourses: 'No course has sold yet',
-      noTeachers: 'No teacher has sold yet'
+      noTeachers: 'No teacher has sold yet',
     },
     title: 'Dashboard',
     welcome: 'Welcome to Admin Panel',
@@ -1445,15 +1397,13 @@ export const en = {
     activeEnrollmentsInPeriod: 'Active enrollments in the last {{period}}',
     enrollmentsInPeriod: 'Enrollments in the last {{period}}',
     recentCoursesDescription: 'Your latest courses and their performance',
-    recentEnrollmentsDescription:
-      'Latest student enrollments across your courses',
+    recentEnrollmentsDescription: 'Latest student enrollments across your courses',
     recentPaymentsDescription: 'Latest payment transactions from your courses',
     enrolledIn: 'Enrolled in',
     unknownUser: 'Unknown User',
     unknownCourse: 'Unknown Course',
     noRecentEnrollments: 'No recent enrollments',
-    enrollmentsWillAppear:
-      'Enrollments will appear here once students join your courses.',
+    enrollmentsWillAppear: 'Enrollments will appear here once students join your courses.',
     noRecentPayments: 'No recent payments',
     paymentsWillAppear:
       'Payment transactions will appear here once students purchase your courses.',
@@ -1501,16 +1451,13 @@ export const en = {
     manageBanners: 'Manage Banners',
     newBanner: 'New Banner',
     launchCourseTitle: 'Launch Your Next Course',
-    launchCourseDesc:
-      'Create and publish a new course in minutes. Reach thousands of students.',
+    launchCourseDesc: 'Create and publish a new course in minutes. Reach thousands of students.',
     launchCourseCta: 'Create Course',
     upgradePlanTitle: 'Upgrade Your Plan',
-    upgradePlanDesc:
-      'Get more storage, more students, and priority support with Pro.',
+    upgradePlanDesc: 'Get more storage, more students, and priority support with Pro.',
     upgradePlanCta: 'View Plans',
     buyPlanTitle: 'Choose your plan',
-    buyPlanDesc:
-      'Pick one of the plans below to unlock Mentoma for your academy.',
+    buyPlanDesc: 'Pick one of the plans below to unlock Mentoma for your academy.',
     buyPlanCta: 'Select & buy',
     renewPlanTitle: 'Renew Your Subscription',
     renewPlanDesc: 'Your plan is expiring soon — renew now to keep access.',
@@ -1525,7 +1472,7 @@ export const en = {
     bannerColor: 'Color',
     saveBanner: 'Save Banner',
     editBanner: 'Edit Banner',
-    addBanner: 'Add Banner'
+    addBanner: 'Add Banner',
   },
   stores: {
     title: 'Stores',
@@ -1544,8 +1491,7 @@ export const en = {
     enterStoreName: 'Enter academy name',
     domainName: 'Domain Name',
     mustBeUnique: 'Must be unique',
-    enterDomainName:
-      'Enter domain name (auto-formatted to lowercase, kebab-case)',
+    enterDomainName: 'Enter domain name (auto-formatted to lowercase, kebab-case)',
     storeUrlWillBe: "This will be your academy's URL:",
     uniqueDomainRequired: 'Each academy must have a unique domain name',
     publicDomain: 'Public Domain',
@@ -1575,8 +1521,7 @@ export const en = {
     removeAcademy: 'Remove academy',
     removeAcademyLocked:
       'This academy has transactions and cannot be deleted. You can suspend or ban it.',
-    removeAcademyLockedManager:
-      'This academy has payments and cannot be deleted.',
+    removeAcademyLockedManager: 'This academy has payments and cannot be deleted.',
     removeAcademyConfirm:
       'This academy will leave the public site and this list. Student records and payments stay saved.',
     landingScreenshots: 'Landing screenshots',
@@ -1645,8 +1590,7 @@ export const en = {
     siteStatusTitleEnable: 'Activate academy',
     siteStatusCardDescDisabled:
       'This academy was deactivated on {{date}} and takes no new students.',
-    siteStatusCardDescDisabledNoDate:
-      'This academy is deactivated and takes no new students.',
+    siteStatusCardDescDisabledNoDate: 'This academy is deactivated and takes no new students.',
     siteStatusEnableShort: 'Reactivate',
     siteDisabledToast: 'Academy deactivated — students have been notified.',
     siteEnabledToast: 'Academy reactivated — students have been notified.',
@@ -1667,8 +1611,7 @@ export const en = {
       'The phone is your account number and cannot be edited here. Email is optional.',
     siteContactPhoneMissing: 'No phone on your account',
     siteDisableMessage: 'Message for visitors (optional)',
-    siteDisableMessagePlaceholder:
-      'e.g. Enrollment for the next term opens in September.',
+    siteDisableMessagePlaceholder: 'e.g. Enrollment for the next term opens in September.',
     siteDisableAction: 'Deactivate academy',
     siteDisableConfirmTitle: 'Deactivate this academy?',
     siteDisableConfirmBody:
@@ -1709,7 +1652,7 @@ export const en = {
     sectionIdentity: 'Academy details',
     sectionBranding: 'Branding',
     categoryPlaceholder: 'Choose a category',
-    optionalTag: '(optional)'
+    optionalTag: '(optional)',
   },
   courses: {
     lessonsManagement: 'Lessons Management',
@@ -1747,13 +1690,11 @@ export const en = {
       stepTopics: 'Topics',
       stepTopicsHint: 'List the subjects you teach across the sessions.',
       stepPricing: 'Price',
-      stepPricingHint:
-        'Set the per-seat group price so classes can be created.',
+      stepPricingHint: 'Set the per-seat group price so classes can be created.',
       stepClass: 'Create class',
       stepClassHint: 'Create a class — a student buys a seat in it.',
       stepSchedule: 'Schedule',
-      stepScheduleHint:
-        'Pick the weekly days and times so session dates are generated.',
+      stepScheduleHint: 'Pick the weekly days and times so session dates are generated.',
       setupTitle: 'Live course setup',
       setupProgress: '{{done}} of {{total}} steps done',
       setupReadyTitle: 'This course is ready to sell',
@@ -1788,13 +1729,11 @@ export const en = {
       topicsRequired: 'Write at least one topic.',
       topicsSaved: 'Syllabus saved.',
       pricing: 'Pricing',
-      pricingHint:
-        'A live course sells two ways: a seat in a group class, or the teacher alone.',
+      pricingHint: 'A live course sells two ways: a seat in a group class, or the teacher alone.',
       groupPrice: 'Price per class seat',
       groupPriceHint: 'What one student pays to join the group class.',
       soloPrice: 'Private class price',
-      soloPriceHint:
-        'One-to-one price. Leave empty to not sell private classes.',
+      soloPriceHint: 'One-to-one price. Leave empty to not sell private classes.',
       pricesRequired: 'Enter at least one of the two prices.',
       pricesSaved: 'Prices saved.',
       pricesSavedAndSellingEnabled:
@@ -1803,8 +1742,7 @@ export const en = {
       solo: 'Private',
       group: 'Group',
       schedule: 'Class schedule',
-      scheduleHint:
-        'Pick the weekly times and how many meetings; the dates are generated for you.',
+      scheduleHint: 'Pick the weekly times and how many meetings; the dates are generated for you.',
       sessionCount: 'Number of meetings',
       startDate: 'Start date',
       startDateRequired: 'Pick a start date.',
@@ -1815,8 +1753,7 @@ export const en = {
       previewTitle: 'Meeting dates',
       createClass: 'Create class',
       classCreated: 'Class created.',
-      needsPriceBeforeSchedule:
-        'Save the group price first, then schedule a class.',
+      needsPriceBeforeSchedule: 'Save the group price first, then schedule a class.',
       timetable: 'Timetable',
       noClassesYet: 'No classes yet. Set a group price, then schedule one.',
       backToClasses: 'Back to classes',
@@ -1846,8 +1783,7 @@ export const en = {
       requestAccepted: 'Class opened and the student was texted.',
       requestsHint:
         'Opening a class from a request links it and texts the student that the class is open to book.',
-      noSessionsYet:
-        'No meetings yet. Publish the class to generate its dates.',
+      noSessionsYet: 'No meetings yet. Publish the class to generate its dates.',
       seatsTaken: '{{taken}} of {{capacity}} seats',
       meetingsCount: '{{count}} meetings',
       nextSession: 'Next meeting',
@@ -1880,45 +1816,37 @@ export const en = {
         'The meeting was cancelled and a refund request was opened for each student.',
       cancelled: 'Cancelled',
       uploadRecording: 'Upload recording',
-      uploadRecordingHint:
-        'Leave this meeting’s video for the students of the class.',
+      uploadRecordingHint: 'Leave this meeting’s video for the students of the class.',
       recordingSaved: 'Recording saved.',
       hasRecording: 'Has recording',
       hasOwnLink: 'Own link',
       meetingUrlPlaceholder: 'https://meet.example.com/your-class',
-      meetingUrlHint:
-        'Leave empty to use the class-wide link for this meeting.',
+      meetingUrlHint: 'Leave empty to use the class-wide link for this meeting.',
       sessionChat: 'Class chat for this meeting',
       uploadMaterial: 'Upload a handout',
       uploadMaterialHint: 'Slides, worksheets or notes shared after the class.',
       uploadHelperVideo: 'Upload a helper video',
-      uploadHelperVideoHint:
-        'An extra video students can watch beside the live class.',
+      uploadHelperVideoHint: 'An extra video students can watch beside the live class.',
       materialAdded: 'File added to this meeting',
       allowRecordingDownload: 'Allow downloading the recording',
-      pageSubtitle:
-        'Build the syllabus, the price, the timetable and the name of each meeting.',
+      pageSubtitle: 'Build the syllabus, the price, the timetable and the name of each meeting.',
       coursePublished: 'Course published.',
       publishNeedsTopic: 'Add at least one topic before publishing.',
       publishNeedsPrice: 'Set the class price before publishing.',
       publishNeedsClass: 'Create at least one class before publishing.',
-      publishNeedsSchedule:
-        'Give the class its weekly times and number of meetings.'
+      publishNeedsSchedule: 'Give the class its weekly times and number of meetings.',
     },
     title: 'Courses',
     pricingTitle: 'Pricing & ways to sell',
-    pricingSectionHint:
-      'Sell this course several ways at once, each with its own price.',
+    pricingSectionHint: 'Sell this course several ways at once, each with its own price.',
     editSellingWay: 'Edit selling way',
-    sellingWayDialogHint:
-      'Set how this way is sold, its price and its access term.',
+    sellingWayDialogHint: 'Set how this way is sold, its price and its access term.',
     editBasePrice: 'Edit base course price',
     basePriceDialogHint:
       'This price is stored on the course itself and applies when you save the page.',
     tutoringPricedElsewhere: 'Private tutoring — priced on the tutoring page',
     openTutoringPage: 'Open tutoring page',
-    pricingSectionHintLive:
-      'A live course is sold by reserving a seat, priced on the class page.',
+    pricingSectionHintLive: 'A live course is sold by reserving a seat, priced on the class page.',
     seatPricing: 'Seat reservation',
     seatPrice: 'Price per seat',
     seatPriceNotSet: 'Not set',
@@ -1933,17 +1861,14 @@ export const en = {
     lastSellingWayLocked:
       'This is the only way to enrol. Add another way, or unpublish the course, before removing it.',
     accessAcademyLifetime: 'As long as the academy is active',
-    accessAcademyLifetimeHint:
-      'Leave empty for access as long as the academy is active',
+    accessAcademyLifetimeHint: 'Leave empty for access as long as the academy is active',
     basePriceNotRemovable:
       'The base price is stored on the course itself and cannot be deleted — switch it off to stop selling it.',
-    allSellingWaysUsed:
-      'Every way of selling is already set up for this course',
+    allSellingWaysUsed: 'Every way of selling is already set up for this course',
     salePrice: 'Sale price',
     priceBeforeDiscount: 'Price before discount',
     priceBeforeDiscountHint: 'Optional — shown crossed out',
-    priceBeforeDiscountInvalid:
-      'Price before discount must be higher than the sale price',
+    priceBeforeDiscountInvalid: 'Price before discount must be higher than the sale price',
     discountBadge: '{{percent}}% off',
     addOffering: 'Add offering',
     offeringType: 'Type',
@@ -1974,8 +1899,7 @@ export const en = {
     contentManagement: 'Content Management',
     courseNotFoundDesc: "The course you're looking for doesn't exist.",
     backToCourse: 'Back to Course',
-    seasonsManagementSubtitle:
-      'Seasons and recorded lessons students watch in "{{title}}"',
+    seasonsManagementSubtitle: 'Seasons and recorded lessons students watch in "{{title}}"',
     totalSeasons: 'Total Seasons',
     totalLessons: 'Total Lessons',
     noSeasonsMatchSearch: 'No seasons match your search criteria.',
@@ -2004,11 +1928,9 @@ export const en = {
     seasonOrderPlaceholder: 'e.g. 1',
     seasonDescriptionOptional: 'Description (optional)',
     seasonDescriptionHint: 'Explain what students will learn in this season',
-    seasonDescriptionPlaceholder:
-      'Topics and learning objectives of this season',
+    seasonDescriptionPlaceholder: 'Topics and learning objectives of this season',
     selectCourse: 'Select a course',
-    seasonOrderConflict:
-      'A season already uses this order. Pick a different order.',
+    seasonOrderConflict: 'A season already uses this order. Pick a different order.',
     backToSeasons: 'Back to Seasons',
     seasonDetailsSubtitle: 'Season details for "{{title}}"',
     manageLessons: 'Manage Lessons',
@@ -2061,11 +1983,9 @@ export const en = {
       stepAccessHint:
         'Decide who may open this course: everyone on your site, or only the students and groups you choose.',
       stepPricing: 'Pricing',
-      stepPricingHint:
-        'Set the price and every way a student can enrol in this course.',
+      stepPricingHint: 'Set the price and every way a student can enrol in this course.',
       stepPreview: 'Preview',
-      stepPreviewHint:
-        'This is what a student sees. Check it, then save the course.',
+      stepPreviewHint: 'This is what a student sees. Check it, then save the course.',
       typeLockedHint: 'The course type is chosen once and cannot be changed.',
       visibilityTitle: 'Who can see this course',
       visibilityPublicTitle: 'Public',
@@ -2078,7 +1998,7 @@ export const en = {
       previewUntitled: 'Untitled course',
       previewUntitledLesson: 'Untitled lesson',
       previewEmptySeason: 'No lessons in this section yet',
-      previewNoContent: 'No sections yet — add lessons in the Content step.'
+      previewNoContent: 'No sections yet — add lessons in the Content step.',
     },
     editCourse: 'Edit Course',
     courseName: 'Course Name',
@@ -2099,8 +2019,7 @@ export const en = {
       'This course is published and visible to students. Changes go live as soon as you save.',
     updatedToast: 'Course updated',
     fixErrorsBeforeSaving: 'Please fix the highlighted fields before saving',
-    createdDraftToast:
-      'Course created as a draft — publish it when it is ready',
+    createdDraftToast: 'Course created as a draft — publish it when it is ready',
     courseTypeLabel: 'Course type',
     typeOfflineTitle: 'Recorded',
     typeOfflineHint: 'Video lessons students watch on their own time.',
@@ -2111,20 +2030,16 @@ export const en = {
       titleMax: 'Title must be less than 80 characters',
       descriptionRequired: 'Description is required',
       descriptionMax: 'Description must be less than 4,000 characters',
-      learningOutcomesMax:
-        'What you will learn must be less than 2,000 characters',
+      learningOutcomesMax: 'What you will learn must be less than 2,000 characters',
       requirementsMax: 'Prerequisites must be less than 2,000 characters',
-      accessDurationWholeNumber:
-        'Access duration must be a whole number of days',
+      accessDurationWholeNumber: 'Access duration must be a whole number of days',
       accessDurationRange: 'Access duration must be between 1 and 1,825 days',
       primaryPriceRequired: 'Sale price is required',
       primaryPriceWholeNumber: 'Sale price must be a whole number',
       primaryPriceRange: 'Sale price must be between 0 and 999,999,999',
       beforeDiscountWholeNumber: 'Price before discount must be a whole number',
-      beforeDiscountRange:
-        'Price before discount must be between 0 and 999,999,999',
-      beforeDiscountTooLow:
-        'Price before discount must be higher than the sale price'
+      beforeDiscountRange: 'Price before discount must be between 0 and 999,999,999',
+      beforeDiscountTooLow: 'Price before discount must be higher than the sale price',
     },
     enterCourseTitle: 'Enter course title (min 5 characters)',
     titleLength: 'Title must be between 5 and 80 characters',
@@ -2210,35 +2125,28 @@ export const en = {
     seasonLength: 'Season length',
     courseLength: 'Total length',
     publishLessonTitleRequired: 'Every lesson needs a title before publishing.',
-    publishEmptySeason:
-      'Each season must have at least one lesson before publishing.',
+    publishEmptySeason: 'Each season must have at least one lesson before publishing.',
     publishNeedsLesson: 'Add at least one lesson before publishing.',
     enterLessonTitle: 'Enter lesson title',
     freePreview: 'Free preview',
     allowDownload: 'Allow download',
-    allowDownloadHint:
-      "Students can save this lesson's file — uses about twice the storage.",
+    allowDownloadHint: "Students can save this lesson's file — uses about twice the storage.",
     optional: 'Optional',
     saving: 'Saving…',
     saved: 'Saved',
     saveFailed: "Couldn't save",
     retry: 'Retry',
     backToCourses: 'Back to courses',
-    seasonsHint:
-      'Organize your course into seasons, then add lessons to each season',
+    seasonsHint: 'Organize your course into seasons, then add lessons to each season',
     lessonVideo: 'Video',
     lessonCover: 'Cover Image',
-    lessonCoverHint:
-      'Shown as the thumbnail for this lesson — a smaller image loads faster',
+    lessonCoverHint: 'Shown as the thumbnail for this lesson — a smaller image loads faster',
     removeVideo: 'Remove video',
     removeCover: 'Remove cover image',
-    videoNeedsSecuring:
-      'This video has not been converted to the secure format yet.',
+    videoNeedsSecuring: 'This video has not been converted to the secure format yet.',
     secureThisVideo: 'Convert to secure format',
-    videoSecuringQueued:
-      'Video queued for secure conversion. This takes a few minutes.',
-    videoSecuringFailed:
-      'Secure conversion failed for this video. You can try again.',
+    videoSecuringQueued: 'Video queued for secure conversion. This takes a few minutes.',
+    videoSecuringFailed: 'Secure conversion failed for this video. You can try again.',
     videoSecuringInProgress: 'Converting to secure format…',
     cancelUpload: 'Cancel',
     uploadVideo: 'Upload video',
@@ -2281,13 +2189,11 @@ export const en = {
     expandAll: 'Expand all',
     collapseAll: 'Collapse all',
     backToCurriculum: 'Back to curriculum',
-    lessonSettingsHint:
-      'Everything else about this lesson is edited in the curriculum.',
+    lessonSettingsHint: 'Everything else about this lesson is edited in the curriculum.',
     liveScheduleHint: 'This lesson meets live.',
     liveScheduleLink: 'Set the meeting time',
     lessonSettingsLink: 'Quiz, live time and download rule',
-    liveSaveFirst:
-      'Save the lesson first, then configure the meeting link on the edit page.',
+    liveSaveFirst: 'Save the lesson first, then configure the meeting link on the edit page.',
     course: 'Course',
     review: 'In Review',
     content: 'Content',
@@ -2326,8 +2232,7 @@ export const en = {
     uploading: 'Uploading...',
     uploadClickOrDrag: 'Click to upload or drag here',
     uploadFileTypes: 'PNG or JPG · Max 2MB',
-    contentHint:
-      'Divide course content into seasons and lessons. You can edit later.',
+    contentHint: 'Divide course content into seasons and lessons. You can edit later.',
     priceInToman: 'Price (Toman)',
     discountPercent: 'Discount %',
     pricePlaceholderExample: 'e.g. 1,480,000',
@@ -2374,14 +2279,13 @@ export const en = {
       keywords: 'Keywords',
       keywordsPlaceholder: 'Type a keyword and press Enter',
       keywordsHint:
-        'The words students search for. Up to {{count}}; used in the page metadata and search data.'
+        'The words students search for. Up to {{count}}; used in the page metadata and search data.',
     },
     highlightedOnHomepage: 'Highlighted on the homepage',
     secureMode: 'Secure mode (no downloading)',
     secureModeOnHint:
       'Students can only watch and listen online. The download button is hidden and saving the file is blocked.',
-    secureModeOffHint:
-      'Students who paid can download this course\u2019s videos and voices.',
+    secureModeOffHint: 'Students who paid can download this course\u2019s videos and voices.',
     applyDownloadsToLessons: 'Apply to every lesson in this course',
     applyDownloadsToLessonsOnHint:
       'Every lesson in this course follows this setting and stays downloadable for paid students. Per-lesson choices are overwritten.',
@@ -2389,8 +2293,7 @@ export const en = {
       'Every lesson in this course follows this setting and stays stream-only. Per-lesson choices are overwritten.',
     level: 'Level',
     shortDescription: 'Short Description',
-    descriptionPlaceholder:
-      'Describe in 2-3 sentences what the student will learn by the end',
+    descriptionPlaceholder: 'Describe in 2-3 sentences what the student will learn by the end',
     removeImage: 'Remove Image',
     editCourseDetails: 'Edit Course Details',
     createCourseTitle: 'Create a New Course',
@@ -2440,14 +2343,12 @@ export const en = {
       audioMainHint: 'Main audio file of this lesson. Manage all files in',
       documentMainHint: 'Main file of this lesson. Manage all files in',
       quizDocumentHint: 'Quiz handout or instructions. Library:',
-      assignmentDocumentHint:
-        'The assignment students follow or submit. Library:',
+      assignmentDocumentHint: 'The assignment students follow or submit. Library:',
       categoryHint: 'Choose a category for this lesson',
       publishedHint: 'Show this lesson to students',
       freeLabel: 'Free lesson',
       freeHint: 'Make this lesson free for everyone',
-      liveNeedsSave:
-        'Save the lesson once, then reopen edit to add the meeting link and schedule.',
+      liveNeedsSave: 'Save the lesson once, then reopen edit to add the meeting link and schedule.',
       liveNeedsType:
         'Save the lesson with type "Live session" first, then add the meeting link here.',
       sidebarTitle: 'Course & season',
@@ -2456,7 +2357,7 @@ export const en = {
       tip2: 'Attach video, audio, image, or document to the lesson.',
       tip3: 'Choose the lesson type that matches your content.',
       tip4: 'For a live class pick "Live session", save, then add the link and time.',
-      tip5: 'A free lesson is visible to every student.'
+      tip5: 'A free lesson is visible to every student.',
     },
     liveSession: {
       title: 'Meeting link & schedule',
@@ -2478,12 +2379,11 @@ export const en = {
       repeatLabel: 'Repeat every week',
       repeatHint: 'For a group class that runs on the same weekdays each week.',
       repeatUntilLabel: 'Repeat until',
-      repeatUntilHint:
-        'Usually the last day of the term. Leave empty to keep going.',
+      repeatUntilHint: 'Usually the last day of the term. Leave empty to keep going.',
       save: 'Save meeting',
       remove: 'Clear meeting',
-      removing: 'Clearing…'
-    }
+      removing: 'Clearing…',
+    },
   },
   members: {
     addMember: 'Add Person',
@@ -2499,7 +2399,7 @@ export const en = {
     optionalPassword: 'New password for your academy (optional)',
     smsNotice:
       'We text them that they were added to your academy, with the password when you set one.',
-    memberAdded: 'Person added to your academy'
+    memberAdded: 'Person added to your academy',
   },
   students: {
     title: 'Students',
@@ -2517,8 +2417,7 @@ export const en = {
     cancelled: 'Cancelled',
     expired: 'Expired',
     loadingStudentsData: 'Loading students data...',
-    manageDescription:
-      'Manage your students, track enrollments, and monitor progress',
+    manageDescription: 'Manage your students, track enrollments, and monitor progress',
     addStudent: 'Add Student',
     addStudentDescription:
       'Create the account yourself. The student signs in with this one-time password and must replace it.',
@@ -2540,8 +2439,7 @@ export const en = {
     willAppearWhenRegistered: 'Students will appear here once they register.',
     courseEnrollments: 'Course Enrollments',
     trackEnrollmentsDescription: 'Track student enrollments and their status',
-    showingRecentEnrollments:
-      'Showing recent enrollments pulled from your academies',
+    showingRecentEnrollments: 'Showing recent enrollments pulled from your academies',
     loadingEnrollments: 'Loading enrollments...',
     noEnrollmentsFound: 'No enrollments found',
     adjustFilters: 'Adjust the filters to see different enrollment records.',
@@ -2553,15 +2451,13 @@ export const en = {
     monitorProgressDescription: 'Monitor student progress across all courses',
     loadingProgressData: 'Loading progress data...',
     noProgressData: 'No progress data',
-    progressWillBeTracked:
-      'Progress will be tracked once students start courses.',
+    progressWillBeTracked: 'Progress will be tracked once students start courses.',
     enrollments: 'Course enrollments',
     studentEnrollments: 'Student course enrollments',
     enrollmentsDescription:
       'Student × course list: enrollment status, filters, and access details per course.',
     zeroResults: '0 results',
-    useSearchAndFilters:
-      'Use the search and filters below to narrow down specific records.',
+    useSearchAndFilters: 'Use the search and filters below to narrow down specific records.',
     searchByStudentOrCourse: 'Search by student or course...',
     filterByStatus: 'Filter by status',
     resultsCount: 'results',
@@ -2589,8 +2485,7 @@ export const en = {
     lagging: 'Lagging (< 50%)',
     fetchingProgressData: 'Fetching progress data...',
     noProgressForFilters: 'No progress data for the selected filters.',
-    tryAdjustingFilters:
-      'Try adjusting the status or progress level filters to widen the scope.',
+    tryAdjustingFilters: 'Try adjusting the status or progress level filters to widen the scope.',
     allUsers: 'All Users',
     manageAllUsers: 'Manage all users across different roles',
     addUser: 'Add User',
@@ -2622,8 +2517,7 @@ export const en = {
       accessOverridesDescription:
         "These rules override the lesson's default published/unpublished state for specific students",
       filterByProfileId: 'Filter by profile ID...',
-      noOverridesYet:
-        'No access overrides yet. All students follow default lesson publish state.',
+      noOverridesYet: 'No access overrides yet. All students follow default lesson publish state.',
       student: 'Student',
       lesson: 'Lesson',
       access: 'Access',
@@ -2642,25 +2536,22 @@ export const en = {
       internalNote: 'Internal Note (optional)',
       saveOverride: 'Save Override',
       saving: 'Saving...',
-      removeConfirm: 'Remove this access override?'
+      removeConfirm: 'Remove this access override?',
     },
     manualEnroll: {
       title: 'Manual Enrollment',
       description:
         'Enroll students who paid outside the platform (cash, bank transfer, or other offline methods)',
       enrollStudent: 'Enroll a Student',
-      enrollStudentDescription:
-        'Creates an active enrollment and records a manual payment',
+      enrollStudentDescription: 'Creates an active enrollment and records a manual payment',
       courseId: 'Course ID *',
       studentProfileId: 'Student Profile ID *',
       amountPaid: 'Amount Paid (IRR)',
       paymentNote: 'Payment Note',
       leaveEmptyIfFree: 'Leave empty if free',
-      manualPaymentNote:
-        'This creates a MANUAL/BANK_TRANSFER payment record for your records',
+      manualPaymentNote: 'This creates a MANUAL/BANK_TRANSFER payment record for your records',
       recentEnrollments: 'Recent Enrollments',
-      recentEnrollmentsDescription:
-        'All enrollments in your academy (including manual)',
+      recentEnrollmentsDescription: 'All enrollments in your academy (including manual)',
       noEnrollmentsFound: 'No enrollments found',
       enrolling: 'Enrolling...',
       enrollStudentBtn: 'Enroll Student',
@@ -2671,8 +2562,8 @@ export const en = {
       student: 'Student',
       course: 'Course',
       payment: 'Payment',
-      enrolled: 'Enrolled'
-    }
+      enrolled: 'Enrolled',
+    },
   },
   teachers: {
     title: 'Teachers',
@@ -2682,7 +2573,7 @@ export const en = {
     courses: 'Courses',
     status: 'Status',
     allTeachers: 'All Teachers',
-    noTeachers: 'No teachers found'
+    noTeachers: 'No teachers found',
   },
   products: {
     title: 'Products',
@@ -2717,8 +2608,7 @@ export const en = {
     originalPrice: 'Original Price',
     forDiscount: 'for discount',
     originalPricePlaceholder: 'Optional - higher than price for discount',
-    originalPriceDescription:
-      'If set, must be higher than price to show discount',
+    originalPriceDescription: 'If set, must be higher than price to show discount',
     enterWholeNumbers: 'Enter whole numbers between 0 and 999,999,999',
     productTypeInventory: 'Product Type & Inventory',
     productType: 'Product Type',
@@ -2734,8 +2624,7 @@ export const en = {
     dimensionsPlaceholder: 'e.g., 10x5x3 cm or LxWxH',
     publishSettings: 'Publish Settings',
     publishProduct: 'Publish Product',
-    publishProductDescription:
-      'Make this product visible to customers immediately',
+    publishProductDescription: 'Make this product visible to customers immediately',
     featuredProduct: 'Featured Product',
     featuredProductDescription: 'Highlight this product on the storefront',
     featured: 'Featured',
@@ -2745,8 +2634,7 @@ export const en = {
     noCategoriesAvailable: 'No categories available',
     relatedCourses: 'Related Courses',
     filteredByCategory: 'filtered by selected category',
-    selectCategoryFirst:
-      'Please select a category first to see related courses',
+    selectCategoryFirst: 'Please select a category first to see related courses',
     noCoursesInCategory: 'No courses available in this category',
     coverImage: 'Cover Image',
     productCover: 'Product Cover',
@@ -2759,7 +2647,7 @@ export const en = {
     selectImageFirst: 'Select an image first',
     inStock: 'In Stock',
     outOfStock: 'Out of Stock',
-    noReviewsYet: 'No reviews yet'
+    noReviewsYet: 'No reviews yet',
   },
   categories: {
     title: 'Categories',
@@ -2782,17 +2670,15 @@ export const en = {
     updateFailed: 'Failed to update category',
     deleteSuccess: 'Category deleted successfully',
     deleteFailed: 'Failed to delete category',
-    deleteConfirm:
-      'Are you sure you want to delete this category? This action cannot be undone.'
+    deleteConfirm: 'Are you sure you want to delete this category? This action cannot be undone.',
   },
   modal: {
     confirmDelete: 'Are you sure?',
-    deleteDescription:
-      'This action cannot be undone. This will permanently delete',
+    deleteDescription: 'This action cannot be undone. This will permanently delete',
     deleteItem: 'Delete',
     cancel: 'Cancel',
     confirm: 'Confirm',
-    deleting: 'Deleting...'
+    deleting: 'Deleting...',
   },
   errors: {
     required: 'This field is required',
@@ -2802,7 +2688,7 @@ export const en = {
     passwordsDoNotMatch: 'Passwords do not match',
     somethingWentWrong: 'Something went wrong',
     tryAgain: 'Please try again',
-    networkError: 'Network error. Please check your connection.'
+    networkError: 'Network error. Please check your connection.',
   },
   success: {
     saved: 'Saved successfully',
@@ -2820,7 +2706,7 @@ export const en = {
     exported: 'Exported successfully',
     refreshed: 'Refreshed successfully',
     uploaded: 'Uploaded successfully',
-    operationCompleted: 'Operation completed successfully'
+    operationCompleted: 'Operation completed successfully',
   },
   error: {
     unexpected: 'An unexpected error occurred. Please try again.',
@@ -2843,36 +2729,33 @@ export const en = {
     requiredFields: 'Please fill in all required fields',
     noDataToExport: 'No data to export',
     accessDenied: 'You do not have permission to access this resource',
-    roleRequired: 'You do not have the required role to access this resource'
+    roleRequired: 'You do not have the required role to access this resource',
   },
   unauthorized: {
     title: 'Account blocked',
     description:
       'This admin panel account has been banned or deactivated. You cannot sign in until an academy manager restores access.',
     note: 'Note:',
-    contactAdmin:
-      'If you believe this is a mistake, contact your academy manager.',
+    contactAdmin: 'If you believe this is a mistake, contact your academy manager.',
     whatYouCanDo: 'What you can do:',
     accessStudentDashboard: "Access your academy's student dashboard",
     contactStoreAdmin: 'Contact your academy manager to restore access',
-    joinAsTeacher:
-      "Join a academy and request teacher role if you're an educator",
+    joinAsTeacher: "Join a academy and request teacher role if you're an educator",
     needHelp: 'Need help?',
-    contactSupport:
-      'If you believe this is a mistake, contact Mentoma support.',
-    redirectingIn: 'Returning to the login page in {{seconds}} seconds.'
+    contactSupport: 'If you believe this is a mistake, contact Mentoma support.',
+    redirectingIn: 'Returning to the login page in {{seconds}} seconds.',
   },
   notFound: {
     title: 'Page Not Found',
     description: 'The page you are looking for does not exist.',
-    backHome: 'Back to Home'
+    backHome: 'Back to Home',
   },
   home: {
     welcomeToSkillForge: 'Welcome to آکادمی',
     description:
       'Empower your learning journey. Create, manage, and sell your online courses with ease. آکادمی is your all-in-one platform for building a thriving online education business.',
     getStarted: 'Get Started / Login',
-    allRightsReserved: 'All rights reserved.'
+    allRightsReserved: 'All rights reserved.',
   },
   content: {
     course: 'Course',
@@ -2889,7 +2772,7 @@ export const en = {
     uploadVideoDescription: 'Upload video content for lessons',
     selectStoreFirst: 'Select Academy First',
     createContent: 'Create Content',
-    createNewContent: 'Create New Content'
+    createNewContent: 'Create New Content',
   },
   forgotPassword: {
     title: 'Reset Password',
@@ -2927,21 +2810,21 @@ export const en = {
       'Your password has been reset. You can now login with your new password.',
     redirectingToLogin: 'Redirecting to sign in...',
     resetAnotherPassword: 'Reset Another Password',
-    goToLogin: 'Go to Login'
+    goToLogin: 'Go to Login',
   },
   compliance: {
     reviewStatus: {
       PENDING: 'Pending review',
       APPROVED: 'Approved',
       FLAGGED: 'Flagged',
-      SUSPENDED: 'Suspended'
+      SUSPENDED: 'Suspended',
     },
     enamadStatus: {
       NOT_REQUIRED: 'Not required',
       REQUIRED: 'Required',
       PENDING: 'Pending review',
       VERIFIED: 'Verified',
-      REJECTED: 'Rejected'
+      REJECTED: 'Rejected',
     },
     queue: {
       title: 'Academy content review',
@@ -2961,8 +2844,8 @@ export const en = {
         PENDING: 'Pending',
         FLAGGED: 'Flagged',
         APPROVED: 'Approved',
-        ALL: 'All'
-      }
+        ALL: 'All',
+      },
     },
     action: {
       confirm: 'Confirm',
@@ -2975,12 +2858,11 @@ export const en = {
       APPROVED: { title: 'Approve academy content', short: 'Approve' },
       FLAGGED: { title: 'Flag academy', short: 'Flag' },
       SUSPENDED: { title: 'Suspend academy site', short: 'Suspend' },
-      PENDING: { title: 'Return to review queue', short: 'Reopen' }
+      PENDING: { title: 'Return to review queue', short: 'Reopen' },
     },
     abuse: {
       title: 'Abuse reports',
-      description:
-        'Reports filed by visitors and students, soonest deadline first.',
+      description: 'Reports filed by visitors and students, soonest deadline first.',
       overdue: '{{count}} report(s) past the 72 business-hour deadline.',
       empty: 'No open reports.',
       pastDue: 'Past due',
@@ -2988,10 +2870,10 @@ export const en = {
       anonymous: 'Anonymous report',
       dismiss: 'Dismiss',
       actioned: 'Actioned',
-      dismissReason: 'Explain why this report is dismissed:'
+      dismissReason: 'Explain why this report is dismissed:',
     },
     manage: {
-      title: 'Manage academy compliance'
+      title: 'Manage academy compliance',
     },
     override: {
       title: 'Content publishing policy for this academy',
@@ -3000,18 +2882,16 @@ export const en = {
       useDefault: 'Use default',
       inheriting: 'Following the default: {{policy}}',
       PUBLISH_IMMEDIATELY: 'Publish immediately',
-      HOLD_FOR_REVIEW: 'Hold for review'
+      HOLD_FOR_REVIEW: 'Hold for review',
     },
     enamadReview: {
-      notApplicable:
-        'This academy is on a Mentoma subdomain, so eNamad does not apply.',
-      awaitingSubmission:
-        'A custom domain is connected but no code has been submitted yet.',
+      notApplicable: 'This academy is on a Mentoma subdomain, so eNamad does not apply.',
+      awaitingSubmission: 'A custom domain is connected but no code has been submitted yet.',
       lookup: 'Look up on eNamad',
       notePlaceholder: 'Review note (required when rejecting)',
       approve: 'Verify seal',
       reject: 'Reject seal',
-      rejectNeedsNote: 'A reason is required to reject.'
+      rejectNeedsNote: 'A reason is required to reject.',
     },
     moderation: {
       title: 'Default content publishing state',
@@ -3025,15 +2905,14 @@ export const en = {
         VIDEO: 'Videos',
         AUDIO: 'Voices',
         DOCUMENT: 'Files',
-        ARTICLE: 'Texts and articles'
+        ARTICLE: 'Texts and articles',
       },
       queueTitle: 'Content awaiting approval',
-      queueDescription:
-        'Items still hidden from students because of a hold-for-review policy.',
+      queueDescription: 'Items still hidden from students because of a hold-for-review policy.',
       queueEmpty: 'Nothing is waiting for approval.',
       item: 'Content',
       reject: 'Reject',
-      rejectReason: 'Explain why this content is rejected:'
+      rejectReason: 'Explain why this content is rejected:',
     },
     sellerIdentity: {
       title: 'Publisher identity',
@@ -3046,22 +2925,19 @@ export const en = {
       economicCode: 'Economic code (optional)',
       vatRegistrationNo: 'VAT registration (optional)',
       permitLabel: 'I hold any teaching permits my activity requires',
-      permitHelp:
-        'Required under the platform agreement before connecting a custom domain.',
+      permitHelp: 'Required under the platform agreement before connecting a custom domain.',
       save: 'Save identity',
       complete: 'Complete',
       incomplete: 'Incomplete',
-      savedComplete:
-        'Publisher identity saved — you can connect your domain now',
-      savedIncomplete: 'Saved — fill the remaining fields to publish'
+      savedComplete: 'Publisher identity saved — you can connect your domain now',
+      savedIncomplete: 'Saved — fill the remaining fields to publish',
     },
     kyc: {
-      title: 'Identity verification'
+      title: 'Identity verification',
     },
     enamad: {
       title: 'eNamad trust seal',
-      description:
-        'eNamad is issued per domain, to the registered owner of that domain.',
+      description: 'eNamad is issued per domain, to the registered owner of that domain.',
       subdomainNotice:
         'Your academy runs on a Mentoma subdomain, so eNamad cannot be obtained for it. Connecting your own domain makes the seal both possible and required.',
       statusTitle: 'Seal status',
@@ -3092,33 +2968,32 @@ export const en = {
       sealIdHelp:
         'After eNamad issues the seal, copy the numeric id= value from the snippet. We put the official widget in your footer.',
       titleVerifyLabel: 'Put the code in the homepage title',
-      titleVerifyHelp:
-        'Turn on only while you click “verify title” in eNamad, then turn it off.',
+      titleVerifyHelp: 'Turn on only while you click “verify title” in eNamad, then turn it off.',
       footerLive: 'Official seal is showing in the public footer',
       saveSealId: 'Save badge id',
       step: {
         ownership: {
           title: 'Domain ownership',
-          body: 'The domain must be registered to the same person or company you entered in Mentoma.'
+          body: 'The domain must be registered to the same person or company you entered in Mentoma.',
         },
         businessInfo: {
           title: 'Business details',
-          body: 'National ID or company ID, plus registration notice and official gazette for companies.'
+          body: 'National ID or company ID, plus registration notice and official gazette for companies.',
         },
         contactInfo: {
           title: 'Contact details',
-          body: 'A landline in your own name, postal address and postcode. The landline is verified by phone call.'
+          body: 'A landline in your own name, postal address and postcode. The landline is verified by phone call.',
         },
         commitment: {
           title: 'Undertaking and activity permit',
-          body: 'The eNamad undertaking, and a teaching permit from the competent authority where required.'
+          body: 'The eNamad undertaking, and a teaching permit from the competent authority where required.',
         },
         technical: {
           title: 'Technical access to the domain',
-          body: 'We place the file at the site root and the meta tag in the header. You confirm them in eNamad, keep info@ working, then paste the badge id for the footer.'
-        }
-      }
-    }
+          body: 'We place the file at the site root and the meta tag in the header. You confirm them in eNamad, keep info@ working, then paste the badge id for the footer.',
+        },
+      },
+    },
   },
   settings: {
     sitePages: {
@@ -3159,8 +3034,8 @@ export const en = {
         youtube: 'YouTube',
         twitter: 'X',
         aparat: 'Aparat',
-        eitaa: 'Eitaa'
-      }
+        eitaa: 'Eitaa',
+      },
     },
     title: 'Settings',
     defaultAcademy: {
@@ -3171,7 +3046,7 @@ export const en = {
       single: 'You only have one academy — no need to pick a default.',
       pickOne: 'Pick one',
       noDefault: '— no default —',
-      saved: 'Default academy saved'
+      saved: 'Default academy saved',
     },
     subscriptionTitle: 'Subscription',
     loadingSubscription: 'Loading subscription...',
@@ -3198,16 +3073,14 @@ export const en = {
       personal: 'Personal',
       personalDescription: 'Your user account only',
       platform: 'Platform',
-      platformDescription:
-        'Your subscription plan and academy settings on the platform',
+      platformDescription: 'Your subscription plan and academy settings on the platform',
       academy: 'Students',
-      academyDescription: 'Site, pricing, and plans your learners see and buy'
+      academyDescription: 'Site, pricing, and plans your learners see and buy',
     },
     groupPersonal: 'Personal',
     groupPersonalDescription: 'Your profile and account security',
     groupPlatform: 'Academy & subscription',
-    groupPlatformDescription:
-      'Your subscription, academy details, and plan limits',
+    groupPlatformDescription: 'Your subscription, academy details, and plan limits',
     groupAcademy: 'Site & student sales',
     groupAcademyDescription: 'Site template and the plans students see and buy',
     platformPlanTitle: 'Academy Subscription',
@@ -3216,21 +3089,16 @@ export const en = {
     managePlatformPlan: 'Manage subscription',
     noPlan: 'No plan',
     daysRemaining: 'Days remaining',
-    subscriptionReadOnlyHint:
-      'Upgrade or change plan from the Platform Plan page',
-    storeSettingsPlatformDescription:
-      'Your academy name, site address, and description',
+    subscriptionReadOnlyHint: 'Upgrade or change plan from the Platform Plan page',
+    storeSettingsPlatformDescription: 'Your academy name, site address, and description',
     studentPricingTitle: 'Student Pricing Page',
-    studentPricingDescription:
-      'Marketing copy on the pricing page your students see',
+    studentPricingDescription: 'Marketing copy on the pricing page your students see',
     studentPlansTitle: 'Student Plans',
-    studentPlansDescription:
-      'Subscription and package plans you sell to students',
+    studentPlansDescription: 'Subscription and package plans you sell to students',
     platformPricingTitle: 'Platform Pricing',
     platformPricingDescription: 'Monetization policy shown to academy managers',
     paymentGatewayTitle: 'Payment Gateway',
-    paymentGatewayDescription:
-      'Configure PayPing and other payment gateway credentials',
+    paymentGatewayDescription: 'Configure PayPing and other payment gateway credentials',
     gateway: {
       subtitle: 'Configure API tokens and manage payment gateway providers',
       adapterStatusTitle: 'Gateway adapter status',
@@ -3249,8 +3117,7 @@ export const en = {
       seeDocs: 'See docs',
       activeAccepting: 'Active — accepting payments',
       inactiveDisabled: 'Inactive — disabled',
-      sandboxMode:
-        'Sandbox mode — uses test credentials and the test bank endpoint',
+      sandboxMode: 'Sandbox mode — uses test credentials and the test bank endpoint',
       productionMode: 'Production mode — uses the live bank endpoint',
       apiToken: 'API token / secret',
       tokenIsSet: 'Token is set',
@@ -3273,10 +3140,9 @@ export const en = {
       paypingGuide5: 'The system uses PayPing API v3 (api.payping.ir/v3)',
       samanNotesTitle: 'Saman SEP setup notes (from merchant docs)',
       samanRequired: 'Required for the token flow:',
-      samanWhitelist:
-        'Recommended: whitelist your server IP with Saman before production.',
+      samanWhitelist: 'Recommended: whitelist your server IP with Saman before production.',
       samanKeepDisabled:
-        'Keep Saman disabled until the initiate and verify flow is fully implemented.'
+        'Keep Saman disabled until the initiate and verify flow is fully implemented.',
     },
     general: 'General',
     language: 'Language',
@@ -3286,8 +3152,7 @@ export const en = {
     store: 'Academy',
     security: 'Security',
     profile: 'Profile',
-    description:
-      'Manage your profile, academy configuration, branding, and security preferences.',
+    description: 'Manage your profile, academy configuration, branding, and security preferences.',
     refreshData: 'Refresh Data',
     accountSummary: 'Account Summary',
     accountSummaryDescription: 'Key information for your admin account.',
@@ -3314,8 +3179,7 @@ export const en = {
       formTitle: 'Identity verification',
       formDescription:
         'National ID vs your login mobile, then Sheba. After Sheba confirm your identity is verified and you can request settlement.',
-      ownerOnly:
-        'Only the academy creating manager can view and edit identity verification.',
+      ownerOnly: 'Only the academy creating manager can view and edit identity verification.',
       stepDone: 'Confirmed',
       stepCurrent: 'In progress',
       stepPending: 'Not started',
@@ -3329,11 +3193,9 @@ export const en = {
       verifying: 'Verifying…',
       shahkarMatched: 'National ID matched your login phone',
       ibanMatched: 'Sheba matched your national ID and birth date',
-      ibanConfirmed:
-        'Account details confirmed. You can request a settlement now.',
+      ibanConfirmed: 'Account details confirmed. You can request a settlement now.',
       confirmedSoFar: 'Confirmed so far',
-      identityStepHint:
-        'We check your national code against the mobile you signed in with.',
+      identityStepHint: 'We check your national code against the mobile you signed in with.',
       shebaStepHint:
         'We check your Sheba against the national code from the previous step and your birth date.',
       ibanInfoTitle: 'Bank account details',
@@ -3354,14 +3216,11 @@ export const en = {
       pendingIbanNotice:
         'A new Sheba is waiting for your confirmation. Until then, settlements go to the current Sheba. Press "Add a new Sheba" to continue.',
       usedInAcademies: 'Used in: {{names}}',
-      settlementUnlocked:
-        'Bank identity is complete. You can request a settlement.',
+      settlementUnlocked: 'Bank identity is complete. You can request a settlement.',
       serviceDisabled:
         'Automatic verification is not configured yet. The form is visible but disabled until API_IR_TOKEN is set on the server.',
-      rateLimited:
-        'Too many failed attempts on this step. Wait 24 hours. Other steps stay open.',
-      attemptsRemaining:
-        '{{count}} of {{total}} attempts left today for this step',
+      rateLimited: 'Too many failed attempts on this step. Wait 24 hours. Other steps stay open.',
+      attemptsRemaining: '{{count}} of {{total}} attempts left today for this step',
       firstName: 'First name',
       lastName: 'Last name',
       legalEntityName: 'Legal / full name',
@@ -3378,22 +3237,19 @@ export const en = {
       permitLabel: 'I hold any teaching permits my activity requires',
       permitHelp: 'Publisher declaration under the platform agreement.',
       verifiedNotice: 'Identity verified. You can connect a custom domain.',
-      domainBlocked:
-        'Complete identity verification before connecting a custom domain.',
+      domainBlocked: 'Complete identity verification before connecting a custom domain.',
       domainReady: 'Identity is verified for this academy.',
       goToIdentity: 'Open identity verification',
       status: {
         MISSING: 'Identity missing',
         PARTIAL: 'Identity incomplete',
-        VERIFIED: 'Identity verified'
-      }
+        VERIFIED: 'Identity verified',
+      },
     },
     storeSettings: 'Academy Details',
-    storeSettingsDescription:
-      'Edit your academy name, description, and site address.',
+    storeSettingsDescription: 'Edit your academy name, description, and site address.',
     themeBranding: 'Theme & Branding',
-    themeBrandingDescription:
-      'Customize colours, logos, and visual appearance for students.',
+    themeBrandingDescription: 'Customize colours, logos, and visual appearance for students.',
     uiTemplateBuilder: 'Site Template',
     uiTemplateBuilderDescription:
       'Arrange the layout and sections of the academy site students see.',
@@ -3401,18 +3257,15 @@ export const en = {
       'Change passwords, enable two-factor authentication, and manage notifications.',
     openSettings: 'Open settings',
     profileSettingsTitle: 'Profile Settings',
-    profileSettingsSubtitle:
-      'Update the personal information other administrators will see.',
+    profileSettingsSubtitle: 'Update the personal information other administrators will see.',
     profileInformation: 'Profile Information',
-    profileInformationDescription:
-      'Manage your avatar, contact information, and bio.',
+    profileInformationDescription: 'Manage your avatar, contact information, and bio.',
     uploadPhoto: 'Upload Photo',
     photoFormatHint: 'JPG, PNG or GIF up to 2MB.',
     photoDropHint: 'Drop a photo here, or click to choose one.',
     photoTooLarge: 'The photo is larger than 2MB.',
     photoInvalidType: 'Only JPG, PNG, GIF or WebP images are accepted.',
-    passwordSessionNote:
-      'The new password replaces the old one right away and you stay signed in.',
+    passwordSessionNote: 'The new password replaces the old one right away and you stay signed in.',
     fullName: 'Full name',
     fullNamePlaceholder: 'Jane Doe',
     emailPlaceholder: 'jane@skillforge.com',
@@ -3423,17 +3276,14 @@ export const en = {
     saving: 'Saving…',
     saveChanges: 'Save changes',
     pricingCmsTitle: 'Pricing CMS',
-    pricingCmsSubtitle:
-      'Edit public platform pricing page content without code changes.',
+    pricingCmsSubtitle: 'Edit public platform pricing page content without code changes.',
     pricingCmsCardDescription: 'Manage public pricing page copy',
     publicPricingContentTitle: 'Public Pricing Content',
-    publicPricingContentDescription:
-      'This content is shown on the platform-level pricing page.',
+    publicPricingContentDescription: 'This content is shown on the platform-level pricing page.',
     pricingPageTitleLabel: 'Page title',
     pricingPageTitlePlaceholder: 'Pricing Plans',
     pricingSubtitleLabel: 'Subtitle',
-    pricingSubtitlePlaceholder:
-      'Clear pricing for creators, mentors, and academy businesses...',
+    pricingSubtitlePlaceholder: 'Clear pricing for creators, mentors, and academy businesses...',
     pricingCtaLabel: 'CTA label',
     pricingCtaPlaceholder: 'Start With Your Plan',
     pricingUpdatedSuccess: 'Pricing content updated successfully',
@@ -3468,8 +3318,7 @@ export const en = {
     showcaseMobileHint:
       'Mobile site screenshot inside the phone frame — 390 x 844 pixels works best, keep the file small for faster loading',
     showcaseSaved: 'Showcase images saved',
-    storeSettingsSubtitle:
-      'Sets your academy name, site address, and description on the platform.',
+    storeSettingsSubtitle: 'Sets your academy name, site address, and description on the platform.',
     academyFeaturesTitle: 'Learning features',
     academyFeaturesDescription:
       'Enable or disable learning paths and follow-up tools for your academy.',
@@ -3484,15 +3333,13 @@ export const en = {
     enrollmentEnabled: 'One-time enrollment',
     enrollmentEnabledDescription: 'Sell courses with a single payment.',
     subscriptionEnabled: 'Course subscriptions',
-    subscriptionEnabledDescription:
-      'Recurring access and subscription renewals.',
+    subscriptionEnabledDescription: 'Recurring access and subscription renewals.',
     liveClassesEnabled: 'Live classes',
     liveClassesEnabledDescription: 'Schedule and run online live sessions.',
     featuresUpdatedSuccess: 'Features updated successfully',
     savingFeatures: 'Saving…',
     generalInformation: 'General Information',
-    generalInformationDescription:
-      'Update the name, description, and domain for your academy.',
+    generalInformationDescription: 'Update the name, description, and domain for your academy.',
     storeName: 'Academy name',
     storeNamePlaceholder: 'e.g. Mehr Language Academy',
     customDomain: 'Custom domain',
@@ -3516,15 +3363,12 @@ export const en = {
       title: 'Custom domain DNS',
       description: 'Connect your site to Mentoma. Just copy the table.',
       targetTitle: 'Where traffic must go',
-      targetDescription:
-        'Paste this into the Value field. Copy it — do not type by hand.',
+      targetDescription: 'Paste this into the Value field. Copy it — do not type by hand.',
       currentDomain: 'Saved domain: {{domain}}',
-      noDomainYet:
-        'No domain saved yet. Add it in Academy details, then come back.',
+      noDomainYet: 'No domain saved yet. Add it in Academy details, then come back.',
       openAcademySettings: 'Open academy details',
       stepsTitle: 'Connection steps',
-      stepsDescription:
-        'Do this in Arvan Cloud (or your DNS site). Do not change Mentoma DNS.',
+      stepsDescription: 'Do this in Arvan Cloud (or your DNS site). Do not change Mentoma DNS.',
       checklistTitle: 'Connection checklist',
       checklistDescription:
         'Green means done. Your job: Arvan → Add DNS → Type, Title, Value, Cloud.',
@@ -3559,7 +3403,7 @@ export const en = {
         fillTitle: 'Copy Title from the Title column.',
         fillValue: 'Copy Value from the Value column.',
         setCloud: 'Set Cloud like the Cloud column: On or Off.',
-        save: 'Save. For the next row, press Add DNS again.'
+        save: 'Save. For the next row, press Add DNS again.',
       },
       recommendedTitle: 'Recommended — www',
       apexTitle: 'Root domain (@)',
@@ -3568,74 +3412,72 @@ export const en = {
       wizard: {
         save: {
           title: 'Write your site address in Mentoma',
-          body: 'In Academy details, write the address (e.g. www.maral.ir). Then come back and press Recheck.'
+          body: 'In Academy details, write the address (e.g. www.maral.ir). Then come back and press Recheck.',
         },
         hamravesh: {
           title: 'Add the domain in Hamravesh',
           body: 'Platform adds {{domain}} in Hamravesh.',
           blank: 'Address added in Hamravesh',
-          check: 'Check — domain added in Hamravesh'
+          check: 'Check — domain added in Hamravesh',
         },
         acmePaste: {
           title: 'Paste padlock rows from Hamravesh',
           body: 'Title is short: _acme-challenge or _acme-challenge.www. Not the full domain.',
           addRow: 'Add row',
-          check: 'Check — rows saved for manager'
+          check: 'Check — rows saved for manager',
         },
         traffic: {
           title: 'In Arvan, press Add DNS',
           bodyBefore: 'Go to',
-          bodyAfter:
-            'Open your domain. Copy Type, Title, Value, and Cloud from the table.',
-          check: 'Check DNS'
+          bodyAfter: 'Open your domain. Copy Type, Title, Value, and Cloud from the table.',
+          check: 'Check DNS',
         },
         acmeDns: {
           title: 'Padlock rows (HTTPS)',
           body: 'Press Add DNS again. Title is short (_acme-challenge). Cloud must be Off.',
           waitPlatform: 'Wait for step 3. Then come back.',
           check: 'Check — I added the padlock rows',
-          proxyOff: 'Cloud on these rows must be Off.'
+          proxyOff: 'Cloud on these rows must be Off.',
         },
         ssl: {
           title: 'Confirm SSL in Hamravesh',
           body: 'Platform checks that the certificate is valid in Hamravesh.',
-          check: 'Check — SSL is valid'
-        }
+          check: 'Check — SSL is valid',
+        },
       },
       step: {
         saveDomain: {
           title: 'Write your site address in Mentoma',
-          body: 'In Academy details write: www.{{example}}'
+          body: 'In Academy details write: www.{{example}}',
         },
         openDns: {
           title: 'Open Arvan',
           bodyBefore: 'Go to',
-          bodyAfter: 'Open domain {{example}}. Not Mentoma DNS.'
+          bodyAfter: 'Open domain {{example}}. Not Mentoma DNS.',
         },
         addRecord: {
           title: 'Add DNS: Type, Title, Value',
-          body: 'Title is only @ or www. Value: {{target}}. Cloud: On.'
+          body: 'Title is only @ or www. Value: {{target}}. Cloud: On.',
         },
         noNsChange: {
           title: 'Do not change nameservers',
-          body: 'Only add DNS rows.'
+          body: 'Only add DNS rows.',
         },
         ssl: {
           title: 'Padlock rows (if shown)',
-          body: 'Title: _acme-challenge. Cloud: Off. Do not copy mentoma.ir rows.'
+          body: 'Title: _acme-challenge. Cloud: Off. Do not copy mentoma.ir rows.',
         },
         wait: {
           title: 'Wait a few minutes',
-          body: 'Usually a few minutes. Sometimes up to two hours.'
-        }
-      }
+          body: 'Usually a few minutes. Sometimes up to two hours.',
+        },
+      },
     },
     securityTitle: 'Security',
     securitySubtitle:
       'Strengthen your account by keeping credentials and notifications up to date.',
     changePassword: 'Change password',
-    changePasswordDescription:
-      'Set a new password directly — your current one is not needed.',
+    changePasswordDescription: 'Set a new password directly — your current one is not needed.',
     currentPassword: 'Current password',
     currentPasswordPlaceholder: 'Enter your current password',
     newPassword: 'New password',
@@ -3646,8 +3488,7 @@ export const en = {
     updatePassword: 'Update password',
     passwordUpdatedSuccess: 'Password updated successfully',
     newPasswordsDoNotMatch: 'New passwords do not match',
-    unableToLoadProfile:
-      'Unable to load account profile. Please refresh and try again.',
+    unableToLoadProfile: 'Unable to load account profile. Please refresh and try again.',
     activeSessions: 'Active sessions',
     activeSessionsDescription:
       'Devices currently signed in to your account. End any session you do not recognise.',
@@ -3655,16 +3496,14 @@ export const en = {
     thisDevice: 'This device',
     sessionLastActive: 'Last active {{date}}',
     terminateSession: 'Terminate',
-    terminateSessionConfirm:
-      'Sign {{device}} out of your account? It will need to log in again.',
+    terminateSessionConfirm: 'Sign {{device}} out of your account? It will need to log in again.',
     terminateOtherSessions: 'Sign out my other devices',
     terminateOtherSessionsConfirm:
       'Sign out {{count}} other device(s)? This device stays signed in.',
     sessionTerminated: 'Session terminated',
     otherSessionsTerminated: 'Other devices signed out',
     twoFactorAuthentication: 'Two-factor authentication',
-    twoFactorAuthenticationDescription:
-      'Add an additional layer of security to your account.',
+    twoFactorAuthenticationDescription: 'Add an additional layer of security to your account.',
     twoFactorAuthenticationText:
       'Enable two-factor authentication (2FA) to require a one-time code in addition to your password when signing in. Hardware keys, authenticator apps, and SMS are supported.',
     configure2FA: 'Configure 2FA',
@@ -3672,24 +3511,19 @@ export const en = {
     notificationPreferencesDescription:
       'Choose which product and payment notifications you receive.',
     emailNotifications: 'Email notifications',
-    emailNotificationsDescription:
-      'Receive important account and product updates by email.',
+    emailNotificationsDescription: 'Receive important account and product updates by email.',
     smsAlerts: 'SMS alerts',
-    smsAlertsDescription:
-      'Get text messages for critical payment and security events.',
+    smsAlertsDescription: 'Get text messages for critical payment and security events.',
     courseUpdates: 'Course updates',
-    courseUpdatesDescription:
-      'Stay informed when courses or lessons are added or updated.',
+    courseUpdatesDescription: 'Stay informed when courses or lessons are added or updated.',
     paymentAlerts: 'Payment alerts',
     paymentAlertsDescription: 'Receive receipts and payout notifications.',
     savePreferences: 'Save preferences',
     notificationPreferencesSaved: 'Notification preferences saved',
     themeBrandingTitle: 'Theme & Branding',
-    themeBrandingSubtitle:
-      'Customize the look and feel of your آکادمی academies for students.',
+    themeBrandingSubtitle: 'Customize the look and feel of your آکادمی academies for students.',
     colours: 'Colours',
-    coloursDescription:
-      'Choose the palette students will see across the platform.',
+    coloursDescription: 'Choose the palette students will see across the platform.',
     primaryColour: 'Primary colour',
     primaryColourHelper: 'Buttons, highlights, and key actions.',
     secondaryColour: 'Secondary colour',
@@ -3714,12 +3548,10 @@ export const en = {
       'Primary buttons, highlights, and accents will use your selected palette. Toggle dark mode to preview the student experience.',
     primaryAction: 'Primary action',
     brandAssets: 'Brand assets',
-    brandAssetsDescription:
-      'Upload logos and set branding resources for certificates and emails.',
+    brandAssetsDescription: 'Upload logos and set branding resources for certificates and emails.',
     logoUrl: 'Logo URL',
     logoUrlPlaceholder: 'https://cdn.yourstore.com/logo.png',
-    logoUrlHint:
-      'Provide a publicly accessible image URL. SVG is recommended for crisp results.',
+    logoUrlHint: 'Provide a publicly accessible image URL. SVG is recommended for crisp results.',
     preview: 'Preview',
     storeLogoPreview: 'Academy logo preview',
     noLogoProvided: 'No logo provided yet. Paste a URL to preview.',
@@ -3731,8 +3563,7 @@ export const en = {
     advancedCustomizationDescription:
       'Customize animations, patterns, and visual effects for your academy website',
     backgroundAnimation: 'Background Animation',
-    backgroundAnimationHelp:
-      'Choose an animated background effect for your website',
+    backgroundAnimationHelp: 'Choose an animated background effect for your website',
     backgroundAnimationGradient: 'Gradient Flow',
     backgroundAnimationBlobs: 'Gradient Blobs',
     backgroundAnimationParticles: 'Particles',
@@ -3745,8 +3576,7 @@ export const en = {
     speedFast: 'Fast',
     svgPatternOptional: 'SVG Pattern (Optional)',
     svgPatternPlaceholder: 'pattern-dots, pattern-grid, pattern-waves, etc.',
-    svgPatternHelper:
-      'Enter a pattern ID to use as background overlay (leave empty for none)',
+    svgPatternHelper: 'Enter a pattern ID to use as background overlay (leave empty for none)',
     elementAnimationStyle: 'Element Animation Style',
     elementAnimationSubtle: 'Subtle',
     elementAnimationModerate: 'Moderate',
@@ -3762,8 +3592,7 @@ export const en = {
     shadowMedium: 'Medium',
     shadowStrong: 'Strong',
     uiTemplateBuilderTitle: 'Site Template',
-    uiTemplateBuilderSubtitle:
-      'Arrange the layout and sections of the academy site students see.',
+    uiTemplateBuilderSubtitle: 'Arrange the layout and sections of the academy site students see.',
     basedOn: 'Based on',
     chooseTemplate: 'Choose Template',
     chooseTemplateLayout: 'Choose Template Layout',
@@ -3801,24 +3630,20 @@ export const en = {
     publishing: 'Publishing...',
     previewUpdating: 'Updating preview...',
     previewLoading: 'Loading preview...',
-    previewUnavailable:
-      'Live preview is temporarily unavailable. Please try again later.',
+    previewUnavailable: 'Live preview is temporarily unavailable. Please try again later.',
     templateAppliedSuccess: 'Template "{presetId}" applied successfully',
     selectBlockToEdit: 'Select a block from the list to edit its settings.',
     editBlock: 'Block Settings',
-    noBlocksMessage:
-      'No blocks defined. Select and apply a preset to get started.',
+    noBlocksMessage: 'No blocks defined. Select and apply a preset to get started.',
     moveUp: 'Move up',
     moveDown: 'Move down',
     publishSite: 'Publish Site',
     previewSite: 'Preview',
     changeTemplate: 'Change Template',
     templateStatus: 'Template Status',
-    templateStatusDescription:
-      'Disable to fall back to the default storefront.',
+    templateStatusDescription: 'Disable to fall back to the default storefront.',
     themeGeneratorTitle: 'Theme Generator',
-    themeGeneratorSubtitle:
-      'Design and generate creative themes for your customers.',
+    themeGeneratorSubtitle: 'Design and generate creative themes for your customers.',
     copyConfig: 'Copy Config',
     copied: 'Copied!',
     applyToStore: 'Apply to Store',
@@ -3833,8 +3658,7 @@ export const en = {
     style: 'Style',
     themeGeneratorApplied: 'Theme applied to academy successfully',
     presetsTitle: 'Curated Theme Presets',
-    presetsDescription:
-      'Start from a professionally designed preset, then fine-tune it',
+    presetsDescription: 'Start from a professionally designed preset, then fine-tune it',
     colorPaletteTitle: 'Color Palette',
     colorPaletteDescription: 'Set distinct colors for light and dark modes',
     darkModeLabel: 'Default Mode',
@@ -3848,8 +3672,7 @@ export const en = {
     colorBackground: 'Background',
     colorBackgroundHelper: 'Page canvas color behind all content',
     colorAccent: 'Accent',
-    colorAccentHelper:
-      'Discount labels, sale badges, call-to-action highlights',
+    colorAccentHelper: 'Discount labels, sale badges, call-to-action highlights',
     quickPalettes: 'Quick Palettes',
     quickPalettesLabel: 'Quick Palettes',
     paletteCoolBlue: 'Cool Blue',
@@ -3859,12 +3682,10 @@ export const en = {
     paletteOceanDeep: 'Ocean Deep',
     paletteMinimalDark: 'Minimal Dark',
     effectsTitle: 'Background Effects',
-    effectsDescription:
-      'Choose how the background animates on your academyfront',
+    effectsDescription: 'Choose how the background animates on your academyfront',
     svgPattern: 'SVG Pattern',
     styleTitle: 'Visual Style',
-    styleDescription:
-      'Control border radius, shadows, and element animation intensity',
+    styleDescription: 'Control border radius, shadows, and element animation intensity',
     borderRadius: 'Border Radius',
     elementAnimation: 'Element Animation',
     configSummary: 'Config Summary',
@@ -3907,8 +3728,7 @@ export const en = {
     sectionImportedSuccess: 'Section added to draft',
     sectionStyleLabel: 'Design',
     sectionReplaceTitle: 'Change section design',
-    sectionReplaceDescription:
-      'Pick a different design for this section. Your content is kept.',
+    sectionReplaceDescription: 'Pick a different design for this section. Your content is kept.',
     sectionReplace: 'Apply design',
     sectionReplacing: 'Changing…',
     sectionSwappedSuccess: 'Section design changed',
@@ -3943,18 +3763,17 @@ export const en = {
     bgTypeImage: 'Image',
     heroModeLabel: 'Hero Banner',
     slideshowModeLabel: 'Slideshow',
-    slideshowSpeed: 'Slide Speed'
+    slideshowSpeed: 'Slide Speed',
   },
   fileUploader: {
     dropHere: 'Drop the files here',
     dragOrClick: 'Drag and drop a file here, or click to select',
     limitSingle: 'Maximum size: {{size}}',
-    limitMultiple: 'Up to {{count}} files, {{size}} each'
+    limitMultiple: 'Up to {{count}} files, {{size}} each',
   },
   media: {
     videoLoading: 'Preparing secure playback…',
-    videoPlaybackFailed:
-      'This video could not be played. Please refresh the page.',
+    videoPlaybackFailed: 'This video could not be played. Please refresh the page.',
     changeImage: 'Change image',
     cancelUpload: 'Cancel upload',
     videoUploaded: 'Video uploaded successfully',
@@ -3970,8 +3789,7 @@ export const en = {
     noImageSelected: 'No image selected',
     videoPoster: 'Video poster',
     noPosterSelected: 'No poster selected',
-    dropImageHint:
-      'Click to browse or drag an image here — smaller files help pages load faster',
+    dropImageHint: 'Click to browse or drag an image here — smaller files help pages load faster',
     dropVideoHint: 'Click to browse or drag a video here',
     dropAudioHint: 'Click to browse or drag an audio file here',
     dropDocumentHint: 'Click to browse or drag a file here',
@@ -4068,8 +3886,7 @@ export const en = {
     editAudio: 'Edit Audio',
     updateMetadata: 'Update the metadata for this audio file.',
     publiclyAccessible: 'Publicly accessible',
-    allowMembersAccess:
-      'Allow members of the academy to access this audio file.',
+    allowMembersAccess: 'Allow members of the academy to access this audio file.',
     audioLabel: 'Audio',
     audioFile: 'audio file',
     untitledAudio: 'Untitled audio',
@@ -4083,8 +3900,7 @@ export const en = {
     retry: 'Retry',
     failedToLoadAudioFiles: 'Failed to load audio files. Please try again.',
     unableToPlayAudioFile: 'Unable to play audio file.',
-    audioElementNotSupported:
-      'Your browser does not support the audio element.',
+    audioElementNotSupported: 'Your browser does not support the audio element.',
     // Categories
     categories: 'Categories',
     loadingCategories: 'Loading categories...',
@@ -4112,14 +3928,11 @@ export const en = {
     audioFileHint: 'MP3, WAV, OGG, WebM — max 50MB',
     audioTitlePlaceholder: 'Enter audio title',
     audioDescriptionPlaceholder: 'Describe the audio content and its purpose',
-    uploadDocumentDescription:
-      'Upload documents, PDFs, presentations and other course files',
+    uploadDocumentDescription: 'Upload documents, PDFs, presentations and other course files',
     documentFile: 'Document file',
-    documentFileHint:
-      'PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, MD — max 20MB',
+    documentFileHint: 'PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, MD — max 20MB',
     documentTitlePlaceholder: 'Enter document title',
-    documentDescriptionPlaceholder:
-      'Describe the document content and its purpose',
+    documentDescriptionPlaceholder: 'Describe the document content and its purpose',
     documentPreviewFallback: 'Document preview',
     attachedToLessons: 'Attached to lessons',
     standaloneVideos: 'Standalone',
@@ -4162,7 +3975,7 @@ export const en = {
     tags: 'Tags',
     tagsPlaceholder: 'e.g. introduction, tutorial, overview',
     tagsHint: 'Tags help you organize your videos',
-    uploading: 'Uploading...'
+    uploading: 'Uploading...',
   },
   assignmentsPage: {
     title: 'Assignments',
@@ -4174,8 +3987,7 @@ export const en = {
     assignmentsTab: 'Assignments',
     submissionsTab: 'Submissions',
     allAssignments: 'All Assignments',
-    allAssignmentsDescription:
-      'Assignments created for lessons across your courses',
+    allAssignmentsDescription: 'Assignments created for lessons across your courses',
     searchAssignments: 'Search assignments...',
     assignment: 'Assignment',
     lesson: 'Lesson',
@@ -4186,8 +3998,7 @@ export const en = {
     noAssignmentsFound: 'No assignments found',
     notAvailable: '—',
     studentSubmissions: 'Student Submissions',
-    studentSubmissionsDescription:
-      'Review and grade student assignment submissions',
+    studentSubmissionsDescription: 'Review and grade student assignment submissions',
     student: 'Student',
     status: 'Status',
     score: 'Score',
@@ -4210,7 +4021,7 @@ export const en = {
     filterByCourse: 'Filter by course',
     filterByStatus: 'Filter by status',
     allStatuses: 'All statuses',
-    clearFilters: 'Clear filters'
+    clearFilters: 'Clear filters',
   },
   learningNav: {
     accessDenied: 'Access not available',
@@ -4219,7 +4030,7 @@ export const en = {
     noSellingCourses:
       'No courses with one-time, public subscription, or private tutoring sales were found in your scope.',
     privateSubRequired:
-      'Private tutoring must be active on at least one course, and learning follow-up must be enabled.'
+      'Private tutoring must be active on at least one course, and learning follow-up must be enabled.',
   },
   messages: {
     sendMessage: 'Send message',
@@ -4236,8 +4047,7 @@ export const en = {
     recipientCount: 'Sending to {{count}} people',
     sentCount: 'Message sent to {{sent}} people',
     sentWithSkipped: 'Sent to {{sent}}; {{skipped}} were unreachable',
-    messengerHint:
-      'Telegram and Bale only reach students who have started the bot.'
+    messengerHint: 'Telegram and Bale only reach students who have started the bot.',
   },
   users: {
     allUsers: 'All Users',
@@ -4259,7 +4069,7 @@ export const en = {
       ACTIVE: 'Active',
       INACTIVE: 'Inactive',
       SUSPENDED: 'Suspended',
-      BANNED: 'Banned'
+      BANNED: 'Banned',
     },
     listTitle: 'Users',
     colUser: 'User',
@@ -4269,8 +4079,7 @@ export const en = {
     colEmail: 'Email',
     colPhone: 'Phone',
     colActions: 'Actions',
-    detailSheetDescription:
-      'User detail, purchase history, academy roles, and support actions',
+    detailSheetDescription: 'User detail, purchase history, academy roles, and support actions',
     loadingDetails: 'Loading details...',
     detailName: 'Name',
     resetPassword: 'Reset Password',
@@ -4278,8 +4087,7 @@ export const en = {
     newPasswordDescription:
       'Share this password with the user. They must set their own password on first login.',
     deleteUserTitle: 'Delete user',
-    confirmDeleteUser:
-      'Are you sure you want to delete {{name}}? This cannot be undone.',
+    confirmDeleteUser: 'Are you sure you want to delete {{name}}? This cannot be undone.',
     userDeleted: 'User deleted',
     grantCourse: 'Grant Course',
     assignVoucher: 'Assign Voucher',
@@ -4339,8 +4147,7 @@ export const en = {
     revokeAccess: 'Revoke access',
     grantCourseAccessTitle: 'Grant course access',
     grantLessonAccessTitle: 'Grant lesson access',
-    grantAccessDescription:
-      'The selected access is given to every member of this group.',
+    grantAccessDescription: 'The selected access is given to every member of this group.',
     groupAccessGranted: 'Access granted successfully',
     selectCourses: 'Select courses',
     selectLessons: 'Select lessons',
@@ -4356,8 +4163,7 @@ export const en = {
     activeUsers: 'Active Users',
     pendingApproval: 'Pending Approval',
     pendingBannerTitle: '{{count}} teacher approval request(s) awaiting review',
-    pendingBannerDesc:
-      'These requests were submitted by students and require manager approval',
+    pendingBannerDesc: 'These requests were submitted by students and require manager approval',
     reviewRequests: 'Review',
     showingOf: 'Showing {{shown}} of {{total}}',
     systemRole: 'System',
@@ -4396,7 +4202,7 @@ export const en = {
     roleAdmin: 'Admin',
     roleSuperAdmin: 'Super Admin',
     roleSupport: 'Support',
-    roleUser: 'User'
+    roleUser: 'User',
   },
   userDetails: {
     title: 'User Details',
@@ -4437,7 +4243,7 @@ export const en = {
     purchasesDescription: "This user's purchase and payment history",
     noPurchases: 'No payments recorded yet',
     sendEmail: 'Send email',
-    sendSms: 'Send SMS'
+    sendSms: 'Send SMS',
   },
   userEdit: {
     title: 'Edit User',
@@ -4449,7 +4255,7 @@ export const en = {
     birthday: 'Birthday',
     accessDeniedTitle: 'Access Denied',
     accessDeniedDescription: 'You do not have permission to edit this user.',
-    backToUsers: 'Back to Users'
+    backToUsers: 'Back to Users',
   },
   admins: {
     title: 'Admin Users',
@@ -4499,8 +4305,8 @@ export const en = {
       PLATFORM_OWNER: 'Platform owner',
       ADMIN: 'Platform admin',
       FINANCE: 'Finance',
-      SUPPORT: 'Support'
-    }
+      SUPPORT: 'Support',
+    },
   },
   accountActions: {
     ban: 'Ban',
@@ -4510,8 +4316,7 @@ export const en = {
     banUserDescription:
       'They lose access in every academy and their active sessions end. The reason you write is shown to them when they try to sign in.',
     banMemberTitle: 'Ban inside this academy',
-    banMemberDescription:
-      'They lose access to your academy only. Their other academies stay open.',
+    banMemberDescription: 'They lose access to your academy only. Their other academies stay open.',
     unbanConfirm: 'Lift the ban on this person?',
     reasonLabel: 'Reason (shown to the person)',
     reasonPlaceholder: 'e.g. Repeated breaches of the academy rules',
@@ -4542,7 +4347,7 @@ export const en = {
     confirmIdentifierLabel: 'Type this person\u2019s phone or email to confirm',
     confirmIdentifierMismatch: 'That does not match this account.',
     reset_ok: 'Reset completed',
-    irreversible: 'This cannot be undone.'
+    irreversible: 'This cannot be undone.',
   },
   platformUsers: {
     eyebrow: 'Platform',
@@ -4554,19 +4359,17 @@ export const en = {
     addStaff: 'Add staff',
     promote: 'Promote user',
     promoteTitle: 'Promote registered user',
-    promoteDescription:
-      'Look up an existing Mentoma account by phone and grant a staff role.',
+    promoteDescription: 'Look up an existing Mentoma account by phone and grant a staff role.',
     promoted: 'User promoted to platform staff',
     notRegistered: 'No registered user with this phone.',
     alreadyStaff: 'This person is already platform staff.',
     emptyStaff: 'No platform staff found.',
     emptyAcademy: 'No academy members found.',
-    academy: 'Academy'
+    academy: 'Academy',
   },
   createAdminUser: {
     title: 'Create Admin User',
-    description:
-      'Create a new admin user. Phone number and email must be verified with OTP.',
+    description: 'Create a new admin user. Phone number and email must be verified with OTP.',
     name: 'Name',
     namePlaceholder: 'Enter full name',
     phoneNumber: 'Phone Number',
@@ -4599,7 +4402,7 @@ export const en = {
     autoConfirmEmail: 'Auto-confirm email',
     autoConfirmPhone: 'Auto-confirm phone',
     autoConfirmed: 'Auto-confirmed',
-    platformRole: 'Platform role'
+    platformRole: 'Platform role',
   },
   changeUserRole: {
     title: 'Change User Role',
@@ -4608,23 +4411,21 @@ export const en = {
     newRole: 'New Role',
     selectRole: 'Select a role',
     noRole: 'No role',
-    changeRole: 'Change Role'
+    changeRole: 'Change Role',
   },
   teacherRequests: {
     title: 'Teacher Requests',
     description: 'Review and manage teacher access requests from students',
     noRequests: 'No Teacher Requests',
-    noRequestsDescription:
-      'There are no pending teacher requests at the moment.',
+    noRequestsDescription: 'There are no pending teacher requests at the moment.',
     allStatuses: 'All Statuses',
     noRequestsFound: 'No teacher requests found',
-    noRequestsFoundDescription:
-      'Teacher requests will appear here when students submit them.',
+    noRequestsFoundDescription: 'Teacher requests will appear here when students submit them.',
     approve: 'Approve',
     reject: 'Reject',
     pending: 'Pending',
     approved: 'Approved',
-    rejected: 'Rejected'
+    rejected: 'Rejected',
   },
   analytics: {
     overview: 'Analytics Overview',
@@ -4646,8 +4447,7 @@ export const en = {
     engagementBreakdownDescription: 'Distribution of current enrolment states.',
     noData: 'No Data',
     topPerformingCourses: 'Top Performing Courses',
-    topPerformingCoursesDescription:
-      'Leaderboard of courses by recent enrolments.',
+    topPerformingCoursesDescription: 'Leaderboard of courses by recent enrolments.',
     // Revenue Analytics
     revenueAnalytics: 'Revenue Analytics',
     revenueAnalyticsDescription:
@@ -4660,25 +4460,20 @@ export const en = {
     monthOverMonth: 'Month over Month',
     changeComparedPrevious: 'Change compared with previous month',
     monthlyRevenueVsEnrollments: 'Monthly Revenue vs Enrollments',
-    monthlyRevenueDescription:
-      'Track total revenue alongside transaction volume.',
+    monthlyRevenueDescription: 'Track total revenue alongside transaction volume.',
     revenueByCourse: 'Revenue by Course',
-    revenueByCourseDescription:
-      'Top course contributors across recorded payments.',
+    revenueByCourseDescription: 'Top course contributors across recorded payments.',
     noCourseRevenueData: 'No course revenue data available yet.',
     enrollmentValueByCourse: 'Enrolment Value by Course',
-    enrollmentValueDescription:
-      'Aggregation of payments captured per enrolment.',
+    enrollmentValueDescription: 'Aggregation of payments captured per enrolment.',
     // Course Performance
     coursePerformance: 'Course Performance',
     coursePerformanceDescription:
       'Understand which courses attract the most students and deliver the highest revenue.',
     activeVsCompleted: 'Active vs Completed Enrolments',
-    activeVsCompletedDescription:
-      'Trend of learner activity across recent months.',
+    activeVsCompletedDescription: 'Trend of learner activity across recent months.',
     topCoursesByEnrollments: 'Top Courses by Enrolments',
-    topCoursesByEnrollmentsDescription:
-      'Most popular courses among your students.',
+    topCoursesByEnrollmentsDescription: 'Most popular courses among your students.',
     revenueLeaderboard: 'Revenue Leaderboard',
     revenueLeaderboardDescription: 'Courses with the highest payment totals.',
     // Student Engagement
@@ -4692,8 +4487,7 @@ export const en = {
     completedStudentsDescription: 'Finished their course',
     activeCourses: 'Active Courses',
     activeCoursesDescription: 'Courses with active learners',
-    engagementDistributionDescription:
-      'Share of students per engagement segment.',
+    engagementDistributionDescription: 'Share of students per engagement segment.',
     coursesByEngagement: 'Courses by Engagement',
     coursesByEngagementDescription: 'Active vs completed status per course.',
     paymentDetails: 'Payment details',
@@ -4710,8 +4504,8 @@ export const en = {
       PAID: 'Paid',
       FAILED: 'Failed',
       CANCELLED: 'Cancelled',
-      REFUNDED: 'Refunded'
-    }
+      REFUNDED: 'Refunded',
+    },
   },
   payments: {
     transactions: 'Transactions',
@@ -4776,19 +4570,15 @@ export const en = {
     retiredGateways: 'Retired',
     retiredGatewaysDescription: 'Gateways kept for old payments only.',
     gatewayPerformance: 'Gateway Performance',
-    gatewayPerformanceDescription:
-      'Share of revenue and total payments per method.',
+    gatewayPerformanceDescription: 'Share of revenue and total payments per method.',
     noPaymentsProcessed:
       'No payments have been processed yet. Once transactions occur, you will see method-level metrics here.',
     creditDebitCards: 'Credit & Debit Cards',
-    creditDebitCardsDescription:
-      'Accept payments from all major card networks via Stripe.',
+    creditDebitCardsDescription: 'Accept payments from all major card networks via Stripe.',
     bankTransfer: 'Bank Transfer',
-    bankTransferDescription:
-      'Support direct ACH and wire payments for enterprise customers.',
+    bankTransferDescription: 'Support direct ACH and wire payments for enterprise customers.',
     digitalWallets: 'Digital Wallets',
-    digitalWalletsDescription:
-      'Let students pay with PayPal, Google Pay, or local wallets.',
+    digitalWalletsDescription: 'Let students pay with PayPal, Google Pay, or local wallets.',
     manageAccess: 'Manage Access',
     configure: 'Configure',
     ofRevenue: '% of revenue',
@@ -4814,37 +4604,35 @@ export const en = {
       IDPAY: 'IDPay',
       PAYMOB: 'Paymob',
       PAYTABS: 'PayTabs',
-      CHECKOUT_COM: 'Checkout.com'
+      CHECKOUT_COM: 'Checkout.com',
     },
     gatewayBadge: {
       active: 'Active',
       inactive: 'Inactive',
-      planned: 'Planned'
+      planned: 'Planned',
     },
     gateways: {
       bitpay: {
         title: 'BitPay Gateway',
-        description:
-          'Backup gateway. Switch to it from the owner panel if Saman is unavailable.'
+        description: 'Backup gateway. Switch to it from the owner panel if Saman is unavailable.',
       },
       payping: {
         title: 'PayPing Gateway',
-        description: 'Retired gateway, no longer used for new payments.'
+        description: 'Retired gateway, no longer used for new payments.',
       },
       samanSep: {
         title: 'Saman SEP',
         description:
-          'Default gateway — student checkouts and academy subscriptions settle through it.'
+          'Default gateway — student checkouts and academy subscriptions settle through it.',
       },
       mellatBp: {
         title: 'Mellat BP',
-        description: 'Retired gateway, no longer used for new payments.'
-      }
+        description: 'Retired gateway, no longer used for new payments.',
+      },
     },
     // Invoices Page
     invoices: 'Invoices',
-    invoicesDescription:
-      'Generate, monitor, and download invoices related to course purchases.',
+    invoicesDescription: 'Generate, monitor, and download invoices related to course purchases.',
     filters: 'Filters',
     createInvoice: 'Create Invoice',
     issued: 'Issued',
@@ -4856,8 +4644,7 @@ export const en = {
     refunded: 'Refunded',
     refundedDescription: 'Invoices refunded to students.',
     findInvoice: 'Find Invoice',
-    findInvoiceDescription:
-      'Search by student, course, invoice number, or status.',
+    findInvoiceDescription: 'Search by student, course, invoice number, or status.',
     searchInvoicesPlaceholder: 'Search invoices…',
     showingInvoices: 'Showing {{count}} of {{total}}',
     invoiceLedger: 'Invoice Ledger',
@@ -4866,7 +4653,7 @@ export const en = {
     createOrAdjust: 'Create a new invoice or adjust your filters.',
     download: 'Download',
     cancelled: 'Cancelled',
-    unknownStatus: 'Unknown'
+    unknownStatus: 'Unknown',
   },
   vouchers: {
     title: 'Vouchers',
@@ -4903,8 +4690,7 @@ export const en = {
     fetchFailed: 'Failed to fetch vouchers',
     fillRequiredFields: 'Please fill in all required fields',
     fixValidationErrors: 'Please fix the validation errors',
-    discountValueRequired:
-      'Discount value is required and must be greater than 0',
+    discountValueRequired: 'Discount value is required and must be greater than 0',
     percentMax: 'Percent discount cannot exceed 100',
     usageLimitRequired: 'Usage limit is required and must be at least 1',
     startDateRequired: 'Start date is required',
@@ -4915,14 +4701,14 @@ export const en = {
     updatedSuccess: 'Voucher updated successfully',
     updateFailed: 'Failed to update voucher',
     deletedSuccess: 'Voucher deleted successfully',
-    deleteFailed: 'Failed to delete voucher'
+    deleteFailed: 'Failed to delete voucher',
   },
   period: {
     heading: 'Time range',
     thisMonth: 'This month',
     wholeYear: 'All of {{year}}',
     olderYear: 'Previous year',
-    newerYear: 'Next year'
+    newerYear: 'Next year',
   },
   datePicker: {
     heading: 'Select date',
@@ -4931,7 +4717,7 @@ export const en = {
     olderMonth: 'Previous month',
     newerMonth: 'Next month',
     olderYear: 'Previous year',
-    newerYear: 'Next year'
+    newerYear: 'Next year',
   },
   financial: {
     store: {
@@ -4998,7 +4784,7 @@ export const en = {
         paid: 'Paid',
         net: 'Academy net',
         coupon: 'Coupon',
-        refunded: 'Refunded'
+        refunded: 'Refunded',
       },
       revenue: {
         title: 'Revenue & Benefits',
@@ -5051,7 +4837,7 @@ export const en = {
         student: 'Student',
         course: 'Course',
         amount: 'Amount',
-        noPayments: 'No payments found'
+        noPayments: 'No payments found',
       },
       costs: {
         title: 'Academy Costs',
@@ -5080,7 +4866,7 @@ export const en = {
         revenue: 'Revenue',
         cost: 'Cost',
         profit: 'Profit',
-        uncategorized: 'Uncategorized'
+        uncategorized: 'Uncategorized',
       },
       payments: {
         title: 'Student Payments',
@@ -5122,8 +4908,7 @@ export const en = {
         teacherPayout: 'Teacher Payout',
         schoolNet: 'School Net',
         reconciliationTitle: 'Reconciliation',
-        reconciliationDescription:
-          'Callback and settlement consistency report for selected period',
+        reconciliationDescription: 'Callback and settlement consistency report for selected period',
         paidPayments: 'Paid Payments',
         matchedCallbacks: 'Matched Callbacks',
         missingCallbacks: 'Missing Callbacks',
@@ -5139,7 +4924,7 @@ export const en = {
         vatRate: 'VAT',
         takeRate: 'Take',
         shareRate: 'Share',
-        payments: 'payments'
+        payments: 'payments',
       },
       reports: {
         title: 'Financial Reports',
@@ -5175,19 +4960,17 @@ export const en = {
         profit: 'Profit',
         noMonthlyData: 'No monthly data available',
         allFinancialRecords: 'All Financial Records',
-        allFinancialRecordsDescription:
-          'Complete list of all financial records',
+        allFinancialRecordsDescription: 'Complete list of all financial records',
         noRecords: 'No records found',
         period: 'Period',
         category: 'Category',
         finalProfit: 'Final Profit',
-        uncategorized: 'Uncategorized'
-      }
+        uncategorized: 'Uncategorized',
+      },
     },
     platform: {
       title: 'Platform Financial Management',
-      description:
-        'Platform-wide financial overview and business cash flow management',
+      description: 'Platform-wide financial overview and business cash flow management',
       loading: 'Loading financial data...',
       loadFailed: 'Failed to load financial data',
       filters: 'Filters',
@@ -5207,8 +4990,7 @@ export const en = {
       costCategories: 'Cost Categories',
       businessFlow: 'Business Flow',
       iranSettlementTitle: 'Iran Settlement Snapshot',
-      iranSettlementDescription:
-        'PayPing-only settlement totals for selected filter period',
+      iranSettlementDescription: 'PayPing-only settlement totals for selected filter period',
       gross: 'Gross',
       platformFee: 'Platform Fee',
       vat: 'VAT',
@@ -5216,7 +4998,7 @@ export const en = {
       tabs: {
         platformRecords: 'Platform Records',
         allStores: 'All Academies',
-        storeRecords: 'Academy Records'
+        storeRecords: 'Academy Records',
       },
       platformRecords: {
         title: 'Platform Financial Records',
@@ -5232,14 +5014,13 @@ export const en = {
         noRecords: 'No platform financial records found',
         deleteConfirm: 'Are you sure you want to delete this record?',
         deleteSuccess: 'Record deleted successfully',
-        deleteError: 'Failed to delete record'
+        deleteError: 'Failed to delete record',
       },
       storeRecords: {
         title: 'Academy Financial Records',
         description: 'Per-store costs and revenue records',
         allStoresTitle: 'All Academies Financial Records',
-        allStoresDescription:
-          'Per-store costs and revenue records across all academies',
+        allStoresDescription: 'Per-store costs and revenue records across all academies',
         addRecord: 'Add Record',
         store: 'Academy',
         period: 'Period',
@@ -5250,21 +5031,19 @@ export const en = {
         margin: 'Margin',
         actions: 'Actions',
         view: 'View',
-        noRecords: 'No academy financial records found'
+        noRecords: 'No academy financial records found',
       },
       eyebrow: 'Platform Financial Reports',
       dateRange: 'Date Range',
       export: 'Export Excel',
       netProfit: 'Net Profit',
-      platformRevenueCount: '{{count}} records'
+      platformRevenueCount: '{{count}} records',
     },
     desk: {
       title: 'Financial',
-      description:
-        'Live academy and platform payments, shares, and what Mentoma must deposit.',
+      description: 'Live academy and platform payments, shares, and what Mentoma must deposit.',
       toDeposit: 'To deposit',
-      toDepositHint:
-        'Student money still sitting in Mentoma that academies are owed',
+      toDepositHint: 'Student money still sitting in Mentoma that academies are owed',
       pending: 'Pending requests',
       pendingHint: 'Withdrawal requests waiting for a bank transfer',
       academyShare: 'Academy share',
@@ -5299,21 +5078,18 @@ export const en = {
       notifyOk: 'Academy creator was informed by SMS and email',
       notifyFailed: 'Could not inform the academy creator',
       monthlyGross: 'Monthly gross',
-      monthlyGrossHint:
-        'Paid academy sales and platform plan payments in each month (Toman)',
+      monthlyGrossHint: 'Paid academy sales and platform plan payments in each month (Toman)',
       cumulativeGross: 'Gross over time',
-      cumulativeGrossHint:
-        'Running total of academy sales and platform plan payments (Toman)',
+      cumulativeGrossHint: 'Running total of academy sales and platform plan payments (Toman)',
       academyGross: 'Academies',
       platformGross: 'Platform',
-      noTrend: 'No paid payments to chart yet'
-    }
+      noTrend: 'No paid payments to chart yet',
+    },
   },
   platform: {
     pricing: {
       title: 'Platform Pricing Policy',
-      description:
-        'Manage platform monetization copy for academy managers (not student pricing).',
+      description: 'Manage platform monetization copy for academy managers (not student pricing).',
       managerContentTitle: 'Manager-facing monetization content',
       managerContentDescription:
         'Define Group plans, overage policy, billing notes, and platform FAQs.',
@@ -5328,21 +5104,17 @@ export const en = {
       defaultTitle: 'Platform Plans',
       defaultSubtitle: 'Pricing and monetization policy for academy managers.',
       defaultCtaLabel: 'Start Platform Plan',
-      defaultBillingNotes:
-        'Billing cycle, overage terms, VAT/tax notes, and settlement policy.',
+      defaultBillingNotes: 'Billing cycle, overage terms, VAT/tax notes, and settlement policy.',
       defaultFaq: 'Add platform-level FAQs for managers here.',
       accessRestrictedTitle: 'Access restricted',
-      accessRestrictedDescription:
-        'Platform pricing policy can only be edited by platform admins.'
+      accessRestrictedDescription: 'Platform pricing policy can only be edited by platform admins.',
     },
     overview: {
       pendingSettlements: '{{count}} settlement requests awaiting review',
-      pendingSettlementsHint:
-        'Academy managers are waiting for the transfer; click to review',
+      pendingSettlementsHint: 'Academy managers are waiting for the transfer; click to review',
       noPendingSettlements: 'No settlement request is waiting',
       title: 'Platform Overview',
-      description:
-        'Manage and monitor all schools and platform-wide statistics',
+      description: 'Manage and monitor all schools and platform-wide statistics',
       loading: 'Loading platform overview...',
       totalSchools: 'Total Schools',
       activeSchools: '{{count}} active schools',
@@ -5357,12 +5129,10 @@ export const en = {
       allSchoolsAccess: 'Access comprehensive school management tools',
       platformUsers: 'Platform Users',
       platformUsersDescription: 'Manage all users across the platform',
-      platformUsersAccess:
-        'View and manage administrators, managers, teachers, and students',
+      platformUsersAccess: 'View and manage administrators, managers, teachers, and students',
       platformAnalytics: 'Platform Analytics',
       platformAnalyticsDescription: 'View platform-wide analytics and insights',
-      platformAnalyticsAccess:
-        'Monitor platform performance and growth metrics',
+      platformAnalyticsAccess: 'Monitor platform performance and growth metrics',
       quickActions: 'Quick Actions',
       quickActionsDescription: 'Common platform management tasks',
       manageSchools: 'Manage Schools',
@@ -5370,8 +5140,7 @@ export const en = {
       allUsers: 'All Users',
       platformAnalyticsLink: 'Platform Analytics',
       accessDenied: 'Access Denied',
-      accessDeniedDescription:
-        'This page is only accessible to platform-level administrators.'
+      accessDeniedDescription: 'This page is only accessible to platform-level administrators.',
     },
     academies: {
       title: 'All Academies',
@@ -5391,8 +5160,7 @@ export const en = {
       private: 'Private',
       storeDetails: 'Academy Details',
       financialOverview: 'Financial Overview',
-      financialOverviewDescription:
-        'Platform-level financial statistics for this academy',
+      financialOverviewDescription: 'Platform-level financial statistics for this academy',
       payments: 'Payments',
       recentPayments: 'Recent Payments',
       recentPaymentsDescription: 'Latest payment transactions for this academy',
@@ -5409,7 +5177,7 @@ export const en = {
       expires: 'Expires',
       noExpiry: '—',
       pending: 'PENDING',
-      notAvailable: '-'
+      notAvailable: '-',
     },
     stores: {
       customPlan: {
@@ -5418,8 +5186,7 @@ export const en = {
         description:
           'Set custom limits and features for large academies — replaces the standard plan.',
         enabledBadge: 'Custom plan active',
-        disabledHint:
-          "This academy doesn't have a custom plan yet — it uses its standard plan.",
+        disabledHint: "This academy doesn't have a custom plan yet — it uses its standard plan.",
         nameLabel: 'Plan name',
         namePlaceholder: 'e.g. Enterprise — Acme Academy',
         limitsTitle: 'Limits',
@@ -5440,8 +5207,7 @@ export const en = {
         featuresPlaceholder: 'e.g. Dedicated support',
         priceMonthlyLabel: 'Monthly price (Toman)',
         priceYearlyLabel: 'Yearly price (Toman)',
-        priceHint:
-          'Informational only — never billed automatically from the academy.',
+        priceHint: 'Informational only — never billed automatically from the academy.',
         noteLabel: 'Internal note',
         notePlaceholder: 'Contract reference, deal context, etc...',
         save: 'Save custom plan',
@@ -5453,16 +5219,15 @@ export const en = {
         clearing: 'Clearing...',
         assignedAt: 'Set on',
         saveSuccess: 'Custom plan saved',
-        clearSuccess: 'Custom plan cleared'
-      }
-    }
+        clearSuccess: 'Custom plan cleared',
+      },
+    },
   },
   accessGrants: {
     title: 'Give access to students',
     description:
       'Hand this course to students or groups without a purchase, for as long as you choose.',
-    stagedDescription:
-      'Choose who gets this course. Access is granted when you save the course.',
+    stagedDescription: 'Choose who gets this course. Access is granted when you save the course.',
     savedWithCourseHint:
       '{{students}} students, {{groups}} groups get access when you save the course.',
     giveAccess: 'Give access',
@@ -5477,8 +5242,7 @@ export const en = {
     pickTargetHint: 'Select at least one student or group to turn this on.',
     pickCourseHint: 'Select at least one course to turn this on.',
     blockedHint: 'Something above is still missing.',
-    readyHint:
-      'Ready to give access to {{students}} students, {{groups}} groups.',
+    readyHint: 'Ready to give access to {{students}} students, {{groups}} groups.',
     courses: 'Courses',
     selectCourses: 'Select courses',
     noCourses: 'No courses found',
@@ -5526,7 +5290,7 @@ export const en = {
     expired: 'Expired',
     unknownStudent: 'Unknown student',
     stagedFailed:
-      'The course was created but access could not be given. Try again from the course page.'
+      'The course was created but access could not be given. Try again from the course page.',
   },
   bundles: {
     title: 'Bundles',
@@ -5536,8 +5300,7 @@ export const en = {
     newBundle: 'New Bundle',
     allBundles: 'All Bundles',
     noBundle: 'No bundles yet',
-    noBundleDesc:
-      'Group your courses into a bundle and offer students a better deal.',
+    noBundleDesc: 'Group your courses into a bundle and offer students a better deal.',
     createBundle: 'Create Bundle',
     editBundle: 'Edit Bundle',
     bundleTitle: 'Bundle name',
@@ -5559,7 +5322,7 @@ export const en = {
     originalTotal: 'Original total',
     savings: 'Students save',
     active: 'Active',
-    inactive: 'Inactive'
+    inactive: 'Inactive',
   },
   refunds: {
     title: 'Refunds',
@@ -5578,7 +5341,7 @@ export const en = {
     amount: 'Amount',
     date: 'Date',
     action: 'Action',
-    searchPlaceholder: 'Search by ID, status or student…'
+    searchPlaceholder: 'Search by ID, status or student…',
   },
   settlement: {
     eyebrow: 'Finance',
@@ -5587,25 +5350,25 @@ export const en = {
       'See where your money came from, how much of it Mentoma is still holding, and request a transfer to your academy bank account.',
     custody: {
       PLATFORM: 'Via Mentoma gateway',
-      ACADEMY: 'Directly by you'
+      ACADEMY: 'Directly by you',
     },
     balance: {
       available: {
         title: 'Available to settle',
-        hint: 'The amount you can request right now.'
+        hint: 'The amount you can request right now.',
       },
       pending: {
         title: 'In progress',
-        hint: 'Requested but not yet transferred to your bank account.'
+        hint: 'Requested but not yet transferred to your bank account.',
       },
       withdrawn: {
         title: 'Settled to date',
-        hint: 'Everything transferred to your academy account so far.'
+        hint: 'Everything transferred to your academy account so far.',
       },
       direct: {
         title: 'Collected by you',
-        hint: 'Cash, POS and card-to-card. You already have this money; it is never settled.'
-      }
+        hint: 'Cash, POS and card-to-card. You already have this money; it is never settled.',
+      },
     },
     channels: {
       title: 'Earnings by payment channel',
@@ -5615,7 +5378,7 @@ export const en = {
       custody: 'Collected via',
       count: 'Transactions',
       gross: 'Total amount',
-      share: 'Share'
+      share: 'Share',
     },
     bank: {
       title: 'Settlement bank account',
@@ -5638,20 +5401,19 @@ export const en = {
       status: {
         PENDING: 'Awaiting verification',
         APPROVED: 'Verified',
-        REJECTED: 'Rejected'
-      }
+        REJECTED: 'Rejected',
+      },
     },
     request: {
       title: 'Request a settlement',
-      description:
-        'Enter the amount to be transferred to your verified account.',
+      description: 'Enter the amount to be transferred to your verified account.',
       amountLabel: 'Requested amount',
       notesLabel: 'Note (optional)',
       useMax: 'Full balance: {{amount}}',
       submit: 'Submit settlement request',
       submitted: 'Settlement request submitted',
       manualHint:
-        'Transfers are made manually during banking hours; the bank reference appears here once it is done.'
+        'Transfers are made manually during banking hours; the bank reference appears here once it is done.',
     },
     panel: {
       heldTitle: 'Held by Mentoma to settle',
@@ -5659,39 +5421,36 @@ export const en = {
         'Student money still with the platform. In progress: {{pending}}. Already settled: {{withdrawn}}.',
       request: 'Request settlement',
       oncePerDay: 'You can send one request per day.',
-      details: 'Bank account and settlement details'
+      details: 'Bank account and settlement details',
     },
     blockers: {
       KYC_REQUIRED:
         'Identity verification (احراز هویت) must be completed and approved before you can request a settlement.',
-      KYC_PENDING:
-        'Identity verification is waiting for Mentoma staff approval.',
+      KYC_PENDING: 'Identity verification is waiting for Mentoma staff approval.',
       NO_BANK_ACCOUNT: 'You have not added a Sheba number yet.',
       BANK_ACCOUNT_PENDING: 'Your Sheba number is being reviewed.',
-      BANK_ACCOUNT_REJECTED:
-        'Your Sheba number was rejected; please correct it.',
+      BANK_ACCOUNT_REJECTED: 'Your Sheba number was rejected; please correct it.',
       NO_BALANCE: 'There is nothing available to settle.',
       BELOW_MINIMUM: 'The minimum request amount is {{amount}}.',
       REQUEST_IN_PROGRESS: 'A settlement request is already being processed.',
       COOLDOWN_UNTIL: 'You can submit the next request from {{date}}.',
-      COOLDOWN: 'The waiting period before the next request has not passed yet.'
+      COOLDOWN: 'The waiting period before the next request has not passed yet.',
     },
     status: {
       PENDING: 'Pending review',
       APPROVED: 'Approved',
       REJECTED: 'Rejected',
-      PAID: 'Transferred'
+      PAID: 'Transferred',
     },
     history: {
       title: 'Settlement history',
-      empty:
-        'No settlements yet. Staff transfers and your requests appear here.',
+      empty: 'No settlements yet. Staff transfers and your requests appear here.',
       requestedAt: 'Requested at',
       amount: 'Amount',
       settledAt: 'Settled at',
       destination: 'Destination account',
-      bankRef: 'Bank reference'
-    }
+      bankRef: 'Bank reference',
+    },
   },
   withdrawals: {
     id: 'ID',
@@ -5720,10 +5479,10 @@ export const en = {
     informed: 'Informed',
     notInformed: 'Not informed',
     informedSms: 'SMS sent',
-    informedEmail: 'Email sent'
+    informedEmail: 'Email sent',
   },
   teacherShare: {
-    note: 'In this academy the teacher share is {{teacher}} of each sale and {{academy}} goes to the academy; the manager sets this rate.'
+    note: 'In this academy the teacher share is {{teacher}} of each sale and {{academy}} goes to the academy; the manager sets this rate.',
   },
   teacherEarnings: {
     title: 'My earnings',
@@ -5733,8 +5492,7 @@ export const en = {
     paid: 'Paid to you',
     owed: 'Still owed',
     payoutsTitle: 'Payments from the academy',
-    payoutsSubtitle:
-      'The tracking code of each transfer is your proof of payment',
+    payoutsSubtitle: 'The tracking code of each transfer is your proof of payment',
     colDate: 'Date',
     colAmount: 'Amount',
     colTrackingCode: 'Tracking code',
@@ -5744,11 +5502,10 @@ export const en = {
     confirmDone: 'Payment confirmed',
     rejectDone: 'Payment rejected; the amount is owed to you again',
     confirmedAt: 'Confirmed on {{date}}',
-    rejectWaitHint:
-      'Because of the bank settlement cycle, rejecting opens on {{date}}',
+    rejectWaitHint: 'Because of the bank settlement cycle, rejecting opens on {{date}}',
     responseNote:
       'Confirm or reject is only bookkeeping between you and the academy manager; the platform is not involved. If the money never arrives, you can reject after 72 hours so the amount is owed again.',
-    noPayouts: 'No payment recorded yet'
+    noPayouts: 'No payment recorded yet',
   },
   teacherPayouts: {
     title: 'Teacher Payouts',
@@ -5764,7 +5521,7 @@ export const en = {
     bankInfo: 'Bank Info',
     requestedAt: 'Requested',
     notes: 'Notes (optional)',
-    statusFilter: 'Status filter'
+    statusFilter: 'Status filter',
   },
   affiliates: {
     title: 'Affiliates',
@@ -5782,8 +5539,7 @@ export const en = {
     payoutHistory: 'Payout history',
     myDashSubtitle: 'Track your referral links, impressions, and earnings.',
     noLinksYet: 'No affiliate links yet',
-    noLinksDesc:
-      'Contact the academy to be added as an affiliate and receive your referral link.',
+    noLinksDesc: 'Contact the academy to be added as an affiliate and receive your referral link.',
     totalSales: 'Total sales',
     available: 'Available',
     requestPayoutTitle: 'Request Payout',
@@ -5800,8 +5556,7 @@ export const en = {
       'Invite people to promote your courses and earn a commission on every sale they drive.',
     newAffiliate: 'Add Affiliate',
     noAffiliates: 'No affiliates yet',
-    noAffiliatesDesc:
-      'Add your first affiliate to start growing your reach through word-of-mouth.',
+    noAffiliatesDesc: 'Add your first affiliate to start growing your reach through word-of-mouth.',
     createAffiliate: 'Add Affiliate',
     editAffiliate: 'Edit Affiliate',
     code: 'Referral code',
@@ -5815,8 +5570,7 @@ export const en = {
     selectCourse: 'Select course (optional)',
     commission: 'Commission',
     commissionPercent: 'Commission rate (%)',
-    commissionHelp:
-      'Percentage of the sale price the affiliate earns. E.g. 20 = 20%.',
+    commissionHelp: 'Percentage of the sale price the affiliate earns. E.g. 20 = 20%.',
     clicks: 'Clicks',
     conversions: 'Sales',
     earnings: 'Earned',
@@ -5864,8 +5618,7 @@ export const en = {
     fieldName: 'Full name',
     fieldPhone: 'Mobile number',
     fieldCode: 'Referral code',
-    codeAutoGenerated:
-      'A unique referral code is generated automatically after creation.',
+    codeAutoGenerated: 'A unique referral code is generated automatically after creation.',
     foundUser: 'Found: {{name}}',
     commissionLabel: 'Commission %',
     commissionCustom: 'Custom',
@@ -5884,8 +5637,7 @@ export const en = {
     previewPhoneDesc: 'Enter the mobile number you registered with',
     previewPhonePlaceholder: '+1 234 567 8900',
     previewSendOtp: 'Get verification code',
-    previewTerms:
-      'By signing in, you accept the terms of service and privacy policy',
+    previewTerms: 'By signing in, you accept the terms of service and privacy policy',
     previewOtpTitle: 'Enter verification code',
     previewOtpSent: '6-digit code sent to {{phone}}',
     previewResend: 'Resend in 00:48',
@@ -5901,7 +5653,7 @@ export const en = {
     previewStatTotal: 'Total income',
     previewStatBalance: 'Balance',
     previewStatClicks: 'Clicks',
-    previewStatSales: 'Sales'
+    previewStatSales: 'Sales',
   },
   coupons: {
     title: 'Platform plan vouchers',
@@ -5968,7 +5720,7 @@ export const en = {
     bannerViewAll: 'View codes',
     bannerCopyCode: 'Copy code {{code}}',
     academyScopeHint:
-      'Codes created here belong to your academy and apply to student checkout only.'
+      'Codes created here belong to your academy and apply to student checkout only.',
   },
   subscriptions: {
     title: 'Subscriptions',
@@ -5989,7 +5741,7 @@ export const en = {
     expires: 'Expires',
     expired: 'Expired',
     renewalsPending: 'Renewals Pending',
-    reminders: 'Reminders'
+    reminders: 'Reminders',
   },
   platformSettings: {
     title: 'Platform Settings',
@@ -6018,7 +5770,7 @@ export const en = {
       'SMS sent to this number when a manager pays a Mentoma plan in the admin panel',
     ownerNotifyPhone: 'Owner notify phone',
     ownerNotifyPhoneHint: 'Iranian mobile, e.g. 09121234567',
-    saveSettings: 'Save Settings'
+    saveSettings: 'Save Settings',
   },
   paymentPlans: {
     title: 'Payment Plans',
@@ -6033,7 +5785,7 @@ export const en = {
     createPlan: 'Create Plan',
     creating: 'Creating…',
     backToCourse: 'Back to course',
-    allPlans: 'Installment Plans'
+    allPlans: 'Installment Plans',
   },
   webhooks: {
     title: 'Webhook Configuration',
@@ -6047,7 +5799,7 @@ export const en = {
     secretHint: 'Used to verify the signature on incoming webhook deliveries',
     hmacTitle: 'HMAC Verification (reference)',
     saveSettings: 'Save Webhook Settings',
-    backToAcademy: 'Back to Academy'
+    backToAcademy: 'Back to Academy',
   },
   wizard: {
     backToCourses: 'Back to courses',
@@ -6067,8 +5819,7 @@ export const en = {
     subtitlePlaceholder: 'Brief one-line summary shown to students',
     subtitleHint: 'Optional — shown below the title on the sales page',
     description: 'Description',
-    descriptionPlaceholder:
-      'What will students learn? What makes this course unique?',
+    descriptionPlaceholder: 'What will students learn? What makes this course unique?',
     descriptionCounter: '{{count}}/2000',
     category: 'Category',
     selectCategory: 'Select a category',
@@ -6096,8 +5847,7 @@ export const en = {
     subscriptionNote:
       'Students with an active subscription through your academy plan can access this course',
     subscriptionManage: 'Manage academy plans',
-    freeNote:
-      'Students can enroll at no cost. You can always change the pricing later.',
+    freeNote: 'Students can enroll at no cost. You can always change the pricing later.',
     publishToggle: 'Publish Status',
     publishedDesc: 'Visible to students immediately after creation',
     draftDesc: 'Save as draft — you can publish anytime',
@@ -6121,7 +5871,7 @@ export const en = {
     cover: 'Cover',
     willPublish: 'Will Publish',
     draft: 'Draft',
-    lifetime: 'Lifetime'
+    lifetime: 'Lifetime',
   },
   certificates: {
     tab: 'Certificate',
@@ -6146,7 +5896,7 @@ export const en = {
       'This course does not award a certificate. Turn on "Certificate" in the course settings.',
     minPercentLabel: 'Assignment pass mark (percent)',
     minPercentHint:
-      'Every required assignment must reach this share of its full score before a certificate can be issued.'
+      'Every required assignment must reach this share of its full score before a certificate can be issued.',
   },
   courseDetail: {
     nextClass: 'Next class',
@@ -6219,8 +5969,7 @@ export const en = {
     unpublishedToast: 'Course unpublished',
     publishFailed: 'Could not change the publish status',
     financeTitle: 'Course finance',
-    financeVisibility:
-      'Only the academy manager and this course teacher can see this section',
+    financeVisibility: 'Only the academy manager and this course teacher can see this section',
     grossAllTime: 'Gross revenue (all time)',
     grossAllTimeHint: 'Total of all successful payments',
     paidSales: 'Paid sales',
@@ -6242,7 +5991,7 @@ export const en = {
     daysCount: '{{count}} days',
     lifetimeAccess: 'As long as the academy is active',
     createdAt: 'Created',
-    updatedAt: 'Last updated'
+    updatedAt: 'Last updated',
   },
   subscriptionStatus: {
     active: 'Active',
@@ -6251,15 +6000,13 @@ export const en = {
     expired: 'Expired',
     inactive: 'No active plan',
     noPlanTitle: "You don't have an active plan yet",
-    startPlanHint: 'Choose and activate one of the plans below to get started.'
+    startPlanHint: 'Choose and activate one of the plans below to get started.',
   },
   sidebar: {
     buyPlan: 'Buy plan',
-    buyPlanDescription:
-      'Choose a platform plan to activate your academy and get started.',
+    buyPlanDescription: 'Choose a platform plan to activate your academy and get started.',
     upgradePlan: 'Upgrade plan',
-    upgradeDescription:
-      'Unlock more courses, storage, and features with a higher tier',
+    upgradeDescription: 'Unlock more courses, storage, and features with a higher tier',
     upgradeDescriptionExpiring:
       'Your plan expires in {{days}} days. Renew now to avoid interruption.',
     subscriptionExpiring: '{{plan}} plan',
@@ -6271,12 +6018,11 @@ export const en = {
     platformAdmin: 'Platform Admin',
     managementConsole: 'Management Console',
     planBadgeFree: 'Free plan',
-    planBadgeExpired: 'Expired'
+    planBadgeExpired: 'Expired',
   },
   templatesGallery: {
     title: 'Templates Gallery',
-    description:
-      'Manage and publish public site templates available to all academies.',
+    description: 'Manage and publish public site templates available to all academies.',
     newTemplate: 'New Template',
     empty: 'No templates found.',
     createFirst: 'Create your first template',
@@ -6286,26 +6032,23 @@ export const en = {
     publish: 'Publish',
     unpublish: 'Unpublish',
     sections: '{{count}} sections',
-    deleteConfirm: 'Delete template "{{name}}"?'
+    deleteConfirm: 'Delete template "{{name}}"?',
   },
   plans: {
     trial: {
       claimTitle: 'Start your free 14-day trial',
       claimDescription: 'You have one free trial. Use it on this academy.',
       claimCta: 'Start free trial',
-      claimConfirm:
-        'Your one free trial will start on {{academy}} and run for 14 days.',
+      claimConfirm: 'Your one free trial will start on {{academy}} and run for 14 days.',
       moveCta: 'Move trial here',
       moveTitle: 'Move your free trial here',
-      moveDescription:
-        'Your trial is running on {{academy}} with {{days}} days left.',
+      moveDescription: 'Your trial is running on {{academy}} with {{days}} days left.',
       moveConfirm:
         '{{from}} becomes read-only immediately. You keep {{days}} days on {{to}} — no new days are added, and the trial cannot be moved again once it ends.',
-      applied: 'Free trial applied to this academy'
+      applied: 'Free trial applied to this academy',
     },
     title: 'Pricing Plans',
-    subtitle:
-      'Choose a plan for your academy or build subscriptions for your students',
+    subtitle: 'Choose a plan for your academy or build subscriptions for your students',
     badge: 'Platform',
     monthly: 'Monthly',
     quarterly: '3 months · discount',
@@ -6344,8 +6087,7 @@ export const en = {
     invoiceStatusCancelled: 'Cancelled',
     invoiceStatusDuplicate: 'Duplicate — refund due',
     renewLockedShort: 'Renew near the end',
-    renewOpensLater:
-      'Renewal opens in the last {{days}} days of your current plan',
+    renewOpensLater: 'Renewal opens in the last {{days}} days of your current plan',
     popular: 'Most Popular',
     managePlans: 'Manage Plans',
     addPlan: 'Add Plan',
@@ -6362,12 +6104,10 @@ export const en = {
     enterpriseContactDialogTitle: 'Request an Enterprise plan',
     enterpriseContactDialogDesc:
       'Tell us what your academy needs and our sales team will reach out.',
-    enterpriseContactPlaceholder:
-      'e.g. number of teachers, students, and features you need...',
+    enterpriseContactPlaceholder: 'e.g. number of teachers, students, and features you need...',
     enterpriseContactSubmit: 'Send request',
     enterpriseContactSubject: 'Enterprise plan request',
-    enterpriseContactSuccess:
-      'Your request was sent. Our sales team will contact you shortly.',
+    enterpriseContactSuccess: 'Your request was sent. Our sales team will contact you shortly.',
     noPlanConfigured: 'No plans configured yet.',
     createFirstPlan: 'Create First Plan',
     storage: 'Storage',
@@ -6382,8 +6122,7 @@ export const en = {
     subscriptionExpired: 'Expired',
     changePlan: 'Change Plan',
     confirmChangePlan: 'Confirm Plan Change',
-    confirmChangePlanDesc:
-      'Select a subscription period. The full amount will be charged.',
+    confirmChangePlanDesc: 'Select a subscription period. The full amount will be charged.',
     confirmUpgradeDesc:
       'You are upgrading to a higher plan. Only the difference for the days left on your current plan is charged.',
     upgradeSummary: 'Upgrade summary',
@@ -6412,8 +6151,7 @@ export const en = {
     selectGateway: 'Payment gateway',
     voucherCode: 'Voucher code',
     voucherCodePlaceholder: 'e.g. MENTOMA100',
-    voucherCodeHint:
-      'If the final price is zero, the plan activates without a bank gateway.',
+    voucherCodeHint: 'If the final price is zero, the plan activates without a bank gateway.',
     applyVoucher: 'Apply',
     removeVoucher: 'Remove',
     voucherApplied: 'Voucher applied',
@@ -6452,8 +6190,7 @@ export const en = {
     payIncompleteParams: 'The bank returned incomplete parameters.',
     payRetry: 'Try again',
     deletePlan: 'Delete Plan',
-    deleteWarning:
-      'This plan will be permanently deleted. This action cannot be undone.',
+    deleteWarning: 'This plan will be permanently deleted. This action cannot be undone.',
     planActive: 'Active',
     planInactive: 'Inactive',
     toggleActive: 'Status',
@@ -6466,11 +6203,9 @@ export const en = {
     academyPlansTab: 'Student Subscriptions',
     mySubscriptionTab: 'My Subscription',
     platformTabTitle: 'Platform plan',
-    platformTabDescription:
-      'Choose or upgrade the subscription plan for this academy',
+    platformTabDescription: 'Choose or upgrade the subscription plan for this academy',
     academyTabTitle: 'Student Subscriptions',
-    academyTabDescription:
-      'Create subscriptions that your students buy from your academy',
+    academyTabDescription: 'Create subscriptions that your students buy from your academy',
     kindLabel: 'Type',
     kindSubscription: 'Subscription',
     kindPackage: 'Package',
@@ -6485,9 +6220,8 @@ export const en = {
     editAcademyPlan: 'Edit Subscription',
     noAcademyPlans: 'No subscriptions created yet.',
     createFirstAcademyPlan: 'Create your first subscription',
-    selectAcademyFirst:
-      'Select an academy context to manage its subscriptions.',
-    subscriptionOnlyDuration: 'Only required for subscriptions'
+    selectAcademyFirst: 'Select an academy context to manage its subscriptions.',
+    subscriptionOnlyDuration: 'Only required for subscriptions',
   },
   website: {
     title: 'Academy Website',
@@ -6500,18 +6234,15 @@ export const en = {
       pages: 'Pages',
       seo: 'Search & sharing',
       trust: 'Trust badge',
-      domain: 'Domain'
+      domain: 'Domain',
     },
     cards: {
       blogTitle: 'Blog',
-      blogDescription:
-        'Write articles for your public site and decide what gets published.',
+      blogDescription: 'Write articles for your public site and decide what gets published.',
       appearanceTitle: 'Appearance',
-      appearanceDescription:
-        'Pick a template and arrange the sections of your public site.',
+      appearanceDescription: 'Pick a template and arrange the sections of your public site.',
       pagesTitle: 'Pages & contact',
-      pagesDescription:
-        'Write your About and Contact pages and list your contact links.',
+      pagesDescription: 'Write your About and Contact pages and list your contact links.',
       seoTitle: 'Search & sharing',
       seoDescription:
         'Control the title, description and picture shown in Google and on shared links.',
@@ -6520,8 +6251,7 @@ export const en = {
       domainTitle: 'Domain',
       domainDescription: 'Connect your own domain and set up its DNS.',
       brandingTitle: 'Name & branding',
-      brandingDescription:
-        'Academy name, address, logo, favicon and brand colour.'
+      brandingDescription: 'Academy name, address, logo, favicon and brand colour.',
     },
     seo: {
       title: 'Search & sharing',
@@ -6529,13 +6259,10 @@ export const en = {
         'What people see when your academy shows up in Google or someone shares a link to it.',
       formTitle: 'Search and share details',
       metaTitle: 'Search title',
-      metaTitlePlaceholder:
-        'e.g. Maral Language Academy — IELTS & general English',
-      metaTitleHint:
-        'Shown as the blue headline in Google. Leave empty to use your academy name.',
+      metaTitlePlaceholder: 'e.g. Maral Language Academy — IELTS & general English',
+      metaTitleHint: 'Shown as the blue headline in Google. Leave empty to use your academy name.',
       metaDescription: 'Search description',
-      metaDescriptionPlaceholder:
-        'One or two sentences about who you teach and what you offer.',
+      metaDescriptionPlaceholder: 'One or two sentences about who you teach and what you offer.',
       metaDescriptionHint:
         'The grey text under the headline. Leave empty to use your academy description.',
       shareImage: 'Share image',
@@ -6545,8 +6272,8 @@ export const en = {
       previewSearch: 'Google preview',
       previewShare: 'Shared link preview',
       previewEmptyDescription: 'No description yet.',
-      saved: 'Search and sharing details saved'
-    }
+      saved: 'Search and sharing details saved',
+    },
   },
   sitePreview: {
     academyName: 'Your Academy',
@@ -6593,18 +6320,15 @@ export const en = {
     testimonialsTitle: 'Student Reviews',
     review1Name: 'Sarah M.',
     review1Role: 'Software Engineer',
-    review1Text:
-      'This platform completely transformed my career. The courses are outstanding!',
+    review1Text: 'This platform completely transformed my career. The courses are outstanding!',
     review1Revenue: '$1,200/mo',
     review2Name: 'Michael K.',
     review2Role: 'Product Manager',
-    review2Text:
-      'Best investment for my professional growth. Highly recommend!',
+    review2Text: 'Best investment for my professional growth. Highly recommend!',
     review2Revenue: '$800/mo',
     review3Name: 'Elena R.',
     review3Role: 'Data Scientist',
-    review3Text:
-      'The hands-on projects make all the difference. I landed my dream job!',
+    review3Text: 'The hands-on projects make all the difference. I landed my dream job!',
     review3Revenue: '$1,500/mo',
     review4Name: 'David K.',
     review4Role: 'UX Designer',
@@ -6661,8 +6385,7 @@ export const en = {
     blockMembership: 'Membership',
     blockSlideshow: 'Slideshow / Banner',
     heroVideoTitle: 'Banner video',
-    heroVideoHint:
-      'Upload a video on the banner itself, or pick one from the media library.',
+    heroVideoHint: 'Upload a video on the banner itself, or pick one from the media library.',
     heroVideoPick: 'Choose a video',
     heroVideoSelected: 'Selected video',
     heroVideoAutoplay: 'Autoplay, muted',
@@ -6677,8 +6400,7 @@ export const en = {
     slidesEditorTitle: 'Slides',
     slidesAdd: 'Add slide',
     slidesEmpty: 'No slides added yet.',
-    slidesCaption:
-      'Each slide is a full-width image with a headline and a short line of text.',
+    slidesCaption: 'Each slide is a full-width image with a headline and a short line of text.',
     slideTitle: 'Slide headline',
     slideSubtitle: 'Slide text',
     videosEditorTitle: 'Videos in this section',
@@ -6700,10 +6422,8 @@ export const en = {
     panelIncomplete: 'This section is missing required content',
     panelAdvanced: 'Advanced Settings',
     panelNoContent: 'This section has no editable content.',
-    panelRequiredHint:
-      'Add a {{field}} to make this section meaningful for visitors.',
-    panelStyleFromTheme:
-      'This section inherits its appearance from the global template theme.',
+    panelRequiredHint: 'Add a {{field}} to make this section meaningful for visitors.',
+    panelStyleFromTheme: 'This section inherits its appearance from the global template theme.',
     panelBackground: 'Background',
     panelBgGradient: 'Gradient',
     panelBgSolid: 'Solid',
@@ -6732,10 +6452,8 @@ export const en = {
     panelDuplicateSection: 'Duplicate Section',
     panelSectionVisible: 'Show This Section',
     sidebarTitle: 'Template Customization',
-    canvasEditHint:
-      'Click text or images on the preview to edit. Pick a banner design below.',
-    emptySlotHint:
-      'Choose a section type below, then pick a design from the library.',
+    canvasEditHint: 'Click text or images on the preview to edit. Pick a banner design below.',
+    emptySlotHint: 'Choose a section type below, then pick a design from the library.',
     chooseBlockType: 'Section type',
     removeEmptySlot: 'Remove empty slot',
     revertToPrevious: 'Restore "{{type}}"',
@@ -6868,7 +6586,7 @@ export const en = {
     panelSlotLive: 'Live',
     panelSlotPlaceholder: 'Placeholder',
     panelSlotHidden: 'Hidden',
-    panelPlaceholderTextHint: 'Placeholder text'
+    panelPlaceholderTextHint: 'Placeholder text',
   },
   learningOperations: {
     workspace: 'Workspace',
@@ -6887,10 +6605,8 @@ export const en = {
     timeline: 'Learning timeline',
     lastAccessed: 'Last accessed',
     videoHeartbeats: 'Video heartbeats',
-    summaryUnavailable:
-      'Learning summary is unavailable for this student profile.',
-    timelineUnavailable:
-      'Learning timeline is unavailable for this student profile.',
+    summaryUnavailable: 'Learning summary is unavailable for this student profile.',
+    timelineUnavailable: 'Learning timeline is unavailable for this student profile.',
     noTimeline: 'No learning activities recorded yet.',
     courseId: 'Course ID',
     lessonId: 'Lesson ID',
@@ -6904,14 +6620,14 @@ export const en = {
       QUIZ_ATTEMPTED: 'Quiz attempted',
       QUIZ_GRADED: 'Quiz graded',
       ATTENDANCE_MARKED: 'Attendance marked',
-      ENROLLMENT_ACTIVATED: 'Enrollment activated'
+      ENROLLMENT_ACTIVATED: 'Enrollment activated',
     },
     status: {
       DRAFT: 'Draft',
       SUBMITTED: 'Submitted',
       GRADED: 'Graded',
-      REJECTED: 'Rejected'
-    }
+      REJECTED: 'Rejected',
+    },
   },
   opsQueue: {
     title: 'Intervention queue',
@@ -6942,14 +6658,12 @@ export const en = {
     missedClasses: 'Missed tutoring classes',
     missedClassesDescription: 'Attendance marked as absent.',
     unansweredThreads: 'Unanswered threads',
-    unansweredThreadsDescription:
-      'Discussion threads where the latest message is from a student.',
+    unansweredThreadsDescription: 'Discussion threads where the latest message is from a student.',
     empty: 'Nothing in this queue right now.',
     profile: 'Profile',
     missedSessionAt: 'Session time',
     interventionNote: 'Intervention note',
-    interventionNoteDescription:
-      'Save a follow-up note on the student learning timeline.',
+    interventionNoteDescription: 'Save a follow-up note on the student learning timeline.',
     profileIdPlaceholder: 'Search student by name or ID',
     followUpAt: 'Follow-up date',
     note: 'Note',
@@ -6965,8 +6679,7 @@ export const en = {
     enableFeature: 'Turn on private & group classes',
     enablingFeature: 'Enabling…',
     featureEnabledSuccess: 'Private and group classes turned on',
-    contactManager:
-      'Ask your academy manager to turn on private and group classes for access.'
+    contactManager: 'Ask your academy manager to turn on private and group classes for access.',
   },
   tutoring: {
     groups: {
@@ -6982,14 +6695,12 @@ export const en = {
       create: 'Create class',
       offer: 'Price to sell it at',
       offerPlaceholder: 'Choose a tutoring offer',
-      offerHint:
-        'The price comes from the offer; the class only sets the times.',
+      offerHint: 'The price comes from the offer; the class only sets the times.',
       name: 'Class name',
       description_: 'Description',
       capacity: 'Capacity',
       minStudents: 'Minimum students',
-      minStudentsHint:
-        'The class waits until this many seats are booked, then starts by itself.',
+      minStudentsHint: 'The class waits until this many seats are booked, then starts by itself.',
       ageMin: 'Minimum age',
       ageMax: 'Maximum age',
       termWeeks: 'Term length (weeks)',
@@ -7001,8 +6712,7 @@ export const en = {
         'If the minimum is not reached by then, the class is cancelled and everyone is refunded.',
       meetingUrl: 'Meeting link',
       timetable: 'Weekly times',
-      timetableHint:
-        'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
+      timetableHint: 'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
       saveTimetable: 'Save weekly times',
       timetableSaved: 'Weekly times saved.',
       timetableLockedHint:
@@ -7059,11 +6769,9 @@ export const en = {
       announceSms: 'Also send an SMS (costs money per student)',
       announceSend: 'Send',
       startNow: 'Start now anyway',
-      startNowHint:
-        'Start the class even though the minimum is not reached yet.',
+      startNowHint: 'Start the class even though the minimum is not reached yet.',
       cancelLabel: 'Reason for cancelling',
-      cancelHint:
-        'Cancelling opens a refund request for every student who paid.',
+      cancelHint: 'Cancelling opens a refund request for every student who paid.',
       cancel: 'Cancel class and refund',
       sessionsTitle: 'Meetings',
       sessionsEmpty: 'Meetings appear once the class starts.',
@@ -7073,22 +6781,22 @@ export const en = {
         CONFIRMED: 'Confirmed',
         RUNNING: 'Running',
         COMPLETED: 'Finished',
-        CANCELLED: 'Cancelled'
+        CANCELLED: 'Cancelled',
       },
       memberStatus: {
         PENDING: 'Waiting',
         ACTIVE: 'Active',
         PAUSED: 'Paused',
         COMPLETED: 'Finished',
-        CANCELLED: 'Cancelled'
+        CANCELLED: 'Cancelled',
       },
       sessionStatus: {
         SCHEDULED: 'Scheduled',
         COMPLETED: 'Held',
         CANCELLED: 'Cancelled',
         RESCHEDULED: 'Moved',
-        NO_SHOW: 'No show'
-      }
+        NO_SHOW: 'No show',
+      },
     },
     title: 'Tutoring',
     description: 'Manage 1:1 engagements, sessions, and attendance.',
@@ -7165,19 +6873,18 @@ export const en = {
     status: {
       PRESENT: 'Present',
       JOINED: 'Joined',
-      ABSENT: 'Absent'
-    }
+      ABSENT: 'Absent',
+    },
   },
   downloadPolicy: {
     title: 'Download policy',
-    description:
-      'Control whether learners can download this lesson by access source.',
+    description: 'Control whether learners can download this lesson by access source.',
     free: 'Allow download for free access',
     enrollment: 'Allow download for enrollment access',
     subscription: 'Allow download for subscription access',
     tutoring: 'Allow download for tutoring access',
     save: 'Save download policy',
-    saved: 'Download policy saved.'
+    saved: 'Download policy saved.',
   },
   quiz: {
     manager: 'Quiz manager',
@@ -7217,8 +6924,8 @@ export const en = {
     type: {
       MULTIPLE_CHOICE: 'Multiple choice',
       TRUE_FALSE: 'True / false',
-      SHORT_TEXT: 'Short text'
-    }
+      SHORT_TEXT: 'Short text',
+    },
   },
   discussion: {
     title: 'Learning discussion',
@@ -7230,7 +6937,7 @@ export const en = {
     attachFile: 'Attach file',
     removeAttachment: 'Remove attachment',
     uploadFailed: 'The file could not be uploaded.',
-    openAttachment: 'Open file'
+    openAttachment: 'Open file',
   },
   pricing: {
     planLimits: {
@@ -7257,7 +6964,7 @@ export const en = {
         storage_gb: 'Storage (GB)',
         monthly_traffic_gb: 'Monthly traffic (GB)',
         videos: 'Videos',
-        dedicated_templates: 'Dedicated site templates'
+        dedicated_templates: 'Dedicated site templates',
       },
       marginOk: 'Gross margin {{margin}}% — within target (≥70%)',
       marginLow: 'Gross margin {{margin}}% — below 70% minimum',
@@ -7267,8 +6974,8 @@ export const en = {
         egress: 'bandwidth',
         compute: 'compute',
         sms: 'SMS',
-        gateway: 'payment gateway'
-      }
+        gateway: 'payment gateway',
+      },
     },
     calculator: {
       title: 'Plan price calculator',
@@ -7290,7 +6997,7 @@ export const en = {
       colLive: 'Live / mo',
       colDelta: 'Delta',
       colMargin: 'Margin @ recommended',
-      colBreakEven: 'Break-even academies'
+      colBreakEven: 'Break-even academies',
     },
     costs: {
       title: 'Cost assumptions & add-on packs',
@@ -7312,16 +7019,15 @@ export const en = {
         storage_addon_gb: 'Storage pack (GB)',
         storage_addon_price_toman: 'Storage pack price (Toman)',
         traffic_addon_gb: 'Traffic pack (GB)',
-        traffic_addon_price_toman: 'Traffic pack price (Toman)'
-      }
+        traffic_addon_price_toman: 'Traffic pack price (Toman)',
+      },
     },
     platform: {
       title: 'Platform Pricing & Commission',
       subtitle:
         'Manage VAT, platform commission, teacher revenue share, subscription plans, and payment gateways. Changes take effect on the next request (60-second cache).',
       accessRestricted: 'Access Restricted',
-      accessRestrictedDesc:
-        'Only platform administrators can manage pricing settings.',
+      accessRestrictedDesc: 'Only platform administrators can manage pricing settings.',
       loadFailed: 'Failed to load platform settings',
       plansLoadFailed: 'Failed to load subscription plans',
       gatewaysLoadFailed: 'Failed to load payment gateways',
@@ -7390,15 +7096,14 @@ export const en = {
         'Activate exactly one live gateway. It is used for both academy plan checkout (AdminPanel) and student payments (edusphere). Turning one on switches the others off.',
       gatewayActive: 'Active — accepting payments',
       gatewaySandbox: 'Active — sandbox (test payments only)',
-      gatewayNeedsToken:
-        'On, but no API key saved — open Token & details and paste the BitPay key',
+      gatewayNeedsToken: 'On, but no API key saved — open Token & details and paste the BitPay key',
       gatewayInactive: 'Inactive — disabled',
       gatewaySaved: 'Gateway updated',
       gatewaySaveFailed: 'Failed to update gateway',
       noGateways: 'No payment gateway records found.',
       manageGatewayDetails: 'Manage tokens & details',
-      refresh: 'Refresh'
-    }
+      refresh: 'Refresh',
+    },
   },
   platformStorage: {
     title: 'Storage',
@@ -7432,14 +7137,13 @@ export const en = {
     confirmDeleteAll:
       '{{size}} of leftover files that no video, image, audio, or document uses will be permanently removed. This cannot be undone.',
     deleted: '{{count}} files deleted.',
-    refused: '{{count}} files were still in use and were not deleted.'
+    refused: '{{count}} files were still in use and were not deleted.',
   },
   dashboardBanners: {
     title: 'Dashboard banners',
     description:
       'These images rotate slowly in the centre of every academy dashboard. The set an academy sees depends on whether it has finished setup (academy + template + first course).',
-    accessDenied:
-      'Only the platform owner and admins can manage dashboard banners.',
+    accessDenied: 'Only the platform owner and admins can manage dashboard banners.',
     upload: 'Upload banners',
     uploadedCount: '{{count}} banner(s) uploaded',
     deleted: 'Banner deleted',
@@ -7452,13 +7156,12 @@ export const en = {
     linkSaved: 'Banner link saved',
     states: {
       INCOMPLETE: 'Setup not finished',
-      COMPLETED: 'Academy fully set up'
+      COMPLETED: 'Academy fully set up',
     },
     stateHelp: {
       INCOMPLETE: 'Shown when the academy has no template or no course yet.',
-      COMPLETED:
-        'Shown when the academy has a template and at least one course.'
-    }
+      COMPLETED: 'Shown when the academy has a template and at least one course.',
+    },
   },
   broadcasts: {
     title: 'Platform broadcasts',
@@ -7479,24 +7182,24 @@ export const en = {
       status: 'Status',
       recipients: 'Recipients',
       academyIds: 'Academy IDs',
-      academyIdsPlaceholder: 'Comma-separated academy IDs'
+      academyIdsPlaceholder: 'Comma-separated academy IDs',
     },
     audiences: {
       ALL_MANAGERS: 'All academy dashboards',
       ALL_TEACHERS: 'All teachers',
-      SELECTED_ACADEMIES: 'Selected academies'
+      SELECTED_ACADEMIES: 'Selected academies',
     },
     statuses: {
       DRAFT: 'Draft',
-      SENT: 'Sent'
-    }
+      SENT: 'Sent',
+    },
   },
   notifications: {
     bell: {
       title: 'Notifications',
       empty: 'No notifications',
-      markAllRead: 'Mark all read'
-    }
+      markAllRead: 'Mark all read',
+    },
   },
   academiesHealth: {
     title: 'Academy health',
@@ -7530,10 +7233,8 @@ export const en = {
       toDeposit: 'Payable now',
       bankAccount: 'Bank account',
       kycTitle: 'Identity verification',
-      kycVerified:
-        'Manager identity verified via Shahkar and Sheba matched to national ID',
-      kycMissing:
-        'Identity verification (Shahkar + Sheba match) not completed yet',
+      kycVerified: 'Manager identity verified via Shahkar and Sheba matched to national ID',
+      kycMissing: 'Identity verification (Shahkar + Sheba match) not completed yet',
       lockedNoKyc:
         'Form locked: manager identity verification is incomplete. No deposit until Shahkar and Sheba match are confirmed.',
       bankMissing: 'No verified bank account — cannot settle',
@@ -7568,8 +7269,8 @@ export const en = {
       lockedNoBalance:
         'Form locked: nothing to deposit. The wallet is only filled by verified online payments; cash and bank-transfer sales stay with the academy.',
       pendingHelp:
-        'Requests the academy manager submitted. After the transfer, enter the tracking code and approve.'
-    }
+        'Requests the academy manager submitted. After the transfer, enter the tracking code and approve.',
+    },
   },
   entitySearch: {
     searchPlaceholder: 'Search by name or ID…',
@@ -7578,7 +7279,7 @@ export const en = {
     loading: 'Searching…',
     clear: 'Clear selection',
     selectCourseFirst: 'Select a course first',
-    unnamedUser: 'Unnamed user'
+    unnamedUser: 'Unnamed user',
   },
   userNav: {
     profile: 'Profile',
@@ -7594,8 +7295,8 @@ export const en = {
       MANAGER: 'Academy Manager',
       TEACHER: 'Instructor',
       STUDENT: 'Student',
-      USER: 'User'
-    }
+      USER: 'User',
+    },
   },
 
   /**
@@ -7620,8 +7321,7 @@ export const en = {
       'You must verify your phone number before signing up. Request and enter the verification code first.',
     AUTH_MUST_VERIFY_EMAIL:
       'You must verify your email before signing up. Request and enter the verification code first.',
-    AUTH_IDENTIFIER_REQUIRED:
-      'Please enter your phone number or email to continue.',
+    AUTH_IDENTIFIER_REQUIRED: 'Please enter your phone number or email to continue.',
     AUTH_ACADEMY_ID_REQUIRED: 'Please select your academy to sign in.',
     AUTH_ACADEMY_ACCESS_DENIED:
       'You do not have access to this academy. Contact the academy manager if you should.',
@@ -7631,36 +7331,26 @@ export const en = {
       'The password and its confirmation do not match. Please re-enter both fields.',
     AUTH_CURRENT_PASSWORD_INCORRECT:
       'The current password you entered is not correct. Please try again.',
-    AUTH_ADMIN_ROLE_NOT_ALLOWED:
-      'An admin account cannot be created through this route.',
+    AUTH_ADMIN_ROLE_NOT_ALLOWED: 'An admin account cannot be created through this route.',
     AUTH_ADMIN_ONLY: 'Only system admins can perform this action.',
     AUTH_NOT_AUTHENTICATED: 'Your session is not valid. Please sign in again.',
-    AUTH_SESSION_EXPIRED:
-      'Your session has ended. Please sign in again to continue.',
-    AUTH_REFRESH_TOKEN_MISSING:
-      'Your session could not be found. Please sign in again.',
+    AUTH_SESSION_EXPIRED: 'Your session has ended. Please sign in again to continue.',
+    AUTH_REFRESH_TOKEN_MISSING: 'Your session could not be found. Please sign in again.',
     AUTH_REFRESH_TOKEN_INVALID:
       'Your session is no longer valid. Please sign in again to continue.',
-    AUTH_TEMP_TOKEN_INVALID:
-      'This step has expired. Please start signing in again.',
-    AUTH_SESSION_NOT_FOUND:
-      'That session was not found, or it has already been closed.',
-    OTP_INVALID:
-      'That verification code is not correct. Please check it, or request a new code.',
-    OTP_EXPIRED:
-      'This verification code has expired. Tap "Resend" to get a new one.',
-    OTP_ALREADY_USED:
-      'This verification code has already been used. Please request a new one.',
+    AUTH_TEMP_TOKEN_INVALID: 'This step has expired. Please start signing in again.',
+    AUTH_SESSION_NOT_FOUND: 'That session was not found, or it has already been closed.',
+    OTP_INVALID: 'That verification code is not correct. Please check it, or request a new code.',
+    OTP_EXPIRED: 'This verification code has expired. Tap "Resend" to get a new one.',
+    OTP_ALREADY_USED: 'This verification code has already been used. Please request a new one.',
     OTP_COOLDOWN:
       'A code was just sent to you. Please wait {seconds} seconds before requesting another.',
     OTP_RATE_LIMITED:
       'You have requested too many verification codes. Please try again a little later.',
-    OTP_PHONE_REQUIRED:
-      'Please enter your phone number to receive a verification code.',
+    OTP_PHONE_REQUIRED: 'Please enter your phone number to receive a verification code.',
     OTP_PHONE_INVALID:
       'That phone number is not valid. Enter it with the country code, for example +989121234567.',
-    OTP_TYPE_REQUIRED:
-      'The verification code type was not specified. Please try again.',
+    OTP_TYPE_REQUIRED: 'The verification code type was not specified. Please try again.',
     OTP_SEND_FAILED:
       'We could not send the verification code. Please try again shortly; contact support if it keeps happening.',
     VALIDATION_FAILED:
@@ -7668,10 +7358,8 @@ export const en = {
     VALIDATION_REQUIRED: '{field} is required.',
     VALIDATION_MIN_LENGTH: '{field} must be at least {min} characters.',
     VALIDATION_MAX_LENGTH: '{field} must be no longer than {max} characters.',
-    VALIDATION_EMAIL:
-      '{field} is not a valid email address. Example: name@example.com',
-    VALIDATION_PHONE:
-      '{field} is not a valid phone number. Enter it with the country code.',
+    VALIDATION_EMAIL: '{field} is not a valid email address. Example: name@example.com',
+    VALIDATION_PHONE: '{field} is not a valid phone number. Enter it with the country code.',
     VALIDATION_PATTERN:
       'The format of {field} is not correct. Please enter it as the field describes.',
     VALIDATION_PASSWORD_ASCII:
@@ -7693,19 +7381,14 @@ export const en = {
       'Students paid for this course and still have access. It cannot be deleted or taken off the site until their access ends.',
     ACADEMY_HAS_TRANSACTIONS:
       'This academy has real transactions and cannot be deleted. Suspend or ban it instead.',
-    ACADEMY_ENROLLMENT_CLOSED:
-      'This academy is not accepting new enrollments right now.',
-    RESOURCE_NOT_FOUND:
-      'What you were looking for was not found. It may have been deleted.',
+    ACADEMY_ENROLLMENT_CLOSED: 'This academy is not accepting new enrollments right now.',
+    RESOURCE_NOT_FOUND: 'What you were looking for was not found. It may have been deleted.',
     PERMISSION_DENIED:
       'You do not have permission to do this. Contact your academy manager for access.',
     TENANT_MISMATCH: 'This item does not belong to your academy.',
-    FILE_TOO_LARGE:
-      'The file is larger than allowed. Please choose a smaller file.',
-    FILE_TOO_LARGE_MB:
-      'The file must be smaller than {max}MB. Please choose a smaller file.',
-    FILE_TYPE_NOT_ALLOWED:
-      'This file type is not allowed. Please choose a supported format.',
+    FILE_TOO_LARGE: 'The file is larger than allowed. Please choose a smaller file.',
+    FILE_TOO_LARGE_MB: 'The file must be smaller than {max}MB. Please choose a smaller file.',
+    FILE_TYPE_NOT_ALLOWED: 'This file type is not allowed. Please choose a supported format.',
     EXTERNAL_SERVICE_FAILED:
       'We could not reach an external service. Please try again in a moment.',
     SUBSCRIPTION_EXPIRED:
@@ -7718,15 +7401,13 @@ export const en = {
       'No payment gateway is currently enabled. Contact the platform administrator.',
     PAYMENT_GATEWAY_NOT_CONFIGURED:
       'The payment gateway is on, but no API key is saved. Open Token & details and paste the BitPay key.',
-    PAYMENT_GATEWAY_REJECTED:
-      'The payment gateway rejected this checkout. {reason}',
+    PAYMENT_GATEWAY_REJECTED: 'The payment gateway rejected this checkout. {reason}',
     HTTP_400:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     BAD_REQUEST:
       'The information sent was incomplete or invalid. Please check the form and try again.',
     HTTP_401: 'You need to be signed in to do this. Please sign in again.',
-    UNAUTHENTICATED:
-      'You need to be signed in to do this. Please sign in again.',
+    UNAUTHENTICATED: 'You need to be signed in to do this. Please sign in again.',
     HTTP_403:
       'You do not have permission to do this. If you think this is a mistake, contact your academy manager.',
     FORBIDDEN:
@@ -7735,32 +7416,23 @@ export const en = {
       'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
     NOT_FOUND:
       'What you were looking for was not found. It may have been deleted, or the address may be wrong.',
-    HTTP_409:
-      'This item already exists. Please choose a different name or value.',
-    CONFLICT:
-      'This item already exists. Please choose a different name or value.',
-    HTTP_413:
-      'The uploaded file is larger than allowed. Please choose a smaller file.',
-    PAYLOAD_TOO_LARGE:
-      'The uploaded file is larger than allowed. Please choose a smaller file.',
-    HTTP_415:
-      'That file type is not supported. Please choose a file in an allowed format.',
+    HTTP_409: 'This item already exists. Please choose a different name or value.',
+    CONFLICT: 'This item already exists. Please choose a different name or value.',
+    HTTP_413: 'The uploaded file is larger than allowed. Please choose a smaller file.',
+    PAYLOAD_TOO_LARGE: 'The uploaded file is larger than allowed. Please choose a smaller file.',
+    HTTP_415: 'That file type is not supported. Please choose a file in an allowed format.',
     UNSUPPORTED_MEDIA_TYPE:
       'That file type is not supported. Please choose a file in an allowed format.',
-    HTTP_422:
-      'The submitted data could not be processed. Please review the values and try again.',
+    HTTP_422: 'The submitted data could not be processed. Please review the values and try again.',
     UNPROCESSABLE:
       'The submitted data could not be processed. Please review the values and try again.',
-    HTTP_429:
-      'You have made too many attempts. Please wait a little and try again.',
-    RATE_LIMITED:
-      'You have made too many attempts. Please wait a little and try again.',
+    HTTP_429: 'You have made too many attempts. Please wait a little and try again.',
+    RATE_LIMITED: 'You have made too many attempts. Please wait a little and try again.',
     HTTP_500:
       'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
     INTERNAL_ERROR:
       'Something went wrong on our side and the error has been logged. Please try again in a moment; contact support if it keeps happening.',
-    HTTP_502:
-      'We could not reach one of our external services. Please try again in a moment.',
+    HTTP_502: 'We could not reach one of our external services. Please try again in a moment.',
     UPSTREAM_ERROR:
       'We could not reach one of our external services. Please try again in a moment.',
     HTTP_503:
@@ -7768,10 +7440,8 @@ export const en = {
     SERVICE_UNAVAILABLE:
       'The service is temporarily unavailable, likely for maintenance. Please try again in a few minutes.',
     HTTP_504: 'An external service took too long to respond. Please try again.',
-    UPSTREAM_TIMEOUT:
-      'An external service took too long to respond. Please try again.',
-    NETWORK_ERROR:
-      'We could not reach the server. Check your internet connection and try again.',
+    UPSTREAM_TIMEOUT: 'An external service took too long to respond. Please try again.',
+    NETWORK_ERROR: 'We could not reach the server. Check your internet connection and try again.',
     UNKNOWN:
       'An unexpected error occurred and has been logged. Please try again; contact support if it keeps happening.',
     fields: {
@@ -7803,8 +7473,8 @@ export const en = {
       starts_at: 'Start date',
       ends_at: 'End date',
       file: 'File',
-      image_id: 'Image'
-    }
+      image_id: 'Image',
+    },
   },
   platformCosts: {
     title: 'Platform costs',
@@ -7824,7 +7494,7 @@ export const en = {
       infrastructure: 'Infrastructure',
       people: 'People',
       operations: 'Operations',
-      other: 'Other'
+      other: 'Other',
     },
     subcategories: {
       social: 'Social ads',
@@ -7844,8 +7514,8 @@ export const en = {
       accounting: 'Accounting',
       tools: 'Software tools',
       office: 'Office',
-      other: 'Other'
-    }
+      other: 'Other',
+    },
   },
   platformMetrics: {
     title: 'Investor report',
@@ -7859,7 +7529,7 @@ export const en = {
       users: 'Users & activity',
       catalog: 'Courses & learning record',
       economics: 'Unit economics',
-      reconciliation: 'Reconciliation'
+      reconciliation: 'Reconciliation',
     },
     currency: { label: 'Currency', toman: 'Toman', eur: 'EUR' },
     source: { label: 'Source', live: 'Live', snapshot: 'Monthly snapshot' },
@@ -7945,7 +7615,7 @@ export const en = {
       invoiced_amount: 'Invoiced amount',
       invoice_count: 'Paid invoices',
       manual_invoice_count: 'Manual invoices',
-      manual_invoice_amount: 'Manual invoice amount'
+      manual_invoice_amount: 'Manual invoice amount',
     },
     bridge: {
       title: 'Monthly MRR bridge',
@@ -7954,7 +7624,7 @@ export const en = {
       expansion: 'Expansion',
       contraction: 'Contraction',
       churned: 'Churned',
-      ending: 'Ending'
+      ending: 'Ending',
     },
     columns: {
       month: 'Month',
@@ -7984,7 +7654,7 @@ export const en = {
       churnedAcademies: 'Churned',
       measured: 'Academies measured',
       medianDays: 'Median days',
-      p75Days: 'P75 days'
+      p75Days: 'P75 days',
     },
     sections: {
       byStatus: 'By status',
@@ -8001,12 +7671,12 @@ export const en = {
       timeToValue: 'Time to first value',
       learningRecord: 'Learning record',
       activity: 'Login activity',
-      registrations: 'Registrations'
+      registrations: 'Registrations',
     },
     ttv: {
       first_course_created: 'First course created',
       first_enrollment: 'First student enrolled',
-      first_paid_invoice: 'First paid invoice'
+      first_paid_invoice: 'First paid invoice',
     },
     reconciliation: {
       title: 'Invoice, payment and gateway tie-out',
@@ -8017,26 +7687,22 @@ export const en = {
       orphan: 'Orphan',
       manual: 'Settled manually',
       invoiceToPayment: 'Invoice → Payment',
-      paymentToGateway: 'Payment → Gateway'
+      paymentToGateway: 'Payment → Gateway',
     },
     caveats: {
       title: 'Data limits',
-      loginHistory:
-        'Login and retention series start from the day this table went live.',
-      marketingSpend:
-        'Marketing spend is entered by hand; without it CAC cannot be computed.',
-      runway:
-        'Cash balance is not stored in the platform, so runway cannot be computed.',
-      financialRecords:
-        'No platform financial records in this window, so gross margin is unknown.',
-      zeroChurn: 'Observed churn is zero, so LTV is undefined.'
+      loginHistory: 'Login and retention series start from the day this table went live.',
+      marketingSpend: 'Marketing spend is entered by hand; without it CAC cannot be computed.',
+      runway: 'Cash balance is not stored in the platform, so runway cannot be computed.',
+      financialRecords: 'No platform financial records in this window, so gross margin is unknown.',
+      zeroChurn: 'Observed churn is zero, so LTV is undefined.',
     },
     spend: {
       title: 'Marketing spend',
       channel: 'Channel',
       amount: 'Amount',
       add: 'Record spend',
-      saved: 'Saved'
+      saved: 'Saved',
     },
     guides: {
       overview:
@@ -8056,124 +7722,124 @@ export const en = {
       economics:
         'Unit economics from marketing spend and cost records you enter. CAC, LTV and runway stay blank until those inputs exist.',
       reconciliation:
-        'Three-way check that every paid invoice has a payment, and every payment has a gateway confirmation. A gap is a money-path defect, not a reporting artefact.'
+        'Three-way check that every paid invoice has a payment, and every payment has a gateway confirmation. A gap is a money-path defect, not a reporting artefact.',
     },
     terms: {
       mrr: {
         abbr: 'MRR',
         full: 'Monthly Recurring Revenue',
-        hint: 'Invoice amount spread evenly across each month of the plan term.'
+        hint: 'Invoice amount spread evenly across each month of the plan term.',
       },
       arr: {
         abbr: 'ARR',
         full: 'Annual Recurring Revenue',
-        hint: 'MRR × 12.'
+        hint: 'MRR × 12.',
       },
       arpa: {
         abbr: 'ARPA',
         full: 'Average Revenue Per Account',
-        hint: 'MRR ÷ paying academies.'
+        hint: 'MRR ÷ paying academies.',
       },
       nrr: {
         abbr: 'NRR',
         full: 'Net Revenue Retention',
-        hint: 'Last-month MRR of the opening cohort ÷ first-month MRR. Can exceed 100% when academies upgrade.'
+        hint: 'Last-month MRR of the opening cohort ÷ first-month MRR. Can exceed 100% when academies upgrade.',
       },
       grr: {
         abbr: 'GRR',
         full: 'Gross Revenue Retention',
-        hint: 'Like NRR but upgrades are excluded, so it never exceeds 100%.'
+        hint: 'Like NRR but upgrades are excluded, so it never exceeds 100%.',
       },
       cohort: {
         abbr: 'Cohort',
         full: 'Cohort',
-        hint: 'A group that started in the same month, followed together in later months.'
+        hint: 'A group that started in the same month, followed together in later months.',
       },
       logoRetention: {
         abbr: 'Logo retention',
         full: 'Logo Retention',
-        hint: 'Share of the opening cohort still paying anything this month.'
+        hint: 'Share of the opening cohort still paying anything this month.',
       },
       gmv: {
         abbr: 'GMV',
         full: 'Gross Merchandise Value',
-        hint: 'Student payments to academies. Not Mentoma income (0% commission).'
+        hint: 'Student payments to academies. Not Mentoma income (0% commission).',
       },
       dau: {
         abbr: 'DAU',
         full: 'Daily Active Users',
-        hint: 'Distinct users who logged in in the last 1 day.'
+        hint: 'Distinct users who logged in in the last 1 day.',
       },
       wau: {
         abbr: 'WAU',
         full: 'Weekly Active Users',
-        hint: 'Distinct users who logged in in the last 7 days.'
+        hint: 'Distinct users who logged in in the last 7 days.',
       },
       mau: {
         abbr: 'MAU',
         full: 'Monthly Active Users',
-        hint: 'Distinct users who logged in in the last 30 days.'
+        hint: 'Distinct users who logged in in the last 30 days.',
       },
       stickiness: {
         abbr: 'Stickiness',
         full: 'DAU / MAU',
-        hint: 'How often monthly users come back on a given day.'
+        hint: 'How often monthly users come back on a given day.',
       },
       cac: {
         abbr: 'CAC',
         full: 'Customer Acquisition Cost',
-        hint: 'Marketing spend ÷ new paying academies.'
+        hint: 'Marketing spend ÷ new paying academies.',
       },
       ltv: {
         abbr: 'LTV',
         full: 'Lifetime Value',
-        hint: '(ARPA × gross margin) ÷ monthly logo churn.'
+        hint: '(ARPA × gross margin) ÷ monthly logo churn.',
       },
       ltvCac: {
         abbr: 'LTV : CAC',
         full: 'Lifetime Value to Customer Acquisition Cost',
-        hint: 'How many times lifetime value covers acquisition cost. Above 3 is a common healthy bar.'
+        hint: 'How many times lifetime value covers acquisition cost. Above 3 is a common healthy bar.',
       },
       ttv: {
         abbr: 'TTV',
         full: 'Time To Value',
-        hint: 'Days from academy creation to first course, first enrollment, or first paid invoice.'
+        hint: 'Days from academy creation to first course, first enrollment, or first paid invoice.',
       },
       ruleOf40: {
         abbr: 'Rule of 40',
         full: 'Rule of 40',
-        hint: 'Annualised MRR growth % + gross margin %. Healthy SaaS is at or above 40.'
+        hint: 'Annualised MRR growth % + gross margin %. Healthy SaaS is at or above 40.',
       },
       quickRatio: {
         abbr: 'Quick ratio',
         full: 'Quick Ratio',
-        hint: '(New + expansion MRR) ÷ (contraction + churned MRR). Above 4 is strong.'
+        hint: '(New + expansion MRR) ÷ (contraction + churned MRR). Above 4 is strong.',
       },
       expansion: {
         abbr: 'Expansion',
         full: 'Expansion MRR',
-        hint: 'Extra MRR from academies that already paid last month and pay more this month.'
+        hint: 'Extra MRR from academies that already paid last month and pay more this month.',
       },
       contraction: {
         abbr: 'Contraction',
         full: 'Contraction MRR',
-        hint: 'Lost MRR from academies that still pay, but less than last month.'
+        hint: 'Lost MRR from academies that still pay, but less than last month.',
       },
       churn: {
         abbr: 'Churn',
         full: 'Churned MRR',
-        hint: 'MRR (or academies) that paid last month and pay nothing this month.'
+        hint: 'MRR (or academies) that paid last month and pay nothing this month.',
       },
       learningRecord: {
         abbr: 'Learning record',
         full: 'Learning Record',
-        hint: 'Quizzes, submissions, grades, discussions, attendance, and certificates. The switching-cost metric.'
+        hint: 'Quizzes, submissions, grades, discussions, attendance, and certificates. The switching-cost metric.',
       },
       orphan: {
         abbr: 'Orphan',
         full: 'Orphan payment',
-        hint: 'A paid payment with no matching invoice — investigate.'
-      }
-    }
-  }
+        hint: 'A paid payment with no matching invoice — investigate.',
+      },
+    },
+  },
 };

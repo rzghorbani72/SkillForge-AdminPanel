@@ -28,11 +28,7 @@ export default function SitePagesSettingsPage() {
         <div className="space-y-6">
           <div className="grid gap-4 xl:grid-cols-2">
             {pages.map((page) => (
-              <AcademyPageEditor
-                key={page.slug}
-                page={page}
-                onSaved={refresh}
-              />
+              <AcademyPageEditor key={page.slug} page={page} onSaved={refresh} />
             ))}
           </div>
 

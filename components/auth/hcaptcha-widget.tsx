@@ -13,7 +13,7 @@ declare global {
           sitekey: string;
           callback: (token: string) => void;
           'expired-callback'?: () => void;
-        }
+        },
       ) => string;
       reset: (widgetId?: string) => void;
     };
@@ -24,9 +24,7 @@ function loadHCaptchaScript(): Promise<void> {
   if (window.hcaptcha) return Promise.resolve();
   const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
   if (existing) {
-    return new Promise((resolve) =>
-      existing.addEventListener('load', () => resolve())
-    );
+    return new Promise((resolve) => existing.addEventListener('load', () => resolve()));
   }
   return new Promise((resolve) => {
     const script = document.createElement('script');
@@ -43,11 +41,7 @@ function loadHCaptchaScript(): Promise<void> {
  * avoid a new dependency for a widget shown only after repeated login
  * failures. Renders nothing if NEXT_PUBLIC_HCAPTCHA_SITE_KEY is unset.
  */
-export function HCaptchaWidget({
-  onVerify
-}: {
-  onVerify: (token: string) => void;
-}) {
+export function HCaptchaWidget({ onVerify }: { onVerify: (token: string) => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const siteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
@@ -61,7 +55,7 @@ export function HCaptchaWidget({
       widgetId = window.hcaptcha.render(containerRef.current, {
         sitekey: siteKey,
         callback: onVerify,
-        'expired-callback': () => onVerify('')
+        'expired-callback': () => onVerify(''),
       });
     });
 

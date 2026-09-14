@@ -3,13 +3,7 @@
 import type { ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLearningNavCapabilities } from '@/hooks/useLearningNavCapabilities';
 import type { LearningNavVisibility } from '@/lib/nav-filter';
 
@@ -20,10 +14,7 @@ interface LearningNavGateProps {
   children: ReactNode;
 }
 
-export function LearningNavGate({
-  requiredCapability,
-  children
-}: LearningNavGateProps) {
+export function LearningNavGate({ requiredCapability, children }: LearningNavGateProps) {
   const { t } = useTranslation();
   const { visibility, isLoading, shouldResolve } = useLearningNavCapabilities();
 
@@ -59,9 +50,7 @@ export function LearningNavGate({
           <CardDescription>{t(messageKey)}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {t('learningNav.accessDeniedHint')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('learningNav.accessDeniedHint')}</p>
         </CardContent>
       </Card>
     </div>

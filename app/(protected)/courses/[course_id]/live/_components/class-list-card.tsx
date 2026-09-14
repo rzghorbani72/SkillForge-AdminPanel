@@ -8,11 +8,7 @@ import { GroupStatusBadge } from '@/components/class/group-status-badge';
 import { GroupTermRange } from '@/components/class/group-term-range';
 import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { SeatMeter } from '@/components/class/seat-meter';
-import {
-  DataList,
-  DataPanel,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { termStart } from '@/lib/class-slot-time';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -31,9 +27,7 @@ interface ClassListCardProps {
 
 /** Without a group price there is nothing to sell a seat at, so say that instead. */
 const emptyKey = (hasAction: boolean) =>
-  hasAction
-    ? 'courses.live.noClassesYet'
-    : 'courses.live.needsPriceBeforeSchedule';
+  hasAction ? 'courses.live.noClassesYet' : 'courses.live.needsPriceBeforeSchedule';
 
 /**
  * The classes this course runs, one row each. Everything about a single class
@@ -45,7 +39,7 @@ export function ClassListCard({
   groups,
   action,
   emptyAction,
-  onChanged
+  onChanged,
 }: ClassListCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -66,7 +60,7 @@ export function ClassListCard({
           </button>
           <ClassSizeBadge capacity={group.capacity} />
         </div>
-      )
+      ),
     },
     {
       id: 'schedule',
@@ -77,7 +71,7 @@ export function ClassListCard({
           startsOn={termStart(group)}
           timezone={group.timezone}
         />
-      )
+      ),
     },
     {
       id: 'term',
@@ -86,33 +80,29 @@ export function ClassListCard({
         <span className="text-xs text-muted-foreground">
           <GroupTermRange group={group} />
         </span>
-      )
+      ),
     },
     {
       id: 'seats',
       header: t('tutoring.groups.columnSeats'),
       className: 'w-40',
       cell: (group) => (
-        <SeatMeter
-          taken={group.seats_taken}
-          capacity={group.capacity}
-          held={group.seats_held}
-        />
-      )
+        <SeatMeter taken={group.seats_taken} capacity={group.capacity} held={group.seats_held} />
+      ),
     },
     {
       id: 'status',
       header: t('tutoring.groups.columnStatus'),
       align: 'center',
-      cell: (group) => <GroupStatusBadge status={group.status} />
-    }
+      cell: (group) => <GroupStatusBadge status={group.status} />,
+    },
   ];
 
   return (
     <DataPanel
       title={t('courses.live.classesTitle')}
       subtitle={t('courses.live.classesCount', {
-        count: formatNumber(groups.length)
+        count: formatNumber(groups.length),
       })}
       actions={groups.length > 0 ? action : null}
     >

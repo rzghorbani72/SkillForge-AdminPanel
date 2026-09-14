@@ -3,25 +3,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CountryCode, COUNTRY_CODES } from '@/lib/country-codes';
-import {
-  detectUserCountry,
-  getStoredCountry,
-  storeCountry
-} from '@/lib/geo-location';
+import { detectUserCountry, getStoredCountry, storeCountry } from '@/lib/geo-location';
 import {
   cleanPhoneNumber,
   isValidPhoneNumber,
   formatPhoneNumber,
-  getFullPhoneNumber
+  getFullPhoneNumber,
 } from '@/lib/phone-utils';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { getDefaultCountryByLanguage } from '@/lib/country-codes';
@@ -57,19 +48,17 @@ export function PhoneInputWithCountry({
   maxLength = 10,
   onValidationChange,
   onBlur,
-  lockCountryCode
+  lockCountryCode,
 }: PhoneInputWithCountryProps) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslation();
   const lockedCountry = useMemo(
     () =>
-      lockCountryCode
-        ? (COUNTRY_CODES.find((c) => c.code === lockCountryCode) ?? null)
-        : null,
-    [lockCountryCode]
+      lockCountryCode ? (COUNTRY_CODES.find((c) => c.code === lockCountryCode) ?? null) : null,
+    [lockCountryCode],
   );
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
-    lockedCountry ?? getDefaultCountryByLanguage(language)
+    lockedCountry ?? getDefaultCountryByLanguage(language),
   );
   const [isLoadingCountry, setIsLoadingCountry] = useState(true);
   const [isValid, setIsValid] = useState(false);
@@ -96,15 +85,12 @@ export function PhoneInputWithCountry({
         fa: 'IR',
         tr: 'TR',
         en: 'US',
-        ar: 'SA'
+        ar: 'SA',
       };
 
       // Check if stored country matches the current language preference
       const storedCountry = getStoredCountry();
-      if (
-        storedCountry &&
-        storedCountry.code === languageCountryMap[language]
-      ) {
+      if (storedCountry && storedCountry.code === languageCountryMap[language]) {
         // Stored country matches language, use it
         setSelectedCountry(storedCountry);
         setIsLoadingCountry(false);
@@ -229,9 +215,7 @@ export function PhoneInputWithCountry({
               >
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{selectedCountry.flag}</span>
-                  <span className="text-sm font-medium">
-                    {selectedCountry.dialCode}
-                  </span>
+                  <span className="text-sm font-medium">{selectedCountry.dialCode}</span>
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </div>
               </SelectTrigger>
@@ -241,9 +225,7 @@ export function PhoneInputWithCountry({
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{country.flag}</span>
                       <span className="text-sm">{country.name}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {country.dialCode}
-                      </span>
+                      <span className="text-sm text-muted-foreground">{country.dialCode}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -263,7 +245,7 @@ export function PhoneInputWithCountry({
               className={cn(
                 'rounded-l-none border-l-0 ps-10',
                 error && 'border-red-500',
-                className
+                className,
               )}
               disabled={disabled}
               autoComplete="tel"
@@ -274,15 +256,8 @@ export function PhoneInputWithCountry({
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
       {!error && value && (
-        <p
-          className={cn(
-            'text-xs',
-            isValid ? 'text-green-600' : 'text-amber-600'
-          )}
-        >
-          {isValid
-            ? t('common.validPhoneNumberFormat')
-            : t('common.invalidPhoneNumberFormat')}
+        <p className={cn('text-xs', isValid ? 'text-green-600' : 'text-amber-600')}>
+          {isValid ? t('common.validPhoneNumberFormat') : t('common.invalidPhoneNumberFormat')}
         </p>
       )}
     </div>

@@ -8,14 +8,10 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Search, X, SlidersHorizontal } from 'lucide-react';
-import {
-  FilterType,
-  CategoryType,
-  getCategoryTypeLabel
-} from './category-utils';
+import { FilterType, CategoryType, getCategoryTypeLabel } from './category-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SearchAndFiltersProps {
@@ -29,7 +25,7 @@ export function SearchAndFilters({
   searchTerm,
   onSearchChange,
   selectedType,
-  onTypeChange
+  onTypeChange,
 }: SearchAndFiltersProps) {
   const { t } = useTranslation();
 
@@ -67,11 +63,7 @@ export function SearchAndFilters({
               {getCategoryTypeLabel('all')}
             </SelectItem>
             {Object.values(CategoryType).map((type: CategoryType) => (
-              <SelectItem
-                key={type}
-                value={type.toString()}
-                className="rounded-lg"
-              >
+              <SelectItem key={type} value={type.toString()} className="rounded-lg">
                 {getCategoryTypeLabel(type.toString())}
               </SelectItem>
             ))}

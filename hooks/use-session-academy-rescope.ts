@@ -5,7 +5,7 @@ import { apiClient } from '@/lib/api';
 import {
   ACADEMY_RESCOPE_FLAG,
   getSelectedAcademyId,
-  setSelectedAcademyId
+  setSelectedAcademyId,
 } from '@/lib/store-utils';
 import type { Academy } from '@/types/api';
 
@@ -17,7 +17,7 @@ import type { Academy } from '@/types/api';
  */
 export function useSessionAcademyRescope({
   enabled,
-  academies
+  academies,
 }: {
   enabled: boolean;
   academies: Academy[];

@@ -9,9 +9,7 @@ export function AnalyticsLoading() {
       <div className="flex h-64 items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t('common.loading')}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     </div>

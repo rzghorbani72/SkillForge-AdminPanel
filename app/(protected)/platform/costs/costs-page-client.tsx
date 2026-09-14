@@ -4,11 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
-import {
-  DataPanel,
-  DataList,
-  type DataColumn
-} from '@/components/shared/data-list';
+import { DataPanel, DataList, type DataColumn } from '@/components/shared/data-list';
 import { apiClient, type PlatformCostRow } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -61,7 +57,7 @@ export function CostsPageClient() {
         setBusy(false);
       }
     },
-    [load]
+    [load],
   );
 
   const remove = useCallback(
@@ -76,60 +72,51 @@ export function CostsPageClient() {
         setBusy(false);
       }
     },
-    [load]
+    [load],
   );
 
   const columns: DataColumn<PlatformCostRow>[] = [
     {
       id: 'paidAt',
       header: t('platformCosts.paidAt'),
-      cell: (row) =>
-        formatDate(row.paid_at, { hour: '2-digit', minute: '2-digit' })
+      cell: (row) => formatDate(row.paid_at, { hour: '2-digit', minute: '2-digit' }),
     },
     {
       id: 'category',
       header: t('platformCosts.category'),
-      cell: (row) => t(`platformCosts.categories.${row.category}`)
+      cell: (row) => t(`platformCosts.categories.${row.category}`),
     },
     {
       id: 'subcategory',
       header: t('platformCosts.subcategory'),
-      cell: (row) => t(`platformCosts.subcategories.${row.subcategory}`)
+      cell: (row) => t(`platformCosts.subcategories.${row.subcategory}`),
     },
     {
       id: 'description',
       header: t('platformCosts.description'),
-      cell: (row) => row.description
+      cell: (row) => row.description,
     },
     {
       id: 'amount',
       header: t('platformCosts.amount'),
       align: 'end',
-      cell: (row) => format('amount', row.amount)
+      cell: (row) => format('amount', row.amount),
     },
     {
       id: 'actions',
       header: '',
       align: 'end',
       cell: (row) => (
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={busy}
-          onClick={() => void remove(row.id)}
-        >
+        <Button variant="ghost" size="sm" disabled={busy} onClick={() => void remove(row.id)}>
           {t('common.delete')}
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      <PageHeader
-        title={t('platformCosts.title')}
-        description={t('platformCosts.subtitle')}
-      />
+      <PageHeader title={t('platformCosts.title')} description={t('platformCosts.subtitle')} />
       <DataPanel title={t('platformCosts.save')}>
         <div className="p-5">
           <CostForm busy={busy} onSubmit={save} />

@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,20 +16,14 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { SlugField } from '@/components/academies/slug-field';
 import { ImageUploadField } from '@/components/academies/image-upload-field';
-import {
-  BrandColorPicker,
-  DEFAULT_BRAND_COLOR
-} from '@/components/academies/brand-color-picker';
+import { BrandColorPicker, DEFAULT_BRAND_COLOR } from '@/components/academies/brand-color-picker';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
-import {
-  isSlugBlocking,
-  useSlugAvailability
-} from '@/hooks/use-slug-availability';
+import { isSlugBlocking, useSlugAvailability } from '@/hooks/use-slug-availability';
 import type { AcademyCreateInput } from '@/lib/academy-create';
 
 const CATEGORY_KEYS = [
@@ -48,7 +42,7 @@ const CATEGORY_KEYS = [
   'sport',
   'photography',
   'kids',
-  'other'
+  'other',
 ] as const;
 
 type AcademyCreateModalProps = {
@@ -62,12 +56,7 @@ function categoryLabelKey(key: string) {
   return `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`;
 }
 
-export function AcademyCreateModal({
-  open,
-  onClose,
-  onSubmit,
-  t
-}: AcademyCreateModalProps) {
+export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreateModalProps) {
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -76,11 +65,7 @@ export function AcademyCreateModal({
   const logo = useImageUpload();
   const favicon = useImageUpload();
   const [primaryColor, setPrimaryColor] = useState<string>(DEFAULT_BRAND_COLOR);
-  const {
-    status: slugStatus,
-    check: checkSlug,
-    reset: resetSlug
-  } = useSlugAvailability();
+  const { status: slugStatus, check: checkSlug, reset: resetSlug } = useSlugAvailability();
 
   const canSubmit =
     name.trim().length >= 2 &&
@@ -126,7 +111,7 @@ export function AcademyCreateModal({
         category,
         logoId: logo.id ?? undefined,
         faviconId: favicon.id ?? undefined,
-        primaryColor
+        primaryColor,
       });
       handleClose();
     } finally {
@@ -136,10 +121,7 @@ export function AcademyCreateModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent
-        dir="rtl"
-        className="gap-0 rounded-2xl sm:max-w-3xl sm:p-8"
-      >
+      <DialogContent dir="rtl" className="gap-0 rounded-2xl sm:max-w-3xl sm:p-8">
         <DialogHeader className="space-y-1.5 text-start">
           <DialogTitle className="text-xl font-semibold">
             {t('stores.createModalHeading')}
@@ -158,9 +140,7 @@ export function AcademyCreateModal({
             </p>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                {t('stores.academyName')}
-              </label>
+              <label className="block text-sm font-medium">{t('stores.academyName')}</label>
               <Input
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
@@ -169,12 +149,7 @@ export function AcademyCreateModal({
               />
             </div>
 
-            <SlugField
-              value={slug}
-              status={slugStatus}
-              onChange={handleSlugChange}
-              t={t}
-            />
+            <SlugField value={slug} status={slugStatus} onChange={handleSlugChange} t={t} />
 
             <div className="space-y-1.5">
               <label className="block text-sm font-medium">

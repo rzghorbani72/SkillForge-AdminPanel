@@ -1,13 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,17 +10,10 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  DollarSign,
-  TrendingUp,
-  CreditCard,
-  BookOpen,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+import { DollarSign, TrendingUp, CreditCard, BookOpen, Eye, EyeOff } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -90,15 +77,12 @@ export default function StoreRevenuePage() {
     setSelectedMonth,
     dateRange,
     years,
-    formatDate
+    formatDate,
   } = useFinancialFilters();
 
   const [loading, setLoading] = useState(true);
-  const [revenueData, setRevenueData] = useState<AcademyRevenueData | null>(
-    null
-  );
-  const [monetizationSummary, setMonetizationSummary] =
-    useState<MonetizationSummary | null>(null);
+  const [revenueData, setRevenueData] = useState<AcademyRevenueData | null>(null);
+  const [monetizationSummary, setMonetizationSummary] = useState<MonetizationSummary | null>(null);
 
   const loadData = useCallback(async () => {
     if (!currentAcademy?.id) return;
@@ -108,15 +92,15 @@ export default function StoreRevenuePage() {
       const params = {
         academy_id: currentAcademy.id,
         start_date: dateRange.startIso,
-        end_date: dateRange.endIso
+        end_date: dateRange.endIso,
       };
       const [revenue, summary] = await Promise.all([
         apiClient.getAcademyRevenueFromPayments(
           currentAcademy.id,
           dateRange.startIso,
-          dateRange.endIso
+          dateRange.endIso,
         ),
-        apiClient.getMonetizationSummary(params)
+        apiClient.getMonetizationSummary(params),
       ]);
       setRevenueData(revenue as AcademyRevenueData);
       setMonetizationSummary(summary as MonetizationSummary);
@@ -137,41 +121,30 @@ export default function StoreRevenuePage() {
   const canViewRevenue = Boolean(vis?.can_view_store_revenue);
   const canViewTeacherRevenue = Boolean(vis?.can_view_teacher_revenue);
   const canViewPlatformRevenue = Boolean(vis?.can_view_platform_revenue);
-  const canSeeAnyRevenue =
-    canViewRevenue || canViewTeacherRevenue || canViewPlatformRevenue;
+  const canSeeAnyRevenue = canViewRevenue || canViewTeacherRevenue || canViewPlatformRevenue;
   const revenueCurrency = metrics?.currency ?? revenueData?.currency ?? 'IRR';
 
   const primaryRevenue = useMemo(() => {
     if (canViewRevenue) {
       return {
         label: t('financial.store.revenue.schoolRevenue'),
-        amount: Number(
-          metrics?.school_net_revenue ?? metrics?.teacher_gross_revenue ?? 0
-        )
+        amount: Number(metrics?.school_net_revenue ?? metrics?.teacher_gross_revenue ?? 0),
       };
     }
     if (canViewTeacherRevenue) {
       return {
         label: t('financial.store.revenue.teacherRevenue'),
-        amount: Number(
-          metrics?.teacher_payout_revenue ?? metrics?.teacher_payout ?? 0
-        )
+        amount: Number(metrics?.teacher_payout_revenue ?? metrics?.teacher_payout ?? 0),
       };
     }
     if (canViewPlatformRevenue) {
       return {
         label: t('financial.store.revenue.platformRevenue'),
-        amount: Number(metrics?.platform_revenue ?? 0)
+        amount: Number(metrics?.platform_revenue ?? 0),
       };
     }
     return { label: t('financial.store.revenue.roleBasedRevenue'), amount: 0 };
-  }, [
-    canViewRevenue,
-    canViewTeacherRevenue,
-    canViewPlatformRevenue,
-    metrics,
-    t
-  ]);
+  }, [canViewRevenue, canViewTeacherRevenue, canViewPlatformRevenue, metrics, t]);
 
   const paymentsByCourse = useMemo((): CourseRevenueBucket[] => {
     const grouped = new Map<string, CourseRevenueBucket>();
@@ -181,12 +154,12 @@ export default function StoreRevenuePage() {
         course: p.course?.title ?? t('financial.store.revenue.unknownCourse'),
         count: 0,
         total: 0,
-        currency: p.currency
+        currency: p.currency,
       };
       grouped.set(key, {
         ...existing,
         count: existing.count + 1,
-        total: existing.total + (p.amount ?? 0)
+        total: existing.total + (p.amount ?? 0),
       });
     }
     return Array.from(grouped.values()).sort((a, b) => b.total - a.total);
@@ -194,10 +167,8 @@ export default function StoreRevenuePage() {
 
   const teacherRows: TeacherRevenueRow[] = useMemo(
     () =>
-      Array.isArray(metrics?.teacher_revenue_breakdown)
-        ? metrics!.teacher_revenue_breakdown
-        : [],
-    [metrics]
+      Array.isArray(metrics?.teacher_revenue_breakdown) ? metrics!.teacher_revenue_breakdown : [],
+    [metrics],
   );
 
   async function toggleTeacherVisibility(row: TeacherRevenueRow) {
@@ -206,7 +177,7 @@ export default function StoreRevenuePage() {
       await apiClient.setTeacherRevenueVisibility({
         academy_id: currentAcademy.id,
         teacher_id: row.teacher_id,
-        is_visible: row.revenue_visible === false
+        is_visible: row.revenue_visible === false,
       });
       await loadData();
     } catch (err) {
@@ -217,9 +188,7 @@ export default function StoreRevenuePage() {
   if (!currentAcademy) {
     return (
       <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
-        <p className="text-muted-foreground">
-          {t('financial.store.revenue.noStore')}
-        </p>
+        <p className="text-muted-foreground">{t('financial.store.revenue.noStore')}</p>
       </div>
     );
   }
@@ -248,16 +217,12 @@ export default function StoreRevenuePage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {primaryRevenue.label}
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">{primaryRevenue.label}</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {canSeeAnyRevenue
-                  ? formatCurrency(primaryRevenue.amount, revenueCurrency)
-                  : '—'}
+                {canSeeAnyRevenue ? formatCurrency(primaryRevenue.amount, revenueCurrency) : '—'}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.roleBasedDescription')}
@@ -273,9 +238,7 @@ export default function StoreRevenuePage() {
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
-                {formatNumber(payments.length)}
-              </p>
+              <p className="text-2xl font-bold">{formatNumber(payments.length)}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.successfulTransactions')}
               </p>
@@ -294,7 +257,7 @@ export default function StoreRevenuePage() {
                 {revenueData.payment_count > 0
                   ? formatCurrency(
                       revenueData.total_revenue / revenueData.payment_count,
-                      revenueData.currency
+                      revenueData.currency,
                     )
                   : formatCurrency(0, revenueData.currency)}
               </p>
@@ -312,9 +275,7 @@ export default function StoreRevenuePage() {
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
-                {formatNumber(paymentsByCourse.length)}
-              </p>
+              <p className="text-2xl font-bold">{formatNumber(paymentsByCourse.length)}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.revenue.coursesWithPayments')}
               </p>
@@ -327,49 +288,39 @@ export default function StoreRevenuePage() {
       {monetizationSummary && (
         <Card>
           <CardHeader>
-            <CardTitle>
-              {t('financial.store.revenue.roleBasedAccess')}
-            </CardTitle>
+            <CardTitle>{t('financial.store.revenue.roleBasedAccess')}</CardTitle>
             <CardDescription>
               {t('financial.store.revenue.roleBasedAccessDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-lg border p-4">
-              <p className="text-xs text-muted-foreground">
-                {t('financial.store.revenue.role')}
-              </p>
-              <p className="text-lg font-semibold">
-                {getRoleLabel(monetizationSummary.role, t)}
-              </p>
+              <p className="text-xs text-muted-foreground">{t('financial.store.revenue.role')}</p>
+              <p className="text-lg font-semibold">{getRoleLabel(monetizationSummary.role, t)}</p>
             </div>
             {[
               {
                 key: 'platformRevenue',
                 visible: vis?.can_view_platform_revenue,
-                value: metrics?.platform_revenue
+                value: metrics?.platform_revenue,
               },
               {
                 key: 'schoolRevenue',
                 visible: vis?.can_view_store_revenue,
-                value:
-                  metrics?.school_net_revenue ?? metrics?.teacher_gross_revenue
+                value: metrics?.school_net_revenue ?? metrics?.teacher_gross_revenue,
               },
               {
                 key: 'teacherRevenue',
                 visible: vis?.can_view_teacher_revenue,
-                value:
-                  metrics?.teacher_payout_revenue ?? metrics?.teacher_payout
-              }
+                value: metrics?.teacher_payout_revenue ?? metrics?.teacher_payout,
+              },
             ].map(({ key, visible, value }) => (
               <div key={key} className="rounded-lg border p-4">
                 <p className="text-xs text-muted-foreground">
                   {t(`financial.store.revenue.${key}`)}
                 </p>
                 <p className="mt-1 text-sm font-medium">
-                  {visible
-                    ? formatCurrency(Number(value ?? 0), revenueCurrency)
-                    : '—'}
+                  {visible ? formatCurrency(Number(value ?? 0), revenueCurrency) : '—'}
                 </p>
               </div>
             ))}
@@ -390,8 +341,7 @@ export default function StoreRevenuePage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              {metrics?.message ??
-                t('financial.store.revenue.revenueHiddenPolicy')}
+              {metrics?.message ?? t('financial.store.revenue.revenueHiddenPolicy')}
             </p>
           </CardContent>
         </Card>
@@ -401,9 +351,7 @@ export default function StoreRevenuePage() {
       {canSeeAnyRevenue && teacherRows.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>
-              {t('financial.store.revenue.teacherRevenueBreakdown')}
-            </CardTitle>
+            <CardTitle>{t('financial.store.revenue.teacherRevenueBreakdown')}</CardTitle>
             <CardDescription>
               {t('financial.store.revenue.teacherRevenueBreakdownDescription')}
             </CardDescription>
@@ -432,17 +380,12 @@ export default function StoreRevenuePage() {
                         `${t('financial.store.revenue.teacher')} #${row.teacher_id}`}
                     </TableCell>
                     <TableCell className="text-end">
-                      <Badge variant="secondary">
-                        {formatNumber(row.payment_count ?? 0)}
-                      </Badge>
+                      <Badge variant="secondary">{formatNumber(row.payment_count ?? 0)}</Badge>
                     </TableCell>
                     <TableCell className="text-end font-medium">
                       {row.revenue_visible === false
                         ? '—'
-                        : formatCurrency(
-                            Number(row.payout_revenue ?? 0),
-                            revenueCurrency
-                          )}
+                        : formatCurrency(Number(row.payout_revenue ?? 0), revenueCurrency)}
                     </TableCell>
                     <TableCell className="text-end">
                       {monetizationSummary?.role === 'MANAGER' ? (
@@ -475,33 +418,23 @@ export default function StoreRevenuePage() {
       {/* Payments / By-course tabs */}
       <Tabs defaultValue="payments" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="payments">
-            {t('financial.store.revenue.allPayments')}
-          </TabsTrigger>
-          <TabsTrigger value="courses">
-            {t('financial.store.revenue.revenueByCourse')}
-          </TabsTrigger>
+          <TabsTrigger value="payments">{t('financial.store.revenue.allPayments')}</TabsTrigger>
+          <TabsTrigger value="courses">{t('financial.store.revenue.revenueByCourse')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="payments">
           <Card>
             <CardHeader>
               <CardTitle>{t('financial.store.revenue.allPayments')}</CardTitle>
-              <CardDescription>
-                {t('financial.store.revenue.paymentsDescription')}
-              </CardDescription>
+              <CardDescription>{t('financial.store.revenue.paymentsDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('financial.store.payments.date')}</TableHead>
-                    <TableHead>
-                      {t('financial.store.payments.student')}
-                    </TableHead>
-                    <TableHead>
-                      {t('financial.store.payments.course')}
-                    </TableHead>
+                    <TableHead>{t('financial.store.payments.student')}</TableHead>
+                    <TableHead>{t('financial.store.payments.course')}</TableHead>
                     <TableHead className="text-end">
                       {t('financial.store.payments.amount')}
                     </TableHead>
@@ -510,10 +443,7 @@ export default function StoreRevenuePage() {
                 <TableBody>
                   {payments.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="py-6 text-center text-muted-foreground"
-                      >
+                      <TableCell colSpan={4} className="py-6 text-center text-muted-foreground">
                         {t('financial.store.payments.noPayments')}
                       </TableCell>
                     </TableRow>
@@ -528,9 +458,7 @@ export default function StoreRevenuePage() {
                         </TableCell>
                         <TableCell>{p.course?.title ?? '—'}</TableCell>
                         <TableCell className="text-end font-medium">
-                          {canSeeAnyRevenue
-                            ? formatCurrency(p.amount, p.currency)
-                            : '—'}
+                          {canSeeAnyRevenue ? formatCurrency(p.amount, p.currency) : '—'}
                         </TableCell>
                       </TableRow>
                     ))
@@ -544,9 +472,7 @@ export default function StoreRevenuePage() {
         <TabsContent value="courses">
           <Card>
             <CardHeader>
-              <CardTitle>
-                {t('financial.store.revenue.revenueByCourse')}
-              </CardTitle>
+              <CardTitle>{t('financial.store.revenue.revenueByCourse')}</CardTitle>
               <CardDescription>
                 {t('financial.store.revenue.revenueByCourseDescription')}
               </CardDescription>
@@ -555,9 +481,7 @@ export default function StoreRevenuePage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>
-                      {t('financial.store.payments.course')}
-                    </TableHead>
+                    <TableHead>{t('financial.store.payments.course')}</TableHead>
                     <TableHead className="text-end">
                       {t('financial.store.revenue.payments')}
                     </TableHead>
@@ -569,28 +493,19 @@ export default function StoreRevenuePage() {
                 <TableBody>
                   {paymentsByCourse.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={3}
-                        className="py-6 text-center text-muted-foreground"
-                      >
+                      <TableCell colSpan={3} className="py-6 text-center text-muted-foreground">
                         {t('financial.store.revenue.noCourseRevenue')}
                       </TableCell>
                     </TableRow>
                   ) : (
                     paymentsByCourse.map((c, i) => (
                       <TableRow key={i}>
-                        <TableCell className="font-medium">
-                          {c.course}
-                        </TableCell>
+                        <TableCell className="font-medium">{c.course}</TableCell>
                         <TableCell className="text-end">
-                          <Badge variant="secondary">
-                            {formatNumber(c.count)}
-                          </Badge>
+                          <Badge variant="secondary">{formatNumber(c.count)}</Badge>
                         </TableCell>
                         <TableCell className="text-end font-medium">
-                          {canSeeAnyRevenue
-                            ? formatCurrency(c.total, c.currency)
-                            : '—'}
+                          {canSeeAnyRevenue ? formatCurrency(c.total, c.currency) : '—'}
                         </TableCell>
                       </TableRow>
                     ))

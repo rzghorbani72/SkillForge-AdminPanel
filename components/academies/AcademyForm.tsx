@@ -34,7 +34,7 @@ export function AcademyForm({
   onFormDataChange,
   domainValidation,
   domainAvailability,
-  isEdit = false
+  isEdit = false,
 }: AcademyFormProps) {
   const { t } = useTranslation();
   const updateFormData = (field: keyof AcademyFormData, value: any) => {
@@ -44,9 +44,7 @@ export function AcademyForm({
   return (
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
-        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>
-          {t('stores.storeName')} *
-        </Label>
+        <Label htmlFor={isEdit ? 'edit-name' : 'name'}>{t('stores.storeName')} *</Label>
         <Input
           id={isEdit ? 'edit-name' : 'name'}
           value={formData.name}
@@ -72,11 +70,7 @@ export function AcademyForm({
           }
         />
         {domainValidation.message && (
-          <p
-            className={`text-xs ${
-              domainValidation.isValid ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
+          <p className={`text-xs ${domainValidation.isValid ? 'text-green-600' : 'text-red-600'}`}>
             {domainValidation.message}
           </p>
         )}
@@ -112,9 +106,7 @@ export function AcademyForm({
             onChange={(e) => updateFormData('public_domain', e.target.value)}
             placeholder={t('stores.enterPublicDomain')}
           />
-          <p className="text-xs text-muted-foreground">
-            {t('stores.optionalCustomDomain')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('stores.optionalCustomDomain')}</p>
         </div>
       )}
       <div className="grid gap-2">
@@ -133,9 +125,7 @@ export function AcademyForm({
         <div className="flex items-center justify-between rounded-md border p-3">
           <div className="space-y-0.5">
             <Label>{t('common.status')}</Label>
-            <p className="text-xs text-muted-foreground">
-              {t('stores.toggleStatusDescription')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('stores.toggleStatusDescription')}</p>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">
@@ -143,9 +133,7 @@ export function AcademyForm({
             </span>
             <Switch
               checked={!!formData.is_active}
-              onCheckedChange={(checked) =>
-                updateFormData('is_active', checked)
-              }
+              onCheckedChange={(checked) => updateFormData('is_active', checked)}
               aria-label={t('stores.toggleActiveStatus')}
             />
           </div>

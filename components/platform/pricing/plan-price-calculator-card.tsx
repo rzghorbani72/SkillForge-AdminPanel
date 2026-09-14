@@ -1,13 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
@@ -18,7 +12,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
@@ -28,13 +22,9 @@ import {
   DEFAULT_LIMITS,
   formatToman,
   irrToToman,
-  type CostSettingKey
+  type CostSettingKey,
 } from './pricing-helpers';
-import {
-  buildPlanPriceRows,
-  marginCostsFromForm,
-  type PlanPriceRow
-} from './plan-price-recommend';
+import { buildPlanPriceRows, marginCostsFromForm, type PlanPriceRow } from './plan-price-recommend';
 
 const CALC_COST_KEYS: CostSettingKey[] = [
   'cost_storage_per_gb_toman',
@@ -43,24 +33,22 @@ const CALC_COST_KEYS: CostSettingKey[] = [
   'cost_compute_base_per_academy_toman',
   'cost_compute_per_student_toman',
   'cost_sms_per_message_toman',
-  'cost_platform_fixed_monthly_toman'
+  'cost_platform_fixed_monthly_toman',
 ];
 
 type FormState = Record<CostSettingKey, string>;
 
 const toForm = (settings: PlatformSettingsData | null): FormState => {
-  const entries = (Object.keys(COST_DEFAULTS) as CostSettingKey[]).map(
-    (key) => {
-      const raw = settings?.[key];
-      const value =
-        key === 'cost_gateway_fee_rate'
-          ? (typeof raw === 'number' ? raw : COST_DEFAULTS[key]) * 100
-          : typeof raw === 'number'
-            ? raw
-            : COST_DEFAULTS[key];
-      return [key, String(value)] as const;
-    }
-  );
+  const entries = (Object.keys(COST_DEFAULTS) as CostSettingKey[]).map((key) => {
+    const raw = settings?.[key];
+    const value =
+      key === 'cost_gateway_fee_rate'
+        ? (typeof raw === 'number' ? raw : COST_DEFAULTS[key]) * 100
+        : typeof raw === 'number'
+          ? raw
+          : COST_DEFAULTS[key];
+    return [key, String(value)] as const;
+  });
   return Object.fromEntries(entries) as FormState;
 };
 
@@ -91,7 +79,7 @@ export function PlanPriceCalculatorCard({ settings, plans }: Props) {
       cost_gateway_fee_rate:
         Number.isFinite(Number(gatewayFee)) && Number(gatewayFee) >= 0
           ? Number(gatewayFee) / 100
-          : COST_DEFAULTS.cost_gateway_fee_rate
+          : COST_DEFAULTS.cost_gateway_fee_rate,
     };
 
     const priced = plans
@@ -101,19 +89,13 @@ export function PlanPriceCalculatorCard({ settings, plans }: Props) {
         slug: plan.slug,
         name: plan.name,
         limits: { ...DEFAULT_LIMITS, ...(plan.limits ?? {}) },
-        liveMonthlyToman: irrToToman(plan.price_monthly)
+        liveMonthlyToman: irrToToman(plan.price_monthly),
       }));
 
-    return buildPlanPriceRows(
-      priced,
-      costs,
-      margin,
-      Number.isFinite(sms) && sms >= 0 ? sms : 1
-    );
+    return buildPlanPriceRows(priced, costs, margin, Number.isFinite(sms) && sms >= 0 ? sms : 1);
   }, [form, gatewayFee, plans, smsPerStudent, targetMargin]);
 
-  const set = (key: CostSettingKey, raw: string) =>
-    setForm((prev) => ({ ...prev, [key]: raw }));
+  const set = (key: CostSettingKey, raw: string) => setForm((prev) => ({ ...prev, [key]: raw }));
 
   const costField = (key: CostSettingKey) => (
     <div key={key} className="space-y-1">
@@ -152,34 +134,21 @@ export function PlanPriceCalculatorCard({ settings, plans }: Props) {
           </div>
           <div className="space-y-1">
             <Label>{t('pricing.calculator.gatewayFee')}</Label>
-            <NumberInput
-              value={gatewayFee}
-              onChange={setGatewayFee}
-              allowDecimal
-              placeholder="1"
-            />
+            <NumberInput value={gatewayFee} onChange={setGatewayFee} allowDecimal placeholder="1" />
           </div>
           <div className="space-y-1">
             <Label>{t('pricing.calculator.smsPerStudent')}</Label>
-            <NumberInput
-              value={smsPerStudent}
-              onChange={setSmsPerStudent}
-              placeholder="1"
-            />
+            <NumberInput value={smsPerStudent} onChange={setSmsPerStudent} placeholder="1" />
             <p className="text-[11px] text-muted-foreground">
               {t('pricing.calculator.smsPerStudentHint')}
             </p>
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground">
-          {t('pricing.calculator.formula')}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('pricing.calculator.formula')}</p>
 
         {rows.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('pricing.calculator.noPlans')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('pricing.calculator.noPlans')}</p>
         ) : (
           <Table>
             <TableHeader>
@@ -199,17 +168,13 @@ export function PlanPriceCalculatorCard({ settings, plans }: Props) {
                 <TableRow key={row.slug}>
                   <TableCell>
                     <div className="font-medium">{row.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {row.slug}
-                    </div>
+                    <div className="text-xs text-muted-foreground">{row.slug}</div>
                   </TableCell>
                   <TableCell>{formatToman(row.variableCogs)}</TableCell>
                   <TableCell className="font-semibold">
                     {formatToman(row.recommendedMonthlyToman)}
                   </TableCell>
-                  <TableCell>
-                    {formatToman(row.recommendedQuarterlyToman)}
-                  </TableCell>
+                  <TableCell>{formatToman(row.recommendedQuarterlyToman)}</TableCell>
                   <TableCell>{formatToman(row.liveMonthlyToman)}</TableCell>
                   <TableCell>
                     <span
@@ -231,9 +196,7 @@ export function PlanPriceCalculatorCard({ settings, plans }: Props) {
                         {row.grossMarginPercent}%
                       </Badge>
                       <span className="text-[10px] text-muted-foreground">
-                        {t(
-                          `pricing.planLimits.costDriver.${row.topCostDriver}`
-                        )}
+                        {t(`pricing.planLimits.costDriver.${row.topCostDriver}`)}
                       </span>
                     </div>
                   </TableCell>

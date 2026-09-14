@@ -4,7 +4,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CategoryForm } from './CategoryForm';
@@ -34,33 +34,25 @@ export function CategoryDialog({
   formData,
   onFormDataChange,
   onSubmit,
-  onCancel
+  onCancel,
 }: CategoryDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? 'Edit Category' : 'Create New Category'}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? 'Edit Category' : 'Create New Category'}</DialogTitle>
           <DialogDescription>
             {isEdit
               ? 'Update the category information.'
               : 'Add a new category for organizing your courses and content.'}
           </DialogDescription>
         </DialogHeader>
-        <CategoryForm
-          formData={formData}
-          onFormDataChange={onFormDataChange}
-          isEdit={isEdit}
-        />
+        <CategoryForm formData={formData} onFormDataChange={onFormDataChange} isEdit={isEdit} />
         <DialogFooter>
           <Button variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button onClick={onSubmit}>
-            {isEdit ? 'Update Category' : 'Create Category'}
-          </Button>
+          <Button onClick={onSubmit}>{isEdit ? 'Update Category' : 'Create Category'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

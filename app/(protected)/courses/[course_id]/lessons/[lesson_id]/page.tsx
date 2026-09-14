@@ -60,18 +60,12 @@ export default function LessonSettingsPage() {
       {isLoading ? (
         <Skeleton className="h-64 w-full rounded-xl" />
       ) : !lesson || String(lesson.course_id) !== courseId ? (
-        <p className="text-sm text-muted-foreground">
-          {t('courses.lessonNotFound')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('courses.lessonNotFound')}</p>
       ) : (
         <>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              {lesson.title}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {t('courses.lessonSettingsHint')}
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight">{lesson.title}</h1>
+            <p className="text-sm text-muted-foreground">{t('courses.lessonSettingsHint')}</p>
           </div>
 
           {lesson.lesson_type === 'LIVE' && (
@@ -82,9 +76,7 @@ export default function LessonSettingsPage() {
             />
           )}
 
-          {lesson.lesson_type === 'QUIZ' && (
-            <QuizBuilder lessonId={lesson.id} />
-          )}
+          {lesson.lesson_type === 'QUIZ' && <QuizBuilder lessonId={lesson.id} />}
 
           <LessonDownloadPolicyEditor lesson={lesson} />
         </>

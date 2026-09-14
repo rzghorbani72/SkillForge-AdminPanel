@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { apiClient } from '@/lib/api';
 import {
   EntitySearchCombobox,
-  type EntitySearchComboboxProps
+  type EntitySearchComboboxProps,
 } from '@/components/entity-search/entity-search-combobox';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { EntitySearchOption } from '@/types/entity-search';
@@ -19,11 +19,7 @@ interface LessonRecord {
   title: string;
 }
 
-export function LessonSearchCombobox({
-  courseId,
-  disabled,
-  ...props
-}: LessonSearchComboboxProps) {
+export function LessonSearchCombobox({ courseId, disabled, ...props }: LessonSearchComboboxProps) {
   const { t } = useTranslation();
 
   const fetchOptions = useCallback(
@@ -34,7 +30,7 @@ export function LessonSearchCombobox({
 
       const lessons = (await apiClient.getLessons({
         course_id: courseId,
-        limit: 200
+        limit: 200,
       })) as LessonRecord[];
 
       const normalizedQuery = query.trim().toLowerCase();
@@ -46,17 +42,15 @@ export function LessonSearchCombobox({
           }
           const title = lesson.title.toLowerCase();
           const id = String(lesson.id);
-          return (
-            title.includes(normalizedQuery) || id.includes(normalizedQuery)
-          );
+          return title.includes(normalizedQuery) || id.includes(normalizedQuery);
         })
         .slice(0, 20)
         .map((lesson) => ({
           value: String(lesson.id),
-          label: lesson.title
+          label: lesson.title,
         }));
     },
-    [courseId]
+    [courseId],
   );
 
   const resolveOption = useCallback(
@@ -67,7 +61,7 @@ export function LessonSearchCombobox({
       const options = await fetchOptions(id);
       return options.find((option) => option.value === id) ?? null;
     },
-    [courseId, fetchOptions]
+    [courseId, fetchOptions],
   );
 
   const isDisabled = useMemo(() => disabled || !courseId, [courseId, disabled]);
@@ -78,9 +72,7 @@ export function LessonSearchCombobox({
       disabled={isDisabled}
       placeholder={
         props.placeholder ??
-        (courseId
-          ? t('entitySearch.searchPlaceholder')
-          : t('entitySearch.selectCourseFirst'))
+        (courseId ? t('entitySearch.searchPlaceholder') : t('entitySearch.selectCourseFirst'))
       }
       fetchOptions={fetchOptions}
       resolveOption={resolveOption}

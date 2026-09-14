@@ -23,7 +23,7 @@ const emptyScheduleForm = (engagementId: string) => ({
   ends_at: '',
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
   meeting_url: '',
-  notes: ''
+  notes: '',
 });
 
 /**
@@ -37,9 +37,7 @@ export default function EngagementClassPage() {
   const params = useParams<{ engagement_id: string }>();
   const engagementId = params.engagement_id;
   const cls = useEngagementClass(engagementId);
-  const [scheduleForm, setScheduleForm] = useState(() =>
-    emptyScheduleForm(engagementId)
-  );
+  const [scheduleForm, setScheduleForm] = useState(() => emptyScheduleForm(engagementId));
   const [scheduledCount, setScheduledCount] = useState(0);
 
   const schedule = async () => {
@@ -66,9 +64,7 @@ export default function EngagementClassPage() {
           </div>
         ) : !cls.engagement ? (
           <div className="space-y-3 rounded-lg border p-6 text-center">
-            <p className="text-muted-foreground">
-              {t('tutoring.engagementNotFound')}
-            </p>
+            <p className="text-muted-foreground">{t('tutoring.engagementNotFound')}</p>
             <Button asChild variant="outline">
               <Link href="/tutoring">{t('tutoring.backToTutoring')}</Link>
             </Button>
@@ -90,10 +86,7 @@ export default function EngagementClassPage() {
                 <ClassHomeworkCard sessions={cls.sessions} />
               </div>
               <div className="space-y-6">
-                <RequestedTimesCard
-                  engagementId={engagementId}
-                  refreshKey={scheduledCount}
-                />
+                <RequestedTimesCard engagementId={engagementId} refreshKey={scheduledCount} />
                 <ScheduleSessionCard
                   form={scheduleForm}
                   onChange={setScheduleForm}
@@ -104,9 +97,7 @@ export default function EngagementClassPage() {
                 <SessionAttendanceCard
                   sessions={cls.sessions}
                   saving={cls.saving}
-                  onSubmit={(session, status) =>
-                    void cls.markAttendance(session, status)
-                  }
+                  onSubmit={(session, status) => void cls.markAttendance(session, status)}
                 />
               </div>
             </div>

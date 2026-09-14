@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +23,7 @@ const CHANNELS: { value: MessageChannel; labelKey: string }[] = [
   { value: 'IN_APP', labelKey: 'messages.channelInApp' },
   { value: 'EMAIL', labelKey: 'messages.channelEmail' },
   { value: 'TELEGRAM', labelKey: 'messages.channelTelegram' },
-  { value: 'BALE', labelKey: 'messages.channelBale' }
+  { value: 'BALE', labelKey: 'messages.channelBale' },
 ];
 
 type SendMessageDialogProps = {
@@ -42,13 +42,13 @@ export function SendMessageDialog({
   onOpenChange,
   groupId,
   profileIds,
-  recipientCount
+  recipientCount,
 }: SendMessageDialogProps) {
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [channels, setChannels] = useState<Set<MessageChannel>>(
-    new Set<MessageChannel>(['SMS', 'IN_APP'])
+    new Set<MessageChannel>(['SMS', 'IN_APP']),
   );
   const [isSending, setIsSending] = useState(false);
 
@@ -82,7 +82,7 @@ export function SendMessageDialog({
         profile_ids: profileIds,
         title: title.trim(),
         body: body.trim(),
-        channels: Array.from(channels)
+        channels: Array.from(channels),
       });
 
       // Report what actually happened — skipped recipients are not failures,
@@ -91,7 +91,7 @@ export function SendMessageDialog({
       ErrorHandler.showSuccess(
         skipped > 0
           ? t('messages.sentWithSkipped', { sent, skipped })
-          : t('messages.sentCount', { sent })
+          : t('messages.sentCount', { sent }),
       );
       onOpenChange(false);
     } catch (error) {
@@ -161,9 +161,7 @@ export function SendMessageDialog({
                 );
               })}
             </div>
-            <p className="text-[11.5px] text-muted-foreground">
-              {t('messages.messengerHint')}
-            </p>
+            <p className="text-[11.5px] text-muted-foreground">{t('messages.messengerHint')}</p>
           </div>
 
           <DialogFooter>
@@ -177,12 +175,7 @@ export function SendMessageDialog({
             </Button>
             <Button
               type="submit"
-              disabled={
-                isSending ||
-                !title.trim() ||
-                !body.trim() ||
-                channels.size === 0
-              }
+              disabled={isSending || !title.trim() || !body.trim() || channels.size === 0}
             >
               {isSending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
               {t('messages.send')}

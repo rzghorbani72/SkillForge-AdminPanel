@@ -18,11 +18,7 @@ type UserContactActionsProps = {
  * through the platform (SMS / in-app / messenger, recorded and auditable); the
  * mail and SMS links remain as a direct hand-off to the device.
  */
-export function UserContactActions({
-  profileId,
-  email,
-  phoneNumber
-}: UserContactActionsProps) {
+export function UserContactActions({ profileId, email, phoneNumber }: UserContactActionsProps) {
   const { t } = useTranslation();
   const [sendOpen, setSendOpen] = useState(false);
 

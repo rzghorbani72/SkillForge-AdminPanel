@@ -58,7 +58,7 @@ function SectionRow({
   onDragStart,
   onDragOver,
   onDrop,
-  onDragEnd
+  onDragEnd,
 }: SectionRowProps) {
   const { t } = useTranslation();
   const schema = getSectionSchema(block.type);
@@ -117,9 +117,7 @@ function SectionRow({
       >
         <span className="truncate">{schema.name}</span>
         {isPlaceholder && (
-          <span className="flex-shrink-0 text-[9px] font-medium text-blue-600">
-            +
-          </span>
+          <span className="flex-shrink-0 text-[9px] font-medium text-blue-600">+</span>
         )}
         {incomplete && (
           <span
@@ -147,22 +145,14 @@ function SectionRow({
           <>
             <button
               type="button"
-              title={
-                visible
-                  ? t('sitePreview.sectionHide')
-                  : t('sitePreview.sectionShow')
-              }
+              title={visible ? t('sitePreview.sectionHide') : t('sitePreview.sectionShow')}
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleVisible(!visible);
               }}
               className="rounded p-1 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
             >
-              {visible ? (
-                <Eye className="h-3.5 w-3.5" />
-              ) : (
-                <EyeOff className="h-3.5 w-3.5" />
-              )}
+              {visible ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </button>
             <button
               type="button"
@@ -193,7 +183,7 @@ export function SidebarSectionList({
   onReorderMiddle,
   onToggleVisible,
   onDelete,
-  onOpenPicker
+  onOpenPicker,
 }: SidebarSectionListProps) {
   const { t } = useTranslation();
   const swappableTypes = useSwappableSectionTypes(true);
@@ -217,7 +207,7 @@ export function SidebarSectionList({
     onSelect: () => onSelect(block.id),
     onSwap: () => onOpenPicker({ blockId: block.id, type: block.type }),
     onToggleVisible: (visible: boolean) => onToggleVisible(block.id, visible),
-    onDelete: () => onDelete(block.id)
+    onDelete: () => onDelete(block.id),
   });
 
   const noop = () => undefined;
@@ -226,7 +216,7 @@ export function SidebarSectionList({
     onDragStart: noop,
     onDragOver: noop,
     onDrop: noop,
-    onDragEnd: noop
+    onDragEnd: noop,
   };
 
   return (
@@ -235,14 +225,7 @@ export function SidebarSectionList({
         {t('sitePreview.sectionOrder')}
       </p>
 
-      {header && (
-        <SectionRow
-          {...rowProps(header)}
-          index={1}
-          structural
-          {...structuralDrag}
-        />
-      )}
+      {header && <SectionRow {...rowProps(header)} index={1} structural {...structuralDrag} />}
 
       {middle.map((block, i) => (
         <SectionRow

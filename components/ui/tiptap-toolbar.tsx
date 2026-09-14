@@ -17,7 +17,7 @@ import {
   ListOrdered,
   Quote,
   Strikethrough,
-  Underline
+  Underline,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -38,92 +38,92 @@ const ACTIONS: ReadonlyArray<ToolbarAction> = [
     icon: Bold,
     labelKey: 'editor.bold',
     run: (e) => e.chain().focus().toggleBold().run(),
-    isActive: (e) => e.isActive('bold')
+    isActive: (e) => e.isActive('bold'),
   },
   {
     id: 'italic',
     icon: Italic,
     labelKey: 'editor.italic',
     run: (e) => e.chain().focus().toggleItalic().run(),
-    isActive: (e) => e.isActive('italic')
+    isActive: (e) => e.isActive('italic'),
   },
   {
     id: 'underline',
     icon: Underline,
     labelKey: 'editor.underline',
     run: (e) => e.chain().focus().toggleUnderline().run(),
-    isActive: (e) => e.isActive('underline')
+    isActive: (e) => e.isActive('underline'),
   },
   {
     id: 'strike',
     icon: Strikethrough,
     labelKey: 'editor.strikethrough',
     run: (e) => e.chain().focus().toggleStrike().run(),
-    isActive: (e) => e.isActive('strike')
+    isActive: (e) => e.isActive('strike'),
   },
   {
     id: 'h1',
     icon: Heading1,
     labelKey: 'editor.sizeLarge',
     run: (e) => e.chain().focus().toggleHeading({ level: 1 }).run(),
-    isActive: (e) => e.isActive('heading', { level: 1 })
+    isActive: (e) => e.isActive('heading', { level: 1 }),
   },
   {
     id: 'h2',
     icon: Heading2,
     labelKey: 'editor.sizeMedium',
     run: (e) => e.chain().focus().toggleHeading({ level: 2 }).run(),
-    isActive: (e) => e.isActive('heading', { level: 2 })
+    isActive: (e) => e.isActive('heading', { level: 2 }),
   },
   {
     id: 'h3',
     icon: Heading3,
     labelKey: 'editor.sizeSmall',
     run: (e) => e.chain().focus().toggleHeading({ level: 3 }).run(),
-    isActive: (e) => e.isActive('heading', { level: 3 })
+    isActive: (e) => e.isActive('heading', { level: 3 }),
   },
   {
     id: 'bulletList',
     icon: List,
     labelKey: 'editor.bulletList',
     run: (e) => e.chain().focus().toggleBulletList().run(),
-    isActive: (e) => e.isActive('bulletList')
+    isActive: (e) => e.isActive('bulletList'),
   },
   {
     id: 'orderedList',
     icon: ListOrdered,
     labelKey: 'editor.numberedList',
     run: (e) => e.chain().focus().toggleOrderedList().run(),
-    isActive: (e) => e.isActive('orderedList')
+    isActive: (e) => e.isActive('orderedList'),
   },
   {
     id: 'blockquote',
     icon: Quote,
     labelKey: 'editor.quote',
     run: (e) => e.chain().focus().toggleBlockquote().run(),
-    isActive: (e) => e.isActive('blockquote')
+    isActive: (e) => e.isActive('blockquote'),
   },
   {
     id: 'alignStart',
     icon: AlignLeft,
     labelKey: 'editor.alignStart',
     run: (e) => e.chain().focus().setTextAlign('start').run(),
-    isActive: (e) => e.isActive({ textAlign: 'start' })
+    isActive: (e) => e.isActive({ textAlign: 'start' }),
   },
   {
     id: 'alignCenter',
     icon: AlignCenter,
     labelKey: 'editor.alignCenter',
     run: (e) => e.chain().focus().setTextAlign('center').run(),
-    isActive: (e) => e.isActive({ textAlign: 'center' })
+    isActive: (e) => e.isActive({ textAlign: 'center' }),
   },
   {
     id: 'alignEnd',
     icon: AlignRight,
     labelKey: 'editor.alignEnd',
     run: (e) => e.chain().focus().setTextAlign('end').run(),
-    isActive: (e) => e.isActive({ textAlign: 'end' })
-  }
+    isActive: (e) => e.isActive({ textAlign: 'end' }),
+  },
 ];
 
 type TiptapToolbarProps = {
@@ -132,11 +132,7 @@ type TiptapToolbarProps = {
   onInsertImage?: () => void;
 };
 
-export function TiptapToolbar({
-  editor,
-  disabled,
-  onInsertImage
-}: TiptapToolbarProps) {
+export function TiptapToolbar({ editor, disabled, onInsertImage }: TiptapToolbarProps) {
   const { t } = useTranslation();
 
   const handleLink = () => {

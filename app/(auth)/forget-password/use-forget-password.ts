@@ -15,7 +15,7 @@ import {
   validateEmail,
   validateOtp,
   validateNewPassword as validateChosenPassword,
-  validatePhone
+  validatePhone,
 } from '@/lib/auth-validation';
 
 type Step = 'identifier' | 'otp' | 'password' | 'success';
@@ -38,7 +38,7 @@ const EMPTY: ForgetFields = {
   password: '',
   confirmed_password: '',
   otp: '',
-  store_slug: ''
+  store_slug: '',
 };
 
 export function useForgetPassword() {
@@ -51,9 +51,7 @@ export function useForgetPassword() {
   const [formData, setFormData] = useState<ForgetFields>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState('');
-  const [stores, setStores] = useState<
-    Array<{ id: string; name: string; slug: string }>
-  >([]);
+  const [stores, setStores] = useState<Array<{ id: string; name: string; slug: string }>>([]);
   const [autoRedirecting, setAutoRedirecting] = useState(false);
 
   useEffect(() => {
@@ -87,7 +85,7 @@ export function useForgetPassword() {
       authMethod === 'email'
         ? { email: validateEmail(formData.email) }
         : { phoneNumber: validatePhone(formData.phoneNumber) },
-      t
+      t,
     );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -97,12 +95,9 @@ export function useForgetPassword() {
     const newErrors = collectErrors(
       {
         password: validateChosenPassword(formData.password),
-        confirmed_password: validateConfirmPassword(
-          formData.password,
-          formData.confirmed_password
-        )
+        confirmed_password: validateConfirmPassword(formData.password, formData.confirmed_password),
       },
-      t
+      t,
     );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -114,33 +109,18 @@ export function useForgetPassword() {
     setErrors({});
     try {
       if (authMethod === 'email') {
-        await apiClient.sendEmailOtp(
-          formData.email,
-          OtpType.RESET_PASSWORD_BY_EMAIL
-        );
+        await apiClient.sendEmailOtp(formData.email, OtpType.RESET_PASSWORD_BY_EMAIL);
         setMessage(t('forgotPassword.otpSentToEmail'));
-        notifyOtpSent(
-          t('forgotPassword.otpSentToEmail'),
-          'forget-password-otp-sent'
-        );
+        notifyOtpSent(t('forgotPassword.otpSentToEmail'), 'forget-password-otp-sent');
       } else {
         const phoneToSend = formData.fullPhoneNumber || formData.phoneNumber;
-        await apiClient.sendPhoneOtp(
-          toE164Iran(phoneToSend),
-          OtpType.RESET_PASSWORD_BY_PHONE
-        );
+        await apiClient.sendPhoneOtp(toE164Iran(phoneToSend), OtpType.RESET_PASSWORD_BY_PHONE);
         setMessage(t('forgotPassword.otpSentToPhone'));
-        notifyOtpSent(
-          t('forgotPassword.otpSentToPhone'),
-          'forget-password-otp-sent'
-        );
+        notifyOtpSent(t('forgotPassword.otpSentToPhone'), 'forget-password-otp-sent');
       }
       setStep('otp');
     } catch (error: unknown) {
-      const errorMessage = apiErrorMessage(
-        error,
-        t('forgotPassword.failedToSendOtp')
-      );
+      const errorMessage = apiErrorMessage(error, t('forgotPassword.failedToSendOtp'));
       setErrors({ identifier: errorMessage });
       toast.error(errorMessage, { toastId: 'forget-password-error' });
     } finally {
@@ -161,22 +141,19 @@ export function useForgetPassword() {
         await apiClient.verifyEmailOtp(
           formData.email,
           formData.otp,
-          OtpType.RESET_PASSWORD_BY_EMAIL
+          OtpType.RESET_PASSWORD_BY_EMAIL,
         );
       } else {
         await apiClient.verifyPhoneOtp(
           toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
           formData.otp,
-          OtpType.RESET_PASSWORD_BY_PHONE
+          OtpType.RESET_PASSWORD_BY_PHONE,
         );
       }
       setStep('password');
       setMessage(t('forgotPassword.otpVerifiedSuccess'));
     } catch (error: unknown) {
-      const errorMessage = apiErrorMessage(
-        error,
-        t('forgotPassword.invalidOtp')
-      );
+      const errorMessage = apiErrorMessage(error, t('forgotPassword.invalidOtp'));
       setErrors({ otp: errorMessage });
       toast.error(errorMessage, { toastId: 'forget-password-otp-error' });
     } finally {
@@ -189,9 +166,7 @@ export function useForgetPassword() {
     setIsLoading(true);
     setErrors({});
     try {
-      const selectedStore = stores.find(
-        (store) => store.slug === formData.store_slug
-      );
+      const selectedStore = stores.find((store) => store.slug === formData.store_slug);
       await apiClient.forgetPassword({
         identifier:
           authMethod === 'phone'
@@ -200,15 +175,12 @@ export function useForgetPassword() {
         password: formData.password,
         confirmed_password: formData.confirmed_password,
         otp: formData.otp,
-        academy_id: selectedStore?.id
+        academy_id: selectedStore?.id,
       });
       setStep('success');
       setMessage(t('forgotPassword.passwordResetSuccess'));
     } catch (error: unknown) {
-      const errorMessage = apiErrorMessage(
-        error,
-        t('forgotPassword.passwordResetFailed')
-      );
+      const errorMessage = apiErrorMessage(error, t('forgotPassword.passwordResetFailed'));
       setErrors({ password: errorMessage });
       toast.error(errorMessage, { toastId: 'forget-password-reset-error' });
     } finally {
@@ -240,6 +212,6 @@ export function useForgetPassword() {
     handleSendOtp,
     handleVerifyOtp,
     handleResetPassword,
-    resetForm
+    resetForm,
   };
 }

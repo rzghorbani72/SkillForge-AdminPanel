@@ -48,91 +48,91 @@ export const LANGUAGES: Record<LanguageCode, LanguageConfig> = {
     name: 'English',
     nativeName: 'English',
     direction: 'ltr',
-    locale: 'en-US'
+    locale: 'en-US',
   },
   tr: {
     code: 'tr',
     name: 'Turkish',
     nativeName: 'Türkçe',
     direction: 'ltr',
-    locale: 'tr-TR'
+    locale: 'tr-TR',
   },
   de: {
     code: 'de',
     name: 'German',
     nativeName: 'Deutsch',
     direction: 'ltr',
-    locale: 'de-DE'
+    locale: 'de-DE',
   },
   fr: {
     code: 'fr',
     name: 'French',
     nativeName: 'Français',
     direction: 'ltr',
-    locale: 'fr-FR'
+    locale: 'fr-FR',
   },
   es: {
     code: 'es',
     name: 'Spanish',
     nativeName: 'Español',
     direction: 'ltr',
-    locale: 'es-ES'
+    locale: 'es-ES',
   },
   it: {
     code: 'it',
     name: 'Italian',
     nativeName: 'Italiano',
     direction: 'ltr',
-    locale: 'it-IT'
+    locale: 'it-IT',
   },
   ru: {
     code: 'ru',
     name: 'Russian',
     nativeName: 'Русский',
     direction: 'ltr',
-    locale: 'ru-RU'
+    locale: 'ru-RU',
   },
   zh: {
     code: 'zh',
     name: 'Chinese',
     nativeName: '中文',
     direction: 'ltr',
-    locale: 'zh-CN'
+    locale: 'zh-CN',
   },
   ja: {
     code: 'ja',
     name: 'Japanese',
     nativeName: '日本語',
     direction: 'ltr',
-    locale: 'ja-JP'
+    locale: 'ja-JP',
   },
   ko: {
     code: 'ko',
     name: 'Korean',
     nativeName: '한국어',
     direction: 'ltr',
-    locale: 'ko-KR'
+    locale: 'ko-KR',
   },
   hi: {
     code: 'hi',
     name: 'Hindi',
     nativeName: 'हिन्दी',
     direction: 'ltr',
-    locale: 'hi-IN'
+    locale: 'hi-IN',
   },
   ur: {
     code: 'ur',
     name: 'Urdu',
     nativeName: 'اردو',
     direction: 'rtl', // Urdu is RTL
-    locale: 'ur-PK'
+    locale: 'ur-PK',
   },
   he: {
     code: 'he',
     name: 'Hebrew',
     nativeName: 'עברית',
     direction: 'rtl',
-    locale: 'he-IL'
+    locale: 'he-IL',
   },
   // RTL Languages
   fa: {
@@ -140,15 +140,15 @@ export const LANGUAGES: Record<LanguageCode, LanguageConfig> = {
     name: 'Persian',
     nativeName: 'فارسی',
     direction: 'rtl',
-    locale: 'fa-IR'
+    locale: 'fa-IR',
   },
   ar: {
     code: 'ar',
     name: 'Arabic',
     nativeName: 'العربية',
     direction: 'rtl',
-    locale: 'ar-SA'
-  }
+    locale: 'ar-SA',
+  },
 };
 
 /**
@@ -160,52 +160,52 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
   IR: {
     countryCode: 'IR',
     defaultLanguage: 'fa',
-    supportedLanguages: ['fa', 'en']
+    supportedLanguages: ['fa', 'en'],
   }, // Iran - Persian
   SA: {
     countryCode: 'SA',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en']
+    supportedLanguages: ['ar', 'en'],
   }, // Saudi Arabia - Arabic
   AE: {
     countryCode: 'AE',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en']
+    supportedLanguages: ['ar', 'en'],
   }, // UAE - Arabic
   IQ: {
     countryCode: 'IQ',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en']
+    supportedLanguages: ['ar', 'en'],
   }, // Iraq - Arabic
   SY: {
     countryCode: 'SY',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en']
+    supportedLanguages: ['ar', 'en'],
   }, // Syria - Arabic
   JO: {
     countryCode: 'JO',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en']
+    supportedLanguages: ['ar', 'en'],
   }, // Jordan - Arabic
   LB: {
     countryCode: 'LB',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en', 'fr']
+    supportedLanguages: ['ar', 'en', 'fr'],
   }, // Lebanon - Arabic
   EG: {
     countryCode: 'EG',
     defaultLanguage: 'ar',
-    supportedLanguages: ['ar', 'en']
+    supportedLanguages: ['ar', 'en'],
   }, // Egypt - Arabic
   IL: {
     countryCode: 'IL',
     defaultLanguage: 'he',
-    supportedLanguages: ['he', 'en', 'ar']
+    supportedLanguages: ['he', 'en', 'ar'],
   }, // Israel - Hebrew
   PK: {
     countryCode: 'PK',
     defaultLanguage: 'ur',
-    supportedLanguages: ['ur', 'en']
+    supportedLanguages: ['ur', 'en'],
   }, // Pakistan - Urdu (RTL)
 
   // LTR Countries
@@ -213,73 +213,71 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
   US: {
     countryCode: 'US',
     defaultLanguage: 'en',
-    supportedLanguages: ['en', 'es']
+    supportedLanguages: ['en', 'es'],
   }, // USA - English
   GB: { countryCode: 'GB', defaultLanguage: 'en', supportedLanguages: ['en'] }, // UK - English
   CA: {
     countryCode: 'CA',
     defaultLanguage: 'en',
-    supportedLanguages: ['en', 'fr']
+    supportedLanguages: ['en', 'fr'],
   }, // Canada - English
   AU: { countryCode: 'AU', defaultLanguage: 'en', supportedLanguages: ['en'] }, // Australia - English
   TR: {
     countryCode: 'TR',
     defaultLanguage: 'tr',
-    supportedLanguages: ['tr', 'en']
+    supportedLanguages: ['tr', 'en'],
   }, // Turkey - Turkish
   DE: {
     countryCode: 'DE',
     defaultLanguage: 'de',
-    supportedLanguages: ['de', 'en']
+    supportedLanguages: ['de', 'en'],
   }, // Germany - German
   FR: {
     countryCode: 'FR',
     defaultLanguage: 'fr',
-    supportedLanguages: ['fr', 'en']
+    supportedLanguages: ['fr', 'en'],
   }, // France - French
   ES: {
     countryCode: 'ES',
     defaultLanguage: 'es',
-    supportedLanguages: ['es', 'en']
+    supportedLanguages: ['es', 'en'],
   }, // Spain - Spanish
   IT: {
     countryCode: 'IT',
     defaultLanguage: 'it',
-    supportedLanguages: ['it', 'en']
+    supportedLanguages: ['it', 'en'],
   }, // Italy - Italian
   RU: {
     countryCode: 'RU',
     defaultLanguage: 'ru',
-    supportedLanguages: ['ru', 'en']
+    supportedLanguages: ['ru', 'en'],
   }, // Russia - Russian
   CN: {
     countryCode: 'CN',
     defaultLanguage: 'zh',
-    supportedLanguages: ['zh', 'en']
+    supportedLanguages: ['zh', 'en'],
   }, // China - Chinese
   JP: {
     countryCode: 'JP',
     defaultLanguage: 'ja',
-    supportedLanguages: ['ja', 'en']
+    supportedLanguages: ['ja', 'en'],
   }, // Japan - Japanese
   KR: {
     countryCode: 'KR',
     defaultLanguage: 'ko',
-    supportedLanguages: ['ko', 'en']
+    supportedLanguages: ['ko', 'en'],
   }, // South Korea - Korean
   IN: {
     countryCode: 'IN',
     defaultLanguage: 'hi',
-    supportedLanguages: ['hi', 'en']
-  } // India - Hindi
+    supportedLanguages: ['hi', 'en'],
+  }, // India - Hindi
 };
 
 /**
  * Get default language for a country
  */
-export function getDefaultLanguageForCountry(
-  countryCode: string
-): LanguageCode {
+export function getDefaultLanguageForCountry(countryCode: string): LanguageCode {
   const mapping = COUNTRY_LANGUAGE_MAP[countryCode.toUpperCase()];
   return mapping?.defaultLanguage || DEFAULT_LANGUAGE;
 }
@@ -315,13 +313,7 @@ export function getLocaleForLanguage(languageCode: string): string {
 /**
  * Get supported languages for a country
  */
-export function getSupportedLanguagesForCountry(
-  countryCode: string
-): LanguageCode[] {
+export function getSupportedLanguagesForCountry(countryCode: string): LanguageCode[] {
   const mapping = COUNTRY_LANGUAGE_MAP[countryCode.toUpperCase()];
-  return (
-    mapping?.supportedLanguages || [
-      mapping?.defaultLanguage || DEFAULT_LANGUAGE
-    ]
-  );
+  return mapping?.supportedLanguages || [mapping?.defaultLanguage || DEFAULT_LANGUAGE];
 }

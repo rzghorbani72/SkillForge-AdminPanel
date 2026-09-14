@@ -2,13 +2,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import {
@@ -16,7 +10,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
@@ -45,18 +39,12 @@ const CreateProductTypeSettings = ({ form }: Props) => {
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder={t('products.selectProductType')}
-                    />
+                    <SelectValue placeholder={t('products.selectProductType')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="DIGITAL">
-                    {t('products.digitalProduct')}
-                  </SelectItem>
-                  <SelectItem value="PHYSICAL">
-                    {t('products.physicalProduct')}
-                  </SelectItem>
+                  <SelectItem value="DIGITAL">{t('products.digitalProduct')}</SelectItem>
+                  <SelectItem value="PHYSICAL">{t('products.physicalProduct')}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -117,10 +105,7 @@ const CreateProductTypeSettings = ({ form }: Props) => {
                 <FormItem>
                   <FormLabel>{t('products.dimensions')}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t('products.dimensionsPlaceholder')}
-                      {...field}
-                    />
+                    <Input placeholder={t('products.dimensionsPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -39,7 +39,7 @@ const MediaDropzone: React.FC<MediaDropzoneProps> = ({
   disabled = false,
   onFile,
   onRemove,
-  className
+  className,
 }) => {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,7 +55,7 @@ const MediaDropzone: React.FC<MediaDropzoneProps> = ({
         'relative w-full overflow-hidden rounded-lg border-2 border-dashed transition-colors',
         isDragging ? 'border-primary bg-primary/5' : 'border-border',
         !disabled && !filled && 'cursor-pointer hover:border-primary/60',
-        className
+        className,
       )}
       onClick={filled ? undefined : openPicker}
       onDragOver={(e) => {
@@ -115,9 +115,7 @@ const MediaDropzone: React.FC<MediaDropzoneProps> = ({
       ) : (
         <div className="flex min-h-[10rem] w-full flex-col items-center justify-center gap-2 px-4 py-8 text-center">
           {icon}
-          <p className="text-sm font-medium text-foreground">
-            {placeholderText}
-          </p>
+          <p className="text-sm font-medium text-foreground">{placeholderText}</p>
           <p className="text-xs text-muted-foreground">{placeholderSubtext}</p>
         </div>
       )}
@@ -130,11 +128,7 @@ const MediaDropzone: React.FC<MediaDropzoneProps> = ({
               {uploadingLabel ?? t('common.uploading')}
             </p>
           </div>
-          <ProgressBar
-            progress={uploadProgress}
-            size="sm"
-            className="max-w-[220px]"
-          />
+          <ProgressBar progress={uploadProgress} size="sm" className="max-w-[220px]" />
         </div>
       )}
 

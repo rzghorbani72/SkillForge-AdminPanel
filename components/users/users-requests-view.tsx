@@ -36,7 +36,7 @@ function requestTone(id: number) {
 
 export function UsersRequestsView({
   onPendingCountChange,
-  onStats
+  onStats,
 }: {
   onPendingCountChange?: (count: number) => void;
   /** Feeds the page-level stats row so it stays in place across tabs. */
@@ -60,7 +60,7 @@ export function UsersRequestsView({
         { labelKey: 'users.requests', value: list.length },
         { labelKey: 'users.pendingApproval', value: countOf('PENDING') },
         { labelKey: 'teacherRequests.approved', value: countOf('APPROVED') },
-        { labelKey: 'teacherRequests.rejected', value: countOf('REJECTED') }
+        { labelKey: 'teacherRequests.rejected', value: countOf('REJECTED') },
       ]);
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -77,9 +77,7 @@ export function UsersRequestsView({
     try {
       await apiClient.reviewTeacherRequest(id, { status });
       ErrorHandler.showSuccess(
-        status === 'APPROVED'
-          ? t('teacherRequests.approved')
-          : t('teacherRequests.rejected')
+        status === 'APPROVED' ? t('teacherRequests.approved') : t('teacherRequests.rejected'),
       );
       fetchRequests();
     } catch (e) {
@@ -108,27 +106,21 @@ export function UsersRequestsView({
       {requests.map((r) => {
         const tone = requestTone(r.id);
         const colors = toneToHsl(tone);
-        const name =
-          r.profile?.user?.name || r.profile?.display_name || t('common.none');
+        const name = r.profile?.user?.name || r.profile?.display_name || t('common.none');
         const email = r.profile?.user?.email;
         const phone = r.profile?.user?.phone_number;
         const phoneDisplay = phone ? formatPhoneDisplay(phone, language) : null;
         const submittedAt = new Date(r.created_at).toLocaleDateString('fa-IR');
 
         return (
-          <div
-            key={r.id}
-            className="rounded-xl border border-border bg-card p-5"
-          >
+          <div key={r.id} className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-start gap-4">
               <UserAvatar name={name} tone={tone} size={48} />
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-center gap-2.5">
                   <span className="text-[15px] font-semibold">{name}</span>
                   <UserStatusPill status={r.status.toLowerCase()} />
-                  <span className="ms-auto text-[11px] text-muted-foreground">
-                    {submittedAt}
-                  </span>
+                  <span className="ms-auto text-[11px] text-muted-foreground">{submittedAt}</span>
                 </div>
                 {(email || phoneDisplay) && (
                   <div className="mb-3 text-sm text-muted-foreground">
@@ -149,9 +141,7 @@ export function UsersRequestsView({
                       <BookOpen style={{ width: 13, height: 13 }} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[12px] font-semibold">
-                        {r.store.name}
-                      </div>
+                      <div className="text-[12px] font-semibold">{r.store.name}</div>
                     </div>
                   </div>
                 )}
@@ -162,8 +152,7 @@ export function UsersRequestsView({
                     onClick={() => handleDecide(r.id, 'APPROVED')}
                     className="flex h-9 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 text-[12.5px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                   >
-                    <Check style={{ width: 13, height: 13 }} />{' '}
-                    {t('users.approveTeacher')}
+                    <Check style={{ width: 13, height: 13 }} /> {t('users.approveTeacher')}
                   </button>
                   <button
                     onClick={() => handleDecide(r.id, 'REJECTED')}

@@ -6,7 +6,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
@@ -14,7 +14,7 @@ import {
   MODERATION_POLICY,
   type ContentKind,
   type ModerationPolicy,
-  type ModerationPolicyMap
+  type ModerationPolicyMap,
 } from '@/types/compliance';
 
 /** Sentinel for "no override" — Radix Select cannot hold an empty string value. */
@@ -33,12 +33,7 @@ type Props = {
  * the default happens to be" — otherwise changing the global default silently
  * stops affecting academies that were only ever meant to follow it.
  */
-export function AcademyPolicyOverrides({
-  defaults,
-  overrides,
-  saving,
-  onChange
-}: Props) {
+export function AcademyPolicyOverrides({ defaults, overrides, saving, onChange }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -49,13 +44,11 @@ export function AcademyPolicyOverrides({
         return (
           <div key={kind} className="flex items-center justify-between gap-4">
             <div className="space-y-0.5">
-              <Label htmlFor={`override-${kind}`}>
-                {t(`compliance.moderation.kind.${kind}`)}
-              </Label>
+              <Label htmlFor={`override-${kind}`}>{t(`compliance.moderation.kind.${kind}`)}</Label>
               {!override && inherited ? (
                 <p className="text-xs text-muted-foreground">
                   {t('compliance.override.inheriting', {
-                    policy: t(`compliance.override.${inherited}`)
+                    policy: t(`compliance.override.${inherited}`),
                   })}
                 </p>
               ) : null}
@@ -64,28 +57,19 @@ export function AcademyPolicyOverrides({
               value={override ?? INHERIT}
               disabled={saving === kind}
               onValueChange={(value) =>
-                onChange(
-                  kind,
-                  value === INHERIT ? null : (value as ModerationPolicy)
-                )
+                onChange(kind, value === INHERIT ? null : (value as ModerationPolicy))
               }
             >
               <SelectTrigger id={`override-${kind}`} className="w-[200px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={INHERIT}>
-                  {t('compliance.override.useDefault')}
-                </SelectItem>
+                <SelectItem value={INHERIT}>{t('compliance.override.useDefault')}</SelectItem>
                 <SelectItem value={MODERATION_POLICY.PUBLISH_IMMEDIATELY}>
-                  {t(
-                    `compliance.override.${MODERATION_POLICY.PUBLISH_IMMEDIATELY}`
-                  )}
+                  {t(`compliance.override.${MODERATION_POLICY.PUBLISH_IMMEDIATELY}`)}
                 </SelectItem>
                 <SelectItem value={MODERATION_POLICY.HOLD_FOR_REVIEW}>
-                  {t(
-                    `compliance.override.${MODERATION_POLICY.HOLD_FOR_REVIEW}`
-                  )}
+                  {t(`compliance.override.${MODERATION_POLICY.HOLD_FOR_REVIEW}`)}
                 </SelectItem>
               </SelectContent>
             </Select>

@@ -19,6 +19,6 @@ export function buildAcademyThemePatch(hex: string) {
   return {
     primary_color: hex,
     primary_color_light: `#${shift(r, 60)}${shift(g, 60)}${shift(b, 60)}`,
-    primary_color_dark: `#${shift(r, -40)}${shift(g, -40)}${shift(b, -40)}`
+    primary_color_dark: `#${shift(r, -40)}${shift(g, -40)}${shift(b, -40)}`,
   };
 }

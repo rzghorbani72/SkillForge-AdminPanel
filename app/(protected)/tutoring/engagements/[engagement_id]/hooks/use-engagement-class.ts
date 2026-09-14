@@ -9,7 +9,7 @@ import type {
   ClassSession,
   CourseTopic,
   TutoringAttendanceStatus,
-  TutoringEngagement
+  TutoringEngagement,
 } from '@/types/learning-operations';
 
 /**
@@ -42,7 +42,7 @@ export function useEngagementClass(engagementId: string) {
         if (!found) return;
         const [rows, courseTopics] = await Promise.all([
           apiClient.getEngagementSessions(engagementId),
-          apiClient.getCourseTopics(found.course_id)
+          apiClient.getCourseTopics(found.course_id),
         ]);
         if (cancelled) return;
         setSessions(rows);
@@ -61,10 +61,8 @@ export function useEngagementClass(engagementId: string) {
 
   const replaceSession = useCallback(
     (updated: ClassSession) =>
-      setSessions((rows) =>
-        rows.map((row) => (row.id === updated.id ? updated : row))
-      ),
-    []
+      setSessions((rows) => rows.map((row) => (row.id === updated.id ? updated : row))),
+    [],
   );
 
   const run = useCallback(
@@ -79,7 +77,7 @@ export function useEngagementClass(engagementId: string) {
         setSaving(false);
       }
     },
-    [loadSessions]
+    [loadSessions],
   );
 
   const schedule = (form: {
@@ -93,31 +91,26 @@ export function useEngagementClass(engagementId: string) {
       await apiClient.scheduleTutoringSession({
         engagement_id: engagementId,
         starts_at: new Date(form.starts_at).toISOString(),
-        ends_at: form.ends_at
-          ? new Date(form.ends_at).toISOString()
-          : undefined,
+        ends_at: form.ends_at ? new Date(form.ends_at).toISOString() : undefined,
         timezone: form.timezone,
         meeting_url: form.meeting_url || undefined,
-        notes: form.notes || undefined
+        notes: form.notes || undefined,
       });
     });
 
   const cancelSession = (session: ClassSession) =>
     run(async () => {
       await apiClient.cancelTutoringSession(session.id, {
-        reason: t('tutoring.cancelReasonDefault')
+        reason: t('tutoring.cancelReasonDefault'),
       });
     });
 
-  const markAttendance = (
-    session: ClassSession,
-    status: TutoringAttendanceStatus
-  ) =>
+  const markAttendance = (session: ClassSession, status: TutoringAttendanceStatus) =>
     run(async () => {
       if (!engagement) return;
       await apiClient.markTutoringAttendance(session.id, {
         profile_id: engagement.student_profile_id,
-        status
+        status,
       });
     });
 
@@ -130,6 +123,6 @@ export function useEngagementClass(engagementId: string) {
     replaceSession,
     schedule,
     cancelSession,
-    markAttendance
+    markAttendance,
   };
 }

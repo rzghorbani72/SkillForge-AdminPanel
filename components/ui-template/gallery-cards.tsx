@@ -4,20 +4,14 @@ import { useRef, useState } from 'react';
 import { Eye, Trash2, Check, Pencil, ImageUp, Loader2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TemplatePreset } from '@/types/api';
-import {
-  presetSourceKey,
-  formatPresetDisplayName
-} from '@/lib/ui-template/preset-source';
+import { presetSourceKey, formatPresetDisplayName } from '@/lib/ui-template/preset-source';
 import { getDesignSystem } from '@/lib/design-systems';
 import { apiClient } from '@/lib/api';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { SectionPreviewFrame } from './section-preview-frame';
-import {
-  getTemplateCategoryByKey,
-  type TemplateCategory
-} from '@/constants/template-names';
+import { getTemplateCategoryByKey, type TemplateCategory } from '@/constants/template-names';
 import { TemplateStarRating } from './template-star-rating';
 
 // Card/preview swatches follow the template's saved theme when present, so a
@@ -31,7 +25,7 @@ export function resolveTemplateColors(preset: TemplatePreset) {
     background: pick('background_color', ds.colors.background),
     primary: pick('primary_color', ds.colors.primary),
     secondary: pick('secondary_color', ds.colors.secondary),
-    accent: pick('accent_color', ds.colors.accent)
+    accent: pick('accent_color', ds.colors.accent),
   };
 }
 
@@ -71,7 +65,7 @@ export function TemplateSection({
   onQuickApply,
   onDelete,
   onRate,
-  onCoverUploaded
+  onCoverUploaded,
 }: TemplateSectionProps) {
   return (
     <section>
@@ -93,11 +87,7 @@ export function TemplateSection({
             onQuickApply={onQuickApply ? () => onQuickApply(preset) : undefined}
             onDelete={preset.isOwned ? () => onDelete(preset) : undefined}
             onRate={onRate ? (stars) => onRate(preset, stars) : undefined}
-            onCoverUploaded={
-              onCoverUploaded
-                ? (url) => onCoverUploaded(preset, url)
-                : undefined
-            }
+            onCoverUploaded={onCoverUploaded ? (url) => onCoverUploaded(preset, url) : undefined}
           />
         ))}
       </div>
@@ -130,7 +120,7 @@ function GalleryCard({
   onQuickApply,
   onDelete,
   onRate,
-  onCoverUploaded
+  onCoverUploaded,
 }: GalleryCardProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
@@ -144,21 +134,14 @@ function GalleryCard({
   // records the original it came from — one badge, one word for the manager.
   const isCustomized = isDedicated && !!preset.sourcePresetKey;
   const colors = resolveTemplateColors(preset);
-  const swatches = [
-    colors.background,
-    colors.primary,
-    colors.secondary,
-    colors.accent
-  ];
+  const swatches = [colors.background, colors.primary, colors.secondary, colors.accent];
   // Only platform staff can set the banner shown for a shared catalog
   // template; a dedicated (academy-owned) copy has no such banner.
-  const canUploadCover =
-    !isDedicated && Boolean(onCoverUploaded) && isPlatformAdmin(user);
+  const canUploadCover = !isDedicated && Boolean(onCoverUploaded) && isPlatformAdmin(user);
   // A static banner can't show a manager's own edits, so only a customized
   // card renders the real live storefront. Every other card (public, or a
   // dedicated copy with no changes recorded) is banner-or-gradient only.
-  const canRenderFrame =
-    isCustomized && Boolean(storefrontBaseUrl) && Boolean(previewToken);
+  const canRenderFrame = isCustomized && Boolean(storefrontBaseUrl) && Boolean(previewToken);
   // Loading placeholder: this card's own banner if staff/manager set one,
   // otherwise the base template's banner, otherwise the brand gradient.
   const loadingCover = preset.preview ?? baseCoverUrl ?? null;
@@ -167,7 +150,7 @@ function GalleryCard({
     setIsUploadingCover(true);
     try {
       const uploaded = (await apiClient.uploadImage(file, {
-        title: `${preset.name} banner`
+        title: `${preset.name} banner`,
       })) as { id?: string | number } | null;
       const id = uploaded?.id;
       if (id === undefined || id === null) return;
@@ -238,7 +221,7 @@ function GalleryCard({
                   frameLoaded ? 'opacity-0' : 'opacity-100'
                 }`}
                 style={{
-                  background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
+                  background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`,
                 }}
               >
                 <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
@@ -268,16 +251,12 @@ function GalleryCard({
         ) : preset.preview ? (
           // A staff-uploaded banner — object-cover keeps its own aspect ratio
           // intact (no stretching), cropping only what overflows the box.
-          <img
-            src={preset.preview}
-            alt={preset.name}
-            className="h-full w-full object-cover"
-          />
+          <img src={preset.preview} alt={preset.name} className="h-full w-full object-cover" />
         ) : (
           <div
             className="absolute inset-0 flex flex-col items-center justify-center gap-3"
             style={{
-              background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`
+              background: `linear-gradient(145deg, ${colors.primary} 0%, ${colors.secondary}cc 100%)`,
             }}
           >
             <span className="px-6 text-center text-xl font-bold text-white drop-shadow-lg">
@@ -360,10 +339,7 @@ function GalleryCard({
       {/* Footer */}
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3
-            title={preset.name}
-            className="text-base font-bold leading-tight text-foreground"
-          >
+          <h3 title={preset.name} className="text-base font-bold leading-tight text-foreground">
             {displayName}
           </h3>
           {/* Palette strip doubles as the at-a-glance identity of the template. */}
@@ -404,7 +380,7 @@ function GalleryCard({
                 className="whitespace-nowrap rounded-md px-2 py-1 text-[10.5px] font-semibold"
                 style={{
                   background: `${colors.primary}14`,
-                  color: colors.primary
+                  color: colors.primary,
                 }}
               >
                 {tag.trim()}

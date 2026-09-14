@@ -9,7 +9,7 @@ import {
   getDefaultLanguageForCountry,
   getLocaleForLanguage,
   isRTL,
-  getTextDirection
+  getTextDirection,
 } from './config';
 import { en } from './translations/en';
 import { fa } from './translations/fa';
@@ -21,7 +21,7 @@ const translations = {
   en,
   fa,
   ar,
-  tr
+  tr,
 } as const;
 
 type LoadedLanguage = keyof typeof translations;
@@ -44,11 +44,7 @@ export type InterpolationParams = Record<string, string | number>;
  * Interpolate values into a string template
  * Replaces {{key}} with the corresponding value from params
  */
-function interpolate(
-  template: string,
-  params?: InterpolationParams,
-  locale?: string
-): string {
+function interpolate(template: string, params?: InterpolationParams, locale?: string): string {
   if (!params) return template;
 
   return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
@@ -64,7 +60,7 @@ function interpolate(
 export function t(
   key: string,
   language: LanguageCode = DEFAULT_LANGUAGE,
-  params?: InterpolationParams
+  params?: InterpolationParams,
 ): string {
   const resolveFromPack = (pack: Record<string, any>): string | null => {
     const keys = key.split('.');
@@ -106,9 +102,7 @@ export function getTranslations(language: LanguageCode = DEFAULT_LANGUAGE) {
 /**
  * Get language from country code
  */
-export function getLanguageFromCountry(
-  countryCode: string | null | undefined
-): LanguageCode {
+export function getLanguageFromCountry(countryCode: string | null | undefined): LanguageCode {
   if (!countryCode) return DEFAULT_LANGUAGE;
   return getDefaultLanguageForCountry(countryCode);
 }
@@ -116,12 +110,7 @@ export function getLanguageFromCountry(
 /**
  * Get language configuration
  */
-export {
-  getLanguageConfig,
-  getDefaultLanguageForCountry,
-  isRTL,
-  getTextDirection
-};
+export { getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirection };
 
 /**
  * Re-export types

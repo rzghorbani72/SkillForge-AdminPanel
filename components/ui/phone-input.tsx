@@ -28,7 +28,7 @@ export function PhoneInput({
   onBlur,
   error,
   disabled,
-  className
+  className,
 }: PhoneInputProps) {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
@@ -40,7 +40,7 @@ export function PhoneInput({
         <Phone
           className={cn(
             'absolute top-2.5 h-4 w-4 text-muted-foreground',
-            isRTL ? 'right-3' : 'left-3'
+            isRTL ? 'right-3' : 'left-3',
           )}
         />
         <Input

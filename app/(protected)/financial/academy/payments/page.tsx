@@ -1,13 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -16,15 +10,9 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@/components/ui/table';
-import {
-  DollarSign,
-  CreditCard,
-  TrendingUp,
-  Download,
-  Lock
-} from 'lucide-react';
+import { DollarSign, CreditCard, TrendingUp, Download, Lock } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -40,7 +28,7 @@ import type {
   AcademyRevenueData,
   SettlementStatement,
   ReconciliationData,
-  AcademyPayment
+  AcademyPayment,
 } from '@/types/financial';
 import { toast } from 'react-toastify';
 
@@ -56,16 +44,13 @@ export default function StorePaymentsPage() {
     setSelectedMonth,
     dateRange,
     years,
-    formatDate
+    formatDate,
   } = useFinancialFilters();
 
   const [loading, setLoading] = useState(true);
-  const [revenueData, setRevenueData] = useState<AcademyRevenueData | null>(
-    null
-  );
+  const [revenueData, setRevenueData] = useState<AcademyRevenueData | null>(null);
   const [statement, setStatement] = useState<SettlementStatement | null>(null);
-  const [reconciliation, setReconciliation] =
-    useState<ReconciliationData | null>(null);
+  const [reconciliation, setReconciliation] = useState<ReconciliationData | null>(null);
   const [exporting, setExporting] = useState(false);
   const [locking, setLocking] = useState(false);
 
@@ -77,17 +62,17 @@ export default function StorePaymentsPage() {
       const params = {
         academy_id: currentAcademy.id,
         start_date: dateRange.startIso,
-        end_date: dateRange.endIso
+        end_date: dateRange.endIso,
       };
 
       const [revenue, settlement, reconciliationData] = await Promise.all([
         apiClient.getAcademyRevenueFromPayments(
           currentAcademy.id,
           dateRange.startIso,
-          dateRange.endIso
+          dateRange.endIso,
         ),
         apiClient.getIranSettlementStatement(params),
-        apiClient.getIranSettlementReconciliation(params)
+        apiClient.getIranSettlementReconciliation(params),
       ]);
 
       setRevenueData(revenue as AcademyRevenueData);
@@ -124,12 +109,12 @@ export default function StorePaymentsPage() {
         method: key,
         count: 0,
         total: 0,
-        currency: p.currency
+        currency: p.currency,
       };
       grouped.set(key, {
         ...existing,
         count: existing.count + 1,
-        total: existing.total + (p.amount ?? 0)
+        total: existing.total + (p.amount ?? 0),
       });
     }
     return Array.from(grouped.values()).sort((a, b) => b.total - a.total);
@@ -145,7 +130,7 @@ export default function StorePaymentsPage() {
       const blob = await apiClient.exportIranSettlementCsv({
         academy_id: currentAcademy.id,
         start_date: dateRange.startIso,
-        end_date: dateRange.endIso
+        end_date: dateRange.endIso,
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -170,11 +155,11 @@ export default function StorePaymentsPage() {
         28,
         23,
         59,
-        59
+        59,
       );
       await apiClient.lockIranFinancialPeriod({
         academy_id: currentAcademy.id,
-        lock_until: lockUntil.toISOString()
+        lock_until: lockUntil.toISOString(),
       });
       toast.success(t('financial.store.payments.lockedSuccess'));
     } catch (err) {
@@ -187,9 +172,7 @@ export default function StorePaymentsPage() {
   if (!currentAcademy) {
     return (
       <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
-        <p className="text-muted-foreground">
-          {t('financial.store.payments.noStore')}
-        </p>
+        <p className="text-muted-foreground">{t('financial.store.payments.noStore')}</p>
       </div>
     );
   }
@@ -204,12 +187,7 @@ export default function StorePaymentsPage() {
         title={t('financial.store.payments.title')}
         description={`${currentAcademy.name} — ${t('financial.store.payments.description')}`}
       >
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleLockPeriod}
-          disabled={locking}
-        >
+        <Button variant="outline" size="sm" onClick={handleLockPeriod} disabled={locking}>
           <Lock className="mr-2 h-4 w-4" />
           {t('financial.store.payments.lockPeriod')}
         </Button>
@@ -239,14 +217,11 @@ export default function StorePaymentsPage() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {formatCurrency(
-                  revenueData.total_revenue,
-                  revenueData.currency
-                )}
+                {formatCurrency(revenueData.total_revenue, revenueData.currency)}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {t('financial.store.payments.fromPayments', {
-                  count: revenueData.payment_count
+                  count: revenueData.payment_count,
                 })}
               </p>
             </CardContent>
@@ -309,12 +284,8 @@ export default function StorePaymentsPage() {
       {statement?.totals && (
         <Card>
           <CardHeader>
-            <CardTitle>
-              {t('financial.store.payments.settlementTitle')}
-            </CardTitle>
-            <CardDescription>
-              {t('financial.store.payments.settlementDescription')}
-            </CardDescription>
+            <CardTitle>{t('financial.store.payments.settlementTitle')}</CardTitle>
+            <CardDescription>{t('financial.store.payments.settlementDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
@@ -324,13 +295,13 @@ export default function StorePaymentsPage() {
                 {
                   key: 'vatIran',
                   value: statement.totals.tax_vat_amount,
-                  suffix: ` (${vatPercentLabel}٪)`
+                  suffix: ` (${vatPercentLabel}٪)`,
                 },
                 {
                   key: 'teacherPayout',
-                  value: statement.totals.teacher_payout
+                  value: statement.totals.teacher_payout,
                 },
-                { key: 'schoolNet', value: statement.totals.school_net_revenue }
+                { key: 'schoolNet', value: statement.totals.school_net_revenue },
               ].map(({ key, value, suffix = '' }) => (
                 <div key={key} className="rounded-lg bg-muted/50 p-3">
                   <p className="text-xs text-muted-foreground">
@@ -351,9 +322,7 @@ export default function StorePaymentsPage() {
       {reconciliation && (
         <Card>
           <CardHeader>
-            <CardTitle>
-              {t('financial.store.payments.reconciliationTitle')}
-            </CardTitle>
+            <CardTitle>{t('financial.store.payments.reconciliationTitle')}</CardTitle>
             <CardDescription>
               {t('financial.store.payments.reconciliationDescription')}
             </CardDescription>
@@ -363,28 +332,26 @@ export default function StorePaymentsPage() {
               {[
                 {
                   key: 'paidPayments',
-                  value: reconciliation.total_paid_payments
+                  value: reconciliation.total_paid_payments,
                 },
                 {
                   key: 'matchedCallbacks',
-                  value: reconciliation.matched_successful_callbacks
+                  value: reconciliation.matched_successful_callbacks,
                 },
                 {
                   key: 'missingCallbacks',
-                  value: reconciliation.missing_successful_callbacks
+                  value: reconciliation.missing_successful_callbacks,
                 },
                 {
                   key: 'orphanCallbacks',
-                  value: reconciliation.orphan_successful_callbacks
-                }
+                  value: reconciliation.orphan_successful_callbacks,
+                },
               ].map(({ key, value }) => (
                 <div key={key} className="rounded-lg bg-muted/50 p-3">
                   <p className="text-xs text-muted-foreground">
                     {t(`financial.store.payments.${key}`)}
                   </p>
-                  <p className="mt-1 text-base font-semibold">
-                    {formatNumber(value ?? 0)}
-                  </p>
+                  <p className="mt-1 text-base font-semibold">{formatNumber(value ?? 0)}</p>
                 </div>
               ))}
             </div>
@@ -396,9 +363,7 @@ export default function StorePaymentsPage() {
       {paymentsByMethod.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>
-              {t('financial.store.payments.paymentsByMethod')}
-            </CardTitle>
+            <CardTitle>{t('financial.store.payments.paymentsByMethod')}</CardTitle>
             <CardDescription>
               {t('financial.store.payments.paymentsByMethodDescription')}
             </CardDescription>
@@ -407,12 +372,8 @@ export default function StorePaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
-                    {t('financial.store.payments.paymentMethod')}
-                  </TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.store.payments.count')}
-                  </TableHead>
+                  <TableHead>{t('financial.store.payments.paymentMethod')}</TableHead>
+                  <TableHead className="text-end">{t('financial.store.payments.count')}</TableHead>
                   <TableHead className="text-end">
                     {t('financial.store.payments.totalAmount')}
                   </TableHead>
@@ -440,9 +401,7 @@ export default function StorePaymentsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t('financial.store.payments.allPayments')}</CardTitle>
-          <CardDescription>
-            {t('financial.store.payments.allPaymentsDescription')}
-          </CardDescription>
+          <CardDescription>{t('financial.store.payments.allPaymentsDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="table-h-scroll">
           <Table>
@@ -453,9 +412,7 @@ export default function StorePaymentsPage() {
                 <TableHead>{t('financial.store.payments.course')}</TableHead>
                 <TableHead>{t('financial.store.payments.method')}</TableHead>
                 <TableHead>{t('financial.store.payments.status')}</TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.payments.vat')}
-                </TableHead>
+                <TableHead className="text-end">{t('financial.store.payments.vat')}</TableHead>
                 <TableHead className="text-end">
                   {t('financial.store.payments.platformFee')}
                 </TableHead>
@@ -465,18 +422,13 @@ export default function StorePaymentsPage() {
                 <TableHead className="text-end">
                   {t('financial.store.payments.schoolNet')}
                 </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.payments.amount')}
-                </TableHead>
+                <TableHead className="text-end">{t('financial.store.payments.amount')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {payments.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={10}
-                    className="py-8 text-center text-muted-foreground"
-                  >
+                  <TableCell colSpan={10} className="py-8 text-center text-muted-foreground">
                     {t('financial.store.payments.noPayments')}
                   </TableCell>
                 </TableRow>
@@ -489,7 +441,7 @@ export default function StorePaymentsPage() {
                       (p.amount ?? 0) -
                         (p.platform_fee ?? 0) -
                         (p.instructor_fee ?? 0) -
-                        (p.tax_vat_amount ?? 0)
+                        (p.tax_vat_amount ?? 0),
                     );
 
                   return (
