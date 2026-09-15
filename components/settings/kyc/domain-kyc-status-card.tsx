@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ShieldCheck } from 'lucide-react';
 import { KycStatusBadge } from '@/components/settings/kyc/kyc-readonly-panel';
 import { useKyc } from '@/hooks/use-kyc';
+import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { KYC_IDENTITY_PATH } from '@/lib/kyc-error';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { KYC_STATUS } from '@/types/kyc';
@@ -14,7 +15,10 @@ import { KYC_STATUS } from '@/types/kyc';
 /** Domain page gate: link to KYC when not yet verified. */
 export function DomainKycStatusCard() {
   const { t } = useTranslation();
-  const { state, isLoading } = useKyc(true);
+  const academy = useCurrentAcademy();
+  const { state, isLoading } = useKyc(Boolean(academy?.id));
+
+  if (!academy?.id) return null;
 
   if (isLoading) {
     return <Skeleton className="h-28 w-full" />;
