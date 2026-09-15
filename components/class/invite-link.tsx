@@ -5,18 +5,24 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { academySiteUrl } from '@/lib/academy-site-url';
+import { resolveAcademySiteUrls } from '@/lib/academy-site-url';
 import { useTranslation } from '@/lib/i18n/hooks';
 
-/** The link a student sends friends to fill a class; every class has one. */
+/**
+ * Share link so friends can book the same class. Prefer the Mentoma subdomain
+ * over a custom domain — custom hostnames are often saved before DNS works,
+ * and a dead invite link blocks enrollment.
+ */
 export function InviteLink({ joinCode }: { joinCode: string }) {
   const { t } = useTranslation();
   const academy = useCurrentAcademy();
   const [copied, setCopied] = useState(false);
-  const base = academySiteUrl(academy) ?? '';
-  const url = `${base}/classes/join/${joinCode}`;
+  const urls = resolveAcademySiteUrls(academy);
+  const base = (urls.subdomain ?? urls.public ?? '').replace(/\/$/, '');
+  const url = base ? `${base}/classes/join/${joinCode}` : '';
 
   const copy = async () => {
+    if (!url) return;
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
@@ -25,6 +31,8 @@ export function InviteLink({ joinCode }: { joinCode: string }) {
       // Clipboard may be blocked; the address is still visible to select.
     }
   };
+
+  if (!url) return null;
 
   return (
     <div className="space-y-1.5">
