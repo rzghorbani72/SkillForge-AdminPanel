@@ -549,6 +549,7 @@ export const fa = {
     permanentlyDelete: 'این مورد به طور دائمی حذف خواهد شد',
     deleting: 'در حال حذف...',
     copy: 'کپی',
+    copied: 'کپی شد',
     saving: 'در حال ذخیره...',
     updating: 'در حال به‌روزرسانی...',
     creating: 'در حال ایجاد...',

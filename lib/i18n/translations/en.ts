@@ -554,6 +554,7 @@ export const en = {
     permanentlyDelete: 'This will permanently delete',
     deleting: 'Deleting...',
     copy: 'Copy',
+    copied: 'Copied!',
     saving: 'Saving...',
     updating: 'Updating...',
     creating: 'Creating...',

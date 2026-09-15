@@ -369,6 +369,8 @@ export const ar = {
     cannotBeUndone: 'لا يمكن التراجع عن هذا الإجراء.',
     permanentlyDelete: 'سيتم حذف هذا بشكل دائم',
     deleting: 'جاري الحذف...',
+    copy: 'نسخ',
+    copied: 'تم النسخ!',
     saving: 'جاري الحفظ...',
     updating: 'جاري التحديث...',
     creating: 'جاري الإنشاء...',

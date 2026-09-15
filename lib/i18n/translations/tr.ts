@@ -371,6 +371,8 @@ export const tr = {
     cannotBeUndone: 'Bu işlem geri alınamaz.',
     permanentlyDelete: 'Bu kalıcı olarak silinecek',
     deleting: 'Siliniyor...',
+    copy: 'Kopyala',
+    copied: 'Kopyalandı!',
     saving: 'Kaydediliyor...',
     updating: 'Güncelleniyor...',
     creating: 'Oluşturuluyor...',
