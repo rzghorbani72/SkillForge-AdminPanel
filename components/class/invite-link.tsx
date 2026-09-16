@@ -13,7 +13,14 @@ import { useTranslation } from '@/lib/i18n/hooks';
  * over a custom domain — custom hostnames are often saved before DNS works,
  * and a dead invite link blocks enrollment.
  */
-export function InviteLink({ joinCode }: { joinCode: string }) {
+export function InviteLink({
+  joinCode,
+  coursePublished = true,
+}: {
+  joinCode: string;
+  /** Storefront join works only when the parent course is published. */
+  coursePublished?: boolean;
+}) {
   const { t } = useTranslation();
   const academy = useCurrentAcademy();
   const [copied, setCopied] = useState(false);
@@ -33,6 +40,12 @@ export function InviteLink({ joinCode }: { joinCode: string }) {
   };
 
   if (!url) return null;
+
+  if (!coursePublished) {
+    return (
+      <p className="text-xs text-muted-foreground">{t('tutoring.groups.inviteLinkCourseDraft')}</p>
+    );
+  }
 
   return (
     <div className="space-y-1.5">

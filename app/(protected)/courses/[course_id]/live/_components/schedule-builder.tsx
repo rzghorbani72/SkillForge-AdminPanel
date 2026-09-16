@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
 import { NumberInput } from '@/components/ui/number-input';
 import { ClassSellingFields } from '@/components/class/class-selling-fields';
-import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
 import { defaultTimezone } from '@/lib/class-slot-time';
 import { apiClient } from '@/lib/api';
@@ -141,10 +140,7 @@ export default function ScheduleBuilder({
             <NumberInput id="min-students" value={minStudents} min={1} onChange={setMinStudents} />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
-              <ClassSizeBadge capacity={Number(capacity) || 1} />
-            </div>
+            <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
             <NumberInput id="capacity" value={capacity} min={1} onChange={setCapacity} />
           </div>
         </div>

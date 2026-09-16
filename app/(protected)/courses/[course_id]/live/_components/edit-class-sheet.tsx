@@ -1,22 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { ExternalLink, Loader2 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { Loader2 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { DatePicker } from '@/components/ui/date-picker';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { NumberInput } from '@/components/ui/number-input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
@@ -24,26 +9,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Textarea } from '@/components/ui/textarea';
-import { ClassSellingFields } from '@/components/class/class-selling-fields';
-import { ClassSizeBadge } from '@/components/class/class-size-badge';
-import { GroupActionsCard } from '@/components/class/group-actions-card';
-import { InviteLink } from '@/components/class/invite-link';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
-import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
 import { useClassDetail } from '@/hooks/use-class-detail';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type {
-  TutoringGroup,
-  TutoringGroupSlot,
-  TutoringGroupVisibility,
-} from '@/types/learning-operations';
-
-/** The timetable is only a proposal until the class fills and is confirmed. */
-const EDITABLE_SCHEDULE_STATUSES = ['DRAFT', 'WAITING'];
+import { ClassSettingsBody } from './class-settings-body';
 
 interface EditClassSheetProps {
   courseId: string;
+  coursePublished: boolean;
   groupId: string;
   onOpenChange: (open: boolean) => void;
   onChanged: () => void;
@@ -56,6 +29,7 @@ interface EditClassSheetProps {
  */
 export function EditClassSheet({
   courseId,
+  coursePublished,
   groupId,
   onOpenChange,
   onChanged,
@@ -96,275 +70,13 @@ export function EditClassSheet({
           <ClassSettingsBody
             key={detail.group.id}
             courseId={courseId}
+            coursePublished={coursePublished}
             group={detail.group}
-            busy={detail.busy}
-            update={detail.update}
-            replaceSlots={detail.replaceSlots}
-            publish={detail.publish}
-            updateLink={detail.updateLink}
-            announce={detail.announce}
-            confirm={detail.confirm}
-            cancel={detail.cancel}
+            detail={detail}
             onChanged={onChanged}
           />
         )}
       </SheetContent>
     </Sheet>
-  );
-}
-
-type ClassSettingsBodyProps = {
-  courseId: string;
-  group: TutoringGroup;
-  busy: boolean;
-  update: ReturnType<typeof useClassDetail>['update'];
-  replaceSlots: ReturnType<typeof useClassDetail>['replaceSlots'];
-  publish: ReturnType<typeof useClassDetail>['publish'];
-  updateLink: ReturnType<typeof useClassDetail>['updateLink'];
-  announce: ReturnType<typeof useClassDetail>['announce'];
-  confirm: ReturnType<typeof useClassDetail>['confirm'];
-  cancel: ReturnType<typeof useClassDetail>['cancel'];
-  onChanged: () => void;
-};
-
-/**
- * Mounted only once its class has loaded, keyed by the class id — so every
- * field starts from the class's own data with no effect needed to sync it in
- * after the fetch.
- */
-function ClassSettingsBody({
-  courseId,
-  group,
-  busy,
-  update,
-  replaceSlots,
-  publish,
-  updateLink,
-  announce,
-  confirm,
-  cancel,
-  onChanged,
-}: ClassSettingsBodyProps) {
-  const { t } = useTranslation();
-
-  const [title, setTitle] = useState(group.title);
-  const [description, setDescription] = useState(group.description ?? '');
-  const [capacity, setCapacity] = useState(String(group.capacity));
-  const [minStudents, setMinStudents] = useState(String(group.min_students));
-  const [seatPrice, setSeatPrice] = useState(
-    group.seat_price != null ? String(group.seat_price) : '',
-  );
-  const [wholeClassBooking, setWholeClassBooking] = useState(group.whole_class_booking ?? true);
-  const [ageMin, setAgeMin] = useState(group.age_min ? String(group.age_min) : '');
-  const [ageMax, setAgeMax] = useState(group.age_max ? String(group.age_max) : '');
-  const [termWeeks, setTermWeeks] = useState(String(group.term_weeks));
-  const [visibility, setVisibility] = useState<TutoringGroupVisibility>(group.visibility);
-  const [joinDeadline, setJoinDeadline] = useState(
-    group.join_deadline ? group.join_deadline.slice(0, 10) : '',
-  );
-  const [slots, setSlots] = useState<TutoringGroupSlot[]>(group.Slots ?? []);
-  const [saving, setSaving] = useState(false);
-
-  const canEditSchedule = EDITABLE_SCHEDULE_STATUSES.includes(group.status);
-
-  // One save writes every field, the timetable included — a manager who edits
-  // a slot and presses "save changes" must never lose it.
-  const saveAll = async (): Promise<boolean> => {
-    setSaving(true);
-    try {
-      const settingsOk = await update({
-        title: title.trim(),
-        description: description.trim() || undefined,
-        capacity: Number(capacity) || undefined,
-        min_students: Number(minStudents) || undefined,
-        seat_price: seatPrice === '' ? undefined : Number(seatPrice),
-        whole_class_booking: wholeClassBooking,
-        age_min: ageMin ? Number(ageMin) : undefined,
-        age_max: ageMax ? Number(ageMax) : undefined,
-        term_weeks: Number(termWeeks) || undefined,
-        visibility,
-        join_deadline: joinDeadline ? new Date(joinDeadline).toISOString() : undefined,
-      });
-      if (!settingsOk) return false;
-      if (canEditSchedule && !(await replaceSlots(slots))) return false;
-      onChanged();
-      return true;
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const doSave = async () => {
-    if (await saveAll()) toast.success(t('courseDetail.settingsSaved'));
-  };
-
-  const doPublish = async () => {
-    if (!(await saveAll())) return;
-    if (await publish()) {
-      toast.success(t('courses.live.classPublished'));
-      onChanged();
-    }
-  };
-
-  return (
-    <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="beautiful-scrollbar flex-1 space-y-6 overflow-y-auto px-4 py-5 sm:px-6">
-        <div className="space-y-4 rounded-lg border p-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="edit-group-title">{t('tutoring.groups.name')}</Label>
-              <Input
-                id="edit-group-title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="edit-group-description">{t('tutoring.groups.description_')}</Label>
-              <Textarea
-                id="edit-group-description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="edit-group-capacity">{t('tutoring.groups.capacity')}</Label>
-                <ClassSizeBadge capacity={Number(capacity) || 1} />
-              </div>
-              <NumberInput
-                id="edit-group-capacity"
-                value={capacity}
-                min={Math.max(1, group.seats_taken)}
-                onChange={setCapacity}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="edit-group-min">{t('tutoring.groups.minStudents')}</Label>
-              <NumberInput
-                id="edit-group-min"
-                value={minStudents}
-                min={1}
-                onChange={setMinStudents}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="edit-group-age-min">{t('tutoring.groups.ageMin')}</Label>
-              <NumberInput id="edit-group-age-min" value={ageMin} min={3} onChange={setAgeMin} />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="edit-group-age-max">{t('tutoring.groups.ageMax')}</Label>
-              <NumberInput id="edit-group-age-max" value={ageMax} min={3} onChange={setAgeMax} />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="edit-group-term">{t('tutoring.groups.termWeeks')}</Label>
-              <NumberInput id="edit-group-term" value={termWeeks} min={1} onChange={setTermWeeks} />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="edit-group-visibility">{t('tutoring.groups.visibility')}</Label>
-              <Select
-                value={visibility}
-                onValueChange={(value) => setVisibility(value as TutoringGroupVisibility)}
-              >
-                <SelectTrigger id="edit-group-visibility">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PUBLIC">{t('tutoring.groups.visibilityPublic')}</SelectItem>
-                  <SelectItem value="PRIVATE">{t('tutoring.groups.visibilityPrivate')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="edit-group-deadline">{t('tutoring.groups.joinDeadline')}</Label>
-              <DatePicker
-                id="edit-group-deadline"
-                value={joinDeadline}
-                onChange={setJoinDeadline}
-              />
-            </div>
-          </div>
-        </div>
-
-        <ClassSellingFields
-          idPrefix="edit-group"
-          capacity={Number(capacity) || 1}
-          seatPrice={seatPrice}
-          offerPrice={group.Offer?.price}
-          wholeClassBooking={wholeClassBooking}
-          seatsHeld={group.seats_held}
-          onSeatPriceChange={setSeatPrice}
-          onWholeClassBookingChange={setWholeClassBooking}
-        />
-
-        {group.join_code ? (
-          <div className="rounded-lg border p-4">
-            <InviteLink joinCode={group.join_code} />
-          </div>
-        ) : null}
-
-        <div className="space-y-2 rounded-lg border p-4">
-          <Label>{t('tutoring.groups.timetable')}</Label>
-          {canEditSchedule ? (
-            <>
-              <p className="text-xs text-muted-foreground">{t('tutoring.groups.timetableHint')}</p>
-              <GroupSlotEditor slots={slots} onChange={setSlots} />
-            </>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.timetableLockedHint')}
-            </p>
-          )}
-        </div>
-
-        <GroupActionsCard
-          group={group}
-          busy={busy}
-          onUpdateLink={(url, notify, regenerate) =>
-            void updateLink(url, notify, regenerate).then((ok) => ok && onChanged())
-          }
-          onAnnounce={(body, sms) => void announce(body, sms)}
-          onConfirm={() => void confirm().then((ok) => ok && onChanged())}
-          onCancel={(reason) => void cancel(reason).then((ok) => ok && onChanged())}
-        />
-
-        <Button variant="outline" className="w-full" asChild>
-          <Link href={`/courses/${courseId}/live/${group.id}`}>
-            <ExternalLink className="me-1.5 h-4 w-4" />
-            {t('tutoring.groups.openFullPage')}
-          </Link>
-        </Button>
-      </div>
-
-      <div className="flex shrink-0 gap-2 border-t bg-background p-4 sm:px-6">
-        {group.status === 'DRAFT' && (
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1"
-            disabled={busy || saving}
-            onClick={() => void doPublish()}
-          >
-            {busy || saving ? t('common.saving') : t('courses.live.publishClass')}
-          </Button>
-        )}
-        <Button
-          type="button"
-          className="flex-1"
-          disabled={busy || saving}
-          onClick={() => void doSave()}
-        >
-          {saving ? t('common.saving') : t('common.saveChanges')}
-        </Button>
-      </div>
-    </div>
   );
 }

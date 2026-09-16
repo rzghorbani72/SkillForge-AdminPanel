@@ -1,7 +1,6 @@
 'use client';
 
-import { ClassSizeBadge } from '@/components/class/class-size-badge';
-import { InviteLink } from '@/components/class/invite-link';
+import { ClassInviteBlock } from '@/components/class/class-invite-block';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { termStart } from '@/lib/class-slot-time';
@@ -10,8 +9,35 @@ import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { formatNumber } from '@/lib/utils';
 import type { TutoringGroup } from '@/types/learning-operations';
 
+function SeatFacts({ group }: { group: TutoringGroup }) {
+  const { t, language } = useTranslation();
+
+  return (
+    <div>
+      <dt className="text-xs text-muted-foreground">{t('tutoring.groups.columnSeats')}</dt>
+      <dd className="text-lg font-semibold">
+        {formatNumber(group.seats_taken, language)} / {formatNumber(group.capacity, language)}
+      </dd>
+      {group.seats_held ? (
+        <dd className="text-xs text-muted-foreground">
+          {t('courses.live.seatsHeld', {
+            held: formatNumber(group.seats_held, language),
+          })}{' '}
+          · {t('courses.live.heldHint')}
+        </dd>
+      ) : null}
+    </div>
+  );
+}
+
 /** The facts a manager checks first: who fits, when it starts, how to join. */
-export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
+export function ClassSummaryCard({
+  group,
+  coursePublished,
+}: {
+  group: TutoringGroup;
+  coursePublished: boolean;
+}) {
   const { t, language } = useTranslation();
   const formatDate = useDateFormat();
   const seatsNeeded = Math.max(group.min_students - group.seats_taken, 0);
@@ -24,23 +50,7 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
       }
     >
       <dl className="grid gap-4 p-5 sm:grid-cols-3">
-        <div>
-          <dt className="text-xs text-muted-foreground">{t('tutoring.groups.columnSeats')}</dt>
-          <dd className="text-lg font-semibold">
-            {formatNumber(group.seats_taken, language)} / {formatNumber(group.capacity, language)}
-          </dd>
-          <dd className="mt-1">
-            <ClassSizeBadge capacity={group.capacity} />
-          </dd>
-          {group.seats_held ? (
-            <dd className="text-xs text-muted-foreground">
-              {t('courses.live.seatsHeld', {
-                held: formatNumber(group.seats_held, language),
-              })}{' '}
-              · {t('courses.live.heldHint')}
-            </dd>
-          ) : null}
-        </div>
+        <SeatFacts group={group} />
         <div>
           <dt className="text-xs text-muted-foreground">{t('tutoring.groups.columnMin')}</dt>
           <dd className="text-lg font-semibold">{formatNumber(group.min_students, language)}</dd>
@@ -61,20 +71,13 @@ export function ClassSummaryCard({ group }: { group: TutoringGroup }) {
             />
           </dd>
         </div>
-        {group.age_min || group.age_max ? (
-          <div>
-            <dt className="text-xs text-muted-foreground">{t('tutoring.groups.ageRange')}</dt>
-            <dd>
-              {formatNumber(group.age_min ?? 0, language)}–
-              {formatNumber(group.age_max ?? 0, language)}
-            </dd>
-          </div>
-        ) : null}
-        {group.join_code ? (
-          <div className="sm:col-span-3">
-            <InviteLink joinCode={group.join_code} />
-          </div>
-        ) : null}
+        <div className="sm:col-span-3">
+          <ClassInviteBlock
+            joinCode={group.join_code}
+            coursePublished={coursePublished}
+            classStatus={group.status}
+          />
+        </div>
       </dl>
     </DataPanel>
   );

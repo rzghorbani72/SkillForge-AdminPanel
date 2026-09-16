@@ -46,6 +46,16 @@ export function CoursePublishButton() {
   };
 
   if (!published) {
+    if (course.course_type === 'LIVE') {
+      return (
+        <Button size="sm" variant="secondary" asChild>
+          <a href={`/courses/${course.id}/live`}>
+            <Globe className="me-1.5 h-3.5 w-3.5" />
+            {t('courseDetail.publishLiveCourse')}
+          </a>
+        </Button>
+      );
+    }
     return (
       <Button size="sm" disabled={saving} onClick={() => setPublished(true)}>
         <Globe className="me-1.5 h-3.5 w-3.5" />

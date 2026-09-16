@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ClassSellingFields } from '@/components/class/class-selling-fields';
-import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -78,10 +77,7 @@ export const CreateGroupCard = ({ offers, form, saving, onChange, onSubmit }: Pr
           </div>
 
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="group-capacity">{t('tutoring.groups.capacity')}</Label>
-              <ClassSizeBadge capacity={Number(form.capacity) || 1} />
-            </div>
+            <Label htmlFor="group-capacity">{t('tutoring.groups.capacity')}</Label>
             <Input
               id="group-capacity"
               type="number"
@@ -106,38 +102,14 @@ export const CreateGroupCard = ({ offers, form, saving, onChange, onSubmit }: Pr
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="group-age-min">{t('tutoring.groups.ageMin')}</Label>
+            <Label htmlFor="group-sessions">{t('courses.live.sessionCount')}</Label>
             <Input
-              id="group-age-min"
-              type="number"
-              min={3}
-              dir="ltr"
-              value={form.age_min}
-              onChange={(e) => patch({ age_min: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="group-age-max">{t('tutoring.groups.ageMax')}</Label>
-            <Input
-              id="group-age-max"
-              type="number"
-              min={3}
-              dir="ltr"
-              value={form.age_max}
-              onChange={(e) => patch({ age_max: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="group-term">{t('tutoring.groups.termWeeks')}</Label>
-            <Input
-              id="group-term"
+              id="group-sessions"
               type="number"
               min={1}
               dir="ltr"
-              value={form.term_weeks}
-              onChange={(e) => patch({ term_weeks: e.target.value })}
+              value={form.session_count}
+              onChange={(e) => patch({ session_count: e.target.value })}
             />
           </div>
 

@@ -6,19 +6,12 @@ import { useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
 import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
-import { Button } from '@/components/ui/button';
-import { ClassHomeworkCard } from '@/components/class/class-homework-card';
-import { ClassTimetableCard } from '@/components/class/class-timetable-card';
-import { NextSessionCard } from '@/components/class/next-session-card';
-import { GroupActionsCard } from '@/components/class/group-actions-card';
-import { GroupRosterCard } from '@/components/class/group-roster-card';
-import { GroupStatusBadge } from '@/components/class/group-status-badge';
 import { useClassDetail } from '@/hooks/use-class-detail';
 import { useClassSessions } from '@/hooks/use-class-sessions';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { CourseTopic } from '@/types/learning-operations';
-import { ClassSummaryCard } from './_components/class-summary-card';
+import { ClassLoadedView } from './_components/class-loaded-view';
 
 /**
  * One class, on one page: who is in it, when it meets, what each meeting
@@ -34,6 +27,7 @@ export default function ClassPage() {
   const detail = useClassDetail(groupId);
   const timetable = useClassSessions(groupId);
   const [topics, setTopics] = useState<CourseTopic[]>([]);
+  const [coursePublished, setCoursePublished] = useState(false);
 
   useEffect(() => {
     apiClient
@@ -42,11 +36,14 @@ export default function ClassPage() {
       .catch(() => setTopics([]));
   }, [courseId]);
 
-  const group = detail.group;
+  useEffect(() => {
+    apiClient
+      .getCourse(courseId)
+      .then((row) => setCoursePublished(Boolean(row?.is_published)))
+      .catch(() => setCoursePublished(false));
+  }, [courseId]);
 
-  const publish = async () => {
-    if (await detail.publish()) await timetable.reload();
-  };
+  const group = detail.group;
 
   return (
     <LearningNavGate requiredCapability="tutoring">
@@ -64,54 +61,13 @@ export default function ClassPage() {
         ) : !group ? (
           <p className="text-sm text-muted-foreground">{t('tutoring.groups.notFound')}</p>
         ) : (
-          <>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-tight">{group.title}</h1>
-                <GroupStatusBadge status={group.status} />
-              </div>
-              {group.status === 'DRAFT' && (
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={detail.busy}
-                  onClick={() => void publish()}
-                >
-                  {detail.busy ? t('common.saving') : t('courses.live.publishClass')}
-                </Button>
-              )}
-            </div>
-
-            <ClassSummaryCard group={group} />
-
-            <NextSessionCard sessions={timetable.sessions} classMeetingUrl={group.meeting_url} />
-
-            <GroupRosterCard
-              members={group.members ?? []}
-              busy={detail.busy}
-              onRemove={(profileId) => void detail.removeMember(profileId)}
-            />
-
-            <GroupActionsCard
-              group={group}
-              busy={detail.busy}
-              onUpdateLink={(url, notify, regenerate) =>
-                void detail.updateLink(url, notify, regenerate)
-              }
-              onAnnounce={(body, sms) => void detail.announce(body, sms)}
-              onConfirm={() => void detail.confirm()}
-              onCancel={(reason) => void detail.cancel(reason)}
-            />
-
-            <ClassTimetableCard
-              sessions={timetable.sessions}
-              topics={topics}
-              isLoading={timetable.isLoading}
-              onSessionChanged={timetable.replace}
-            />
-
-            <ClassHomeworkCard groupId={group.id} sessions={timetable.sessions} />
-          </>
+          <ClassLoadedView
+            group={group}
+            coursePublished={coursePublished}
+            topics={topics}
+            detail={detail}
+            timetable={timetable}
+          />
         )}
       </main>
     </LearningNavGate>

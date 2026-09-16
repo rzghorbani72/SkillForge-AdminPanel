@@ -16,9 +16,7 @@ export interface GroupFormState {
   description: string;
   capacity: string;
   min_students: string;
-  age_min: string;
-  age_max: string;
-  term_weeks: string;
+  session_count: string;
   seat_price: string;
   whole_class_booking: boolean;
   visibility: 'PUBLIC' | 'PRIVATE';
@@ -33,9 +31,7 @@ export const EMPTY_GROUP_FORM: GroupFormState = {
   description: '',
   capacity: '8',
   min_students: '3',
-  age_min: '',
-  age_max: '',
-  term_weeks: '8',
+  session_count: '10',
   seat_price: '',
   whole_class_booking: true,
   visibility: 'PUBLIC',
@@ -43,11 +39,6 @@ export const EMPTY_GROUP_FORM: GroupFormState = {
   meeting_url: '',
   // Saturday 09:00 is the ordinary first guess for a Persian week.
   slots: [{ weekday: 6, start_minute: 9 * 60, duration_minutes: 90 }],
-};
-
-const optionalNumber = (value: string): number | undefined => {
-  const parsed = Number(value);
-  return value.trim() && Number.isFinite(parsed) ? parsed : undefined;
 };
 
 export function useTutoringGroups() {
@@ -82,12 +73,10 @@ export function useTutoringGroups() {
         timezone: defaultTimezone(),
         capacity: Number(form.capacity),
         min_students: Number(form.min_students),
-        age_min: optionalNumber(form.age_min),
-        age_max: optionalNumber(form.age_max),
         seat_price: form.seat_price === '' ? undefined : Number(form.seat_price),
         whole_class_booking: form.whole_class_booking,
         visibility: form.visibility,
-        term_weeks: Number(form.term_weeks),
+        session_count: Number(form.session_count) || undefined,
         join_deadline: form.join_deadline ? new Date(form.join_deadline).toISOString() : undefined,
         meeting_url: form.meeting_url.trim() || undefined,
         slots: form.slots,

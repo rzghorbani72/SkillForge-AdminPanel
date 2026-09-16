@@ -48,7 +48,6 @@ export function ClassSellingFields({
           placeholder={offerPrice != null ? String(offerPrice) : undefined}
           onChange={onSeatPriceChange}
         />
-        <p className="text-xs text-muted-foreground">{t('courses.live.seatPriceHint')}</p>
       </div>
 
       {capacity > 1 ? (

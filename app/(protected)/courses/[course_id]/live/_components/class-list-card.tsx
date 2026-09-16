@@ -6,7 +6,6 @@ import { CalendarClock, CalendarDays } from 'lucide-react';
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { GroupStatusBadge } from '@/components/class/group-status-badge';
 import { GroupTermRange } from '@/components/class/group-term-range';
-import { ClassSizeBadge } from '@/components/class/class-size-badge';
 import { SeatMeter } from '@/components/class/seat-meter';
 import { DataList, DataPanel, type DataColumn } from '@/components/shared/data-list';
 import { termStart } from '@/lib/class-slot-time';
@@ -17,6 +16,7 @@ import { EditClassSheet } from './edit-class-sheet';
 
 interface ClassListCardProps {
   courseId: string;
+  coursePublished: boolean;
   groups: TutoringGroup[];
   /** "Create class", shown in the panel header and again inside the empty state. */
   action?: ReactNode;
@@ -29,37 +29,22 @@ interface ClassListCardProps {
 const emptyKey = (hasAction: boolean) =>
   hasAction ? 'courses.live.noClassesYet' : 'courses.live.needsPriceBeforeSchedule';
 
-/**
- * The classes this course runs, one row each. Everything about a single class
- * lives on its own page, so this stays a list instead of growing into a stack
- * of full panels the manager has to scroll past.
- */
-export function ClassListCard({
-  courseId,
-  groups,
-  action,
-  emptyAction,
-  onChanged,
-}: ClassListCardProps) {
-  const { t } = useTranslation();
-  const formatNumber = useNumberFormat();
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  const columns: DataColumn<TutoringGroup>[] = [
+function classListColumns(
+  t: ReturnType<typeof useTranslation>['t'],
+  onEdit: (id: string) => void,
+): DataColumn<TutoringGroup>[] {
+  return [
     {
       id: 'title',
       header: t('tutoring.groups.columnTitle'),
       cell: (group) => (
-        <div className="space-y-1">
-          <button
-            type="button"
-            onClick={() => setEditingId(group.id)}
-            className="text-start font-medium hover:underline"
-          >
-            {group.title}
-          </button>
-          <ClassSizeBadge capacity={group.capacity} />
-        </div>
+        <button
+          type="button"
+          onClick={() => onEdit(group.id)}
+          className="text-start font-medium hover:underline"
+        >
+          {group.title}
+        </button>
       ),
     },
     {
@@ -97,6 +82,53 @@ export function ClassListCard({
       cell: (group) => <GroupStatusBadge status={group.status} />,
     },
   ];
+}
+
+function ClassListMobileCard({ group, onOpen }: { group: TutoringGroup; onOpen: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="block w-full space-y-2.5 rounded-xl border p-4 text-start transition-colors hover:border-primary/40 hover:bg-muted/40"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="truncate font-medium">{group.title}</span>
+        <GroupStatusBadge status={group.status} />
+      </div>
+      <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
+        <CalendarDays className="mt-1 h-3.5 w-3.5 shrink-0" />
+        <GroupScheduleSummary
+          slots={group.Slots}
+          startsOn={termStart(group)}
+          timezone={group.timezone}
+          className="min-w-0 flex-1"
+        />
+      </div>
+      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+        <GroupTermRange group={group} />
+      </p>
+      <SeatMeter taken={group.seats_taken} capacity={group.capacity} held={group.seats_held} />
+    </button>
+  );
+}
+
+/**
+ * The classes this course runs, one row each. Everything about a single class
+ * lives on its own page, so this stays a list instead of growing into a stack
+ * of full panels the manager has to scroll past.
+ */
+export function ClassListCard({
+  courseId,
+  coursePublished,
+  groups,
+  action,
+  emptyAction,
+  onChanged,
+}: ClassListCardProps) {
+  const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
     <DataPanel
@@ -108,37 +140,10 @@ export function ClassListCard({
     >
       <DataList
         items={groups}
-        columns={columns}
+        columns={classListColumns(t, setEditingId)}
         rowKey={(group) => group.id}
         renderCard={(group) => (
-          <button
-            type="button"
-            onClick={() => setEditingId(group.id)}
-            className="block w-full space-y-2.5 rounded-xl border p-4 text-start transition-colors hover:border-primary/40 hover:bg-muted/40"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="truncate font-medium">{group.title}</span>
-              <GroupStatusBadge status={group.status} />
-            </div>
-            <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
-              <CalendarDays className="mt-1 h-3.5 w-3.5 shrink-0" />
-              <GroupScheduleSummary
-                slots={group.Slots}
-                startsOn={termStart(group)}
-                timezone={group.timezone}
-                className="min-w-0 flex-1"
-              />
-            </div>
-            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <CalendarClock className="h-3.5 w-3.5 shrink-0" />
-              <GroupTermRange group={group} />
-            </p>
-            <SeatMeter
-              taken={group.seats_taken}
-              capacity={group.capacity}
-              held={group.seats_held}
-            />
-          </button>
+          <ClassListMobileCard group={group} onOpen={() => setEditingId(group.id)} />
         )}
         cardGridClassName="grid gap-3 p-4 sm:grid-cols-2"
         emptyState={
@@ -155,6 +160,7 @@ export function ClassListCard({
       {editingId && (
         <EditClassSheet
           courseId={courseId}
+          coursePublished={coursePublished}
           groupId={editingId}
           onOpenChange={(open) => !open && setEditingId(null)}
           onChanged={() => onChanged?.()}
