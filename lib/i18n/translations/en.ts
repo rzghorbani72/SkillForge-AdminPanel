@@ -1807,10 +1807,16 @@ export const en = {
       sessionRescheduled: 'Meeting time updated.',
       cancelSession: 'Cancel meeting',
       sessionCancelled: 'Meeting cancelled.',
-      cancelWithMakeup: 'Cancel and add a makeup session at the end',
+      cancelWithMakeup: 'Add a makeup session at the end of the timetable',
+      cancelWithMakeupHint: 'Same weekday and hour, after the last remaining meeting.',
+      cancelWithMakeupAt: 'Pick another time for the makeup session',
+      cancelWithMakeupAtHint: 'Choose the date and hour of the replacement meeting.',
+      cancelMakeupPreview:
+        'Students will be texted that the {{time}} meeting is cancelled and a makeup will replace it.',
+      confirmCancelMakeup: 'Cancel and add makeup',
       cancelWithRefund: "Cancel and refund this session's price",
       sessionCancelledMakeup:
-        'The meeting was cancelled and a makeup session was added at the end. Students were texted.',
+        'The {{time}} meeting was cancelled. Makeup: {{makeup}}. Students were texted.',
       sessionCancelledRefund:
         'The meeting was cancelled and a refund request was opened for each student.',
       cancelled: 'Cancelled',
@@ -6768,8 +6774,23 @@ export const en = {
       startNow: 'Start now anyway',
       startNowHint: 'Start the class even though the minimum is not reached yet.',
       cancelLabel: 'Reason for cancelling',
-      cancelHint: 'Cancelling opens a refund request for every student who paid.',
-      cancel: 'Cancel class and refund',
+      cancelHint:
+        'Paying students get store credit. Complimentary seats (teacher grant or a 0-rial voucher) get no credit — check them to invite into another class. Everyone is texted.',
+      cancel: 'Cancel class',
+      cancelConfirm: 'Cancel class and notify students',
+      cancelInviteCheck: 'Invite to a new class',
+      cancelInviteSelect: 'Replacement class to invite into',
+      cancelInviteSkip: 'Do not invite now',
+      cancelInviteNone:
+        'No other class of this course exists. You can add these students by hand later.',
+      cancelInviteRequired: 'Pick a replacement class to invite them into.',
+      cancelCreditAmount: 'Credit: {{amount}}',
+      classCancelled: 'Class cancelled and students were texted.',
+      cancelKind: {
+        PAID: 'Paid',
+        VOUCHER: 'Voucher / free',
+        GRANTED: 'Added by teacher',
+      },
       sessionsTitle: 'Meetings',
       sessionsEmpty: 'Meetings appear once the class starts.',
       status: {

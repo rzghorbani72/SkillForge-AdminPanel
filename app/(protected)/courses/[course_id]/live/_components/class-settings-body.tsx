@@ -130,7 +130,11 @@ function ClassSettingsSections({
           }
           onAnnounce={(body, sms) => void detail.announce(body, sms)}
           onConfirm={() => void detail.confirm().then((ok) => ok && onChanged())}
-          onCancel={(reason) => void detail.cancel(reason).then((ok) => ok && onChanged())}
+          onCancel={async (payload) => {
+            const ok = await detail.cancel(payload);
+            if (ok) onChanged();
+            return ok;
+          }}
         />
         <Button variant="outline" className="w-full" asChild>
           <Link href={`/courses/${courseId}/live/${group.id}`}>

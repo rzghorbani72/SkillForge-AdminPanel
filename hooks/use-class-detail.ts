@@ -7,6 +7,7 @@ import type {
   TutoringGroup,
   TutoringGroupSlot,
   UpdateTutoringGroupPayload,
+  CancelTutoringGroupPayload,
 } from '@/types/learning-operations';
 
 export function useClassDetail(groupId: string) {
@@ -59,7 +60,8 @@ export function useClassDetail(groupId: string) {
       run(() => apiClient.replaceTutoringGroupSlots(groupId, slots)),
     publish: () => run(() => apiClient.publishTutoringGroup(groupId)),
     confirm: () => run(() => apiClient.confirmTutoringGroup(groupId)),
-    cancel: (reason: string) => run(() => apiClient.cancelTutoringGroup(groupId, reason)),
+    cancel: (payload: CancelTutoringGroupPayload) =>
+      run(() => apiClient.cancelTutoringGroup(groupId, payload)),
     updateLink: (url: string | null, notify: boolean, regenerate?: boolean) =>
       run(() => apiClient.updateTutoringGroupMeetingLink(groupId, url, notify, regenerate)),
     removeMember: (profileId: string) =>

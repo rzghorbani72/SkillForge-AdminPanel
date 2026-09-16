@@ -92,6 +92,10 @@ import type {
   ClassRequest,
   ClassRequestStatus,
   ClassSessionCancelResolution,
+  CancelClassSessionResult,
+  CancelClassPreview,
+  CancelTutoringGroupPayload,
+  CancelTutoringGroupResult,
   ClassSession,
   CourseTopic,
   CertificateRoster,
@@ -5832,13 +5836,21 @@ class ApiClient {
 
   async cancelClassSession(
     sessionId: string,
-    resolution: ClassSessionCancelResolution,
-    reason?: string,
-  ): Promise<void> {
-    await this.request(`/tutoring/class-sessions/${sessionId}/cancel`, {
-      method: 'PATCH',
-      body: JSON.stringify({ resolution, reason }),
-    });
+    payload: {
+      resolution?: ClassSessionCancelResolution;
+      makeup_starts_at?: string;
+      makeup_ends_at?: string;
+      reason?: string;
+    },
+  ): Promise<CancelClassSessionResult> {
+    const res = await this.request<CancelClassSessionResult | { data: CancelClassSessionResult }>(
+      `/tutoring/class-sessions/${sessionId}/cancel`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+      },
+    );
+    return unwrapDataEnvelope(res.data);
   }
 
   // ─── Group classes ─────────────────────────────────────────────────────────
@@ -5946,11 +5958,25 @@ class ApiClient {
     });
   }
 
-  async cancelTutoringGroup(groupId: string, reason?: string): Promise<void> {
-    await this.request(`/tutoring/groups/${groupId}/cancel`, {
-      method: 'POST',
-      body: JSON.stringify({ reason }),
-    });
+  async cancelTutoringGroup(
+    groupId: string,
+    payload: CancelTutoringGroupPayload = {},
+  ): Promise<CancelTutoringGroupResult> {
+    const res = await this.request<CancelTutoringGroupResult | { data: CancelTutoringGroupResult }>(
+      `/tutoring/groups/${groupId}/cancel`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      },
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getCancelClassPreview(groupId: string): Promise<CancelClassPreview> {
+    const res = await this.request<CancelClassPreview | { data: CancelClassPreview }>(
+      `/tutoring/groups/${groupId}/cancel-preview`,
+    );
+    return unwrapDataEnvelope(res.data);
   }
 
   async updateTutoringGroupMeetingLink(

@@ -62,7 +62,7 @@ export function ClassLoadedView({
         onUpdateLink={(url, notify, regenerate) => void detail.updateLink(url, notify, regenerate)}
         onAnnounce={(body, sms) => void detail.announce(body, sms)}
         onConfirm={() => void detail.confirm()}
-        onCancel={(reason) => void detail.cancel(reason)}
+        onCancel={(payload) => detail.cancel(payload)}
       />
 
       <ClassTimetableCard
@@ -70,6 +70,7 @@ export function ClassLoadedView({
         topics={topics}
         isLoading={timetable.isLoading}
         onSessionChanged={timetable.replace}
+        onCancelled={timetable.reload}
       />
 
       <ClassHomeworkCard groupId={group.id} sessions={timetable.sessions} />

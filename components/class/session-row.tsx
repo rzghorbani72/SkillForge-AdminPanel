@@ -1,27 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Ban,
-  CalendarPlus,
-  CheckCircle2,
-  Link2,
-  MessageSquare,
-  Pencil,
-  RotateCcw,
-  Video,
-} from 'lucide-react';
+import { Ban, CheckCircle2, Link2, MessageSquare, Pencil, Video } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -34,11 +19,8 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { fromDateTimeInputValue, toDateTimeInputValue } from '@/lib/i18n/calendar-date';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type {
-  ClassSession,
-  ClassSessionCancelResolution,
-  CourseTopic,
-} from '@/types/learning-operations';
+import type { ClassSession, CourseTopic } from '@/types/learning-operations';
+import { CancelSessionDialog } from './cancel-session-dialog';
 import { SessionRecordingField } from './session-recording-field';
 import { SessionMaterialsField } from './session-materials-field';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
@@ -52,8 +34,10 @@ interface SessionRowProps {
   /** The meeting the teacher is working towards: running now, or up next. */
   isNext?: boolean;
   onChanged: (session: ClassSession) => void;
-  /** A 1:1 meeting has no makeup/refund choice; the caller cancels it. */
+  /** A 1:1 meeting has no makeup choice; the caller cancels it. */
   onCancel?: () => Promise<void>;
+  /** After a class meeting is cancelled and a makeup is added, reload the list. */
+  onCancelled?: () => void | Promise<void>;
 }
 
 /**
@@ -68,6 +52,7 @@ export function SessionRow({
   isNext = false,
   onChanged,
   onCancel,
+  onCancelled,
 }: SessionRowProps) {
   const { t, language } = useTranslation();
   const [title, setTitle] = useState(session.title ?? '');
@@ -115,20 +100,6 @@ export function SessionRow({
       ErrorHandler.handleApiError(err);
     } finally {
       setIsRescheduling(false);
-    }
-  };
-
-  const cancel = async (resolution: ClassSessionCancelResolution) => {
-    try {
-      await apiClient.cancelClassSession(session.id, resolution);
-      onChanged({ ...session, status: 'CANCELLED' });
-      toast.success(
-        resolution === 'MAKEUP'
-          ? t('courses.live.sessionCancelledMakeup')
-          : t('courses.live.sessionCancelledRefund'),
-      );
-    } catch (err) {
-      ErrorHandler.handleApiError(err);
     }
   };
 
@@ -187,26 +158,9 @@ export function SessionRow({
             {t('courses.live.cancelSession')}
           </Button>
         )}
-        {!isCancelled && !onCancel && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button type="button" variant="ghost" size="sm">
-                <Ban className="h-4 w-4" />
-                {t('courses.live.cancelSession')}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => void cancel('MAKEUP')}>
-                <CalendarPlus className="h-4 w-4" />
-                {t('courses.live.cancelWithMakeup')}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => void cancel('REFUND')}>
-                <RotateCcw className="h-4 w-4" />
-                {t('courses.live.cancelWithRefund')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        {!isCancelled && !onCancel ? (
+          <CancelSessionDialog session={session} onDone={() => onCancelled?.()} />
+        ) : null}
       </div>
 
       {isEditingTime && (

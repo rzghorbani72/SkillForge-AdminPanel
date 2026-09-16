@@ -472,6 +472,55 @@ export type ClassRequestStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED';
 
 export type ClassSessionCancelResolution = 'MAKEUP' | 'REFUND';
 
+export type CancelClassSessionPayload = {
+  resolution?: ClassSessionCancelResolution;
+  makeup_starts_at?: string;
+  makeup_ends_at?: string;
+  reason?: string;
+};
+
+export type CancelClassSessionResult = {
+  session: ClassSession;
+  makeup: ClassSession | null;
+};
+
+export type CancelMemberKind = 'PAID' | 'VOUCHER' | 'GRANTED';
+
+export type CancelClassMember = {
+  engagement_id: string;
+  student_profile_id: string;
+  display_name: string | null;
+  seats_claimed: number;
+  paid_amount: number;
+  credit: number;
+  kind: CancelMemberKind;
+};
+
+export type CancelInviteGroup = {
+  id: string;
+  title: string;
+  status: string;
+  seats_left: number;
+};
+
+export type CancelClassPreview = {
+  members: CancelClassMember[];
+  invite_groups: CancelInviteGroup[];
+};
+
+export type CancelTutoringGroupPayload = {
+  reason?: string;
+  invite_profile_ids?: string[];
+  invite_group_id?: string;
+};
+
+export type CancelTutoringGroupResult = {
+  credits: number;
+  complimentary: number;
+  invited: number;
+  invite_failed: number;
+};
+
 export interface ClassRequestWindow {
   weekday: number;
   start_minute: number;

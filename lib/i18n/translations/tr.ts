@@ -1076,6 +1076,15 @@ export const tr = {
       sessionRescheduled: 'Oturum saati güncellendi.',
       cancelSession: 'Oturumu iptal et',
       sessionCancelled: 'Oturum iptal edildi.',
+      cancelWithMakeup: 'Telafi oturumunu programın sonuna ekle',
+      cancelWithMakeupHint: 'Aynı gün ve saat, kalan son toplantıdan sonra.',
+      cancelWithMakeupAt: 'Telafi oturumu için başka bir zaman seç',
+      cancelWithMakeupAtHint: 'Yerine geçecek toplantının tarih ve saatini siz seçin.',
+      cancelMakeupPreview:
+        'Öğrencilere {{time}} oturumunun iptal edildiği ve yerine telafi konacağı SMS ile bildirilir.',
+      confirmCancelMakeup: 'İptal et ve telafi ekle',
+      sessionCancelledMakeup:
+        '{{time}} oturumu iptal edildi. Telafi: {{makeup}}. Öğrencilere SMS gönderildi.',
       cancelled: 'İptal edildi',
       uploadRecording: 'Kaydı yükle',
       uploadRecordingHint: 'Bu oturumun videosunu ders öğrencilerine bırakın.',
@@ -3349,8 +3358,22 @@ export const tr = {
       startNow: 'Start now anyway',
       startNowHint: 'Start the class even though the minimum is not reached yet.',
       cancelLabel: 'Reason for cancelling',
-      cancelHint: 'Cancelling opens a refund request for every student who paid.',
-      cancel: 'Cancel class and refund',
+      cancelHint:
+        'Paying students get store credit. Complimentary seats get no credit — check them to invite into another class. Everyone is texted.',
+      cancel: 'Cancel class',
+      cancelConfirm: 'Cancel class and notify students',
+      cancelInviteCheck: 'Invite to a new class',
+      cancelInviteSelect: 'Replacement class to invite into',
+      cancelInviteSkip: 'Do not invite now',
+      cancelInviteNone:
+        'No other class of this course exists. You can add these students by hand later.',
+      cancelCreditAmount: 'Credit: {{amount}}',
+      classCancelled: 'Class cancelled and students were texted.',
+      cancelKind: {
+        PAID: 'Paid',
+        VOUCHER: 'Voucher / free',
+        GRANTED: 'Added by teacher',
+      },
       sessionsTitle: 'Meetings',
       sessionsEmpty: 'Meetings appear once the class starts.',
       status: {

@@ -10,7 +10,8 @@ import { DataPanel } from '@/components/shared/data-list/data-panel';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { Copy, RefreshCw } from 'lucide-react';
 import { toast } from 'react-toastify';
-import type { TutoringGroup } from '@/types/learning-operations';
+import type { CancelTutoringGroupPayload, TutoringGroup } from '@/types/learning-operations';
+import { CancelClassDialog } from './cancel-class-dialog';
 
 type Props = {
   group: TutoringGroup;
@@ -18,7 +19,7 @@ type Props = {
   onUpdateLink: (url: string | null, notify: boolean, regenerate?: boolean) => void;
   onAnnounce: (body: string, sendSms: boolean) => void;
   onConfirm: () => void;
-  onCancel: (reason: string) => void;
+  onCancel: (payload: CancelTutoringGroupPayload) => Promise<boolean>;
 };
 
 /** Running the class day to day: the link, the announcements, start and stop. */
@@ -38,7 +39,6 @@ export const GroupActionsCard = ({
   const [notify, setNotify] = useState(true);
   const [message, setMessage] = useState('');
   const [sendSms, setSendSms] = useState(false);
-  const [reason, setReason] = useState('');
 
   useEffect(() => {
     setLink(group.meeting_url ?? '');
@@ -191,23 +191,7 @@ export const GroupActionsCard = ({
         ) : null}
 
         {canCancel ? (
-          <div className="space-y-2 rounded-md border border-destructive/40 p-3">
-            <Label htmlFor="group-cancel-reason">{t('tutoring.groups.cancelLabel')}</Label>
-            <Input
-              id="group-cancel-reason"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">{t('tutoring.groups.cancelHint')}</p>
-            <Button
-              size="sm"
-              variant="destructive"
-              disabled={busy}
-              onClick={() => onCancel(reason.trim())}
-            >
-              {t('tutoring.groups.cancel')}
-            </Button>
-          </div>
+          <CancelClassDialog groupId={group.id} disabled={busy} onConfirm={onCancel} />
         ) : null}
       </div>
     </DataPanel>

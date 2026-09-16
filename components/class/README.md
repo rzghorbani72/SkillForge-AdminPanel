@@ -26,6 +26,15 @@ so old links and bookmarks keep working.
 
 `ClassTimetableCard` renders one `SessionRow` per meeting. A row saves itself and
 hands the updated meeting back up, so the list never refetches to show an edit.
+Cancelling a class meeting (`CancelSessionDialog`) is different: it creates a
+makeup (end of the timetable, or a time the teacher picks) and then marks the
+original cancelled, so students get **one** SMS with both times. After that the
+timetable reloads, because a new row appeared.
+
+Cancelling the **whole class** (`CancelClassDialog`) shows every enrolled student
+first. Cash paid (and spent store credit) becomes academy credit. A teacher grant
+or a 0-rial voucher gets no credit — those rows are checked so the teacher can
+seat them in another class of the same course. Everyone is texted.
 
 `ClassHomeworkCard` reads two parents — work set for the whole class, and work
 attached to a single meeting — because the teacher picks which when creating it.

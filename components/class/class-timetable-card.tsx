@@ -15,6 +15,7 @@ interface ClassTimetableCardProps {
   isLoading: boolean;
   onSessionChanged: (session: ClassSession) => void;
   onCancelSession?: (session: ClassSession) => Promise<void>;
+  onCancelled?: () => void | Promise<void>;
 }
 
 /** Every meeting of one class, in the order it happens. */
@@ -24,6 +25,7 @@ export function ClassTimetableCard({
   isLoading,
   onSessionChanged,
   onCancelSession,
+  onCancelled,
 }: ClassTimetableCardProps) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -67,6 +69,7 @@ export function ClassTimetableCard({
               isNext={session.id === focusId}
               onChanged={onSessionChanged}
               onCancel={onCancelSession ? () => onCancelSession(session) : undefined}
+              onCancelled={onCancelled}
             />
           ))
         )}
