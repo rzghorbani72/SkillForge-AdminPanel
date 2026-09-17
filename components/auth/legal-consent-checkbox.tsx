@@ -41,7 +41,7 @@ export function LegalConsentCheckbox({
         <Link href="/privacy" className="underline hover:text-foreground">
           {t('auth.privacyPolicy')}
         </Link>
-        {includeStaffTerms && (
+        {/* {includeStaffTerms && (
           <>
             {' '}
             {t('auth.and')}{' '}
@@ -49,7 +49,7 @@ export function LegalConsentCheckbox({
               {t('auth.staffTerms')}
             </Link>
           </>
-        )}
+        )} */}
         {t('auth.agree')}
       </span>
     </label>
