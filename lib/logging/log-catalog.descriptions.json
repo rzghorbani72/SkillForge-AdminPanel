@@ -1,5 +1,6 @@
 {
   "domains": {
+    "Dashboard": "Academy manager dashboard: live money, enrolment, and plan figures.",
     "Gdpr": "Cookie and privacy consent captured in the browser.",
     "Media": "Video and file storage, transcoding and secure playback.",
     "Onboarding": "First-run setup steps a manager completes to go live.",
@@ -7,6 +8,8 @@
     "TeacherPayout": "Off-platform teacher payouts a manager records from the dashboard."
   },
   "events": {
+    "Dashboard.ReportExported": "Manager downloaded the dashboard CSV report for the selected period.",
+    "Dashboard.ReportExportFailed": "Dashboard CSV report failed to build or download in the browser.",
     "Gdpr.ConsentAccepted": "GDPR consent accepted.",
     "Gdpr.ConsentDeclined": "GDPR consent declined.",
     "Media.PlaybackSessionFailed": "Media playback session failed.",

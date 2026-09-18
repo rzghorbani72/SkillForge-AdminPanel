@@ -46,4 +46,13 @@ test.describe('Manager dashboard @backend', () => {
     await expect(page).toHaveURL(/\/dashboard/);
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
+
+  test('export report downloads a CSV of the visible period', async ({ page }) => {
+    const exportButton = page.getByRole('button', { name: /خروجی گزارش|Export report/ });
+    await expect(exportButton).toBeEnabled({ timeout: 20_000 });
+    const downloadPromise = page.waitForEvent('download');
+    await exportButton.click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^mentoma-dashboard-.+\.csv$/);
+  });
 });

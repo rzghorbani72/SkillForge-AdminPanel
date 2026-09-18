@@ -7,20 +7,35 @@
 import type { LogCatalog } from './logger';
 
 export const LOG_CATALOG = {
+  Dashboard: {
+    description: 'Academy manager dashboard: live money, enrolment, and plan figures.',
+    actions: {
+      ReportExported: {
+        description: 'Manager downloaded the dashboard CSV report for the selected period.',
+        level: 'info',
+        fields: ['course_count', 'period', 'teacher_count'] as const,
+      },
+      ReportExportFailed: {
+        description: 'Dashboard CSV report failed to build or download in the browser.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
   Gdpr: {
     description: 'Cookie and privacy consent captured in the browser.',
     actions: {
       ConsentAccepted: {
         description: 'GDPR consent accepted.',
         level: 'info',
-        fields: ['surface'] as const
+        fields: ['surface'] as const,
       },
       ConsentDeclined: {
         description: 'GDPR consent declined.',
         level: 'info',
-        fields: ['surface'] as const
-      }
-    }
+        fields: ['surface'] as const,
+      },
+    },
   },
   Media: {
     description: 'Video and file storage, transcoding and secure playback.',
@@ -28,14 +43,14 @@ export const LOG_CATALOG = {
       PlaybackSessionFailed: {
         description: 'Media playback session failed.',
         level: 'error',
-        fields: ['error_name', 'video_id'] as const
+        fields: ['error_name', 'video_id'] as const,
       },
       PlayerError: {
         description: 'Media player error.',
         level: 'error',
-        fields: ['error_details', 'error_type', 'video_id'] as const
-      }
-    }
+        fields: ['error_details', 'error_type', 'video_id'] as const,
+      },
+    },
   },
   Onboarding: {
     description: 'First-run setup steps a manager completes to go live.',
@@ -43,67 +58,55 @@ export const LOG_CATALOG = {
       AcademyDialogShown: {
         description: 'Onboarding academy dialog shown.',
         level: 'info',
-        fields: [] as const
+        fields: [] as const,
       },
       FirstAcademyCreated: {
         description: 'Onboarding first academy created.',
         level: 'info',
-        fields: ['academy_id'] as const
+        fields: ['academy_id'] as const,
       },
       SetupBannerDismissed: {
         description: 'Manager dismissed the first-run setup checklist.',
         level: 'info',
-        fields: [] as const
+        fields: [] as const,
       },
       SetupBannerShown: {
         description: 'First-run setup checklist shown on the dashboard.',
         level: 'info',
-        fields: [] as const
+        fields: [] as const,
       },
       SetupStepOpened: {
-        description:
-          'Manager opened a first-run setup step from the dashboard banner.',
+        description: 'Manager opened a first-run setup step from the dashboard banner.',
         level: 'info',
-        fields: ['step'] as const
-      }
-    }
+        fields: ['step'] as const,
+      },
+    },
   },
   RequestStorm: {
-    description:
-      'Client-side circuit breaker: one API route called far above human speed.',
+    description: 'Client-side circuit breaker: one API route called far above human speed.',
     actions: {
       Tripped: {
-        description:
-          "A single route exceeded the per-window hit limit in the manager's browser; protected routes force a sign-out and storage wipe.",
+        description: 'A single route exceeded the per-window hit limit in the manager\'s browser; protected routes force a sign-out and storage wipe.',
         level: 'error',
-        fields: [
-          'count',
-          'is_protected',
-          'method',
-          'route',
-          'window_ms'
-        ] as const
-      }
-    }
+        fields: ['count', 'is_protected', 'method', 'route', 'window_ms'] as const,
+      },
+    },
   },
   TeacherPayout: {
-    description:
-      'Off-platform teacher payouts a manager records from the dashboard.',
+    description: 'Off-platform teacher payouts a manager records from the dashboard.',
     actions: {
       Recorded: {
-        description:
-          'The manager saved a bank transfer to a teacher from the teacher money table.',
+        description: 'The manager saved a bank transfer to a teacher from the teacher money table.',
         level: 'info',
-        fields: ['amount'] as const
+        fields: ['amount'] as const,
       },
       TeacherAnswered: {
-        description:
-          'The teacher confirmed or rejected a recorded payout from the earnings page.',
+        description: 'The teacher confirmed or rejected a recorded payout from the earnings page.',
         level: 'info',
-        fields: ['action'] as const
-      }
-    }
-  }
+        fields: ['action'] as const,
+      },
+    },
+  },
 } as const satisfies LogCatalog;
 
 export type AppLogCatalog = typeof LOG_CATALOG;

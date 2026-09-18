@@ -25,6 +25,7 @@ import { SetupChecklistBanner } from '@/components/dashboard/onboarding/setup-ch
 import { BuyPlansSection } from '@/components/dashboard/buy-plans-section';
 import { PERIOD_OPTIONS, type DashboardPeriod } from '@/components/dashboard/dashboard-periods';
 import { DashboardGlow, DashboardSkeleton } from '@/components/dashboard/dashboard-shell';
+import { useDashboardExport } from '@/components/dashboard/use-dashboard-export';
 
 export default function DashboardPage() {
   const { t, language } = useTranslation();
@@ -52,13 +53,32 @@ export default function DashboardPage() {
     }
   }, [storeLoading, isPlatformAdmin, selectedAcademy, router]);
 
-  const { isLoading, recentCourses, statsCards, statusData, overallCompletion, journeyData } =
-    useDashboard(period, periodLabel);
+  const {
+    isLoading,
+    recentCourses,
+    statsCards,
+    statsTotals,
+    statusData,
+    overallCompletion,
+    journeyData,
+  } = useDashboard(period, periodLabel);
 
   // Money, course and teacher figures are aggregated by the API so they stay
   // correct past the page caps the list endpoints impose.
   const money = useManagerMoney(period);
   const settlement = useSettlement(selectedAcademy?.id ?? null);
+  const { exportReport } = useDashboardExport({
+    period,
+    periodLabel,
+    money,
+    settlement: settlement.summary,
+    totalCourses: statsTotals.totalCourses,
+    totalStudents: statsTotals.totalStudents,
+    activeEnrollments: statsTotals.activeEnrollments,
+    overallCompletion,
+    journey: journeyData,
+    status: statusData,
+  });
 
   const canManagePlan = canManageSubscription(user);
   const { needsPlanPurchase, isLoading: subscriptionLoading } =
@@ -162,10 +182,13 @@ export default function DashboardPage() {
             </div>
             <button
               type="button"
-              className="flex items-center gap-1.5 rounded-full border border-white/80 bg-white/70 px-3.5 py-2 text-sm font-medium text-muted-foreground backdrop-blur-md transition-colors hover:bg-white hover:text-foreground"
+              aria-label={t('dashboard.export.button')}
+              disabled={isLoading || money.isLoading || settlement.isLoading}
+              onClick={exportReport}
+              className="flex items-center gap-1.5 rounded-full border border-white/80 bg-white/70 px-3.5 py-2 text-sm font-medium text-muted-foreground backdrop-blur-md transition-colors hover:bg-white hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">{isFa ? 'خروجی گزارش' : 'Export'}</span>
+              <span className="hidden sm:inline">{t('dashboard.export.button')}</span>
             </button>
           </div>
         </div>
