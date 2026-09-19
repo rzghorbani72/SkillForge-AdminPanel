@@ -84,15 +84,21 @@ function classListColumns(
   ];
 }
 
+/**
+ * One card in the mobile grid. Fixed height so a row of these lines up even
+ * when one class has a longer title or a busier weekly schedule than the
+ * next: the schedule line clamps instead of pushing the seat meter down, and
+ * the meter always sits on the bottom edge.
+ */
 function ClassListMobileCard({ group, onOpen }: { group: TutoringGroup; onOpen: () => void }) {
   return (
     <button
       type="button"
       onClick={onOpen}
-      className="block w-full space-y-2.5 rounded-xl border p-4 text-start transition-colors hover:border-primary/40 hover:bg-muted/40"
+      className="flex h-full w-full flex-col gap-2.5 rounded-xl border p-4 text-start transition-colors hover:border-primary/40 hover:bg-muted/40"
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="truncate font-medium">{group.title}</span>
+      <div className="flex items-start justify-between gap-2">
+        <span className="line-clamp-2 min-w-0 flex-1 font-medium">{group.title}</span>
         <GroupStatusBadge status={group.status} />
       </div>
       <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
@@ -101,14 +107,19 @@ function ClassListMobileCard({ group, onOpen }: { group: TutoringGroup; onOpen: 
           slots={group.Slots}
           startsOn={termStart(group)}
           timezone={group.timezone}
-          className="min-w-0 flex-1"
+          className="line-clamp-2 min-w-0 flex-1"
         />
       </div>
       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <CalendarClock className="h-3.5 w-3.5 shrink-0" />
         <GroupTermRange group={group} />
       </p>
-      <SeatMeter taken={group.seats_taken} capacity={group.capacity} held={group.seats_held} />
+      <SeatMeter
+        taken={group.seats_taken}
+        capacity={group.capacity}
+        held={group.seats_held}
+        className="mt-auto pt-1"
+      />
     </button>
   );
 }

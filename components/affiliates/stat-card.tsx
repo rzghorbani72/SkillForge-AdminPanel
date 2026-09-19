@@ -10,7 +10,7 @@ export function StatCard({
   delta?: number;
 }) {
   return (
-    <div className="rounded-xl border bg-card p-4 shadow-sm">
+    <div className="rounded-xl border bg-card p-4">
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted-foreground">{label}</span>
         {delta !== undefined && (

@@ -11,9 +11,10 @@ interface PriceLadderPreviewProps {
 }
 
 /**
- * The price ladder as the student sees it: private 1:1, a seat in a small
- * group, a seat in a public class, and a class bought whole. A 1:1 priced
- * below a seat can never move into a class, so that gets a warning.
+ * The price ladder as the student sees it: private 1:1, and a seat in a group
+ * class — there is one group price regardless of class size, so it is shown
+ * once. A 1:1 priced below a seat can never move into a class, so that gets a
+ * warning.
  */
 export function PriceLadderPreview({ groupPrice, soloPrice }: PriceLadderPreviewProps) {
   const { t } = useTranslation();
@@ -22,8 +23,7 @@ export function PriceLadderPreview({ groupPrice, soloPrice }: PriceLadderPreview
 
   const rows = [
     soloPrice ? { label: t('courses.live.priceLadderPrivate'), value: soloPrice } : null,
-    groupPrice ? { label: t('courses.live.priceLadderSmall'), value: groupPrice } : null,
-    groupPrice ? { label: t('courses.live.priceLadderPublic'), value: groupPrice } : null,
+    groupPrice ? { label: t('courses.live.priceLadderGroup'), value: groupPrice } : null,
   ].filter((row): row is { label: string; value: number } => row !== null);
 
   return (

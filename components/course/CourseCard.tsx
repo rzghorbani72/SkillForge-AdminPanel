@@ -72,7 +72,7 @@ export function CourseCard({
   return (
     <div
       className={cn(
-        'group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow duration-200 hover:shadow-md',
+        'group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-200 hover:border-primary/40',
         onClick && 'cursor-pointer',
       )}
       onClick={onClick}

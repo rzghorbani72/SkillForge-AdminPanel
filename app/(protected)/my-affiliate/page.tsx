@@ -139,10 +139,7 @@ function LinkCard({
 
   return (
     <div
-      className={cn(
-        'flex flex-col rounded-2xl border bg-card shadow-sm',
-        !link.is_active && 'opacity-50',
-      )}
+      className={cn('flex flex-col rounded-2xl border bg-card', !link.is_active && 'opacity-50')}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3 p-5">

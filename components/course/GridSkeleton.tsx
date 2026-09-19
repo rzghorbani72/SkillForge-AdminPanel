@@ -6,7 +6,7 @@ export function GridSkeleton() {
       {[...Array(6)].map((_, i) => (
         <div
           key={i}
-          className="animate-pulse overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+          className="animate-pulse overflow-hidden rounded-2xl border border-border bg-card"
         >
           <div className="aspect-video bg-muted" />
           <div className="space-y-3 p-5">

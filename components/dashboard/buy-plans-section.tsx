@@ -97,7 +97,7 @@ export function BuyPlansSection() {
                 key={plan.slug}
                 href={`/plans?plan=${encodeURIComponent(plan.slug)}`}
                 className={cn(
-                  'relative flex flex-col rounded-2xl border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md',
+                  'relative flex flex-col rounded-2xl border bg-card p-6 transition-colors hover:border-primary/40',
                   isCurrent && 'border-success/45 bg-success/[0.04] ring-1 ring-success/25',
                   isPopular && 'border-primary ring-2 ring-primary/30',
                 )}

@@ -1801,8 +1801,7 @@ export const en = {
       useCoursePrice: 'Use course price',
       priceLadderTitle: 'Prices as the student sees them',
       priceLadderPrivate: 'Private class (1:1)',
-      priceLadderSmall: 'Per seat, small group (up to 15)',
-      priceLadderPublic: 'Per seat, public class (over 15)',
+      priceLadderGroup: 'Per seat, group class',
       priceLadderWhole:
         'Reserving a whole class = seats × seat price. Each class can override its seat price.',
       soloBelowGroupWarning:

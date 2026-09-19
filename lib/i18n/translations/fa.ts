@@ -1802,8 +1802,7 @@ export const fa = {
       useCoursePrice: 'استفاده از قیمت دوره',
       priceLadderTitle: 'قیمت‌ها همان‌طور که دانشجو می‌بیند',
       priceLadderPrivate: 'کلاس خصوصی (یک‌نفره)',
-      priceLadderSmall: 'هر صندلی در گروه کوچک (تا ۱۵ نفر)',
-      priceLadderPublic: 'هر صندلی در کلاس عمومی (بیش از ۱۵ نفر)',
+      priceLadderGroup: 'هر صندلی در کلاس گروهی',
       priceLadderWhole:
         'رزرو کل یک کلاس = تعداد صندلی × قیمت صندلی. قیمت هر کلاس را می‌توان جداگانه تغییر داد.',
       soloBelowGroupWarning:

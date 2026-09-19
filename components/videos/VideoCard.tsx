@@ -41,7 +41,7 @@ export function VideoCard({ video, isActive, onToggle, onDeactivate }: VideoCard
   const canPlay = Boolean(video.streaming_url);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card text-start shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card text-start transition-colors duration-300 hover:border-primary/40">
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         {isActive && canPlay ? (
           <SecureVideoPlayer

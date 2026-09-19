@@ -18,8 +18,8 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
   return (
     <Card
       className={cn(
-        'group overflow-hidden border-border/50 transition-all duration-300',
-        'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
+        'group overflow-hidden border-border/50 transition-colors duration-300',
+        'hover:border-primary/40',
       )}
     >
       <CardHeader className="pb-3">

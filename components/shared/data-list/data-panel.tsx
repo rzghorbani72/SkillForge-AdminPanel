@@ -24,10 +24,7 @@ export function DataPanel({
 }: DataPanelProps) {
   return (
     <section
-      className={cn(
-        'overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm',
-        className,
-      )}
+      className={cn('overflow-hidden rounded-2xl border border-border/70 bg-card', className)}
     >
       <header className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">

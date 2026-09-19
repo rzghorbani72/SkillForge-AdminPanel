@@ -108,8 +108,8 @@ export function AcademyCard({
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-2xl border bg-card shadow-sm',
-        isCurrent && 'border-2 border-primary shadow-md',
+        'overflow-hidden rounded-2xl border bg-card',
+        isCurrent && 'border-2 border-primary',
       )}
     >
       {/* Colored header band */}

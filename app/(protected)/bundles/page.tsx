@@ -138,7 +138,7 @@ function BundleCard({
   const courses = bundle.Courses?.map((bc) => bc.Course) ?? bundle.courses ?? [];
 
   return (
-    <div className="flex flex-col rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
+    <div className="flex flex-col rounded-xl border bg-card transition-colors hover:border-primary/40">
       {/* Top bar */}
       <div className="flex items-start justify-between gap-3 p-4">
         <div className="flex items-start gap-3">

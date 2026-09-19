@@ -104,7 +104,7 @@ export function ArticleList({
   const renderCard = (article: Article) => (
     <Card
       key={article.id}
-      className="cursor-pointer transition-shadow hover:shadow-md"
+      className="cursor-pointer transition-colors hover:border-primary/40"
       onClick={() => openEditor(article)}
     >
       <CardContent className="space-y-3 p-4">

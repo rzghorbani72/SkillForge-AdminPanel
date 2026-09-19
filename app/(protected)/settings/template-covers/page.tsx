@@ -98,10 +98,7 @@ export default function TemplateCoversPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           {groups.map((group) => (
-            <div
-              key={group.key}
-              className="rounded-2xl border border-border/60 bg-background p-5 shadow-sm"
-            >
+            <div key={group.key} className="rounded-2xl border border-border/60 bg-background p-5">
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <p className="flex items-center gap-1.5 text-sm font-bold text-foreground">
                   <LayoutTemplate className="h-4 w-4" />

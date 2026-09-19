@@ -83,7 +83,12 @@ export function DataList<T>({
     return (
       <div className={cn('grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3', cardGridClassName)}>
         {items.map((item) => (
-          <div key={rowKey(item)}>{renderCard(item)}</div>
+          // The grid row already stretches every cell to the tallest one;
+          // `h-full` passes that height down so a card's own root can fill it
+          // instead of shrinking to its own content.
+          <div key={rowKey(item)} className="h-full">
+            {renderCard(item)}
+          </div>
         ))}
         {cardExtra}
       </div>
