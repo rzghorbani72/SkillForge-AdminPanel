@@ -36,16 +36,18 @@ switch and delete are disabled with a reason. The server enforces the same rule
 A **LIVE** course is attended, not watched later, so the only way in is a
 **reserved seat** — a `TutoringOffer` on the class, never an `Offer`. It does
 not sell at its own base price either (`CoursesService.create` keeps
-`base_price_active` off for LIVE). The section therefore hides the base-price
-tile and the add button entirely, and shows the GROUP/SOLO seat prices read-only
-with a link to the class page, which is where they are edited (`LiveSeatCards`).
+`base_price_active` off for LIVE). The wizard therefore **hides the pricing step
+for live courses** (`stepsFor('LIVE')`) and this section never renders for
+them: the GROUP/SOLO seat prices are set once on the Classroom step
+(`LivePricingCard`), and each class may override its seat price from its own
+settings (`ClassSellingFields`; the server charges `seat_price ?? Offer.price`).
 `OffersService` rejects **any** offer on a live course, so a stale page cannot
 get around it.
 
-| Course type | Ways it can be sold                                   |
-| ----------- | ----------------------------------------------------- |
-| OFFLINE     | base price, one-time, subscription, free, private 1:1 |
-| LIVE        | group seat, private class (both priced on class page) |
+| Course type | Ways it can be sold                                            |
+| ----------- | -------------------------------------------------------------- |
+| OFFLINE     | base price, one-time, subscription, free, private 1:1          |
+| LIVE        | group seat, private class (Classroom step; per-class override) |
 
 ## Live class vs recorded
 

@@ -13,14 +13,17 @@ export const COURSE_WIZARD_STEPS = [
 
 export type CourseWizardStep = (typeof COURSE_WIZARD_STEPS)[number];
 
+const LIVE_ONLY_STEPS: readonly CourseWizardStep[] = ['classroom'];
+const RECORDED_ONLY_STEPS: readonly CourseWizardStep[] = ['content', 'pricing'];
+
 /**
- * A live course has no lesson tree — its topics, price and timetable are
- * managed in `classroom` instead of `content`.
+ * A live course has no lesson tree and no separate price step — its topics,
+ * seat prices and timetable are all managed in `classroom`, so a manager sets
+ * each price in exactly one place.
  */
 export function stepsFor(courseType: CourseType): readonly CourseWizardStep[] {
-  return courseType === 'LIVE'
-    ? COURSE_WIZARD_STEPS.filter((step) => step !== 'content')
-    : COURSE_WIZARD_STEPS.filter((step) => step !== 'classroom');
+  const hidden = courseType === 'LIVE' ? RECORDED_ONLY_STEPS : LIVE_ONLY_STEPS;
+  return COURSE_WIZARD_STEPS.filter((step) => !hidden.includes(step));
 }
 
 export const WIZARD_STEP_LABEL: Record<CourseWizardStep, string> = {

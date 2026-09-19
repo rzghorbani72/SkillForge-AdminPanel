@@ -1,8 +1,9 @@
 # Course builder wizard
 
-Builds one **recorded (OFFLINE)** course in five steps. A live course is run
-from its timetable, so `/courses/[id]/edit` keeps the old single-page form for
-`course_type === 'LIVE'`.
+Builds one course step by step. `stepsFor(courseType)` picks the steps: a
+**recorded (OFFLINE)** course gets the five below; a **LIVE** course swaps
+`content` and `pricing` for a single `classroom` step, which owns its topics,
+its default seat price and its classes — so every price is set in one place.
 
 ## The steps
 

@@ -50,9 +50,7 @@ export function WizardStepBody({
           onPendingAccessChange={onPendingAccessChange}
         />
       )}
-      {step === 'pricing' && (
-        <CoursePricingSection courseId={courseId} form={form} courseType={course.courseType} />
-      )}
+      {step === 'pricing' && <CoursePricingSection courseId={courseId} form={form} />}
       {step === 'preview' && (
         <StepPreview
           values={{ ...form.getValues(), published: isPublic }}

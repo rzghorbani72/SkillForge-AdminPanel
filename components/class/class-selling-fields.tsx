@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PriceInput } from '@/components/ui/price-input';
 import { Switch } from '@/components/ui/switch';
@@ -20,8 +21,68 @@ interface ClassSellingFieldsProps {
 }
 
 /**
+ * The override input. Empty means "charge the course price", and the reset
+ * link puts a class back on it in one click.
+ */
+function SeatPriceField({
+  id,
+  seatPrice,
+  offerPrice,
+  onChange,
+}: {
+  id: string;
+  seatPrice: string;
+  offerPrice?: number | null;
+  onChange: (value: string) => void;
+}) {
+  const { t } = useTranslation();
+  const formatCurrency = useFormatCurrency();
+  const hasCoursePrice = offerPrice != null;
+  const isOverridden = seatPrice !== '';
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between gap-2">
+        <Label htmlFor={id}>
+          {t('courses.live.seatPrice')}
+          {hasCoursePrice ? (
+            <span className="ms-1 font-normal text-muted-foreground">({t('common.optional')})</span>
+          ) : null}
+        </Label>
+        {hasCoursePrice && isOverridden ? (
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto p-0 text-xs"
+            onClick={() => onChange('')}
+          >
+            {t('courses.live.useCoursePrice')}
+          </Button>
+        ) : null}
+      </div>
+      <PriceInput
+        id={id}
+        value={seatPrice}
+        placeholder={hasCoursePrice ? String(offerPrice) : undefined}
+        onChange={onChange}
+      />
+      {hasCoursePrice ? (
+        <p className="text-xs text-muted-foreground">
+          {isOverridden
+            ? t('courses.live.seatPriceOverrideHint', { price: formatCurrency(offerPrice) })
+            : t('courses.live.seatPriceInheritHint', { price: formatCurrency(offerPrice) })}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/**
  * What a seat costs and how the class may be bought — shown exactly the way
  * the student will see it at checkout, so the manager prices with open eyes.
+ * The price is an optional override: empty means the course's seat price,
+ * which is what the server charges (`seat_price ?? Offer.price`).
  */
 export function ClassSellingFields({
   idPrefix,
@@ -40,15 +101,12 @@ export function ClassSellingFields({
 
   return (
     <div className="space-y-4 rounded-lg border p-4">
-      <div className="space-y-1.5">
-        <Label htmlFor={`${idPrefix}-seat-price`}>{t('courses.live.seatPrice')}</Label>
-        <PriceInput
-          id={`${idPrefix}-seat-price`}
-          value={seatPrice}
-          placeholder={offerPrice != null ? String(offerPrice) : undefined}
-          onChange={onSeatPriceChange}
-        />
-      </div>
+      <SeatPriceField
+        id={`${idPrefix}-seat-price`}
+        seatPrice={seatPrice}
+        offerPrice={offerPrice}
+        onChange={onSeatPriceChange}
+      />
 
       {capacity > 1 ? (
         <p className="text-sm">
