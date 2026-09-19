@@ -1,8 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ConfirmDeleteDialog } from '@/components/shared/ConfirmDeleteDialog';
 import NoAcademyState from '@/components/course/NoAcademyState';
 import { secondsToDuration } from '@/components/course/course-drafts';
 import { CourseStudentPreview } from '@/components/course/student-preview';
@@ -17,8 +20,12 @@ import type { CourseDetail } from '@/components/course/detail/types';
 import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
 import { useCourseTutoringOffers } from '@/components/course/pricing/use-course-tutoring-offers';
 import { useStore } from '@/hooks/useStore';
+import { apiClient } from '@/lib/api';
 import { langApiVersionPath } from '@/lib/api-lang';
+import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { tNow } from '@/lib/i18n/t-now';
+import { toast } from 'react-toastify';
 
 function coverUrl(course: CourseDetail): string | null {
   const image = course.Image;
@@ -45,6 +52,8 @@ export default function CourseOverviewPage() {
   const { course, loading } = useCourseWorkspace();
   // A live course is priced through its tutoring offers, not `course.price`.
   const offers = useCourseTutoringOffers(course?.course_type === 'LIVE' ? course.id : undefined);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   if (!selectedAcademy) return <NoAcademyState />;
 
@@ -71,9 +80,52 @@ export default function CourseOverviewPage() {
   }
 
   const seasons = course.Season ?? [];
+  const courseId = course.id;
+
+  async function handleDelete() {
+    if (deleting) return;
+    setDeleting(true);
+    try {
+      await apiClient.deleteCourse(courseId);
+      toast.success(tNow('toasts.courseDeleted'));
+      router.push('/courses');
+    } catch (err: unknown) {
+      ErrorHandler.handleApiError(err);
+    } finally {
+      setDeleting(false);
+      setConfirmingDelete(false);
+    }
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1400px] flex-1 p-4 sm:p-6">
+      <div className="mb-3 flex items-center justify-end gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5"
+          onClick={() => router.push(`/courses/${course.id}/edit`)}
+        >
+          <Pencil className="h-3.5 w-3.5" /> {t('common.edit')}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-destructive hover:text-destructive"
+          onClick={() => setConfirmingDelete(true)}
+        >
+          <Trash2 className="h-3.5 w-3.5" /> {t('common.delete')}
+        </Button>
+      </div>
+
+      <ConfirmDeleteDialog
+        open={confirmingDelete}
+        title={t('courses.deleteCourse')}
+        description={t('courses.deleteCourseConfirm', { title: course.title })}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmingDelete(false)}
+      />
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-3">
           <p className="text-sm text-muted-foreground">{t('courseDetail.overviewHint')}</p>
