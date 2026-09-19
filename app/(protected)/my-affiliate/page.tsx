@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { Button } from '@/components/ui/button';
 import { NumberInput } from '@/components/ui/number-input';
@@ -129,8 +130,8 @@ function LinkCard({
   // Build base URL from academy info
   const academy = (link as any).Academy;
   const baseUrl = academy?.slug
-    ? `https://${academy.slug}.skillforge.com`
-    : 'https://skillforge.com';
+    ? `https://${academy.slug}.${ACADEMY_DOMAIN}`
+    : `https://${ACADEMY_DOMAIN}`;
   const refUrl = `${baseUrl}?ref=${link.code}`;
 
   const pendingWithdrawals = link.Withdrawals.filter(

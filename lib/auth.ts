@@ -3,6 +3,7 @@ import { ErrorHandler } from './error-handler';
 import { User, Profile, Academy } from '@/types/api';
 import { isDevelopmentMode, getStoreUrl, logDevInfo } from './dev-utils';
 import { wipeNonPlatformStorage } from './wipe-non-platform-storage';
+import { ACADEMY_DOMAIN } from './slug';
 
 export interface AuthUser {
   user: User;
@@ -78,7 +79,7 @@ class AuthService {
       user.currentAcademy?.id ??
       null;
     if (academyId) {
-      window.localStorage.setItem('skillforge_selected_academy_id', String(academyId));
+      window.localStorage.setItem('selected_academy_id', String(academyId));
     }
   }
 
@@ -291,7 +292,7 @@ class AuthService {
     }
 
     const privateDomain = academy.slug;
-    return `https://${privateDomain}.skillforge.com`;
+    return `https://${privateDomain}.${ACADEMY_DOMAIN}`;
   }
 
   getAcademyLoginUrl(academy: Academy): string {

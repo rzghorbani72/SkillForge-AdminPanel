@@ -2,6 +2,8 @@
  * Development utilities for localhost compatibility
  */
 
+import { ACADEMY_DOMAIN } from './slug';
+
 /**
  * Check if the application is running in development mode
  */
@@ -19,7 +21,7 @@ export function getBaseUrl(): string {
   if (isDevelopmentMode()) {
     return 'http://localhost:3000';
   }
-  return 'https://skillforge.com';
+  return `https://${ACADEMY_DOMAIN}`;
 }
 
 /**
@@ -29,7 +31,7 @@ export function getStoreUrl(storeSlug: string): string {
   if (isDevelopmentMode()) {
     return `http://${storeSlug}.localhost:3000`;
   }
-  return `https://${storeSlug}.skillforge.com`;
+  return `https://${storeSlug}.${ACADEMY_DOMAIN}`;
 }
 
 /**
@@ -39,7 +41,7 @@ export function getAdminPanelUrl(): string {
   if (isDevelopmentMode()) {
     return 'http://localhost:3000';
   }
-  return 'https://admin.skillforge.com';
+  return `https://admin.${ACADEMY_DOMAIN}`;
 }
 
 /**

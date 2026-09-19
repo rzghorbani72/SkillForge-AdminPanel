@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { ACADEMY_DOMAIN } from '@/lib/slug';
 
 interface AcademyFormData {
   name: string;
@@ -86,8 +87,8 @@ export function AcademyForm({
         <p className="text-xs text-muted-foreground">
           {t('stores.storeUrlWillBe')}{' '}
           {formData.private_domain
-            ? `${formData.private_domain}.skillforge.com`
-            : 'your-domain.skillforge.com'}
+            ? `${formData.private_domain}.${ACADEMY_DOMAIN}`
+            : `your-domain.${ACADEMY_DOMAIN}`}
         </p>
         {!isEdit && (
           <p className="text-xs font-medium text-orange-600">

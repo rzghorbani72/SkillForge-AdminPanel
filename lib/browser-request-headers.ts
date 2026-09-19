@@ -2,7 +2,7 @@
 // double-submit CSRF token and the selected academy id. Every fetch helper
 // must build them from here, otherwise one module drifts and its writes 403.
 
-const SELECTED_ACADEMY_STORAGE_KEY = 'skillforge_selected_academy_id';
+const SELECTED_ACADEMY_STORAGE_KEY = 'selected_academy_id';
 
 const SAFE_METHODS = ['GET', 'HEAD'];
 

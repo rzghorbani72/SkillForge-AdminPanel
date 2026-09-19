@@ -1561,7 +1561,7 @@ export const ar = {
     passwordSessionNote: 'كلمة المرور الجديدة تحل محل القديمة فورًا وتبقى مسجّل الدخول.',
     fullName: 'الاسم الكامل',
     fullNamePlaceholder: 'الاسم الكامل',
-    emailPlaceholder: 'example@skillforge.com',
+    emailPlaceholder: 'example@mentoma.ir',
     phoneNumber: 'رقم الهاتف',
     phoneNumberPlaceholder: '+966 500 000 000',
     bio: 'السيرة الذاتية',

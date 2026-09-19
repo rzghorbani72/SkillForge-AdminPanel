@@ -9,8 +9,8 @@ test.describe('platform storage keep-list', () => {
   });
 
   test('drops academy, person, and staff keys', () => {
-    expect(isPlatformStorageKey('skillforge_selected_academy_id')).toBe(false);
-    expect(isPlatformStorageKey('skillforge_academies_cache')).toBe(false);
+    expect(isPlatformStorageKey('selected_academy_id')).toBe(false);
+    expect(isPlatformStorageKey('academies_cache')).toBe(false);
     expect(isPlatformStorageKey('categories-store')).toBe(false);
     expect(isPlatformStorageKey('user_country')).toBe(false);
     expect(isPlatformStorageKey('preview_real_data')).toBe(false);
@@ -22,6 +22,6 @@ test.describe('platform storage keep-list', () => {
     expect(isPlatformCookieName('preferred_language')).toBe(true);
     expect(isPlatformCookieName('gdpr_consent')).toBe(true);
     expect(isPlatformCookieName('jwt')).toBe(false);
-    expect(isPlatformCookieName('skillforge_selected_academy_id')).toBe(false);
+    expect(isPlatformCookieName('selected_academy_id')).toBe(false);
   });
 });

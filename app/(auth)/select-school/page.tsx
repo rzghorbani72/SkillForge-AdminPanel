@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { AuthWideLayout } from '@/components/auth/auth-wide-layout';
 import { AuthBrand } from '@/components/auth/auth-brand';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { ACADEMY_DOMAIN } from '@/lib/slug';
 
 export default function SelectStorePage() {
   const { t } = useTranslation();
@@ -146,7 +147,9 @@ export default function SelectStorePage() {
                   </div>
                   <div>
                     <CardTitle className="text-lg">{academy.name}</CardTitle>
-                    <CardDescription>{academy.slug}.skillforge.com</CardDescription>
+                    <CardDescription>
+                      {academy.slug}.{ACADEMY_DOMAIN}
+                    </CardDescription>
                   </div>
                 </div>
               </CardHeader>

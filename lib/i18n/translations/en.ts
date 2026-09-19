@@ -2787,7 +2787,7 @@ export const en = {
     backHome: 'Back to Home',
   },
   home: {
-    welcomeToSkillForge: 'Welcome to آکادمی',
+    welcomeMessage: 'Welcome to آکادمی',
     description:
       'Empower your learning journey. Create, manage, and sell your online courses with ease. آکادمی is your all-in-one platform for building a thriving online education business.',
     getStarted: 'Get Started / Login',
@@ -3304,7 +3304,7 @@ export const en = {
     passwordSessionNote: 'The new password replaces the old one right away and you stay signed in.',
     fullName: 'Full name',
     fullNamePlaceholder: 'Jane Doe',
-    emailPlaceholder: 'jane@skillforge.com',
+    emailPlaceholder: 'jane@mentoma.ir',
     phoneNumber: 'Phone number',
     phoneNumberPlaceholder: '+1 555 000 0000',
     bio: 'Bio',

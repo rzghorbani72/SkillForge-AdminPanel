@@ -1586,7 +1586,7 @@ export const tr = {
     passwordSessionNote: 'Yeni parola eskisinin yerini hemen alır ve oturumunuz açık kalır.',
     fullName: 'Tam Ad',
     fullNamePlaceholder: 'Ad Soyad',
-    emailPlaceholder: 'ornek@skillforge.com',
+    emailPlaceholder: 'ornek@mentoma.ir',
     phoneNumber: 'Telefon Numarası',
     phoneNumberPlaceholder: '+90 500 000 0000',
     bio: 'Biyografi',

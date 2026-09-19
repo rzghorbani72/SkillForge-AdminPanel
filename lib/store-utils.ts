@@ -1,11 +1,12 @@
 'use client';
 
 import type { Academy } from '@/types/api';
+import { ACADEMY_DOMAIN } from '@/lib/slug';
 
 const ACADEMY_STORAGE_KEYS = {
-  SELECTED_ACADEMY_ID: 'skillforge_selected_academy_id',
-  ACADEMIES_CACHE: 'skillforge_academies_cache',
-  LAST_FETCH: 'skillforge_academies_last_fetch',
+  SELECTED_ACADEMY_ID: 'selected_academy_id',
+  ACADEMIES_CACHE: 'academies_cache',
+  LAST_FETCH: 'academies_last_fetch',
 };
 
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
@@ -73,7 +74,7 @@ export function getSelectedAcademy(academies: Academy[]): Academy | null {
 }
 
 /** One re-scope attempt per session, cleared whenever the academy data is. */
-export const ACADEMY_RESCOPE_FLAG = 'skillforge_academy_rescoped';
+export const ACADEMY_RESCOPE_FLAG = 'academy_rescoped';
 
 export function clearAcademyData(): void {
   if (typeof window === 'undefined') return;
@@ -144,7 +145,8 @@ export function autoSelectAcademy(
 
 export function extractDomainPart(domain: string): string {
   if (!domain) return '';
-  const cleanDomain = domain.replace(/\.skillforge\.com$/i, '').replace(/\./g, '');
+  const domainSuffix = new RegExp(`\\.${ACADEMY_DOMAIN.replace(/\./g, '\\.')}$`, 'i');
+  const cleanDomain = domain.replace(domainSuffix, '').replace(/\./g, '');
 
   if (!cleanDomain) return '';
   return cleanDomain

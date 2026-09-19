@@ -3107,7 +3107,7 @@ export const fa = {
     passwordSessionNote: 'رمز عبور تازه بلافاصله جایگزین رمز قبلی می‌شود و شما وارد حساب می‌مانید.',
     fullName: 'نام کامل',
     fullNamePlaceholder: 'نام و نام خانوادگی',
-    emailPlaceholder: 'example@skillforge.com',
+    emailPlaceholder: 'example@mentoma.ir',
     phoneNumber: 'شماره تلفن',
     phoneNumberPlaceholder: '۰۹۱۲ ۰۰۰ ۰۰۰۰',
     bio: 'بیوگرافی',
@@ -3737,7 +3737,7 @@ export const fa = {
     backHome: 'بازگشت به خانه',
   },
   home: {
-    welcomeToSkillForge: 'به آکادمی خوش آمدید',
+    welcomeMessage: 'به آکادمی خوش آمدید',
     description:
       'مسیر یادگیری خود را تقویت کنید. دوره‌های آنلاین خود را به‌راحتی بسازید، مدیریت کنید و بفروشید. آکادمی پلتفرم همه‌کاره شما برای راه‌اندازی یک کسب‌وکار آموزشی آنلاین پربار است.',
     getStarted: 'شروع کنید / ورود',
