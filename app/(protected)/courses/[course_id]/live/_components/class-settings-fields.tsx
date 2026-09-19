@@ -74,7 +74,11 @@ function ClassSizeFields({ draft, seatsTaken, patch }: FieldsProps) {
   );
 }
 
-function ClassTermFields({ draft, patch }: Omit<FieldsProps, 'seatsTaken'>) {
+function ClassTermFields({
+  draft,
+  canEditSchedule,
+  patch,
+}: Omit<FieldsProps, 'seatsTaken'> & { canEditSchedule: boolean }) {
   const { t } = useTranslation();
 
   const setVisibility = (value: string) => {
@@ -104,7 +108,16 @@ function ClassTermFields({ draft, patch }: Omit<FieldsProps, 'seatsTaken'>) {
           </SelectContent>
         </Select>
       </div>
-      <div className="space-y-1.5 sm:col-span-2">
+      <div className="space-y-1.5">
+        <Label htmlFor="edit-group-starts-on">{t('courses.live.startDate')}</Label>
+        <DatePicker
+          id="edit-group-starts-on"
+          value={draft.startsOn}
+          disabled={!canEditSchedule}
+          onChange={(startsOn) => patch({ startsOn })}
+        />
+      </div>
+      <div className="space-y-1.5">
         <Label htmlFor="edit-group-deadline">{t('tutoring.groups.joinDeadline')}</Label>
         <DatePicker
           id="edit-group-deadline"
@@ -112,6 +125,9 @@ function ClassTermFields({ draft, patch }: Omit<FieldsProps, 'seatsTaken'>) {
           onChange={(joinDeadline) => patch({ joinDeadline })}
         />
       </div>
+      <p className="text-xs text-muted-foreground sm:col-span-2">
+        {t('tutoring.groups.joinDeadlineHint')}
+      </p>
     </>
   );
 }
@@ -119,10 +135,12 @@ function ClassTermFields({ draft, patch }: Omit<FieldsProps, 'seatsTaken'>) {
 export function ClassSettingsFields({
   draft,
   group,
+  canEditSchedule,
   patch,
 }: {
   draft: ClassSettingsDraft;
   group: TutoringGroup;
+  canEditSchedule: boolean;
   patch: (partial: Partial<ClassSettingsDraft>) => void;
 }) {
   return (
@@ -130,7 +148,7 @@ export function ClassSettingsFields({
       <div className="grid gap-4 sm:grid-cols-2">
         <ClassBasicsFields draft={draft} patch={patch} />
         <ClassSizeFields draft={draft} seatsTaken={group.seats_taken} patch={patch} />
-        <ClassTermFields draft={draft} patch={patch} />
+        <ClassTermFields draft={draft} canEditSchedule={canEditSchedule} patch={patch} />
       </div>
     </div>
   );

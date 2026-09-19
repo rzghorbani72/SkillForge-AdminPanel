@@ -427,6 +427,10 @@ export interface TutoringGroup {
   term_weeks: number;
   join_deadline?: string | null;
   status: TutoringGroupStatus;
+  /** 'MINIMUM_NOT_REACHED' when the deadline passed short of the minimum. */
+  cancel_reason?: string | null;
+  /** Store credit the cancel gave back; only on a cancelled class. */
+  refunds?: { students: number; amount: number } | null;
   meeting_url?: string | null;
   meeting_url_source?: 'MANUAL' | 'AUTO_JITSI';
   meeting_url_updated_at?: string | null;

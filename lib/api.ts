@@ -5944,6 +5944,13 @@ class ApiClient {
     });
   }
 
+  async reopenTutoringGroup(groupId: string): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/reopen`, {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
+  }
+
   async publishTutoringGroup(groupId: string): Promise<void> {
     await this.request(`/tutoring/groups/${groupId}/publish`, {
       method: 'POST',

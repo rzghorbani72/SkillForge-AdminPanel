@@ -22,8 +22,12 @@ export type ClassSettingsDraft = {
   wholeClassBooking: boolean;
   sessionCount: string;
   visibility: TutoringGroupVisibility;
+  startsOn: string;
   joinDeadline: string;
 };
+
+const dateOnly = (iso: string | null | undefined) => (iso ? iso.slice(0, 10) : '');
+const isoOf = (date: string) => (date ? new Date(date).toISOString() : undefined);
 
 function draftFrom(group: TutoringGroup): ClassSettingsDraft {
   return {
@@ -35,7 +39,8 @@ function draftFrom(group: TutoringGroup): ClassSettingsDraft {
     wholeClassBooking: group.whole_class_booking ?? true,
     sessionCount: String(group.session_count ?? ''),
     visibility: group.visibility,
-    joinDeadline: group.join_deadline ? group.join_deadline.slice(0, 10) : '',
+    startsOn: dateOnly(group.starts_on_requested),
+    joinDeadline: dateOnly(group.join_deadline),
   };
 }
 
@@ -57,7 +62,8 @@ async function persistClassSettings(
     whole_class_booking: draft.wholeClassBooking,
     session_count: Number(draft.sessionCount) || undefined,
     visibility: draft.visibility,
-    join_deadline: draft.joinDeadline ? new Date(draft.joinDeadline).toISOString() : undefined,
+    starts_on_requested: canEditSchedule ? isoOf(draft.startsOn) : undefined,
+    join_deadline: isoOf(draft.joinDeadline),
   });
   if (!settingsOk) return false;
   if (canEditSchedule && !(await actions.replaceSlots(slots))) return false;

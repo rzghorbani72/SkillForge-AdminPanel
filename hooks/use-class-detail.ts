@@ -59,6 +59,7 @@ export function useClassDetail(groupId: string) {
     replaceSlots: (slots: TutoringGroupSlot[]) =>
       run(() => apiClient.replaceTutoringGroupSlots(groupId, slots)),
     publish: () => run(() => apiClient.publishTutoringGroup(groupId)),
+    reopen: () => run(() => apiClient.reopenTutoringGroup(groupId)),
     confirm: () => run(() => apiClient.confirmTutoringGroup(groupId)),
     cancel: (payload: CancelTutoringGroupPayload) =>
       run(() => apiClient.cancelTutoringGroup(groupId, payload)),

@@ -12,6 +12,7 @@ import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/g
 import { useClassDetail } from '@/hooks/use-class-detail';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringGroup, TutoringGroupSlot } from '@/types/learning-operations';
+import { ClassCancelledNotice } from './class-cancelled-notice';
 import { ClassSettingsFields } from './class-settings-fields';
 import { useClassSettings } from './use-class-settings';
 
@@ -101,7 +102,21 @@ function ClassSettingsSections({
   return (
     <>
       <div className="beautiful-scrollbar flex-1 space-y-6 overflow-y-auto px-4 py-5 sm:px-6">
-        <ClassSettingsFields draft={settings.draft} group={group} patch={settings.patch} />
+        <ClassCancelledNotice
+          group={group}
+          busy={detail.busy}
+          onReopen={async () => {
+            const ok = await detail.reopen();
+            if (ok) onChanged();
+            return ok;
+          }}
+        />
+        <ClassSettingsFields
+          draft={settings.draft}
+          group={group}
+          canEditSchedule={settings.canEditSchedule}
+          patch={settings.patch}
+        />
         <ClassSellingFields
           idPrefix="edit-group"
           capacity={Number(settings.draft.capacity) || 1}

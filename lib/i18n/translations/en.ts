@@ -6751,6 +6751,17 @@ export const en = {
       timetableHint: 'Add one row per weekly meeting, for example Tuesday 15:00 for 90 minutes.',
       saveTimetable: 'Save weekly times',
       timetableSaved: 'Weekly times saved.',
+      cancelledTitle: 'This class is cancelled',
+      cancelledHint: 'The class no longer accepts students.',
+      cancelledByDeadlineTitle: 'Registration closed; class cancelled',
+      cancelledByDeadlineNoOne:
+        'Nobody registered by the join deadline ({{deadline}}), so the class was cancelled automatically.',
+      cancelledByDeadlineRefunded:
+        'The minimum was not reached by the join deadline ({{deadline}}); {{students}} students had registered and {{refunded}} of them got {{amount}} back as wallet credit.',
+      reopenHint:
+        'To run it again, reopen the class, then set a new start date and join deadline and publish.',
+      reopenClass: 'Reopen class',
+      classReopened: 'The class is a draft again. Set the dates and publish.',
       timetableLockedHint:
         'The timetable is fixed once the class is confirmed. Reschedule sessions one at a time instead.',
       slotRow: 'Weekly meeting',
