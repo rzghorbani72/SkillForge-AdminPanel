@@ -3,16 +3,7 @@
 import { useState, type ReactElement } from 'react';
 import Link from 'next/link';
 import { Check, Copy, Eye, KeyRound, Pencil, Trash2, UserCheck, UserX } from 'lucide-react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { ConfirmActionDialog } from '@/components/users/confirm-action-dialog';
 import {
   Dialog,
   DialogContent,
@@ -70,6 +61,8 @@ export function UserRowActions({
 }: UserRowActionsProps) {
   const { t } = useTranslation();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [confirmToggleActive, setConfirmToggleActive] = useState(false);
   const [newPassword, setNewPassword] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -78,10 +71,13 @@ export function UserRowActions({
     callerRole === 'ADMIN' ||
     (callerRole === 'MANAGER' && targetLevel != null && targetLevel < MANAGER_HIERARCHY_LEVEL);
 
+  const userName = user.display_name || user.name || '';
+
   async function handleToggleActive() {
     setBusy(true);
     try {
       await apiClient.updateUser(user.id, { is_active: !user.is_active });
+      setConfirmToggleActive(false);
       onChanged();
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -95,6 +91,7 @@ export function UserRowActions({
     setBusy(true);
     try {
       await apiClient.resetUserPassword(user.id, generated);
+      setConfirmReset(false);
       setNewPassword(generated);
     } catch (e) {
       ErrorHandler.handleApiError(e);
@@ -155,7 +152,7 @@ export function UserRowActions({
               <ActionTooltip label={t('users.resetPassword')}>
                 <button
                   type="button"
-                  onClick={handleResetPassword}
+                  onClick={() => setConfirmReset(true)}
                   disabled={busy}
                   className={iconBtnClass}
                   aria-label={t('users.resetPassword')}
@@ -166,7 +163,7 @@ export function UserRowActions({
               <ActionTooltip label={user.is_active ? t('common.deactivate') : t('common.activate')}>
                 <button
                   type="button"
-                  onClick={handleToggleActive}
+                  onClick={() => setConfirmToggleActive(true)}
                   disabled={busy}
                   className={iconBtnClass}
                   aria-label={user.is_active ? t('common.deactivate') : t('common.activate')}
@@ -196,28 +193,39 @@ export function UserRowActions({
         </div>
       </TooltipProvider>
 
-      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('users.deleteUserTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('users.confirmDeleteUser', {
-                name: user.display_name || user.name || '',
-              })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={busy}>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={busy}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t('common.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmActionDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        title={t('users.deleteUserTitle')}
+        description={t('users.confirmDeleteUser', { name: userName })}
+        confirmLabel={t('common.delete')}
+        onConfirm={handleDelete}
+        busy={busy}
+      />
+
+      <ConfirmActionDialog
+        open={confirmReset}
+        onOpenChange={setConfirmReset}
+        title={t('users.resetPasswordTitle')}
+        description={t('users.confirmResetPassword', { name: userName })}
+        confirmLabel={t('users.resetPassword')}
+        onConfirm={handleResetPassword}
+        busy={busy}
+      />
+
+      <ConfirmActionDialog
+        open={confirmToggleActive}
+        onOpenChange={setConfirmToggleActive}
+        title={user.is_active ? t('users.deactivateUserTitle') : t('users.activateUserTitle')}
+        description={t(
+          user.is_active ? 'users.confirmDeactivateUser' : 'users.confirmActivateUser',
+          { name: userName },
+        )}
+        confirmLabel={user.is_active ? t('common.deactivate') : t('common.activate')}
+        onConfirm={handleToggleActive}
+        busy={busy}
+        destructive={user.is_active}
+      />
 
       <Dialog open={!!newPassword} onOpenChange={(open) => !open && setNewPassword(null)}>
         <DialogContent className="max-w-sm">

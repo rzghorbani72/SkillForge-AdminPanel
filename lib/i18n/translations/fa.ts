@@ -4110,9 +4110,16 @@ export const fa = {
     loadingDetails: 'در حال بارگذاری جزئیات...',
     detailName: 'نام',
     resetPassword: 'بازنشانی رمز عبور',
+    resetPasswordTitle: 'بازنشانی رمز عبور؟',
+    confirmResetPassword:
+      'با این کار رمز عبور فعلی {{name}} باطل می‌شود و او دیگر نمی‌تواند با رمز قبلی وارد شود. رمز جدید را باید به او بدهید.',
     newPasswordTitle: 'رمز عبور یک‌بارمصرف ساخته شد',
     newPasswordDescription:
       'این رمز را به کاربر بدهید. او باید در اولین ورود، رمز خودش را تنظیم کند.',
+    deactivateUserTitle: 'غیرفعال‌سازی کاربر؟',
+    confirmDeactivateUser: '{{name}} از سیستم خارج می‌شود و تا فعال‌سازی مجدد نمی‌تواند وارد شود.',
+    activateUserTitle: 'فعال‌سازی کاربر؟',
+    confirmActivateUser: '{{name}} دوباره می‌تواند وارد شود.',
     deleteUserTitle: 'حذف کاربر',
     confirmDeleteUser:
       'آیا مطمئن هستید که می‌خواهید {{name}} را حذف کنید؟ این کار قابل بازگشت نیست.',

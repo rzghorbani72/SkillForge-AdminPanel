@@ -2100,9 +2100,17 @@ export const tr = {
     loadingDetails: 'Detaylar yükleniyor...',
     detailName: 'Ad',
     resetPassword: 'Şifreyi Sıfırla',
+    resetPasswordTitle: 'Şifre sıfırlansın mı?',
+    confirmResetPassword:
+      'Bu işlem {{name}} kullanıcısının mevcut şifresini geçersiz kılar. Eski şifresiyle artık giriş yapamaz, kendisine yeni şifreyi vermeniz gerekir.',
     newPasswordTitle: 'Tek kullanımlık şifre oluşturuldu',
     newPasswordDescription:
       'Bu şifreyi kullanıcıyla paylaşın. İlk girişte kendi şifresini belirlemesi gerekir.',
+    deactivateUserTitle: 'Kullanıcı devre dışı bırakılsın mı?',
+    confirmDeactivateUser:
+      '{{name}} oturumu kapatılacak ve yeniden etkinleştirilene kadar giriş yapamayacak.',
+    activateUserTitle: 'Kullanıcı etkinleştirilsin mi?',
+    confirmActivateUser: '{{name}} tekrar giriş yapabilecek.',
     deleteUserTitle: 'Kullanıcıyı sil',
     confirmDeleteUser:
       '{{name}} kullanıcısını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',

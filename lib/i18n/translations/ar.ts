@@ -2063,9 +2063,16 @@ export const ar = {
     loadingDetails: 'جارٍ تحميل التفاصيل...',
     detailName: 'الاسم',
     resetPassword: 'إعادة تعيين كلمة المرور',
+    resetPasswordTitle: 'إعادة تعيين كلمة المرور؟',
+    confirmResetPassword:
+      'سيؤدي هذا إلى إبطال كلمة مرور {{name}} الحالية. لن يتمكن بعد الآن من تسجيل الدخول بكلمة المرور القديمة، ويجب عليك إعطاؤه كلمة المرور الجديدة.',
     newPasswordTitle: 'تم إنشاء كلمة مرور لمرة واحدة',
     newPasswordDescription:
       'شارك كلمة المرور هذه مع المستخدم. يجب عليه تعيين كلمة مروره الخاصة عند أول تسجيل دخول.',
+    deactivateUserTitle: 'تعطيل المستخدم؟',
+    confirmDeactivateUser: 'سيتم تسجيل خروج {{name}} ولن يتمكن من تسجيل الدخول حتى إعادة التفعيل.',
+    activateUserTitle: 'تفعيل المستخدم؟',
+    confirmActivateUser: 'سيتمكن {{name}} من تسجيل الدخول مرة أخرى.',
     deleteUserTitle: 'حذف المستخدم',
     confirmDeleteUser: 'هل أنت متأكد أنك تريد حذف {{name}}؟ لا يمكن التراجع عن هذا الإجراء.',
     userDeleted: 'تم حذف المستخدم',

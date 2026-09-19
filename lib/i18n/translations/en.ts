@@ -4119,9 +4119,17 @@ export const en = {
     loadingDetails: 'Loading details...',
     detailName: 'Name',
     resetPassword: 'Reset Password',
+    resetPasswordTitle: 'Reset password?',
+    confirmResetPassword:
+      "This will invalidate {{name}}'s current password. They will no longer be able to log in with their old password and must use the new one you give them.",
     newPasswordTitle: 'One-time password generated',
     newPasswordDescription:
       'Share this password with the user. They must set their own password on first login.',
+    deactivateUserTitle: 'Deactivate user?',
+    confirmDeactivateUser:
+      '{{name}} will be signed out and will not be able to log in until reactivated.',
+    activateUserTitle: 'Activate user?',
+    confirmActivateUser: '{{name}} will be able to log in again.',
     deleteUserTitle: 'Delete user',
     confirmDeleteUser: 'Are you sure you want to delete {{name}}? This cannot be undone.',
     userDeleted: 'User deleted',
