@@ -6,6 +6,7 @@ import { Course } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 export type CourseWithRevenue = Course & {
   revenue: number;
@@ -64,8 +65,8 @@ const useCourses = () => {
         (c as any).academy_id ? (c as any).academy_id === selectedAcademy.id : true,
       );
       setRawCourses(list);
-    } catch {
-      toast.error(tNow('toasts.coursesLoadFailed'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, tNow('toasts.coursesLoadFailed')));
       setRawCourses([]);
     } finally {
       setIsLoading(false);

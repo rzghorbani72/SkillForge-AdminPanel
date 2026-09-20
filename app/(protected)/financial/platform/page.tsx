@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CalendarDays, Download, MoreHorizontal, TrendingDown, TrendingUp } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import {
   PlatformFinancialSummary,
   StoreFinancialRecord,
@@ -164,8 +165,7 @@ export default function PlatformFinancialPage() {
       setPlatformRecords(platformData);
       setSettlement(settlementData as { totals?: SettlementTotals });
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : '';
-      toast.error(msg || t('financial.platform.loadFailed'));
+      toast.error(apiErrorMessage(error, t('financial.platform.loadFailed')));
     } finally {
       setLoading(false);
     }
@@ -419,9 +419,11 @@ export default function PlatformFinancialPage() {
                                       );
                                       loadData();
                                     } catch (err: unknown) {
-                                      const msg = err instanceof Error ? err.message : '';
                                       toast.error(
-                                        msg || t('financial.platform.platformRecords.deleteError'),
+                                        apiErrorMessage(
+                                          err,
+                                          t('financial.platform.platformRecords.deleteError'),
+                                        ),
                                       );
                                     }
                                   }

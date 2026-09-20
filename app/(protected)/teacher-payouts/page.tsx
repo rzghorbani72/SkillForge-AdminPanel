@@ -74,8 +74,8 @@ export default function TeacherPayoutsPage() {
       await apiClient.approveTeacherPayout(id);
       toast.success(t('common.success'));
       load(statusFilter);
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     }
   }
 
@@ -87,8 +87,8 @@ export default function TeacherPayoutsPage() {
       toast.success(t('common.success'));
       setRejectDialog(null);
       load(statusFilter);
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }

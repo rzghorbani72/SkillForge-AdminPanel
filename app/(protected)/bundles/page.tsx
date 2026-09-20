@@ -335,8 +335,8 @@ export default function BundlesPage() {
       toast.success(t('common.success'));
       setDialogOpen(false);
       loadBundles();
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSaving(false);
     }

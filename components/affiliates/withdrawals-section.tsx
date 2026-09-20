@@ -5,6 +5,7 @@ import { ArrowDownToLine, Clock, CircleCheck, XCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { apiClient } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getLocaleForLanguage } from '@/lib/i18n/config';
 
@@ -75,8 +76,8 @@ export function WithdrawalsSection({ formatCurrency }: { formatCurrency: (n: num
         }),
       );
       load();
-    } catch (e: any) {
-      toast.error(e?.message ?? t('common.error'));
+    } catch (e: unknown) {
+      toast.error(apiErrorMessage(e, t('common.error')));
     } finally {
       setProcessing(null);
     }

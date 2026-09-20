@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { markdownToHtml } from '@/lib/legal/markdown-to-html';
 import { prepareLegalMarkdown } from '@/lib/legal/prepare-legal-markdown';
@@ -57,7 +58,7 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
         setBody('');
       }
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setLoading(false);
     }
@@ -84,7 +85,7 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
       toast.success(t('legalAdmin.draftSaved'));
       await loadOverview();
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSaving(false);
     }
@@ -107,7 +108,7 @@ export function LegalAdminWorkspace({ enabled }: LegalAdminWorkspaceProps) {
       toast.success(t('legalAdmin.published'));
       await loadOverview();
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setPublishing(false);
     }

@@ -272,8 +272,8 @@ export default function CouponsPage() {
       toast.success(t('common.success'));
       setDialogOpen(false);
       load();
-    } catch (err: unknown) {
-      toast.error((err as Error)?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSaving(false);
     }

@@ -17,6 +17,7 @@ import { isPlatformStaff, isPlatformAdmin } from '@/lib/roles';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import { apiClient } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { createAcademy, type AcademyCreateInput } from '@/lib/academy-create';
 import { toast } from 'react-toastify';
@@ -76,7 +77,7 @@ export default function AcademiesPage() {
         window.location.reload();
       }
     } catch (e: unknown) {
-      toast.error((e as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(e, t('common.error')));
       setSwitching(null);
     }
   }

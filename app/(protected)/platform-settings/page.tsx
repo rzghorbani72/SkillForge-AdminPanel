@@ -92,8 +92,8 @@ export default function PlatformSettingsPage() {
         owner_notify_phone: values.owner_notify_phone || null,
       });
       toast.success(t('common.success'));
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSaving(false);
     }

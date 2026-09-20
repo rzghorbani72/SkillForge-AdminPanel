@@ -66,8 +66,8 @@ export default function AffiliatesPage() {
       await apiClient.deleteAffiliate(aff.id);
       toast.success(t('affiliates.deleteSuccess'));
       load();
-    } catch (e: any) {
-      toast.error(e?.message ?? t('common.error'));
+    } catch (e) {
+      toast.error(apiErrorMessage(e, t('common.error')));
     }
   }
 

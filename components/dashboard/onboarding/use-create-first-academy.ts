@@ -7,6 +7,7 @@ import { useStore } from '@/hooks/useStore';
 import { clearAcademyData, setSelectedAcademyId } from '@/lib/store-utils';
 import { createAcademy, type AcademyCreateInput } from '@/lib/academy-create';
 import { logger } from '@/lib/logging/app-logger';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 /**
  * Creating the first academy changes every academy-scoped request in the panel,
@@ -39,7 +40,7 @@ export function useCreateFirstAcademy() {
         // A legal-consent 403 opens its own modal and pauses every call — a second
         // toast here would blame the manager for a form that was never submitted.
         if ((err as { code?: string })?.code === 'LEGAL_CONSENT_REQUIRED') return;
-        toast.error((err as { message?: string })?.message ?? t('common.error'));
+        toast.error(apiErrorMessage(err, t('common.error')));
       }
     },
     [refreshAcademies, t],

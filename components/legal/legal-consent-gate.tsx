@@ -20,6 +20,7 @@ import {
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { authService } from '@/lib/auth';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { LegalDocumentDiff } from './legal-document-diff';
 
 const DOCUMENT_LINKS: Record<string, string> = {
@@ -141,7 +142,7 @@ export function LegalConsentGate({ children }: { children: React.ReactNode }) {
       // Remount providers/pages that never loaded under the consent gate
       window.location.reload();
     } catch (err: unknown) {
-      setError((err as { message?: string })?.message ?? t('common.error'));
+      setError(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }

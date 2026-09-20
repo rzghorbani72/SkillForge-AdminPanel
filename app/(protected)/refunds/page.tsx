@@ -110,8 +110,8 @@ export default function RefundsPage() {
       toast.success(t('common.success'));
       setDialogOpen(false);
       load();
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }

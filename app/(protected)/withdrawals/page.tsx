@@ -96,8 +96,8 @@ export default function WithdrawalsPage() {
       toast.success(t('common.success'));
       setApproveDialog(null);
       load(statusFilter);
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }
@@ -111,8 +111,8 @@ export default function WithdrawalsPage() {
       toast.success(t('common.success'));
       setRejectDialog(null);
       load(statusFilter);
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }

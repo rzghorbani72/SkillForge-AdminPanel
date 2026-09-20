@@ -318,8 +318,8 @@ export default function MyAffiliatePage() {
       setDialogLink(null);
       setAmount('');
       load();
-    } catch (e: any) {
-      toast.error(e?.message ?? t('affiliates.requestPayoutFailed'));
+    } catch (e) {
+      toast.error(apiErrorMessage(e, t('affiliates.requestPayoutFailed')));
     } finally {
       setRequesting(false);
     }

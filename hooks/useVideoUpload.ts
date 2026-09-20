@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { formatFileSize } from '@/constants/video-constraints';
 import { isVideoFileAcceptable } from '@/lib/validate-video-upload';
 
@@ -160,7 +161,7 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
           toast.info(tNow('toasts.uploadCancelled'));
           options.onCancel?.();
         } else {
-          toast.error(tNow('toasts.videoUploadFailed'));
+          toast.error(apiErrorMessage(error, tNow('toasts.videoUploadFailed')));
           setSelectedFile(null);
           setSelectedPosterFile(null);
           setPreview((prev) => {

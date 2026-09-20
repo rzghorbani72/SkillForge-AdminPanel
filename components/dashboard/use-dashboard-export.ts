@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { logger } from '@/lib/logging/app-logger';
 import { errorFields } from '@/lib/logging/error-fields';
 import type { SettlementSummary } from '@/lib/api-settlement';
@@ -77,7 +78,7 @@ export function useDashboardExport({
       toast.success(t('dashboard.export.success'));
     } catch (err) {
       logger.error('Dashboard', 'ReportExportFailed', errorFields(err));
-      toast.error(t('dashboard.export.failed'));
+      toast.error(apiErrorMessage(err, t('dashboard.export.failed')));
     }
   }, [
     activeEnrollments,

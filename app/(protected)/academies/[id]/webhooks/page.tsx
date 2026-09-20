@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { Save, Webhook, ChevronLeft, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { apiClient } from '@/lib/api';
+import { apiErrorMessage } from '@/lib/api-error-message';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -69,8 +70,8 @@ export default function WebhooksPage() {
           : Promise.resolve(),
       ]);
       toast.success(t('common.success'));
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err: unknown) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSaving(false);
     }

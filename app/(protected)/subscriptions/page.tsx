@@ -52,8 +52,8 @@ export default function SubscriptionsPage() {
       const result = await apiClient.triggerSubscriptionLifecycle();
       setTickResult(result);
       toast.success(t('common.success'));
-    } catch (err: any) {
-      toast.error(err?.message ?? t('common.error'));
+    } catch (err) {
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setTicking(false);
     }

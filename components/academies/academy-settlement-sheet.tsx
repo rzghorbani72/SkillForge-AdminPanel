@@ -126,7 +126,7 @@ export function AcademySettlementSheet({ academy, open, onOpenChange, onSettled 
       setTrackingCode('');
       setNote('');
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }
@@ -147,7 +147,7 @@ export function AcademySettlementSheet({ academy, open, onOpenChange, onSettled 
       onSettled();
       if (academy) await load(academy.id);
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }
@@ -161,7 +161,7 @@ export function AcademySettlementSheet({ academy, open, onOpenChange, onSettled 
       onSettled();
       if (academy) await load(academy.id);
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? t('common.error'));
+      toast.error(apiErrorMessage(err, t('common.error')));
     } finally {
       setSubmitting(false);
     }

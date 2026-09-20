@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
+import { apiErrorMessage } from '@/lib/api-error-message';
 
 export interface ImageUploadOptions {
   title?: string;
@@ -98,7 +99,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
           toast.info(tNow('toasts.uploadCancelled'));
           options.onCancel?.();
         } else {
-          toast.error(tNow('toasts.imageUploadFailed'));
+          toast.error(apiErrorMessage(error, tNow('toasts.imageUploadFailed')));
           setSelectedFile(null);
           setPreview((prev) => {
             if (prev) URL.revokeObjectURL(prev);
