@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
+import { LessonAssignmentEditor } from '@/components/lesson/lesson-assignment-editor';
 import { LessonDownloadPolicyEditor } from '@/components/lesson/lesson-download-policy-editor';
 import LiveSessionEditor from '@/components/lesson/LiveSessionEditor';
 import { QuizBuilder } from '@/components/quiz/quiz-builder';
@@ -77,6 +78,10 @@ export default function LessonSettingsPage() {
           )}
 
           {lesson.lesson_type === 'QUIZ' && <QuizBuilder lessonId={lesson.id} />}
+
+          {lesson.lesson_type === 'ASSIGNMENT' && (
+            <LessonAssignmentEditor lessonId={lesson.id} courseId={courseId} />
+          )}
 
           <LessonDownloadPolicyEditor lesson={lesson} />
         </>

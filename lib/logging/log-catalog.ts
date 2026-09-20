@@ -7,6 +7,16 @@
 import type { LogCatalog } from './logger';
 
 export const LOG_CATALOG = {
+  Assignments: {
+    description: 'Homework a teacher sets on a lesson and the submissions it collects.',
+    actions: {
+      LessonAssignmentSaved: {
+        description: 'Teacher created or updated the homework attached to a course lesson.',
+        level: 'info',
+        fields: ['assignment_id', 'lesson_id'] as const,
+      },
+    },
+  },
   Dashboard: {
     description: 'Academy manager dashboard: live money, enrolment, and plan figures.',
     actions: {

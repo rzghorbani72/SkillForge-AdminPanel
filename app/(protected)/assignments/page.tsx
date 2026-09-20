@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -62,7 +63,8 @@ export default function AssignmentsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubLoading, setIsSubLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [courseFilter, setCourseFilter] = useState('');
+  const searchParams = useSearchParams();
+  const [courseFilter, setCourseFilter] = useState(searchParams.get('course_id') ?? '');
   const [statusFilter, setStatusFilter] = useState<SubmissionStatus | 'ALL'>('ALL');
   const [currentPage, setCurrentPage] = useState(1);
   const [subPage, setSubPage] = useState(1);
