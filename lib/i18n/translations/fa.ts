@@ -6989,6 +6989,14 @@ export const fa = {
     loadAttemptsFailed: 'بارگذاری تلاش‌ها ناموفق بود.',
     openAttemptFailed: 'باز کردن تلاش ناموفق بود.',
     finalizeFailed: 'ثبت نهایی نمره ناموفق بود.',
+    editQuiz: 'ویرایش آزمون',
+    description: 'توضیح آزمون',
+    editQuestion: 'ویرایش سؤال',
+    saveChanges: 'ذخیره تغییرات',
+    moveUp: 'انتقال به بالا',
+    moveDown: 'انتقال به پایین',
+    lockedByAttempts:
+      'دانشجویان این آزمون را داده‌اند؛ سؤال‌ها قابل تغییر نیستند. عنوان و نمرهٔ قبولی هنوز قابل ویرایش است.',
     type: {
       MULTIPLE_CHOICE: 'چندگزینه‌ای',
       TRUE_FALSE: 'درست / نادرست',

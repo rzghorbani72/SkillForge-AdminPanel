@@ -3503,6 +3503,14 @@ export const ar = {
     loadAttemptsFailed: 'تعذر تحميل المحاولات.',
     openAttemptFailed: 'تعذر فتح المحاولة.',
     finalizeFailed: 'تعذر اعتماد الدرجة.',
+    editQuiz: 'تعديل الاختبار',
+    description: 'وصف الاختبار',
+    editQuestion: 'تعديل السؤال',
+    saveChanges: 'حفظ التغييرات',
+    moveUp: 'نقل لأعلى',
+    moveDown: 'نقل لأسفل',
+    lockedByAttempts:
+      'أجرى الطلاب هذا الاختبار بالفعل؛ لا يمكن تغيير الأسئلة. لا يزال بالإمكان تعديل العنوان ودرجة النجاح.',
     type: {
       MULTIPLE_CHOICE: 'اختيار من متعدد',
       TRUE_FALSE: 'صح / خطأ',

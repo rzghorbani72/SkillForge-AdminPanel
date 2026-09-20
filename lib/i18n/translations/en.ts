@@ -6992,6 +6992,14 @@ export const en = {
     loadAttemptsFailed: 'Failed to load attempts.',
     openAttemptFailed: 'Failed to open the attempt.',
     finalizeFailed: 'Failed to finalize the grade.',
+    editQuiz: 'Edit quiz',
+    description: 'Quiz description',
+    editQuestion: 'Edit question',
+    saveChanges: 'Save changes',
+    moveUp: 'Move up',
+    moveDown: 'Move down',
+    lockedByAttempts:
+      'Students have already taken this quiz; questions can no longer change. Title and passing score can still be edited.',
     type: {
       MULTIPLE_CHOICE: 'Multiple choice',
       TRUE_FALSE: 'True / false',

@@ -3560,6 +3560,14 @@ export const tr = {
     loadAttemptsFailed: 'Denemeler yüklenemedi.',
     openAttemptFailed: 'Deneme açılamadı.',
     finalizeFailed: 'Puan kesinleştirilemedi.',
+    editQuiz: 'Sınavı düzenle',
+    description: 'Sınav açıklaması',
+    editQuestion: 'Soruyu düzenle',
+    saveChanges: 'Değişiklikleri kaydet',
+    moveUp: 'Yukarı taşı',
+    moveDown: 'Aşağı taşı',
+    lockedByAttempts:
+      'Öğrenciler bu sınava girdi; sorular artık değiştirilemez. Başlık ve geçme notu hâlâ düzenlenebilir.',
     type: {
       MULTIPLE_CHOICE: 'Çoktan seçmeli',
       TRUE_FALSE: 'Doğru / yanlış',
