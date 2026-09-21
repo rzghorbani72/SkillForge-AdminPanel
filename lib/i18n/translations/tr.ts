@@ -3169,6 +3169,12 @@ export const tr = {
     resetConfirmAction: 'Sürümümü sil',
     originalLockedBadge: 'Orijinal şablon — yalnızca görüntüleme',
     customizedBadge: 'Özelleştirilmiş',
+    quickApplyLabel: 'Kullan ve yayınla',
+    quickApplyConfirmTitle: 'Şablonu sitenizde yayınla',
+    quickApplyConfirmBody:
+      '"{{name}}" şablonu mevcut sitenizin yerine geçer ve hemen yayınlanır. Önce düzenlemek için "Tam önizleme" seçin.',
+    quickApplyConfirmAction: 'Yayınla',
+    quickApplySuccess: '"{{name}}" şablonu yayında',
     coverLoading: 'Önizleme yükleniyor…',
     saveTemplate: 'Şablonu kaydet',
     saveAndPublish: 'Kaydet ve yayınla',

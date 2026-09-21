@@ -3114,6 +3114,12 @@ export const ar = {
     resetConfirmAction: 'حذف نسختي',
     originalLockedBadge: 'قالب أصلي — للعرض فقط',
     customizedBadge: 'مخصص',
+    quickApplyLabel: 'استخدام ونشر',
+    quickApplyConfirmTitle: 'نشر القالب على موقعك',
+    quickApplyConfirmBody:
+      'سيحل القالب «{{name}}» محل موقعك الحالي ويُنشر فوراً. للتعديل أولاً اختر «معاينة كاملة».',
+    quickApplyConfirmAction: 'نشر',
+    quickApplySuccess: 'تم نشر القالب «{{name}}»',
     coverLoading: 'جارٍ تحميل المعاينة…',
     saveTemplate: 'حفظ القالب',
     saveAndPublish: 'حفظ ونشر',

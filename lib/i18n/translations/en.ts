@@ -6535,6 +6535,12 @@ export const en = {
     resetConfirmAction: 'Delete my version',
     originalLockedBadge: 'Original template — view only',
     customizedBadge: 'Customized',
+    quickApplyLabel: 'Use & publish',
+    quickApplyConfirmTitle: 'Publish template to your site',
+    quickApplyConfirmBody:
+      'Template "{{name}}" will replace your current site and go live immediately. To edit first, choose "Full preview".',
+    quickApplyConfirmAction: 'Publish',
+    quickApplySuccess: 'Template "{{name}}" is now live',
     coverLoading: 'Loading preview…',
     saveTemplate: 'Save template',
     saveAndPublish: 'Save and publish',

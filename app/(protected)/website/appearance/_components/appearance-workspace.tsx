@@ -73,6 +73,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 // outward-facing steps ask first.
 type PendingSave =
   | { kind: 'publish' }
+  | { kind: 'quickApply'; preset: TemplatePreset }
   | { kind: 'reset' }
   | { kind: 'delete'; preset: TemplatePreset };
 
@@ -577,16 +578,20 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
 
   // Quick apply: apply the preset and publish it live without opening the
   // editor — the fast path for a returning manager who knows the template.
-  const handleQuickApply = async (preset: TemplatePreset) => {
+  // A customized copy keeps its saved theme; only catalog presets seed one.
+  const doQuickApply = async (preset: TemplatePreset) => {
     try {
       setIsPreviewLoading(true);
       await apiClient.applyTemplatePreset(preset.id);
-      const ds = getDesignSystem(presetSourceKey(preset));
-      const { name: _omit, ...themeSeed } = buildThemePayload(ds);
-      await apiClient.saveThemeDraft(themeSeed);
+      if (preset.visibility !== 'DEDICATED') {
+        const ds = getDesignSystem(presetSourceKey(preset));
+        const { name: _omit, ...themeSeed } = buildThemePayload(ds);
+        await apiClient.saveThemeDraft(themeSeed);
+      }
       await apiClient.publishSite();
       setActivePresetId(preset.id);
-      ErrorHandler.showSuccess(`قالب «${preset.name}» منتشر شد`);
+      hasUnpublishedRef.current = false;
+      ErrorHandler.showSuccess(t('sitePreview.quickApplySuccess', { name: preset.name }));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -1175,6 +1180,22 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
             onCancel={closeConfirm}
           />
         );
+      case 'quickApply': {
+        const { preset } = pendingSave;
+        return (
+          <TemplateConfirmDialog
+            open
+            title={t('sitePreview.quickApplyConfirmTitle')}
+            description={t('sitePreview.quickApplyConfirmBody', { name: preset.name })}
+            confirmLabel={t('sitePreview.quickApplyConfirmAction')}
+            onConfirm={() => {
+              closeConfirm();
+              void doQuickApply(preset);
+            }}
+            onCancel={closeConfirm}
+          />
+        );
+      }
       case 'reset':
         return (
           <TemplateConfirmDialog
@@ -1585,7 +1606,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               storefrontBaseUrl={galleryStorefrontUrl}
               getBaseCover={getBaseCover}
               onSelect={openTemplate}
-              onQuickApply={handleQuickApply}
+              onQuickApply={(preset) => setPendingSave({ kind: 'quickApply', preset })}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
               onRate={handleRate}
             />
@@ -1597,7 +1618,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               presets={filteredPlatform}
               activePresetId={activePresetId}
               onSelect={openTemplate}
-              onQuickApply={handleQuickApply}
+              onQuickApply={(preset) => setPendingSave({ kind: 'quickApply', preset })}
               onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
               onRate={handleRate}
               onCoverUploaded={(preset, url) =>

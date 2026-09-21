@@ -323,7 +323,7 @@ function GalleryCard({
               className="pointer-events-auto inline-flex items-center gap-1.5 rounded-lg border border-white/40 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-white/10"
             >
               <Check className="h-3 w-3" />
-              انتخاب سریع
+              {t('sitePreview.quickApplyLabel')}
             </span>
           )}
         </div>

@@ -6537,6 +6537,12 @@ export const fa = {
     resetConfirmAction: 'حذف نسخهٔ من',
     originalLockedBadge: 'قالب اصلی — فقط نمایش',
     customizedBadge: 'سفارشی‌شده',
+    quickApplyLabel: 'استفاده و انتشار',
+    quickApplyConfirmTitle: 'انتشار قالب روی سایت',
+    quickApplyConfirmBody:
+      'قالب «{{name}}» جایگزین سایت فعلی شما می‌شود و فوراً منتشر می‌شود. برای ویرایش قبل از انتشار، «پیش‌نمایش کامل» را انتخاب کنید.',
+    quickApplyConfirmAction: 'انتشار',
+    quickApplySuccess: 'قالب «{{name}}» منتشر شد',
     coverLoading: 'در حال بارگذاری پیش‌نمایش…',
     saveTemplate: 'ذخیره قالب',
     saveAndPublish: 'ذخیره و انتشار',
