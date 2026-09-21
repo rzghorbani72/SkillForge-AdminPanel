@@ -20,6 +20,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { blockTypeLabelKey } from '@/components/ui-template/block-type-picker';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -166,12 +167,17 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     storefrontBaseRef.current = storefrontBase;
   }, [storefrontBase]);
   const mediaPickerRef = useRef<TemplateMediaPickerHandle>(null);
+  // Section names for the canvas toolbar, keyed by block type.
+  const blockLabelsRef = useRef<Record<string, string>>({});
   // Stable ref so the message handler always sees the latest blocks without
   // re-registering the listener on every keystroke.
   const draftBlocksRef = useRef(draftBlocks);
   useEffect(() => {
     draftBlocksRef.current = draftBlocks;
-  }, [draftBlocks]);
+    blockLabelsRef.current = Object.fromEntries(
+      draftBlocks.map((b) => [b.type, t(blockTypeLabelKey(b.type)) || b.type]),
+    );
+  }, [draftBlocks, t]);
   // Ref for handleBlockConfigChange — initialised to a no-op and patched after
   // the function is declared further below (avoids "used before declaration").
   const handleBlockConfigChangeRef = useRef<
@@ -247,6 +253,10 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       // scrolling, so a save-triggered reload keeps the manager in place.
       if (data.type === 'ready') {
         previewLoadingRef.current = false;
+        previewIframeRef.current?.contentWindow?.postMessage(
+          { source: 'template-admin', type: 'block-labels', labels: blockLabelsRef.current },
+          getPreviewPostMessageTarget(storefrontBaseRef.current),
+        );
         postHighlight(selectedBlockIdRef.current, false);
         if (rebuildQueuedRef.current) {
           rebuildQueuedRef.current = false;

@@ -28,7 +28,6 @@ function moveItem<T>(arr: T[], from: number, to: number): T[] {
 
 interface SectionRowProps {
   block: UIBlockConfig;
-  index: number;
   selected: boolean;
   swappable: boolean;
   // Header/footer are structural: they cannot be dragged, hidden or deleted.
@@ -46,7 +45,6 @@ interface SectionRowProps {
 
 function SectionRow({
   block,
-  index,
   selected,
   swappable,
   structural,
@@ -98,23 +96,20 @@ function SectionRow({
           : isPlaceholder
             ? 'border-dashed border-zinc-300 bg-zinc-50/80 hover:border-blue-400'
             : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50'
-      } ${structural ? '' : 'cursor-grab active:cursor-grabbing'}`}
+      } cursor-pointer`}
     >
       {structural ? (
         <span className="w-4 flex-shrink-0" />
       ) : (
-        <GripVertical className="h-4 w-4 flex-shrink-0 text-zinc-300 group-hover:text-zinc-500" />
+        <GripVertical className="h-4 w-4 flex-shrink-0 cursor-grab text-zinc-300 active:cursor-grabbing group-hover:text-zinc-500" />
       )}
-
-      <span className="w-4 flex-shrink-0 text-center text-[10px] font-medium text-zinc-400">
-        {index}
-      </span>
 
       <span
         className={`flex min-w-0 flex-1 items-center gap-1.5 text-right text-xs font-medium ${
-          visible ? 'text-zinc-800' : 'text-zinc-400 line-through'
+          visible ? 'text-zinc-800' : 'text-zinc-400'
         }`}
       >
+        {!visible && <EyeOff className="h-3 w-3 flex-shrink-0" />}
         <span className="truncate">{schema.name}</span>
         {isPlaceholder && (
           <span className="flex-shrink-0 text-[9px] font-medium text-blue-600">+</span>
@@ -225,13 +220,12 @@ export function SidebarSectionList({
         {t('sitePreview.sectionOrder')}
       </p>
 
-      {header && <SectionRow {...rowProps(header)} index={1} structural {...structuralDrag} />}
+      {header && <SectionRow {...rowProps(header)} structural {...structuralDrag} />}
 
       {middle.map((block, i) => (
         <SectionRow
           key={block.id}
           {...rowProps(block)}
-          index={i + (header ? 2 : 1)}
           structural={false}
           dropBefore={dragIndex !== null && overIndex === i && dragIndex !== i}
           onDragStart={() => setDragIndex(i)}
@@ -241,14 +235,7 @@ export function SidebarSectionList({
         />
       ))}
 
-      {footer && (
-        <SectionRow
-          {...rowProps(footer)}
-          index={middle.length + (header ? 2 : 1)}
-          structural
-          {...structuralDrag}
-        />
-      )}
+      {footer && <SectionRow {...rowProps(footer)} structural {...structuralDrag} />}
 
       <button
         type="button"
