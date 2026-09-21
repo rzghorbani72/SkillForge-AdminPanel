@@ -16,9 +16,12 @@ import {
   type AcademyAddress,
 } from '@/lib/academy-site-url';
 import { cn } from '@/lib/utils';
+import { useVisitSiteGate, type VisitClick } from './use-visit-site-gate';
 
 interface VisitSiteLinkProps {
-  academy: AcademyAddress | null | undefined;
+  academy: (AcademyAddress & { id?: string }) | null | undefined;
+  /** Ask once per academy whether to keep the auto-picked template before opening the site. */
+  askTemplateChoice?: boolean;
   variant?: 'outline' | 'ghost' | 'secondary';
   size?: 'sm' | 'icon';
   /** Icon-only rendering keeps the header compact on small screens. */
@@ -34,6 +37,7 @@ function SiteLinkAnchor({
   variant,
   size,
   className,
+  onClick,
 }: {
   href: string;
   label: string;
@@ -42,6 +46,7 @@ function SiteLinkAnchor({
   variant: VisitSiteLinkProps['variant'];
   size: VisitSiteLinkProps['size'];
   className?: string;
+  onClick?: VisitClick;
 }) {
   return (
     <Button
@@ -50,7 +55,7 @@ function SiteLinkAnchor({
       size={iconOnly ? 'icon' : size}
       className={cn('gap-1.5', className)}
     >
-      <a href={href} target="_blank" rel="noopener noreferrer" title={label}>
+      <a href={href} target="_blank" rel="noopener noreferrer" title={label} onClick={onClick}>
         <ExternalLink className="h-4 w-4" />
         {!iconOnly && <span>{host ? `${label} · ${host}` : label}</span>}
       </a>
@@ -60,73 +65,83 @@ function SiteLinkAnchor({
 
 export function VisitSiteLink({
   academy,
+  askTemplateChoice = false,
   variant = 'outline',
   size = 'sm',
   iconOnly = false,
   className,
 }: VisitSiteLinkProps) {
   const { t } = useTranslation();
+  const { guard, dialog } = useVisitSiteGate(academy?.id ?? null, askTemplateChoice);
   const urls = resolveAcademySiteUrls(academy);
-  const hasBoth = Boolean(urls.subdomain && urls.public);
   const singleHref = academySiteUrl(academy);
 
   if (!singleHref) return null;
 
   const visitLabel = t('academy.visitSite');
 
-  if (!hasBoth) {
+  if (!urls.subdomain || !urls.public) {
     return (
-      <SiteLinkAnchor
-        href={singleHref}
-        label={visitLabel}
-        iconOnly={iconOnly}
-        variant={variant}
-        size={size}
-        className={className}
-      />
+      <>
+        <SiteLinkAnchor
+          href={singleHref}
+          label={visitLabel}
+          iconOnly={iconOnly}
+          variant={variant}
+          size={size}
+          className={className}
+          onClick={guard(singleHref)}
+        />
+        {dialog}
+      </>
     );
   }
 
-  const subdomainHost = academySiteHost(urls.subdomain!);
-  const publicHost = academySiteHost(urls.public!);
+  const subdomainHost = academySiteHost(urls.subdomain);
+  const publicHost = academySiteHost(urls.public);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant={variant}
-          size={iconOnly ? 'icon' : size}
-          className={cn('gap-1.5', className)}
-          title={t('academy.visitSiteChoose')}
-        >
-          <ExternalLink className="h-4 w-4" />
-          {!iconOnly && <span>{visitLabel}</span>}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[14rem]">
-        <DropdownMenuItem asChild>
-          <a
-            href={urls.subdomain!}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex cursor-pointer flex-col items-start gap-0.5"
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={variant}
+            size={iconOnly ? 'icon' : size}
+            className={cn('gap-1.5', className)}
+            title={t('academy.visitSiteChoose')}
           >
-            <span className="font-medium">{t('academy.visitSiteSubdomain')}</span>
-            <span className="text-xs text-muted-foreground">{subdomainHost}</span>
-          </a>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a
-            href={urls.public!}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex cursor-pointer flex-col items-start gap-0.5"
-          >
-            <span className="font-medium">{t('academy.visitSiteCustomDomain')}</span>
-            <span className="text-xs text-muted-foreground">{publicHost}</span>
-          </a>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            <ExternalLink className="h-4 w-4" />
+            {!iconOnly && <span>{visitLabel}</span>}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-[14rem]">
+          <DropdownMenuItem asChild>
+            <a
+              href={urls.subdomain}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={guard(urls.subdomain)}
+              className="flex cursor-pointer flex-col items-start gap-0.5"
+            >
+              <span className="font-medium">{t('academy.visitSiteSubdomain')}</span>
+              <span className="text-xs text-muted-foreground">{subdomainHost}</span>
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a
+              href={urls.public}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={guard(urls.public)}
+              className="flex cursor-pointer flex-col items-start gap-0.5"
+            >
+              <span className="font-medium">{t('academy.visitSiteCustomDomain')}</span>
+              <span className="text-xs text-muted-foreground">{publicHost}</span>
+            </a>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {dialog}
+    </>
   );
 }

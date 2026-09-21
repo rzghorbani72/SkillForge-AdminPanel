@@ -90,6 +90,11 @@ export const LOG_CATALOG = {
         level: 'info',
         fields: ['step'] as const,
       },
+      TemplateChoiceMade: {
+        description: 'Onboarding template choice made.',
+        level: 'info',
+        fields: ['choice'] as const,
+      },
     },
   },
   RequestStorm: {

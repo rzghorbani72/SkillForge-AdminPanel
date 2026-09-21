@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from '@/components/ui/link';
 import { BookOpen, Check, ExternalLink, Globe, LayoutTemplate, X } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -10,8 +11,9 @@ import { useStore } from '@/hooks/useStore';
 import { buildAcademySiteUrl } from '@/lib/website/academy-site-url';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logging/app-logger';
-import { apiClient } from '@/lib/api';
 import { SETUP_STEPS, useSetupChecklist, type SetupStepId } from './use-setup-checklist';
+import { TemplateChoiceDialog, type TemplateChoice } from './template-choice-dialog';
+import { useTemplateChoiceGate } from './use-template-choice-gate';
 
 const STEP_META: Record<
   SetupStepId,
@@ -50,24 +52,16 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
   const enabled =
     !!user && !isPlatformStaff(user) && user.isSelfRegisteredManager === true && !!selectedAcademy;
 
-  // A template already applied to this academy counts as done, whether or not
-  // this browser ever ticked the step.
-  const [hasTemplate, setHasTemplate] = useState(false);
+  const [choiceOpen, setChoiceOpen] = useState(false);
+  const router = useRouter();
   const academyId = selectedAcademy?.id ?? null;
 
-  useEffect(() => {
-    if (!enabled || !academyId) return;
-    let cancelled = false;
-    void (async () => {
-      const data = await apiClient.getCurrentUITemplate().catch(() => null);
-      if (cancelled) return;
-      const preset = (data as { template_preset?: string | null } | null)?.template_preset;
-      setHasTemplate(!!preset);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, academyId]);
+  // A template already applied to this academy counts as done, whether or not
+  // this browser ever ticked the step.
+  const { hasTemplate, presetKey, shouldAsk, markChoiceMade } = useTemplateChoiceGate(
+    academyId,
+    enabled,
+  );
 
   const { visible, done, completedCount, markDone, dismiss } = useSetupChecklist({
     academyId,
@@ -84,6 +78,17 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
     shown.current = true;
     logger.ok('Onboarding', 'SetupBannerShown', {});
   }, [visible]);
+
+  const confirmTemplateChoice = (choice: TemplateChoice) => {
+    markChoiceMade(choice);
+    setChoiceOpen(false);
+    if (choice === 'choose') {
+      router.push(STEP_META.template.href);
+      return;
+    }
+    markDone('visit');
+    window.open(siteUrl, '_blank', 'noreferrer');
+  };
 
   if (!visible) return null;
 
@@ -148,13 +153,19 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
           }
 
           if (meta.href === 'site') {
+            const onVisit = shouldAsk
+              ? (event: React.MouseEvent) => {
+                  event.preventDefault();
+                  setChoiceOpen(true);
+                }
+              : onStepClick;
             return (
               <li key={step}>
                 <a
                   href={href}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={onStepClick}
+                  onClick={onVisit}
                   className={className}
                 >
                   {body}
@@ -172,6 +183,13 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
           );
         })}
       </ol>
+
+      <TemplateChoiceDialog
+        open={choiceOpen}
+        presetKey={presetKey}
+        onConfirm={confirmTemplateChoice}
+        onClose={() => setChoiceOpen(false)}
+      />
     </div>
   );
 }

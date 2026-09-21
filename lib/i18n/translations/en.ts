@@ -1029,12 +1029,20 @@ export const en = {
     noAcademyDescription:
       'Your account was created by an academy manager. Nothing shows here until they add you to their academy.',
     setupBannerTitle: 'Get your academy live',
-    setupBannerDescription: '{done} of 4 steps done — finish these to start teaching.',
+    setupBannerDescription: '{{done}} of 4 steps done — finish these to start teaching.',
     setupStepWebsite: 'Create or edit your academy website',
     setupStepTemplate: 'Choose a template',
     setupStepCourse: 'Add a course',
     setupStepVisit: 'Visit your website',
     setupDismiss: 'Dismiss setup checklist',
+    templateChoiceTitle: 'Your website is ready',
+    templateChoiceDescription:
+      'We already applied a template so your site is live. Keep it, or pick another one before you look.',
+    templateChoiceDefault: 'Use the template we picked (recommended)',
+    templateChoiceDefaultHint: 'Open your website now. You can change the template any time.',
+    templateChoiceDefaultHintNamed: 'Current template: {{name}}. You can change it any time.',
+    templateChoiceOwn: 'Choose a template myself',
+    templateChoiceOwnHint: 'Go to the template gallery and pick the design you like.',
   },
 
   auth: {

@@ -27,6 +27,7 @@ export default function Header() {
           <AcademySelector />
           <VisitSiteLink
             academy={academy}
+            askTemplateChoice
             iconOnly
             className="hidden rounded-full sm:inline-flex"
           />

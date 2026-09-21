@@ -1031,6 +1031,14 @@ export const fa = {
     setupStepCourse: 'افزودن دوره',
     setupStepVisit: 'مشاهده وب‌سایت',
     setupDismiss: 'بستن راهنمای راه‌اندازی',
+    templateChoiceTitle: 'وب‌سایت شما آماده است',
+    templateChoiceDescription:
+      'یک قالب به‌صورت خودکار روی سایت شما اعمال شده است. همین را نگه دارید یا قبل از دیدن سایت، قالب دیگری انتخاب کنید.',
+    templateChoiceDefault: 'استفاده از قالب انتخاب‌شده توسط پلتفرم (پیشنهادی)',
+    templateChoiceDefaultHint: 'همین حالا وب‌سایت را ببینید. هر زمان می‌توانید قالب را عوض کنید.',
+    templateChoiceDefaultHintNamed: 'قالب فعلی: {{name}}. هر زمان می‌توانید آن را عوض کنید.',
+    templateChoiceOwn: 'خودم قالب را انتخاب می‌کنم',
+    templateChoiceOwnHint: 'به گالری قالب‌ها بروید و طرح دلخواه را انتخاب کنید.',
   },
 
   auth: {

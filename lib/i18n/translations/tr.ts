@@ -628,12 +628,22 @@ export const tr = {
     noAcademyDescription:
       'Hesabınız bir akademi yöneticisi tarafından oluşturuldu. Sizi akademisine ekleyene kadar burada bir şey görünmez.',
     setupBannerTitle: 'Akademinizi yayına alın',
-    setupBannerDescription: '{done} / 4 adım tamamlandı — eğitime başlamak için bunları bitirin.',
+    setupBannerDescription: '{{done}} / 4 adım tamamlandı — eğitime başlamak için bunları bitirin.',
     setupStepWebsite: 'Akademi sitesini oluşturun veya düzenleyin',
     setupStepTemplate: 'Şablon seçin',
     setupStepCourse: 'Kurs ekleyin',
     setupStepVisit: 'Siteyi ziyaret edin',
     setupDismiss: 'Kurulum listesini kapat',
+    templateChoiceTitle: 'Web siteniz hazır',
+    templateChoiceDescription:
+      'Siteniz yayında olsun diye otomatik bir şablon uyguladık. Onu koruyun ya da bakmadan önce başka bir şablon seçin.',
+    templateChoiceDefault: 'Seçtiğimiz şablonu kullan (önerilen)',
+    templateChoiceDefaultHint:
+      'Sitenizi şimdi açın. Şablonu istediğiniz zaman değiştirebilirsiniz.',
+    templateChoiceDefaultHintNamed:
+      'Mevcut şablon: {{name}}. İstediğiniz zaman değiştirebilirsiniz.',
+    templateChoiceOwn: 'Şablonu kendim seçeyim',
+    templateChoiceOwnHint: 'Şablon galerisine gidip beğendiğiniz tasarımı seçin.',
   },
 
   auth: {

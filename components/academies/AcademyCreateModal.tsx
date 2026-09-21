@@ -121,7 +121,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent dir="rtl" className="gap-0 rounded-2xl sm:max-w-3xl sm:p-8">
+      <DialogContent dir="rtl" className="max-h-[90dvh] gap-0 rounded-2xl sm:max-w-3xl sm:p-6">
         <DialogHeader className="space-y-1.5 text-start">
           <DialogTitle className="text-xl font-semibold">
             {t('stores.createModalHeading')}
@@ -133,8 +133,8 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
 
         {/* Two columns keep the dialog short: what the academy is on one side,
             how it looks on the other. */}
-        <div className="mt-6 grid gap-x-8 gap-y-8 sm:grid-cols-12">
-          <div className="space-y-5 sm:col-span-7">
+        <div className="mt-4 grid gap-x-8 gap-y-6 sm:grid-cols-12">
+          <div className="space-y-4 sm:col-span-7">
             <p className="text-xs font-medium text-muted-foreground">
               {t('stores.sectionIdentity')}
             </p>
@@ -183,7 +183,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder={t('stores.shortDescriptionPlaceholder')}
-                rows={3}
+                rows={2}
                 className="resize-none"
               />
             </div>
@@ -191,7 +191,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
 
           {/* A hairline instead of a filled panel: it separates branding from
               the identity fields without adding another box to read. */}
-          <div className="space-y-5 sm:col-span-5 sm:border-s sm:border-border/60 sm:ps-8">
+          <div className="space-y-4 sm:col-span-5 sm:border-s sm:border-border/60 sm:ps-8">
             <p className="text-xs font-medium text-muted-foreground">
               {t('stores.sectionBranding')}
               <span className="ms-1.5">{t('stores.optionalTag')}</span>
@@ -228,12 +228,12 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
           </div>
         </div>
 
-        <DialogFooter className="mt-7 flex-row justify-end gap-3 border-t border-border/60 pt-5 sm:space-x-0">
+        <DialogFooter className="mt-5 flex-row justify-end gap-3 border-t border-border/60 pt-4 sm:space-x-0">
           <button
             type="button"
             disabled={saving}
             onClick={handleClose}
-            className="inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-60"
+            className="inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-60"
           >
             {t('stores.cancel')}
           </button>
@@ -242,7 +242,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
             type="button"
             disabled={!canSubmit}
             onClick={handleSubmit}
-            className="inline-flex h-11 min-w-[10rem] items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
+            className="inline-flex h-10 min-w-[10rem] items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
             {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             {t('common.create')}

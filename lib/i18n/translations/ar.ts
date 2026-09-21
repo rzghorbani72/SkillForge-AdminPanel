@@ -623,12 +623,20 @@ export const ar = {
     noAcademyDescription:
       'تم إنشاء حسابك بواسطة مدير أكاديمية. لن يظهر شيء هنا حتى يضيفك إلى أكاديميته.',
     setupBannerTitle: 'جهّز أكاديميتك',
-    setupBannerDescription: '{done} من 4 خطوات مكتملة — أنهِ هذه الخطوات لتبدأ التعليم.',
+    setupBannerDescription: '{{done}} من 4 خطوات مكتملة — أنهِ هذه الخطوات لتبدأ التعليم.',
     setupStepWebsite: 'إنشاء أو تعديل موقع الأكاديمية',
     setupStepTemplate: 'اختيار قالب',
     setupStepCourse: 'إضافة دورة',
     setupStepVisit: 'زيارة الموقع',
     setupDismiss: 'إخفاء قائمة الإعداد',
+    templateChoiceTitle: 'موقعك جاهز',
+    templateChoiceDescription:
+      'طبّقنا قالبًا تلقائيًا ليكون موقعك متاحًا. احتفظ به أو اختر قالبًا آخر قبل المشاهدة.',
+    templateChoiceDefault: 'استخدام القالب الذي اخترناه (موصى به)',
+    templateChoiceDefaultHint: 'افتح موقعك الآن. يمكنك تغيير القالب في أي وقت.',
+    templateChoiceDefaultHintNamed: 'القالب الحالي: {{name}}. يمكنك تغييره في أي وقت.',
+    templateChoiceOwn: 'أختار القالب بنفسي',
+    templateChoiceOwnHint: 'انتقل إلى معرض القوالب واختر التصميم الذي يعجبك.',
   },
 
   auth: {
