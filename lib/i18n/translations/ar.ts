@@ -3112,8 +3112,12 @@ export const ar = {
     resetConfirmTitle: 'العودة إلى القالب الأصلي؟',
     resetConfirmBody: 'سيتم حذف نسختك المخصصة ويعود القالب الأصلي. لا يمكن التراجع عن ذلك.',
     resetConfirmAction: 'حذف نسختي',
-    originalLockedBadge: 'قالب أصلي — للعرض فقط',
+    originalLockedBadge: 'تُحفظ تعديلاتك في نسخة أكاديميتك الخاصة؛ القالب الأصلي يبقى كما هو',
     customizedBadge: 'مخصص',
+    publishToSite: 'نشر على الموقع',
+    publishedState: 'منشور',
+    publishing: 'جارٍ النشر...',
+    publishDone: 'تم نشر القالب على موقعك',
     quickApplyLabel: 'استخدام ونشر',
     quickApplyConfirmTitle: 'نشر القالب على موقعك',
     quickApplyConfirmBody:

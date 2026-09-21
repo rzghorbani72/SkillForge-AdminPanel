@@ -15,6 +15,8 @@ import {
   Undo2,
   Redo2,
   Database,
+  Save,
+  Globe,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -48,11 +50,7 @@ import {
   TemplateMediaPicker,
   type TemplateMediaPickerHandle,
 } from '@/components/ui-template/template-media-picker';
-import {
-  TemplateSection,
-  resolveTemplateColors,
-  getTemplateCategory,
-} from '@/components/ui-template/gallery-cards';
+import { TemplateSection, getTemplateCategory } from '@/components/ui-template/gallery-cards';
 import { CATEGORY_LABELS, type TemplateCategory } from '@/constants/template-names';
 import type {
   BorderRadius,
@@ -599,12 +597,15 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     }
   };
 
+  // Publish implies save: the manager's copy is persisted first so the live
+  // site and the gallery never disagree, and nothing is lost on template swap.
   const doPublish = async () => {
     setIsPublishing(true);
     try {
+      if (!(isAdmin && isPublicPreset)) await persistDraft();
       await apiClient.publishSite();
       setIsApplied(true);
-      ErrorHandler.showSuccess('قالب با موفقیت روی سایت منتشر شد');
+      ErrorHandler.showSuccess(t('sitePreview.publishDone'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -685,24 +686,28 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   // One save for managers: it always lands on this academy's single copy of the
   // selected template, created on first save and updated afterwards. No dialog,
   // no name to invent — the manager just gets a confirmation snackbar.
+  const persistDraft = async () => {
+    if (!selectedPreset) return;
+    await flushStyleDraft();
+    await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
+    if (isAdmin && isPublicPreset) {
+      await apiClient.overridePublicTemplate(selectedPreset.id, { blocks: draftBlocks });
+    } else {
+      const saved = (await apiClient.saveDraftAsTemplate()) as TemplatePreset | null | undefined;
+      if (saved) setSelectedPreset(saved);
+    }
+    await refreshPresets();
+    markDraftSaved();
+  };
+
   const doSave = async () => {
     if (!selectedPreset || isSaving) return;
     setIsSaving(true);
     try {
-      await flushStyleDraft();
-      await apiClient.saveUITemplateDraft({ blocks: draftBlocks });
-      if (isAdmin && isPublicPreset) {
-        await apiClient.overridePublicTemplate(selectedPreset.id, {
-          blocks: draftBlocks,
-        });
-        ErrorHandler.showSuccess(t('sitePreview.saveOriginalDone'));
-      } else {
-        const saved = (await apiClient.saveDraftAsTemplate()) as TemplatePreset | null | undefined;
-        if (saved) setSelectedPreset(saved);
-        ErrorHandler.showSuccess(t('sitePreview.saveCopyDone'));
-      }
-      await refreshPresets();
-      markDraftSaved();
+      await persistDraft();
+      ErrorHandler.showSuccess(
+        t(isAdmin && isPublicPreset ? 'sitePreview.saveOriginalDone' : 'sitePreview.saveCopyDone'),
+      );
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -1255,8 +1260,6 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
   // ── Preview / editor mode ─────────────────────────────────────────────────
 
   if (selectedPreset) {
-    const ds = getDesignSystem(presetSourceKey(selectedPreset));
-    const colors = resolveTemplateColors(selectedPreset);
     const isEditingMaster = isAdmin && isPublicPreset && showCustomizer;
 
     // Live-preview context for the hero design picker — needs a storefront URL
@@ -1388,15 +1391,6 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               ))}
             </div>
 
-            {ds.tagline && (
-              <span
-                className="rounded-full px-2.5 py-1 text-[10px] font-semibold text-white"
-                style={{ background: colors.primary }}
-              >
-                {ds.tagline}
-              </span>
-            )}
-
             <Button
               size="sm"
               onClick={() => setShowCustomizer((v) => !v)}
@@ -1421,24 +1415,40 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
 
             <Button
               size="sm"
-              onClick={() => setPendingSave({ kind: 'publish' })}
-              disabled={isApplied || isPublishing}
-              className="h-8 gap-1.5 bg-red-500 px-3 text-xs font-semibold text-white hover:bg-red-600 disabled:opacity-70"
+              variant="outline"
+              title="Ctrl+S"
+              onClick={doSave}
+              disabled={isSaving || isPublishing}
+              className="h-8 gap-1.5 px-3 text-xs font-semibold"
             >
-              {isApplied ? (
-                <>
-                  <Check className="h-3.5 w-3.5" />
-                  منتشر شد
-                </>
-              ) : isPublishing ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  در حال انتشار...
-                </>
+              {isSaving ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                'انتشار در سایت'
+                <Save className="h-3.5 w-3.5" />
               )}
+              {t('sitePreview.saveSiteChanges')}
             </Button>
+
+            {isApplied ? (
+              <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-700">
+                <Check className="h-3.5 w-3.5" />
+                {t('sitePreview.publishedState')}
+              </span>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() => setPendingSave({ kind: 'publish' })}
+                disabled={isPublishing || isSaving}
+                className="h-8 gap-1.5 bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700"
+              >
+                {isPublishing ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Globe className="h-3.5 w-3.5" />
+                )}
+                {isPublishing ? t('sitePreview.publishing') : t('sitePreview.publishToSite')}
+              </Button>
+            )}
 
             <VisitSiteLink academy={currentAcademy} variant="ghost" />
           </div>
@@ -1477,7 +1487,6 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               onReset={() => setPendingSave({ kind: 'reset' })}
               isOriginalSelected={isPublicPreset}
               saveMode={saveMode}
-              onSave={doSave}
               onClose={() => setShowCustomizer(false)}
               onCloseSection={() => setSelectedBlockId(null)}
               selectedBlockId={selectedBlockId}

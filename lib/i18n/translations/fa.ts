@@ -6535,8 +6535,13 @@ export const fa = {
     resetConfirmBody:
       'نسخهٔ سفارشی‌شدهٔ شما حذف می‌شود و قالب اصلی برمی‌گردد. این کار قابل بازگشت نیست.',
     resetConfirmAction: 'حذف نسخهٔ من',
-    originalLockedBadge: 'قالب اصلی — فقط نمایش',
+    originalLockedBadge:
+      'تغییرات شما در نسخهٔ اختصاصی آکادمی ذخیره می‌شود؛ قالب اصلی دست‌نخورده می‌ماند',
     customizedBadge: 'سفارشی‌شده',
+    publishToSite: 'انتشار در سایت',
+    publishedState: 'منتشر شده',
+    publishing: 'در حال انتشار...',
+    publishDone: 'قالب با موفقیت روی سایت منتشر شد',
     quickApplyLabel: 'استفاده و انتشار',
     quickApplyConfirmTitle: 'انتشار قالب روی سایت',
     quickApplyConfirmBody:

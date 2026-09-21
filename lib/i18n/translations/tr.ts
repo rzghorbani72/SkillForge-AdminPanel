@@ -3167,8 +3167,13 @@ export const tr = {
     resetConfirmBody:
       'Özelleştirilmiş sürümünüz silinir ve orijinal şablon geri gelir. Bu işlem geri alınamaz.',
     resetConfirmAction: 'Sürümümü sil',
-    originalLockedBadge: 'Orijinal şablon — yalnızca görüntüleme',
+    originalLockedBadge:
+      'Düzenlemeleriniz akademinizin kendi kopyasına kaydedilir; orijinal şablon değişmez',
     customizedBadge: 'Özelleştirilmiş',
+    publishToSite: 'Siteye yayınla',
+    publishedState: 'Yayında',
+    publishing: 'Yayınlanıyor...',
+    publishDone: 'Şablon sitenizde yayınlandı',
     quickApplyLabel: 'Kullan ve yayınla',
     quickApplyConfirmTitle: 'Şablonu sitenizde yayınla',
     quickApplyConfirmBody:

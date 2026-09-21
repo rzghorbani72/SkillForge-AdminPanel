@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, RotateCcw, Save, Globe, Palette, Layers, Lock } from 'lucide-react';
+import { X, RotateCcw, Globe, Palette, Layers, Copy, Wand2 } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
 import type {
   BorderRadius,
@@ -58,7 +58,6 @@ export interface TemplateCustomizationSidebarProps {
   /** True while a public original is selected and no copy exists yet. */
   isOriginalSelected?: boolean;
   saveMode?: SaveMode;
-  onSave?: () => void;
   onClose: () => void;
   onCloseSection: () => void;
   selectedBlockId?: string | null;
@@ -98,7 +97,6 @@ export function TemplateCustomizationSidebar({
   onReset,
   isOriginalSelected,
   saveMode,
-  onSave,
   onClose,
   onCloseSection,
   selectedBlockId,
@@ -109,12 +107,6 @@ export function TemplateCustomizationSidebar({
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('sections');
   const isAdminEditing = saveMode === 'admin-override';
-
-  // One save, one label. A manager's save always lands on their own copy, so
-  // there is nothing left to disambiguate in the wording.
-  const saveLabel = isAdminEditing
-    ? t('sitePreview.saveAndPublish')
-    : t('sitePreview.saveSiteChanges');
 
   // Selecting a section in the preview should reveal its editor, which lives in
   // the Sections tab.
@@ -135,7 +127,11 @@ export function TemplateCustomizationSidebar({
       {/* Header */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-zinc-200 px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-base">{isAdminEditing ? '🌐' : '🤖'}</span>
+          {isAdminEditing ? (
+            <Globe className="h-4 w-4 text-amber-600" />
+          ) : (
+            <Wand2 className="h-4 w-4 text-zinc-500" />
+          )}
           <span className="text-sm font-semibold text-zinc-900">
             {isAdminEditing ? t('sitePreview.sidebarTitleAdmin') : t('sitePreview.sidebarTitle')}
           </span>
@@ -150,11 +146,11 @@ export function TemplateCustomizationSidebar({
         </button>
       </div>
 
-      {/* Originals are read-only for managers: editing forks into their own
-          copy, so say that up front instead of letting the save surprise them. */}
+      {/* Editing a catalog template forks it into the academy's own copy, so
+          say that up front instead of letting the save surprise them. */}
       {!isAdminEditing && isOriginalSelected && (
         <div className="flex items-start gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-2 text-[11px] leading-relaxed text-zinc-600">
-          <Lock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+          <Copy className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
           {t('sitePreview.originalLockedBadge')}
         </div>
       )}
@@ -235,27 +231,14 @@ export function TemplateCustomizationSidebar({
         )}
       </div>
 
-      {/* Footer – save buttons + reset */}
-      <div className="flex-shrink-0 space-y-2 border-t border-zinc-200 p-4">
-        {onSave && (
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={isSaving}
-            title="Ctrl+S"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
-          >
-            <Save className="h-4 w-4" />
-            {saveLabel}
-          </button>
-        )}
-
+      {/* Footer – destructive reset only; save/publish live in the top bar */}
+      <div className="flex flex-shrink-0 justify-center border-t border-zinc-200 px-4 py-2">
         <button
           type="button"
           onClick={onReset}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
         >
-          <RotateCcw className="h-4 w-4" />
+          <RotateCcw className="h-3.5 w-3.5" />
           {t('sitePreview.resetToOriginal')}
         </button>
       </div>

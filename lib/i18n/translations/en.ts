@@ -6533,8 +6533,13 @@ export const en = {
     resetConfirmBody:
       'Your customized version is deleted and the original template comes back. This cannot be undone.',
     resetConfirmAction: 'Delete my version',
-    originalLockedBadge: 'Original template — view only',
+    originalLockedBadge:
+      "Your edits are saved to your academy's own copy; the original template stays untouched",
     customizedBadge: 'Customized',
+    publishToSite: 'Publish to site',
+    publishedState: 'Published',
+    publishing: 'Publishing...',
+    publishDone: 'Template published to your site',
     quickApplyLabel: 'Use & publish',
     quickApplyConfirmTitle: 'Publish template to your site',
     quickApplyConfirmBody:
