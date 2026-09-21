@@ -145,6 +145,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder={t('stores.academyNamePlaceholder')}
+                dir="auto"
                 autoFocus
               />
             </div>

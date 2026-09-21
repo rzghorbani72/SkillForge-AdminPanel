@@ -58,6 +58,7 @@ export function RegisterDetailsForm({
       <AuthField
         label={t('auth.fullName')}
         autoComplete="name"
+        dir="auto"
         error={errors.name?.message}
         disabled={loading}
         {...form.register('name')}
