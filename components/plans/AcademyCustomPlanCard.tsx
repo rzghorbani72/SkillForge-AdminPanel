@@ -45,7 +45,6 @@ const LIMIT_FIELDS: Array<{
   { key: 'storage_gb', labelKey: 'storageGb' },
   { key: 'monthly_traffic_gb', labelKey: 'monthlyTrafficGb' },
   { key: 'videos', labelKey: 'videos' },
-  { key: 'dedicated_templates', labelKey: 'dedicatedTemplates' },
 ];
 
 export function AcademyCustomPlanCard({ academyId, t }: Props) {
