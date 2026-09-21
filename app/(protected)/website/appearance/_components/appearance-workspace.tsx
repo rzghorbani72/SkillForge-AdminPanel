@@ -233,6 +233,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         fileName?: string;
         mimeType?: string;
         kind?: 'image' | 'video';
+        progressKey?: string;
         buffer?: ArrayBuffer;
         message?: string;
       };
@@ -315,7 +316,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               source: 'template-admin',
               type: 'media-uploading',
               blockId: data.blockId,
-              fieldKey: data.fieldKey,
+              fieldKey: data.progressKey ?? data.fieldKey,
               uploading,
               percent,
             },
