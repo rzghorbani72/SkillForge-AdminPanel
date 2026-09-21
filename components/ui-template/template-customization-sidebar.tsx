@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X, RotateCcw, Globe, Palette, Layers, Copy, Wand2 } from 'lucide-react';
 import type { UIBlockConfig } from '@/types/api';
 import type {
@@ -108,9 +108,14 @@ export function TemplateCustomizationSidebar({
   const [tab, setTab] = useState<Tab>('style');
   const isAdminEditing = saveMode === 'admin-override';
 
-  // Selecting a section in the preview should reveal its editor, which lives in
-  // the Sections tab.
+  // The sidebar always opens on Appearance; only a fresh section pick in the
+  // preview moves it to Sections, where that section's editor lives.
+  const isFirstRender = useRef(true);
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     if (selectedBlockId) setTab('sections');
   }, [selectedBlockId]);
 
