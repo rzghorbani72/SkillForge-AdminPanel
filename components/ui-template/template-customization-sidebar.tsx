@@ -105,7 +105,7 @@ export function TemplateCustomizationSidebar({
   academyName,
 }: TemplateCustomizationSidebarProps) {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<Tab>('sections');
+  const [tab, setTab] = useState<Tab>('style');
   const isAdminEditing = saveMode === 'admin-override';
 
   // Selecting a section in the preview should reveal its editor, which lives in

@@ -6536,10 +6536,16 @@ export const en = {
     originalLockedBadge:
       "Your edits are saved to your academy's own copy; the original template stays untouched",
     customizedBadge: 'Customized',
+    visitUnpublishedTitle: 'This template is not live yet',
+    visitUnpublishedBody:
+      'Your public site still shows the previous version. Press "Publish to site" to apply the current template and edits.',
     publishToSite: 'Publish to site',
     publishedState: 'Published',
     publishing: 'Publishing...',
-    publishDone: 'Template published to your site',
+    publishDone:
+      'Template published. It may take about 30 seconds to appear on your site; refresh the page a few times.',
+    publishHint:
+      'It may take about 30 seconds to appear on your site; if you still see the old version, refresh the page.',
     quickApplyLabel: 'Use & publish',
     quickApplyConfirmTitle: 'Publish template to your site',
     quickApplyConfirmBody:

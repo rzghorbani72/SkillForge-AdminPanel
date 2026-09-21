@@ -17,6 +17,7 @@ import {
   Database,
   Save,
   Globe,
+  ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -72,6 +73,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 type PendingSave =
   | { kind: 'publish' }
   | { kind: 'quickApply'; preset: TemplatePreset }
+  | { kind: 'visitUnpublished' }
   | { kind: 'reset' }
   | { kind: 'delete'; preset: TemplatePreset };
 
@@ -589,7 +591,9 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
       await apiClient.publishSite();
       setActivePresetId(preset.id);
       hasUnpublishedRef.current = false;
-      ErrorHandler.showSuccess(t('sitePreview.quickApplySuccess', { name: preset.name }));
+      ErrorHandler.showSuccess(
+        `${t('sitePreview.quickApplySuccess', { name: preset.name })} ${t('sitePreview.publishHint')}`,
+      );
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
@@ -1176,8 +1180,22 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
           <TemplateConfirmDialog
             open
             title="انتشار قالب در سایت"
-            description="قالب و تنظیمات فعلی روی سایت عمومی آکادمی شما منتشر می‌شود."
+            description={`قالب و تنظیمات فعلی روی سایت عمومی آکادمی شما منتشر می‌شود. ${t('sitePreview.publishHint')}`}
             confirmLabel="انتشار"
+            onConfirm={() => {
+              closeConfirm();
+              void doPublish();
+            }}
+            onCancel={closeConfirm}
+          />
+        );
+      case 'visitUnpublished':
+        return (
+          <TemplateConfirmDialog
+            open
+            title={t('sitePreview.visitUnpublishedTitle')}
+            description={t('sitePreview.visitUnpublishedBody')}
+            confirmLabel={t('sitePreview.publishToSite')}
             onConfirm={() => {
               closeConfirm();
               void doPublish();
@@ -1450,7 +1468,21 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               </Button>
             )}
 
-            <VisitSiteLink academy={currentAcademy} variant="ghost" />
+            {isApplied ? (
+              <VisitSiteLink academy={currentAcademy} variant="ghost" />
+            ) : (
+              // The live site still shows the previous version; say so instead
+              // of letting the manager hunt for edits that were never published.
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => setPendingSave({ kind: 'visitUnpublished' })}
+              >
+                <ExternalLink className="h-4 w-4" />
+                {t('academy.visitSite')}
+              </Button>
+            )}
           </div>
         </div>
 

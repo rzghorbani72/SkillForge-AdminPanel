@@ -3170,10 +3170,16 @@ export const tr = {
     originalLockedBadge:
       'Düzenlemeleriniz akademinizin kendi kopyasına kaydedilir; orijinal şablon değişmez',
     customizedBadge: 'Özelleştirilmiş',
+    visitUnpublishedTitle: 'Bu şablon henüz sitede yayında değil',
+    visitUnpublishedBody:
+      'Herkese açık siteniz hâlâ önceki sürümü gösteriyor. Mevcut şablonu ve düzenlemeleri uygulamak için "Siteye yayınla"ya basın.',
     publishToSite: 'Siteye yayınla',
     publishedState: 'Yayında',
     publishing: 'Yayınlanıyor...',
-    publishDone: 'Şablon sitenizde yayınlandı',
+    publishDone:
+      'Şablon yayınlandı. Sitenizde görünmesi yaklaşık 30 saniye sürebilir; sayfayı birkaç kez yenileyin.',
+    publishHint:
+      'Sitenizde görünmesi yaklaşık 30 saniye sürebilir; hâlâ eski sürümü görüyorsanız sayfayı yenileyin.',
     quickApplyLabel: 'Kullan ve yayınla',
     quickApplyConfirmTitle: 'Şablonu sitenizde yayınla',
     quickApplyConfirmBody:

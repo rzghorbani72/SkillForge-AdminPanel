@@ -3114,10 +3114,14 @@ export const ar = {
     resetConfirmAction: 'حذف نسختي',
     originalLockedBadge: 'تُحفظ تعديلاتك في نسخة أكاديميتك الخاصة؛ القالب الأصلي يبقى كما هو',
     customizedBadge: 'مخصص',
+    visitUnpublishedTitle: 'هذا القالب لم يُطبَّق على الموقع بعد',
+    visitUnpublishedBody:
+      'لا يزال موقعك العام يعرض النسخة السابقة. اضغط «نشر على الموقع» لتطبيق القالب والتعديلات الحالية.',
     publishToSite: 'نشر على الموقع',
     publishedState: 'منشور',
     publishing: 'جارٍ النشر...',
-    publishDone: 'تم نشر القالب على موقعك',
+    publishDone: 'تم نشر القالب. قد يستغرق الظهور على موقعك نحو ٣٠ ثانية؛ حدّث الصفحة عدة مرات.',
+    publishHint: 'قد يستغرق الظهور على موقعك نحو ٣٠ ثانية؛ إذا رأيت النسخة القديمة فحدّث الصفحة.',
     quickApplyLabel: 'استخدام ونشر',
     quickApplyConfirmTitle: 'نشر القالب على موقعك',
     quickApplyConfirmBody:
