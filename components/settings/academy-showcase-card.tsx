@@ -13,9 +13,9 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { resolveMediaUrl } from '@/lib/media-url';
 
 /**
- * Landing-page showcase shots. These are platform editorial — the marketing site
- * pairs the desktop image with the mobile one for every academy it features — so
- * the card is only rendered for platform admins, and the API rejects anyone else.
+ * Mentoma landing showcase shots for this academy. Desktop is the samples
+ * banner; mobile pairs with it on the public academies directory. Listing on
+ * the marketing site is still controlled by platform `listed_publicly`.
  */
 export function AcademyShowcaseCard() {
   const { t } = useTranslation();
@@ -23,8 +23,6 @@ export function AcademyShowcaseCard() {
   const mobile = useImageUpload();
   const [saving, setSaving] = useState(false);
 
-  // Detail endpoint still works when staff is inside one academy; the
-  // academies list now also returns these two fields for the dashboard modal.
   const load = useCallback(async () => {
     try {
       const data = await apiClient.getCurrentAcademyDetail();
@@ -60,7 +58,7 @@ export function AcademyShowcaseCard() {
   };
 
   return (
-    <Card>
+    <Card id="showcase">
       <CardHeader>
         <CardTitle>{t('settings.showcaseTitle')}</CardTitle>
         <CardDescription>{t('settings.showcaseDescription')}</CardDescription>

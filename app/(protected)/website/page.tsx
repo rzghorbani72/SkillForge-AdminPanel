@@ -6,6 +6,7 @@ import {
   ExternalLink,
   FileText,
   Globe,
+  ImageIcon,
   Layout,
   Newspaper,
   Search,
@@ -71,6 +72,13 @@ export default function WebsiteHubPage() {
       title: t('website.cards.brandingTitle'),
       description: t('website.cards.brandingDescription'),
       tone: HUB_TONES.rose,
+    },
+    {
+      href: '/settings/academy#showcase',
+      icon: ImageIcon,
+      title: t('website.cards.showcaseTitle'),
+      description: t('website.cards.showcaseDescription'),
+      tone: HUB_TONES.sky,
     },
   ];
 

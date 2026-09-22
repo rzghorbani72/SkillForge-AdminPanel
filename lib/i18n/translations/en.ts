@@ -3355,16 +3355,16 @@ export const en = {
     uploadingPhoto: 'Uploading…',
     changePhoto: 'Change Photo',
     storeSettingsTitle: 'Academy Details',
-    showcaseTitle: 'Landing page showcase',
+    showcaseTitle: 'Landing page banner',
     showcaseDescription:
-      'Two photos for the public landing: the square card and the phone screen. Platform admins only.',
-    showcaseDesktop: 'Card photo',
+      'Photos shown on Mentoma’s public landing when your academy is listed. Desktop is the samples banner; mobile appears in the academies directory.',
+    showcaseDesktop: 'Desktop banner',
     showcaseDesktopHint:
-      'Square photo for the landing card — 1080 x 1080 pixels works best, keep the file small for faster loading',
+      'Wide screenshot of your site — about 1280 × 720 pixels works best; keep the file small for faster loading',
     showcaseMobile: 'Phone screenshot',
     showcaseMobileHint:
-      'Mobile site screenshot inside the phone frame — 390 x 844 pixels works best, keep the file small for faster loading',
-    showcaseSaved: 'Showcase images saved',
+      'Mobile site screenshot for the phone frame — about 390 × 844 pixels works best; keep the file small for faster loading',
+    showcaseSaved: 'Landing banner saved',
     storeSettingsSubtitle: 'Sets your academy name, site address, and description on the platform.',
     academyFeaturesTitle: 'Learning features',
     academyFeaturesDescription:
@@ -6308,6 +6308,9 @@ export const en = {
       domainDescription: 'Connect your own domain and set up its DNS.',
       brandingTitle: 'Name & branding',
       brandingDescription: 'Academy name, address, logo, favicon and brand colour.',
+      showcaseTitle: 'Landing banner',
+      showcaseDescription:
+        'Upload the desktop and mobile photos shown on Mentoma’s public landing.',
     },
     seo: {
       title: 'Search & sharing',

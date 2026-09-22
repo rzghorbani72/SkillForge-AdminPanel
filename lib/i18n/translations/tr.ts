@@ -1640,16 +1640,16 @@ export const tr = {
     uploadingPhoto: 'Yükleniyor…',
     changePhoto: 'Fotoğrafı Değiştir',
     storeSettingsTitle: 'Akademi Bilgileri',
-    showcaseTitle: 'Tanıtım sayfası vitrini',
+    showcaseTitle: 'Tanıtım sayfası afişi',
     showcaseDescription:
-      'Tanıtım için iki görsel: kare kart ve telefon ekranı. Yalnızca platform yöneticileri.',
-    showcaseDesktop: 'Kart fotoğrafı',
+      'Akademiniz herkese açık listede olduğunda Mentoma tanıtım sayfasında gösterilen görseller. Masaüstü örnekler afişidir; mobil akademiler dizininde görünür.',
+    showcaseDesktop: 'Masaüstü afişi',
     showcaseDesktopHint:
-      'Tanıtım kartı için kare fotoğraf — en iyisi 1080 x 1080 piksel, hızlı yükleme için dosyayı küçük tutun',
+      'Sitenizin geniş ekran görüntüsü — yaklaşık 1280 × 720 piksel uygundur; hızlı yükleme için dosyayı küçük tutun',
     showcaseMobile: 'Telefon ekran görüntüsü',
     showcaseMobileHint:
-      'Telefon çerçevesindeki mobil site görüntüsü — en iyisi 390 x 844 piksel, hızlı yükleme için dosyayı küçük tutun',
-    showcaseSaved: 'Vitrin görselleri kaydedildi',
+      'Telefon çerçevesindeki mobil site görüntüsü — yaklaşık 390 × 844 piksel uygundur; hızlı yükleme için dosyayı küçük tutun',
+    showcaseSaved: 'Tanıtım afişi kaydedildi',
     storeSettingsSubtitle: 'Enstitünüzün آکادمی ekosisteminde nasıl göründüğünü yönetin.',
     generalInformation: 'Genel Bilgiler',
     generalInformationDescription: 'Enstitünüzün adını, açıklamasını ve alan adını güncelleyin.',

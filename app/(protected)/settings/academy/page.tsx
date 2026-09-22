@@ -15,8 +15,6 @@ import { AcademyFeaturesCard } from '@/components/settings/academy-features-card
 import { AcademyTeacherShareCard } from '@/components/settings/academy-teacher-share-card';
 import { AcademySiteStatusCard } from '@/components/settings/academy-site-status-card';
 import { AcademyShowcaseCard } from '@/components/settings/academy-showcase-card';
-import { useAuthUser } from '@/hooks/useAuthUser';
-import { isPlatformAdmin } from '@/lib/roles';
 import {
   AcademyEditForm,
   buildAcademyThemePatch,
@@ -27,7 +25,6 @@ export default function AcademySettingsPage() {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const { academy, isLoading, refresh } = useSettingsData();
-  const { user } = useAuthUser();
 
   const handleSave = async (data: AcademyEditPayload) => {
     try {
@@ -102,7 +99,7 @@ export default function AcademySettingsPage() {
             onSaved={refresh}
           />
           <AcademySiteStatusCard academyName={academy.name ?? ''} />
-          {isPlatformAdmin(user) ? <AcademyShowcaseCard /> : null}
+          <AcademyShowcaseCard />
         </div>
 
         <div className="space-y-4">
