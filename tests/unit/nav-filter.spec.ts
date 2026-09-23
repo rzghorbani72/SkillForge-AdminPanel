@@ -112,8 +112,9 @@ test.describe('sidebar shape', () => {
   // The manager-facing sidebar is the product's front door: a long flat list is
   // the complexity we removed, so the top level stays scannable without scrolling.
   test('a manager gets a short top level', () => {
-    // Worst case: every learning capability on, so nothing is filtered away.
-    const items = filterNavItems(navItems, {
+    // Worst case: every learning capability on → Teaching group appears.
+    // Typical (recorded-only academy): Teaching is gone → one fewer item.
+    const withTeaching = filterNavItems(navItems, {
       ...MANAGER,
       learningVisibility: {
         students: true,
@@ -122,46 +123,53 @@ test.describe('sidebar shape', () => {
         tutoring: true,
       },
     });
-    expect(items.length).toBeLessThanOrEqual(10);
+    expect(withTeaching.length).toBeLessThanOrEqual(10);
+
+    const typical = filterNavItems(navItems, MANAGER);
+    expect(typical.length).toBeLessThanOrEqual(9);
+    expect(typical.some((item) => item.title === 'Teaching')).toBe(false);
   });
 
   // The daily destinations must be one click away, not hidden in a group.
   test('the everyday screens sit at the top level', () => {
     const items = filterNavItems(navItems, MANAGER);
-    for (const href of ['/dashboard', '/courses', '/users']) {
+    for (const href of ['/dashboard', '/courses', '/users', '/website', '/settings', '/support']) {
       expect(
         items.some((item) => item.href === href),
         href,
       ).toBe(true);
     }
-    expect(items.some((item) => item.title === 'Website')).toBe(true);
   });
 
-  test('website destinations live under the Website group', () => {
+  test('website is a single hub link', () => {
     const items = filterNavItems(navItems, MANAGER);
     const website = items.find((item) => item.title === 'Website');
-    expect(website?.href).toBeUndefined();
-    expect(website?.children?.map((child) => child.href)).toEqual([
-      '/website',
-      '/website/appearance/list',
-      '/website/pages',
-      '/website/seo',
-      '/website/trust',
-      '/website/domain',
-    ]);
+    expect(website?.href).toBe('/website');
+    expect(website?.children).toBeUndefined();
   });
 
-  test('support destinations live under the Support group', () => {
+  test('support is a single hub link', () => {
     const items = filterNavItems(navItems, MANAGER);
     const support = items.find((item) => item.title === 'Support');
-    expect(support?.href).toBeUndefined();
-    expect(support?.children?.map((child) => child.href)).toEqual([
-      '/support',
-      '/support/email',
-      '/support/faq',
-      '/support/phone',
-      '/support/suggestion',
+    expect(support?.href).toBe('/support');
+    expect(support?.children).toBeUndefined();
+  });
+
+  test('money destinations live under one Money group', () => {
+    const items = filterNavItems(navItems, MANAGER);
+    const money = items.find((item) => item.label === 'financeHub');
+    expect(money?.keepGrouped).toBe(true);
+    expect(money?.children?.map((child) => child.href)).toEqual([
+      '/financial/academy',
+      '/financial/academy/settlement',
+      '/financial/academy/settlement#teacher-share',
+      '/coupons',
+      '/financial/academy/platform-invoices',
+      '/plans',
+      '/coupons/plan-vouchers',
     ]);
+    expect(items.some((item) => item.label === 'academyFinanceHub')).toBe(false);
+    expect(items.some((item) => item.label === 'platformFinanceHub')).toBe(false);
   });
 
   test('every group holds at least two children, unless keepGrouped', () => {
@@ -175,14 +183,6 @@ test.describe('sidebar shape', () => {
         expect(item.children.length, `group "${item.title}"`).toBeGreaterThan(1);
       }
     }
-  });
-
-  test('platform finance hub stays grouped even with only vouchers', () => {
-    const items = filterNavItems(navItems, MANAGER);
-    const hub = items.find((item) => item.label === 'platformFinanceHub');
-    expect(hub?.keepGrouped).toBe(true);
-    expect(hub?.children?.some((c) => c.href === '/coupons/plan-vouchers')).toBe(true);
-    expect(items.some((item) => item.href === '/coupons/plan-vouchers')).toBe(false);
   });
 
   test('the nesting never goes deeper than one level', () => {
@@ -236,10 +236,11 @@ test.describe('route scope honesty', () => {
     }
   });
 
-  test('roles management is reachable for a manager', () => {
+  test('settings hub is reachable for a manager (roles live inside it)', () => {
     const items = flatten(filterNavItems(navItems, MANAGER));
-    expect(titles(items)).toContain('Roles & Permissions');
-    const roles = items.find((item) => item.title === 'Roles & Permissions');
-    expect(roles?.href).toBe('/settings/roles');
+    expect(titles(items)).toContain('Settings');
+    const settings = items.find((item) => item.title === 'Settings');
+    expect(settings?.href).toBe('/settings');
+    expect(titles(items)).not.toContain('Roles & Permissions');
   });
 });

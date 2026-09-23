@@ -787,6 +787,7 @@ export const tr = {
   },
   teacherShare: {
     note: 'Bu akademide öğretmen payı her satışın {{teacher}}’i, {{academy}}’i akademiye gider; bu oranı yönetici belirler.',
+    changeRate: 'Oranı değiştir',
   },
   teacherEarnings: {
     title: 'Kazançlarım',

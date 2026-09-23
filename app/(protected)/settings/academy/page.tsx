@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { AcademyFeaturesCard } from '@/components/settings/academy-features-card';
-import { AcademyTeacherShareCard } from '@/components/settings/academy-teacher-share-card';
+import { TEACHER_SHARE_HREF } from '@/components/settings/academy-teacher-share-card';
 import { AcademySiteStatusCard } from '@/components/settings/academy-site-status-card';
 import { AcademyShowcaseCard } from '@/components/settings/academy-showcase-card';
 import {
@@ -94,10 +94,17 @@ export default function AcademySettingsPage() {
           </Card>
 
           <AcademyFeaturesCard />
-          <AcademyTeacherShareCard
-            teacherShareRate={academy.teacher_share_rate}
-            onSaved={refresh}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('settings.teacherShareTitle')}</CardTitle>
+              <CardDescription>{t('settings.teacherShareMovedDescription')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" asChild>
+                <Link href={TEACHER_SHARE_HREF}>{t('settings.teacherShareMovedCta')}</Link>
+              </Button>
+            </CardContent>
+          </Card>
           <AcademySiteStatusCard academyName={academy.name ?? ''} />
           <AcademyShowcaseCard />
         </div>

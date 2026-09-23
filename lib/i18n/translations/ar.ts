@@ -778,6 +778,7 @@ export const ar = {
   },
   teacherShare: {
     note: 'في هذه الأكاديمية حصة المعلم {{teacher}} من كل عملية بيع و{{academy}} للأكاديمية؛ يحدد المدير هذه النسبة.',
+    changeRate: 'تغيير النسبة',
   },
   teacherEarnings: {
     title: 'أرباحي',

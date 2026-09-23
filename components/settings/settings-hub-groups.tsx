@@ -1,9 +1,21 @@
 'use client';
 
-import { Building, CreditCard, Layers, Layout, Shield, ShieldCheck, User, Zap } from 'lucide-react';
+import {
+  Building,
+  CreditCard,
+  HardDrive,
+  Layers,
+  Layout,
+  Percent,
+  Shield,
+  ShieldCheck,
+  User,
+  Zap,
+} from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScopeBadge } from '@/components/settings/scope-badge';
 import { HUB_TONES, TintedNavCard, type HubCardTone } from '@/components/settings/tinted-nav-card';
+import { TEACHER_SHARE_HREF } from '@/components/settings/academy-teacher-share-card';
 import { useAcademySubscription } from '@/hooks/use-academy-subscription';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatNumber } from '@/lib/utils';
@@ -124,83 +136,123 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
     ],
   };
 
-  const platformGroup: HubGroup = {
-    title: t('settings.groupPlatform'),
-    description: t('settings.groupPlatformDescription'),
-    scope: 'platform',
-    items: isPlatformAdmin
-      ? [
-          {
-            title: t('settings.platformPricingTitle'),
-            description: t('settings.platformPricingDescription'),
-            href: '/platform/pricing',
-            icon: Building,
-            scope: 'platform',
-            tone: HUB_TONES.violet,
-          },
-          {
-            title: t('settings.paymentGatewayTitle'),
-            description: t('settings.paymentGatewayDescription'),
-            href: '/settings/payment-gateway',
-            icon: CreditCard,
-            scope: 'platform',
-            tone: HUB_TONES.teal,
-          },
-        ]
-      : [
-          {
-            title: t('settings.storeSettings'),
-            description: t('settings.storeSettingsPlatformDescription'),
-            href: '/settings/academy',
-            icon: Building,
-            scope: 'platform',
-            tone: HUB_TONES.rose,
-          },
-        ],
-  };
+  if (isPlatformAdmin) {
+    const platformGroup: HubGroup = {
+      title: t('settings.groupPlatform'),
+      description: t('settings.groupPlatformDescription'),
+      scope: 'platform',
+      items: [
+        {
+          title: t('settings.platformPricingTitle'),
+          description: t('settings.platformPricingDescription'),
+          href: '/platform/pricing',
+          icon: Building,
+          scope: 'platform',
+          tone: HUB_TONES.violet,
+        },
+        {
+          title: t('settings.paymentGatewayTitle'),
+          description: t('settings.paymentGatewayDescription'),
+          href: '/settings/payment-gateway',
+          icon: CreditCard,
+          scope: 'platform',
+          tone: HUB_TONES.teal,
+        },
+      ],
+    };
+
+    return (
+      <div className="space-y-8">
+        {[personalGroup, platformGroup].map((group) => (
+          <section key={group.scope} className="space-y-4">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-lg font-semibold">{group.title}</h2>
+                <ScopeBadge scope={group.scope} />
+              </div>
+              <p className="text-sm text-muted-foreground">{group.description}</p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {group.items.map((item) => (
+                <HubCard key={item.href} item={item} />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    );
+  }
 
   const academyGroup: HubGroup = {
     title: t('settings.groupAcademy'),
     description: t('settings.groupAcademyDescription'),
     scope: 'academy',
-    items: isPlatformAdmin
-      ? []
-      : [
-          {
-            title: t('website.title'),
-            description: t('website.description'),
-            href: '/website',
-            icon: Layout,
-            scope: 'academy',
-            tone: HUB_TONES.indigo,
-          },
-          {
-            title: t('settings.studentPlansTitle'),
-            description: t('settings.studentPlansDescription'),
-            href: '/plans?tab=academy',
-            icon: Layers,
-            scope: 'academy',
-            tone: HUB_TONES.emerald,
-          },
-          {
-            title: t('roles.title'),
-            description: t('roles.description'),
-            href: '/settings/roles',
-            icon: ShieldCheck,
-            scope: 'academy',
-            tone: HUB_TONES.amber,
-          },
-        ],
+    items: [
+      {
+        title: t('settings.storeSettings'),
+        description: t('settings.storeSettingsPlatformDescription'),
+        href: '/settings/academy',
+        icon: Building,
+        scope: 'academy',
+        tone: HUB_TONES.rose,
+      },
+      {
+        title: t('website.title'),
+        description: t('website.description'),
+        href: '/website',
+        icon: Layout,
+        scope: 'academy',
+        tone: HUB_TONES.indigo,
+      },
+      {
+        title: t('navigation.storage'),
+        description: t('settings.storageHubDescription'),
+        href: '/settings/storage',
+        icon: HardDrive,
+        scope: 'academy',
+        tone: HUB_TONES.teal,
+      },
+      {
+        title: t('roles.title'),
+        description: t('roles.description'),
+        href: '/settings/roles',
+        icon: ShieldCheck,
+        scope: 'academy',
+        tone: HUB_TONES.amber,
+      },
+    ],
   };
 
-  const groups = [personalGroup, platformGroup, academyGroup].filter(
-    (group) => group.items.length > 0 || group.scope === 'platform',
-  );
+  const moneyGroup: HubGroup = {
+    title: t('settings.groupMoney'),
+    description: t('settings.groupMoneyDescription'),
+    scope: 'academy',
+    items: [
+      {
+        title: t('settings.teacherShareTitle'),
+        description: t('settings.teacherShareHubDescription'),
+        href: TEACHER_SHARE_HREF,
+        icon: Percent,
+        scope: 'academy',
+        tone: HUB_TONES.emerald,
+      },
+      {
+        title: t('settings.studentPlansTitle'),
+        description: t('settings.studentPlansDescription'),
+        href: '/plans?tab=academy',
+        icon: Layers,
+        scope: 'academy',
+        tone: HUB_TONES.sky,
+      },
+    ],
+  };
+
+  const groups = [personalGroup, academyGroup, moneyGroup];
 
   return (
     <div className="space-y-8">
       {groups.map((group) => (
-        <section key={group.scope} className="space-y-4">
+        <section key={`${group.scope}-${group.title}`} className="space-y-4">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-semibold">{group.title}</h2>
@@ -212,7 +264,7 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
             {group.items.map((item) => (
               <HubCard key={item.href} item={item} />
             ))}
-            {!isPlatformAdmin && group.scope === 'platform' ? <PlatformPlanCard /> : null}
+            {group === moneyGroup ? <PlatformPlanCard /> : null}
           </div>
         </section>
       ))}

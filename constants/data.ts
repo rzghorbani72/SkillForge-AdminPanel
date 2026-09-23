@@ -60,22 +60,6 @@ const ACADEMY_SUPPORT_ROLES: NonNullable<NavItem['roles']> = [
   'TEACHER',
 ];
 
-function academySupportItem(
-  title: string,
-  href: string,
-  label: string,
-  icon: IconType = 'help',
-): NavItem {
-  return {
-    title,
-    href,
-    icon,
-    label,
-    roles: ACADEMY_SUPPORT_ROLES,
-    scope: 'academy',
-  };
-}
-
 export const navItems: NavItem[] = [
   // ── Platform mode ──────────────────────────────────────────────────────────
   // The daily destinations stay at the top level; everything a staff member
@@ -404,13 +388,14 @@ export const navItems: NavItem[] = [
       },
     ],
   },
-  // مالی آکادمی — students → academy (income)
+  // Money — student income, settlement / teacher share, and Mentoma bills in one place
   {
-    title: 'Academy Finances',
+    title: 'Money',
     icon: 'dollarSign' as IconType,
-    label: 'academyFinanceHub',
+    label: 'financeHub',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
     scope: 'academy',
+    keepGrouped: true,
     children: [
       {
         title: 'Student Payments',
@@ -429,6 +414,14 @@ export const navItems: NavItem[] = [
         scope: 'academy',
       },
       {
+        title: 'Teacher share',
+        href: '/financial/academy/settlement#teacher-share',
+        icon: 'percent' as IconType,
+        label: 'teacherShareNav',
+        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'MANAGER'],
+        scope: 'academy',
+      },
+      {
         title: 'Student Vouchers',
         href: '/coupons',
         icon: 'percent' as IconType,
@@ -436,17 +429,6 @@ export const navItems: NavItem[] = [
         roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
         scope: 'academy',
       },
-    ],
-  },
-  // مالی پلتفرم — academy → Mentoma (invoices, plan pay, platform vouchers)
-  {
-    title: 'Platform Finances',
-    icon: 'billing' as IconType,
-    label: 'platformFinanceHub',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-    scope: 'academy',
-    keepGrouped: true,
-    children: [
       {
         title: 'Payments to platform',
         href: '/financial/academy/platform-invoices',
@@ -475,60 +457,11 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Website',
+    href: '/website',
     icon: 'layout' as IconType,
     label: 'academyWebsite',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
     scope: 'academy',
-    children: [
-      {
-        title: 'Overview',
-        href: '/website',
-        icon: 'dashboard' as IconType,
-        label: 'websiteOverview',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-      },
-      {
-        title: 'Appearance',
-        href: '/website/appearance/list',
-        icon: 'gallery' as IconType,
-        label: 'websiteAppearance',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-      },
-      {
-        title: 'Pages',
-        href: '/website/pages',
-        icon: 'fileText' as IconType,
-        label: 'websitePages',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-      },
-      {
-        title: 'Search & sharing',
-        href: '/website/seo',
-        icon: 'search' as IconType,
-        label: 'websiteSeo',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-      },
-      {
-        title: 'Trust badge',
-        href: '/website/trust',
-        icon: 'shield' as IconType,
-        label: 'websiteTrust',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-      },
-      {
-        title: 'Domain',
-        href: '/website/domain',
-        icon: 'globe' as IconType,
-        label: 'websiteDomain',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-      },
-    ],
   },
   {
     title: 'My Earnings',
@@ -580,53 +513,21 @@ export const navItems: NavItem[] = [
       },
     ],
   },
-  // The owner's own account and setup, not the academy's day-to-day
   {
-    title: 'Account',
+    title: 'Settings',
+    href: '/settings',
     icon: 'settings' as IconType,
-    label: 'accountHub',
+    label: 'settingsHub',
     roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
     scope: 'academy',
-    children: [
-      {
-        title: 'Settings',
-        href: '/settings',
-        icon: 'settings' as IconType,
-        label: 'settingsHub',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER', 'TEACHER'],
-        scope: 'academy',
-      },
-      {
-        title: 'Storage',
-        href: '/settings/storage',
-        icon: 'hardDrive' as IconType,
-        label: 'storage',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'MANAGER'],
-        scope: 'academy',
-      },
-      {
-        title: 'Roles & Permissions',
-        href: '/settings/roles',
-        icon: 'shield' as IconType,
-        label: 'rolesPermissions',
-        roles: ['MANAGER'],
-        scope: 'academy',
-      },
-    ],
   },
   {
     title: 'Support',
+    href: '/support',
     icon: 'help' as IconType,
     label: 'support',
     roles: ACADEMY_SUPPORT_ROLES,
     scope: 'academy',
-    children: [
-      academySupportItem('Ticketing', '/support', 'ticketing'),
-      academySupportItem('Email', '/support/email', 'supportEmail'),
-      academySupportItem('FAQ', '/support/faq', 'supportFaq'),
-      academySupportItem('Phone number', '/support/phone', 'supportPhone'),
-      academySupportItem('Suggestion', '/support/suggestion', 'supportSuggestion', 'megaphone'),
-    ],
   },
   {
     title: 'My Affiliate',

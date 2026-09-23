@@ -149,7 +149,8 @@ NavItemButton.displayName = 'NavItemButton';
  * child is active, not its Website sibling. -1 = no match.
  */
 function matchScore(href: string, path: string, query: string): number {
-  const [hrefPath, hrefQuery] = href.split('?');
+  const withoutHash = href.split('#')[0] ?? href;
+  const [hrefPath, hrefQuery] = withoutHash.split('?');
   if (hrefQuery) {
     if (path !== hrefPath || !query) return -1;
     const current = new URLSearchParams(query);

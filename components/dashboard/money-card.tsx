@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import Link from '@/components/ui/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
@@ -29,6 +30,8 @@ export type CardModel = {
   /** Whole-percent move against the previous window; null when there is no base. */
   change: number | null;
   meter?: number;
+  /** Optional destination — whole card becomes a link (e.g. teacher share settings). */
+  href?: string;
 };
 
 export const TONE_CLASS = {
@@ -54,52 +57,65 @@ export function MoneyCard({
   const isUp = (card.change ?? 0) >= 0;
   const Trend = isUp ? TrendingUp : TrendingDown;
 
-  return (
-    <Card className="stat-card group flex flex-col">
-      <CardContent className="flex flex-1 flex-col p-0">
-        <div
-          className="w-fit shrink-0 rounded-2xl p-2.5"
-          style={{ background: `${line.slice(0, -1)} / 0.1)` }}
-        >
-          <card.icon className="h-5 w-5" style={{ color: line }} />
-        </div>
+  const body = (
+    <CardContent className="flex flex-1 flex-col p-0">
+      <div
+        className="w-fit shrink-0 rounded-2xl p-2.5"
+        style={{ background: `${line.slice(0, -1)} / 0.1)` }}
+      >
+        <card.icon className="h-5 w-5" style={{ color: line }} />
+      </div>
 
-        <p className="mt-4 text-[13px] font-medium text-muted-foreground">{card.title}</p>
+      <p className="mt-4 text-[13px] font-medium text-muted-foreground">{card.title}</p>
 
-        {isLoading ? (
-          <>
-            <div className="shimmer mt-2 h-7 w-24 rounded-lg" />
-            <div className="shimmer mt-2 h-3 w-32 rounded-full" />
-          </>
-        ) : (
-          <>
-            <div className="mt-1 flex flex-wrap items-baseline gap-2">
-              {card.valueLabel ? (
-                <span className="text-2xl font-bold tracking-tight">{card.valueLabel}</span>
-              ) : (
-                <MoneyValue value={card.value} className={toneClass(card)} />
-              )}
-              {card.change !== null ? (
-                <span
-                  className={cn(
-                    'flex items-center gap-0.5 text-xs font-semibold',
-                    isUp
-                      ? 'text-emerald-600 dark:text-emerald-400'
-                      : 'text-rose-600 dark:text-rose-400',
-                  )}
-                >
-                  <Trend className="h-3.5 w-3.5" />
-                  {percent(Math.abs(card.change))}
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">{card.hint}</p>
-            {card.meter !== undefined ? (
-              <Progress value={card.meter} className="mt-3 h-1.5" />
+      {isLoading ? (
+        <>
+          <div className="shimmer mt-2 h-7 w-24 rounded-lg" />
+          <div className="shimmer mt-2 h-3 w-32 rounded-full" />
+        </>
+      ) : (
+        <>
+          <div className="mt-1 flex flex-wrap items-baseline gap-2">
+            {card.valueLabel ? (
+              <span className="text-2xl font-bold tracking-tight">{card.valueLabel}</span>
+            ) : (
+              <MoneyValue value={card.value} className={toneClass(card)} />
+            )}
+            {card.change !== null ? (
+              <span
+                className={cn(
+                  'flex items-center gap-0.5 text-xs font-semibold',
+                  isUp
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-rose-600 dark:text-rose-400',
+                )}
+              >
+                <Trend className="h-3.5 w-3.5" />
+                {percent(Math.abs(card.change))}
+              </span>
             ) : null}
-          </>
-        )}
-      </CardContent>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">{card.hint}</p>
+          {card.meter !== undefined ? <Progress value={card.meter} className="mt-3 h-1.5" /> : null}
+        </>
+      )}
+    </CardContent>
+  );
+
+  return (
+    <Card
+      className={cn(
+        'stat-card group flex flex-col',
+        card.href && 'transition-colors hover:border-primary/40',
+      )}
+    >
+      {card.href ? (
+        <Link href={card.href} className="flex flex-1 flex-col outline-none">
+          {body}
+        </Link>
+      ) : (
+        body
+      )}
     </Card>
   );
 }

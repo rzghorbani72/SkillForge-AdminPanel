@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,9 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { fromPercent, toPercent } from '@/components/platform/pricing/pricing-helpers';
 
+export const TEACHER_SHARE_HASH = 'teacher-share';
+export const TEACHER_SHARE_HREF = `/financial/academy/settlement#${TEACHER_SHARE_HASH}`;
+
 type Props = {
   teacherShareRate?: number;
   onSaved: () => void;
@@ -20,6 +23,10 @@ export function AcademyTeacherShareCard({ teacherShareRate, onSaved }: Props) {
   const { t } = useTranslation();
   const [value, setValue] = useState(String(toPercent(teacherShareRate ?? 0.7)));
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setValue(String(toPercent(teacherShareRate ?? 0.7)));
+  }, [teacherShareRate]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -37,7 +44,7 @@ export function AcademyTeacherShareCard({ teacherShareRate, onSaved }: Props) {
   };
 
   return (
-    <Card>
+    <Card id={TEACHER_SHARE_HASH}>
       <CardHeader>
         <CardTitle>{t('settings.teacherShareTitle')}</CardTitle>
         <CardDescription>{t('settings.teacherShareDescription')}</CardDescription>

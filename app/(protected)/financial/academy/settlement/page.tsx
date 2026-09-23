@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SettlementBalanceCards } from '@/components/financial/settlement/settlement-balance-cards';
@@ -8,13 +9,27 @@ import { SettlementChannelsTable } from '@/components/financial/settlement/settl
 import { SettlementHistoryTable } from '@/components/financial/settlement/settlement-history-table';
 import { SettlementRequestCard } from '@/components/financial/settlement/settlement-request-card';
 import { useSettlement } from '@/components/financial/settlement/use-settlement';
-import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import {
+  AcademyTeacherShareCard,
+  TEACHER_SHARE_HASH,
+} from '@/components/settings/academy-teacher-share-card';
+import { useCurrentAcademy, useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
+import { useStore } from '@/hooks/useStore';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 export default function SettlementPage() {
   const { t } = useTranslation();
   const academyId = useCurrentAcademyId();
+  const academy = useCurrentAcademy();
+  const { refreshAcademies } = useStore();
   const { summary, history, isLoading, error, reload } = useSettlement(academyId);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.location.hash !== `#${TEACHER_SHARE_HASH}`) return;
+    const el = document.getElementById(TEACHER_SHARE_HASH);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [academyId, isLoading]);
 
   if (!academyId) {
     return (
@@ -33,6 +48,11 @@ export default function SettlementPage() {
         <h1 className="text-2xl font-bold tracking-tight">{t('settlement.title')}</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">{t('settlement.description')}</p>
       </header>
+
+      <AcademyTeacherShareCard
+        teacherShareRate={academy?.teacher_share_rate}
+        onSaved={() => void refreshAcademies()}
+      />
 
       {isLoading ? (
         <div className="space-y-4">

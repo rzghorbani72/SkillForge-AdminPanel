@@ -10,6 +10,7 @@ import {
   Percent,
   Wallet,
 } from 'lucide-react';
+import { TEACHER_SHARE_HREF } from '@/components/settings/academy-teacher-share-card';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn, formatCurrencyWithStore, formatNumber } from '@/lib/utils';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -121,6 +122,7 @@ export default function MoneyCards({
       hint: t('dashboard.money.teacherRateHint'),
       icon: Percent,
       change: null,
+      href: TEACHER_SHARE_HREF,
     },
   ];
 
