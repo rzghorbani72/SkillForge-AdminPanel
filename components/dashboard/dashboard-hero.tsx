@@ -1,7 +1,7 @@
 'use client';
 
-import { DashboardHeroSlideshow } from './dashboard-hero-slideshow';
 import { StatCard } from './StatsCards';
+import { DashboardHeroSlideshow } from './dashboard-hero-slideshow';
 import { DashboardStatsCard } from './useDashboard';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -18,70 +18,79 @@ type Props = {
 };
 
 /**
- * Hero row: two stacked cards, the academy's identity panel, two stacked cards.
- * The centre block is one tall panel rather than a pair, so the row reads as a
- * single composition instead of six equal tiles.
+ * Mildly rectangular banner in the centre, with the four learning metrics
+ * stacked beside it so the row reads as one composition. Charts stay in their
+ * own section.
  */
-export default function DashboardHero({ cards, period, isLoading, loadingLabel }: Props) {
+export default function DashboardHero({
+  cards,
+  period: _period,
+  isLoading,
+  loadingLabel: _loadingLabel,
+}: Props) {
   const academy = useCurrentAcademy();
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
   const isFa = language === 'fa';
   const logoUrl = absoluteUrl(academy?.logo?.publicUrl);
   const [left, right] = [cards.slice(0, 2), cards.slice(2, 4)];
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[0.8fr_1.4fr_0.8fr]">
-      <div className="hero-in hero-in-start flex flex-col gap-4">
-        {left.map((card, i) => (
-          <StatCard
-            key={card.title}
-            card={card}
-            index={i}
-            period={period}
-            isLoading={isLoading}
-            loadingLabel={loadingLabel}
-          />
-        ))}
-      </div>
+    <section className="space-y-3">
+      <h2 className="text-sm font-semibold text-muted-foreground">{t('dashboard.learningRow')}</h2>
 
-      <div className="hero-media hero-in relative order-first min-h-[220px] lg:order-none">
-        <DashboardHeroSlideshow>
-          {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt={academy?.name ?? ''}
-              className="h-24 w-24 rounded-3xl object-cover shadow-lg"
+      <div className="grid gap-3 lg:grid-cols-[0.85fr_1fr_0.85fr] lg:items-stretch">
+        <div className="hero-in hero-in-start flex flex-col gap-3">
+          {left.map((card) => (
+            <StatCard
+              key={card.title}
+              card={card}
+              isLoading={isLoading}
+              className="min-h-0 flex-1"
+              compact
             />
-          ) : (
-            <div className="grid h-24 w-24 place-items-center rounded-3xl bg-white/70 text-3xl font-bold text-primary shadow-lg">
-              {academy?.name?.[0]?.toUpperCase() ?? '?'}
-            </div>
-          )}
-          <h2 className="mt-4 text-lg font-bold">
-            {academy?.name ?? (isFa ? 'آکادمی شما' : 'Your academy')}
-          </h2>
-          {academy?.domain?.public_address && (
-            <p className="mt-1 text-xs text-muted-foreground">{academy.domain.public_address}</p>
-          )}
-          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/60 px-3 py-1 text-[11px] font-semibold text-foreground/80">
-            <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--viz-accent))]" />
-            {isFa ? 'فعال' : 'Active'}
-          </span>
-        </DashboardHeroSlideshow>
-      </div>
+          ))}
+        </div>
 
-      <div className="hero-in hero-in-end flex flex-col gap-4">
-        {right.map((card, i) => (
-          <StatCard
-            key={card.title}
-            card={card}
-            index={i + 2}
-            period={period}
-            isLoading={isLoading}
-            loadingLabel={loadingLabel}
-          />
-        ))}
+        <div className="dashboard-card relative order-first aspect-[5/4] w-full overflow-hidden lg:order-none">
+          <DashboardHeroSlideshow>
+            <div className="flex h-full min-h-0 flex-col items-center justify-center gap-3 p-6 text-center">
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={academy?.name ?? ''}
+                  className="h-20 w-20 rounded-2xl object-cover sm:h-24 sm:w-24"
+                />
+              ) : (
+                <div className="grid h-20 w-20 place-items-center rounded-2xl bg-muted text-2xl font-semibold text-primary sm:h-24 sm:w-24">
+                  {academy?.name?.[0]?.toUpperCase() ?? '?'}
+                </div>
+              )}
+              <div className="min-w-0 px-2">
+                <h3 className="truncate text-base font-semibold sm:text-lg">
+                  {academy?.name ?? (isFa ? 'آکادمی شما' : 'Your academy')}
+                </h3>
+                {academy?.domain?.public_address ? (
+                  <p className="mt-1 truncate text-xs text-muted-foreground">
+                    {academy.domain.public_address}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </DashboardHeroSlideshow>
+        </div>
+
+        <div className="hero-in hero-in-end flex flex-col gap-3">
+          {right.map((card) => (
+            <StatCard
+              key={card.title}
+              card={card}
+              isLoading={isLoading}
+              className="min-h-0 flex-1"
+              compact
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

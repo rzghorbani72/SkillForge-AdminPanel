@@ -156,7 +156,7 @@ export default function DashboardPage() {
               </span>
               {isFa ? 'داده‌های زنده' : 'Live data'}
             </span>
-            <h1 className="mt-2 bg-gradient-to-br from-foreground via-foreground to-primary bg-clip-text text-[26px] font-bold leading-tight text-transparent sm:text-3xl">
+            <h1 className="mt-2 text-[26px] font-bold leading-tight sm:text-3xl">
               {isFa
                 ? `خوش آمدید${firstName ? `، ${firstName}` : ''}`
                 : `Welcome back${firstName ? `, ${firstName}` : ''}`}
@@ -185,7 +185,7 @@ export default function DashboardPage() {
               aria-label={t('dashboard.export.button')}
               disabled={isLoading || money.isLoading || settlement.isLoading}
               onClick={exportReport}
-              className="flex items-center gap-1.5 rounded-full border border-white/80 bg-white/70 px-3.5 py-2 text-sm font-medium text-muted-foreground backdrop-blur-md transition-colors hover:bg-white hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-card px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">{t('dashboard.export.button')}</span>
@@ -217,37 +217,39 @@ export default function DashboardPage() {
             isLoading={money.isLoading || settlement.isLoading}
           />
 
-          {/* Row 3: where the money goes (2/3) + student journey (1/3) */}
-          <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
-            <MoneyFlowChart
-              series={money.series}
-              grain={money.period.grain}
-              period={period}
-              isLoading={money.isLoading}
-            />
-            <ConversionFunnel steps={journeyData} period={period} isLoading={isLoading} />
-          </div>
-
-          {/* Row 4: what the plan still allows before an upgrade is needed */}
-          <PlanLimitsPanel limits={money.limits} isLoading={money.isLoading} />
-
-          {/* Row 5: which course makes the money */}
-          <CourseMoneyTable rows={money.courses} isLoading={money.isLoading} />
-
-          {/* Row 5: which teacher makes the money (1.4/2) + progress (1/2) */}
-          <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-            <TeacherMoneyTable
-              rows={money.teachers}
-              isLoading={money.isLoading}
-              onPayoutRecorded={money.reload}
-            />
+          <section className="space-y-3">
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground">
+                {t('dashboard.chartsSection')}
+              </h2>
+              <p className="text-xs text-muted-foreground">{t('dashboard.chartsSectionHint')}</p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+              <MoneyFlowChart
+                series={money.series}
+                grain={money.period.grain}
+                period={period}
+                isLoading={money.isLoading}
+              />
+              <ConversionFunnel steps={journeyData} period={period} isLoading={isLoading} />
+            </div>
             <CompletionDonut
               segments={statusData}
               completion={overallCompletion}
               period={period}
               isLoading={isLoading}
             />
-          </div>
+          </section>
+
+          <PlanLimitsPanel limits={money.limits} isLoading={money.isLoading} />
+
+          <CourseMoneyTable rows={money.courses} isLoading={money.isLoading} />
+
+          <TeacherMoneyTable
+            rows={money.teachers}
+            isLoading={money.isLoading}
+            onPayoutRecorded={money.reload}
+          />
         </div>
       </div>
     </div>

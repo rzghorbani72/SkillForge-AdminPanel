@@ -261,7 +261,7 @@ body {
     );
   }
 
-  /* ─── Stat cards (frosted glass) ─────────────────────────────── */
+  /* ─── Stat cards (flat, scannable) ─────────────────────────────── */
   /* Real glass: a translucent gradient pane, a lit top edge, and a saturating
      blur so the ambient glows behind the grid show through the surface. */
   .glass-surface {
@@ -284,11 +284,14 @@ body {
   }
 
   .stat-card {
-    @apply glass-surface relative min-h-[190px] overflow-hidden rounded-[20px] p-5 transition-all duration-300;
+    @apply relative overflow-hidden rounded-xl border border-border/80 bg-card p-4 transition-colors;
+    min-height: 0;
+    box-shadow: none;
   }
 
   .stat-card:hover {
-    @apply -translate-y-1;
+    @apply border-border bg-muted/30;
+    transform: none;
   }
 
   /* ─── Dashboard glass background ─────────────────────────────── */
@@ -296,55 +299,32 @@ body {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background:
-      radial-gradient(120% 80% at 50% -10%, hsl(var(--primary) / 0.07) 0%, transparent 60%),
-      linear-gradient(180deg, hsl(192 20% 99%) 0%, hsl(192 14% 96%) 100%);
+    background: hsl(var(--background));
   }
 
   .dashboard-glow {
-    position: absolute;
-    z-index: -10;
-    border-radius: 9999px;
-    filter: blur(110px);
-    pointer-events: none;
+    display: none;
   }
 
-  .dashboard-glow-1 {
-    top: -140px;
-    inset-inline-start: -100px;
-    width: 440px;
-    height: 440px;
-    background: hsl(var(--primary) / 0.16);
-  }
-
-  .dashboard-glow-2 {
-    top: 120px;
-    inset-inline-end: -140px;
-    width: 380px;
-    height: 380px;
-    background: hsl(38 92% 50% / 0.14);
-  }
-
+  .dashboard-glow-1,
+  .dashboard-glow-2,
   .dashboard-glow-3 {
-    top: 760px;
-    inset-inline-start: 35%;
-    width: 480px;
-    height: 480px;
-    background: hsl(215 60% 50% / 0.1);
+    display: none;
   }
 
-  /* ─── Dashboard cards (frosted glass, matches .stat-card) ────── */
+  /* ─── Dashboard cards (flat, matches .stat-card) ────── */
   .dashboard-card {
-    @apply glass-surface relative overflow-hidden rounded-[20px] transition-all duration-300;
+    @apply relative overflow-hidden rounded-xl border border-border/80 bg-card transition-colors;
+    box-shadow: none;
   }
 
   .dashboard-card:hover {
-    @apply -translate-y-1;
+    transform: none;
   }
 
   /* Corner "open" affordance on a card, mirroring the reference dashboards */
   .card-corner-btn {
-    @apply absolute top-4 grid h-7 w-7 place-items-center rounded-full border border-border/60 bg-white/70 text-muted-foreground opacity-0 transition-all duration-200;
+    @apply absolute top-4 grid h-7 w-7 place-items-center rounded-full border border-border/60 bg-muted/40 text-muted-foreground opacity-0 transition-all duration-200;
     inset-inline-end: 1rem;
   }
 
@@ -359,23 +339,18 @@ body {
 
   /* Centre block of the hero row: the academy's own identity panel. */
   .hero-media {
-    @apply relative flex flex-col items-center justify-center overflow-hidden rounded-[20px] p-6 text-center;
-    background:
-      radial-gradient(90% 70% at 50% 0%, hsl(var(--viz-2) / 0.35) 0%, transparent 70%),
-      linear-gradient(160deg, hsl(var(--viz-1) / 0.16) 0%, hsl(var(--viz-3) / 0.22) 100%);
-    border: 1px solid rgb(255 255 255 / 0.6);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.6),
-      0 20px 44px -28px hsl(var(--viz-3) / 0.6);
+    @apply relative flex flex-col items-center justify-center overflow-hidden rounded-xl border border-border/80 bg-muted/30 p-6 text-center;
+    box-shadow: none;
   }
 
   /* Segmented period switcher */
   .dash-segment {
-    @apply glass-surface flex max-w-full overflow-x-auto rounded-full p-1;
+    @apply flex max-w-full overflow-x-auto rounded-lg border border-border/80 bg-card p-1;
+    box-shadow: none;
   }
 
   .dash-segment-item {
-    @apply shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium text-muted-foreground transition-all duration-200;
+    @apply shrink-0 rounded-md px-3.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-150;
   }
 
   .dash-segment-item:hover {
@@ -384,7 +359,7 @@ body {
 
   .dash-segment-item[data-active='true'] {
     @apply bg-primary text-primary-foreground;
-    box-shadow: 0 6px 14px -8px hsl(var(--primary) / 0.8);
+    box-shadow: none;
   }
 
   /* ─── Scrollbar (matches design) ────────────────────────────── */

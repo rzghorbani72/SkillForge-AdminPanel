@@ -1272,6 +1272,9 @@ export const en = {
     agree: '.',
   },
   dashboard: {
+    learningRow: 'Learning overview',
+    chartsSection: 'Charts',
+    chartsSectionHint: 'Trends and student progress for the selected period',
     limits: {
       title: 'Your plan allowances',
       subtitle: 'How much of each quota you have used and what is left',

@@ -9,14 +9,6 @@ import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { cn } from '@/lib/utils';
 import { MoneyValue } from './money-value';
 
-const LINES = [
-  'hsl(var(--viz-1))',
-  'hsl(var(--viz-2))',
-  'hsl(var(--viz-3))',
-  'hsl(var(--viz-1))',
-  'hsl(var(--viz-2))',
-];
-
 export type CardModel = {
   key: string;
   title: string;
@@ -45,46 +37,44 @@ function toneClass(card: CardModel): string | undefined {
 
 export function MoneyCard({
   card,
-  index,
   isLoading,
 }: {
   card: CardModel;
-  index: number;
+  index?: number;
   isLoading: boolean;
 }) {
   const percent = usePercentLabel();
-  const line = LINES[index % LINES.length];
   const isUp = (card.change ?? 0) >= 0;
   const Trend = isUp ? TrendingUp : TrendingDown;
 
   const body = (
     <CardContent className="flex flex-1 flex-col p-0">
-      <div
-        className="w-fit shrink-0 rounded-2xl p-2.5"
-        style={{ background: `${line.slice(0, -1)} / 0.1)` }}
-      >
-        <card.icon className="h-5 w-5" style={{ color: line }} />
+      <div className="flex items-start gap-3">
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-muted">
+          <card.icon className="h-4 w-4 text-muted-foreground" />
+        </div>
+        <p className="pt-1.5 text-sm font-medium text-muted-foreground">{card.title}</p>
       </div>
-
-      <p className="mt-4 text-[13px] font-medium text-muted-foreground">{card.title}</p>
 
       {isLoading ? (
         <>
-          <div className="shimmer mt-2 h-7 w-24 rounded-lg" />
+          <div className="shimmer mt-3 h-7 w-24 rounded-md" />
           <div className="shimmer mt-2 h-3 w-32 rounded-full" />
         </>
       ) : (
         <>
-          <div className="mt-1 flex flex-wrap items-baseline gap-2">
+          <div className="mt-3 flex flex-wrap items-baseline gap-2">
             {card.valueLabel ? (
-              <span className="text-2xl font-bold tracking-tight">{card.valueLabel}</span>
+              <span className="text-2xl font-semibold tabular-nums tracking-tight">
+                {card.valueLabel}
+              </span>
             ) : (
               <MoneyValue value={card.value} className={toneClass(card)} />
             )}
             {card.change !== null ? (
               <span
                 className={cn(
-                  'flex items-center gap-0.5 text-xs font-semibold',
+                  'flex items-center gap-0.5 text-xs font-medium',
                   isUp
                     ? 'text-emerald-600 dark:text-emerald-400'
                     : 'text-rose-600 dark:text-rose-400',
@@ -95,7 +85,7 @@ export function MoneyCard({
               </span>
             ) : null}
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">{card.hint}</p>
+          <p className="mt-1.5 text-xs text-muted-foreground">{card.hint}</p>
           {card.meter !== undefined ? <Progress value={card.meter} className="mt-3 h-1.5" /> : null}
         </>
       )}
@@ -105,8 +95,8 @@ export function MoneyCard({
   return (
     <Card
       className={cn(
-        'stat-card group flex flex-col',
-        card.href && 'transition-colors hover:border-primary/40',
+        'stat-card flex flex-col',
+        card.href && 'hover:border-primary/40 hover:bg-primary/5',
       )}
     >
       {card.href ? (

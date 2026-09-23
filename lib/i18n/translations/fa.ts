@@ -1269,6 +1269,9 @@ export const fa = {
     agree: ' موافقت می‌کنید.',
   },
   dashboard: {
+    learningRow: 'نمای کلی آموزش',
+    chartsSection: 'نمودارها',
+    chartsSectionHint: 'روندها و پیشرفت دانشجویان در بازه انتخاب‌شده',
     limits: {
       title: 'سقف‌های پلن شما',
       subtitle: 'چقدر از هر سهمیه مصرف شده و چقدر باقی مانده',
