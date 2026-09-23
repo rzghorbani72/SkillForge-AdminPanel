@@ -174,6 +174,8 @@ export default function ProfileSettingsPage() {
               onCodeChange={phoneOtp.setCode}
               onVerify={phoneOtp.verify}
               onSend={phoneOtp.send}
+              canResend={phoneOtp.canResend}
+              resendCooldown={phoneOtp.resendCooldown}
               onRevert={() => {
                 setForm((current) => ({
                   ...current,
@@ -207,6 +209,8 @@ export default function ProfileSettingsPage() {
               onCodeChange={emailOtp.setCode}
               onVerify={emailOtp.verify}
               onSend={emailOtp.send}
+              canResend={emailOtp.canResend}
+              resendCooldown={emailOtp.resendCooldown}
               onRevert={() => {
                 setForm((current) => ({
                   ...current,

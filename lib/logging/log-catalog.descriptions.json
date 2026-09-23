@@ -6,6 +6,7 @@
     "Media": "Video and file storage, transcoding and secure playback.",
     "Onboarding": "First-run setup steps a manager completes to go live.",
     "RequestStorm": "Client-side circuit breaker: one API route called far above human speed.",
+    "Settings": "Manager account settings in the academy panel (profile, contact verification).",
     "TeacherPayout": "Off-platform teacher payouts a manager records from the dashboard."
   },
   "events": {
@@ -23,6 +24,10 @@
     "Onboarding.SetupStepOpened": "Manager opened a first-run setup step from the dashboard banner.",
     "Onboarding.TemplateChoiceMade": "Onboarding template choice made.",
     "RequestStorm.Tripped": "A single route exceeded the per-window hit limit in the manager's browser; protected routes force a sign-out and storage wipe.",
+    "Settings.ContactOtpSendFailed": "Profile contact OTP request failed (cooldown, delivery, or validation).",
+    "Settings.ContactOtpSent": "Manager requested an OTP to verify a new email or phone on the profile page.",
+    "Settings.ContactOtpVerified": "Manager verified a new email or phone on the profile page.",
+    "Settings.ContactOtpVerifyFailed": "Profile contact OTP verification failed.",
     "TeacherPayout.Recorded": "The manager saved a bank transfer to a teacher from the teacher money table.",
     "TeacherPayout.TeacherAnswered": "The teacher confirmed or rejected a recorded payout from the earnings page."
   }

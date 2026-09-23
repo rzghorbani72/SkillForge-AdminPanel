@@ -3,20 +3,33 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 
-const DURATION = 120;
+/** Auth screens use 120s; profile contact OTP matches Backend's 60s cooldown. */
+const DEFAULT_DURATION = 120;
 
-export function useOtpTimer() {
-  const [seconds, setSeconds] = useState(DURATION);
+type OtpTimerOptions = {
+  /** Start counting down immediately (auth OTP screens). */
+  autoStart?: boolean;
+};
+
+export function useOtpTimer(defaultDuration = DEFAULT_DURATION, options?: OtpTimerOptions) {
+  const [seconds, setSeconds] = useState(options?.autoStart ? defaultDuration : 0);
   const formatNumber = useNumberFormat();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const durationRef = useRef(defaultDuration);
+  durationRef.current = defaultDuration;
 
   const clear = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   };
 
-  const start = useCallback(() => {
+  const start = useCallback((overrideSeconds?: number) => {
     clear();
-    setSeconds(DURATION);
+    const next = Math.max(0, Math.floor(overrideSeconds ?? durationRef.current));
+    setSeconds(next);
+    if (next <= 0) return;
     intervalRef.current = setInterval(() => {
       setSeconds((s) => {
         if (s <= 1) {
@@ -28,7 +41,11 @@ export function useOtpTimer() {
     }, 1000);
   }, []);
 
-  useEffect(() => () => clear(), []);
+  useEffect(() => {
+    if (options?.autoStart) start();
+    return () => clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only autoStart
+  }, []);
 
   const pad = (value: number) =>
     formatNumber(value, { minimumIntegerDigits: 2, useGrouping: false });
@@ -36,6 +53,7 @@ export function useOtpTimer() {
   const ss = pad(seconds % 60);
 
   return {
+    secondsLeft: seconds,
     formatted: `${mm}:${ss}`,
     canResend: seconds === 0,
     start,

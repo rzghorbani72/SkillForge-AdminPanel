@@ -3159,6 +3159,7 @@ export const fa = {
     codeSentTo: 'کد تایید به {{value}} ارسال شد',
     otpPlaceholder: '000000',
     resendCode: 'ارسال مجدد',
+    resendIn: 'ارسال مجدد تا',
     uploadingPhoto: 'در حال آپلود…',
     changePhoto: 'تغییر عکس',
     storeSettingsTitle: 'مشخصات آکادمی',

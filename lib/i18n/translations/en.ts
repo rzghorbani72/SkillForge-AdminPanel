@@ -3352,6 +3352,7 @@ export const en = {
     codeSentTo: 'Code sent to {{value}}',
     otpPlaceholder: '000000',
     resendCode: 'Resend',
+    resendIn: 'Resend in',
     uploadingPhoto: 'Uploading…',
     changePhoto: 'Change Photo',
     storeSettingsTitle: 'Academy Details',

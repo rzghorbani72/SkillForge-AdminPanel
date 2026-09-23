@@ -24,6 +24,8 @@ interface VerifiedContactFieldProps {
   onVerify: () => void;
   onSend: () => void;
   onRevert: () => void;
+  canResend: boolean;
+  resendCooldown: string;
   children: ReactNode;
 }
 
@@ -42,6 +44,8 @@ export function VerifiedContactField({
   onVerify,
   onSend,
   onRevert,
+  canResend,
+  resendCooldown,
   children,
 }: VerifiedContactFieldProps) {
   const { t } = useTranslation();
@@ -128,6 +132,8 @@ export function VerifiedContactField({
           onCodeChange={onCodeChange}
           onVerify={onVerify}
           onResend={onSend}
+          canResend={canResend}
+          resendCooldown={resendCooldown}
         />
       )}
     </div>

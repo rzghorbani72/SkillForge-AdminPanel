@@ -12,17 +12,28 @@ interface OtpPanelProps {
   onCodeChange: (code: string) => void;
   onVerify: () => void;
   onResend: () => void;
+  canResend: boolean;
+  resendCooldown: string;
 }
 
-export function OtpPanel({ state, sentTo, onCodeChange, onVerify, onResend }: OtpPanelProps) {
+export function OtpPanel({
+  state,
+  sentTo,
+  onCodeChange,
+  onVerify,
+  onResend,
+  canResend,
+  resendCooldown,
+}: OtpPanelProps) {
   const { t } = useTranslation();
   if (state.step === 'idle') return null;
 
   const isVerifying = state.step === 'verifying';
+  const isSending = state.step === 'sending';
 
   return (
     <div className="space-y-3 rounded-lg border bg-muted/40 p-3">
-      {state.step === 'sending' ? (
+      {isSending ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
           {t('settings.sendingCode')}
@@ -48,9 +59,15 @@ export function OtpPanel({ state, sentTo, onCodeChange, onVerify, onResend }: Ot
                 t('settings.verifyCode')
               )}
             </Button>
-            <Button variant="ghost" size="sm" onClick={onResend} disabled={isVerifying}>
-              {t('settings.resendCode')}
-            </Button>
+            {canResend ? (
+              <Button variant="ghost" size="sm" onClick={onResend} disabled={isVerifying}>
+                {t('settings.resendCode')}
+              </Button>
+            ) : (
+              <span className="px-2 text-sm tabular-nums text-muted-foreground">
+                {t('settings.resendIn')} <bdi>{resendCooldown}</bdi>
+              </span>
+            )}
           </div>
         </>
       )}

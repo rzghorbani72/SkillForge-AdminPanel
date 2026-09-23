@@ -107,6 +107,31 @@ export const LOG_CATALOG = {
       },
     },
   },
+  Settings: {
+    description: 'Manager account settings in the academy panel (profile, contact verification).',
+    actions: {
+      ContactOtpSendFailed: {
+        description: 'Profile contact OTP request failed (cooldown, delivery, or validation).',
+        level: 'warn',
+        fields: ['channel', 'error_code'] as const,
+      },
+      ContactOtpSent: {
+        description: 'Manager requested an OTP to verify a new email or phone on the profile page.',
+        level: 'info',
+        fields: ['channel'] as const,
+      },
+      ContactOtpVerified: {
+        description: 'Manager verified a new email or phone on the profile page.',
+        level: 'info',
+        fields: ['channel'] as const,
+      },
+      ContactOtpVerifyFailed: {
+        description: 'Profile contact OTP verification failed.',
+        level: 'warn',
+        fields: ['channel', 'error_code'] as const,
+      },
+    },
+  },
   TeacherPayout: {
     description: 'Off-platform teacher payouts a manager records from the dashboard.',
     actions: {

@@ -1,7 +1,6 @@
 'use client';
 
 import { CheckCircle2 } from 'lucide-react';
-import { useEffect } from 'react';
 import { AuthShell } from '@/components/auth/auth-shell';
 import { AuthSubmit } from '@/components/auth/auth-fields';
 import type { AuthTab } from '@/components/auth/auth-tabs';
@@ -51,12 +50,7 @@ export function PhoneOtpScreen({
 }: PhoneOtpScreenProps) {
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const timer = useOtpTimer();
-
-  useEffect(() => {
-    if (onResend) timer.start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const timer = useOtpTimer(120, { autoStart: Boolean(onResend) });
 
   return (
     <AuthShell activeTab={activeTab} title={title ?? t('auth.verifyYourContact')}>
