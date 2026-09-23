@@ -1,24 +1,14 @@
 'use client';
 
-import {
-  Building,
-  CreditCard,
-  HardDrive,
-  Layers,
-  Layout,
-  Percent,
-  Shield,
-  ShieldCheck,
-  User,
-  Zap,
-} from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Building, CreditCard, HardDrive, Shield, ShieldCheck, User } from 'lucide-react';
 import { ScopeBadge } from '@/components/settings/scope-badge';
-import { HUB_TONES, TintedNavCard, type HubCardTone } from '@/components/settings/tinted-nav-card';
-import { TEACHER_SHARE_HREF } from '@/components/settings/academy-teacher-share-card';
-import { useAcademySubscription } from '@/hooks/use-academy-subscription';
+import {
+  HUB_TONES,
+  HubCardGrid,
+  TintedNavCard,
+  type HubCardTone,
+} from '@/components/settings/tinted-nav-card';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { formatNumber } from '@/lib/utils';
 import type { SettingsScope } from '@/lib/settings-scope';
 import type { LucideIcon } from 'lucide-react';
 
@@ -27,7 +17,6 @@ type HubItem = {
   description: string;
   href: string;
   icon: LucideIcon;
-  scope: SettingsScope;
   tone: HubCardTone;
 };
 
@@ -42,13 +31,6 @@ type SettingsHubGroupsProps = {
   isPlatformAdmin: boolean;
 };
 
-const SUBSCRIPTION_STATUS_LABEL_KEYS: Record<string, string> = {
-  ACTIVE: 'settings.statusActive',
-  GRACE: 'settings.statusGrace',
-  EXPIRED: 'settings.statusExpired',
-  INACTIVE: 'settings.statusInactive',
-};
-
 function HubCard({ item }: { item: HubItem }) {
   const { t } = useTranslation();
 
@@ -60,52 +42,26 @@ function HubCard({ item }: { item: HubItem }) {
       description={item.description}
       tone={item.tone}
       actionLabel={t('settings.openSettings')}
-      badge={<ScopeBadge scope={item.scope} showTooltip={false} />}
     />
   );
 }
 
-function PlatformPlanCard() {
-  const { t, language } = useTranslation();
-  const { planName, status, daysRemaining, isLoading } = useAcademySubscription(true);
-
+function HubSection({ group }: { group: HubGroup }) {
   return (
-    <TintedNavCard
-      href="/plans"
-      icon={Zap}
-      title={t('settings.platformPlanTitle')}
-      description={t('settings.platformPlanDescription')}
-      tone={HUB_TONES.violet}
-      actionLabel={t('settings.managePlatformPlan')}
-      badge={<ScopeBadge scope="platform" showTooltip={false} />}
-    >
-      {isLoading ? (
-        <Skeleton className="h-4 w-40" />
-      ) : (
-        <div className="space-y-1 text-sm text-muted-foreground">
-          <div className="flex justify-between">
-            <span>{t('settings.subscriptionPlan')}</span>
-            <span className="font-medium capitalize text-foreground">
-              {planName ?? t('settings.noPlan')}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span>{t('settings.subscriptionStatus')}</span>
-            <span className="font-medium text-foreground">
-              {status ? t(SUBSCRIPTION_STATUS_LABEL_KEYS[status] ?? '') || status : '—'}
-            </span>
-          </div>
-          {daysRemaining != null ? (
-            <div className="flex justify-between">
-              <span>{t('settings.daysRemaining')}</span>
-              <span className="font-medium text-foreground">
-                {formatNumber(daysRemaining, language)}
-              </span>
-            </div>
-          ) : null}
+    <section className="space-y-4">
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-lg font-semibold">{group.title}</h2>
+          <ScopeBadge scope={group.scope} />
         </div>
-      )}
-    </TintedNavCard>
+        <p className="text-sm text-muted-foreground">{group.description}</p>
+      </div>
+      <HubCardGrid>
+        {group.items.map((item) => (
+          <HubCard key={item.href} item={item} />
+        ))}
+      </HubCardGrid>
+    </section>
   );
 }
 
@@ -122,7 +78,6 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
         description: t('settings.profileSettingsDescription'),
         href: '/settings/profile',
         icon: User,
-        scope: 'personal',
         tone: HUB_TONES.sky,
       },
       {
@@ -130,7 +85,6 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
         description: t('settings.securityDescription'),
         href: '/settings/security',
         icon: Shield,
-        scope: 'personal',
         tone: HUB_TONES.amber,
       },
     ],
@@ -147,7 +101,6 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
           description: t('settings.platformPricingDescription'),
           href: '/platform/pricing',
           icon: Building,
-          scope: 'platform',
           tone: HUB_TONES.violet,
         },
         {
@@ -155,7 +108,6 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
           description: t('settings.paymentGatewayDescription'),
           href: '/settings/payment-gateway',
           icon: CreditCard,
-          scope: 'platform',
           tone: HUB_TONES.teal,
         },
       ],
@@ -164,20 +116,7 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
     return (
       <div className="space-y-8">
         {[personalGroup, platformGroup].map((group) => (
-          <section key={group.scope} className="space-y-4">
-            <div className="space-y-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-lg font-semibold">{group.title}</h2>
-                <ScopeBadge scope={group.scope} />
-              </div>
-              <p className="text-sm text-muted-foreground">{group.description}</p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {group.items.map((item) => (
-                <HubCard key={item.href} item={item} />
-              ))}
-            </div>
-          </section>
+          <HubSection key={group.scope} group={group} />
         ))}
       </div>
     );
@@ -193,23 +132,13 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
         description: t('settings.storeSettingsPlatformDescription'),
         href: '/settings/academy',
         icon: Building,
-        scope: 'academy',
         tone: HUB_TONES.rose,
-      },
-      {
-        title: t('website.title'),
-        description: t('website.description'),
-        href: '/website',
-        icon: Layout,
-        scope: 'academy',
-        tone: HUB_TONES.indigo,
       },
       {
         title: t('navigation.storage'),
         description: t('settings.storageHubDescription'),
         href: '/settings/storage',
         icon: HardDrive,
-        scope: 'academy',
         tone: HUB_TONES.teal,
       },
       {
@@ -217,56 +146,15 @@ export function SettingsHubGroups({ isPlatformAdmin }: SettingsHubGroupsProps) {
         description: t('roles.description'),
         href: '/settings/roles',
         icon: ShieldCheck,
-        scope: 'academy',
         tone: HUB_TONES.amber,
       },
     ],
   };
 
-  const moneyGroup: HubGroup = {
-    title: t('settings.groupMoney'),
-    description: t('settings.groupMoneyDescription'),
-    scope: 'academy',
-    items: [
-      {
-        title: t('settings.teacherShareTitle'),
-        description: t('settings.teacherShareHubDescription'),
-        href: TEACHER_SHARE_HREF,
-        icon: Percent,
-        scope: 'academy',
-        tone: HUB_TONES.emerald,
-      },
-      {
-        title: t('settings.studentPlansTitle'),
-        description: t('settings.studentPlansDescription'),
-        href: '/plans?tab=academy',
-        icon: Layers,
-        scope: 'academy',
-        tone: HUB_TONES.sky,
-      },
-    ],
-  };
-
-  const groups = [personalGroup, academyGroup, moneyGroup];
-
   return (
     <div className="space-y-8">
-      {groups.map((group) => (
-        <section key={`${group.scope}-${group.title}`} className="space-y-4">
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-lg font-semibold">{group.title}</h2>
-              <ScopeBadge scope={group.scope} />
-            </div>
-            <p className="text-sm text-muted-foreground">{group.description}</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {group.items.map((item) => (
-              <HubCard key={item.href} item={item} />
-            ))}
-            {group === moneyGroup ? <PlatformPlanCard /> : null}
-          </div>
-        </section>
+      {[personalGroup, academyGroup].map((group) => (
+        <HubSection key={`${group.scope}-${group.title}`} group={group} />
       ))}
     </div>
   );

@@ -3133,7 +3133,7 @@ export const en = {
     groupPlatform: 'Platform',
     groupPlatformDescription: 'Platform pricing and payment gateways',
     groupAcademy: 'Academy',
-    groupAcademyDescription: 'Academy details, website, storage, and team access',
+    groupAcademyDescription: 'Academy details, storage, and team access',
     groupMoney: 'Money',
     groupMoneyDescription: 'Teacher share, student plans, and your Mentoma subscription',
     platformPlanTitle: 'Academy Subscription',

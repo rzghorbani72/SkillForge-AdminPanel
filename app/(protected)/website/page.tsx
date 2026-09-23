@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SettingsSectionHeader } from '@/components/settings/settings-section-header';
-import { HUB_TONES, TintedNavCard } from '@/components/settings/tinted-nav-card';
+import { HUB_TONES, HubCardGrid, TintedNavCard } from '@/components/settings/tinted-nav-card';
 import { useSettingsData } from '@/app/(protected)/settings/_hooks/use-settings-data';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { buildAcademySiteUrl } from '@/lib/website/academy-site-url';
@@ -100,7 +100,7 @@ export default function WebsiteHubPage() {
         ) : null}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <HubCardGrid>
         {cards.map((card) => (
           <TintedNavCard
             key={card.href}
@@ -112,7 +112,7 @@ export default function WebsiteHubPage() {
             actionLabel={t('settings.openSettings')}
           />
         ))}
-      </div>
+      </HubCardGrid>
     </div>
   );
 }

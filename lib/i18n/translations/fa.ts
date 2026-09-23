@@ -2895,7 +2895,7 @@ export const fa = {
     groupPlatform: 'پلتفرم',
     groupPlatformDescription: 'قیمت‌گذاری پلتفرم و درگاه‌های پرداخت',
     groupAcademy: 'آکادمی',
-    groupAcademyDescription: 'مشخصات آکادمی، وب‌سایت، فضای ذخیره و دسترسی تیم',
+    groupAcademyDescription: 'مشخصات آکادمی، فضای ذخیره و دسترسی تیم',
     groupMoney: 'مالی',
     groupMoneyDescription: 'سهم معلم، پلن دانشجویان و اشتراک منتوما',
     platformPlanTitle: 'اشتراک آکادمی',
