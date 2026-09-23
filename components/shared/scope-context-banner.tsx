@@ -15,7 +15,6 @@ const PLATFORM_SCOPED_PREFIXES = [
   '/platform',
   '/platform-settings',
   '/billing',
-  '/subscriptions',
   '/financial/platform',
   '/support-access-logs',
   '/withdrawals',

@@ -35,7 +35,7 @@ export default function PlanLimitsPanel({ limits, isLoading }: Props) {
           <CardTitle className="mt-1 text-base">{t('dashboard.limits.subtitle')}</CardTitle>
         </div>
         <Link
-          href="/subscriptions"
+          href="/plans"
           className="flex items-center gap-1 text-xs text-primary hover:underline"
         >
           {t('dashboard.limits.upgrade')}

@@ -3,7 +3,7 @@ import { managerLogin } from '../helpers/auth';
 
 /**
  * Manager financial pages @backend.
- * Covers: academy payments, revenue, costs, reports, orders, subscriptions.
+ * Covers: academy payments, revenue, costs, reports, orders.
  * Also verifies the manager CANNOT access the platform-level financial screen.
  *
  * Run: E2E_BACKEND=1 pnpm test:e2e e2e/features/manager-financial.spec.ts
@@ -45,11 +45,6 @@ test.describe('Manager financial pages @backend', () => {
   test('orders page loads', async ({ page }) => {
     await page.goto('/orders');
     await expect(page).toHaveURL(/\/orders/);
-    await expect(page.locator('body')).not.toContainText('Internal Server Error');
-  });
-
-  test('subscriptions page loads', async ({ page }) => {
-    await page.goto('/subscriptions');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
 

@@ -61,7 +61,6 @@ export const LEGACY_ANY_ALLOWLIST = [
   'app/(protected)/platform/academies/page.tsx',
   'app/(protected)/refunds/page.tsx',
   'app/(protected)/settings/_hooks/use-settings-data.ts',
-  'app/(protected)/subscriptions/page.tsx',
   'app/(protected)/support-access-logs/page.tsx',
   'app/(protected)/teacher-payouts/page.tsx',
   'app/(protected)/user/[id]/edit/page.tsx',

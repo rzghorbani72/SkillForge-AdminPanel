@@ -6864,13 +6864,6 @@ class ApiClient {
     return (res.data as any)?.data ?? res.data;
   }
 
-  async triggerSubscriptionLifecycle() {
-    const res = await this.request<any>('/subscriptions/lifecycle/tick', {
-      method: 'POST',
-    });
-    return (res.data as any)?.data ?? res.data;
-  }
-
   /**
    * Initiate gateway checkout for an AcademyPlan (SUBSCRIPTION or PACKAGE).
    * Returns { payment_id, redirect_url } — caller should window.location.href = redirect_url.

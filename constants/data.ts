@@ -133,17 +133,6 @@ export const navItems: NavItem[] = [
         paymentGated: true,
       },
       {
-        title: 'Manager subscriptions',
-        href: '/subscriptions',
-        icon: 'calendarClock' as IconType,
-        label: 'managerSubscriptions',
-        roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE'],
-        financeOnly: true,
-        adminOnly: true,
-        scope: 'platform',
-        paymentGated: true,
-      },
-      {
         title: 'Platform Vouchers',
         href: '/coupons',
         icon: 'percent' as IconType,
