@@ -1,7 +1,7 @@
 /**
  * Turkish translations for Admin Panel - LTR
  */
-export const tr = {
+const tr = {
   monitoring: {
     title: 'Akademi sağlığı',
     subtitle: 'Sitenizin çalıştığını ve öğrencilerin hatasız kullandığını görün',
@@ -4226,3 +4226,5 @@ export const tr = {
     },
   },
 };
+
+export { tr };

@@ -83,7 +83,7 @@ export function SupportInbox({ scope }: Props) {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(280px,380px)_1fr]">
-      <Card className="flex h-[72vh] flex-col overflow-hidden">
+      <Card className="flex flex-col overflow-hidden">
         <div className="space-y-3 border-b p-3">
           <InboxQueueBar
             summary={summary}
@@ -151,7 +151,7 @@ export function SupportInbox({ scope }: Props) {
         )}
       </Card>
 
-      <Card className="h-[72vh] overflow-hidden">
+      <Card>
         <CardContent className="h-full p-4">
           {selected ? (
             <StaffTicketDetail ticketId={selected} onChanged={load} />
