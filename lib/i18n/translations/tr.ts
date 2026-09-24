@@ -3698,6 +3698,8 @@ export const tr = {
       'That phone/email or password is not correct. If you forgot your password use "Reset password"; if you do not have an account yet, use "Sign up".',
     AUTH_USER_NOT_REGISTERED:
       'No account is registered with these details. Tap "Sign up" to create one.',
+    AUTH_EMAIL_NOT_ON_PROFILE:
+      'This email is not linked to an account. Sign in with your phone number first, then add your email in your profile.',
     AUTH_NO_PASSWORD_SET:
       'This account has no password set. Please sign in with a one-time code, then set a password in settings.',
     AUTH_ACCOUNT_EXPIRED:

@@ -135,19 +135,25 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
                   complete ? 'bg-emerald-500 text-white' : 'bg-primary/10 text-primary',
                 )}
               >
-                {complete ? <Check className="h-4 w-4" /> : index + 1}
+                {complete ? <Check className="h-4 w-4" aria-hidden /> : index + 1}
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-semibold">{t(meta.titleKey)}</span>
               </span>
-              <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
             </>
           );
 
-          if (!href) {
+          // Completed steps are read-only status — not links.
+          if (complete || !href) {
             return (
               <li key={step}>
-                <span className={cn(className, 'opacity-60')}>{body}</span>
+                <span
+                  className={cn(className, !complete && 'opacity-60')}
+                  aria-current={complete ? 'step' : undefined}
+                >
+                  {body}
+                </span>
               </li>
             );
           }
