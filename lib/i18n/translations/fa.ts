@@ -6771,6 +6771,7 @@ export const fa = {
       name: 'نام کلاس',
       description_: 'توضیحات',
       capacity: 'ظرفیت',
+      capacityLimitHint: 'حداکثر {{count}} دانشجو در هر کلاس زنده (محدودیت سرور جلسه).',
       minStudents: 'کمترین تعداد دانشجو',
       minStudentsHint: 'کلاس تا رسیدن به این تعداد در انتظار می‌ماند و سپس خودکار شروع می‌شود.',
       visibility: 'چه کسی می‌تواند ثبت‌نام کند',

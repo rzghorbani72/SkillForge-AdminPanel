@@ -17,6 +17,7 @@ import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroupSlot } from '@/types/learning-operations';
 import { previewSessionDates } from '@/lib/session-plan-preview';
+import { clampClassCapacity, MAX_CLASS_CAPACITY } from '@/lib/live-room';
 
 const DEFAULT_SLOT: TutoringGroupSlot = {
   weekday: 6,
@@ -141,7 +142,15 @@ export default function ScheduleBuilder({
           </div>
           <div className="space-y-2">
             <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
-            <NumberInput id="capacity" value={capacity} min={1} onChange={setCapacity} />
+            <NumberInput
+              id="capacity"
+              value={capacity}
+              min={1}
+              onChange={(raw) => setCapacity(clampClassCapacity(raw))}
+            />
+            <p className="text-xs text-muted-foreground">
+              {t('tutoring.groups.capacityLimitHint', { count: MAX_CLASS_CAPACITY })}
+            </p>
           </div>
         </div>
         <ClassSellingFields

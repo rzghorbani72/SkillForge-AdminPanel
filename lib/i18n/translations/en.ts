@@ -6771,6 +6771,7 @@ export const en = {
       name: 'Class name',
       description_: 'Description',
       capacity: 'Capacity',
+      capacityLimitHint: 'At most {{count}} students per live class (meeting server limit).',
       minStudents: 'Minimum students',
       minStudentsHint: 'The class waits until this many seats are booked, then starts by itself.',
       visibility: 'Who can join',

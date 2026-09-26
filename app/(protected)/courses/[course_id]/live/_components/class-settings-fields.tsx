@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringGroup } from '@/types/learning-operations';
 import type { ClassSettingsDraft } from './use-class-settings';
+import { clampClassCapacity, MAX_CLASS_CAPACITY } from '@/lib/live-room';
 
 type FieldsProps = {
   draft: ClassSettingsDraft;
@@ -58,8 +59,11 @@ function ClassSizeFields({ draft, seatsTaken, patch }: FieldsProps) {
           id="edit-group-capacity"
           value={draft.capacity}
           min={Math.max(1, seatsTaken)}
-          onChange={(capacity) => patch({ capacity })}
+          onChange={(capacity) => patch({ capacity: clampClassCapacity(capacity) })}
         />
+        <p className="text-xs text-muted-foreground">
+          {t('tutoring.groups.capacityLimitHint', { count: MAX_CLASS_CAPACITY })}
+        </p>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="edit-group-min">{t('tutoring.groups.minStudents')}</Label>

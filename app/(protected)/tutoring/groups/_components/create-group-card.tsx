@@ -18,6 +18,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import type { TutoringOffer } from '@/types/learning-operations';
 import type { GroupFormState } from '../hooks/use-tutoring-groups';
 import { GroupSlotEditor } from './group-slot-editor';
+import { clampClassCapacity, MAX_CLASS_CAPACITY } from '@/lib/live-room';
 
 type Props = {
   offers: TutoringOffer[];
@@ -82,10 +83,14 @@ export const CreateGroupCard = ({ offers, form, saving, onChange, onSubmit }: Pr
               id="group-capacity"
               type="number"
               min={1}
+              max={MAX_CLASS_CAPACITY}
               dir="ltr"
               value={form.capacity}
-              onChange={(e) => patch({ capacity: e.target.value })}
+              onChange={(e) => patch({ capacity: clampClassCapacity(e.target.value) })}
             />
+            <p className="text-xs text-muted-foreground">
+              {t('tutoring.groups.capacityLimitHint', { count: MAX_CLASS_CAPACITY })}
+            </p>
           </div>
 
           <div className="space-y-1.5">
