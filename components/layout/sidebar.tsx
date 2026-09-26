@@ -102,12 +102,11 @@ export default function Sidebar({ className }: SidebarProps) {
         )}
       </div>
 
-      {/* Collapse toggle */}
       <button
         type="button"
         onClick={toggle}
         className={cn(
-          'absolute -end-3 top-[3.75rem] z-50 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-md transition-all duration-300 hover:bg-primary hover:text-white',
+          'absolute -end-3 top-4 z-50 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-md transition-all duration-300 hover:bg-primary hover:text-white',
           !isMinimized && 'rotate-180',
         )}
         aria-label="Toggle sidebar"
