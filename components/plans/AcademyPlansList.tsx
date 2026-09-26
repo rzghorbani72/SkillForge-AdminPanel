@@ -15,7 +15,7 @@ interface Props {
   onEditPlan: (plan: AcademyPlanData) => void;
   onDeletePlan: (plan: AcademyPlanData) => void;
   onToggleActive: (plan: AcademyPlanData) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 export function AcademyPlansList({
@@ -98,7 +98,7 @@ export function AcademyPlansList({
                     {plan.kind === 'SUBSCRIPTION' && plan.duration_days && (
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {plan.duration_days}d
+                        {t('tutoring.durationDaysLabel', { days: plan.duration_days })}
                       </span>
                     )}
                     {plan.description && (
