@@ -60,6 +60,9 @@ const ACADEMY_SUPPORT_ROLES: NonNullable<NavItem['roles']> = [
   'TEACHER',
 ];
 
+// TODO: re-enable when the affiliate program is ready to ship.
+const AFFILIATE_NAV_ENABLED = false;
+
 export const navItems: NavItem[] = [
   // ── Platform mode ──────────────────────────────────────────────────────────
   // The daily destinations stay at the top level; everything a staff member
@@ -518,13 +521,17 @@ export const navItems: NavItem[] = [
     roles: ACADEMY_SUPPORT_ROLES,
     scope: 'academy',
   },
-  {
-    title: 'My Affiliate',
-    href: '/my-affiliate',
-    icon: 'network' as IconType,
-    label: 'my-affiliate',
-    roles: ['STUDENT', 'TEACHER', 'AFFILIATE'],
-  },
+  ...(AFFILIATE_NAV_ENABLED
+    ? [
+        {
+          title: 'My Affiliate',
+          href: '/my-affiliate',
+          icon: 'network' as IconType,
+          label: 'my-affiliate',
+          roles: ['STUDENT', 'TEACHER', 'AFFILIATE'],
+        } satisfies NavItem,
+      ]
+    : []),
 ];
 
 // Dashboard quick stats

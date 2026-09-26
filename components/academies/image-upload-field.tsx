@@ -47,9 +47,9 @@ export function ImageUploadField({
         {uploading ? (
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         ) : previewUrl ? (
-          <span className="flex h-full w-full flex-col items-center justify-center gap-1 p-2">
-            <img src={previewUrl} alt={label} className="max-h-16 w-full object-contain" />
-            <span className="text-[11px] text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+          <span className="relative flex h-full w-full items-center justify-center p-1.5">
+            <img src={previewUrl} alt={label} className="h-full w-full object-contain" />
+            <span className="absolute inset-x-0 bottom-0 truncate bg-background/80 py-0.5 text-center text-[11px] text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
               {replaceHint ?? hint}
             </span>
           </span>
