@@ -102,6 +102,7 @@ export const en = {
   header: {
     planDaysLeft: '{{days}} days left',
     planDaysToPay: '{{days}} days to pay',
+    storageAmount: '{{used}} of {{total}} GB',
   },
   weekdays: {
     saturday: 'Saturday',

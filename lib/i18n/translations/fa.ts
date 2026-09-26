@@ -102,6 +102,7 @@ export const fa = {
   header: {
     planDaysLeft: '{{days}} روز مانده',
     planDaysToPay: '{{days}} روز برای پرداخت',
+    storageAmount: '{{used}} از {{total}} گیگابایت',
   },
   weekdays: {
     saturday: 'شنبه',
