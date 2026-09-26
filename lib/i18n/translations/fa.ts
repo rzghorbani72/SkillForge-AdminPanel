@@ -1229,6 +1229,8 @@ export const fa = {
     dontHaveAccountYet: 'حساب کاربری ندارید؟',
     chooseAcademy: 'آکادمی خود را انتخاب کنید',
     chooseAcademyDesc: 'شما به چندین آکادمی دسترسی دارید. کدام یک را می‌خواهید مدیریت کنید؟',
+    chooseAcademyHint:
+      'بعداً هر زمان خواستید، از نام آکادمی در بالای پنل می‌توانید آکادمی را عوض کنید.',
     setupAcademyTitle: 'آکادمی خود را راه‌اندازی کنید',
     setupAcademySubtitle:
       'یک قدم تا داشبورد شما. درباره آکادمی خود بگویید — همه چیز بعداً قابل تغییر است.',
@@ -1555,6 +1557,7 @@ export const fa = {
     storesManagement: 'مدیریت آکادمی‌ها',
     manageStoresDescription: 'مدیریت آکادمی‌ها و تنظیمات آن‌ها',
     searchStores: 'جستجوی آکادمی‌ها...',
+    switchAcademy: 'تغییر آکادمی',
     platformAdmin: 'مدیر پلتفرم',
     platformLevel: 'سطح پلتفرم',
     noStoresFound: 'آکادمی‌ای یافت نشد',

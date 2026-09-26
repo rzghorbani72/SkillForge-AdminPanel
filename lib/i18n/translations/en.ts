@@ -1233,6 +1233,8 @@ export const en = {
     dontHaveAccountYet: "Don't have an account?",
     chooseAcademy: 'Choose your academy',
     chooseAcademyDesc: 'You have access to multiple academies. Which one do you want to manage?',
+    chooseAcademyHint:
+      'You can switch academies anytime from the academy name at the top of the panel.',
     setupAcademyTitle: 'Set up your academy',
     setupAcademySubtitle:
       "You're one step away from your dashboard. Tell us about your academy — you can change everything later.",
@@ -1554,6 +1556,7 @@ export const en = {
     academiesManagement: 'Stores Management',
     manageStoresDescription: 'Manage your academies and their settings',
     searchStores: 'Search academies...',
+    switchAcademy: 'Switch academy',
     platformAdmin: 'Platform Admin',
     platformLevel: 'Platform level',
     noStoresFound: 'No academies found',

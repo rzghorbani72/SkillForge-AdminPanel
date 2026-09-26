@@ -1012,6 +1012,7 @@ export const ar = {
     storesManagement: 'إدارة المعاهد',
     manageStoresDescription: 'إدارة معاهدك وإعداداتها',
     searchStores: 'البحث في المعاهد...',
+    switchAcademy: 'تغيير المعهد',
     platformAdmin: 'مدير المنصة',
     platformLevel: 'مستوى المنصة',
     noStoresFound: 'لم يتم العثور على معاهد',

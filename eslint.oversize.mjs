@@ -36,7 +36,6 @@ export const OVERSIZE_ALLOWLIST = [
 
 // Legacy files still using `any`, `x!` or `console.*`; cleaned as they are split. May only shrink.
 export const LEGACY_ANY_ALLOWLIST = [
-  'components/layout/AcademySelector.tsx',
   'app/(auth)/forget-password/use-forget-password.ts',
   'app/(auth)/select-school/page.tsx',
   'app/(protected)/academies/[id]/webhooks/page.tsx',

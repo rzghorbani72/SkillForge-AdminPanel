@@ -1021,6 +1021,7 @@ const tr = {
     storesManagement: 'Enstitü Yönetimi',
     manageStoresDescription: 'Enstitülerinizi ve ayarlarını yönetin',
     searchStores: 'Enstitülerde ara...',
+    switchAcademy: 'Enstitü değiştir',
     platformAdmin: 'Platform Yöneticisi',
     platformLevel: 'Platform seviyesi',
     noStoresFound: 'Enstitü bulunamadı',
