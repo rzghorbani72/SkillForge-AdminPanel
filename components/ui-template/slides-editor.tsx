@@ -8,6 +8,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { SectionItemControls, moveItem } from './section-item-controls';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 export interface SlideConfig {
   backgroundImage?: string;
@@ -119,7 +120,7 @@ export function SlidesEditor({ cfg, set }: SlidesEditorProps) {
               )}
               <input
                 type="file"
-                accept="image/*"
+                accept={IMAGE_ACCEPT}
                 className="hidden"
                 disabled={uploadingIndex !== null}
                 onChange={(event) => handleUpload(index, event)}

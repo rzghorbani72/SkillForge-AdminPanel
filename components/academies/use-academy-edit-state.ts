@@ -9,6 +9,7 @@ import { isSlugBlocking, useSlugAvailability } from '@/hooks/use-slug-availabili
 import { DEFAULT_BRAND_COLOR } from '@/components/academies/brand-color-picker';
 import type { Academy } from '@/types/api';
 import type { AcademyEditPayload } from './academy-edit-types';
+import { FAVICON_MAX_KB, LOGO_MAX_KB } from '@/lib/upload-limits';
 
 function currentSlugOf(academy: Academy): string {
   return (
@@ -33,8 +34,8 @@ export function useAcademyEditState(academy: Academy) {
     check: checkSlug,
     reset: resetSlug,
   } = useSlugAvailability({ ownSlug });
-  const logo = useImageUpload();
-  const favicon = useImageUpload();
+  const logo = useImageUpload(LOGO_MAX_KB * 1024);
+  const favicon = useImageUpload(FAVICON_MAX_KB * 1024);
   const [primaryColor, setPrimaryColor] = useState<string>(DEFAULT_BRAND_COLOR);
 
   useEffect(() => {

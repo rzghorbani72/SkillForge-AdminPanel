@@ -47,7 +47,7 @@ import { csrfHeader, selectedAcademyHeader } from './browser-request-headers';
 import { ensureCsrfToken, isCsrfRequiredError } from './csrf';
 import { ApiResponseError, parseApiError, resolveApiErrorMessage } from './api-error';
 import { currentLanguage } from './current-language';
-import { assertUploadSize, MAX_IMAGE_UPLOAD_BYTES } from './upload-limits';
+import { assertImageFile, MAX_AVATAR_UPLOAD_BYTES, MAX_IMAGE_UPLOAD_BYTES } from './upload-limits';
 import { isAuthPagePath } from './auth-routes';
 import { isPanelAccessBlockedError } from './auth-login-errors';
 import {
@@ -2795,7 +2795,7 @@ class ApiClient {
     onProgress?: (progress: number) => void,
     abortController?: AbortController,
   ) {
-    assertUploadSize(file, MAX_IMAGE_UPLOAD_BYTES);
+    assertImageFile(file, MAX_IMAGE_UPLOAD_BYTES);
 
     const formData = new FormData();
     formData.append('imagefile', file); // Backend expects 'imagefile'
@@ -2819,7 +2819,7 @@ class ApiClient {
     onProgress?: (progress: number) => void,
     abortController?: AbortController,
   ) {
-    assertUploadSize(file, MAX_IMAGE_UPLOAD_BYTES);
+    assertImageFile(file, MAX_AVATAR_UPLOAD_BYTES);
 
     const formData = new FormData();
     formData.append('imagefile', file);

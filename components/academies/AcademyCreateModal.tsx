@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
   Dialog,
@@ -25,6 +25,8 @@ import { useImageUpload } from '@/hooks/use-image-upload';
 import { toSlug } from '@/lib/slug';
 import { isSlugBlocking, useSlugAvailability } from '@/hooks/use-slug-availability';
 import type { AcademyCreateInput } from '@/lib/academy-create';
+import type { InterpolationParams } from '@/lib/i18n';
+import { FAVICON_MAX_KB, LOGO_MAX_KB } from '@/lib/upload-limits';
 
 const CATEGORY_KEYS = [
   'language',
@@ -49,23 +51,58 @@ type AcademyCreateModalProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: AcademyCreateInput) => Promise<void>;
-  t: (k: string) => string;
+  t: (k: string, params?: InterpolationParams) => string;
 };
 
 function categoryLabelKey(key: string) {
   return `stores.category${key.charAt(0).toUpperCase()}${key.slice(1)}`;
 }
 
+const DRAFT_KEY = 'academy-create-draft';
+
+type AcademyCreateDraft = {
+  name: string;
+  slug: string;
+  description: string;
+  category: string;
+  primaryColor: string;
+};
+
+function readDraft(): AcademyCreateDraft | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as AcademyCreateDraft) : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredDraft() {
+  if (typeof window === 'undefined') return;
+  window.sessionStorage.removeItem(DRAFT_KEY);
+}
+
 export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreateModalProps) {
   const [saving, setSaving] = useState(false);
-  const [name, setName] = useState('');
-  const [slug, setSlug] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const logo = useImageUpload();
-  const favicon = useImageUpload();
-  const [primaryColor, setPrimaryColor] = useState<string>(DEFAULT_BRAND_COLOR);
+  const [name, setName] = useState(() => readDraft()?.name ?? '');
+  const [slug, setSlug] = useState(() => readDraft()?.slug ?? '');
+  const [description, setDescription] = useState(() => readDraft()?.description ?? '');
+  const [category, setCategory] = useState(() => readDraft()?.category ?? '');
+  const logo = useImageUpload(LOGO_MAX_KB * 1024);
+  const favicon = useImageUpload(FAVICON_MAX_KB * 1024);
+  const [primaryColor, setPrimaryColor] = useState<string>(
+    () => readDraft()?.primaryColor ?? DEFAULT_BRAND_COLOR,
+  );
   const { status: slugStatus, check: checkSlug, reset: resetSlug } = useSlugAvailability();
+
+  // Persist typed input so an accidental outside-click/escape close doesn't
+  // lose it; only the cancel button (or a successful submit) clears it.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const draft: AcademyCreateDraft = { name, slug, description, category, primaryColor };
+    window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  }, [name, slug, description, category, primaryColor]);
 
   const canSubmit =
     name.trim().length >= 2 &&
@@ -88,7 +125,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
     checkSlug(normalized);
   }
 
-  function handleClose() {
+  function clearDraft() {
     resetSlug();
     setName('');
     setSlug('');
@@ -97,6 +134,11 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
     logo.reset();
     favicon.reset();
     setPrimaryColor(DEFAULT_BRAND_COLOR);
+    clearStoredDraft();
+  }
+
+  function handleCancel() {
+    clearDraft();
     onClose();
   }
 
@@ -113,14 +155,15 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
         faviconId: favicon.id ?? undefined,
         primaryColor,
       });
-      handleClose();
+      clearDraft();
+      onClose();
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent dir="rtl" className="max-h-[90dvh] gap-0 rounded-2xl sm:max-w-3xl sm:p-6">
         <DialogHeader className="space-y-1.5 text-start">
           <DialogTitle className="text-xl font-semibold">
@@ -202,7 +245,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
               <ImageUploadField
                 size="sm"
                 label={t('stores.brandingLogo')}
-                hint={t('stores.brandingLogoHint')}
+                hint={t('stores.brandingLogoHint', { max: LOGO_MAX_KB })}
                 replaceHint={t('stores.brandingReplaceHint')}
                 previewUrl={logo.preview}
                 uploading={logo.uploading}
@@ -212,7 +255,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
               <ImageUploadField
                 size="sm"
                 label={t('stores.brandingFavicon')}
-                hint={t('stores.brandingFaviconHint')}
+                hint={t('stores.brandingFaviconHint', { max: FAVICON_MAX_KB })}
                 replaceHint={t('stores.brandingReplaceHint')}
                 previewUrl={favicon.preview}
                 uploading={favicon.uploading}
@@ -233,7 +276,7 @@ export function AcademyCreateModal({ open, onClose, onSubmit, t }: AcademyCreate
           <button
             type="button"
             disabled={saving}
-            onClick={handleClose}
+            onClick={handleCancel}
             className="inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-60"
           >
             {t('stores.cancel')}

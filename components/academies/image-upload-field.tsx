@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { Loader2, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 export interface ImageUploadFieldProps {
   label: string;
@@ -64,7 +65,7 @@ export function ImageUploadField({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept={IMAGE_ACCEPT}
         aria-label={label}
         className="hidden"
         onChange={(e) => {

@@ -8,6 +8,7 @@ import { imageByIdSrc as fetchImageByIdSrc } from '@/lib/image-src';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useTranslation } from '@/lib/i18n/hooks';
 import ProgressBar from './ProgressBar';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 interface ImageUploadPreviewProps {
   title?: string;
@@ -109,7 +110,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept={IMAGE_ACCEPT}
         className="hidden"
         disabled={disabled}
         onChange={(e) => {

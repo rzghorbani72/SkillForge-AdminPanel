@@ -1687,9 +1687,9 @@ export const fa = {
     categoryOther: 'سایر',
     categoryFinance: 'مالی',
     brandingLogo: 'لوگوی آکادمی',
-    brandingLogoHint: 'PNG یا JPG · حداکثر ۲ مگابایت · کوچک‌تر یعنی سریع‌تر',
+    brandingLogoHint: 'PNG، SVG یا WebP · حداکثر {{max}} کیلوبایت · کوچک‌تر یعنی سریع‌تر',
     brandingFavicon: 'آیکون تب مرورگر',
-    brandingFaviconHint: 'PNG مربعی · حداقل ۶۴×۶۴',
+    brandingFaviconHint: 'PNG یا SVG مربعی · ۵۱۲×۵۱۲ · حداکثر {{max}} کیلوبایت',
     brandingReplaceHint: 'برای تغییر کلیک کنید',
     brandingColor: 'رنگ برند',
     brandingColorCustom: 'رنگ دلخواه',
@@ -7484,6 +7484,8 @@ export const fa = {
     TENANT_MISMATCH: 'این مورد به آکادمی شما تعلق ندارد.',
     FILE_TOO_LARGE: 'حجم فایل بیش از حد مجاز است. لطفاً فایل کوچک‌تری انتخاب کنید.',
     FILE_TOO_LARGE_MB: 'حجم فایل باید کمتر از {max} مگابایت باشد. لطفاً فایل کوچک‌تری انتخاب کنید.',
+    FILE_TOO_LARGE_KB:
+      'حجم فایل باید کمتر از {max} کیلوبایت باشد. لطفاً فایل کوچک‌تری انتخاب کنید.',
     FILE_TYPE_NOT_ALLOWED: 'این نوع فایل مجاز نیست. لطفاً فایلی با قالب پشتیبانی‌شده انتخاب کنید.',
     EXTERNAL_SERVICE_FAILED:
       'ارتباط با سرویس بیرونی برقرار نشد. لطفاً چند لحظه بعد دوباره تلاش کنید.',

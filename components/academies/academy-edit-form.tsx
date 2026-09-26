@@ -13,6 +13,8 @@ import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import { useAcademyEditState } from '@/components/academies/use-academy-edit-state';
 import type { AcademyEditPayload } from '@/components/academies/academy-edit-types';
 import type { Academy } from '@/types/api';
+import type { InterpolationParams } from '@/lib/i18n';
+import { FAVICON_MAX_KB, LOGO_MAX_KB } from '@/lib/upload-limits';
 
 export type { AcademyEditPayload } from '@/components/academies/academy-edit-types';
 export { buildAcademyThemePatch } from '@/components/academies/academy-edit-types';
@@ -23,7 +25,7 @@ type AcademyEditFormProps = {
   academy: Academy;
   onSubmit: (data: AcademyEditPayload) => Promise<void>;
   onCancel?: () => void;
-  t: (k: string) => string;
+  t: (k: string, params?: InterpolationParams) => string;
   /** Compact layout for dialogs; page layout uses full-width fields. */
   compact?: boolean;
 };
@@ -122,7 +124,7 @@ export function AcademyEditForm({
           <div className="grid items-stretch gap-4 sm:grid-cols-2">
             <ImageUploadField
               label={t('stores.brandingLogo')}
-              hint={t('stores.brandingLogoHint')}
+              hint={t('stores.brandingLogoHint', { max: LOGO_MAX_KB })}
               replaceHint={t('stores.brandingReplaceHint')}
               previewUrl={state.logo.preview}
               uploading={state.logo.uploading}
@@ -130,7 +132,7 @@ export function AcademyEditForm({
             />
             <ImageUploadField
               label={t('stores.brandingFavicon')}
-              hint={t('stores.brandingFaviconHint')}
+              hint={t('stores.brandingFaviconHint', { max: FAVICON_MAX_KB })}
               replaceHint={t('stores.brandingReplaceHint')}
               previewUrl={state.favicon.preview}
               uploading={state.favicon.uploading}

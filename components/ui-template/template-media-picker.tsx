@@ -7,6 +7,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatNumber } from '@/lib/utils';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 export interface PendingMediaTarget {
   blockId: string;
@@ -69,7 +70,7 @@ export const TemplateMediaPicker = forwardRef<TemplateMediaPickerHandle, Templat
         <input
           ref={inputRef}
           type="file"
-          accept="image/*,image/gif,image/webp"
+          accept={IMAGE_ACCEPT}
           className="hidden"
           onChange={handleChange}
         />

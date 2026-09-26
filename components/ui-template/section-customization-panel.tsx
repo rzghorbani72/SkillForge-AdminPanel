@@ -33,6 +33,7 @@ import { VideosEditor } from './videos-editor';
 import { ADDABLE_SECTION_TYPES } from '@/lib/ui-template/addable-section-types';
 import { HeroAlignPicker } from './hero-align-picker';
 import { TEMPLATE_KEYS, isCenteredHero, isVideoBannerHero } from '@/constants/template-names';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 type HeroBgType = 'gradient' | 'solid' | 'image';
 
@@ -460,7 +461,7 @@ function HeroBackground({
                 {t('sitePreview.panelReplaceImage')}
                 <input
                   type="file"
-                  accept="image/*"
+                  accept={IMAGE_ACCEPT}
                   className="hidden"
                   onChange={handleUpload}
                   disabled={isUploading}
@@ -473,7 +474,7 @@ function HeroBackground({
               {isUploading ? t('sitePreview.panelUploading') : t('sitePreview.panelUploadImage')}
               <input
                 type="file"
-                accept="image/*"
+                accept={IMAGE_ACCEPT}
                 className="hidden"
                 onChange={handleUpload}
                 disabled={isUploading}

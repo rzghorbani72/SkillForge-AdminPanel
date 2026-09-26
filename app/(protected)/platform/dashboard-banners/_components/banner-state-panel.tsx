@@ -9,6 +9,7 @@ import { apiClient, type DashboardBanner, type DashboardBannerState } from '@/li
 import { dashboardBannerSrc, uploadedImageId } from '@/lib/dashboard-banner-url';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 type Props = {
   state: DashboardBannerState;
@@ -90,7 +91,7 @@ export function BannerStatePanel({ state, banners, onChanged }: Props) {
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept={IMAGE_ACCEPT}
           multiple
           className="hidden"
           onChange={(event) => {

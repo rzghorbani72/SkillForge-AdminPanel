@@ -13,6 +13,8 @@ import { isPlatformAdmin } from '@/lib/roles';
 import { SectionPreviewFrame } from './section-preview-frame';
 import { getTemplateCategoryByKey, type TemplateCategory } from '@/constants/template-names';
 import { TemplateStarRating } from './template-star-rating';
+import { ErrorHandler } from '@/lib/error-handler';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 // Card/preview swatches follow the template's saved theme when present, so a
 // dedicated template shows its real palette instead of the design-system default.
@@ -157,6 +159,8 @@ function GalleryCard({
       const url = `${getBrowserApiBaseUrl()}/images/get-image?id=${id}`;
       await apiClient.setTemplateCover(preset.id, url);
       onCoverUploaded?.(url);
+    } catch (error) {
+      ErrorHandler.handleApiError(error);
     } finally {
       setIsUploadingCover(false);
     }
@@ -294,7 +298,7 @@ function GalleryCard({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept={IMAGE_ACCEPT}
               className="hidden"
               onClick={(e) => e.stopPropagation()}
               onChange={(e) => {

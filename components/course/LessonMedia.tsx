@@ -30,6 +30,7 @@ import type { LessonDraft, LessonType } from './useCourseForm';
 import { DEFAULT_DURATION, secondsToDuration } from './course-drafts';
 import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
 import { SecureVideoPlayer } from '@/components/media/secure-video-player';
+import { IMAGE_ACCEPT } from '@/lib/upload-limits';
 
 type SlotKey = 'video' | 'audio' | 'document' | 'cover';
 
@@ -511,7 +512,7 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
           label={t('courses.lessonCover')}
           Icon={ImageIcon}
           uploadLabel={t('courses.uploadCoverImage')}
-          accept="image/*"
+          accept={IMAGE_ACCEPT}
           hint={t('courses.lessonCoverHint')}
           toneClass={tone}
           uploading={uploading.cover && !lesson.coverPreviewUrl}
