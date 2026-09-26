@@ -6771,6 +6771,9 @@ export const en = {
       name: 'Class name',
       description_: 'Description',
       capacity: 'Capacity',
+      backupLink: 'Backup link (optional)',
+      backupLinkHint:
+        'If Mentoma Meet quality is not good enough, students can join through this link (e.g. Skyroom) during class time.',
       capacityLimitHint: 'At most {{count}} students per live class (meeting server limit).',
       minStudents: 'Minimum students',
       minStudentsHint: 'The class waits until this many seats are booked, then starts by itself.',

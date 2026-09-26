@@ -12,11 +12,13 @@ import { Copy, RefreshCw } from 'lucide-react';
 import { toast } from 'react-toastify';
 import type { CancelTutoringGroupPayload, TutoringGroup } from '@/types/learning-operations';
 import { CancelClassDialog } from './cancel-class-dialog';
+import { BackupLinkField } from './backup-link-field';
 
 type Props = {
   group: TutoringGroup;
   busy: boolean;
   onUpdateLink: (url: string | null, notify: boolean, regenerate?: boolean) => void;
+  onUpdateBackupLink: (url: string | null) => void;
   onAnnounce: (body: string, sendSms: boolean) => void;
   onConfirm: () => void;
   onCancel: (payload: CancelTutoringGroupPayload) => Promise<boolean>;
@@ -27,6 +29,7 @@ export const GroupActionsCard = ({
   group,
   busy,
   onUpdateLink,
+  onUpdateBackupLink,
   onAnnounce,
   onConfirm,
   onCancel,
@@ -155,6 +158,8 @@ export const GroupActionsCard = ({
             </Button>
           ) : null}
         </div>
+
+        <BackupLinkField value={group.backup_meeting_url} busy={busy} onSave={onUpdateBackupLink} />
 
         <div className="space-y-2">
           <Label htmlFor="group-announcement">{t('tutoring.groups.announceLabel')}</Label>

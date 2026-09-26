@@ -140,6 +140,9 @@ function ClassSettingsSections({
         <GroupActionsCard
           group={group}
           busy={detail.busy}
+          onUpdateBackupLink={(url) =>
+            void detail.updateBackupLink(url).then((ok) => ok && onChanged())
+          }
           onUpdateLink={(url, notify, regenerate) =>
             void detail.updateLink(url, notify, regenerate).then((ok) => ok && onChanged())
           }

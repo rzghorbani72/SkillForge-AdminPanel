@@ -60,6 +60,7 @@ export function ClassLoadedView({
         group={group}
         busy={detail.busy}
         onUpdateLink={(url, notify, regenerate) => void detail.updateLink(url, notify, regenerate)}
+        onUpdateBackupLink={(url) => void detail.updateBackupLink(url)}
         onAnnounce={(body, sms) => void detail.announce(body, sms)}
         onConfirm={() => void detail.confirm()}
         onCancel={(payload) => detail.cancel(payload)}

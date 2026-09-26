@@ -6002,6 +6002,13 @@ class ApiClient {
     });
   }
 
+  async updateTutoringGroupBackupLink(groupId: string, backupUrl: string | null): Promise<void> {
+    await this.request(`/tutoring/groups/${groupId}/meeting-link`, {
+      method: 'PATCH',
+      body: JSON.stringify({ backup_meeting_url: backupUrl, notify: false }),
+    });
+  }
+
   async addTutoringGroupMember(
     groupId: string,
     studentProfileId: string,

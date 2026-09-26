@@ -65,6 +65,8 @@ export function useClassDetail(groupId: string) {
       run(() => apiClient.cancelTutoringGroup(groupId, payload)),
     updateLink: (url: string | null, notify: boolean, regenerate?: boolean) =>
       run(() => apiClient.updateTutoringGroupMeetingLink(groupId, url, notify, regenerate)),
+    updateBackupLink: (url: string | null) =>
+      run(() => apiClient.updateTutoringGroupBackupLink(groupId, url)),
     removeMember: (profileId: string) =>
       run(() => apiClient.removeTutoringGroupMember(groupId, profileId)),
     announce: (body: string, sendSms: boolean) =>
