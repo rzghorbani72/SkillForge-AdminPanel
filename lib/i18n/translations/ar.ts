@@ -1346,7 +1346,12 @@ export const ar = {
     lessonSettingsHint: 'بقية إعدادات هذا الدرس تُحرَّر في المنهج.',
     liveScheduleHint: 'يُقدَّم هذا الدرس مباشرة.',
     liveScheduleLink: 'حدد موعد الجلسة',
-    lessonSettingsLink: 'الاختبار وموعد البث وقاعدة التنزيل',
+    lessonSettingsLink: 'موعد البث وقاعدة التنزيل',
+    lessonQuiz: 'اختبار',
+    lessonAssignment: 'واجب',
+    assessmentTitle: 'اختبار وواجب الدرس',
+    assessmentHint: 'أنشئ اختبار هذا الدرس وواجبه وعدّلهما هنا.',
+    assessmentSaveFirst: 'احفظ الدرس أولاً لإضافة اختبار أو واجب.',
     liveSaveFirst: 'احفظ الدرس أولاً، ثم أعدّ رابط الاجتماع في صفحة التعديل.',
   },
   students: {

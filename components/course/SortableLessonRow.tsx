@@ -93,6 +93,7 @@ export function SortableLessonRow({
   return (
     <div
       ref={combinedRef}
+      data-lesson-row
       className={cn(
         // The start bar carries the lesson type's color, so where one lesson's
         // block begins and ends stays obvious even with several open at once.

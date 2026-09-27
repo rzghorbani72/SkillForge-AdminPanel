@@ -26,6 +26,7 @@ import {
 import { LessonMedia, LESSON_INFO_SLOT_CLASS } from './LessonMedia';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
 import { LessonDurationInfo } from './lesson-duration-info';
+import { LessonAssessmentDialog } from './lesson-assessment-dialog';
 
 /**
  * Switching type drops the media the old type owned, so a length measured from
@@ -56,8 +57,8 @@ interface LessonEditorPanelProps {
 export function LessonEditorPanel({ lesson, seasons, onUpdate, onAssign }: LessonEditorPanelProps) {
   const { t } = useTranslation();
   const { course_id: courseId } = useParams<{ course_id: string }>();
-  // Quizzes, live times and the download rule need a screen each, so an
-  // unsaved lesson has nowhere to link to yet.
+  // Live times and the download rule need a screen each, so an unsaved
+  // lesson has nowhere to link to yet.
   const settingsHref = lesson.id && courseId ? `/courses/${courseId}/lessons/${lesson.id}` : null;
 
   // Live teaching is a live course with its own timetable, so a recorded
@@ -214,6 +215,13 @@ export function LessonEditorPanel({ lesson, seasons, onUpdate, onAssign }: Lesso
             className="text-xs"
           />
         </div>
+        {courseId && (
+          <LessonAssessmentDialog
+            lessonId={lesson.id}
+            courseId={courseId}
+            lessonTitle={lesson.title}
+          />
+        )}
         {settingsHref && (
           <Link
             href={settingsHref}

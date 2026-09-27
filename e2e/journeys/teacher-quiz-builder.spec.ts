@@ -6,25 +6,35 @@ import { teacherLogin } from '../helpers/auth';
 test.describe('@backend teacher journey: quiz builder', () => {
   test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 and run the Backend e2e:seed first');
 
-  test('builds a required quiz drawn from a question bank and publishes it', async ({ page }) => {
+  test('builds a required quiz in the lesson dialog and publishes it', async ({ page }) => {
     await teacherLogin(page);
-    await page.goto(
-      `/courses/${process.env.E2E_QUIZ_COURSE_ID}/lessons/${process.env.E2E_QUIZ_AUTHORING_LESSON_ID}`,
-    );
+    await page.goto(`/courses/${process.env.E2E_QUIZ_COURSE_ID}/edit?step=content`);
+    const row = page
+      .locator('[data-lesson-row]')
+      .filter({ has: page.locator('input[value="درس ساخت آزمون"]') });
+    await page.waitForLoadState('networkidle');
+    await row.getByRole('button', { name: 'ویرایش' }).click();
+    await row.getByRole('button', { name: 'آزمون', exact: true }).click();
+    const dialog = page.getByRole('dialog');
 
-    await page.getByPlaceholder('عنوان آزمون').fill('آزمون ساخته‌شده در مرورگر');
-    await page.getByPlaceholder('همهٔ سؤال‌ها').fill('1');
-    await page.getByRole('switch', { name: /دانشجو باید قبول شود/ }).click();
-    await page.getByRole('button', { name: 'ساخت آزمون' }).click();
-    await expect(page.getByText('قبولی اجباری')).toBeVisible();
+    await dialog.getByPlaceholder('عنوان آزمون').fill('آزمون ساخته‌شده در مرورگر');
+    await dialog.getByPlaceholder('همهٔ سؤال‌ها').fill('1');
+    await dialog.getByRole('switch', { name: /دانشجو باید قبول شود/ }).click();
+    await dialog.getByRole('button', { name: 'ساخت آزمون' }).click();
+    await expect(dialog.getByText('قبولی اجباری')).toBeVisible();
 
-    await page.locator('textarea').fill('پایتخت ایران کجاست؟');
-    await page.getByPlaceholder('گزینه 1').fill('تهران');
-    await page.getByPlaceholder('گزینه 2').fill('اصفهان');
-    await page.getByRole('button', { name: 'افزودن سؤال' }).click();
-    await expect(page.getByText('پایتخت ایران کجاست؟')).toBeVisible();
+    await dialog.locator('textarea').fill('پایتخت ایران کجاست؟');
+    await dialog.getByPlaceholder('گزینه ۱').fill('تهران');
+    await dialog.getByPlaceholder('گزینه ۲').fill('اصفهان');
+    await dialog.getByRole('button', { name: 'افزودن سؤال' }).click();
+    await expect(dialog.getByText('پایتخت ایران کجاست؟')).toBeVisible();
 
-    await page.getByRole('button', { name: 'انتشار' }).click();
-    await expect(page.getByRole('button', { name: 'لغو انتشار' })).toBeVisible();
+    await dialog.getByRole('button', { name: 'انتشار' }).click();
+    await expect(dialog.getByRole('button', { name: 'لغو انتشار' })).toBeVisible();
+
+    await dialog.getByRole('tab', { name: 'تکلیف' }).click();
+    await expect(dialog.getByText('تکلیف این درس')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page).toHaveURL(/\/edit\?step=content/);
   });
 });

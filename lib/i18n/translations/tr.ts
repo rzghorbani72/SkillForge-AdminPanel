@@ -1362,7 +1362,12 @@ const tr = {
     lessonSettingsHint: 'Bu dersin diğer tüm ayarları müfredatta düzenlenir.',
     liveScheduleHint: 'Bu ders canlı işlenir.',
     liveScheduleLink: 'Buluşma saatini belirle',
-    lessonSettingsLink: 'Sınav, canlı saat ve indirme kuralı',
+    lessonSettingsLink: 'Canlı saat ve indirme kuralı',
+    lessonQuiz: 'Sınav',
+    lessonAssignment: 'Ödev',
+    assessmentTitle: 'Ders sınavı ve ödevi',
+    assessmentHint: 'Bu dersin sınavını ve ödevini burada oluşturun ve düzenleyin.',
+    assessmentSaveFirst: 'Sınav veya ödev eklemek için önce dersi kaydedin.',
     liveSaveFirst:
       'Önce dersi kaydedin, ardından düzenleme sayfasında toplantı bağlantısını yapılandırın.',
   },
