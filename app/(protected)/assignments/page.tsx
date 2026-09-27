@@ -12,18 +12,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { NumberInput } from '@/components/ui/number-input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Pagination } from '@/components/shared/Pagination';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -37,11 +27,12 @@ import type {
   LearningAssignment,
   SubmissionStatus,
 } from '@/types/learning-operations';
-import { DiscussionThread } from '@/components/discussion/discussion-thread';
 import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 import { RequirePermission } from '@/components/access-control/RequirePermission';
 import { AssignmentsFilters } from './_components/assignments-filters';
 import { AssignmentsStats } from './_components/assignments-stats';
+import { GradeSubmissionDialog } from '@/components/assignments/grade-submission-dialog';
+import { SubmissionStatusBadge } from '@/components/assignments/submission-status-badge';
 
 /** Course ids are cuids, so they are passed through as text, never parsed. */
 function parseCourseId(value: string): string | undefined {
@@ -70,13 +61,7 @@ export default function AssignmentsPage() {
   const [subPage, setSubPage] = useState(1);
   const [activeTab, setActiveTab] = useState<'assignments' | 'submissions'>('submissions');
 
-  const [gradeDialog, setGradeDialog] = useState<{
-    open: boolean;
-    submission: AssignmentSubmission | null;
-  }>({ open: false, submission: null });
-  const [gradeScore, setGradeScore] = useState('');
-  const [gradeFeedback, setGradeFeedback] = useState('');
-  const [isGrading, setIsGrading] = useState(false);
+  const [gradingSubmission, setGradingSubmission] = useState<AssignmentSubmission | null>(null);
 
   const courseId = parseCourseId(courseFilter);
 
@@ -152,48 +137,6 @@ export default function AssignmentsPage() {
     setCurrentPage(1);
     setSubPage(1);
   }, [courseFilter, statusFilter]);
-
-  const handleGrade = async () => {
-    if (!gradeDialog.submission) return;
-    const score = Number(gradeScore);
-    const maxScore = gradeDialog.submission.Assignment?.max_score;
-    if (!Number.isFinite(score) || score < 0 || maxScore === undefined || score > maxScore) {
-      return;
-    }
-    try {
-      setIsGrading(true);
-      await apiClient.gradeSubmission(gradeDialog.submission.id, {
-        score,
-        feedback: gradeFeedback || undefined,
-      });
-      setGradeDialog({ open: false, submission: null });
-      void fetchSubmissions();
-      void fetchStats();
-    } catch (e) {
-      ErrorHandler.handleApiError(e);
-    } finally {
-      setIsGrading(false);
-    }
-  };
-
-  const openGradeDialog = (sub: AssignmentSubmission) => {
-    setGradeDialog({ open: true, submission: sub });
-    setGradeScore(sub.score != null ? String(sub.score) : '');
-    setGradeFeedback(sub.feedback ?? '');
-  };
-
-  const statusColor = (status: string) => {
-    switch (status) {
-      case 'GRADED':
-        return 'bg-green-100 text-green-800';
-      case 'SUBMITTED':
-        return 'bg-blue-100 text-blue-800';
-      case 'REJECTED':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
-  };
 
   const filteredAssignments = search
     ? assignments.filter((a) => a.title.toLowerCase().includes(search.toLowerCase()))
@@ -420,9 +363,7 @@ export default function AssignmentsPage() {
                               {sub.Assignment?.title ?? t('assignmentsPage.notAvailable')}
                             </TableCell>
                             <TableCell>
-                              <Badge className={statusColor(sub.status)}>
-                                {t(`learningOperations.status.${sub.status}`)}
-                              </Badge>
+                              <SubmissionStatusBadge status={sub.status} />
                             </TableCell>
                             <TableCell className="text-sm">
                               {sub.score != null && sub.Assignment?.max_score != null
@@ -439,7 +380,7 @@ export default function AssignmentsPage() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => openGradeDialog(sub)}
+                                  onClick={() => setGradingSubmission(sub)}
                                 >
                                   <PenLine className="me-1 h-3 w-3" />
                                   {t('assignmentsPage.grade')}
@@ -449,7 +390,7 @@ export default function AssignmentsPage() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  onClick={() => openGradeDialog(sub)}
+                                  onClick={() => setGradingSubmission(sub)}
                                 >
                                   {t('assignmentsPage.editGrade')}
                                 </Button>
@@ -476,92 +417,14 @@ export default function AssignmentsPage() {
             </Card>
           )}
 
-          <Dialog
-            open={gradeDialog.open}
-            onOpenChange={(open) => setGradeDialog((d) => ({ ...d, open }))}
-          >
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{t('assignmentsPage.gradeSubmission')}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                {gradeDialog.submission?.content ? (
-                  <div>
-                    <Label>{t('assignmentsPage.studentAnswer')}</Label>
-                    <div className="mt-1 rounded border bg-muted/50 p-3 text-sm">
-                      {gradeDialog.submission.content}
-                    </div>
-                  </div>
-                ) : null}
-                {gradeDialog.submission?.file_url ? (
-                  <div>
-                    <Label>{t('assignmentsPage.attachedFile')}</Label>
-                    <a
-                      href={gradeDialog.submission.file_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-1 block text-sm text-blue-600 underline"
-                    >
-                      {t('assignmentsPage.viewFile')}
-                    </a>
-                  </div>
-                ) : null}
-                {gradeDialog.submission ? (
-                  <div className="rounded-lg border p-3">
-                    <DiscussionThread
-                      submissionId={String(gradeDialog.submission.id)}
-                      threadId={gradeDialog.submission.discussion_thread_id}
-                    />
-                  </div>
-                ) : null}
-                <div>
-                  <Label htmlFor="score">
-                    {t('assignmentsPage.scoreMax', {
-                      max:
-                        gradeDialog.submission?.Assignment?.max_score != null
-                          ? formatNumber(gradeDialog.submission.Assignment.max_score)
-                          : t('assignmentsPage.notAvailable'),
-                    })}
-                  </Label>
-                  <NumberInput
-                    id="score"
-                    value={gradeScore}
-                    onChange={(raw) => setGradeScore(raw)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="feedback">{t('assignmentsPage.feedbackOptional')}</Label>
-                  <Textarea
-                    id="feedback"
-                    value={gradeFeedback}
-                    onChange={(e) => setGradeFeedback(e.target.value)}
-                    placeholder={t('assignmentsPage.feedbackPlaceholder')}
-                    className="mt-1"
-                    rows={3}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setGradeDialog({ open: false, submission: null })}
-                >
-                  {t('common.cancel')}
-                </Button>
-                <Button
-                  onClick={handleGrade}
-                  disabled={
-                    isGrading ||
-                    !gradeScore ||
-                    gradeDialog.submission?.Assignment?.max_score === undefined
-                  }
-                >
-                  {isGrading ? t('common.saving') : t('assignmentsPage.saveGrade')}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <GradeSubmissionDialog
+            submission={gradingSubmission}
+            onClose={() => setGradingSubmission(null)}
+            onGraded={() => {
+              void fetchSubmissions();
+              void fetchStats();
+            }}
+          />
         </div>
       </LearningNavGate>
     </RequirePermission>

@@ -4085,6 +4085,13 @@ export const en = {
     filterByStatus: 'Filter by status',
     allStatuses: 'All statuses',
     clearFilters: 'Clear filters',
+    answerImages: 'Answer images',
+    previousImage: 'Previous image',
+    nextImage: 'Next image',
+    imageCounter: '{{current}} of {{total}}',
+    lessonSubmissionsTitle: 'Submissions and scores for this lesson',
+    lessonSubmissionsHint: "See each student's answer and give a score.",
+    late: 'Late',
   },
   learningNav: {
     accessDenied: 'Access not available',

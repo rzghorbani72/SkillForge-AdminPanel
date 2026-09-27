@@ -79,9 +79,7 @@ export default function LessonSettingsPage() {
 
           <QuizBuilder parent={{ kind: 'lesson', id: lesson.id }} />
 
-          {lesson.lesson_type === 'ASSIGNMENT' && (
-            <LessonAssignmentEditor lessonId={lesson.id} courseId={courseId} />
-          )}
+          <LessonAssignmentEditor lessonId={lesson.id} courseId={courseId} />
 
           <LessonDownloadPolicyEditor lesson={lesson} />
         </>

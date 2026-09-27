@@ -4076,6 +4076,13 @@ export const fa = {
     filterByStatus: 'فیلتر بر اساس وضعیت',
     allStatuses: 'همه وضعیت‌ها',
     clearFilters: 'پاک کردن فیلترها',
+    answerImages: 'تصاویر پاسخ',
+    previousImage: 'تصویر قبلی',
+    nextImage: 'تصویر بعدی',
+    imageCounter: '{{current}} از {{total}}',
+    lessonSubmissionsTitle: 'ارسال‌ها و نمره‌های این درس',
+    lessonSubmissionsHint: 'پاسخ هر دانشجو را ببینید و نمره بدهید.',
+    late: 'با تأخیر',
   },
   learningNav: {
     accessDenied: 'دسترسی در دسترس نیست',

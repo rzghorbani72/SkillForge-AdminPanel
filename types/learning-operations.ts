@@ -74,6 +74,7 @@ export interface AssignmentSubmission {
   graded_at?: string;
   content?: string;
   file_url?: string;
+  image_ids?: string[];
   discussion_thread_id?: string;
   enrollment_id?: string;
   /** Recorded, never blocking — a late hand-in is still accepted. */

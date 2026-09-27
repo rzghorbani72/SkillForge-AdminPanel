@@ -17,6 +17,7 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { logger } from '@/lib/logging/app-logger';
 import type { LearningAssignment } from '@/types/learning-operations';
+import { LessonSubmissionsList } from './lesson-submissions-list';
 
 interface Props {
   lessonId: string;
@@ -90,67 +91,70 @@ export function LessonAssignmentEditor({ lessonId, courseId }: Props) {
   if (isLoading) return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>;
 
   return (
-    <Card className="border-dashed">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <ClipboardList className="h-4 w-4" />
-          {t('courses.live.homeworkForLesson')}
-        </CardTitle>
-        <CardDescription>{t('courses.live.homeworkLessonHint')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="lesson-homework-title">{t('courses.live.homeworkTitle')} *</Label>
-            <Input
-              id="lesson-homework-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
+    <>
+      <Card className="border-dashed">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ClipboardList className="h-4 w-4" />
+            {t('courses.live.homeworkForLesson')}
+          </CardTitle>
+          <CardDescription>{t('courses.live.homeworkLessonHint')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="lesson-homework-title">{t('courses.live.homeworkTitle')} *</Label>
+              <Input
+                id="lesson-homework-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lesson-homework-due">{t('courses.live.homeworkDue')}</Label>
+              <DatePicker id="lesson-homework-due" value={dueDate} onChange={setDueDate} />
+              <p className="text-xs text-muted-foreground">{t('courses.live.homeworkDueHint')}</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lesson-homework-score">{t('courses.live.homeworkMaxScore')}</Label>
+              <NumberInput
+                id="lesson-homework-score"
+                value={maxScore}
+                min={1}
+                max={1000}
+                onChange={(raw) => setMaxScore(Number(raw) || 100)}
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="lesson-homework-description">
+                {t('courses.live.homeworkDescription')}
+              </Label>
+              <Textarea
+                id="lesson-homework-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="lesson-homework-due">{t('courses.live.homeworkDue')}</Label>
-            <DatePicker id="lesson-homework-due" value={dueDate} onChange={setDueDate} />
-            <p className="text-xs text-muted-foreground">{t('courses.live.homeworkDueHint')}</p>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lesson-homework-score">{t('courses.live.homeworkMaxScore')}</Label>
-            <NumberInput
-              id="lesson-homework-score"
-              value={maxScore}
-              min={1}
-              max={1000}
-              onChange={(raw) => setMaxScore(Number(raw) || 100)}
-            />
-          </div>
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="lesson-homework-description">
-              {t('courses.live.homeworkDescription')}
-            </Label>
-            <Textarea
-              id="lesson-homework-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-            />
-          </div>
-        </div>
 
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-        <div className="flex items-center justify-between gap-2">
-          <Button type="button" onClick={save} disabled={isSaving}>
-            {isSaving ? t('common.saving') : t('common.save')}
-          </Button>
-          {assignment ? (
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/assignments?course_id=${courseId}`}>
-                {t('courses.live.homeworkSubmissions')}
-              </Link>
+          <div className="flex items-center justify-between gap-2">
+            <Button type="button" onClick={save} disabled={isSaving}>
+              {isSaving ? t('common.saving') : t('common.save')}
             </Button>
-          ) : null}
-        </div>
-      </CardContent>
-    </Card>
+            {assignment ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/assignments?course_id=${courseId}`}>
+                  {t('courses.live.homeworkSubmissions')}
+                </Link>
+              </Button>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
+      {assignment ? <LessonSubmissionsList assignment={assignment} /> : null}
+    </>
   );
 }
