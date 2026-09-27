@@ -1,9 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Lock } from 'lucide-react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient } from '@/lib/api';
 import { apiErrorMessage } from '@/lib/api-error-message';
@@ -13,13 +11,15 @@ import { QuizGrading } from './quiz-grading';
 import { QuizHeaderCard, type QuizDetails } from './quiz-header-card';
 import { QuizQuestionForm } from './quiz-question-form';
 import { QuizQuestionList } from './quiz-question-list';
-import type { QuestionPayload, Quiz } from './quiz-types';
+import type { QuestionPayload, Quiz, QuizParent, QuizSettings } from './quiz-types';
 
 interface QuizBuilderProps {
-  lessonId: string;
+  parent: QuizParent;
 }
 
-export function QuizBuilder({ lessonId }: QuizBuilderProps) {
+export function QuizBuilder({ parent }: QuizBuilderProps) {
+  // Keyed on the parts, so an inline `parent` object does not reload every render.
+  const { kind, id } = parent;
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
   const [quiz, setQuiz] = useState<Quiz | null>(null);
@@ -29,13 +29,17 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setQuiz(await apiClient.getLessonQuiz<Quiz>(lessonId));
+      setQuiz(
+        await (kind === 'lesson'
+          ? apiClient.getLessonQuiz<Quiz>(id)
+          : apiClient.getSessionQuiz<Quiz>(id)),
+      );
     } catch {
       setQuiz(null);
     } finally {
       setLoading(false);
     }
-  }, [lessonId]);
+  }, [kind, id]);
 
   useEffect(() => {
     void load();
@@ -55,19 +59,21 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
 
   if (loading) return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>;
 
+  const isLessonQuiz = kind === 'lesson';
   if (!quiz) {
+    const parentKey = isLessonQuiz ? { lesson_id: id } : { tutoring_session_id: id };
     return (
       <QuizCreateForm
         error={error}
-        onCreate={(title, passing_score) =>
-          run(() => apiClient.createQuiz({ lesson_id: lessonId, title, passing_score }))
+        isLessonQuiz={isLessonQuiz}
+        onCreate={(title: string, settings: QuizSettings) =>
+          run(() => apiClient.createQuiz({ ...parentKey, title, ...settings }))
         }
       />
     );
   }
 
   const quizId = quiz.id;
-  const locked = (quiz._count?.Attempt ?? 0) > 0;
   const saveDetails = (details: QuizDetails) => run(() => apiClient.updateQuiz(quizId, details));
   const addQuestion = (payload: QuestionPayload) =>
     run(() => apiClient.addQuizQuestion(quizId, payload));
@@ -81,32 +87,23 @@ export function QuizBuilder({ lessonId }: QuizBuilderProps) {
         onSave={saveDetails}
         onTogglePublish={() => run(() => apiClient.setQuizPublished(quizId, !quiz.is_published))}
       >
-        {locked && (
-          <Alert>
-            <Lock className="h-4 w-4" />
-            <AlertDescription>{t('quiz.lockedByAttempts')}</AlertDescription>
-          </Alert>
-        )}
         {error && <p className="text-sm text-destructive">{error}</p>}
         <QuizQuestionList
           questions={quiz.Question}
-          locked={locked}
           onUpdate={updateQuestion}
           onDelete={(id) => run(() => apiClient.deleteQuizQuestion(id))}
           onReorder={(ids) => run(() => apiClient.reorderQuizQuestions(quizId, ids))}
         />
       </QuizHeaderCard>
 
-      {!locked && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('quiz.addQuestion')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <QuizQuestionForm onSubmit={addQuestion} />
-          </CardContent>
-        </Card>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('quiz.addQuestion')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <QuizQuestionForm onSubmit={addQuestion} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

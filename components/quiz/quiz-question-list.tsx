@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Lock, Pencil, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -10,13 +10,12 @@ import type { QuestionPayload, QuizQuestion } from './quiz-types';
 
 interface Props {
   questions: QuizQuestion[];
-  locked: boolean;
   onUpdate: (questionId: string, payload: QuestionPayload) => Promise<boolean>;
   onDelete: (questionId: string) => Promise<boolean>;
   onReorder: (questionIds: string[]) => Promise<boolean>;
 }
 
-export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReorder }: Props) {
+export function QuizQuestionList({ questions, onUpdate, onDelete, onReorder }: Props) {
   const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -33,8 +32,9 @@ export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReor
 
   return (
     <div className="space-y-3">
-      {questions.map((q, i) =>
-        editingId === q.id ? (
+      {questions.map((q, i) => {
+        const answered = (q._count?.Answer ?? 0) > 0;
+        return editingId === q.id ? (
           <div key={q.id} className="rounded-md border p-3">
             <QuizQuestionForm
               initial={q}
@@ -54,6 +54,12 @@ export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReor
                 <span className="text-xs text-muted-foreground">
                   ({t(`quiz.type.${q.type}`)} · {t('quiz.pointsValue', { count: q.points })})
                 </span>
+                {answered && (
+                  <Lock
+                    className="ms-1 inline h-3 w-3 text-muted-foreground"
+                    aria-label={t('quiz.answeredLocked')}
+                  />
+                )}
               </p>
               {q.type === 'MULTIPLE_CHOICE' && (
                 <ul className="mt-1 text-xs text-muted-foreground">
@@ -75,7 +81,7 @@ export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReor
               <Button
                 size="sm"
                 variant="ghost"
-                disabled={locked || i === 0}
+                disabled={i === 0}
                 onClick={() => move(i, -1)}
                 aria-label={t('quiz.moveUp')}
               >
@@ -84,7 +90,7 @@ export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReor
               <Button
                 size="sm"
                 variant="ghost"
-                disabled={locked || i === questions.length - 1}
+                disabled={i === questions.length - 1}
                 onClick={() => move(i, 1)}
                 aria-label={t('quiz.moveDown')}
               >
@@ -93,7 +99,7 @@ export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReor
               <Button
                 size="sm"
                 variant="ghost"
-                disabled={locked}
+                disabled={answered || q.type !== 'MULTIPLE_CHOICE'}
                 onClick={() => setEditingId(q.id)}
                 aria-label={t('quiz.editQuestion')}
               >
@@ -102,7 +108,7 @@ export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReor
               <Button
                 size="sm"
                 variant="ghost"
-                disabled={locked}
+                disabled={answered}
                 onClick={() => onDelete(q.id)}
                 aria-label={t('quiz.deleteQuestion')}
               >
@@ -110,8 +116,8 @@ export function QuizQuestionList({ questions, locked, onUpdate, onDelete, onReor
               </Button>
             </div>
           </div>
-        ),
-      )}
+        );
+      })}
     </div>
   );
 }

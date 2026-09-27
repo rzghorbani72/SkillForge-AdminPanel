@@ -23,6 +23,7 @@ import type { ClassSession, CourseTopic } from '@/types/learning-operations';
 import { CancelSessionDialog } from './cancel-session-dialog';
 import { SessionRecordingField } from './session-recording-field';
 import { SessionMaterialsField } from './session-materials-field';
+import { SessionQuizSheet } from './session-quiz-sheet';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 
 const NO_TOPIC = 'none';
@@ -251,15 +252,18 @@ export function SessionRow({
             onChanged={(materials) => onChanged({ ...session, Materials: materials })}
           />
 
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowChat((open) => !open)}
-          >
-            <MessageSquare className="h-4 w-4" />
-            {t('courses.live.sessionChat')}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowChat((open) => !open)}
+            >
+              <MessageSquare className="h-4 w-4" />
+              {t('courses.live.sessionChat')}
+            </Button>
+            <SessionQuizSheet sessionId={session.id} />
+          </div>
           {showChat && (
             <div className="rounded-lg border p-3">
               <DiscussionThread tutoringSessionId={session.id} />

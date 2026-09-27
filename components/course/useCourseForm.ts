@@ -81,6 +81,7 @@ export function useCourseForm(courseId: string) {
       requirements: '',
       difficulty: 'BEGINNER',
       is_certificate: false,
+      certificate_rule: 'ALL_QUIZZES',
       access_duration_days: '',
       primary_price: '0',
       secondary_price: '',
@@ -116,6 +117,7 @@ export function useCourseForm(courseId: string) {
         requirements: (data.requirements ?? '').trim(),
         difficulty: data.difficulty,
         is_certificate: data.is_certificate,
+        certificate_rule: data.certificate_rule,
         access_duration_days: parseAccessDurationDays(data.access_duration_days),
         meta_title: data.meta_title.trim(),
         meta_description: data.meta_description.trim(),
@@ -199,6 +201,7 @@ export function useCourseForm(courseId: string) {
           requirements: course.requirements ?? '',
           difficulty: parseCourseDifficulty(course.difficulty),
           is_certificate: course.is_certificate ?? false,
+          certificate_rule: course.certificate_rule ?? 'ALL_QUIZZES',
           access_duration_days:
             course.access_duration_days != null ? String(course.access_duration_days) : '',
           meta_title: course.meta_title ?? '',

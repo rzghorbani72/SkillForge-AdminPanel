@@ -2,6 +2,10 @@ import * as z from 'zod';
 
 // Single source of truth for the limits shown in the counter, enforced by the
 // schema and validated again by the backend DTOs — they must never drift.
+/** FINAL_QUIZ = lessons + final exam; ALL_QUIZZES = lessons + every quiz + required homework. */
+export const CERTIFICATE_RULES = ['FINAL_QUIZ', 'ALL_QUIZZES'] as const;
+export type CertificateRule = (typeof CERTIFICATE_RULES)[number];
+
 export const COURSE_TITLE_MAX = 80;
 export const COURSE_DESCRIPTION_MAX = 4000;
 export const COURSE_LEARNING_OUTCOMES_MAX = 2000;
@@ -48,6 +52,7 @@ export const courseFormFields = z.object({
     .default(''),
   difficulty: z.enum(COURSE_DIFFICULTIES).default('BEGINNER'),
   is_certificate: z.boolean().default(false),
+  certificate_rule: z.enum(CERTIFICATE_RULES).default('ALL_QUIZZES'),
   // Empty = students keep access while the academy is active.
   access_duration_days: z
     .string()

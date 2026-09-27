@@ -10,7 +10,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { toPersianDigits } from '@/lib/phone-utils';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
-import { secondsToDuration, sumDurationSeconds } from './course-drafts';
+import { secondsToDuration, sumDurationSeconds, type LessonType } from './course-drafts';
 import { LessonList } from './LessonList';
 import { InlineConfirm } from './InlineConfirm';
 
@@ -35,7 +35,7 @@ interface SeasonAccordionProps {
   onRemove: () => void;
   /** Called instead of onRemove when this is the last season: wipes it back to blank. */
   onClear: () => void;
-  onAddLesson: (title: string) => void;
+  onAddLesson: (title: string, lessonType?: LessonType) => void;
   onRemoveLesson: (key: string) => void;
   onClearLesson: (key: string) => void;
   onUpdateLesson: (key: string, patch: Partial<LessonDraft>) => void;

@@ -18,7 +18,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 import { toPersianDigits } from '@/lib/phone-utils';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
-import { secondsToDuration, sumDurationSeconds } from './course-drafts';
+import { secondsToDuration, sumDurationSeconds, type LessonType } from './course-drafts';
 import { SortableSeasonAccordion } from './SortableSeasonAccordion';
 
 interface SeasonsSectionProps {
@@ -29,7 +29,7 @@ interface SeasonsSectionProps {
   onClearSeason: (key: string) => void;
   onUpdateSeason: (key: string, patch: Partial<Pick<SeasonDraft, 'title'>>) => void;
   onReorderSeasons: (from: number, to: number) => void;
-  onAddLesson: (seasonClientKey: string, title: string) => void;
+  onAddLesson: (seasonClientKey: string, title: string, lessonType?: LessonType) => void;
   onRemoveLesson: (lessonKey: string) => void;
   onClearLesson: (lessonKey: string) => void;
   onUpdateLesson: (lessonKey: string, patch: Partial<LessonDraft>) => void;
@@ -182,7 +182,9 @@ export function SeasonsSection({
                       onUpdate={(patch) => onUpdateSeason(season.clientKey, patch)}
                       onRemove={() => onRemoveSeason(season.clientKey)}
                       onClear={() => onClearSeason(season.clientKey)}
-                      onAddLesson={(title) => onAddLesson(season.clientKey, title)}
+                      onAddLesson={(title, lessonType) =>
+                        onAddLesson(season.clientKey, title, lessonType)
+                      }
                       onRemoveLesson={onRemoveLesson}
                       onClearLesson={onClearLesson}
                       onUpdateLesson={onUpdateLesson}

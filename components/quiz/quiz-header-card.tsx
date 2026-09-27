@@ -8,15 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { NumberInput } from '@/components/ui/number-input';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/lib/i18n/hooks';
-import type { Quiz } from './quiz-types';
+import { QuizSettingsFields } from './quiz-settings-fields';
+import type { Quiz, QuizSettings } from './quiz-types';
 
-export interface QuizDetails {
+export interface QuizDetails extends QuizSettings {
   title: string;
   description?: string;
-  passing_score: number;
 }
 
 interface Props {
@@ -31,14 +30,19 @@ export function QuizHeaderCard({ quiz, onTogglePublish, onSave, children }: Prop
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(quiz.title);
   const [description, setDescription] = useState(quiz.description ?? '');
-  const [passingScore, setPassingScore] = useState(quiz.passing_score);
-  const totalPoints = quiz.Question.reduce((sum, q) => sum + q.points, 0);
+  const [settings, setSettings] = useState<QuizSettings>(quiz);
+  const bankSize = quiz.Question.length;
+  const perAttempt = Math.min(quiz.questions_per_attempt ?? bankSize, bankSize);
 
   const save = async () => {
     const ok = await onSave({
       title: title.trim(),
       description: description.trim() || undefined,
-      passing_score: passingScore,
+      pass_percent: settings.pass_percent,
+      questions_per_attempt: settings.questions_per_attempt,
+      max_attempts: settings.max_attempts,
+      is_required: settings.is_required,
+      is_final: settings.is_final,
     });
     if (ok) setIsEditing(false);
   };
@@ -49,12 +53,21 @@ export function QuizHeaderCard({ quiz, onTogglePublish, onSave, children }: Prop
         <div>
           <CardTitle>{quiz.title}</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            {t('quiz.summary', {
-              questions: quiz.Question.length,
-              points: totalPoints,
-              passing: quiz.passing_score,
+            {t('quiz.summaryBank', {
+              bank: bankSize,
+              perAttempt,
+              pass: quiz.pass_percent,
             })}
           </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {quiz.is_required && <Badge variant="secondary">{t('quiz.requiredBadge')}</Badge>}
+            {quiz.is_final && <Badge variant="secondary">{t('quiz.finalBadge')}</Badge>}
+            <Badge variant="outline">
+              {quiz.max_attempts == null
+                ? t('quiz.unlimitedAttempts')
+                : t('quiz.attemptsAllowed', { count: quiz.max_attempts })}
+            </Badge>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Badge variant={quiz.is_published ? 'default' : 'outline'}>
@@ -84,13 +97,12 @@ export function QuizHeaderCard({ quiz, onTogglePublish, onSave, children }: Prop
               <Label>{t('common.title')}</Label>
               <Input value={title} onChange={(e) => setTitle(e.target.value)} />
             </div>
-            <div className="space-y-2">
-              <Label>{t('quiz.passingScore')}</Label>
-              <NumberInput
-                value={passingScore}
-                min={0}
-                max={totalPoints}
-                onChange={(raw) => setPassingScore(raw === '' ? 0 : Number(raw))}
+            <div className="sm:col-span-2">
+              <QuizSettingsFields
+                value={settings}
+                onChange={setSettings}
+                bankSize={bankSize}
+                isLessonQuiz={quiz.lesson_id != null}
               />
             </div>
             <div className="space-y-2 sm:col-span-2">

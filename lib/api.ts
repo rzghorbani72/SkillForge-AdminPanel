@@ -243,6 +243,15 @@ export interface LearningNavCapabilities {
   };
 }
 
+/** Quiz rules a teacher edits; mirrors the Backend `QuizSettingsDto`. */
+type QuizSettingsPayload = {
+  pass_percent: number;
+  questions_per_attempt: number | null;
+  max_attempts: number | null;
+  is_required: boolean;
+  is_final: boolean;
+};
+
 class ApiClient {
   private isRefreshing: boolean = false;
   private refreshPromise: Promise<boolean> | null = null;
@@ -2179,12 +2188,16 @@ class ApiClient {
     return this.quizData<T>(`/lessons/${lessonId}/quiz`);
   }
 
-  async createQuiz(payload: {
-    lesson_id: string;
-    title: string;
-    description?: string;
-    passing_score?: number;
-  }) {
+  async getSessionQuiz<T = unknown>(sessionId: string) {
+    return this.quizData<T>(`/tutoring-sessions/${sessionId}/quiz`);
+  }
+
+  async createQuiz(
+    payload: ({ lesson_id: string } | { tutoring_session_id: string }) & {
+      title: string;
+      description?: string;
+    } & Partial<QuizSettingsPayload>,
+  ) {
     return this.quizData(`/quizzes`, {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -2193,7 +2206,7 @@ class ApiClient {
 
   async updateQuiz(
     id: string,
-    payload: { title?: string; description?: string; passing_score?: number },
+    payload: { title?: string; description?: string } & Partial<QuizSettingsPayload>,
   ) {
     return this.quizData(`/quizzes/${id}`, {
       method: 'PATCH',
@@ -2204,11 +2217,9 @@ class ApiClient {
   async addQuizQuestion(
     quizId: string,
     payload: {
-      type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'SHORT_TEXT';
       prompt: string;
       points?: number;
-      correct_boolean?: boolean;
-      options?: { text: string; is_correct: boolean }[];
+      options: { text: string; is_correct: boolean }[];
     },
   ) {
     return this.quizData(`/quizzes/${quizId}/questions`, {

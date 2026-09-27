@@ -77,7 +77,7 @@ export default function LessonSettingsPage() {
             />
           )}
 
-          {lesson.lesson_type === 'QUIZ' && <QuizBuilder lessonId={lesson.id} />}
+          <QuizBuilder parent={{ kind: 'lesson', id: lesson.id }} />
 
           {lesson.lesson_type === 'ASSIGNMENT' && (
             <LessonAssignmentEditor lessonId={lesson.id} courseId={courseId} />

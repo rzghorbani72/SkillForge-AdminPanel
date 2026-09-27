@@ -334,6 +334,7 @@ export interface Course {
   is_published: boolean;
   is_featured: boolean;
   is_certificate?: boolean;
+  certificate_rule?: 'FINAL_QUIZ' | 'ALL_QUIZZES';
   cover_id?: number;
   author_id: number;
   academy_id: string;

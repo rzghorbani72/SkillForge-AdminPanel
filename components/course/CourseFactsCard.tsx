@@ -21,7 +21,12 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { COURSE_DIFFICULTIES, type CourseDifficultyLevel, type CourseFormData } from './schema';
+import {
+  CERTIFICATE_RULES,
+  COURSE_DIFFICULTIES,
+  type CourseDifficultyLevel,
+  type CourseFormData,
+} from './schema';
 
 const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
   BEGINNER: 'courses.beginner',
@@ -107,6 +112,39 @@ export default function CourseFactsCard({ form }: { form: UseFormReturn<CourseFo
             </FormItem>
           )}
         />
+
+        {form.watch('is_certificate') && (
+          <FormField
+            control={form.control}
+            name="certificate_rule"
+            render={({ field }) => (
+              <FormItem className="max-w-md">
+                <FormLabel>{t('certificates.ruleLabel')}</FormLabel>
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => {
+                    const rule = CERTIFICATE_RULES.find((option) => option === value);
+                    if (rule) field.onChange(rule);
+                  }}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {CERTIFICATE_RULES.map((rule) => (
+                      <SelectItem key={rule} value={rule}>
+                        {t(`certificates.rule.${rule}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>{t('certificates.ruleHint')}</FormDescription>
+              </FormItem>
+            )}
+          />
+        )}
       </CardContent>
     </Card>
   );

@@ -1,5 +1,11 @@
 import { useCallback, useState } from 'react';
-import { emptyLesson, emptySeason, type LessonDraft, type SeasonDraft } from './course-drafts';
+import {
+  emptyLesson,
+  emptySeason,
+  type LessonDraft,
+  type LessonType,
+  type SeasonDraft,
+} from './course-drafts';
 
 /**
  * The editable curriculum of one course: seasons, lessons and the ids deleted
@@ -70,9 +76,15 @@ export function useCurriculumDraft() {
 
   // ── Lesson mutations ──────────────────────────────────────────────────────
 
-  const addLesson = useCallback((seasonClientKey: string, title = '') => {
-    setLessons((prev) => [...prev, { ...emptyLesson(seasonClientKey), title }]);
-  }, []);
+  const addLesson = useCallback(
+    (seasonClientKey: string, title = '', lessonType: LessonType = 'VIDEO') => {
+      setLessons((prev) => [
+        ...prev,
+        { ...emptyLesson(seasonClientKey), title, lesson_type: lessonType },
+      ]);
+    },
+    [],
+  );
 
   const removeLesson = useCallback((lessonKey: string) => {
     setLessons((prev) => {

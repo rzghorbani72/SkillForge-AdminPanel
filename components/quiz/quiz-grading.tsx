@@ -17,6 +17,7 @@ interface Attempt {
   score: number;
   max_score: number;
   passed?: boolean | null;
+  attempt_number: number;
   Profile?: { id: string; display_name: string | null };
 }
 interface AttemptDetail extends Attempt {
@@ -114,9 +115,14 @@ export function QuizGrading({ quizId, currentProfileId }: QuizGradingProps) {
             <button
               key={a.id}
               onClick={() => openAttempt(a.id)}
-              className={`flex w-full items-center justify-between rounded-md border p-2 text-left text-sm ${selected?.id === a.id ? 'border-primary' : ''}`}
+              className={`flex w-full items-center justify-between rounded-md border p-2 text-start text-sm ${selected?.id === a.id ? 'border-primary' : ''}`}
             >
-              <span>{a.Profile?.display_name ?? t('students.unknownStudent')}</span>
+              <span>
+                {a.Profile?.display_name ?? t('students.unknownStudent')}{' '}
+                <span className="text-xs text-muted-foreground">
+                  {t('quiz.attemptNumber', { number: a.attempt_number })}
+                </span>
+              </span>
               <Badge variant={statusVariant(a.status)}>
                 {a.status === 'PENDING_REVIEW'
                   ? t('quiz.review')

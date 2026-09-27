@@ -10,7 +10,10 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { ListChecks } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
+import type { LessonType } from './course-drafts';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import { SortableLessonRow } from './SortableLessonRow';
 import { QuickAddRow } from './QuickAddRow';
@@ -18,7 +21,7 @@ import { QuickAddRow } from './QuickAddRow';
 interface LessonListProps {
   lessons: LessonDraft[];
   seasons: SeasonDraft[];
-  onAddLesson: (title: string) => void;
+  onAddLesson: (title: string, lessonType?: LessonType) => void;
   onRemoveLesson: (key: string) => void;
   onClearLesson: (key: string) => void;
   onUpdateLesson: (key: string, patch: Partial<LessonDraft>) => void;
@@ -85,9 +88,18 @@ export function LessonList({
 
       <QuickAddRow
         placeholder={t('courses.addLessonHint')}
-        onAdd={onAddLesson}
+        onAdd={(title) => onAddLesson(title)}
         blockedReason={hasUntitledLesson ? t('courses.addLessonBlocked') : undefined}
       />
+      <Button
+        type="button"
+        size="sm"
+        variant="ghost"
+        onClick={() => onAddLesson(t('quiz.seasonQuizTitle'), 'QUIZ')}
+      >
+        <ListChecks className="me-1 h-4 w-4" />
+        {t('quiz.addSeasonQuiz')}
+      </Button>
     </div>
   );
 }
