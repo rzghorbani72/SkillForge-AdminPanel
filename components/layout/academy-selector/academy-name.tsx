@@ -1,6 +1,6 @@
 'use client';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const SELECTOR_NAME_MAX_CHARS = 16;
 
@@ -18,12 +18,15 @@ export function TruncatedAcademyName({ name }: { name: string }) {
     return <p className="text-sm font-semibold leading-tight">{display}</p>;
   }
 
+  // Own provider: the single-academy header renders this outside any switcher.
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <p className="cursor-default text-sm font-semibold leading-tight">{display}</p>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">{name}</TooltipContent>
-    </Tooltip>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <p className="cursor-default text-sm font-semibold leading-tight">{display}</p>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">{name}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
