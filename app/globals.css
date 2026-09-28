@@ -738,6 +738,36 @@ html.transitioning *::after {
   opacity: 0.5;
 }
 
+/* ALTCHA captcha widget — remapped from its own default (bright-green/harsh-red,
+   fixed 320px pill) onto the auth design tokens above. The widget renders in a
+   shadow root, so only its published --altcha-* custom properties can reach in;
+   everything else (the boxed 56px input look, the brand teal, the destructive
+   red) comes from the same variables the rest of this form already uses. */
+.auth-theme altcha-widget {
+  display: block;
+  width: 100%;
+  --altcha-max-width: 100%;
+  --altcha-border-color: #c7c7c7;
+  --altcha-border-width: 1px;
+  --altcha-border-radius: 16px;
+  --altcha-padding: 1.0625rem 1rem;
+  --altcha-color-base: transparent;
+  --altcha-color-base-content: hsl(var(--foreground));
+  --altcha-color-primary: hsl(var(--brand));
+  --altcha-color-primary-content: #fff;
+  --altcha-color-success: hsl(var(--brand-accent));
+  --altcha-color-success-content: #fff;
+  --altcha-color-error: hsl(var(--destructive));
+  --altcha-color-error-content: #fff;
+  --altcha-color-neutral: #c7c7c7;
+  --altcha-color-neutral-content: #616579;
+  --altcha-checkbox-border-color: #c7c7c7;
+  --altcha-checkbox-border-radius: 6px;
+  --altcha-checkbox-outline-color: hsl(var(--brand));
+  --altcha-input-border-radius: 10px;
+  --altcha-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.18);
+}
+
 /* Rendered Markdown descriptions (course, season, lesson). Kept small and
    local so no typography plugin is needed. */
 .prose-description > *,

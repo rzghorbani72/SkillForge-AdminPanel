@@ -45,15 +45,13 @@ export function HumanCheck({ onVerify }: HumanCheckProps) {
   }, [onVerify]);
 
   return (
-    <div className="flex justify-center py-1">
-      <altcha-widget
-        ref={ref}
-        challenge={`${getBrowserApiBaseUrl()}/captcha/challenge`}
-        auto="onfocus"
-        language={language}
-        configuration={WIDGET_CONFIGURATION}
-        suppressHydrationWarning
-      />
-    </div>
+    <altcha-widget
+      ref={ref}
+      challenge={`${getBrowserApiBaseUrl()}/captcha/challenge`}
+      auto="onfocus"
+      language={language}
+      configuration={WIDGET_CONFIGURATION}
+      suppressHydrationWarning
+    />
   );
 }
