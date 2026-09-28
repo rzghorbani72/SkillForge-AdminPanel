@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ClipboardList } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -19,12 +19,28 @@ import { logger } from '@/lib/logging/app-logger';
 import type { LearningAssignment } from '@/types/learning-operations';
 import { LessonSubmissionsList } from './lesson-submissions-list';
 
+/** A course assignment sits on one lesson or closes a whole season. */
+export interface AssignmentParent {
+  kind: 'lesson' | 'season';
+  id: string;
+}
+
 interface Props {
-  lessonId: string;
+  parent: AssignmentParent;
   courseId: string;
 }
 
-export function LessonAssignmentEditor({ lessonId, courseId }: Props) {
+const TEXT_KEYS = {
+  lesson: { title: 'courses.live.homeworkForLesson', hint: 'courses.live.homeworkLessonHint' },
+  season: { title: 'courses.live.homeworkForSeason', hint: 'courses.live.homeworkSeasonHint' },
+} as const;
+
+export function LessonAssignmentEditor({ parent, courseId }: Props) {
+  const { kind, id } = parent;
+  const parentKey = useMemo(
+    () => (kind === 'lesson' ? { lesson_id: id } : { season_id: id }),
+    [kind, id],
+  );
   const { t } = useTranslation();
   const [assignment, setAssignment] = useState<LearningAssignment | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +54,7 @@ export function LessonAssignmentEditor({ lessonId, courseId }: Props) {
   const load = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { assignments } = await apiClient.getAssignments({ lesson_id: lessonId, limit: 1 });
+      const { assignments } = await apiClient.getAssignments({ ...parentKey, limit: 1 });
       const existing = assignments[0] ?? null;
       setAssignment(existing);
       if (existing) {
@@ -52,7 +68,7 @@ export function LessonAssignmentEditor({ lessonId, courseId }: Props) {
     } finally {
       setIsLoading(false);
     }
-  }, [lessonId]);
+  }, [parentKey]);
 
   useEffect(() => {
     void load();
@@ -74,9 +90,10 @@ export function LessonAssignmentEditor({ lessonId, courseId }: Props) {
     try {
       const saved = assignment
         ? await apiClient.updateAssignment(assignment.id, payload)
-        : await apiClient.createAssignment({ lesson_id: lessonId, ...payload });
-      logger.ok('Assignments', 'LessonAssignmentSaved', {
-        lesson_id: lessonId,
+        : await apiClient.createAssignment({ ...parentKey, ...payload });
+      logger.ok('Assignments', 'CourseAssignmentSaved', {
+        parent_kind: kind,
+        parent_id: id,
         assignment_id: saved.id,
       });
       toast.success(t('courses.live.homeworkSaved'));
@@ -96,9 +113,9 @@ export function LessonAssignmentEditor({ lessonId, courseId }: Props) {
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <ClipboardList className="h-4 w-4" />
-            {t('courses.live.homeworkForLesson')}
+            {t(TEXT_KEYS[kind].title)}
           </CardTitle>
-          <CardDescription>{t('courses.live.homeworkLessonHint')}</CardDescription>
+          <CardDescription>{t(TEXT_KEYS[kind].hint)}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">

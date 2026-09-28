@@ -38,13 +38,17 @@ export interface Quiz extends QuizSettings {
   description?: string | null;
   is_published: boolean;
   lesson_id: string | null;
+  season_id: string | null;
   tutoring_session_id: string | null;
   Question: QuizQuestion[];
   _count?: { Attempt: number };
 }
 
-/** Where a quiz hangs: a lesson of a course, or one meeting of a live class. */
-export type QuizParent = { kind: 'lesson'; id: string } | { kind: 'session'; id: string };
+/** Where a quiz hangs: a lesson, season or the course itself, or one live class meeting. */
+export interface QuizParent {
+  kind: 'lesson' | 'season' | 'course' | 'session';
+  id: string;
+}
 
 /** New questions are multiple choice only; older types still show and grade. */
 export interface QuestionPayload {

@@ -2188,12 +2188,25 @@ class ApiClient {
     return this.quizData<T>(`/lessons/${lessonId}/quiz`);
   }
 
+  async getSeasonQuiz<T = unknown>(seasonId: string) {
+    return this.quizData<T>(`/seasons/${seasonId}/quiz`);
+  }
+
+  async getCourseQuiz<T = unknown>(courseId: string) {
+    return this.quizData<T>(`/courses/${courseId}/quiz`);
+  }
+
   async getSessionQuiz<T = unknown>(sessionId: string) {
     return this.quizData<T>(`/tutoring-sessions/${sessionId}/quiz`);
   }
 
   async createQuiz(
-    payload: ({ lesson_id: string } | { tutoring_session_id: string }) & {
+    payload: (
+      | { lesson_id: string }
+      | { season_id: string }
+      | { course_id: string }
+      | { tutoring_session_id: string }
+    ) & {
       title: string;
       description?: string;
     } & Partial<QuizSettingsPayload>,
@@ -5530,6 +5543,7 @@ class ApiClient {
     page?: number;
     limit?: number;
     lesson_id?: string;
+    season_id?: string;
     tutoring_group_id?: string;
     tutoring_session_id?: string;
     course_id?: string;
@@ -5545,8 +5559,9 @@ class ApiClient {
   }
 
   async createAssignment(data: {
-    /** Exactly one parent: a lesson, a whole class, or one meeting of it. */
+    /** Exactly one parent: a lesson, a season, a whole class, or one meeting of it. */
     lesson_id?: string;
+    season_id?: string;
     tutoring_group_id?: string;
     tutoring_session_id?: string;
     title: string;

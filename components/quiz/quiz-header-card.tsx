@@ -102,7 +102,7 @@ export function QuizHeaderCard({ quiz, onTogglePublish, onSave, children }: Prop
                 value={settings}
                 onChange={setSettings}
                 bankSize={bankSize}
-                isLessonQuiz={quiz.lesson_id != null}
+                isCourseQuiz={quiz.tutoring_session_id == null}
               />
             </div>
             <div className="space-y-2 sm:col-span-2">

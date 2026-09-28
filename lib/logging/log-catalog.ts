@@ -10,10 +10,10 @@ export const LOG_CATALOG = {
   Assignments: {
     description: 'Homework a teacher sets on a lesson and the submissions it collects.',
     actions: {
-      LessonAssignmentSaved: {
-        description: 'Teacher created or updated the homework attached to a course lesson.',
+      CourseAssignmentSaved: {
+        description: 'Teacher created or updated the homework attached to a course lesson or season.',
         level: 'info',
-        fields: ['assignment_id', 'lesson_id'] as const,
+        fields: ['assignment_id', 'parent_id', 'parent_kind'] as const,
       },
     },
   },

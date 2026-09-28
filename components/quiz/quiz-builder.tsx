@@ -29,11 +29,13 @@ export function QuizBuilder({ parent }: QuizBuilderProps) {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setQuiz(
-        await (kind === 'lesson'
-          ? apiClient.getLessonQuiz<Quiz>(id)
-          : apiClient.getSessionQuiz<Quiz>(id)),
-      );
+      const byKind = {
+        lesson: () => apiClient.getLessonQuiz<Quiz>(id),
+        season: () => apiClient.getSeasonQuiz<Quiz>(id),
+        course: () => apiClient.getCourseQuiz<Quiz>(id),
+        session: () => apiClient.getSessionQuiz<Quiz>(id),
+      };
+      setQuiz(await byKind[kind]());
     } catch {
       setQuiz(null);
     } finally {
@@ -59,13 +61,17 @@ export function QuizBuilder({ parent }: QuizBuilderProps) {
 
   if (loading) return <p className="text-sm text-muted-foreground">{t('common.loading')}</p>;
 
-  const isLessonQuiz = kind === 'lesson';
   if (!quiz) {
-    const parentKey = isLessonQuiz ? { lesson_id: id } : { tutoring_session_id: id };
+    const parentKey = {
+      lesson: { lesson_id: id },
+      season: { season_id: id },
+      course: { course_id: id },
+      session: { tutoring_session_id: id },
+    }[kind];
     return (
       <QuizCreateForm
         error={error}
-        isLessonQuiz={isLessonQuiz}
+        parentKind={kind}
         onCreate={(title: string, settings: QuizSettings) =>
           run(() => apiClient.createQuiz({ ...parentKey, title, ...settings }))
         }

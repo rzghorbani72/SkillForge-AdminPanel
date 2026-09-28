@@ -26,7 +26,8 @@ import {
 import { LessonMedia, LESSON_INFO_SLOT_CLASS } from './LessonMedia';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
 import { LessonDurationInfo } from './lesson-duration-info';
-import { LessonAssessmentDialog } from './lesson-assessment-dialog';
+import { AssignmentDialog } from './assessment/assignment-dialog';
+import { QuizDialog } from './assessment/quiz-dialog';
 
 /**
  * Switching type drops the media the old type owned, so a length measured from
@@ -40,6 +41,10 @@ function patchForType(lesson: LessonDraft, type: LessonDraft['lesson_type']): Pa
     ...(losesItsLength ? { duration: DEFAULT_DURATION } : {}),
   };
 }
+
+const RETIRED_LESSON_TYPES: ReadonlySet<LessonDraft['lesson_type']> = new Set<
+  LessonDraft['lesson_type']
+>(['LIVE', 'QUIZ', 'ASSIGNMENT']);
 
 const SETTING_ROW_CLASS = 'flex items-center justify-between gap-3 px-4 py-3';
 
@@ -61,10 +66,11 @@ export function LessonEditorPanel({ lesson, seasons, onUpdate, onAssign }: Lesso
   // lesson has nowhere to link to yet.
   const settingsHref = lesson.id && courseId ? `/courses/${courseId}/lessons/${lesson.id}` : null;
 
-  // Live teaching is a live course with its own timetable, so a recorded
-  // course can no longer make a live lesson; ones that exist stay editable.
+  // Live teaching is a live course with its own timetable, and quizzes and
+  // assignments hang off a lesson or season rather than being one. Retired
+  // types stay selectable only on a lesson that already has them.
   const typeOptions = LESSON_TYPE_OPTIONS.filter(
-    (option) => option.type !== 'LIVE' || lesson.lesson_type === 'LIVE',
+    (option) => !RETIRED_LESSON_TYPES.has(option.type) || lesson.lesson_type === option.type,
   );
 
   return (
@@ -216,11 +222,15 @@ export function LessonEditorPanel({ lesson, seasons, onUpdate, onAssign }: Lesso
           />
         </div>
         {courseId && (
-          <LessonAssessmentDialog
-            lessonId={lesson.id}
-            courseId={courseId}
-            lessonTitle={lesson.title}
-          />
+          <div className="flex flex-wrap gap-2">
+            <QuizDialog kind="lesson" parentId={lesson.id} title={lesson.title} />
+            <AssignmentDialog
+              kind="lesson"
+              parentId={lesson.id}
+              courseId={courseId}
+              title={lesson.title}
+            />
+          </div>
         )}
         {settingsHref && (
           <Link

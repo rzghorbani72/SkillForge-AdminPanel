@@ -10,7 +10,7 @@
     "TeacherPayout": "Off-platform teacher payouts a manager records from the dashboard."
   },
   "events": {
-    "Assignments.LessonAssignmentSaved": "Teacher created or updated the homework attached to a course lesson.",
+    "Assignments.CourseAssignmentSaved": "Teacher created or updated the homework attached to a course lesson or season.",
     "Dashboard.ReportExported": "Manager downloaded the dashboard CSV report for the selected period.",
     "Dashboard.ReportExportFailed": "Dashboard CSV report failed to build or download in the browser.",
     "Gdpr.ConsentAccepted": "GDPR consent accepted.",

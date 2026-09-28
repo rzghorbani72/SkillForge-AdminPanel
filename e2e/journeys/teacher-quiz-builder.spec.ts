@@ -6,7 +6,9 @@ import { teacherLogin } from '../helpers/auth';
 test.describe('@backend teacher journey: quiz builder', () => {
   test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 and run the Backend e2e:seed first');
 
-  test('builds a required quiz in the lesson dialog and publishes it', async ({ page }) => {
+  test('builds a lesson quiz in a dialog and opens the assignment, season and course dialogs', async ({
+    page,
+  }) => {
     await teacherLogin(page);
     await page.goto(`/courses/${process.env.E2E_QUIZ_COURSE_ID}/edit?step=content`);
     const row = page
@@ -32,8 +34,19 @@ test.describe('@backend teacher journey: quiz builder', () => {
     await dialog.getByRole('button', { name: 'انتشار' }).click();
     await expect(dialog.getByRole('button', { name: 'لغو انتشار' })).toBeVisible();
 
-    await dialog.getByRole('tab', { name: 'تکلیف' }).click();
-    await expect(dialog.getByText('تکلیف این درس')).toBeVisible();
+    await page.keyboard.press('Escape');
+
+    await row.getByRole('button', { name: 'تکلیف', exact: true }).click();
+    await expect(page.getByRole('dialog').getByText('تکلیف این درس')).toBeVisible();
+    await page.keyboard.press('Escape');
+
+    await page.getByRole('button', { name: 'آزمون فصل', exact: true }).first().click();
+    await expect(page.getByRole('dialog').getByText('ساخت آزمون برای این فصل')).toBeVisible();
+    await page.keyboard.press('Escape');
+
+    // The seed puts the final exam on the course itself, not on a lesson.
+    await page.getByRole('button', { name: 'آزمون دوره', exact: true }).click();
+    await expect(page.getByRole('dialog').getByText('آزمون پایانی دوره')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page).toHaveURL(/\/edit\?step=content/);
   });

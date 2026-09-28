@@ -8,15 +8,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { QuizSettingsFields } from './quiz-settings-fields';
-import { DEFAULT_QUIZ_SETTINGS, type QuizSettings } from './quiz-types';
+import { DEFAULT_QUIZ_SETTINGS, type QuizParent, type QuizSettings } from './quiz-types';
 
 interface Props {
   error: string | null;
-  isLessonQuiz: boolean;
+  parentKind: QuizParent['kind'];
   onCreate: (title: string, settings: QuizSettings) => Promise<boolean>;
 }
 
-export function QuizCreateForm({ error, isLessonQuiz, onCreate }: Props) {
+const CREATE_TITLE_KEY: Record<QuizParent['kind'], string> = {
+  lesson: 'quiz.createForLesson',
+  season: 'quiz.createForSeason',
+  course: 'quiz.createForCourse',
+  session: 'quiz.createForSession',
+};
+
+export function QuizCreateForm({ error, parentKind, onCreate }: Props) {
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [settings, setSettings] = useState<QuizSettings>(DEFAULT_QUIZ_SETTINGS);
@@ -24,7 +31,7 @@ export function QuizCreateForm({ error, isLessonQuiz, onCreate }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t(isLessonQuiz ? 'quiz.createForLesson' : 'quiz.createForSession')}</CardTitle>
+        <CardTitle>{t(CREATE_TITLE_KEY[parentKind])}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -35,7 +42,11 @@ export function QuizCreateForm({ error, isLessonQuiz, onCreate }: Props) {
             placeholder={t('quiz.titlePlaceholder')}
           />
         </div>
-        <QuizSettingsFields value={settings} onChange={setSettings} isLessonQuiz={isLessonQuiz} />
+        <QuizSettingsFields
+          value={settings}
+          onChange={setSettings}
+          isCourseQuiz={parentKind !== 'session'}
+        />
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={() => onCreate(title, settings)} disabled={title.trim().length < 2}>
           {t('quiz.create')}

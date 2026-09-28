@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronRight, Clock, GripVertical, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
 import { Input } from '@/components/ui/input';
@@ -10,9 +11,11 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { toPersianDigits } from '@/lib/phone-utils';
 import type { LessonDraft, SeasonDraft } from './useCourseForm';
-import { secondsToDuration, sumDurationSeconds, type LessonType } from './course-drafts';
+import { secondsToDuration, sumDurationSeconds } from './course-drafts';
 import { LessonList } from './LessonList';
 import { InlineConfirm } from './InlineConfirm';
+import { AssignmentDialog } from './assessment/assignment-dialog';
+import { QuizDialog } from './assessment/quiz-dialog';
 
 // Completeness helper — mirrors the one in SortableLessonRow
 function isLessonComplete(lesson: LessonDraft): boolean {
@@ -35,7 +38,7 @@ interface SeasonAccordionProps {
   onRemove: () => void;
   /** Called instead of onRemove when this is the last season: wipes it back to blank. */
   onClear: () => void;
-  onAddLesson: (title: string, lessonType?: LessonType) => void;
+  onAddLesson: (title: string) => void;
   onRemoveLesson: (key: string) => void;
   onClearLesson: (key: string) => void;
   onUpdateLesson: (key: string, patch: Partial<LessonDraft>) => void;
@@ -62,6 +65,7 @@ export function SortableSeasonAccordion({
   onReorderLessons,
 }: SeasonAccordionProps) {
   const { t, language } = useTranslation();
+  const { course_id: courseId } = useParams<{ course_id: string }>();
   const formatNumber = useNumberFormat();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -212,6 +216,26 @@ export function SortableSeasonAccordion({
             onAssignLesson={onAssignLesson}
             onReorderLessons={onReorderLessons}
           />
+          {courseId && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-dashed px-3 py-2">
+              <span className="text-xs font-medium text-muted-foreground">
+                {t('courses.seasonAssessmentLabel')}
+              </span>
+              <div className="flex flex-wrap gap-2">
+                <QuizDialog
+                  kind="season"
+                  parentId={season.id}
+                  title={season.title || fallbackTitle}
+                />
+                <AssignmentDialog
+                  kind="season"
+                  parentId={season.id}
+                  courseId={courseId}
+                  title={season.title || fallbackTitle}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

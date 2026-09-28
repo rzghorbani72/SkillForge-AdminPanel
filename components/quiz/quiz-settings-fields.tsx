@@ -12,14 +12,14 @@ interface Props {
   /** Questions in the bank today, shown next to the draw size. */
   bankSize?: number;
   /** Gate and final-exam switches only make sense on a course lesson. */
-  isLessonQuiz: boolean;
+  isCourseQuiz: boolean;
 }
 
 /** An empty box means "no limit", so it maps to null rather than 0. */
 const optionalCount = (raw: string): number | null =>
   raw === '' ? null : Math.max(1, Number(raw));
 
-export function QuizSettingsFields({ value, onChange, bankSize, isLessonQuiz }: Props) {
+export function QuizSettingsFields({ value, onChange, bankSize, isCourseQuiz }: Props) {
   const { t } = useTranslation();
   const set = (patch: Partial<QuizSettings>) => onChange({ ...value, ...patch });
 
@@ -57,7 +57,7 @@ export function QuizSettingsFields({ value, onChange, bankSize, isLessonQuiz }: 
         />
       </div>
 
-      {isLessonQuiz && (
+      {isCourseQuiz && (
         <>
           <label className="flex items-start gap-3 rounded-md border p-3 sm:col-span-3">
             <Switch
