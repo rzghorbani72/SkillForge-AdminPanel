@@ -30,6 +30,8 @@ import {
 } from '@/lib/auth-validation';
 import { RegisterDetailsForm, type RegisterValues } from './_components/register-details-form';
 import { AnonymousAuthGate } from '@/components/auth/anonymous-auth-gate';
+import { HumanCheck } from '@/components/auth/human-check';
+import { useHumanCheck } from '@/hooks/use-human-check';
 
 const useRegisterSchema = (t: Translate) =>
   z
@@ -76,6 +78,9 @@ function RegisterPageBody() {
   const [done, setDone] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [acceptedLegal, setAcceptedLegal] = useState(false);
+  const detailsCaptcha = useHumanCheck();
+  // Signup does not open a session, so the automatic first login needs its own check.
+  const loginCaptcha = useHumanCheck();
   const [legalVersions, setLegalVersions] = useState<{
     terms: string | null;
     privacy: string | null;
@@ -127,9 +132,12 @@ function RegisterPageBody() {
         return;
       }
 
+      const captchaToken = detailsCaptcha.token;
+      detailsCaptcha.reset();
       const response = await apiClient.sendPhoneOtp(
         toE164Iran(values.phone),
         OtpType.REGISTER_PHONE_VERIFICATION,
+        captchaToken,
       );
       setStep('verify');
       setOtpCode('');
@@ -151,7 +159,13 @@ function RegisterPageBody() {
   async function signInNewAccount(identifier: string, password: string) {
     setDone(true);
     try {
-      const session = await authService.login({ identifier, password });
+      const captchaToken = loginCaptcha.token;
+      loginCaptcha.reset();
+      const session = await authService.login({
+        identifier,
+        password,
+        captcha_token: captchaToken,
+      });
       // No role means no session was created — the backend answered with a
       // verification/reset gate the login page knows how to finish, not us.
       const role = resolveSessionRole(session);
@@ -225,12 +239,12 @@ function RegisterPageBody() {
     }
   }
 
-  async function resendOtp() {
+  async function resendOtp(captchaToken: string) {
     const phone = toE164Iran(form.getValues('phone'));
     setOtpLoading(true);
     setOtpCode('');
     try {
-      await apiClient.sendPhoneOtp(phone, OtpType.REGISTER_PHONE_VERIFICATION);
+      await apiClient.sendPhoneOtp(phone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
       notifyOtpSent(t('auth.resendCode'), 'register-otp-resent');
     } catch (err: unknown) {
       toast.error(apiErrorMessage(err, t('common.error')), {
@@ -264,7 +278,9 @@ function RegisterPageBody() {
         submitLabel={t('auth.verifySmsOtp')}
         onResend={resendOtp}
         resending={otpLoading}
-      />
+      >
+        <HumanCheck key={loginCaptcha.resetKey} onVerify={loginCaptcha.setToken} />
+      </PhoneOtpScreen>
     );
   }
 
@@ -290,6 +306,7 @@ function RegisterPageBody() {
           loading={otpLoading}
           acceptedLegal={acceptedLegal}
           onAcceptedLegalChange={setAcceptedLegal}
+          captcha={detailsCaptcha}
           onSubmit={onDetailsSubmit}
         />
       </div>

@@ -8,6 +8,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { MemberAcademy } from '@/types/auth';
 import { useMemberAcademies } from '../use-member-academies';
+import { HumanCheck } from '@/components/auth/human-check';
+import { useHumanCheck } from '@/hooks/use-human-check';
 
 interface MemberAcademiesScreenProps {
   phoneE164: string;
@@ -48,6 +50,7 @@ export function MemberAcademiesScreen({
 }: MemberAcademiesScreenProps) {
   const { t } = useTranslation();
   const lookup = useMemberAcademies(phoneE164);
+  const captcha = useHumanCheck();
 
   if (lookup.step === 'otp') {
     return (
@@ -108,7 +111,17 @@ export function MemberAcademiesScreen({
           </Alert>
         )}
 
-        <AuthSubmit loading={lookup.loading} onClick={lookup.sendCode}>
+        <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+
+        <AuthSubmit
+          loading={lookup.loading}
+          disabled={lookup.loading || !captcha.solved}
+          onClick={() => {
+            const token = captcha.token;
+            captcha.reset();
+            void lookup.sendCode(token);
+          }}
+        >
           {t('auth.memberAcademiesSendCode')}
         </AuthSubmit>
 

@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLogin } from './use-login';
-import { IdentifyStep } from '@/components/auth/identify-step';
-import { PasswordStep } from '@/components/auth/password-step';
+import { LoginStep } from '@/components/auth/login-step';
 import { AcademyPicker } from './_components/academy-picker';
 import { MemberAcademiesScreen } from './_components/member-academies-screen';
 import { PhoneOtpScreen } from '@/components/auth/phone-otp-screen';
@@ -117,45 +116,29 @@ export default function LoginPage() {
     );
   }
 
-  if (login.identity) {
-    return (
-      <PasswordStep
-        title={t('auth.loginTitle')}
-        identifier={login.phone}
-        forgotPasswordHref="/forget-password"
-        password={login.password}
-        canUseOtp={login.identity.can_use_otp}
-        isLoading={login.isLoading}
-        error={login.errors.password}
-        captchaRequired={login.captchaRequired}
-        onCaptchaVerify={login.setCaptchaToken}
-        onPasswordChange={(v) => {
-          login.setPassword(v);
-          if (login.errors.password) login.setErrors((p) => ({ ...p, password: '' }));
-        }}
-        onUseOtp={login.useOtpInstead}
-        onChangeIdentifier={login.changeIdentifier}
-        onSubmit={login.handleSubmit}
-      />
-    );
-  }
-
   return (
-    <IdentifyStep
+    <LoginStep
       title={t('auth.loginTitle')}
-      identifier={login.phone}
+      phone={login.phone}
+      password={login.password}
+      method={login.loginMethod}
+      captcha={login.captcha}
       isLoading={login.isLoading}
-      error={login.errors.phone}
+      errors={login.errors}
       notice={login.unauthorizedError}
       notRegistered={login.registrationRequired}
       registerHref={login.registerHref}
-      captchaRequired={login.captchaRequired}
-      onCaptchaVerify={login.setCaptchaToken}
-      onIdentifierChange={(v) => {
+      forgotPasswordHref="/forget-password"
+      onPhoneChange={(v) => {
         login.setPhone(v);
         if (login.errors.phone) login.setErrors((p) => ({ ...p, phone: '' }));
         if (login.registrationRequired) login.clearRegistrationHint();
       }}
+      onPasswordChange={(v) => {
+        login.setPassword(v);
+        if (login.errors.password) login.setErrors((p) => ({ ...p, password: '' }));
+      }}
+      onMethodChange={login.changeMethod}
       onSubmit={login.handleSubmit}
     />
   );

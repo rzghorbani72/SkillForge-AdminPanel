@@ -78,6 +78,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@uploadthing/react": "^5.7.0",
+    "altcha": "3.2.3",
     "autoprefixer": "10.4.21",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

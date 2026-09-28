@@ -38,7 +38,7 @@ export interface LoginCredentials {
   identifier: string;
   password: string;
   academy_id?: string;
-  captcha_token?: string;
+  captcha_token: string;
 }
 
 export interface RegisterData {
@@ -104,6 +104,7 @@ class AuthService {
     email: string;
     phone_number: string;
     password: string;
+    captcha_token: string;
   }): Promise<AuthUser> {
     try {
       const response = await apiClient.adminLogin(credentials);

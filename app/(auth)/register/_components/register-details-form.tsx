@@ -3,6 +3,8 @@
 import { UseFormReturn, UseFormRegisterReturn } from 'react-hook-form';
 import { AuthField, AuthPhoneField, AuthSubmit } from '@/components/auth/auth-fields';
 import { LegalConsentCheckbox } from '@/components/auth/legal-consent-checkbox';
+import { HumanCheck } from '@/components/auth/human-check';
+import type { HumanCheckState } from '@/hooks/use-human-check';
 import { PasswordStrength } from '@/components/ui/password-strength';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { sanitizePasswordInput } from '@/lib/password-utils';
@@ -19,6 +21,7 @@ interface RegisterDetailsFormProps {
   loading: boolean;
   acceptedLegal: boolean;
   onAcceptedLegalChange: (value: boolean) => void;
+  captcha: HumanCheckState;
   onSubmit: (values: RegisterValues) => void;
 }
 
@@ -38,6 +41,7 @@ export function RegisterDetailsForm({
   loading,
   acceptedLegal,
   onAcceptedLegalChange,
+  captcha,
   onSubmit,
 }: RegisterDetailsFormProps) {
   const { t } = useTranslation();
@@ -101,7 +105,12 @@ export function RegisterDetailsForm({
         disabled={loading}
       />
 
-      <AuthSubmit loading={loading} disabled={loading || !acceptedLegal || !allFieldsFilled}>
+      <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+
+      <AuthSubmit
+        loading={loading}
+        disabled={loading || !acceptedLegal || !allFieldsFilled || !captcha.solved}
+      >
         {loading ? t('auth.sending') : t('auth.registerTitle')}
       </AuthSubmit>
     </form>

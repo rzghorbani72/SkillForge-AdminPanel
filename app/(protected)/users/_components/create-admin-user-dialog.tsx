@@ -28,6 +28,8 @@ import { isPlatformAdmin, isPlatformOwner } from '@/lib/roles';
 import { Loader2, Mail, Phone } from 'lucide-react';
 import { OtpType } from '@/constants/data';
 import { Checkbox } from '@/components/ui/checkbox';
+import { HumanCheck } from '@/components/auth/human-check';
+import { useHumanCheck } from '@/hooks/use-human-check';
 
 type PlatformStaffRole = 'ADMIN' | 'FINANCE' | 'SUPPORT';
 
@@ -78,6 +80,14 @@ export function CreateAdminUserDialog({
     email: false,
   });
 
+  // The code-send routes need a solved captcha even for a logged-in admin.
+  const captcha = useHumanCheck();
+  const takeCaptchaToken = () => {
+    const token = captcha.token;
+    captcha.reset();
+    return token;
+  };
+
   const handleSendPhoneOtp = async () => {
     if (!formData.phone || !formData.countryCode) {
       ErrorHandler.showError(t('createAdminUser.phoneNumberRequired'));
@@ -87,7 +97,11 @@ export function CreateAdminUserDialog({
     try {
       setIsSendingOtp(true);
       const fullPhone = `${formData.countryCode}${formData.phone.replace(/^\+/, '')}`;
-      await apiClient.sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
+      await apiClient.sendPhoneOtp(
+        fullPhone,
+        OtpType.REGISTER_PHONE_VERIFICATION,
+        takeCaptchaToken(),
+      );
       setOtpSent((prev) => ({ ...prev, phone: true }));
       ErrorHandler.showSuccess(t('createAdminUser.phoneOtpSent'));
     } catch (error) {
@@ -105,7 +119,11 @@ export function CreateAdminUserDialog({
 
     try {
       setIsSendingOtp(true);
-      await apiClient.sendEmailOtp(formData.email, OtpType.REGISTER_EMAIL_VERIFICATION);
+      await apiClient.sendEmailOtp(
+        formData.email,
+        OtpType.REGISTER_EMAIL_VERIFICATION,
+        takeCaptchaToken(),
+      );
       setOtpSent((prev) => ({ ...prev, email: true }));
       ErrorHandler.showSuccess(t('createAdminUser.emailOtpSent'));
     } catch (error) {
@@ -307,6 +325,7 @@ export function CreateAdminUserDialog({
                 onCountryChange={(code) => setFormData((prev) => ({ ...prev, countryCode: code }))}
                 disabled={isLoading || (otpVerified.phone && !formData.autoConfirmPhone)}
               />
+              <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
               <div className="flex gap-2">
                 <Button
                   type="button"
@@ -314,6 +333,7 @@ export function CreateAdminUserDialog({
                   onClick={handleSendPhoneOtp}
                   disabled={
                     isSendingOtp ||
+                    !captcha.solved ||
                     !formData.phone ||
                     otpVerified.phone ||
                     formData.autoConfirmPhone
@@ -401,6 +421,7 @@ export function CreateAdminUserDialog({
                   onClick={handleSendEmailOtp}
                   disabled={
                     isSendingOtp ||
+                    !captcha.solved ||
                     !formData.email ||
                     otpVerified.email ||
                     formData.autoConfirmEmail

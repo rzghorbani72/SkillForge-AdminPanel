@@ -111,7 +111,7 @@ import type {
   UpdateLessonDownloadPolicyPayload,
   UpdateTutoringOfferPayload,
 } from '@/types/learning-operations';
-import type { AccountIdentity, MemberAcademy } from '@/types/auth';
+import type { MemberAcademy } from '@/types/auth';
 import type { UserDetailsResponse } from '@/types/user-details';
 import type { CouponSummary } from '@/lib/coupons';
 import type {
@@ -743,7 +743,7 @@ class ApiClient {
     identifier: string;
     password: string;
     academy_id?: string;
-    captcha_token?: string;
+    captcha_token: string;
   }) {
     const response = this.request('/auth/staff/login', {
       method: 'POST',
@@ -756,7 +756,12 @@ class ApiClient {
    * Public login for STUDENT/USER (store-specific)
    * academy_id is REQUIRED
    */
-  async publicLogin(credentials: { identifier: string; password: string; academy_id: string }) {
+  async publicLogin(credentials: {
+    identifier: string;
+    password: string;
+    academy_id: string;
+    captcha_token: string;
+  }) {
     const response = this.request('/auth/public/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
@@ -768,7 +773,12 @@ class ApiClient {
    * Admin login for ADMIN role (platform-level)
    * Requires email + phone + password
    */
-  async adminLogin(credentials: { email: string; phone_number: string; password: string }) {
+  async adminLogin(credentials: {
+    email: string;
+    phone_number: string;
+    password: string;
+    captcha_token: string;
+  }) {
     const response = this.request('/auth/admin/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
@@ -799,28 +809,14 @@ class ApiClient {
   }
 
   /**
-   * Identifier-first login step 1: ask which sign-in methods this phone/email
-   * has, so an unknown one is sent to signup instead of failing a password.
-   */
-  async identifyStaff(identifier: string, captcha_token?: string) {
-    return this.request<AccountIdentity>('/auth/staff/identify', {
-      method: 'POST',
-      body: JSON.stringify({
-        identifier,
-        ...(captcha_token ? { captcha_token } : {}),
-      }),
-    });
-  }
-
-  /**
    * Step 2 for a phone that has no panel account but belongs to an academy:
    * send the one-time code that unlocks the academy list. Membership is
    * private, so only the person holding the phone may see it.
    */
-  async sendAcademyLookupOtp(phone_number: string) {
+  async sendAcademyLookupOtp(phone_number: string, captcha_token: string) {
     return this.request<{ message: string }>('/auth/academies/lookup/send-otp', {
       method: 'POST',
-      body: JSON.stringify({ phone_number }),
+      body: JSON.stringify({ phone_number, captcha_token }),
     });
   }
 
@@ -1061,10 +1057,10 @@ class ApiClient {
     });
   }
 
-  async sendAdminLoginOtp(email: string, phone_number: string) {
+  async sendAdminLoginOtp(email: string, phone_number: string, captcha_token: string) {
     return this.request('/auth/admin/login-otp/send', {
       method: 'POST',
-      body: JSON.stringify({ email, phone_number }),
+      body: JSON.stringify({ email, phone_number, captcha_token }),
     });
   }
 
@@ -1126,17 +1122,17 @@ class ApiClient {
   }
 
   // OTP endpoints - Updated to use new OTP controller
-  async sendPhoneOtp(phone_number: string, type: OtpType) {
+  async sendPhoneOtp(phone_number: string, type: OtpType, captcha_token: string) {
     return this.request('/auth/otp/send-phone', {
       method: 'POST',
-      body: JSON.stringify({ phone_number, type }),
+      body: JSON.stringify({ phone_number, type, captcha_token }),
     }) as any;
   }
 
-  async sendEmailOtp(email: string, type: OtpType) {
+  async sendEmailOtp(email: string, type: OtpType, captcha_token: string) {
     return this.request('/auth/otp/send-email', {
       method: 'POST',
-      body: JSON.stringify({ email, type }),
+      body: JSON.stringify({ email, type, captcha_token }),
     }) as any;
   }
 

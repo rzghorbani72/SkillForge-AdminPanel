@@ -3,6 +3,8 @@
 import { AuthField, AuthPhoneField, AuthSubmit } from '@/components/auth/auth-fields';
 import { toE164Iran } from '@/lib/phone-utils';
 import { cn } from '@/lib/utils';
+import { HumanCheck } from '@/components/auth/human-check';
+import { useHumanCheck } from '@/hooks/use-human-check';
 import type { useAdminForgetPassword } from '../use-admin-forget-password';
 
 type Fp = ReturnType<typeof useAdminForgetPassword>;
@@ -14,6 +16,7 @@ const CHANNELS = [
 
 export function IdentifierStep({ fp }: { fp: Fp }) {
   const { t } = fp;
+  const captcha = useHumanCheck();
   // Only one identifier field is rendered at a time.
   const identifier = fp.authMethod === 'email' ? fp.formData.email : fp.formData.phoneNumber;
 
@@ -41,7 +44,9 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          fp.handleSendOtp();
+          const captchaToken = captcha.token;
+          captcha.reset();
+          void fp.handleSendOtp(captchaToken);
         }}
         className="space-y-5"
         noValidate
@@ -69,7 +74,12 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
           disabled={fp.isLoading}
         />
 
-        <AuthSubmit loading={fp.isLoading} disabled={fp.isLoading || identifier.trim() === ''}>
+        <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+
+        <AuthSubmit
+          loading={fp.isLoading}
+          disabled={fp.isLoading || identifier.trim() === '' || !captcha.solved}
+        >
           {t('forgotPassword.sendOtp')}
         </AuthSubmit>
       </form>

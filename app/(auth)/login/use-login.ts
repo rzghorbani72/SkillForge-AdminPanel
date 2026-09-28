@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { toE164Iran } from '@/lib/phone-utils';
@@ -9,15 +9,15 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDelayedRedirect } from '@/hooks/use-delayed-redirect';
 import { checkoutQueryFromSearch, homeRouteFor, resolveSessionRole } from '@/lib/auth-routing';
 import {
+  isMemberElsewhereError,
   isUserNotRegisteredError,
-  isCaptchaRequiredError,
   isPanelAccessBlockedError,
 } from '@/lib/auth-login-errors';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { notifyOtpSent } from '@/lib/otp-notify';
 import { setSelectedAcademyId } from '@/lib/store-utils';
-import type { AccountIdentity } from '@/types/auth';
-import { nextStepFor } from '@/lib/auth-identify';
+import type { LoginMethod } from '@/components/auth/login-method-toggle';
+import { useHumanCheck } from '@/hooks/use-human-check';
 import { collectErrors, validateOtp, validatePassword, validatePhone } from '@/lib/auth-validation';
 
 type Academy = { id: string; name: string; slug: string };
@@ -65,7 +65,8 @@ export function useLogin() {
   const planQuery = checkoutQueryFromSearch(planParam, periodParam);
   const { pending: redirectPending, scheduleRedirect } = useDelayedRedirect();
 
-  const [identity, setIdentity] = useState<AccountIdentity | null>(null);
+  const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
+  const captcha = useHumanCheck();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -76,11 +77,6 @@ export function useLogin() {
   const [academyPickerOpen, setAcademyPickerOpen] = useState(false);
   const [availableAcademies, setAvailableAcademies] = useState<Academy[]>([]);
   const [pickingAcademy, setPickingAcademy] = useState(false);
-
-  // True once the backend has created a real session, so the academy picker must
-  // switch academies instead of logging in again. A ref, not state: `finishLogin`
-  // reads it in the same tick it is set, when state would still be stale.
-  const sessionReadyRef = useRef(false);
 
   const [otpRequired, setOtpRequired] = useState(false);
   const [otpMode, setOtpMode] = useState<'verify' | 'login'>('verify');
@@ -95,8 +91,6 @@ export function useLogin() {
   // The phone has an academy membership but no panel role — a student who came
   // to the wrong door. They are routed to their academy, not to signup.
   const [memberElsewhere, setMemberElsewhere] = useState(false);
-  const [captchaRequired, setCaptchaRequired] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState('');
 
   // Admin created this account with a one-time password — the user must pick
   // their own before a real session is granted.
@@ -114,11 +108,11 @@ export function useLogin() {
     }
   }, [searchParams, t]);
 
-  function validate(step: 'identify' | 'password') {
+  function validate() {
     const e = collectErrors(
       {
         phone: validatePhone(phone),
-        ...(step === 'password' ? { password: validatePassword(password) } : {}),
+        ...(loginMethod === 'password' ? { password: validatePassword(password) } : {}),
       },
       t,
     );
@@ -145,12 +139,12 @@ export function useLogin() {
     });
   }
 
-  async function requestLoginOtp() {
+  async function requestLoginOtp(captchaToken: string) {
     setIsLoading(true);
     setRegistrationRequired(false);
     try {
       const phoneE164 = toE164Iran(phone);
-      await apiClient.sendPhoneOtp(phoneE164, OtpType.LOGIN_BY_PHONE);
+      await apiClient.sendPhoneOtp(phoneE164, OtpType.LOGIN_BY_PHONE, captchaToken);
       setOtpPhone(phoneE164);
       setOtpFullPhone(phoneE164);
       setOtpMode('login');
@@ -167,70 +161,7 @@ export function useLogin() {
         t('auth.accountNotRegisteredForLogin'),
       );
       setRegistrationRequired(needsRegistration);
-      if (needsRegistration) {
-        // Fall back to step 1 so the signup hint is visible where it belongs.
-        setIdentity(null);
-        setErrors((prev) => ({ ...prev, phone: '' }));
-      } else {
-        toast.error(message, { toastId: 'login-error' });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  /**
-   * Step 1 of identifier-first login: look the phone up before asking for a
-   * password, so an unknown number is offered signup instead of a login it
-   * could never pass.
-   */
-  async function handleIdentify() {
-    if (!validate('identify')) return;
-    setIsLoading(true);
-    setRegistrationRequired(false);
-    try {
-      const { data } = await apiClient.identifyStaff(
-        toE164Iran(phone),
-        captchaRequired ? captchaToken : undefined,
-      );
-      setCaptchaRequired(data.captcha_required);
-      setCaptchaToken('');
-
-      const next = nextStepFor(data);
-      if (next === 'register') {
-        setRegistrationRequired(true);
-        return;
-      }
-      if (next === 'member_elsewhere') {
-        setMemberElsewhere(true);
-        return;
-      }
-      if (next === 'panel_blocked') {
-        goToUnauthorized();
-        return;
-      }
-
-      setIdentity(data);
-      if (next === 'otp') {
-        await requestLoginOtp();
-        return;
-      }
-      if (next === 'blocked') {
-        toast.error(t('auth.noSignInMethodAvailable'), {
-          toastId: 'login-no-method',
-        });
-      }
-    } catch (error: unknown) {
-      if (isCaptchaRequiredError(error)) {
-        setCaptchaRequired(true);
-        setCaptchaToken('');
-      } else if (isPanelAccessBlockedError(error)) {
-        goToUnauthorized();
-        return;
-      }
-      toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
-        toastId: 'login-error',
-      });
+      if (!needsRegistration) toast.error(message, { toastId: 'login-error' });
     } finally {
       setIsLoading(false);
     }
@@ -260,19 +191,20 @@ export function useLogin() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!identity) return handleIdentify();
-    if (!validate('password')) return;
+    if (!validate()) return;
+    const captchaToken = captcha.token;
+    captcha.reset();
+    if (loginMethod === 'otp') return requestLoginOtp(captchaToken);
+
     setIsLoading(true);
+    setRegistrationRequired(false);
     try {
       const response = (await authService.login({
         identifier: toE164Iran(phone),
         password,
-        ...(captchaRequired ? { captcha_token: captchaToken } : {}),
+        captcha_token: captchaToken,
       })) as LoginResponse | null;
       if (!response) return;
-
-      setCaptchaRequired(false);
-      setCaptchaToken('');
 
       if (response.phone_verification_required) {
         setOtpTempToken(response.temp_token ?? '');
@@ -293,12 +225,12 @@ export function useLogin() {
 
       await finishLogin(response);
     } catch (error: unknown) {
-      if (isCaptchaRequiredError(error)) {
-        setCaptchaRequired(true);
-        setCaptchaToken('');
-        toast.error(apiErrorMessage(error, t('error.authenticationFailed')), {
-          toastId: 'login-captcha-required',
-        });
+      if (isUserNotRegisteredError(error)) {
+        setRegistrationRequired(true);
+        return;
+      }
+      if (isMemberElsewhereError(error)) {
+        setMemberElsewhere(true);
         return;
       }
       if (isPanelAccessBlockedError(error)) {
@@ -316,38 +248,23 @@ export function useLogin() {
   async function handleAcademySelect(academyId: string) {
     setPickingAcademy(true);
     try {
-      // When a session already exists (OTP login, phone-verify gate, or a fresh
-      // password), pick the academy by switching. Logging in again would replay a
-      // password that is spent or already replaced, failing on a valid session.
-      if (sessionReadyRef.current) {
-        apiClient.resumeRequests();
-        const switched = (await apiClient.switchAcademy(academyId)) as {
-          data?: LoginResponse & { data?: LoginResponse };
-        };
-        setSelectedAcademyId(academyId);
-        toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
+      // Every login path has created a session by now, so picking an academy switches.
+      apiClient.resumeRequests();
+      const switched = (await apiClient.switchAcademy(academyId)) as {
+        data?: LoginResponse & { data?: LoginResponse };
+      };
+      setSelectedAcademyId(academyId);
+      toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
 
-        // Someone who just picked an academy is academy staff by definition, so
-        // an unreadable response falls back to the dashboard — never to
-        // /unauthorized, and never to no redirect at all.
-        const session = switched?.data?.data ?? switched?.data ?? {};
-        scheduleRedirect({
-          href: homeRouteFor(resolveSessionRole(session), { planQuery }) ?? '/dashboard',
-          title: t('success.loginSuccess'),
-          message: t('auth.redirectingToDashboard'),
-        });
-        return;
-      }
-
-      const response = (await authService.login({
-        identifier: toE164Iran(phone),
-        password,
-        academy_id: academyId,
-      })) as LoginResponse | null;
-      if (response) {
-        toast.success(t('success.loginSuccess'), { toastId: 'login-success' });
-        schedulePostLoginRedirect(response);
-      }
+      // Someone who just picked an academy is academy staff by definition, so
+      // an unreadable response falls back to the dashboard — never to
+      // /unauthorized, and never to no redirect at all.
+      const session = switched?.data?.data ?? switched?.data ?? {};
+      scheduleRedirect({
+        href: homeRouteFor(resolveSessionRole(session), { planQuery }) ?? '/dashboard',
+        title: t('success.loginSuccess'),
+        message: t('auth.redirectingToDashboard'),
+      });
     } catch (error: unknown) {
       if (isPanelAccessBlockedError(error)) {
         goToUnauthorized();
@@ -376,12 +293,6 @@ export function useLogin() {
           otp: otp.trim(),
         })) as LoginResponse;
 
-        // OTP login always creates the session, so a user with several academies
-        // picks one by switching rather than by logging in again — there is no
-        // password to replay and the OTP is spent. One academy still goes
-        // through finishLogin so we switch onto that staff seat instead of
-        // following a leftover student JWT.
-        sessionReadyRef.current = true;
         await finishLogin(response);
         return;
       }
@@ -398,7 +309,6 @@ export function useLogin() {
         return;
       }
 
-      sessionReadyRef.current = true;
       toast.success(t('success.otpVerified'), { toastId: 'login-success' });
       scheduleRedirect({
         href: result.redirect_to ?? '/my-affiliate',
@@ -430,9 +340,6 @@ export function useLogin() {
         resetTempToken,
         newPassword,
       )) as LoginResponse;
-      // The new password created a session; the one still in state is the spent
-      // one-time password and must never be replayed by the academy picker.
-      sessionReadyRef.current = true;
       setPasswordResetRequired(false);
       await finishLogin(response);
     } catch (error: unknown) {
@@ -446,7 +353,7 @@ export function useLogin() {
     }
   }
 
-  async function resendOtp() {
+  async function resendOtp(captchaToken: string) {
     setOtpLoading(true);
     setOtpError('');
     setRegistrationRequired(false);
@@ -458,6 +365,7 @@ export function useLogin() {
       await apiClient.sendPhoneOtp(
         otpFullPhone || otpPhone,
         otpMode === 'verify' ? OtpType.REGISTER_PHONE_VERIFICATION : OtpType.LOGIN_BY_PHONE,
+        captchaToken,
       );
       notifyOtpSent(t('success.otpSent'), 'otp-resent');
     } catch (error: unknown) {
@@ -499,7 +407,12 @@ export function useLogin() {
   })();
 
   return {
-    identity,
+    loginMethod,
+    changeMethod: (method: LoginMethod) => {
+      setLoginMethod(method);
+      setErrors({});
+    },
+    captcha,
     registerHref,
     phone,
     setPhone,
@@ -513,9 +426,7 @@ export function useLogin() {
     unauthorizedError,
     handleSubmit,
     redirectPending,
-    useOtpInstead: requestLoginOtp,
     changeIdentifier: () => {
-      setIdentity(null);
       setPassword('');
       setErrors({});
       setMemberElsewhere(false);
@@ -523,9 +434,6 @@ export function useLogin() {
 
     memberElsewhere,
     phoneE164: phone.trim() ? toE164Iran(phone) : '',
-
-    captchaRequired,
-    setCaptchaToken,
 
     academyPickerOpen,
     availableAcademies,

@@ -5,7 +5,8 @@ import { AuthField, AuthPhoneField, AuthSubmit } from '@/components/auth/auth-fi
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toE164Iran } from '@/lib/phone-utils';
 import Link from '@/components/ui/link';
-import { cn } from '@/lib/utils';
+import { HumanCheck } from '@/components/auth/human-check';
+import { LoginMethodToggle } from '@/components/auth/login-method-toggle';
 import type { useAdminLogin } from '../use-admin-login';
 
 type AdminLogin = ReturnType<typeof useAdminLogin>;
@@ -16,7 +17,8 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
   const allFieldsFilled =
     login.formData.email.trim() !== '' &&
     login.formData.phone.trim() !== '' &&
-    (login.loginMethod === 'otp' || login.formData.password !== '');
+    (login.loginMethod === 'otp' || login.formData.password !== '') &&
+    login.captcha.solved;
 
   return (
     <AuthShell
@@ -31,24 +33,11 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
         </Alert>
       )}
 
-      <div className="flex gap-4">
-        {(['password', 'otp'] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => login.changeMethod(m)}
-            disabled={login.isLoading}
-            className={cn(
-              'h-12 flex-1 rounded-2xl text-base transition-colors',
-              login.loginMethod === m
-                ? 'bg-white/50 font-medium text-[#181C20]'
-                : 'text-[#727272] hover:bg-white/30',
-            )}
-          >
-            {m === 'password' ? t('auth.loginWithPassword') : t('auth.loginWithOtp')}
-          </button>
-        ))}
-      </div>
+      <LoginMethodToggle
+        value={login.loginMethod}
+        onChange={login.changeMethod}
+        disabled={login.isLoading}
+      />
 
       <form onSubmit={login.handleSubmit} className="space-y-4" noValidate>
         <AuthField
@@ -96,6 +85,8 @@ export function AdminLoginForm({ login }: { login: AdminLogin }) {
             </div>
           </>
         )}
+
+        <HumanCheck key={login.captcha.resetKey} onVerify={login.captcha.setToken} />
 
         <AuthSubmit loading={login.isLoading} disabled={login.isLoading || !allFieldsFilled}>
           {login.isLoading

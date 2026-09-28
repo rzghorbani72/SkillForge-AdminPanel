@@ -20,8 +20,8 @@ import { isPlatformStaff } from '@/lib/roles';
 import { homeRouteFor, resolveSessionRole } from '@/lib/auth-routing';
 import { isPanelAccessBlockedError } from '@/lib/auth-login-errors';
 import type { AuthUser } from '@/lib/auth';
-
-type LoginMethod = 'password' | 'otp';
+import type { LoginMethod } from '@/components/auth/login-method-toggle';
+import { useHumanCheck } from '@/hooks/use-human-check';
 
 interface AdminLoginFields {
   email: string;
@@ -46,6 +46,7 @@ export function useAdminLogin() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [unauthorizedError, setUnauthorizedError] = useState<string | null>(null);
+  const captcha = useHumanCheck();
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -89,13 +90,14 @@ export function useAdminLogin() {
     window.location.href = homeRouteFor(userRole) ?? '/dashboard';
   };
 
-  const handlePasswordLogin = async () => {
+  const handlePasswordLogin = async (captchaToken: string) => {
     setIsLoading(true);
     try {
       const response = await authService.adminLogin({
         email: formData.email,
         phone_number: formData.fullPhoneNumber || formData.phone,
         password: formData.password,
+        captcha_token: captchaToken,
       });
       if (response) routeAfterLogin(response);
     } catch (error: unknown) {
@@ -110,10 +112,14 @@ export function useAdminLogin() {
     }
   };
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (captchaToken: string) => {
     setIsLoading(true);
     try {
-      await apiClient.sendAdminLoginOtp(formData.email, formData.fullPhoneNumber || formData.phone);
+      await apiClient.sendAdminLoginOtp(
+        formData.email,
+        formData.fullPhoneNumber || formData.phone,
+        captchaToken,
+      );
       setOtpSent(true);
       notifyOtpSent(t('success.otpSent'), 'admin-otp-sent');
     } catch (error: unknown) {
@@ -147,8 +153,10 @@ export function useAdminLogin() {
     e.preventDefault();
     if (loginMethod === 'otp' && otpSent) return handleVerifyOtp();
     if (!validateForm()) return;
-    if (loginMethod === 'otp') return handleSendOtp();
-    return handlePasswordLogin();
+    const captchaToken = captcha.token;
+    captcha.reset();
+    if (loginMethod === 'otp') return handleSendOtp(captchaToken);
+    return handlePasswordLogin(captchaToken);
   };
 
   const handleInputChange = (field: keyof AdminLoginFields, value: string) => {
@@ -179,6 +187,7 @@ export function useAdminLogin() {
     formData,
     errors,
     unauthorizedError,
+    captcha,
     handleSubmit,
     handleSendOtp,
     handleVerifyOtp,

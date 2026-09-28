@@ -8,6 +8,8 @@ import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 import { formatIdentifierDisplay } from '@/lib/format-identifier';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
+import { useHumanCheck } from '@/hooks/use-human-check';
+import { HumanCheck } from '@/components/auth/human-check';
 
 const DEFAULT_OTP_LENGTH = 5;
 
@@ -25,7 +27,8 @@ interface PhoneOtpScreenProps {
   submitLabel?: string;
   backLabel?: string;
   verified?: boolean;
-  onResend?: () => void;
+  /** Every resend is a new anonymous SMS, so it carries a fresh captcha payload. */
+  onResend?: (captchaToken: string) => void | Promise<void>;
   resending?: boolean;
   children?: React.ReactNode;
 }
@@ -51,6 +54,7 @@ export function PhoneOtpScreen({
   const { t } = useTranslation();
   const { language } = useLanguage();
   const timer = useOtpTimer(120, { autoStart: Boolean(onResend) });
+  const captcha = useHumanCheck();
 
   return (
     <AuthShell activeTab={activeTab} title={title ?? t('auth.verifyYourContact')}>
@@ -89,19 +93,24 @@ export function PhoneOtpScreen({
         </div>
 
         {onResend && (
-          <div className="flex justify-center text-sm">
+          <div className="flex flex-col items-center gap-2 text-sm">
             {timer.canResend ? (
-              <button
-                type="button"
-                className="text-primary hover:underline disabled:opacity-50"
-                disabled={resending}
-                onClick={async () => {
-                  timer.start();
-                  await onResend();
-                }}
-              >
-                {resending ? t('auth.resending') : t('auth.resendCode')}
-              </button>
+              <>
+                <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+                <button
+                  type="button"
+                  className="text-primary hover:underline disabled:opacity-50"
+                  disabled={resending || !captcha.solved}
+                  onClick={async () => {
+                    const token = captcha.token;
+                    captcha.reset();
+                    timer.start();
+                    await onResend(token);
+                  }}
+                >
+                  {resending ? t('auth.resending') : t('auth.resendCode')}
+                </button>
+              </>
             ) : (
               <span className="tabular-nums text-primary">
                 <bdi>{timer.formatted}</bdi>

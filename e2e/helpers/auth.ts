@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import { solveHumanCheck } from './human-check';
 
 // Set E2E_* to a manager/teacher that exist in your local dev DB.
 export const MANAGER_PHONE = process.env.E2E_MANAGER_PHONE ?? '09123334444';
@@ -10,13 +11,9 @@ const submit = (page: Page) => page.locator('form button:not([type="button"])').
 
 async function staffLogin(page: Page, phone: string, password: string): Promise<void> {
   await page.goto('/login');
-  // Identifier-first: the phone is looked up before any password is asked for.
   await page.locator('input[type="tel"]').fill(phone);
-  await submit(page).click();
-  await expect(page.locator('input[type="password"]')).toBeVisible({
-    timeout: 20_000,
-  });
   await page.locator('input[type="password"]').pressSequentially(password);
+  await solveHumanCheck(page);
   await submit(page).click();
   // Lands on /dashboard or /onboarding/create-academy — either way, not /login.
   await expect(page).not.toHaveURL(/\/login/, { timeout: 20_000 });

@@ -22,11 +22,11 @@ export function useMemberAcademies(phoneE164: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  async function sendCode() {
+  async function sendCode(captchaToken: string) {
     setLoading(true);
     setError('');
     try {
-      await apiClient.sendAcademyLookupOtp(phoneE164);
+      await apiClient.sendAcademyLookupOtp(phoneE164, captchaToken);
       setStep('otp');
       notifyOtpSent(t('success.otpSent'), 'academy-lookup-otp');
     } catch (err: unknown) {

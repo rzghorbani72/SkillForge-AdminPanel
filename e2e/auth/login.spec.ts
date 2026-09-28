@@ -1,32 +1,38 @@
 import { test, expect } from '@playwright/test';
+import { solveHumanCheck } from '../helpers/human-check';
 
 /**
- * AdminPanel `/login` is the MANAGER / TEACHER entry and is identifier-first:
- * step 1 asks for the phone alone and looks the account up, step 2 asks for the
- * password. `/admin-login` is for ADMIN / SUPPORT and is covered separately.
+ * AdminPanel `/login` is the MANAGER / TEACHER entry and is one step: phone,
+ * password or one-time code, and an ALTCHA human check shown from first render.
+ * `/admin-login` is for ADMIN / SUPPORT and is covered separately.
  *
- * Form components used:
- *  - Phone and password: <AuthField> — error adds `has-error` to the input.
  *  - Submit: <AuthSubmit> — no explicit type, so the last non-type-button in the form.
  */
 const submit = (page: import('@playwright/test').Page) =>
   page.locator('form button:not([type="button"])').last();
 
-test.describe('AdminPanel manager login — step 1 (no backend)', () => {
-  test('asks for the phone only, never a password up front', async ({ page }) => {
+test.describe('AdminPanel manager login — one step (no backend)', () => {
+  test('shows phone, password and the human check on first render', async ({ page }) => {
     await page.goto('/login');
 
     await expect(page.locator('input[type="tel"]')).toBeVisible();
-    await expect(page.locator('input[type="password"]')).toHaveCount(0);
+    await expect(page.locator('input[type="password"]')).toBeVisible();
+    await expect(page.locator('altcha-widget')).toHaveCount(1);
   });
 
-  test('cannot continue with an empty phone', async ({ page }) => {
+  test('cannot submit until the human check is solved', async ({ page }) => {
     await page.goto('/login');
 
-    await expect(submit(page)).toBeDisabled();
-
     await page.locator('input[type="tel"]').fill('9121234567');
-    await expect(submit(page)).toBeEnabled();
+    await page.locator('input[type="password"]').fill('Passw0rd!');
+    await expect(submit(page)).toBeDisabled();
+  });
+
+  test('the one-time-code method hides the password box', async ({ page }) => {
+    await page.goto('/login');
+
+    await page.getByRole('button', { name: /کد یکبار مصرف|One-time code/ }).click();
+    await expect(page.locator('input[type="password"]')).toHaveCount(0);
   });
 
   test('offers signup from the login screen', async ({ page }) => {
@@ -51,26 +57,22 @@ test.describe('AdminPanel manager login — happy path @backend', () => {
 
     await page.goto('/login');
     await page.locator('input[type="tel"]').fill(phone!);
-    await submit(page).click();
-
-    await expect(page.locator('input[type="password"]')).toBeVisible({
-      timeout: 15_000,
-    });
     await page.locator('input[type="password"]').pressSequentially(password!);
+    await solveHumanCheck(page);
     await submit(page).click();
 
     await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
   });
 
-  test('an unknown phone is sent to signup, not to a password box', async ({ page }) => {
+  test('an unknown phone is offered signup', async ({ page }) => {
     await page.goto('/login');
     await page.locator('input[type="tel"]').fill('09120000000');
+    await page.locator('input[type="password"]').pressSequentially('Passw0rd!');
+    await solveHumanCheck(page);
     await submit(page).click();
 
-    await expect(page.locator('a[href^="/register"]')).toBeVisible({
-      timeout: 15_000,
-    });
-    await expect(page.locator('input[type="password"]')).toHaveCount(0);
+    await expect(page.locator('a[href^="/register"]').first()).toBeVisible({ timeout: 15_000 });
+    await expect(page).toHaveURL(/\/login/);
   });
 
   test('shows an error for a wrong password', async ({ page }) => {
@@ -79,12 +81,8 @@ test.describe('AdminPanel manager login — happy path @backend', () => {
 
     await page.goto('/login');
     await page.locator('input[type="tel"]').fill(phone!);
-    await submit(page).click();
-
-    await expect(page.locator('input[type="password"]')).toBeVisible({
-      timeout: 15_000,
-    });
     await page.locator('input[type="password"]').pressSequentially('definitely-wrong-pass');
+    await solveHumanCheck(page);
     await submit(page).click();
 
     await expect(page).toHaveURL(/\/login/);

@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
+import { solveHumanCheck } from '../helpers/human-check';
 
 /**
  * Role-matrix + hacker journeys (@backend). Each role logs in through the real
@@ -23,6 +24,7 @@ test.describe('AdminPanel role journeys @backend', () => {
     await page.goto('/login');
     await page.locator('input[type="tel"]').fill(phone);
     await page.locator('input[type="password"]').pressSequentially(password);
+    await solveHumanCheck(page);
     await submit(page).click();
     await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
   }
@@ -32,6 +34,7 @@ test.describe('AdminPanel role journeys @backend', () => {
     // admin-login takes an email identifier + password (ADMIN/SUPPORT entry).
     await page.locator('input[type="email"], input[type="text"]').first().fill(email);
     await page.locator('input[type="password"]').pressSequentially(password);
+    await solveHumanCheck(page);
     await submit(page).click();
     await expect(page).not.toHaveURL(/\/admin-login/, { timeout: 15_000 });
   }

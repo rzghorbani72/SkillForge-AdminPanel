@@ -79,19 +79,20 @@ export function useAdminForgetPassword() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (captchaToken: string) => {
     if (!validateIdentifier()) return;
     setIsLoading(true);
     setErrors({});
     try {
       if (authMethod === 'email') {
-        await apiClient.sendEmailOtp(formData.email, OtpType.RESET_PASSWORD_BY_EMAIL);
+        await apiClient.sendEmailOtp(formData.email, OtpType.RESET_PASSWORD_BY_EMAIL, captchaToken);
         setMessage(t('forgotPassword.otpSentToEmail'));
         notifyOtpSent(t('forgotPassword.otpSentToEmail'), 'admin-forget-password-otp-sent');
       } else {
         await apiClient.sendPhoneOtp(
           toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
           OtpType.RESET_PASSWORD_BY_PHONE,
+          captchaToken,
         );
         setMessage(t('forgotPassword.otpSentToPhone'));
         notifyOtpSent(t('forgotPassword.otpSentToPhone'), 'admin-forget-password-otp-sent');
