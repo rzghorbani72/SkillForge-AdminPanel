@@ -17,6 +17,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { getLocaleForLanguage } from '@/lib/i18n/config';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { getPlanDisplayName } from '@/lib/plan-display-name';
+import { toPersianDigits } from '@/lib/format-identifier';
 
 interface SubscriptionInvoicesListProps {
   invoices: AcademySubscriptionInvoice[];
@@ -89,7 +90,8 @@ export function SubscriptionInvoicesList({ invoices, highlightId }: Subscription
             const unit = currencyLabel(invoice.currency, rialLabel);
             const paidOn = invoice.paid_at ?? null;
             const dateValue = paidOn ?? invoice.created_at ?? null;
-            const tracking = dash(invoice.tracking_code ?? invoice.authority);
+            const rawTracking = dash(invoice.tracking_code ?? invoice.authority);
+            const tracking = language === 'fa' ? toPersianDigits(rawTracking) : rawTracking;
             const discount =
               invoice.discount_code != null && invoice.discount_code !== ''
                 ? `${invoice.discount_code}${
@@ -139,7 +141,7 @@ export function SubscriptionInvoicesList({ invoices, highlightId }: Subscription
                     : '—'}
                 </TableCell>
                 <TableCell
-                  className="max-w-[12rem] truncate font-mono text-xs"
+                  className="max-w-[12rem] truncate text-xs"
                   title={tracking === '—' ? undefined : tracking}
                 >
                   {tracking}
