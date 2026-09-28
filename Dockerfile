@@ -10,7 +10,9 @@ ENV NPM_CONFIG_REGISTRY=${NPM_REGISTRY}
 
 # Install pnpm via npm mirror (do not use `corepack prepare` — it fetches from registry.npmjs.org first)
 RUN npm config set registry "${NPM_REGISTRY}" \
-  && npm install -g pnpm@9.15.9 \
+  # The Iran mirror intermittently 404s on a package that does exist (transient
+  # proxy hiccup); npm treats a 404 as final and never retries, so retry by hand.
+  && (for i in 1 2 3 4 5; do npm install -g pnpm@9.15.9 && exit 0; sleep 5; done; exit 1) \
   && pnpm config set registry "${NPM_REGISTRY}" \
   && pnpm config set fetch-retries 5 \
   && pnpm config set fetch-retry-mintimeout 20000 \
