@@ -31,7 +31,11 @@ export function useTemplateChoiceGate(academyId: string | null, enabled = true) 
     void (async () => {
       const data = await apiClient.getCurrentUITemplate().catch(() => null);
       if (cancelled) return;
-      setPresetKey((data as { template_preset?: string | null } | null)?.template_preset ?? null);
+      const template = data as {
+        template_preset?: string | null;
+        draft_template_preset?: string | null;
+      } | null;
+      setPresetKey(template?.draft_template_preset ?? template?.template_preset ?? null);
       setChoiceMade(readChoiceMade(academyId));
     })();
     return () => {
