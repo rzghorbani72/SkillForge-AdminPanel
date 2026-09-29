@@ -88,14 +88,18 @@ export function useSetupChecklist({ academyId, hasCourse, hasTemplate, enabled }
 
   // Template and course are checked off by real account state, not by having
   // clicked the step — so the banner is still right on a new device or browser.
+  // A step also counts as done when any later step is done.
   const done = useMemo(() => {
     const marks = stored?.done ?? {};
-    return {
+    const own: Record<SetupStepId, boolean> = {
       website: marks.website === true,
       template: marks.template === true || hasTemplate,
       course: marks.course === true || hasCourse,
       visit: marks.visit === true,
-    } satisfies Record<SetupStepId, boolean>;
+    };
+    return Object.fromEntries(
+      SETUP_STEPS.map((step, index) => [step, SETUP_STEPS.slice(index).some((s) => own[s])]),
+    ) as Record<SetupStepId, boolean>;
   }, [hasCourse, hasTemplate, stored]);
 
   const completedCount = SETUP_STEPS.filter((step) => done[step]).length;
