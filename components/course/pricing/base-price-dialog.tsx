@@ -40,7 +40,7 @@ export function BasePriceDialog({ open, onOpenChange, form }: Props) {
 
         <DialogFooter>
           <Button type="button" onClick={() => onOpenChange(false)}>
-            {t('common.close')}
+            {t('common.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>
