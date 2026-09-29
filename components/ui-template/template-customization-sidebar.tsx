@@ -15,6 +15,8 @@ import type {
   SaveMode,
 } from './sidebar-types';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useAuthUser } from '@/hooks/useAuthUser';
+import { useShowOnce } from '@/hooks/use-show-once';
 import { SidebarStyleTab } from './sidebar-style-tab';
 import { SidebarSectionsTab } from './sidebar-sections-tab';
 import type { HeroPreviewContext } from './hero-variant-picker';
@@ -57,6 +59,7 @@ export interface TemplateCustomizationSidebarProps {
   onReset: () => void;
   /** True while a public original is selected and no copy exists yet. */
   isOriginalSelected?: boolean;
+  templateId?: string;
   saveMode?: SaveMode;
   onClose: () => void;
   onCloseSection: () => void;
@@ -96,6 +99,7 @@ export function TemplateCustomizationSidebar({
   onDeleteBlock,
   onReset,
   isOriginalSelected,
+  templateId,
   saveMode,
   onClose,
   onCloseSection,
@@ -107,6 +111,11 @@ export function TemplateCustomizationSidebar({
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('style');
   const isAdminEditing = saveMode === 'admin-override';
+  const { user } = useAuthUser();
+  const showForkNotice = useShowOnce(
+    `template_fork_notice:${user?.id}:${templateId}`,
+    !isAdminEditing && !!isOriginalSelected && !!user?.id && !!templateId,
+  );
 
   // The sidebar always opens on Appearance; only a fresh section pick in the
   // preview moves it to Sections, where that section's editor lives.
@@ -153,7 +162,7 @@ export function TemplateCustomizationSidebar({
 
       {/* Editing a catalog template forks it into the academy's own copy, so
           say that up front instead of letting the save surprise them. */}
-      {!isAdminEditing && isOriginalSelected && (
+      {showForkNotice && (
         <div className="flex items-start gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-2 text-[11px] leading-relaxed text-zinc-600">
           <Copy className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
           {t('sitePreview.originalLockedBadge')}

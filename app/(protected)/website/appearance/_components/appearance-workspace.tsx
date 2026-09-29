@@ -1529,6 +1529,7 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
               onDeleteBlock={handleBlockDelete}
               onReset={() => setPendingSave({ kind: 'reset' })}
               isOriginalSelected={isPublicPreset}
+              templateId={selectedPreset?.id}
               saveMode={saveMode}
               onClose={() => setShowCustomizer(false)}
               onCloseSection={() => setSelectedBlockId(null)}
