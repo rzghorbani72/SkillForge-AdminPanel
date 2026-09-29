@@ -3720,6 +3720,20 @@ class ApiClient {
     };
   }
 
+  async assignPlatformRoleToMany(id: string, profileIds: string[]) {
+    const response = await this.request(`/platform/roles/${id}/assign-many`, {
+      method: 'POST',
+      body: JSON.stringify({ profile_ids: profileIds }),
+    });
+    return response.data as {
+      results: {
+        profile_id: string;
+        status: 'assigned' | 'unchanged' | 'failed';
+        reason?: string;
+      }[];
+    };
+  }
+
   async deletePlatformRole(id: string) {
     const response = await this.request(`/platform/roles/${id}`, {
       method: 'DELETE',
