@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,29 +19,49 @@ type Props = {
   disabled?: boolean;
 };
 
-const NEW_SLOT: TutoringGroupSlot = {
-  weekday: 6,
-  start_minute: 9 * 60,
-  duration_minutes: 90,
+type SlotRow = Omit<TutoringGroupSlot, 'weekday'> & { days: number[] };
+
+const NEW_ROW: SlotRow = { days: [6], start_minute: 9 * 60, duration_minutes: 90 };
+
+const toRows = (slots: TutoringGroupSlot[]): SlotRow[] => {
+  const rows: SlotRow[] = [];
+  for (const { weekday, start_minute, duration_minutes } of slots) {
+    const row = rows.find(
+      (r) => r.start_minute === start_minute && r.duration_minutes === duration_minutes,
+    );
+    if (row) row.days.push(weekday);
+    else rows.push({ days: [weekday], start_minute, duration_minutes });
+  }
+  return rows.length ? rows : [{ ...NEW_ROW }];
 };
+
+const toSlots = (rows: SlotRow[]): TutoringGroupSlot[] =>
+  rows.flatMap(({ days, ...time }) => days.map((weekday) => ({ ...time, weekday })));
 
 /** The lengths almost every class actually uses, so typing is the exception. */
 const DURATION_PRESETS = [45, 60, 90, 120] as const;
 
 /**
- * The weekly timetable of one class: "Tuesday 15:00 for 90 minutes". Several
- * rows mean the class meets several times a week.
+ * The weekly timetable of one class. Each row is a set of days sharing one time
+ * ("Sat + Mon 15:00, 90 min"); rows are saved as one slot per day.
  */
 export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
 
-  const patch = (index: number, next: Partial<TutoringGroupSlot>) =>
-    onChange(slots.map((slot, i) => (i === index ? { ...slot, ...next } : slot)));
+  const [rows, setRows] = useState(() => toRows(slots));
+
+  const update = (next: SlotRow[]) => {
+    setRows(next);
+    onChange(toSlots(next));
+  };
+
+  const patch = (index: number, next: Partial<SlotRow>) =>
+    update(rows.map((row, i) => (i === index ? { ...row, ...next } : row)));
 
   return (
     <div className="space-y-3">
-      {slots.map((slot, index) => (
+      {rows.map((slot, index) => (
         <div
           key={index}
           className="space-y-3 rounded-xl border bg-muted/20 p-3"
@@ -50,7 +71,7 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
             <p className="text-xs font-medium text-muted-foreground">
               {t('tutoring.groups.slotRow')} {formatNumber(index + 1)}
             </p>
-            {slots.length > 1 ? (
+            {rows.length > 1 ? (
               <Button
                 type="button"
                 variant="ghost"
@@ -58,7 +79,7 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
                 className="h-7 w-7"
                 disabled={disabled}
                 aria-label={t('tutoring.groups.removeSlot')}
-                onClick={() => onChange(slots.filter((_, i) => i !== index))}
+                onClick={() => update(rows.filter((_, i) => i !== index))}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -66,10 +87,9 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
           </div>
 
           <WeekdayPicker
-            single
             disabled={disabled}
-            value={[slot.weekday]}
-            onChange={([weekday]) => patch(index, { weekday })}
+            value={slot.days}
+            onChange={(days) => patch(index, { days })}
           />
 
           <div className="grid gap-3 sm:grid-cols-2">
@@ -120,7 +140,7 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
         variant="outline"
         size="sm"
         disabled={disabled}
-        onClick={() => onChange([...slots, { ...NEW_SLOT }])}
+        onClick={() => update([...rows, { ...NEW_ROW, days: [] }])}
       >
         <Plus className="me-1.5 h-4 w-4" />
         {t('tutoring.groups.addSlot')}
