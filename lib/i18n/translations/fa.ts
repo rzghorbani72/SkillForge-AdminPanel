@@ -1820,6 +1820,11 @@ export const fa = {
       createFirstClass: 'ساخت اولین کلاس',
       classTimeTitle: 'زمان کلاس',
       seatOptionsTitle: 'ظرفیت و قیمت',
+      privateClass: 'کلاس خصوصی',
+      privateClassHint:
+        'در وب‌سایت نمایش داده نمی‌شود؛ فقط کسی که لینک دعوت را دارد می‌تواند ثبت‌نام کند. برای کلاس یک‌به‌یک، تعداد دانشجو را ۱ بگذارید.',
+      privateStudents: 'تعداد دانشجو',
+      privateStudentsHint: 'کلاس وقتی شروع می‌شود که همهٔ این دانشجوها ثبت‌نام کنند.',
       moreSessions: '+ {{count}} جلسهٔ دیگر؛ آخرین جلسه: {{date}}',
       sessionDatesEmpty: 'تاریخ شروع را انتخاب کنید تا تاریخ همهٔ جلسه‌ها اینجا ساخته شود.',
       sessionsOnCoursePublish: 'تاریخ جلسه‌ها با انتشار دوره ثبت می‌شود.',

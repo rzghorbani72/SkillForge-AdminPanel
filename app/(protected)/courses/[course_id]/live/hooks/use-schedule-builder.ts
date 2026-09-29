@@ -65,6 +65,8 @@ function useClassFields(prefill?: ScheduleBuilderPrefill) {
   const [seatPrice, setSeatPrice] = useState('');
   const [wholeClassBooking, setWholeClassBooking] = useState(true);
   const [joinDeadline, setJoinDeadline] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [privateStudents, setPrivateStudents] = useState('1');
 
   return {
     fields: {
@@ -77,6 +79,8 @@ function useClassFields(prefill?: ScheduleBuilderPrefill) {
       seatPrice,
       wholeClassBooking,
       joinDeadline,
+      isPrivate,
+      privateStudents,
     },
     set: {
       slots: setSlots,
@@ -88,7 +92,23 @@ function useClassFields(prefill?: ScheduleBuilderPrefill) {
       seatPrice: setSeatPrice,
       wholeClassBooking: setWholeClassBooking,
       joinDeadline: setJoinDeadline,
+      isPrivate: setIsPrivate,
+      privateStudents: setPrivateStudents,
     },
+  };
+}
+
+type ClassFields = ReturnType<typeof useClassFields>['fields'];
+
+/** A private class starts only when every invited student has joined, so min = max. */
+export function classSeats(fields: ClassFields) {
+  if (fields.isPrivate) {
+    const students = Number(fields.privateStudents) || 1;
+    return { capacity: students, minStudents: students };
+  }
+  return {
+    capacity: Number(fields.capacity) || 1,
+    minStudents: Number(fields.minStudents) || 1,
   };
 }
 
@@ -152,12 +172,14 @@ export function useScheduleBuilder({
     }
     setIsSaving(true);
     try {
+      const seats = classSeats(fields);
       const group = await apiClient.createTutoringGroup({
         offer_id: await resolveOfferId(),
         title: courseTitle,
         timezone,
-        capacity: Number(fields.capacity) || 1,
-        min_students: Number(fields.minStudents) || 1,
+        capacity: seats.capacity,
+        min_students: seats.minStudents,
+        visibility: fields.isPrivate ? 'PRIVATE' : 'PUBLIC',
         seat_price: fields.seatPrice === '' ? undefined : Number(fields.seatPrice),
         whole_class_booking: fields.wholeClassBooking,
         session_count: sessionCountValue,

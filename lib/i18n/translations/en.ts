@@ -1819,6 +1819,11 @@ export const en = {
       createFirstClass: 'Create your first class',
       classTimeTitle: 'Class time',
       seatOptionsTitle: 'Seats and price',
+      privateClass: 'Private class',
+      privateClassHint:
+        'Not shown on your website; only people with the invite link can join. For a 1:1 class, set students to 1.',
+      privateStudents: 'Number of students',
+      privateStudentsHint: 'The class starts when all of these students have joined.',
       moreSessions: '+ {{count}} more sessions; the last one: {{date}}',
       sessionDatesEmpty: 'Pick a start date to see the date of every session here.',
       sessionsOnCoursePublish: 'Session dates are saved when you publish the course.',
