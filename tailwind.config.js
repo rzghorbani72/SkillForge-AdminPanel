@@ -22,7 +22,7 @@ module.exports = {
         vazir: ['Vazirmatn', 'sans-serif'],
       },
       fontSize: {
-        /* Mentoryar density: cozy = 14px base */
+        /* Mentoma density: cozy = 14px base */
         base: ['14px', { lineHeight: '1.6' }],
       },
       colors: {
@@ -81,7 +81,7 @@ module.exports = {
         },
       },
       borderRadius: {
-        /* Mentoryar scale: sm=6px, md=10px, lg=14px, xl=20px */
+        /* Mentoma scale: sm=6px, md=10px, lg=14px, xl=20px */
         sm: '6px',
         DEFAULT: '10px',
         md: '10px',

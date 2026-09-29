@@ -2950,7 +2950,6 @@ export const fa = {
       notYetImplemented: 'هنوز پیاده‌سازی نشده',
       supportedCurrencies: 'ارزهای پشتیبانی‌شده:',
       currencyIrr: 'ریال ایران (IRR)',
-      seeDocs: 'طبق مستندات',
       activeAccepting: 'فعال — در حال دریافت پرداخت',
       inactiveDisabled: 'غیرفعال',
       sandboxMode: 'حالت آزمایشی — از اطلاعات تست و درگاه آزمایشی بانک استفاده می‌شود',

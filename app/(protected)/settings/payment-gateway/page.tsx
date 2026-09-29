@@ -235,10 +235,7 @@ export default function PaymentGatewaySettingsPage() {
                     </div>
                   </div>
                   <CardDescription>
-                    {t('settings.gateway.supportedCurrencies')}{' '}
-                    {gw.name === 'PayPing'
-                      ? t('settings.gateway.currencyIrr')
-                      : t('settings.gateway.seeDocs')}
+                    {t('settings.gateway.supportedCurrencies')} {t('settings.gateway.currencyIrr')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">

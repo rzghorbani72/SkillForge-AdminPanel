@@ -3189,7 +3189,6 @@ export const en = {
       notYetImplemented: 'Not yet implemented',
       supportedCurrencies: 'Supported currencies:',
       currencyIrr: 'IRR (Iranian Rial)',
-      seeDocs: 'See docs',
       activeAccepting: 'Active — accepting payments',
       inactiveDisabled: 'Inactive — disabled',
       sandboxMode: 'Sandbox mode — uses test credentials and the test bank endpoint',
