@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -83,7 +84,10 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
         return;
       }
       ErrorHandler.showError(
-        t('roles.assignSummary', { done: results.length - failed.length, failed: failed.length }),
+        [
+          t('roles.assignSummary', { done: results.length - failed.length, failed: failed.length }),
+          ...failed.map((r) => `${selected.get(r.profile_id) ?? ''}: ${r.reason ?? ''}`),
+        ].join('\n'),
       );
       setSelected(new Map(failed.map((r) => [r.profile_id, selected.get(r.profile_id) ?? ''])));
       onAssigned();
@@ -125,6 +129,7 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
               <li key={option.value}>
                 <label className="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-muted/50">
                   <Checkbox
+                    disabled={option.blocked}
                     checked={selected.has(option.value)}
                     onCheckedChange={() => toggle(option)}
                   />
@@ -136,6 +141,9 @@ export function AssignRoleDialog({ role, open, onClose, onAssigned }: Props) {
                       </span>
                     )}
                   </span>
+                  {option.blocked && (
+                    <Badge variant="destructive">{t('roles.assignBlocked')}</Badge>
+                  )}
                 </label>
               </li>
             ))}

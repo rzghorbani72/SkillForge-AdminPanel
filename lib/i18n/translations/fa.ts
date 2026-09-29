@@ -683,6 +683,7 @@ export const fa = {
     assignTitle: 'اختصاص نقش «{{role}}»',
     assignHint: 'کسی را که باید این نقش را بگیرد پیدا کنید.',
     assignSearchPlaceholder: 'جستجو با نام یا شماره تماس',
+    assignBlocked: 'مسدود',
     assignNoResults: 'کاربری پیدا نشد.',
     assignSelectedCount: '{{count}} کاربر انتخاب شد',
     assignActionMany: 'اختصاص به {{count}} کاربر',

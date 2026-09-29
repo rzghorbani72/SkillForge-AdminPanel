@@ -81,6 +81,7 @@ export function createAcademyUserOptionsFetcher(
 
     const options = (response?.profiles ?? []).map((profile) => ({
       value: profile.id,
+      blocked: profile.is_active === false || !!profile.banned_at || !!profile.user_banned_at,
       label: profile.display_name ?? profile.full_name ?? t('entitySearch.unnamedUser'),
       description:
         [

@@ -688,6 +688,7 @@ export const en = {
     assignTitle: 'Assign "{{role}}"',
     assignHint: 'Find the person who should get this role.',
     assignSearchPlaceholder: 'Search by name or phone',
+    assignBlocked: 'Blocked',
     assignNoResults: 'No users found.',
     assignSelectedCount: '{{count}} selected',
     assignActionMany: 'Assign to {{count}} users',
