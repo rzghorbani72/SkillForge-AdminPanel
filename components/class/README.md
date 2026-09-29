@@ -41,6 +41,14 @@ attached to a single meeting — because the teacher picks which when creating i
 
 ## Where a class is created
 
-Not here. A class is scheduled on the course's live tab (`ScheduleBuilder`), which
-needs a `GROUP` tutoring offer to exist first — there is no seat to sell without a
-price. That tab now lists classes as rows (`ClassListCard`) and links here.
+Not here. A class is created in the course wizard's `classes` step, or on the live tab (`LiveClassesSection` →
+`ScheduleBuilder`). If the course has no `GROUP` price yet, the form asks for
+it and creates the price first, so there is no "save the price first" gate.
+
+Session dates are written when a class is **published**, not when it is
+created, and a class can only be published after its course. So:
+
+- on a published course, the form publishes the new class right away;
+- publishing the course publishes every draft class that has weekly times
+  (`publishDraftClasses`). A class that fails (e.g. a teacher time clash)
+  stays a draft and can be published from its own page.

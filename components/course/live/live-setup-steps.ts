@@ -1,6 +1,6 @@
 import type { LiveCourseReadiness } from '@/components/course/course-drafts';
 
-export type LiveSetupStepId = 'topics' | 'pricing' | 'class' | 'schedule';
+export type LiveSetupStepId = 'topics' | 'pricing' | 'class';
 
 export interface LiveSetupStep {
   id: LiveSetupStepId;
@@ -10,7 +10,7 @@ export interface LiveSetupStep {
 }
 
 /**
- * The four things a live course needs before it can be sold, in the order the
+ * The three things a live course needs before it can be sold, in the order the
  * server checks them (`validateLiveForPublish`). A teacher sees the same order
  * on the page, so "what is missing" and "why publish is disabled" are one
  * answer instead of two.
@@ -31,15 +31,9 @@ export function liveSetupSteps(readiness: LiveCourseReadiness): LiveSetupStep[] 
     },
     {
       id: 'class',
-      done: readiness.classes > 0,
+      done: readiness.classesWithSchedule > 0,
       labelKey: 'courses.live.stepClass',
       hintKey: 'courses.live.stepClassHint',
-    },
-    {
-      id: 'schedule',
-      done: readiness.classesWithSchedule > 0,
-      labelKey: 'courses.live.stepSchedule',
-      hintKey: 'courses.live.stepScheduleHint',
     },
   ];
 }

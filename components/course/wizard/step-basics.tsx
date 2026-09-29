@@ -37,58 +37,64 @@ export function StepBasics({
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('courses.courseTypeLabel')}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <CourseTypePicker
-            value={courseType}
-            onChange={(type) => onCourseTypeChange?.(type)}
-            disabled={!onCourseTypeChange}
-          />
-          {!onCourseTypeChange && (
-            <p className="text-xs text-muted-foreground">{t('courses.wizard.typeLockedHint')}</p>
-          )}
-        </CardContent>
-      </Card>
+    <div className="grid gap-6 lg:grid-cols-3">
+      <div className="flex flex-col gap-6 lg:col-span-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('courses.courseTypeLabel')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <CourseTypePicker
+              value={courseType}
+              onChange={(type) => onCourseTypeChange?.(type)}
+              disabled={!onCourseTypeChange}
+            />
+            {!onCourseTypeChange && (
+              <p className="text-xs text-muted-foreground">{t('courses.wizard.typeLockedHint')}</p>
+            )}
+          </CardContent>
+        </Card>
 
-      <CreateCourseBasicInfo form={form} />
+        <div className="flex flex-1 flex-col *:flex-1">
+          <CreateCourseBasicInfo form={form} />
+        </div>
+      </div>
 
-      <CourseFactsCard form={form} />
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('courses.coverImage')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <FormLabel className="sr-only">{t('courses.coverImage')}</FormLabel>
+            <ImageUploadPreview
+              title={form.watch('title')}
+              description={form.watch('description')}
+              existingImageUrl={coverPreviewUrl}
+              onSuccess={onCoverChange}
+              selectedImageId={form.watch('cover_id')}
+              className="aspect-video w-full"
+              placeholderText={t('courses.noCoverImageSelected')}
+              placeholderSubtext={t('courses.uploadImageToPreview')}
+            />
+          </CardContent>
+        </Card>
 
-      <CreateCourseAssociations
-        categoryId={form.watch('category_id')}
-        onCategoryChange={(id) =>
-          form.setValue('category_id', id ?? '', {
-            shouldDirty: true,
-            shouldTouch: true,
-          })
-        }
-        error={form.formState.errors.category_id?.message}
-      />
+        <CreateCourseAssociations
+          categoryId={form.watch('category_id')}
+          onCategoryChange={(id) =>
+            form.setValue('category_id', id ?? '', {
+              shouldDirty: true,
+              shouldTouch: true,
+            })
+          }
+          error={form.formState.errors.category_id?.message}
+        />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('courses.coverImage')}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <FormLabel className="sr-only">{t('courses.coverImage')}</FormLabel>
-          <ImageUploadPreview
-            title={form.watch('title')}
-            description={form.watch('description')}
-            existingImageUrl={coverPreviewUrl}
-            onSuccess={onCoverChange}
-            selectedImageId={form.watch('cover_id')}
-            className="aspect-video w-full max-w-md"
-            placeholderText={t('courses.noCoverImageSelected')}
-            placeholderSubtext={t('courses.uploadImageToPreview')}
-          />
-        </CardContent>
-      </Card>
+        <CourseFactsCard form={form} />
 
-      <CourseSettingsCard form={form} />
+        <CourseSettingsCard form={form} />
+      </div>
     </div>
   );
 }

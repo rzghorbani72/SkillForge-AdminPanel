@@ -1,191 +1,100 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
+import { Clock } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
 import { NumberInput } from '@/components/ui/number-input';
-import { ClassSellingFields } from '@/components/class/class-selling-fields';
+import { PriceInput } from '@/components/ui/price-input';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
-import { defaultTimezone } from '@/lib/class-slot-time';
-import { apiClient } from '@/lib/api';
-import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useDateFormat } from '@/lib/i18n/use-date-format';
-import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import type { TutoringGroupSlot } from '@/types/learning-operations';
-import { previewSessionDates } from '@/lib/session-plan-preview';
-import { clampClassCapacity, MAX_CLASS_CAPACITY } from '@/lib/live-room';
+import { useScheduleBuilder, type ScheduleBuilderArgs } from '../hooks/use-schedule-builder';
+import { ClassSeatOptions } from './class-seat-options';
+import { FormSection } from './form-section';
+import { SessionDatesPreview } from './session-dates-preview';
 
-const DEFAULT_SLOT: TutoringGroupSlot = {
-  weekday: 6,
-  start_minute: 9 * 60,
-  duration_minutes: 90,
-};
-
-export interface ScheduleBuilderPrefill {
-  slots?: TutoringGroupSlot[];
-  capacity?: number;
-  minStudents?: number;
-}
-
-interface ScheduleBuilderProps {
-  offerId: string;
-  courseTitle: string;
+interface ScheduleBuilderProps extends ScheduleBuilderArgs {
   /** The course's per-seat offer price, shown when the class sets none. */
   defaultSeatPrice?: number;
-  prefill?: ScheduleBuilderPrefill;
-  onCreated?: (groupId: string) => void;
+  /** Hidden for the first class, when there is nothing to go back to. */
+  onCancel?: () => void;
 }
 
 /**
- * Turns "Mondays 10:00 and Tuesdays 15:00, 10 sessions" into a real class. The
- * preview below the form is the same calculation the backend runs, so the dates
- * a teacher agrees to here are exactly the dates their students will get.
+ * When the class meets beside the dates that produces, so a teacher sees each
+ * change land on real days; seats and price, all optional, sit below.
  */
 export default function ScheduleBuilder({
-  offerId,
-  courseTitle,
   defaultSeatPrice,
-  prefill,
-  onCreated,
+  onCancel,
+  ...args
 }: ScheduleBuilderProps) {
   const { t } = useTranslation();
-  const formatDate = useDateFormat();
-  const formatNumber = useNumberFormat();
-  const [slots, setSlots] = useState<TutoringGroupSlot[]>(
-    prefill?.slots?.length ? prefill.slots : [DEFAULT_SLOT],
-  );
-  const [sessionCount, setSessionCount] = useState('10');
-  const [capacity, setCapacity] = useState(String(prefill?.capacity ?? 8));
-  const [minStudents, setMinStudents] = useState(String(prefill?.minStudents ?? 2));
-  const [seatPrice, setSeatPrice] = useState('');
-  const [wholeClassBooking, setWholeClassBooking] = useState(true);
-  const [startsOn, setStartsOn] = useState('');
-  const [joinDeadline, setJoinDeadline] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-
-  const timezone = defaultTimezone();
-  const sessionCountValue = Number(sessionCount) || 0;
-  const preview = useMemo(() => {
-    if (!startsOn || sessionCountValue < 1) return [];
-    const from = new Date(startsOn);
-    if (Number.isNaN(from.getTime())) return [];
-    return previewSessionDates(slots, sessionCountValue, from, timezone);
-  }, [slots, sessionCountValue, startsOn, timezone]);
-
-  const create = async () => {
-    if (!startsOn) {
-      toast.error(t('courses.live.startDateRequired'));
-      return;
-    }
-    if (sessionCountValue < 1) {
-      toast.error(t('courses.live.sessionCountRequired'));
-      return;
-    }
-    setIsSaving(true);
-    try {
-      const group = await apiClient.createTutoringGroup({
-        offer_id: offerId,
-        title: courseTitle,
-        timezone,
-        capacity: Number(capacity) || 1,
-        min_students: Number(minStudents) || 1,
-        seat_price: seatPrice === '' ? undefined : Number(seatPrice),
-        whole_class_booking: wholeClassBooking,
-        session_count: sessionCountValue,
-        starts_on_requested: new Date(startsOn).toISOString(),
-        join_deadline: joinDeadline ? new Date(joinDeadline).toISOString() : undefined,
-        slots,
-      });
-      toast.success(t('courses.live.classCreated'));
-      onCreated?.(group.id);
-    } catch (err) {
-      ErrorHandler.handleApiError(err);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const { fields, set, needsPrice, preview, isSaving, create } = useScheduleBuilder(args);
+  const offerPrice =
+    defaultSeatPrice ?? (needsPrice && fields.groupPrice ? Number(fields.groupPrice) : undefined);
 
   return (
-    <div className="space-y-5">
-      <div className="space-y-2">
-        <Label>{t('courses.live.weeklyTimes')}</Label>
-        <GroupSlotEditor slots={slots} onChange={setSlots} />
-      </div>
+    <>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-8">
+        <FormSection icon={Clock} title={t('courses.live.classTimeTitle')}>
+          {needsPrice && (
+            <div className="space-y-1.5">
+              <Label htmlFor="new-class-group-price">{t('courses.live.groupPrice')} *</Label>
+              <PriceInput
+                id="new-class-group-price"
+                value={fields.groupPrice}
+                onChange={set.groupPrice}
+                suffix={t('common.toman')}
+              />
+              <p className="text-xs text-muted-foreground">{t('courses.live.groupPriceHint')}</p>
+            </div>
+          )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="session-count">{t('courses.live.sessionCount')} *</Label>
-          <NumberInput
-            id="session-count"
-            value={sessionCount}
-            min={1}
-            max={200}
-            onChange={setSessionCount}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="starts-on">{t('courses.live.startDate')} *</Label>
-          <DatePicker id="starts-on" value={startsOn} onChange={setStartsOn} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="join-deadline">{t('courses.live.joinDeadline')}</Label>
-          <DatePicker id="join-deadline" value={joinDeadline} onChange={setJoinDeadline} />
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="min-students">{t('courses.live.minStudents')}</Label>
-            <NumberInput id="min-students" value={minStudents} min={1} onChange={setMinStudents} />
+          <div className="space-y-1.5">
+            <Label>{t('courses.live.weeklyTimes')} *</Label>
+            <GroupSlotEditor slots={fields.slots} onChange={set.slots} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="capacity">{t('courses.live.maxStudents')}</Label>
-            <NumberInput
-              id="capacity"
-              value={capacity}
-              min={1}
-              onChange={(raw) => setCapacity(clampClassCapacity(raw))}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t('tutoring.groups.capacityLimitHint', { count: MAX_CLASS_CAPACITY })}
-            </p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="starts-on">{t('courses.live.startDate')} *</Label>
+              <DatePicker id="starts-on" value={fields.startsOn} onChange={set.startsOn} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="session-count">{t('courses.live.sessionCount')} *</Label>
+              <NumberInput
+                id="session-count"
+                value={fields.sessionCount}
+                min={1}
+                max={200}
+                onChange={set.sessionCount}
+              />
+            </div>
           </div>
-        </div>
-        <ClassSellingFields
-          idPrefix="new-class"
-          capacity={Number(capacity) || 1}
-          seatPrice={seatPrice}
-          offerPrice={defaultSeatPrice}
-          wholeClassBooking={wholeClassBooking}
-          onSeatPriceChange={setSeatPrice}
-          onWholeClassBookingChange={setWholeClassBooking}
+        </FormSection>
+
+        <SessionDatesPreview dates={preview} coursePublished={args.coursePublished} />
+
+        <ClassSeatOptions
+          className="border-t pt-6 lg:col-span-2"
+          fields={fields}
+          set={set}
+          offerPrice={offerPrice}
         />
       </div>
 
-      {preview.length > 0 && (
-        <div className="rounded-xl border bg-muted/30 p-3">
-          <p className="mb-2 text-sm font-medium">{t('courses.live.previewTitle')}</p>
-          <ol className="grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
-            {preview.map((date, index) => (
-              <li key={date.toISOString()} className="flex gap-2">
-                <span className="shrink-0 tabular-nums">{formatNumber(index + 1)}.</span>
-                <span>
-                  {formatDate(date, {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
-
-      <Button type="button" className="w-full sm:w-auto" onClick={create} disabled={isSaving}>
-        {isSaving ? t('common.saving') : t('courses.live.createClass')}
-      </Button>
-    </div>
+      <div className="flex flex-col-reverse gap-2 border-t pt-4 sm:flex-row sm:justify-end">
+        {onCancel ? (
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSaving}>
+            {t('common.cancel')}
+          </Button>
+        ) : null}
+        <Button type="button" onClick={() => void create()} disabled={isSaving}>
+          {isSaving ? t('common.saving') : t('courses.live.createClass')}
+        </Button>
+      </div>
+    </>
   );
 }

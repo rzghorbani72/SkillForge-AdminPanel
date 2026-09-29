@@ -71,6 +71,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
                   onBlur={field.onBlur}
                   placeholder={t('courses.enterDescription')}
                   maxLength={COURSE_DESCRIPTION_MAX}
+                  minRows={9}
                 />
               </FormControl>
               <FormMessage />

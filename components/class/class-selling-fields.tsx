@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { cn } from '@/lib/utils';
 
 interface ClassSellingFieldsProps {
   idPrefix: string;
@@ -16,6 +17,7 @@ interface ClassSellingFieldsProps {
   offerPrice?: number | null;
   wholeClassBooking: boolean;
   seatsHeld?: number;
+  className?: string;
   onSeatPriceChange: (value: string) => void;
   onWholeClassBookingChange: (value: boolean) => void;
 }
@@ -37,6 +39,7 @@ function SeatPriceField({
 }) {
   const { t } = useTranslation();
   const formatCurrency = useFormatCurrency();
+  const formatNumber = useNumberFormat();
   const hasCoursePrice = offerPrice != null;
   const isOverridden = seatPrice !== '';
 
@@ -64,7 +67,7 @@ function SeatPriceField({
       <PriceInput
         id={id}
         value={seatPrice}
-        placeholder={hasCoursePrice ? String(offerPrice) : undefined}
+        placeholder={hasCoursePrice ? formatNumber(offerPrice) : undefined}
         onChange={onChange}
       />
       {hasCoursePrice ? (
@@ -91,6 +94,7 @@ export function ClassSellingFields({
   offerPrice,
   wholeClassBooking,
   seatsHeld = 0,
+  className,
   onSeatPriceChange,
   onWholeClassBookingChange,
 }: ClassSellingFieldsProps) {
@@ -100,7 +104,7 @@ export function ClassSellingFields({
   const effectivePrice = seatPrice === '' ? (offerPrice ?? 0) : Number(seatPrice);
 
   return (
-    <div className="space-y-4 rounded-lg border p-4">
+    <div className={cn('space-y-4 rounded-lg border p-4', className)}>
       <SeatPriceField
         id={`${idPrefix}-seat-price`}
         seatPrice={seatPrice}

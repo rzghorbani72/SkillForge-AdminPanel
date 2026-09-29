@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CalendarClock, CalendarPlus, Inbox, X } from 'lucide-react';
-import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { DataPanel } from '@/components/shared/data-list';
@@ -18,7 +17,7 @@ import type {
   ClassRequestWindow,
   TutoringGroupSlot,
 } from '@/types/learning-operations';
-import { CreateClassSheet } from './create-class-sheet';
+import type { ScheduleBuilderPrefill } from '../hooks/use-schedule-builder';
 
 /** A requested window becomes a weekly slot starting at its start time. */
 const toSlots = (windows: ClassRequestWindow[]): TutoringGroupSlot[] =>
@@ -28,25 +27,23 @@ const toSlots = (windows: ClassRequestWindow[]): TutoringGroupSlot[] =>
     duration_minutes: Math.max(30, Math.min(180, w.end_minute - w.start_minute)),
   }));
 
+export const requestPrefill = (request: ClassRequest): ScheduleBuilderPrefill => ({
+  slots: toSlots(request.windows),
+  capacity: request.seats,
+  minStudents: request.seats,
+});
+
 interface ClassRequestsCardProps {
   courseId: string;
-  courseTitle: string;
-  offerId: string | null;
-  defaultSeatPrice?: number;
-  onClassCreated: () => void;
+  /** Opens the page's create-class form prefilled from this request. */
+  onOpenClass: (request: ClassRequest) => void;
 }
 
 /**
  * Students who asked for a class at their own times. The teacher answers by
  * opening a class prefilled from the request; the student is then texted.
  */
-export function ClassRequestsCard({
-  courseId,
-  courseTitle,
-  offerId,
-  defaultSeatPrice,
-  onClassCreated,
-}: ClassRequestsCardProps) {
+export function ClassRequestsCard({ courseId, onOpenClass }: ClassRequestsCardProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
@@ -69,20 +66,6 @@ export function ClassRequestsCard({
   useEffect(() => {
     void load();
   }, [load]);
-
-  const accept = async (request: ClassRequest, groupId: string) => {
-    setBusyId(request.id);
-    try {
-      await apiClient.acceptClassRequest(request.id, groupId);
-      toast.success(t('courses.live.requestAccepted'));
-      await load();
-      onClassCreated();
-    } catch (err) {
-      ErrorHandler.handleApiError(err);
-    } finally {
-      setBusyId(null);
-    }
-  };
 
   const decline = async (request: ClassRequest) => {
     setBusyId(request.id);
@@ -133,25 +116,17 @@ export function ClassRequestsCard({
                     {t('courses.live.scheduleForRequest')}
                   </Link>
                 </Button>
-              ) : offerId ? (
-                <CreateClassSheet
-                  offerId={offerId}
-                  courseTitle={courseTitle}
-                  defaultSeatPrice={defaultSeatPrice}
-                  prefill={{
-                    slots: toSlots(request.windows),
-                    capacity: request.seats,
-                    minStudents: request.seats,
-                  }}
-                  trigger={
-                    <Button type="button" size="sm" disabled={busyId === request.id}>
-                      <CalendarPlus className="me-1.5 h-4 w-4" />
-                      {t('courses.live.openClassForRequest')}
-                    </Button>
-                  }
-                  onCreated={(groupId) => void accept(request, groupId)}
-                />
-              ) : null}
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={busyId === request.id}
+                  onClick={() => onOpenClass(request)}
+                >
+                  <CalendarPlus className="me-1.5 h-4 w-4" />
+                  {t('courses.live.openClassForRequest')}
+                </Button>
+              )}
               <Button
                 type="button"
                 size="sm"

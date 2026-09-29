@@ -12,6 +12,7 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useLiveCourse } from './hooks/use-live-course';
+import { publishDraftClasses } from './hooks/publish-draft-classes';
 import { LiveCourseLoaded } from './_components/live-course-loaded';
 
 function LiveCourseSkeleton() {
@@ -70,6 +71,8 @@ export default function LiveCoursePage() {
     try {
       await apiClient.updateCourse(courseId, { published: true });
       toast.success(t('courses.live.coursePublished'));
+      const stayedDraft = await publishDraftClasses(groups);
+      if (stayedDraft > 0) toast.warning(t('courses.live.classesStayedDraft'));
       await reload();
     } catch (err) {
       ErrorHandler.handleApiError(err);

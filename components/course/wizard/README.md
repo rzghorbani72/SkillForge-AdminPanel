@@ -2,8 +2,8 @@
 
 Builds one course step by step. `stepsFor(courseType)` picks the steps: a
 **recorded (OFFLINE)** course gets the five below; a **LIVE** course swaps
-`content` and `pricing` for a single `classroom` step, which owns its topics,
-its default seat price and its classes — so every price is set in one place.
+`content` and `pricing` for two steps: `classroom` (its topics and default
+seat price) and `classes` (its classes, created in the page, not a modal).
 
 ## The steps
 

@@ -5,6 +5,7 @@ import { CoursePricingSection } from '../pricing/course-pricing-section';
 import { useCourseForm } from '../useCourseForm';
 import { StepAccess } from './step-access';
 import { StepBasics } from './step-basics';
+import { StepClasses } from './step-classes';
 import { StepClassroom } from './step-classroom';
 import { StepContent } from './step-content';
 import { StepPreview } from './step-preview';
@@ -41,6 +42,7 @@ export function WizardStepBody({
       )}
       {step === 'content' && <StepContent curriculum={course} />}
       {step === 'classroom' && <StepClassroom courseId={courseId} />}
+      {step === 'classes' && <StepClasses courseId={courseId} />}
       {step === 'access' && (
         <StepAccess
           courseId={courseId}

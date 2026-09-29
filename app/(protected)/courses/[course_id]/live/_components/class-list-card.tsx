@@ -18,16 +18,10 @@ interface ClassListCardProps {
   courseId: string;
   coursePublished: boolean;
   groups: TutoringGroup[];
-  /** "Create class", shown in the panel header and again inside the empty state. */
   action?: ReactNode;
-  emptyAction?: ReactNode;
   /** Refreshes the list after a class's settings, schedule or status changes. */
   onChanged?: () => void;
 }
-
-/** Without a group price there is nothing to sell a seat at, so say that instead. */
-const emptyKey = (hasAction: boolean) =>
-  hasAction ? 'courses.live.noClassesYet' : 'courses.live.needsPriceBeforeSchedule';
 
 function classListColumns(
   t: ReturnType<typeof useTranslation>['t'],
@@ -134,7 +128,6 @@ export function ClassListCard({
   coursePublished,
   groups,
   action,
-  emptyAction,
   onChanged,
 }: ClassListCardProps) {
   const { t } = useTranslation();
@@ -161,9 +154,8 @@ export function ClassListCard({
           <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
             <CalendarDays className="h-8 w-8 text-muted-foreground/40" />
             <p className="max-w-sm text-sm text-muted-foreground">
-              {t(emptyKey(Boolean(emptyAction)))}
+              {t('courses.live.noClassesYet')}
             </p>
-            {emptyAction}
           </div>
         }
       />

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -13,9 +12,8 @@ import { SetupCard } from '@/components/course/live/setup-card';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
-import { queryKeys } from '@/lib/query/keys';
 import type { TutoringOffer, TutoringOfferKind } from '@/types/learning-operations';
+import { useCreateTutoringOffer } from '../hooks/use-create-tutoring-offer';
 
 interface LivePricingCardProps {
   courseId: string;
@@ -43,8 +41,7 @@ export default function LivePricingCard({
   onSaved,
 }: LivePricingCardProps) {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const academyId = useCurrentAcademyId();
+  const createOffer = useCreateTutoringOffer();
   const [groupPrice, setGroupPrice] = useState(priceOf(offers, 'GROUP'));
   const [soloPrice, setSoloPrice] = useState(priceOf(offers, 'SOLO'));
   const [isSaving, setIsSaving] = useState(false);
@@ -56,13 +53,7 @@ export default function LivePricingCard({
       if (existing.price === price) return existing;
       return apiClient.updateTutoringOffer(existing.id, { price });
     }
-    return apiClient.createTutoringOffer({
-      course_id: courseId,
-      tutor_profile_id: tutorProfileId,
-      kind,
-      title: `${courseTitle} — ${t(`courses.live.${kind === 'SOLO' ? 'solo' : 'group'}`)}`,
-      price,
-    });
+    return createOffer({ courseId, courseTitle, tutorProfileId }, kind, price);
   };
 
   const save = async () => {
@@ -77,13 +68,9 @@ export default function LivePricingCard({
       if (soloPrice) saved.push(await saveOne('SOLO', soloPrice));
       onSaved(saved);
 
-      // Pricing a live course is itself the decision to sell classes, so the
-      // server turns that on rather than blocking the save. Say so, because it
+      // Pricing a live course switches class selling on; say so, because it
       // also adds the class pages to the sidebar.
       if (saved.some((offer) => offer.feature_enabled_now)) {
-        await queryClient.invalidateQueries({
-          queryKey: queryKeys.learningNavCapabilities(academyId),
-        });
         toast.success(
           <span>
             {t('courses.live.pricesSavedAndSellingEnabled')}{' '}

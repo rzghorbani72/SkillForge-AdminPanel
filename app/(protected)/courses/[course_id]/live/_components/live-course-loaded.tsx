@@ -10,8 +10,8 @@ import type { Course } from '@/types/api';
 import type { CourseTopic, TutoringGroup, TutoringOffer } from '@/types/learning-operations';
 import TopicListEditor from './topic-list-editor';
 import LivePricingCard from './live-pricing-card';
-import { CreateClassSheet } from './create-class-sheet';
-import { ClassListCard } from './class-list-card';
+import { LiveClassesSection } from './live-classes-section';
+import { offersKey } from '../hooks/use-schedule-builder';
 
 export function LiveCourseLoaded({
   courseId,
@@ -39,10 +39,6 @@ export function LiveCourseLoaded({
   onTopicsSaved: (saved: CourseTopic[]) => void;
 }) {
   const { t } = useTranslation();
-  const groupOffer = offers.find((offer) => offer.kind === 'GROUP');
-  const createSheet = groupOffer ? (
-    <CreateClassSheet offerId={groupOffer.id} courseTitle={course.title} onCreated={onReload} />
-  ) : null;
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6">
@@ -61,6 +57,7 @@ export function LiveCourseLoaded({
       <div className="grid gap-6 lg:grid-cols-2">
         <TopicListEditor courseId={courseId} initial={topics} onSaved={onTopicsSaved} />
         <LivePricingCard
+          key={offersKey(offers)}
           courseId={courseId}
           courseTitle={course.title}
           tutorProfileId={String(course.author_id)}
@@ -69,22 +66,12 @@ export function LiveCourseLoaded({
         />
       </div>
 
-      <ClassListCard
+      <LiveClassesSection
         courseId={courseId}
-        coursePublished={Boolean(course.is_published)}
+        course={course}
+        offers={offers}
         groups={groups}
-        onChanged={onReload}
-        action={createSheet}
-        emptyAction={
-          groupOffer ? (
-            <CreateClassSheet
-              offerId={groupOffer.id}
-              courseTitle={course.title}
-              onCreated={onReload}
-              variant="cta"
-            />
-          ) : null
-        }
+        onReload={onReload}
       />
     </div>
   );

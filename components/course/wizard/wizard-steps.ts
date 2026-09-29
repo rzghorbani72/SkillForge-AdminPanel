@@ -6,6 +6,7 @@ export const COURSE_WIZARD_STEPS = [
   'basics',
   'content',
   'classroom',
+  'classes',
   'access',
   'pricing',
   'preview',
@@ -13,13 +14,12 @@ export const COURSE_WIZARD_STEPS = [
 
 export type CourseWizardStep = (typeof COURSE_WIZARD_STEPS)[number];
 
-const LIVE_ONLY_STEPS: readonly CourseWizardStep[] = ['classroom'];
+const LIVE_ONLY_STEPS: readonly CourseWizardStep[] = ['classroom', 'classes'];
 const RECORDED_ONLY_STEPS: readonly CourseWizardStep[] = ['content', 'pricing'];
 
 /**
- * A live course has no lesson tree and no separate price step — its topics,
- * seat prices and timetable are all managed in `classroom`, so a manager sets
- * each price in exactly one place.
+ * A live course has no lesson tree and no separate price step: `classroom`
+ * holds its topics and seat prices, and `classes` holds its timetables.
  */
 export function stepsFor(courseType: CourseType): readonly CourseWizardStep[] {
   const hidden = courseType === 'LIVE' ? RECORDED_ONLY_STEPS : LIVE_ONLY_STEPS;
@@ -30,6 +30,7 @@ export const WIZARD_STEP_LABEL: Record<CourseWizardStep, string> = {
   basics: 'courses.wizard.stepBasics',
   content: 'courses.wizard.stepContent',
   classroom: 'courses.wizard.stepClassroom',
+  classes: 'courses.wizard.stepClasses',
   access: 'courses.wizard.stepAccess',
   pricing: 'courses.wizard.stepPricing',
   preview: 'courses.wizard.stepPreview',
@@ -39,6 +40,7 @@ export const WIZARD_STEP_HINT: Record<CourseWizardStep, string> = {
   basics: 'courses.wizard.stepBasicsHint',
   content: 'courses.wizard.stepContentHint',
   classroom: 'courses.wizard.stepClassroomHint',
+  classes: 'courses.wizard.stepClassesHint',
   access: 'courses.wizard.stepAccessHint',
   pricing: 'courses.wizard.stepPricingHint',
   preview: 'courses.wizard.stepPreviewHint',
@@ -49,6 +51,7 @@ export const WIZARD_STEP_FIELDS: Record<CourseWizardStep, (keyof CourseFormData)
   basics: ['title', 'description', 'requirements', 'difficulty', 'access_duration_days'],
   content: [],
   classroom: [],
+  classes: [],
   access: ['meta_title', 'meta_description', 'keywords'],
   pricing: ['primary_price', 'secondary_price'],
   preview: [],
