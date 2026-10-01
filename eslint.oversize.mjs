@@ -3,7 +3,6 @@
 export const MAX_LINES = 400;
 export const OVERSIZE_ALLOWLIST = [
   'app/(protected)/website/appearance/_components/appearance-workspace.tsx',
-  'constants/data.ts',
 ];
 
 // Legacy files still using `any`, `x!` or `console.*`; cleaned as they are split. May only shrink.
