@@ -48,7 +48,7 @@ export function WithdrawalsSection({ formatCurrency }: { formatCurrency: (n: num
   const locale = getLocaleForLanguage(language);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState<number | null>(null);
+  const [processing, setProcessing] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -66,7 +66,7 @@ export function WithdrawalsSection({ formatCurrency }: { formatCurrency: (n: num
     load();
   }, [load]);
 
-  async function act(id: number, status: string) {
+  async function act(id: string, status: string) {
     setProcessing(id);
     try {
       await apiClient.processAffiliateWithdrawal(id, status);

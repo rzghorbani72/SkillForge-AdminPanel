@@ -8,6 +8,12 @@ export function unwrapDataEnvelope<T>(payload: T | { data: T }): T {
   return payload;
 }
 
+/** Many endpoints answer `{ data }` or the bare value; callers pick the shape they expect. */
+export function unwrapData<T>(payload: unknown): T {
+  const inner = payload && typeof payload === 'object' && 'data' in payload ? payload.data : null;
+  return (inner ?? payload) as T;
+}
+
 /** The upload endpoints answer in a few envelope shapes; only the id matters. */
 export function uploadedFileId(payload: unknown): string {
   if (payload && typeof payload === 'object') {

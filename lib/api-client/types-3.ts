@@ -46,3 +46,44 @@ export interface MarketingSpendRow {
   channel: string;
   note: string | null;
 }
+
+export interface PageMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface StudentLessonAccessRecord {
+  id: string;
+  is_unlocked: boolean;
+  note?: string;
+  updated_at: string;
+  Profile?: { id: string; display_name: string };
+  Lesson?: { id: string; title: string; Season?: { id: string; course_id: string } };
+  UnlockedBy?: { id: string; display_name: string };
+}
+
+export interface StudentLessonAccessList {
+  list: StudentLessonAccessRecord[];
+  pagination: PageMeta | null;
+}
+
+export interface AcademyCustomPlanData {
+  custom_plan_enabled?: boolean;
+  custom_plan_assigned_at?: string | null;
+  custom_plan_name?: string | null;
+  custom_plan_limits?: Record<string, number | string | null> | null;
+  custom_plan_features?: string[] | null;
+  custom_plan_price_monthly?: number | null;
+  custom_plan_price_yearly?: number | null;
+  custom_plan_note?: string | null;
+}
+
+export interface AcademyRecord {
+  id?: string;
+  name?: string;
+  slug?: string;
+}

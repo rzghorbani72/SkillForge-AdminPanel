@@ -32,25 +32,12 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { Lock, LockOpen, Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
-
-interface AccessRecord {
-  id: number;
-  is_unlocked: boolean;
-  note?: string;
-  updated_at: string;
-  Profile?: { id: number; display_name: string };
-  Lesson?: {
-    id: number;
-    title: string;
-    Season?: { id: number; course_id: number };
-  };
-  UnlockedBy?: { id: number; display_name: string };
-}
+import type { PageMeta, StudentLessonAccessRecord } from '@/lib/api-client/types-3';
 
 export default function StudentLessonAccessPage() {
   const { t } = useTranslation();
-  const [list, setList] = useState<AccessRecord[]>([]);
-  const [pagination, setPagination] = useState<any>(null);
+  const [list, setList] = useState<StudentLessonAccessRecord[]>([]);
+  const [pagination, setPagination] = useState<PageMeta | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [profileIdFilter, setProfileIdFilter] = useState('');
@@ -66,8 +53,11 @@ export default function StudentLessonAccessPage() {
   const fetchList = useCallback(async () => {
     try {
       setIsLoading(true);
-      const params: any = { page: currentPage, limit: 20 };
-      if (profileIdFilter) params.profile_id = Number(profileIdFilter);
+      const params = {
+        page: currentPage,
+        limit: 20,
+        ...(profileIdFilter ? { profile_id: profileIdFilter } : {}),
+      };
       const data = await apiClient.getStudentLessonAccess(params);
       setList(data?.list ?? []);
       setPagination(data?.pagination ?? null);
@@ -87,8 +77,8 @@ export default function StudentLessonAccessPage() {
     try {
       setIsSaving(true);
       await apiClient.upsertStudentLessonAccess({
-        profile_id: Number(profileId),
-        lesson_id: Number(lessonId),
+        profile_id: profileId,
+        lesson_id: lessonId,
         is_unlocked: isUnlocked,
         note: note || undefined,
       });
@@ -106,7 +96,7 @@ export default function StudentLessonAccessPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm(t('students.lessonAccess.removeConfirm'))) return;
     try {
       await apiClient.deleteStudentLessonAccess(id);

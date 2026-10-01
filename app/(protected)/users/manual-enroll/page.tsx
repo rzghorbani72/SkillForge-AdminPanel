@@ -81,8 +81,8 @@ export default function ManualEnrollPage() {
       setIsEnrolling(true);
       setLastSuccess(null);
       const result = await apiClient.manualEnroll({
-        course_id: Number(courseId),
-        profile_id: Number(profileId),
+        course_id: courseId,
+        profile_id: profileId,
         paid_amount: paidAmount ? Number(paidAmount) : undefined,
         payment_note: paymentNote || undefined,
       });

@@ -3,7 +3,7 @@ import { SubscriptionPlanData, StructuredPlanLimits } from '@/lib/api';
 export type { SubscriptionPlanData, StructuredPlanLimits };
 
 export interface AcademyPlanData {
-  id: number;
+  id: string;
   academy_id: string;
   kind: 'SUBSCRIPTION' | 'PACKAGE';
   name: string;

@@ -9,7 +9,8 @@ import type {
   TutoringSessionListItem,
   UpdateLessonDownloadPolicyPayload,
 } from '@/types/learning-operations';
-import { mapPublicPlanToSubscriptionPlan, unwrapDataEnvelope } from '../helpers';
+import { mapPublicPlanToSubscriptionPlan, unwrapData, unwrapDataEnvelope } from '../helpers';
+import type { AcademyCustomPlanData, AcademyRecord, StudentLessonAccessList } from '../types-3';
 import type {
   PlanEconomicsPreview,
   PlatformSettingsData,
@@ -95,8 +96,8 @@ export class ApiLayer17 extends ApiLayer16 {
   // ─── Manual Enrollment ─────────────────────────────────────────────────────
 
   async manualEnroll(data: {
-    course_id: number;
-    profile_id: number;
+    course_id: string;
+    profile_id: string;
     payment_note?: string;
     paid_amount?: number;
   }) {
@@ -104,15 +105,17 @@ export class ApiLayer17 extends ApiLayer16 {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<{ Profile?: { display_name?: string }; Course?: { title?: string } }>(
+      res.data,
+    );
   }
 
   // ─── Student Lesson Access ─────────────────────────────────────────────────
 
   async getStudentLessonAccess(params?: {
-    profile_id?: number;
-    lesson_id?: number;
-    course_id?: number;
+    profile_id?: string;
+    lesson_id?: string;
+    course_id?: string;
     page?: number;
     limit?: number;
   }) {
@@ -123,13 +126,12 @@ export class ApiLayer17 extends ApiLayer16 {
       });
     const url = qs.toString() ? `/student-lesson-access?${qs}` : '/student-lesson-access';
     const res = await this.request(url);
-    const payload = res.data as any;
-    return payload?.data ?? payload;
+    return unwrapData<StudentLessonAccessList>(res.data);
   }
 
   async upsertStudentLessonAccess(data: {
-    profile_id: number;
-    lesson_id: number;
+    profile_id: string;
+    lesson_id: string;
     is_unlocked: boolean;
     note?: string;
   }) {
@@ -137,10 +139,10 @@ export class ApiLayer17 extends ApiLayer16 {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
-  async deleteStudentLessonAccess(id: number) {
+  async deleteStudentLessonAccess(id: string) {
     const res = await this.request(`/student-lesson-access/${id}`, {
       method: 'DELETE',
     });
@@ -168,7 +170,7 @@ export class ApiLayer17 extends ApiLayer16 {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async getSubscriptionPlans() {
@@ -203,7 +205,7 @@ export class ApiLayer17 extends ApiLayer16 {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async updateSubscriptionPlan(id: string, data: Partial<SubscriptionPlanData>) {
@@ -211,7 +213,7 @@ export class ApiLayer17 extends ApiLayer16 {
       method: 'PUT',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async previewPlanEconomics(payload: {
@@ -285,7 +287,7 @@ export class ApiLayer17 extends ApiLayer16 {
     const res = await this.request('/payments/gateways/payping/ensure', {
       method: 'POST',
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   // -------------------------------------------------------------------------
@@ -303,25 +305,25 @@ export class ApiLayer17 extends ApiLayer16 {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) qs.append(k, String(v));
       });
-    const res = await this.request<any>(`/stores${qs.toString() ? `?${qs}` : ''}`);
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>(`/stores${qs.toString() ? `?${qs}` : ''}`);
+    return unwrapData<unknown>(res.data);
   }
 
   async getStore(id: string) {
-    const res = await this.request<any>(`/academies/${id}`);
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>(`/academies/${id}`);
+    return unwrapData<AcademyRecord>(res.data);
   }
 
   async createStore(data: { name: string; slug: string; country?: string; is_active?: boolean }) {
-    const res = await this.request<any>('/academies', {
+    const res = await this.request<unknown>('/academies', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async updateStore(
-    id: number,
+    id: string,
     data: Partial<{
       name: string;
       slug: string;
@@ -329,23 +331,23 @@ export class ApiLayer17 extends ApiLayer16 {
       is_active: boolean;
     }>,
   ) {
-    const res = await this.request<any>(`/academies/${id}`, {
+    const res = await this.request<unknown>(`/academies/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
-  async updateAcademyCommissionRate(id: number, commission_rate: number) {
-    const res = await this.request<any>(`/financial/academies/${id}/commission-rate`, {
+  async updateAcademyCommissionRate(id: string, commission_rate: number) {
+    const res = await this.request<unknown>(`/financial/academies/${id}/commission-rate`, {
       method: 'PATCH',
       body: JSON.stringify({ commission_rate }),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async getAcademyCustomPlan(id: string) {
-    const res = await this.request<any>(`/academies/${id}/custom-plan`);
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>(`/academies/${id}/custom-plan`);
+    return unwrapData<AcademyCustomPlanData>(res.data);
   }
 }

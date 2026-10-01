@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-export type Course = { id: number; title: string; price: number };
+export type Course = { id: string; title: string; price: number };
 
 export type Affiliate = {
-  id: number;
+  id: string;
   code: string;
   affiliate_name: string;
   affiliate_email?: string | null;
@@ -11,7 +11,7 @@ export type Affiliate = {
   commission_rate: number;
   is_active: boolean;
   clicks: number;
-  course_id?: number | null;
+  course_id?: string | null;
   academy_id: string;
   course?: Course | null;
   Usages?: Array<{ commission_amount: number; created_at?: string }>;
