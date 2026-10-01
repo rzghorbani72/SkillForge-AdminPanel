@@ -2,67 +2,21 @@
 
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useEffect, useState, useMemo } from 'react';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Plus,
-  Package,
-  BookOpen,
-  Tag,
-  Loader2,
-  ToggleLeft,
-  ToggleRight,
-  Pencil,
-  KeyRound,
-} from 'lucide-react';
+import { Plus, Package } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
 import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
 import { apiClient } from '@/lib/api';
-import type { Offer } from '@/types/api';
 import { useCurrentAcademyId } from '@/hooks/useCurrentAcademy';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { NumberInput } from '@/components/ui/number-input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type Course = { id: string; title: string; price: number; slug: string };
-// A bundle is simply an Offer that unlocks several courses at one price.
-type Bundle = Offer & { courses?: Course[] };
-
-// ─── Schema (no academy_id — derived from context) ───────────────────────────
-
-const schema = z.object({
-  title: z.string().min(2),
-  slug: z
-    .string()
-    .min(2)
-    .regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
-  price: z.coerce.number().min(0),
-  description: z.string().optional(),
-});
-type FormValues = z.infer<typeof schema>;
+import { BundleCard } from './_components/bundle-card';
+import { Bundle, Course } from './_components/shared';
+import { BundleFormDialog } from './_components/bundle-form-dialog';
+import { FormValues, schema } from './_lib/page-helpers';
 
 function toSlug(s: string) {
   return s
@@ -72,154 +26,6 @@ function toSlug(s: string) {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .slice(0, 60);
-}
-
-// ─── Course multi-select ─────────────────────────────────────────────────────
-
-function CourseMultiSelect({
-  courses,
-  selected,
-  onChange,
-  t,
-  formatCurrency,
-}: {
-  courses: Course[];
-  selected: string[];
-  onChange: (ids: string[]) => void;
-  t: (k: string) => string;
-  formatCurrency: (n: number) => string;
-}) {
-  const selectedCourses = courses.filter((c) => selected.includes(c.id));
-  const originalTotal = selectedCourses.reduce((s, c) => s + (c.price ?? 0), 0);
-
-  return (
-    <div className="space-y-2">
-      <EntityMultiSelect
-        items={courses.map((c) => ({ id: c.id, title: c.title }))}
-        selected={selected}
-        onChange={onChange}
-        renderMeta={(item) => formatCurrency(courses.find((c) => c.id === item.id)?.price ?? 0)}
-        labels={{
-          placeholder: t('bundles.selectCourses'),
-          selected: t('bundles.selectedCourses'),
-          search: t('bundles.searchCourses'),
-          empty: t('bundles.noCourses'),
-          remove: t('bundles.removeCourse'),
-        }}
-      />
-
-      {selectedCourses.length > 0 && (
-        <p className="text-xs text-muted-foreground">
-          {t('bundles.originalTotal')}:{' '}
-          <span className="font-medium">{formatCurrency(originalTotal)}</span>
-        </p>
-      )}
-    </div>
-  );
-}
-
-// ─── Bundle card ─────────────────────────────────────────────────────────────
-
-function BundleCard({
-  bundle,
-  onEdit,
-  onToggle,
-  onAssign,
-  formatCurrency,
-  t,
-}: {
-  bundle: Bundle;
-  onEdit: () => void;
-  onToggle: () => void;
-  onAssign: () => void;
-  formatCurrency: (n: number) => string;
-  t: (k: string) => string;
-}) {
-  const courses = bundle.Courses?.map((bc) => bc.Course) ?? bundle.courses ?? [];
-
-  return (
-    <div className="flex flex-col rounded-xl border bg-card transition-colors hover:border-primary/40">
-      {/* Top bar */}
-      <div className="flex items-start justify-between gap-3 p-4">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-            <Package className="h-5 w-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="truncate font-semibold">{bundle.title}</h3>
-            <p className="font-mono text-xs text-muted-foreground">{bundle.slug}</p>
-          </div>
-        </div>
-        <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            aria-label={t('accessGrants.title')}
-            onClick={onAssign}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <KeyRound className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            aria-label={t('bundles.editBundle')}
-            onClick={onEdit}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            aria-label={bundle.is_active ? t('bundles.inactive') : t('bundles.active')}
-            onClick={onToggle}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent"
-          >
-            {bundle.is_active ? (
-              <ToggleRight className="h-5 w-5 text-emerald-500" />
-            ) : (
-              <ToggleLeft className="h-5 w-5 text-muted-foreground" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Description */}
-      {bundle.description && (
-        <p className="mx-4 mb-2 line-clamp-2 text-sm text-muted-foreground">{bundle.description}</p>
-      )}
-
-      {/* Included courses */}
-      {courses.length > 0 && (
-        <div className="mx-4 mb-3 flex flex-wrap gap-1">
-          {courses.map((c: any) => (
-            <span
-              key={c.id}
-              className="flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs"
-            >
-              <BookOpen className="h-3 w-3" />
-              {c.title}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Footer */}
-      <div className="flex items-center justify-between border-t px-4 py-3">
-        <div className="flex items-center gap-1.5 text-sm">
-          <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="font-semibold">{formatCurrency(bundle.price)}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <BookOpen className="h-3 w-3" />
-            {courses.length} {t('bundles.courseCount')}
-          </span>
-          <Badge variant={bundle.is_active ? 'default' : 'secondary'} className="text-xs">
-            {bundle.is_active ? t('bundles.active') : t('bundles.inactive')}
-          </Badge>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -428,129 +234,20 @@ export default function BundlesPage() {
       />
 
       {/* Create / Edit dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg" dir={'rtl'}>
-          <DialogHeader>
-            <DialogTitle>
-              {editTarget ? t('bundles.editBundle') : t('bundles.createBundle')}
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              {t('bundles.description')}
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              {/* Title */}
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('bundles.bundleTitle')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t('bundles.titlePlaceholder')} {...field} />
-                    </FormControl>
-                    <p className="text-xs text-muted-foreground">{t('bundles.titleHelp')}</p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Slug */}
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('bundles.slug')}</FormLabel>
-                    <FormControl>
-                      <Input dir="rtl" className="font-mono text-sm" {...field} />
-                    </FormControl>
-                    <p className="text-xs text-muted-foreground">{t('bundles.slugHelp')}</p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Price */}
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('bundles.price')}</FormLabel>
-                    <FormControl>
-                      <NumberInput
-                        name={field.name}
-                        ref={field.ref}
-                        value={field.value ?? ''}
-                        onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
-                      />
-                    </FormControl>
-                    <p className="text-xs text-muted-foreground">{t('bundles.priceHelp')}</p>
-                    {savings > 0 && (
-                      <p className="text-xs font-medium text-emerald-600">
-                        {t('bundles.savings')}: {formatCurrency(savings)}
-                      </p>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Course picker */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium">{t('bundles.selectCourses')}</label>
-                {loadingCourses ? (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Loading courses…
-                  </div>
-                ) : (
-                  <CourseMultiSelect
-                    courses={courses}
-                    selected={selectedCourseIds}
-                    onChange={setSelectedCourseIds}
-                    t={t}
-                    formatCurrency={formatCurrency}
-                  />
-                )}
-                <p className="text-xs text-muted-foreground">{t('bundles.coursesHelp')}</p>
-              </div>
-
-              {/* Description */}
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('common.description')}</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        rows={3}
-                        placeholder={t('bundles.descriptionPlaceholder')}
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              {/* Footer */}
-              <div className="flex justify-end gap-2 pt-1">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  {t('common.cancel')}
-                </Button>
-                <Button type="submit" disabled={saving}>
-                  {saving && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-                  {t('bundles.saveBundle')}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+      <BundleFormDialog
+        courses={courses}
+        dialogOpen={dialogOpen}
+        editTarget={editTarget}
+        form={form}
+        formatCurrency={formatCurrency}
+        loadingCourses={loadingCourses}
+        onSubmit={onSubmit}
+        saving={saving}
+        savings={savings}
+        selectedCourseIds={selectedCourseIds}
+        setDialogOpen={setDialogOpen}
+        setSelectedCourseIds={setSelectedCourseIds}
+      />
     </div>
   );
 }

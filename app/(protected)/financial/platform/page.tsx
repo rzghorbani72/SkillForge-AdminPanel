@@ -1,25 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { CalendarDays, Download, MoreHorizontal, TrendingDown, TrendingUp } from 'lucide-react';
+
+import { CalendarDays, Download } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { apiErrorMessage } from '@/lib/api-error-message';
 import {
@@ -37,71 +22,11 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useFinancialFilters } from '@/hooks/useFinancialFilters';
 import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
-import { cn } from '@/lib/utils';
-
-interface StatCardProps {
-  label: string;
-  value: string;
-  sub: string;
-  delta?: number | null;
-  accent?: boolean;
-  negative?: boolean;
-}
-
-function StatCard({ label, value, sub, delta, accent, negative }: StatCardProps) {
-  return (
-    <Card
-      className={cn(
-        'transition-shadow hover:shadow-sm',
-        accent && 'border-transparent bg-primary/5',
-      )}
-    >
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between">
-          <span
-            className={cn(
-              'text-xs font-medium uppercase tracking-wider',
-              accent ? 'text-primary' : 'text-muted-foreground',
-            )}
-          >
-            {label}
-          </span>
-          {delta != null && delta !== 0 && (
-            <span
-              className={cn(
-                'flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
-                delta >= 0
-                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                  : 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300',
-              )}
-            >
-              {delta >= 0 ? (
-                <TrendingUp className="h-2.5 w-2.5" />
-              ) : (
-                <TrendingDown className="h-2.5 w-2.5" />
-              )}
-              {Math.abs(delta).toFixed(1)}%
-            </span>
-          )}
-        </div>
-        <p
-          className={cn(
-            'mt-2 text-2xl font-bold tabular-nums tracking-tight',
-            negative && 'text-destructive',
-          )}
-        >
-          {value}
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function profitMargin(revenue: number, cost: number) {
-  if (revenue === 0) return 0;
-  return ((revenue - cost) / revenue) * 100;
-}
+import { StatCardProps } from './_components/shared';
+import { StatCard } from './_components/stat-card';
+import { PlatformRecordsTabs } from './_components/platform-records-tabs';
+import { IranSettlementCard } from './_components/iran-settlement-card';
+import { profitMargin } from './_lib/page-helpers';
 
 export default function PlatformFinancialPage() {
   const { t, language } = useTranslation();
@@ -269,278 +194,16 @@ export default function PlatformFinancialPage() {
 
       {/* Settlement Summary */}
       {settlementTotals && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">
-              {t('financial.platform.iranSettlementTitle')}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {t('financial.platform.iranSettlementDescription')}
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                {
-                  label: t('financial.platform.gross'),
-                  value: formatCurrency(
-                    settlementTotals.gross_amount ?? 0,
-                    settlementTotals.currency,
-                  ),
-                },
-                {
-                  label: `${t('financial.platform.platformFee')} (${((settlementTotals as SettlementTotals & { vat_rate?: number }).vat_rate ?? 0.09) * 100}%)`,
-                  value: formatCurrency(
-                    settlementTotals.platform_fee ?? 0,
-                    settlementTotals.currency,
-                  ),
-                },
-                {
-                  label: t('financial.platform.vat'),
-                  value: formatCurrency(
-                    settlementTotals.tax_vat_amount ?? 0,
-                    settlementTotals.currency,
-                  ),
-                },
-                {
-                  label: t('financial.platform.schoolNet'),
-                  value: formatCurrency(
-                    settlementTotals.school_net_revenue ?? 0,
-                    settlementTotals.currency,
-                  ),
-                },
-              ].map((item) => (
-                <div key={item.label}>
-                  <p className="text-xs text-muted-foreground">{item.label}</p>
-                  <p className="mt-1 text-lg font-semibold tabular-nums">{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <IranSettlementCard formatCurrency={formatCurrency} settlementTotals={settlementTotals} />
       )}
 
       {/* Records Tables */}
-      <Tabs defaultValue="platform" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="platform">{t('financial.platform.tabs.platformRecords')}</TabsTrigger>
-          <TabsTrigger value="stores">{t('financial.platform.tabs.allStores')}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="platform">
-          <Card className="overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/30">
-                  <TableHead>{t('financial.platform.platformRecords.period')}</TableHead>
-                  <TableHead>{t('financial.platform.platformRecords.category')}</TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.platformRecords.revenue')}
-                  </TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.platformRecords.cost')}
-                  </TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.platformRecords.profit')}
-                  </TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.platformRecords.margin')}
-                  </TableHead>
-                  <TableHead className="w-10" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {platformRecords.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                      {t('financial.platform.platformRecords.noRecords')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  platformRecords.map((record) => {
-                    const m = profitMargin(record.revenue, record.cost);
-                    return (
-                      <TableRow key={record.id} className="group">
-                        <TableCell className="text-sm">
-                          {new Date(record.period_start).toLocaleDateString()} –{' '}
-                          {new Date(record.period_end).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          {record.costCategory ? (
-                            <Badge variant="outline">{record.costCategory.name}</Badge>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-end font-medium tabular-nums">
-                          {formatCurrency(record.revenue, record.currency)}
-                        </TableCell>
-                        <TableCell className="text-end tabular-nums text-destructive">
-                          {formatCurrency(record.cost, record.currency)}
-                        </TableCell>
-                        <TableCell
-                          className={cn(
-                            'text-end font-bold tabular-nums',
-                            record.profit >= 0
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-destructive',
-                          )}
-                        >
-                          {formatCurrency(record.profit, record.currency)}
-                        </TableCell>
-                        <TableCell className="text-end">
-                          <Badge variant={m >= 0 ? 'default' : 'destructive'}>
-                            {m.toFixed(1)}%
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7 opacity-0 group-hover:opacity-100"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                className="text-destructive"
-                                onClick={async () => {
-                                  if (
-                                    confirm(t('financial.platform.platformRecords.deleteConfirm'))
-                                  ) {
-                                    try {
-                                      await apiClient.deletePlatformFinancialRecord(record.id);
-                                      toast.success(
-                                        t('financial.platform.platformRecords.deleteSuccess'),
-                                      );
-                                      loadData();
-                                    } catch (err: unknown) {
-                                      toast.error(
-                                        apiErrorMessage(
-                                          err,
-                                          t('financial.platform.platformRecords.deleteError'),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                }}
-                              >
-                                {t('common.delete')}
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="stores">
-          <Card className="overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/30">
-                  <TableHead>{t('financial.platform.storeRecords.store')}</TableHead>
-                  <TableHead>{t('financial.platform.storeRecords.period')}</TableHead>
-                  <TableHead>{t('financial.platform.storeRecords.category')}</TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.storeRecords.revenue')}
-                  </TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.storeRecords.cost')}
-                  </TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.storeRecords.profit')}
-                  </TableHead>
-                  <TableHead className="text-end">
-                    {t('financial.platform.storeRecords.margin')}
-                  </TableHead>
-                  <TableHead className="w-10" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {storeRecords.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
-                      {t('financial.platform.storeRecords.noRecords')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  storeRecords.map((record) => {
-                    const m = profitMargin(record.revenue, record.cost);
-                    return (
-                      <TableRow key={record.id} className="group">
-                        <TableCell className="font-medium">
-                          {record.store?.name ?? `Store #${record.academy_id}`}
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {new Date(record.period_start).toLocaleDateString()} –{' '}
-                          {new Date(record.period_end).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          {record.costCategory ? (
-                            <Badge variant="outline">{record.costCategory.name}</Badge>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-end font-medium tabular-nums">
-                          {formatCurrency(record.revenue, record.currency)}
-                        </TableCell>
-                        <TableCell className="text-end tabular-nums text-destructive">
-                          {formatCurrency(record.cost, record.currency)}
-                        </TableCell>
-                        <TableCell
-                          className={cn(
-                            'text-end font-bold tabular-nums',
-                            record.profit >= 0
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-destructive',
-                          )}
-                        >
-                          {formatCurrency(record.profit, record.currency)}
-                        </TableCell>
-                        <TableCell className="text-end">
-                          <Badge variant={m >= 0 ? 'default' : 'destructive'}>
-                            {m.toFixed(1)}%
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7 opacity-0 group-hover:opacity-100"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => router.push('/platform/academies')}>
-                                {t('financial.platform.storeRecords.view')}
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <PlatformRecordsTabs
+        formatCurrency={formatCurrency}
+        loadData={loadData}
+        platformRecords={platformRecords}
+        storeRecords={storeRecords}
+      />
     </div>
   );
 }

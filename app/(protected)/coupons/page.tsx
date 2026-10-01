@@ -1,33 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Plus, Percent, Pencil, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { NumberInput } from '@/components/ui/number-input';
-import { PriceInput } from '@/components/ui/price-input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,17 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Skeleton } from '@/components/ui/skeleton';
-import { StatusBadge } from '@/components/shared/status-badge';
-import { CopyableVoucherCode } from '@/components/coupons/copyable-voucher-code';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
@@ -57,53 +27,13 @@ import { useAuthUser } from '@/hooks/useAuthUser';
 import { useHasStore } from '@/hooks/useHasStore';
 import { isPlatformAdmin } from '@/lib/roles';
 import { isPlatformMode } from '@/lib/nav-filter';
-import { CalendarDatePicker } from '@/components/shared/calendar-date-picker';
 import { addInputDays, todayInputValue } from '@/lib/i18n/calendar-date';
-import {
-  COUPON_TYPES,
-  COUPON_TYPE_BADGE,
-  COUPON_TYPE_LABEL_KEY,
-  USAGE_TYPES,
-  USAGE_TYPE_LABEL_KEY,
-  COUPON_STATUS_BADGE,
-  COUPON_STATUS_LABEL_KEY,
-  couponStatusOf,
-  couponTypeOf,
-  normalizeDiscountCode,
-} from '@/lib/coupons';
+import { normalizeDiscountCode } from '@/lib/coupons';
 import { useCouponCodeAvailability } from '@/hooks/useCouponCodeAvailability';
 import { apiErrorMessage } from '@/lib/api-error-message';
-
-function buildCouponSchema(endBeforeStartMessage: string) {
-  return z
-    .object({
-      code: z.string().min(1, 'validation.required'),
-      coupon_type: z.enum(COUPON_TYPES),
-      discount_value: z.coerce.number().min(0).optional(),
-      free_trial_days: z.coerce.number().int().min(1).optional(),
-      start_date: z.string().min(1, 'validation.required'),
-      end_date: z.string().min(1, 'validation.required'),
-      usage_type: z.enum(USAGE_TYPES),
-      usage_limit: z.coerce.number().int().min(1).optional(),
-      academy_id: z.string().optional(),
-      max_discount_amount: z.coerce.number().optional(),
-      min_purchase_amount: z.coerce.number().optional(),
-    })
-    .refine((values) => values.coupon_type !== 'FREE_TRIAL' || (values.free_trial_days ?? 0) >= 1, {
-      path: ['free_trial_days'],
-      message: 'validation.required',
-    })
-    .refine((values) => values.usage_type !== 'LIMITED' || (values.usage_limit ?? 0) >= 1, {
-      path: ['usage_limit'],
-      message: 'validation.required',
-    })
-    .refine(
-      (values) => !values.start_date || !values.end_date || values.start_date < values.end_date,
-      { path: ['end_date'], message: endBeforeStartMessage },
-    );
-}
-
-type CouponValues = z.infer<ReturnType<typeof buildCouponSchema>>;
+import { CouponFormDialog } from './_components/coupon-form-dialog';
+import { CouponsTable } from './_components/coupons-table';
+import { CouponValues, buildCouponSchema } from './_lib/page-helpers';
 
 export default function CouponsPage() {
   const { t } = useTranslation();
@@ -317,328 +247,31 @@ export default function CouponsPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('coupons.allCoupons')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <Skeleton className="h-40 w-full" />
-          ) : coupons.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Percent className="mb-3 h-10 w-10 text-muted-foreground" />
-              <p className="font-medium">{t('coupons.noCoupons')}</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('coupons.code')}</TableHead>
-                  <TableHead>{t('coupons.type')}</TableHead>
-                  <TableHead>{t('coupons.value')}</TableHead>
-                  {canManagePlatformVouchers && <TableHead>{t('coupons.academy')}</TableHead>}
-                  <TableHead>{t('coupons.uses')}</TableHead>
-                  <TableHead>{t('coupons.validity')}</TableHead>
-                  <TableHead>{t('coupons.status')}</TableHead>
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {coupons.map((c) => {
-                  const status = couponStatusOf(c);
-                  return (
-                    <TableRow key={c.id} className={status === 'active' ? undefined : 'opacity-60'}>
-                      <TableCell>
-                        <CopyableVoucherCode code={c.code} />
-                      </TableCell>
-                      <TableCell>
-                        <StatusBadge
-                          status={COUPON_TYPE_BADGE[couponTypeOf(c)]}
-                          label={t(COUPON_TYPE_LABEL_KEY[couponTypeOf(c)])}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {c.coupon_type === 'FREE_TRIAL'
-                          ? t('coupons.daysValue', {
-                              count: c.free_trial_days ?? 0,
-                            })
-                          : c.coupon_type === 'FULL_DISCOUNT'
-                            ? formatPercent(100)
-                            : c.coupon_type === 'PERCENT'
-                              ? formatPercent(c.discount_value ?? 0)
-                              : formatNumber(c.discount_value ?? 0)}
-                      </TableCell>
-                      {canManagePlatformVouchers && (
-                        <TableCell>{c.Academy?.name ?? t('coupons.platformScope')}</TableCell>
-                      )}
-                      <TableCell>
-                        {c.usage_limit
-                          ? `${formatNumber(c.used_count ?? 0)}/${formatNumber(c.usage_limit)}`
-                          : formatNumber(c.used_count ?? 0)}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {c.start_date && c.end_date
-                          ? `${formatDate(c.start_date)} → ${formatDate(c.end_date)}`
-                          : '—'}
-                      </TableCell>
-                      <TableCell>
-                        <StatusBadge
-                          status={COUPON_STATUS_BADGE[status]}
-                          label={t(COUPON_STATUS_LABEL_KEY[status])}
-                        />
-                      </TableCell>
-                      <TableCell className="text-end">
-                        <Button variant="ghost" size="sm" onClick={() => openEdit(c)}>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(c)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <CouponsTable
+        canManagePlatformVouchers={canManagePlatformVouchers}
+        coupons={coupons}
+        formatDate={formatDate}
+        formatNumber={formatNumber}
+        formatPercent={formatPercent}
+        loading={loading}
+        openEdit={openEdit}
+        setDeleteTarget={setDeleteTarget}
+      />
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {editTarget ? t('coupons.editCoupon') : t('coupons.createCoupon')}
-            </DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('coupons.code')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={!!editTarget}
-                          onChange={(event) =>
-                            field.onChange(normalizeDiscountCode(event.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="coupon_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('coupons.type')}</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger aria-label={t('coupons.type')}>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {COUPON_TYPES.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {t(COUPON_TYPE_LABEL_KEY[type])}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {(couponType === 'PERCENT' || couponType === 'FIXED') && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="discount_value"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {couponType === 'PERCENT'
-                              ? t('coupons.discountPercent')
-                              : t('coupons.fixedAmount')}
-                          </FormLabel>
-                          <FormControl>
-                            <NumberInput
-                              name={field.name}
-                              ref={field.ref}
-                              value={field.value ?? ''}
-                              onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
-                              suffix={couponType === 'FIXED' ? t('common.toman') : undefined}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    {couponType === 'PERCENT' && (
-                      <FormField
-                        control={form.control}
-                        name="max_discount_amount"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t('coupons.maxDiscount')}</FormLabel>
-                            <FormControl>
-                              <PriceInput
-                                name={field.name}
-                                ref={field.ref}
-                                value={field.value ?? ''}
-                                onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
-                  </>
-                )}
-
-                {couponType === 'FREE_TRIAL' && (
-                  <FormField
-                    control={form.control}
-                    name="free_trial_days"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('coupons.freeTrialDays')}</FormLabel>
-                        <FormControl>
-                          <NumberInput
-                            name={field.name}
-                            ref={field.ref}
-                            value={field.value ?? ''}
-                            onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-
-                <FormField
-                  control={form.control}
-                  name="start_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('coupons.startDate')}</FormLabel>
-                      <FormControl>
-                        <CalendarDatePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          minDate={startMinDate}
-                          maxDate={startMaxDate}
-                          aria-label={t('coupons.startDate')}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="end_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('coupons.endDate')}</FormLabel>
-                      <FormControl>
-                        <CalendarDatePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          minDate={endMinDate}
-                          aria-label={t('coupons.endDate')}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="usage_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('coupons.usageType')}</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger aria-label={t('coupons.usageType')}>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {USAGE_TYPES.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {t(USAGE_TYPE_LABEL_KEY[type])}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {usageType === 'LIMITED' && (
-                  <FormField
-                    control={form.control}
-                    name="usage_limit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('coupons.usageLimit')}</FormLabel>
-                        <FormControl>
-                          <NumberInput
-                            name={field.name}
-                            ref={field.ref}
-                            value={field.value ?? ''}
-                            onChange={(raw) => field.onChange(raw === '' ? '' : Number(raw))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                {t(
-                  canManagePlatformVouchers
-                    ? 'coupons.platformScopeHint'
-                    : 'coupons.academyScopeHint',
-                )}
-              </p>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  {t('common.cancel')}
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={
-                    saving || !!form.formState.errors.code || !!form.formState.errors.end_date
-                  }
-                >
-                  {saving ? t('common.saving') : t('coupons.saveCoupon')}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+      <CouponFormDialog
+        canManagePlatformVouchers={canManagePlatformVouchers}
+        couponType={couponType}
+        dialogOpen={dialogOpen}
+        editTarget={editTarget}
+        endMinDate={endMinDate}
+        form={form}
+        onSubmit={onSubmit}
+        saving={saving}
+        setDialogOpen={setDialogOpen}
+        startMaxDate={startMaxDate}
+        startMinDate={startMinDate}
+        usageType={usageType}
+      />
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>

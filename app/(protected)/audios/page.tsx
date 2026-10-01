@@ -1,32 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, MouseEvent } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import {
-  Music,
-  Edit,
-  Trash2,
-  Play,
-  Pause,
-  FileText,
-  Clock,
-  HardDrive,
-  Music2,
-  Volume2,
-} from 'lucide-react';
+import { Music, Clock, HardDrive, Music2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { UploadMediaDialog } from '@/components/content/upload-media-dialog';
-import {
-  AccessControlBadge,
-  AccessControlActions,
-  type AccessControl,
-} from '@/components/ui/access-control-badge';
-import { toast } from 'react-toastify';
+
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -42,65 +24,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
-import { cn } from '@/lib/utils';
-import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getLocaleForLanguage } from '@/lib/i18n/config';
-
-const DEFAULT_AUDIO_BITRATES_KBPS: Record<string, number> = {
-  'audio/mpeg': 128,
-  'audio/mp3': 128,
-  'audio/aac': 128,
-  'audio/ogg': 96,
-  'audio/wav': 1411,
-  'audio/flac': 921,
-  'audio/webm': 96,
-};
-
-interface AudioItem {
-  id: number;
-  title: string;
-  description?: string;
-  filename?: string | null;
-  url?: string;
-  streaming_url?: string;
-  publicUrl?: string;
-  size?: number | null;
-  mime_type?: string | null;
-  metadata?: {
-    duration?: number;
-    [key: string]: unknown;
-  } | null;
-  duration?: number | null;
-  is_public?: boolean;
-  created_at?: string;
-  updated_at?: string;
-  academy_id?: string | null;
-  access_control?: AccessControl;
-}
-
-const formatDate = (isoDate: string | undefined, locale: string) => {
-  if (!isoDate) return '';
-  const date = new Date(isoDate);
-  if (Number.isNaN(date.getTime())) return '';
-  return date.toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-};
-
-const getAudioUrl = (audio: AudioItem) => {
-  const source = audio.streaming_url ?? audio.publicUrl ?? '';
-  if (!source) return '';
-  if (source.startsWith('http')) return source;
-  const normalizedSource = source.startsWith('/') ? source : `/${source}`;
-  return `${getBrowserApiBaseUrl()}${normalizedSource}`;
-};
+import { EditAudioDialog } from './_components/edit-audio-dialog';
+import { AudioGrid } from './_components/audio-grid';
+import { useAudioPlayback } from './_hooks/use-audio-playback';
+import { useAudioEditing } from './_hooks/use-audio-editing';
+import { AudioItem, formatDate, getAudioUrl } from './_lib/page-helpers';
 
 export default function AudiosPage() {
   const { t, language } = useTranslation();
@@ -112,17 +43,19 @@ export default function AudiosPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewAudio, setViewAudio] = useState<AudioItem | null>(null);
-  const [editAudio, setEditAudio] = useState<AudioItem | null>(null);
-  const [deleteAudio, setDeleteAudio] = useState<AudioItem | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [editTitle, setEditTitle] = useState('');
-  const [editDescription, setEditDescription] = useState('');
-  const [editIsPublic, setEditIsPublic] = useState(true);
-  const [playingId, setPlayingId] = useState<number | null>(null);
-  const [progressMap, setProgressMap] = useState<Record<number, number>>({});
-  const [durationMap, setDurationMap] = useState<Record<number, number>>({});
-  const audioRefs = useRef<Record<number, HTMLAudioElement | null>>({});
+
+  const {
+    audioRefs,
+    getDurationSeconds,
+    handlePlayPause,
+    handleSeek,
+    playingId,
+    progressMap,
+    registerAudioRef,
+    setDurationMap,
+    setPlayingId,
+    setProgressMap,
+  } = useAudioPlayback();
 
   const fetchAudios = useCallback(async () => {
     if (!selectedAcademy) {
@@ -180,6 +113,23 @@ export default function AudiosPage() {
     }
   }, [selectedAcademy]);
 
+  const {
+    deleteAudio,
+    editAudio,
+    editDescription,
+    editIsPublic,
+    editTitle,
+    handleDeleteAudio,
+    handleUpdateAudio,
+    isDeleting,
+    isUpdating,
+    setDeleteAudio,
+    setEditAudio,
+    setEditDescription,
+    setEditIsPublic,
+    setEditTitle,
+  } = useAudioEditing({ fetchAudios });
+
   useEffect(() => {
     if (selectedAcademy) {
       fetchAudios();
@@ -212,148 +162,8 @@ export default function AudiosPage() {
     }
   }, [editAudio]);
 
-  const getDurationSeconds = (audio: AudioItem) => {
-    const stored = durationMap[audio.id];
-    if (stored && stored > 0) return stored;
-    const fallback = audio.metadata?.duration ?? audio.duration;
-    if (fallback && fallback > 0) {
-      return fallback;
-    }
-
-    if (audio.size) {
-      const mime = audio.mime_type?.toLowerCase() ?? 'audio/mpeg';
-      const bitrateKbps = DEFAULT_AUDIO_BITRATES_KBPS[mime] ?? 128;
-      const bitrateBps = bitrateKbps * 1000;
-      if (bitrateBps > 0) {
-        return (audio.size * 8) / bitrateBps;
-      }
-    }
-
-    return 0;
-  };
-
-  const handlePlayPause = (audio: AudioItem) => {
-    const node = audioRefs.current[audio.id];
-    if (!node) return;
-
-    if (playingId && playingId !== audio.id) {
-      const currentNode = audioRefs.current[playingId];
-      if (currentNode) {
-        currentNode.pause();
-      }
-    }
-
-    if (node.paused) {
-      node
-        .play()
-        .then(() => {
-          setPlayingId(audio.id);
-        })
-        .catch((err) => {
-          console.error('Failed to play audio:', err);
-          toast.error(t('media.unableToPlayAudioFile'));
-        });
-    } else {
-      node.pause();
-      setPlayingId(null);
-    }
-  };
-
-  const handleSeek = (audio: AudioItem, event: MouseEvent<HTMLDivElement>) => {
-    const node = audioRefs.current[audio.id];
-    if (!node) return;
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    const isRtl = getComputedStyle(event.currentTarget).direction === 'rtl';
-    const offsetX = isRtl ? rect.right - event.clientX : event.clientX - rect.left;
-    const percent = Math.min(Math.max(offsetX / rect.width, 0), 1);
-    const durationSeconds = getDurationSeconds(audio);
-    const newTime = durationSeconds * percent;
-
-    node.currentTime = newTime;
-    setProgressMap((prev) => ({
-      ...prev,
-      [audio.id]: newTime,
-    }));
-  };
-
-  const registerAudioRef = (audio: AudioItem) => (element: HTMLAudioElement | null) => {
-    audioRefs.current[audio.id] = element;
-
-    if (!element) return;
-
-    element.onloadedmetadata = () => {
-      if (Number.isFinite(element.duration) && element.duration > 0) {
-        setDurationMap((prev) => ({
-          ...prev,
-          [audio.id]: element.duration,
-        }));
-      }
-    };
-
-    element.ontimeupdate = () => {
-      setProgressMap((prev) => ({
-        ...prev,
-        [audio.id]: element.currentTime,
-      }));
-    };
-
-    element.onended = () => {
-      setPlayingId((current) => (current === audio.id ? null : current));
-      setProgressMap((prev) => ({
-        ...prev,
-        [audio.id]: 0,
-      }));
-      element.currentTime = 0;
-    };
-  };
-
   const handleAudioUploaded = () => {
     fetchAudios();
-  };
-
-  const handleUpdateAudio = async () => {
-    if (!editAudio) return;
-
-    const trimmedTitle = editTitle.trim();
-    if (trimmedTitle.length === 0) {
-      toast.error(t('errors.required'));
-      return;
-    }
-
-    try {
-      setIsUpdating(true);
-      await apiClient.updateAudio(editAudio.id, {
-        title: trimmedTitle,
-        description: editDescription.trim(),
-        is_public: editIsPublic,
-      });
-      toast.success(t('media.audioUpdated'));
-      setEditAudio(null);
-      fetchAudios();
-    } catch (err) {
-      console.error('Error updating audio:', err);
-      ErrorHandler.handleApiError(err);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const handleDeleteAudio = async () => {
-    if (!deleteAudio) return;
-
-    try {
-      setIsDeleting(true);
-      await apiClient.deleteAudio(deleteAudio.id);
-      toast.success(t('media.deleteSuccess'));
-      setDeleteAudio(null);
-      fetchAudios();
-    } catch (err) {
-      console.error('Error deleting audio:', err);
-      ErrorHandler.handleApiError(err);
-    } finally {
-      setIsDeleting(false);
-    }
   };
 
   const totalSize = audios.reduce((sum, audio) => sum + (audio.size ?? 0), 0);
@@ -447,155 +257,19 @@ export default function AudiosPage() {
           description={searchTerm ? t('media.noAudioMatch') : t('media.uploadFirstAudio')}
         />
       ) : (
-        <div className="stagger-children grid gap-5 sm:grid-cols-2">
-          {filteredAudios.map((audio, index) => {
-            const totalDurationSeconds = getDurationSeconds(audio);
-            const playedSeconds = progressMap[audio.id] ?? 0;
-            const progressPercent =
-              totalDurationSeconds > 0 ? (playedSeconds / totalDurationSeconds) * 100 : 0;
-            const isPlaying = playingId === audio.id;
-
-            return (
-              <Card
-                key={audio.id}
-                className={cn(
-                  'group overflow-hidden border-border/50 transition-all duration-300',
-                  'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
-                  isPlaying && 'border-primary/30 ring-2 ring-primary/20',
-                )}
-                style={{ animationDelay: `${0.05 * (index + 1)}s` }}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="line-clamp-1 text-base transition-colors group-hover:text-primary">
-                        {audio.title || t('media.untitledAudio')}
-                      </CardTitle>
-                      {audio.description && (
-                        <CardDescription className="mt-1 line-clamp-2 text-xs">
-                          {audio.description}
-                        </CardDescription>
-                      )}
-                    </div>
-                    {audio.access_control && (
-                      <AccessControlBadge
-                        accessControl={audio.access_control}
-                        className="ms-2 text-[10px]"
-                      />
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <audio
-                    ref={registerAudioRef(audio)}
-                    src={getAudioUrl(audio)}
-                    preload="metadata"
-                    crossOrigin="use-credentials"
-                  >
-                    {t('media.audioElementNotSupported')}
-                  </audio>
-
-                  {/* Audio Player */}
-                  <div className="rounded-xl bg-muted/50 p-3">
-                    <div className="flex items-center gap-3">
-                      <Button
-                        size="icon"
-                        variant={isPlaying ? 'default' : 'outline'}
-                        className={cn(
-                          'h-10 w-10 shrink-0 rounded-full transition-all',
-                          isPlaying && 'bg-primary shadow-lg shadow-primary/25',
-                        )}
-                        onClick={() => handlePlayPause(audio)}
-                      >
-                        {isPlaying ? (
-                          <Pause className="h-4 w-4" />
-                        ) : (
-                          <Play className="h-4 w-4 translate-x-px" />
-                        )}
-                      </Button>
-                      <div className="flex-1 space-y-1">
-                        <div
-                          className="group/progress relative h-2 cursor-pointer overflow-hidden rounded-full bg-muted"
-                          onClick={(event) => handleSeek(audio, event)}
-                        >
-                          <div
-                            className="absolute inset-y-0 start-0 rounded-full bg-primary transition-all group-hover/progress:bg-primary/90"
-                            style={{
-                              width: `${Math.min(100, progressPercent)}%`,
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between text-[10px] font-medium text-muted-foreground">
-                          <span>{formatDuration(playedSeconds)}</span>
-                          <span>{formatDuration(totalDurationSeconds)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Audio Info */}
-                  <div className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <FileText className="h-3.5 w-3.5" />
-                      {formatFileSize(audio.size)}
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="rounded-full px-2 py-0 text-[10px] font-semibold"
-                    >
-                      {audio.mime_type?.split('/')[1]?.toUpperCase() || t('media.audioType')}
-                    </Badge>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
-                      {formatDate(audio.created_at, locale)}
-                    </span>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-2">
-                    {audio.access_control ? (
-                      <AccessControlActions
-                        accessControl={audio.access_control}
-                        onView={() => setViewAudio(audio)}
-                        onEdit={() => setEditAudio(audio)}
-                        onDelete={() => setDeleteAudio(audio)}
-                        className="flex-1"
-                      />
-                    ) : (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
-                          onClick={() => setViewAudio(audio)}
-                        >
-                          <Volume2 className="me-1.5 h-3.5 w-3.5" />
-                          {t('media.details')}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
-                          onClick={() => setEditAudio(audio)}
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-lg border-border/50 text-muted-foreground hover:border-destructive/50 hover:bg-destructive/5 hover:text-destructive"
-                          onClick={() => setDeleteAudio(audio)}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        <AudioGrid
+          filteredAudios={filteredAudios}
+          getDurationSeconds={getDurationSeconds}
+          handlePlayPause={handlePlayPause}
+          handleSeek={handleSeek}
+          locale={locale}
+          playingId={playingId}
+          progressMap={progressMap}
+          registerAudioRef={registerAudioRef}
+          setDeleteAudio={setDeleteAudio}
+          setEditAudio={setEditAudio}
+          setViewAudio={setViewAudio}
+        />
       )}
 
       {/* View Audio Dialog */}
@@ -637,50 +311,18 @@ export default function AudiosPage() {
 
       {/* Edit Audio Dialog */}
       {editAudio && (
-        <Dialog open={!!editAudio} onOpenChange={(open) => !open && setEditAudio(null)}>
-          <DialogContent className="sm:max-w-[540px]">
-            <DialogHeader>
-              <DialogTitle>{t('media.editAudio')}</DialogTitle>
-              <DialogDescription>{t('media.updateMetadata')}</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="audio-title">{t('media.title')}</Label>
-                <Input
-                  id="audio-title"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="audio-description">{t('media.description')}</Label>
-                <Textarea
-                  id="audio-description"
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  rows={4}
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="flex items-center justify-between rounded-lg border p-4">
-                <div>
-                  <p className="text-sm font-medium">{t('media.publiclyAccessible')}</p>
-                  <p className="text-xs text-muted-foreground">{t('media.allowMembersAccess')}</p>
-                </div>
-                <Switch checked={editIsPublic} onCheckedChange={setEditIsPublic} />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setEditAudio(null)} disabled={isUpdating}>
-                {t('media.cancel')}
-              </Button>
-              <Button onClick={handleUpdateAudio} disabled={isUpdating}>
-                {isUpdating ? t('media.saving') : t('media.saveChanges')}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <EditAudioDialog
+          editAudio={editAudio}
+          editDescription={editDescription}
+          editIsPublic={editIsPublic}
+          editTitle={editTitle}
+          handleUpdateAudio={handleUpdateAudio}
+          isUpdating={isUpdating}
+          setEditAudio={setEditAudio}
+          setEditDescription={setEditDescription}
+          setEditIsPublic={setEditIsPublic}
+          setEditTitle={setEditTitle}
+        />
       )}
 
       {/* Delete Confirmation */}

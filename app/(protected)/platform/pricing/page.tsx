@@ -2,29 +2,10 @@
 
 import { apiErrorMessage } from '@/lib/api-error-message';
 import { useCallback, useEffect, useState } from 'react';
-import { Plus, Save, Trash2, Pencil, X, Check } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Save } from 'lucide-react';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { NumberInput } from '@/components/ui/number-input';
-import { PriceInput } from '@/components/ui/price-input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { isPlatformAdmin } from '@/lib/roles';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -35,19 +16,22 @@ import {
   type PlatformSettingsData,
   type SubscriptionPlanData,
 } from '@/lib/api';
-import { PlanFormFields, type PlanFormState } from '@/components/platform/pricing/plan-form-fields';
+import { type PlanFormState } from '@/components/platform/pricing/plan-form-fields';
 import { GatewayTogglesCard } from '@/components/platform/pricing/gateway-toggles-card';
 import { CostAssumptionsCard } from '@/components/platform/pricing/cost-assumptions-card';
 import { PlanPriceCalculatorCard } from '@/components/platform/pricing/plan-price-calculator-card';
 import {
   DEFAULT_LIMITS,
-  formatIRR,
-  formatToman,
   fromPercent,
   irrToToman,
   tomanToIrr,
   toPercent,
 } from '@/components/platform/pricing/pricing-helpers';
+import { PlatformSummaryCard } from './_components/platform-summary-card';
+import { PlatformPlansCard } from './_components/platform-plans-card';
+import { PlatformTaxCard } from './_components/platform-tax-card';
+import { PlatformFinancialRatesCard } from './_components/platform-financial-rates-card';
+import { asNumber } from './_lib/page-helpers';
 
 const emptyPlanForm = (): PlanFormState => ({
   name: '',
@@ -62,11 +46,6 @@ const emptyPlanForm = (): PlanFormState => ({
   sort_order: '0',
   limits: { ...DEFAULT_LIMITS },
 });
-
-const asNumber = (value: unknown, fallback = 0): number => {
-  const n = typeof value === 'number' ? value : Number(value);
-  return Number.isFinite(n) ? n : fallback;
-};
 
 const planToForm = (p: SubscriptionPlanData): PlanFormState => ({
   name: p.name,
@@ -300,137 +279,9 @@ export default function PlatformPricingPage() {
         <p className="text-muted-foreground">{t('pricing.platform.subtitle')}</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('pricing.platform.financialRates')}</CardTitle>
-          <CardDescription>{t('pricing.platform.financialRatesDesc')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label>{t('pricing.platform.vatRate')}</Label>
-              <NumberInput
-                allowDecimal
-                value={settingsForm.vat_rate}
-                onChange={(raw) => setSettingsForm({ ...settingsForm, vat_rate: raw })}
-              />
-              <p className="text-xs text-muted-foreground">{t('pricing.platform.vatRateHint')}</p>
-            </div>
-          </div>
+      <PlatformFinancialRatesCard setSettingsForm={setSettingsForm} settingsForm={settingsForm} />
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label>{t('pricing.platform.overageFee')}</Label>
-              <PriceInput
-                value={settingsForm.storage_overage_fee_irr}
-                onChange={(raw) =>
-                  setSettingsForm({
-                    ...settingsForm,
-                    storage_overage_fee_irr: raw,
-                  })
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('pricing.platform.graceDays')}</Label>
-              <NumberInput
-                value={settingsForm.subscription_grace_days}
-                onChange={(raw) =>
-                  setSettingsForm({
-                    ...settingsForm,
-                    subscription_grace_days: raw,
-                  })
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('pricing.platform.reminderDays')}</Label>
-              <NumberInput
-                value={settingsForm.subscription_reminder_days}
-                onChange={(raw) =>
-                  setSettingsForm({
-                    ...settingsForm,
-                    subscription_reminder_days: raw,
-                  })
-                }
-              />
-            </div>
-          </div>
-
-          <div className="max-w-xs space-y-2">
-            <Label>{t('pricing.platform.paymentPhase')}</Label>
-            <Select
-              value={settingsForm.payment_release_phase}
-              onValueChange={(value) =>
-                setSettingsForm({
-                  ...settingsForm,
-                  payment_release_phase: value,
-                })
-              }
-            >
-              <SelectTrigger aria-label={t('pricing.platform.paymentPhase')}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="IRAN_PAYPING_ONLY">
-                  {t('pricing.platform.paymentPhasePaypingOnly')}
-                </SelectItem>
-                <SelectItem value="ALL_GATEWAYS">
-                  {t('pricing.platform.paymentPhaseAllGateways')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              {t('pricing.platform.paymentPhaseHint')}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('pricing.platform.taxTitle')}</CardTitle>
-          <CardDescription>{t('pricing.platform.taxDesc')}</CardDescription>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="space-y-2">
-            <Label>{t('pricing.platform.legalEntityName')}</Label>
-            <Input
-              value={settingsForm.legal_entity_name}
-              onChange={(e) =>
-                setSettingsForm({
-                  ...settingsForm,
-                  legal_entity_name: e.target.value,
-                })
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>{t('pricing.platform.vatRegNo')}</Label>
-            <Input
-              value={settingsForm.vat_registration_no}
-              onChange={(e) =>
-                setSettingsForm({
-                  ...settingsForm,
-                  vat_registration_no: e.target.value,
-                })
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>{t('pricing.platform.economicCode')}</Label>
-            <Input
-              value={settingsForm.economic_code}
-              onChange={(e) =>
-                setSettingsForm({
-                  ...settingsForm,
-                  economic_code: e.target.value,
-                })
-              }
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <PlatformTaxCard setSettingsForm={setSettingsForm} settingsForm={settingsForm} />
 
       <div className="flex justify-end">
         <Button onClick={handleSaveSettings} disabled={savingSettings}>
@@ -443,116 +294,20 @@ export default function PlatformPricingPage() {
 
       <PlanPriceCalculatorCard settings={settings} plans={plans} />
 
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between">
-          <div>
-            <CardTitle>{t('pricing.platform.plansTitle')}</CardTitle>
-            <CardDescription>{t('pricing.platform.plansDesc')}</CardDescription>
-          </div>
-          <Button size="sm" onClick={startNewPlan} disabled={editingPlanId !== null}>
-            <Plus className="me-2 h-4 w-4" /> {t('pricing.platform.newPlan')}
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {editingPlanId !== null && (
-            <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
-              <h3 className="text-sm font-semibold">
-                {editingPlanId === 'new'
-                  ? t('pricing.platform.newPlan')
-                  : t('pricing.platform.editPlan')}
-              </h3>
-              <PlanFormFields
-                form={planForm}
-                isNew={editingPlanId === 'new'}
-                onChange={setPlanForm}
-                costs={settings ?? undefined}
-              />
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={cancelPlan}>
-                  <X className="me-1 h-3 w-3" /> {t('pricing.platform.cancel')}
-                </Button>
-                <Button size="sm" onClick={handleSavePlan} disabled={savingPlan}>
-                  <Check className="me-1 h-3 w-3" />
-                  {savingPlan ? t('pricing.platform.saving') : t('pricing.platform.savePlan')}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {plans.length === 0 && editingPlanId === null ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              {t('pricing.platform.noPlans')}
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('pricing.platform.colName')}</TableHead>
-                  <TableHead>{t('pricing.platform.colMonthly')}</TableHead>
-                  <TableHead>{t('pricing.platform.colAnnual')}</TableHead>
-                  <TableHead>{t('pricing.platform.colStorage')}</TableHead>
-                  <TableHead>{t('pricing.platform.colStatus')}</TableHead>
-                  <TableHead className="text-end">{t('pricing.platform.colActions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {plans.map((plan) => (
-                  <TableRow key={plan.id}>
-                    <TableCell className="font-medium">
-                      <div>{plan.name}</div>
-                      <div className="text-xs text-muted-foreground">{plan.slug}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div>{formatToman(irrToToman(plan.price_monthly))}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {formatIRR(plan.price_monthly)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {plan.price_yearly != null ? (
-                        <>
-                          <div>{formatToman(irrToToman(plan.price_yearly))}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {formatIRR(plan.price_yearly)}
-                          </div>
-                        </>
-                      ) : (
-                        '—'
-                      )}
-                    </TableCell>
-                    <TableCell>{plan.storage_limit_gb} GB</TableCell>
-                    <TableCell>
-                      <Badge variant={plan.is_active ? 'default' : 'secondary'}>
-                        {plan.is_active
-                          ? t('pricing.platform.statusActive')
-                          : t('pricing.platform.statusInactive')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="space-x-1 text-end">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => startEditPlan(plan)}
-                        disabled={editingPlanId !== null}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeletePlan(plan.id)}
-                        disabled={deletingPlanId === plan.id || editingPlanId !== null}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <PlatformPlansCard
+        cancelPlan={cancelPlan}
+        deletingPlanId={deletingPlanId}
+        editingPlanId={editingPlanId}
+        handleDeletePlan={handleDeletePlan}
+        handleSavePlan={handleSavePlan}
+        planForm={planForm}
+        plans={plans}
+        savingPlan={savingPlan}
+        setPlanForm={setPlanForm}
+        settings={settings}
+        startEditPlan={startEditPlan}
+        startNewPlan={startNewPlan}
+      />
 
       <GatewayTogglesCard
         gateways={gateways}
@@ -561,52 +316,7 @@ export default function PlatformPricingPage() {
         onRefresh={() => void loadGateways()}
       />
 
-      {settings && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('pricing.platform.summaryTitle')}</CardTitle>
-            <CardDescription>{t('pricing.platform.summaryDesc')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <dl className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-4">
-              <div>
-                <dt className="text-muted-foreground">{t('pricing.platform.summaryVat')}</dt>
-                <dd className="font-semibold">{toPercent(asNumber(settings.vat_rate))}%</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">
-                  {t('pricing.platform.summaryTeacherShare')}
-                </dt>
-                <dd className="font-semibold">
-                  {toPercent(asNumber(settings.teacher_share_rate))}%
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">{t('pricing.platform.summaryGrace')}</dt>
-                <dd className="font-semibold">
-                  {settings.subscription_grace_days} {t('pricing.platform.days')}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">{t('pricing.platform.summaryReminder')}</dt>
-                <dd className="font-semibold">
-                  {settings.subscription_reminder_days} {t('pricing.platform.daysBefore')}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">{t('pricing.platform.summaryOverage')}</dt>
-                <dd className="font-semibold">
-                  {formatIRR(asNumber(settings.storage_overage_fee_irr))}/GB
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">{t('pricing.platform.summaryPhase')}</dt>
-                <dd className="text-xs font-semibold">{settings.payment_release_phase}</dd>
-              </div>
-            </dl>
-          </CardContent>
-        </Card>
-      )}
+      {settings && <PlatformSummaryCard settings={settings} />}
     </div>
   );
 }
