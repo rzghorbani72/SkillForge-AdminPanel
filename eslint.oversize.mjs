@@ -2,9 +2,7 @@
 // tools/check-oversize-allowlist.mjs fails when a listed file fits the limit again.
 export const MAX_LINES = 400;
 export const OVERSIZE_ALLOWLIST = [
-  'app/(auth)/login/use-login.ts',
   'app/(protected)/website/appearance/_components/appearance-workspace.tsx',
-  'components/course/useCourseForm.ts',
   'constants/data.ts',
 ];
 
@@ -71,6 +69,7 @@ export const LEGACY_ANY_ALLOWLIST = [
   'components/course/CourseCard.tsx',
   'components/course/CourseRow.tsx',
   'components/course/course-drafts.ts',
+  'components/course/use-course-form/use-course-cover.ts',
   'components/course/useCourseForm.ts',
   'components/course/useCourses.ts',
   'components/course/useCurriculumDraft.ts',

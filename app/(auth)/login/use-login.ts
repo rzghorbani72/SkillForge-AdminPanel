@@ -18,44 +18,14 @@ import { notifyOtpSent } from '@/lib/otp-notify';
 import { setSelectedAcademyId } from '@/lib/store-utils';
 import type { LoginMethod } from '@/components/auth/login-method-toggle';
 import { useHumanCheck } from '@/hooks/use-human-check';
-import { collectErrors, validateOtp, validatePassword, validatePhone } from '@/lib/auth-validation';
-
-type Academy = { id: string; name: string; slug: string };
-
-type LoginResponse = {
-  /** The role the backend put in the JWT — the only one the request proxy agrees with. */
-  roles?: string[];
-  currentProfile?: { Role?: { name?: string }; academy_id?: string };
-  currentAcademy?: unknown;
-  phone_verification_required?: boolean;
-  password_reset_required?: boolean;
-  temp_token?: string;
-  /** Masked, for display only. */
-  phone?: string;
-  /** Real E.164 — what the OTP endpoints must be called with. */
-  full_phone?: string;
-  /** Debug code, only while no real SMS provider is delivering it. */
-  availableAcademies?: Academy[];
-  available_academies?: Academy[];
-  requires_academy_selection?: boolean;
-};
-
-function goToUnauthorized() {
-  if (typeof window === 'undefined') return;
-  window.location.assign('/unauthorized');
-}
-
-function resolveLoginError(
-  error: unknown,
-  fallback: string,
-  notRegisteredMessage: string,
-): { message: string; registrationRequired: boolean } {
-  const registrationRequired = isUserNotRegisteredError(error);
-  return {
-    message: registrationRequired ? notRegisteredMessage : apiErrorMessage(error, fallback),
-    registrationRequired,
-  };
-}
+import { collectErrors, validatePassword, validatePhone } from '@/lib/auth-validation';
+import { useLoginOtp } from './use-login/use-login-otp';
+import {
+  LoginResponse,
+  goToUnauthorized,
+  resolveLoginError,
+  Academy,
+} from './_lib/use-login-helpers';
 
 export function useLogin() {
   const { t } = useTranslation();
@@ -78,15 +48,8 @@ export function useLogin() {
   const [availableAcademies, setAvailableAcademies] = useState<Academy[]>([]);
   const [pickingAcademy, setPickingAcademy] = useState(false);
 
-  const [otpRequired, setOtpRequired] = useState(false);
-  const [otpMode, setOtpMode] = useState<'verify' | 'login'>('verify');
-  const [otpTempToken, setOtpTempToken] = useState('');
-  const [otpPhone, setOtpPhone] = useState('');
   // `otpPhone` is masked in the verify flow, so it can never be sent to an API.
-  const [otpFullPhone, setOtpFullPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpLoading, setOtpLoading] = useState(false);
-  const [otpError, setOtpError] = useState('');
+
   const [registrationRequired, setRegistrationRequired] = useState(false);
   // The phone has an academy membership but no panel role — a student who came
   // to the wrong door. They are routed to their academy, not to signup.
@@ -94,10 +57,6 @@ export function useLogin() {
 
   // Admin created this account with a one-time password — the user must pick
   // their own before a real session is granted.
-  const [passwordResetRequired, setPasswordResetRequired] = useState(false);
-  const [resetTempToken, setResetTempToken] = useState('');
-  const [resetLoading, setResetLoading] = useState(false);
-  const [resetError, setResetError] = useState('');
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -189,6 +148,29 @@ export function useLogin() {
     schedulePostLoginRedirect(response);
   }
 
+  const {
+    handleOtpSubmit,
+    handleSetNewPasswordSubmit,
+    otp,
+    otpError,
+    otpLoading,
+    otpPhone,
+    otpRequired,
+    passwordResetRequired,
+    resendOtp,
+    resetError,
+    resetLoading,
+    setOtp,
+    setOtpError,
+    setOtpFullPhone,
+    setOtpMode,
+    setOtpPhone,
+    setOtpRequired,
+    setOtpTempToken,
+    setPasswordResetRequired,
+    setResetTempToken,
+  } = useLoginOtp({ finishLogin, scheduleRedirect, setRegistrationRequired });
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
@@ -275,116 +257,6 @@ export function useLogin() {
       });
     } finally {
       setPickingAcademy(false);
-    }
-  }
-
-  async function handleOtpSubmit() {
-    const otpErrorKey = validateOtp(otp);
-    if (otpErrorKey) {
-      setOtpError(t(otpErrorKey));
-      return;
-    }
-    setOtpLoading(true);
-    setOtpError('');
-    try {
-      if (otpMode === 'login') {
-        const response = (await authService.loginPhoneByOtp({
-          phone_number: otpFullPhone || otpPhone,
-          otp: otp.trim(),
-        })) as LoginResponse;
-
-        await finishLogin(response);
-        return;
-      }
-
-      const result = (await apiClient.confirmPhoneOtp(
-        otpTempToken,
-        otp.trim(),
-      )) as LoginResponse & { redirect_to?: string };
-
-      if (result.password_reset_required) {
-        setOtpRequired(false);
-        setResetTempToken(result.temp_token ?? '');
-        setPasswordResetRequired(true);
-        return;
-      }
-
-      toast.success(t('success.otpVerified'), { toastId: 'login-success' });
-      scheduleRedirect({
-        href: result.redirect_to ?? '/my-affiliate',
-        title: t('success.otpVerified'),
-        message: t('auth.redirectingToAffiliate'),
-      });
-    } catch (error: unknown) {
-      if (isPanelAccessBlockedError(error)) {
-        goToUnauthorized();
-        return;
-      }
-      const { message, registrationRequired: needsRegistration } = resolveLoginError(
-        error,
-        t('error.authenticationFailed'),
-        t('auth.accountNotRegisteredForLogin'),
-      );
-      setRegistrationRequired(needsRegistration);
-      setOtpError(message);
-    } finally {
-      setOtpLoading(false);
-    }
-  }
-
-  async function handleSetNewPasswordSubmit(newPassword: string) {
-    setResetLoading(true);
-    setResetError('');
-    try {
-      const response = (await apiClient.setNewPassword(
-        resetTempToken,
-        newPassword,
-      )) as LoginResponse;
-      setPasswordResetRequired(false);
-      await finishLogin(response);
-    } catch (error: unknown) {
-      if (isPanelAccessBlockedError(error)) {
-        goToUnauthorized();
-        return;
-      }
-      setResetError(apiErrorMessage(error, t('error.authenticationFailed')));
-    } finally {
-      setResetLoading(false);
-    }
-  }
-
-  async function resendOtp(captchaToken: string) {
-    setOtpLoading(true);
-    setOtpError('');
-    setRegistrationRequired(false);
-    try {
-      // The screen serves two flows and they do NOT share an OTP type. In
-      // 'verify' the account's phone is unconfirmed by definition, so asking for
-      // a LOGIN_BY_PHONE code is rejected as "not registered" — and even if it
-      // were sent, confirm-phone only ever matches REGISTER_PHONE_VERIFICATION.
-      await apiClient.sendPhoneOtp(
-        otpFullPhone || otpPhone,
-        otpMode === 'verify' ? OtpType.REGISTER_PHONE_VERIFICATION : OtpType.LOGIN_BY_PHONE,
-        captchaToken,
-      );
-      notifyOtpSent(t('success.otpSent'), 'otp-resent');
-    } catch (error: unknown) {
-      if (isPanelAccessBlockedError(error)) {
-        goToUnauthorized();
-        return;
-      }
-      const { message, registrationRequired: needsRegistration } = resolveLoginError(
-        error,
-        t('error.authenticationFailed'),
-        t('auth.accountNotRegisteredForLogin'),
-      );
-      setRegistrationRequired(needsRegistration);
-      setOtpError(needsRegistration ? message : '');
-      if (!needsRegistration) {
-        toast.error(message, { toastId: 'login-error' });
-      }
-    } finally {
-      setOtpLoading(false);
     }
   }
 
