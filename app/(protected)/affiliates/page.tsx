@@ -37,7 +37,7 @@ export default function AffiliatesPage() {
     setLoading(true);
     try {
       const data = await apiClient.getAffiliates();
-      setAffiliates(Array.isArray(data) ? data : (data?.affiliates ?? data?.data ?? []));
+      setAffiliates(data);
     } catch (error) {
       toast.error(apiErrorMessage(error, t('affiliates.loadError')));
     } finally {

@@ -36,6 +36,7 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { apiErrorMessage } from '@/lib/api-error-message';
+import type { RefundEligibility } from '@/types/financial';
 
 const refundSchema = z.object({
   refund_amount: z.coerce.number().optional(),
@@ -52,7 +53,7 @@ export default function RefundsPage() {
   const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
-  const [eligibility, setEligibility] = useState<any>(null);
+  const [eligibility, setEligibility] = useState<RefundEligibility | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<RefundValues>({

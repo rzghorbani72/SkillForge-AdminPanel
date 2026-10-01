@@ -1,7 +1,15 @@
 import { ApiLayer17 } from './17-list-tutoring-sessions';
 import type { TeacherBalance, TeacherPayoutRecord } from '@/types/teacher-earnings';
 import type { LedgerPaymentsResponse, SettlementDesk } from '@/types/financial';
-import { unwrapDataEnvelope } from '../helpers';
+import { listFrom, unwrapData, unwrapDataEnvelope } from '../helpers';
+import type { Affiliate } from '@/components/affiliates/types';
+import type { AffiliateLink } from '@/app/(protected)/my-affiliate/_lib/page-helpers';
+import type {
+  PaymentPlanRow,
+  RefundEligibility,
+  TeacherPayoutRequestRow,
+  WithdrawalRequestRow,
+} from '@/types/financial';
 import type { StructuredPlanLimits } from '../types-1';
 
 export class ApiLayer18 extends ApiLayer17 {
@@ -17,23 +25,23 @@ export class ApiLayer18 extends ApiLayer17 {
       margin_override?: boolean;
     },
   ) {
-    const res = await this.request<any>(`/academies/${id}/custom-plan`, {
+    const res = await this.request<unknown>(`/academies/${id}/custom-plan`, {
       method: 'PUT',
       body: JSON.stringify(dto),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async clearAcademyCustomPlan(id: string) {
-    const res = await this.request<any>(`/academies/${id}/custom-plan`, {
+    const res = await this.request<unknown>(`/academies/${id}/custom-plan`, {
       method: 'DELETE',
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async getAcademyWallet(academyId: string) {
-    const res = await this.request<any>(`/financial/academies/${academyId}/wallet`);
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>(`/financial/academies/${academyId}/wallet`);
+    return unwrapData<unknown>(res.data);
   }
 
   // -------------------------------------------------------------------------
@@ -41,16 +49,16 @@ export class ApiLayer18 extends ApiLayer17 {
   // -------------------------------------------------------------------------
 
   async getStoreSettings(academyId: string) {
-    const res = await this.request<any>(`/academies/${academyId}/settings`);
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>(`/academies/${academyId}/settings`);
+    return unwrapData<unknown>(res.data);
   }
 
   async setStoreSetting(academyId: string, key: string, value: string) {
-    const res = await this.request<any>(`/academies/${academyId}/settings`, {
+    const res = await this.request<unknown>(`/academies/${academyId}/settings`, {
       method: 'POST',
       body: JSON.stringify({ key, value }),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   // -------------------------------------------------------------------------
@@ -58,8 +66,8 @@ export class ApiLayer18 extends ApiLayer17 {
   // -------------------------------------------------------------------------
 
   async getPaymentPlans(courseId: string) {
-    const res = await this.request<any>(`/payment-plans/courses/${courseId}`);
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>(`/payment-plans/courses/${courseId}`);
+    return listFrom<PaymentPlanRow>(res.data, 'plans');
   }
 
   async createPaymentPlan(
@@ -70,11 +78,11 @@ export class ApiLayer18 extends ApiLayer17 {
       interval_days: number;
     },
   ) {
-    const res = await this.request<any>(`/payment-plans/courses/${courseId}`, {
+    const res = await this.request<unknown>(`/payment-plans/courses/${courseId}`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async updatePaymentPlan(
@@ -85,11 +93,11 @@ export class ApiLayer18 extends ApiLayer17 {
       interval_days: number;
     }>,
   ) {
-    const res = await this.request<any>(`/payment-plans/${id}`, {
+    const res = await this.request<unknown>(`/payment-plans/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   // -------------------------------------------------------------------------
@@ -100,24 +108,24 @@ export class ApiLayer18 extends ApiLayer17 {
   // Refunds
   // -------------------------------------------------------------------------
 
-  async getRefundEligibility(paymentId: number) {
-    const res = await this.request<any>(`/refunds/payments/${paymentId}`);
-    return (res.data as any)?.data ?? res.data;
+  async getRefundEligibility(paymentId: string) {
+    const res = await this.request<unknown>(`/refunds/payments/${paymentId}`);
+    return unwrapData<RefundEligibility>(res.data);
   }
 
   async issueRefund(
-    paymentId: number,
+    paymentId: string,
     data: {
       refund_amount?: number;
       reason: string;
       revoke_enrollment?: boolean;
     },
   ) {
-    const res = await this.request<any>(`/refunds/payments/${paymentId}`, {
+    const res = await this.request<unknown>(`/refunds/payments/${paymentId}`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   // -------------------------------------------------------------------------
@@ -136,8 +144,8 @@ export class ApiLayer18 extends ApiLayer17 {
         if (v !== undefined) qs.append(k, String(v));
       });
     const query = qs.toString();
-    const res = await this.request<any>(`/financial/withdrawals${query ? `?${query}` : ''}`);
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>(`/financial/withdrawals${query ? `?${query}` : ''}`);
+    return listFrom<WithdrawalRequestRow>(res.data, 'withdrawals');
   }
 
   async getSettlementWithdrawals(params?: { academy_id?: string; status?: string }) {
@@ -147,26 +155,26 @@ export class ApiLayer18 extends ApiLayer17 {
         if (v !== undefined) qs.append(k, String(v));
       });
     const query = qs.toString();
-    const res = await this.request<any>(
+    const res = await this.request<unknown>(
       `/financial/settlement/withdrawals${query ? `?${query}` : ''}`,
     );
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async approveWithdrawal(id: string, data: { bank_transaction_code: string; notes?: string }) {
-    const res = await this.request<any>(`/financial/settlement/withdrawals/${id}/approve`, {
+    const res = await this.request<unknown>(`/financial/settlement/withdrawals/${id}/approve`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async rejectWithdrawal(id: string, data: { notes?: string }) {
-    const res = await this.request<any>(`/financial/settlement/withdrawals/${id}/reject`, {
+    const res = await this.request<unknown>(`/financial/settlement/withdrawals/${id}/reject`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async getPendingSettlementCount() {
@@ -226,7 +234,7 @@ export class ApiLayer18 extends ApiLayer17 {
   }
 
   async getTeacherPayouts(params?: {
-    profile_id?: number;
+    profile_id?: string;
     status?: string;
     page?: number;
     limit?: number;
@@ -236,10 +244,10 @@ export class ApiLayer18 extends ApiLayer17 {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) qs.append(k, String(v));
       });
-    const res = await this.request<any>(
+    const res = await this.request<unknown>(
       `/teacher-wallet/payout-requests${qs.toString() ? `?${qs}` : ''}`,
     );
-    return (res.data as any)?.data ?? res.data;
+    return listFrom<TeacherPayoutRequestRow>(res.data, 'requests');
   }
 
   async recordTeacherPayout(body: {
@@ -255,19 +263,19 @@ export class ApiLayer18 extends ApiLayer17 {
     return res.data;
   }
 
-  async approveTeacherPayout(id: number) {
-    const res = await this.request<any>(`/teacher-wallet/payout-requests/${id}/approve`, {
+  async approveTeacherPayout(id: string) {
+    const res = await this.request<unknown>(`/teacher-wallet/payout-requests/${id}/approve`, {
       method: 'POST',
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
-  async rejectTeacherPayout(id: number, notes?: string) {
-    const res = await this.request<any>(`/teacher-wallet/payout-requests/${id}/reject`, {
+  async rejectTeacherPayout(id: string, notes?: string) {
+    const res = await this.request<unknown>(`/teacher-wallet/payout-requests/${id}/reject`, {
       method: 'POST',
       body: JSON.stringify({ notes }),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   // -------------------------------------------------------------------------
@@ -275,10 +283,10 @@ export class ApiLayer18 extends ApiLayer17 {
   // -------------------------------------------------------------------------
 
   async checkAffiliatePhone(phone: string): Promise<{ exists: boolean; name?: string }> {
-    const res = await this.request<any>(
+    const res = await this.request<unknown>(
       `/affiliates/check-phone?phone=${encodeURIComponent(phone)}`,
     );
-    return res.data ?? res;
+    return unwrapData<{ exists: boolean; name?: string }>(res.data);
   }
 
   async createAffiliateAccount(data: {
@@ -288,15 +296,15 @@ export class ApiLayer18 extends ApiLayer17 {
     commission_rate: number;
     send_sms?: boolean;
   }) {
-    const res = await this.request<any>('/affiliates/accounts', {
+    const res = await this.request<unknown>('/affiliates/accounts', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async confirmPhoneOtp(temp_token: string, otp: string) {
-    const res = await this.request<any>('/auth/confirm-phone', {
+    const res = await this.request<unknown>('/auth/confirm-phone', {
       method: 'POST',
       body: JSON.stringify({ temp_token, otp }),
     });
@@ -304,42 +312,42 @@ export class ApiLayer18 extends ApiLayer17 {
   }
 
   async setNewPassword(temp_token: string, new_password: string) {
-    const res = await this.request<any>('/auth/set-new-password', {
+    const res = await this.request<unknown>('/auth/set-new-password', {
       method: 'POST',
       body: JSON.stringify({ temp_token, new_password }),
     });
     return res.data;
   }
 
-  async deactivateAffiliate(id: number) {
-    const res = await this.request<any>(`/affiliates/${id}/deactivate`, {
+  async deactivateAffiliate(id: string) {
+    const res = await this.request<unknown>(`/affiliates/${id}/deactivate`, {
       method: 'PATCH',
       body: '{}',
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async getAffiliates() {
-    const res = await this.request<any>('/affiliates');
-    return (res.data as any)?.data ?? res.data;
+    const res = await this.request<unknown>('/affiliates');
+    return listFrom<Affiliate>(res.data, 'affiliates');
   }
 
   async getMyAffiliateLinks() {
-    const res = await this.request<any>('/affiliates/my');
-    return (res.data as any)?.data ?? res.data ?? [];
+    const res = await this.request<unknown>('/affiliates/my');
+    return listFrom<AffiliateLink>(res.data, 'links');
   }
 
-  async requestAffiliateWithdrawal(linkId: number, amount: number) {
-    const res = await this.request<any>(`/affiliates/my/${linkId}/withdraw`, {
+  async requestAffiliateWithdrawal(linkId: string, amount: number) {
+    const res = await this.request<unknown>(`/affiliates/my/${linkId}/withdraw`, {
       method: 'POST',
       body: JSON.stringify({ amount }),
     });
-    return (res.data as any)?.data ?? res.data;
+    return unwrapData<unknown>(res.data);
   }
 
   async getAffiliateWithdrawals(status?: string) {
     const qs = status ? `?status=${status}` : '';
-    const res = await this.request<any>(`/affiliates/withdrawals${qs}`);
-    return (res.data as any)?.data ?? res.data ?? [];
+    const res = await this.request<unknown>(`/affiliates/withdrawals${qs}`);
+    return unwrapData<unknown[]>(res.data);
   }
 }

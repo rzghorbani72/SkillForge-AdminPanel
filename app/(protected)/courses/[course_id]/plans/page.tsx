@@ -35,6 +35,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
 import { apiErrorMessage } from '@/lib/api-error-message';
+import type { PaymentPlanRow } from '@/types/financial';
 
 const planSchema = z.object({
   installment_count: z.coerce.number().int().min(1),
@@ -50,7 +51,7 @@ export default function PaymentPlansPage() {
   const courseId = params.course_id;
   const { course } = useCourseWorkspace();
 
-  const [plans, setPlans] = useState<any[]>([]);
+  const [plans, setPlans] = useState<PaymentPlanRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -68,7 +69,7 @@ export default function PaymentPlansPage() {
     setLoading(true);
     try {
       const data = await apiClient.getPaymentPlans(courseId);
-      setPlans(Array.isArray(data) ? data : (data?.plans ?? []));
+      setPlans(data);
     } catch (error) {
       toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
@@ -94,7 +95,7 @@ export default function PaymentPlansPage() {
     }
   }
 
-  async function toggleActive(plan: any) {
+  async function toggleActive(plan: PaymentPlanRow) {
     try {
       await apiClient.updatePaymentPlan(plan.id, {
         is_active: !plan.is_active,

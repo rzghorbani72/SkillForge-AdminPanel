@@ -33,6 +33,7 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { apiErrorMessage } from '@/lib/api-error-message';
+import type { WithdrawalRequestRow } from '@/types/financial';
 
 const approveSchema = z.object({
   bank_transaction_code: z.string().min(1, 'validation.required'),
@@ -55,11 +56,11 @@ export default function WithdrawalsPage() {
   const formatNumber = useNumberFormat();
   const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'PAID'];
 
-  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [withdrawals, setWithdrawals] = useState<WithdrawalRequestRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [approveDialog, setApproveDialog] = useState<any>(null);
-  const [rejectDialog, setRejectDialog] = useState<any>(null);
+  const [approveDialog, setApproveDialog] = useState<WithdrawalRequestRow | null>(null);
+  const [rejectDialog, setRejectDialog] = useState<WithdrawalRequestRow | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const approveForm = useForm<ApproveValues>({
@@ -76,7 +77,7 @@ export default function WithdrawalsPage() {
     try {
       const params = status && status !== 'ALL' ? { status } : undefined;
       const data = await apiClient.getWithdrawals(params);
-      setWithdrawals(Array.isArray(data) ? data : (data?.withdrawals ?? []));
+      setWithdrawals(data);
     } catch (error) {
       toast.error(apiErrorMessage(error, t('common.error')));
     } finally {

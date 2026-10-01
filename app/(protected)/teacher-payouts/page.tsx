@@ -32,6 +32,7 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { apiErrorMessage } from '@/lib/api-error-message';
+import type { TeacherPayoutRequestRow } from '@/types/financial';
 
 const rejectSchema = z.object({ notes: z.string().optional() });
 type RejectValues = z.infer<typeof rejectSchema>;
@@ -41,10 +42,10 @@ export default function TeacherPayoutsPage() {
   const formatNumber = useNumberFormat();
   const STATUS_FILTERS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED'];
 
-  const [payouts, setPayouts] = useState<any[]>([]);
+  const [payouts, setPayouts] = useState<TeacherPayoutRequestRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [rejectDialog, setRejectDialog] = useState<any>(null);
+  const [rejectDialog, setRejectDialog] = useState<TeacherPayoutRequestRow | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const rejectForm = useForm<RejectValues>({
@@ -57,7 +58,7 @@ export default function TeacherPayoutsPage() {
     try {
       const params = status && status !== 'ALL' ? { status } : undefined;
       const data = await apiClient.getTeacherPayouts(params);
-      setPayouts(Array.isArray(data) ? data : (data?.requests ?? []));
+      setPayouts(data);
     } catch (error) {
       toast.error(apiErrorMessage(error, t('common.error')));
     } finally {
@@ -69,7 +70,7 @@ export default function TeacherPayoutsPage() {
     load(statusFilter);
   }, [statusFilter]);
 
-  async function approve(id: number) {
+  async function approve(id: string) {
     try {
       await apiClient.approveTeacherPayout(id);
       toast.success(t('common.success'));

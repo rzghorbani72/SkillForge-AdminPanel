@@ -14,6 +14,17 @@ export function unwrapData<T>(payload: unknown): T {
   return (inner ?? payload) as T;
 }
 
+/** List endpoints answer a bare array, `{ [key]: [] }` or `{ data: ... }`; always give back an array. */
+export function listFrom<T>(payload: unknown, key: string): T[] {
+  if (Array.isArray(payload)) return payload as T[];
+  if (payload && typeof payload === 'object') {
+    const record = payload as Record<string, unknown>;
+    if (Array.isArray(record[key])) return record[key] as T[];
+    if ('data' in record) return listFrom<T>(record.data, key);
+  }
+  return [];
+}
+
 /** The upload endpoints answer in a few envelope shapes; only the id matters. */
 export function uploadedFileId(payload: unknown): string {
   if (payload && typeof payload === 'object') {

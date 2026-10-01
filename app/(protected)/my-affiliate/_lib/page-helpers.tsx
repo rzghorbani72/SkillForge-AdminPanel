@@ -20,7 +20,7 @@ import { Badge } from '@/components/ui/badge';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type Withdrawal = {
-  id: number;
+  id: string;
   amount: number;
   status: 'PENDING' | 'APPROVED' | 'PAID' | 'REJECTED';
   requested_at: string;
@@ -29,15 +29,15 @@ export type Withdrawal = {
 };
 
 export type AffiliateLink = {
-  id: number;
+  id: string;
   code: string;
   affiliate_name: string;
   commission_rate: number;
   is_active: boolean;
   clicks: number;
   academy_id: string;
-  course?: { id: number; title: string; price: number } | null;
-  Academy?: { id: number; name: string; slug: string } | null;
+  course?: { id: string; title: string; price: number } | null;
+  Academy?: { id: string; name: string; slug: string } | null;
   Usages: Array<{ commission_amount: number }>;
   Withdrawals: Withdrawal[];
   total_earned: number;

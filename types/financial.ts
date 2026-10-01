@@ -217,3 +217,36 @@ export interface SettlementDesk {
   settlements: DeskSettlementRow[];
   gross_trend: DeskGrossPoint[];
 }
+
+export interface WithdrawalRequestRow {
+  id: string;
+  amount: number | null;
+  status: string;
+  requested_at?: string | null;
+  bank_transaction_code?: string | null;
+  academy?: { name?: string } | null;
+}
+
+export interface TeacherPayoutRequestRow {
+  id: string;
+  amount: number | null;
+  status: string;
+  requested_at?: string | null;
+  bank_info?: string | null;
+  academy?: { name?: string } | null;
+  profile?: { display_name?: string } | null;
+  teacher?: { name?: string } | null;
+}
+
+export interface PaymentPlanRow {
+  id: string;
+  installment_count: number;
+  amount_per_installment: number;
+  interval_days: number;
+  is_active: boolean;
+}
+
+export interface RefundEligibility {
+  max_refundable?: number;
+  reason?: string;
+}
