@@ -29,8 +29,6 @@ export const OVERSIZE_ALLOWLIST = [
   'components/ui-template/sidebar-style-tab.tsx',
   'components/ui-template/template-select-modal.tsx',
   'constants/data.ts',
-  'types/api.ts',
-  'types/learning-operations.ts',
 ];
 
 // Legacy files still using `any`, `x!` or `console.*`; cleaned as they are split. May only shrink.
@@ -136,5 +134,7 @@ export const LEGACY_ANY_ALLOWLIST = [
   'scripts/production-report.ts',
   'sections/employee/employee-form.tsx',
   'sections/product/product-form.tsx',
-  'types/api.ts',
+  'types/api-types/part-1.ts',
+  'types/api-types/part-2.ts',
+  'types/api-types/part-3.ts',
 ];
