@@ -2,33 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  X,
-  Check,
-  Loader2,
-  Wand2,
-  LayoutTemplate,
-  Pencil,
-  Smartphone,
-  Tablet,
-  Monitor,
-  Undo2,
-  Redo2,
-  Database,
-  Save,
-  Globe,
-  ExternalLink,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Smartphone, Tablet, Monitor } from 'lucide-react';
 import { blockTypeLabelKey } from '@/components/ui-template/block-type-picker';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
-import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import type { TemplatePreset, UIBlockConfig, UITemplate } from '@/types/api';
-import { presetSourceKey, formatPresetDisplayName } from '@/lib/ui-template/preset-source';
+import { presetSourceKey } from '@/lib/ui-template/preset-source';
 import { getDesignSystem, buildThemePayload } from '@/lib/design-systems';
 import {
   buildTemplatePreviewUrl,
@@ -41,19 +23,11 @@ import type { HeroPreviewContext } from '@/components/ui-template/hero-variant-p
 import { buildThemeDraftFromPrimary } from '@/lib/ui-template/theme-draft-payload';
 import { buildFullThemePayload, type ThemeSyncState } from '@/lib/ui-template/theme-sync';
 import { useRelativeTime } from '@/lib/ui-template/use-relative-time';
-import {
-  TemplateCustomizationSidebar,
-  type SaveMode,
-} from '@/components/ui-template/template-customization-sidebar';
-import { SectionLibraryModal } from '@/components/ui-template/section-library-modal';
+import { type SaveMode } from '@/components/ui-template/template-customization-sidebar';
 import { TemplateConfirmDialog } from '@/components/ui-template/template-confirm-dialog';
-import { EditorPreview } from '@/components/ui-template/editor-preview';
-import {
-  TemplateMediaPicker,
-  type TemplateMediaPickerHandle,
-} from '@/components/ui-template/template-media-picker';
-import { TemplateSection, getTemplateCategory } from '@/components/ui-template/gallery-cards';
-import { CATEGORY_LABELS, type TemplateCategory } from '@/constants/template-names';
+import { type TemplateMediaPickerHandle } from '@/components/ui-template/template-media-picker';
+import { getTemplateCategory } from '@/components/ui-template/gallery-cards';
+import { type TemplateCategory } from '@/constants/template-names';
 import type {
   BorderRadius,
   ElementAnimation,
@@ -67,11 +41,14 @@ import type {
 } from '@/components/ui-template/sidebar-types';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { EditorBody } from './editor-body';
+import { EditorToolbar } from './editor-toolbar';
+import { TemplateGalleryView } from './template-gallery-view';
 
 // Commit action awaiting explicit confirmation. Saving is never gated — it
 // always lands on the academy's one copy — so only the destructive or
 // outward-facing steps ask first.
-type PendingSave =
+export type PendingSave =
   | { kind: 'publish' }
   | { kind: 'quickApply'; preset: TemplatePreset }
   | { kind: 'visitUnpublished' }
@@ -1318,247 +1295,82 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
         {confirmDialog}
 
         {/* Action bar */}
-        <div className="flex flex-shrink-0 items-center gap-2 border-b border-zinc-200 bg-white px-4 py-2.5">
-          <button
-            type="button"
-            title="بستن پیش‌نمایش"
-            onClick={handleClosePreview}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
-          >
-            <X className="h-4 w-4" />
-          </button>
-
-          <span
-            title={selectedPreset.name}
-            className="max-w-[40vw] truncate text-sm font-semibold text-zinc-900"
-          >
-            {formatPresetDisplayName(selectedPreset.name)}
-          </span>
-
-          {isAdmin && isPublicPreset && (
-            <span className="rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
-              قالب اصلی
-            </span>
-          )}
-
-          {/* Draft status chip */}
-          <div className="flex items-center gap-1.5">
-            <span
-              className={`h-2 w-2 rounded-full ${
-                isSaving
-                  ? 'animate-pulse bg-amber-400'
-                  : isEditingMaster
-                    ? 'bg-amber-400'
-                    : 'bg-emerald-400'
-              }`}
-            />
-            <span className="text-[11px] text-zinc-600">
-              {isSaving
-                ? 'در حال ذخیره...'
-                : savedAgo
-                  ? `ذخیره شد ${savedAgo}${isApplied ? '' : ' · منتشر نشده'}`
-                  : isEditingMaster
-                    ? 'در حال ویرایش قالب اصلی'
-                    : 'پیش‌نمایش زنده'}
-            </span>
-          </div>
-
-          {/* Undo / Redo */}
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              title="واگرد (Ctrl+Z)"
-              onClick={undo}
-              disabled={history.length === 0}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900 disabled:opacity-30"
-            >
-              <Undo2 className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              title="ازنو (Ctrl+Y)"
-              onClick={redo}
-              disabled={future.length === 0}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900 disabled:opacity-30"
-            >
-              <Redo2 className="h-3.5 w-3.5" />
-            </button>
-          </div>
-
-          <div className="ml-auto flex items-center gap-3">
-            {/* Data source toggle: sample design vs real backend data */}
-            <button
-              type="button"
-              onClick={handleToggleRealData}
-              title={useRealData ? 'نمایش داده واقعی آکادمی' : 'نمایش داده نمونه'}
-              className={`flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors ${
-                useRealData
-                  ? 'bg-emerald-500 text-white hover:bg-emerald-600'
-                  : 'bg-zinc-200 text-zinc-700 hover:bg-zinc-300'
-              }`}
-            >
-              <Database className="h-3.5 w-3.5" />
-              {useRealData ? 'داده واقعی' : 'داده نمونه'}
-            </button>
-
-            {/* Viewport switcher */}
-            <div className="flex items-center gap-0.5 rounded-lg bg-zinc-100 p-0.5">
-              {VIEWPORTS.map(({ mode, icon: Icon, label }) => (
-                <button
-                  key={mode}
-                  type="button"
-                  title={label}
-                  onClick={() => setViewport(mode)}
-                  className={`flex h-6 w-7 items-center justify-center rounded-md transition-colors ${
-                    viewport === mode
-                      ? 'bg-white text-zinc-900'
-                      : 'text-zinc-600 hover:text-zinc-900'
-                  }`}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                </button>
-              ))}
-            </div>
-
-            <Button
-              size="sm"
-              onClick={() => setShowCustomizer((v) => !v)}
-              className={`h-8 gap-1.5 px-3 text-xs font-semibold ${
-                showCustomizer
-                  ? 'bg-amber-500 text-white hover:bg-amber-600'
-                  : 'bg-zinc-200 text-zinc-800 hover:bg-zinc-300'
-              }`}
-            >
-              {isAdmin ? (
-                <>
-                  <Pencil className="h-3.5 w-3.5" />
-                  ویرایش
-                </>
-              ) : (
-                <>
-                  <Wand2 className="h-3.5 w-3.5" />
-                  سفارشی‌سازی
-                </>
-              )}
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              title="Ctrl+S"
-              onClick={doSave}
-              disabled={isSaving || isPublishing}
-              className="h-8 gap-1.5 px-3 text-xs font-semibold"
-            >
-              {isSaving ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Save className="h-3.5 w-3.5" />
-              )}
-              {t('sitePreview.saveSiteChanges')}
-            </Button>
-
-            {isApplied ? (
-              <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-700">
-                <Check className="h-3.5 w-3.5" />
-                {t('sitePreview.publishedState')}
-              </span>
-            ) : (
-              <Button
-                size="sm"
-                onClick={() => setPendingSave({ kind: 'publish' })}
-                disabled={isPublishing || isSaving}
-                className="h-8 gap-1.5 bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700"
-              >
-                {isPublishing ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Globe className="h-3.5 w-3.5" />
-                )}
-                {isPublishing ? t('sitePreview.publishing') : t('sitePreview.publishToSite')}
-              </Button>
-            )}
-
-            {isApplied ? (
-              <VisitSiteLink academy={currentAcademy} variant="ghost" />
-            ) : (
-              // The live site still shows the previous version; say so instead
-              // of letting the manager hunt for edits that were never published.
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-1.5"
-                onClick={() => setPendingSave({ kind: 'visitUnpublished' })}
-              >
-                <ExternalLink className="h-4 w-4" />
-                {t('academy.visitSite')}
-              </Button>
-            )}
-          </div>
-        </div>
+        <EditorToolbar
+          VIEWPORTS={VIEWPORTS}
+          currentAcademy={currentAcademy}
+          doSave={doSave}
+          future={future}
+          handleClosePreview={handleClosePreview}
+          handleToggleRealData={handleToggleRealData}
+          history={history}
+          isAdmin={isAdmin}
+          isApplied={isApplied}
+          isEditingMaster={isEditingMaster}
+          isPublicPreset={isPublicPreset}
+          isPublishing={isPublishing}
+          isSaving={isSaving}
+          redo={redo}
+          savedAgo={savedAgo}
+          selectedPreset={selectedPreset}
+          setPendingSave={setPendingSave}
+          setShowCustomizer={setShowCustomizer}
+          setViewport={setViewport}
+          showCustomizer={showCustomizer}
+          undo={undo}
+          useRealData={useRealData}
+          viewport={viewport}
+        />
 
         {/* Content: sidebar + section panel + preview */}
-        <div className="flex min-h-0 flex-1 overflow-hidden">
-          {showCustomizer && (
-            <TemplateCustomizationSidebar
-              primaryColor={primaryColor}
-              fontFamily={fontFamily}
-              borderRadius={borderRadius}
-              shadow={shadow}
-              elementAnimation={elementAnimation}
-              darkMode={darkMode}
-              textDirection={textDirection}
-              sectionSpacing={sectionSpacing}
-              containerWidth={containerWidth}
-              headingScale={headingScale}
-              blocks={draftBlocks}
-              isSaving={isSaving}
-              onColorChange={handleColorChange}
-              onFontFamilyChange={handleFontFamilyChange}
-              onBorderRadiusChange={handleBorderRadiusChange}
-              onShadowChange={handleShadowChange}
-              onElementAnimationChange={handleElementAnimationChange}
-              onDarkModeChange={handleDarkModeChange}
-              onTextDirectionChange={handleTextDirectionChange}
-              onDesignSizeChange={handleDesignSizeChange}
-              onBlocksChange={handleBlocksChange}
-              onUpdateBlock={handleBlockConfigChange}
-              onOpenPicker={handleOpenPicker}
-              onPickBlockType={handlePickBlockType}
-              onToggleVisibleBlock={handleBlockToggleVisible}
-              onDeleteBlock={handleBlockDelete}
-              onReset={() => setPendingSave({ kind: 'reset' })}
-              isOriginalSelected={isPublicPreset}
-              templateId={selectedPreset?.id}
-              saveMode={saveMode}
-              onClose={() => setShowCustomizer(false)}
-              onCloseSection={() => setSelectedBlockId(null)}
-              selectedBlockId={selectedBlockId}
-              onSelectBlock={setSelectedBlockId}
-              preview={heroPreview}
-              academyName={academyName}
-            />
-          )}
-
-          <SectionLibraryModal
-            open={pickerOpen}
-            swapTarget={pickerTarget}
-            onClose={() => setPickerOpen(false)}
-            onImported={handleSectionPicked}
-          />
-
-          <TemplateMediaPicker ref={mediaPickerRef} onUploaded={handleMediaUploaded} />
-
-          <EditorPreview
-            viewport={viewport}
-            iframeSrc={iframeSrc}
-            isLoading={isPreviewLoading}
-            isSaving={isSaving}
-            title={`Preview: ${selectedPreset.name}`}
-            iframeRef={previewIframeRef}
-            onIframeLoad={() => postHighlight(selectedBlockId, false)}
-          />
-        </div>
+        <EditorBody
+          academyName={academyName}
+          borderRadius={borderRadius}
+          containerWidth={containerWidth}
+          darkMode={darkMode}
+          draftBlocks={draftBlocks}
+          elementAnimation={elementAnimation}
+          fontFamily={fontFamily}
+          handleBlockConfigChange={handleBlockConfigChange}
+          handleBlockDelete={handleBlockDelete}
+          handleBlockToggleVisible={handleBlockToggleVisible}
+          handleBlocksChange={handleBlocksChange}
+          handleBorderRadiusChange={handleBorderRadiusChange}
+          handleColorChange={handleColorChange}
+          handleDarkModeChange={handleDarkModeChange}
+          handleDesignSizeChange={handleDesignSizeChange}
+          handleElementAnimationChange={handleElementAnimationChange}
+          handleFontFamilyChange={handleFontFamilyChange}
+          handleMediaUploaded={handleMediaUploaded}
+          handleOpenPicker={handleOpenPicker}
+          handlePickBlockType={handlePickBlockType}
+          handleSectionPicked={handleSectionPicked}
+          handleShadowChange={handleShadowChange}
+          handleTextDirectionChange={handleTextDirectionChange}
+          headingScale={headingScale}
+          heroPreview={heroPreview}
+          iframeSrc={iframeSrc}
+          isPreviewLoading={isPreviewLoading}
+          isPublicPreset={isPublicPreset}
+          isSaving={isSaving}
+          mediaPickerRef={mediaPickerRef}
+          pickerOpen={pickerOpen}
+          pickerTarget={pickerTarget}
+          postHighlight={postHighlight}
+          previewIframeRef={previewIframeRef}
+          primaryColor={primaryColor}
+          saveMode={saveMode}
+          sectionSpacing={sectionSpacing}
+          selectedBlockId={selectedBlockId}
+          selectedPreset={selectedPreset}
+          setPendingSave={setPendingSave}
+          setPickerOpen={setPickerOpen}
+          setSelectedBlockId={setSelectedBlockId}
+          setShowCustomizer={setShowCustomizer}
+          shadow={shadow}
+          showCustomizer={showCustomizer}
+          textDirection={textDirection}
+          viewport={viewport}
+        />
       </div>
     );
   }
@@ -1583,106 +1395,23 @@ export function AppearanceWorkspace({ slug }: { slug?: string }) {
     presets.find((p) => p.id === preset.sourcePresetKey)?.preview;
 
   return (
-    <div className="min-h-full bg-[#f7faf9] p-8" dir="rtl">
-      {confirmDialog}
-
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">قالب‌های آماده</h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            یک قالب کامل فارسی انتخاب کنید تا پیش‌نمایش کامل ببینید — مستقیم روی آن کلیک کنید
-          </p>
-        </div>
-      </div>
-
-      {/* Currently live callout */}
-      {activePreset && (
-        <div className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
-          <span className="h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-emerald-500" />
-          <div className="flex-1">
-            <p
-              title={activePreset.name}
-              className="truncate text-sm font-semibold text-emerald-900"
-            >
-              قالب فعلی: {formatPresetDisplayName(activePreset.name)}
-            </p>
-          </div>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 gap-1.5 border-emerald-300 text-xs text-emerald-800"
-            onClick={() => openTemplate(activePreset)}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-            ویرایش
-          </Button>
-        </div>
-      )}
-
-      {/* Category filter bar */}
-      {platformPresets.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
-          {CATEGORY_LABELS.map(({ value, label }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setCategoryFilter(value)}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
-                categoryFilter === value
-                  ? 'bg-foreground text-background'
-                  : 'border border-border/60 bg-background text-muted-foreground hover:bg-muted/60'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {presets.length === 0 ? (
-        <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-background/60 px-6 text-center">
-          <LayoutTemplate className="mb-4 h-10 w-10 text-muted-foreground/60" />
-          <h2 className="text-lg font-semibold text-foreground">هنوز قالبی تعریف نشده</h2>
-          <p className="mt-2 max-w-md text-sm text-muted-foreground">
-            کاتالوگ قالب‌های آماده خالی است. پس از افزودن قالب‌های جدید، اینجا نمایش داده می‌شوند.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-10">
-          {academyPresets.length > 0 && (
-            <TemplateSection
-              title="قالب‌های آکادمی من"
-              description="نسخه‌های سفارشی‌شدهٔ شما. فقط برای همین آکادمی دیده می‌شوند."
-              presets={academyPresets}
-              activePresetId={activePresetId}
-              previewToken={galleryPreviewToken}
-              storefrontBaseUrl={galleryStorefrontUrl}
-              getBaseCover={getBaseCover}
-              onSelect={openTemplate}
-              onQuickApply={(preset) => setPendingSave({ kind: 'quickApply', preset })}
-              onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
-              onRate={handleRate}
-            />
-          )}
-          {filteredPlatform.length > 0 && (
-            <TemplateSection
-              title="قالب‌های اصلی"
-              description="کاتالوگ آمادهٔ پلتفرم. سفارشی‌سازی و ذخیره، نسخهٔ اختصاصی خودتان را می‌سازد."
-              presets={filteredPlatform}
-              activePresetId={activePresetId}
-              onSelect={openTemplate}
-              onQuickApply={(preset) => setPendingSave({ kind: 'quickApply', preset })}
-              onDelete={(preset) => setPendingSave({ kind: 'delete', preset })}
-              onRate={handleRate}
-              onCoverUploaded={(preset, url) =>
-                setPresets((current) =>
-                  current.map((p) => (p.id === preset.id ? { ...p, preview: url } : p)),
-                )
-              }
-            />
-          )}
-        </div>
-      )}
-    </div>
+    <TemplateGalleryView
+      academyPresets={academyPresets}
+      activePreset={activePreset}
+      activePresetId={activePresetId}
+      categoryFilter={categoryFilter}
+      confirmDialog={confirmDialog}
+      filteredPlatform={filteredPlatform}
+      galleryPreviewToken={galleryPreviewToken}
+      galleryStorefrontUrl={galleryStorefrontUrl}
+      getBaseCover={getBaseCover}
+      handleRate={handleRate}
+      openTemplate={openTemplate}
+      platformPresets={platformPresets}
+      presets={presets}
+      setCategoryFilter={setCategoryFilter}
+      setPendingSave={setPendingSave}
+      setPresets={setPresets}
+    />
   );
 }
