@@ -1,58 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-  Search,
-  Trash2,
-  Eye,
-  Edit,
-  Calendar,
-  Image as ImageIcon,
-  X,
-  SlidersHorizontal,
-  Sparkles,
-  ImagePlus,
-} from 'lucide-react';
+import { Search, Image as ImageIcon, X, SlidersHorizontal } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { toast } from 'react-toastify';
-import Image from 'next/image';
-import { AccessControlBadge, AccessControlActions } from '@/components/ui/access-control-badge';
-import ImageUploadModal from '@/components/modal/image-upload-modal';
 import ImageViewModal from '@/components/modal/image-view-modal';
 import ImageEditModal from '@/components/modal/image-edit-modal';
 import ConfirmDeleteModal from '@/components/modal/confirm-delete-modal';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
-import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
-
-interface ImageItem {
-  id: string;
-  filename: string;
-  publicUrl?: string;
-  size: number;
-  mime_type: string;
-  created_at: string;
-  alt?: string;
-  access_control?: {
-    can_modify: boolean;
-    can_delete: boolean;
-    can_view: boolean;
-    is_owner: boolean;
-    user_role: string;
-    user_permissions: string[];
-  };
-}
-
-const resolveImageSrc = (image: ImageItem): string => {
-  const raw = image.publicUrl ?? '';
-  if (!raw) return '';
-  return raw.startsWith('/') ? `${process.env.NEXT_PUBLIC_HOST ?? ''}${raw}` : raw;
-};
+import { ImageGrid } from './_components/image-grid';
+import { ImagesToolbar } from './_components/images-toolbar';
+import { ImageItem, resolveImageSrc } from './_lib/page-helpers';
 
 export default function ImagesPage() {
   const { t } = useTranslation();
@@ -194,45 +156,7 @@ export default function ImagesPage() {
   return (
     <div className="page-wrapper flex-1 space-y-6 p-4 sm:p-6" dir={'rtl'}>
       {/* Header */}
-      <div className="fade-in-up flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="icon-container-warning">
-            <ImageIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('media.images')}</h1>
-              <Badge
-                variant="secondary"
-                className="hidden rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary sm:flex"
-              >
-                <Sparkles className="me-1 h-3 w-3" />
-                {images.length} {t('media.files')}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground sm:text-base">
-              {t('media.manageImageLibrary')} ({filteredImages.length} / {images.length})
-            </p>
-          </div>
-        </div>
-        <ImageUploadModal
-          trigger={
-            <Button className="gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30">
-              <ImagePlus className="h-4 w-4" />
-              {t('media.uploadImage')}
-            </Button>
-          }
-          onSuccess={() => {
-            fetchImages();
-          }}
-          onError={(error) => {
-            console.error('Error uploading image:', error);
-            ErrorHandler.handleApiError(error);
-          }}
-          modalTitle={t('media.uploadImage')}
-          modalDescription={t('media.manageImageLibrary')}
-        />
-      </div>
+      <ImagesToolbar fetchImages={fetchImages} filteredImages={filteredImages} images={images} />
 
       {/* Search */}
       <div className="fade-in-up flex items-center gap-3" style={{ animationDelay: '0.1s' }}>
@@ -284,138 +208,14 @@ export default function ImagesPage() {
           </div>
         </div>
       ) : (
-        <div className="stagger-children grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredImages.map((image, index) => (
-            <Card
-              key={image.id}
-              className={cn(
-                'group overflow-hidden border-border/50 transition-all duration-300',
-                'hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5',
-              )}
-              style={{ animationDelay: `${0.05 * (index + 1)}s` }}
-            >
-              <CardHeader className="p-0">
-                <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                  {(() => {
-                    const src = resolveImageSrc(image);
-                    if (!src) {
-                      return (
-                        <div className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground">
-                          <ImageIcon className="h-8 w-8" />
-                        </div>
-                      );
-                    }
-                    return (
-                      <>
-                        <Image
-                          src={src}
-                          alt={image.alt || image.filename}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const placeholder = target.nextElementSibling as HTMLElement;
-                            if (placeholder) placeholder.style.display = 'flex';
-                          }}
-                        />
-                        <div
-                          className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground"
-                          style={{ display: 'none' }}
-                        >
-                          <ImageIcon className="h-8 w-8" />
-                        </div>
-                      </>
-                    );
-                  })()}
-                  {/* Hover overlay */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                </div>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="line-clamp-1 text-sm font-semibold transition-colors group-hover:text-primary">
-                        {image.filename}
-                      </h3>
-                      {image.alt && (
-                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
-                          {image.alt}
-                        </p>
-                      )}
-                    </div>
-                    {image.access_control && (
-                      <div className="ml-2 flex-shrink-0">
-                        <AccessControlBadge
-                          accessControl={image.access_control}
-                          className="text-[10px]"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-lg bg-muted/50 px-2.5 py-1.5 text-xs">
-                    <span className="font-medium text-muted-foreground">
-                      {formatFileSize(image.size)}
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="rounded-full px-2 py-0 text-[10px] font-semibold"
-                    >
-                      {image.mime_type.split('/')[1].toUpperCase()}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <Calendar className="mr-1.5 h-3 w-3" />
-                    <span>{formatDate(image.created_at)}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-1">
-                    {image.access_control ? (
-                      <AccessControlActions
-                        accessControl={image.access_control}
-                        onView={() => handleViewImage(image)}
-                        onEdit={() => handleEditImage(image)}
-                        onDelete={() => handleDeleteClick(image)}
-                        className="flex-1"
-                      />
-                    ) : (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-1 rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
-                          onClick={() => handleViewImage(image)}
-                        >
-                          <Eye className="mr-1.5 h-3 w-3" />
-                          View
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-lg border-border/50 text-xs hover:border-primary/50 hover:bg-primary/5"
-                          onClick={() => handleEditImage(image)}
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-lg border-border/50 text-muted-foreground hover:border-destructive/50 hover:bg-destructive/5 hover:text-destructive"
-                          onClick={() => handleDeleteClick(image)}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <ImageGrid
+          filteredImages={filteredImages}
+          formatDate={formatDate}
+          formatFileSize={formatFileSize}
+          handleDeleteClick={handleDeleteClick}
+          handleEditImage={handleEditImage}
+          handleViewImage={handleViewImage}
+        />
       )}
 
       {/* View Image Modal */}

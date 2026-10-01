@@ -23,7 +23,8 @@ import {
   hasTimedMedia,
   isTimedLessonType,
 } from './course-drafts';
-import { LessonMedia, LESSON_INFO_SLOT_CLASS } from './LessonMedia';
+import { LessonMedia } from './LessonMedia';
+import { LESSON_INFO_SLOT_CLASS } from './_lib/LessonMedia-helpers';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
 import { LessonDurationInfo } from './lesson-duration-info';
 import { AssignmentDialog } from './assessment/assignment-dialog';

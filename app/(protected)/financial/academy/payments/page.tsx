@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DollarSign, CreditCard, TrendingUp, Download, Lock } from 'lucide-react';
+import { Download, Lock } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
@@ -21,7 +21,6 @@ import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { FinancialFilterBar } from '@/components/financial/FinancialFilterBar';
-import { StatusBadge } from '@/components/shared/status-badge';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { PageHeader } from '@/components/shared/PageHeader';
 import type {
@@ -31,6 +30,9 @@ import type {
   AcademyPayment,
 } from '@/types/financial';
 import { toast } from 'react-toastify';
+import { AllPaymentsCard } from './_components/all-payments-card';
+import { ReconciliationCard } from './_components/reconciliation-card';
+import { PaymentsSummaryCards } from './_components/payments-summary-cards';
 
 export default function StorePaymentsPage() {
   const { t } = useTranslation();
@@ -207,77 +209,12 @@ export default function StorePaymentsPage() {
 
       {/* Summary Cards */}
       {revenueData && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('financial.store.payments.totalRevenue')}
-              </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {formatCurrency(revenueData.total_revenue, revenueData.currency)}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.store.payments.fromPayments', {
-                  count: revenueData.payment_count,
-                })}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('financial.store.payments.completed')}
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-emerald-500" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                {formatNumber(paymentStats.completed)}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.store.payments.successfulPayments')}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('financial.store.payments.pending')}
-              </CardTitle>
-              <CreditCard className="h-4 w-4 text-amber-500" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                {formatNumber(paymentStats.pending)}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.store.payments.awaitingProcessing')}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t('financial.store.payments.failed')}
-              </CardTitle>
-              <CreditCard className="h-4 w-4 text-destructive" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-destructive">
-                {formatNumber(paymentStats.failed)}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t('financial.store.payments.failedTransactions')}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <PaymentsSummaryCards
+          formatCurrency={formatCurrency}
+          formatNumber={formatNumber}
+          paymentStats={paymentStats}
+          revenueData={revenueData}
+        />
       )}
 
       {/* Settlement Statement */}
@@ -320,43 +257,7 @@ export default function StorePaymentsPage() {
 
       {/* Reconciliation */}
       {reconciliation && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('financial.store.payments.reconciliationTitle')}</CardTitle>
-            <CardDescription>
-              {t('financial.store.payments.reconciliationDescription')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {[
-                {
-                  key: 'paidPayments',
-                  value: reconciliation.total_paid_payments,
-                },
-                {
-                  key: 'matchedCallbacks',
-                  value: reconciliation.matched_successful_callbacks,
-                },
-                {
-                  key: 'missingCallbacks',
-                  value: reconciliation.missing_successful_callbacks,
-                },
-                {
-                  key: 'orphanCallbacks',
-                  value: reconciliation.orphan_successful_callbacks,
-                },
-              ].map(({ key, value }) => (
-                <div key={key} className="rounded-lg bg-muted/50 p-3">
-                  <p className="text-xs text-muted-foreground">
-                    {t(`financial.store.payments.${key}`)}
-                  </p>
-                  <p className="mt-1 text-base font-semibold">{formatNumber(value ?? 0)}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <ReconciliationCard formatNumber={formatNumber} reconciliation={reconciliation} />
       )}
 
       {/* Payments by Method */}
@@ -398,101 +299,11 @@ export default function StorePaymentsPage() {
       )}
 
       {/* All Payments */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('financial.store.payments.allPayments')}</CardTitle>
-          <CardDescription>{t('financial.store.payments.allPaymentsDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent className="table-h-scroll">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('financial.store.payments.date')}</TableHead>
-                <TableHead>{t('financial.store.payments.student')}</TableHead>
-                <TableHead>{t('financial.store.payments.course')}</TableHead>
-                <TableHead>{t('financial.store.payments.method')}</TableHead>
-                <TableHead>{t('financial.store.payments.status')}</TableHead>
-                <TableHead className="text-end">{t('financial.store.payments.vat')}</TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.payments.platformFee')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.payments.teacherPayout')}
-                </TableHead>
-                <TableHead className="text-end">
-                  {t('financial.store.payments.schoolNet')}
-                </TableHead>
-                <TableHead className="text-end">{t('financial.store.payments.amount')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {payments.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={10} className="py-8 text-center text-muted-foreground">
-                    {t('financial.store.payments.noPayments')}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                payments.map((p) => {
-                  const schoolNet =
-                    p.school_net_revenue ??
-                    Math.max(
-                      0,
-                      (p.amount ?? 0) -
-                        (p.platform_fee ?? 0) -
-                        (p.instructor_fee ?? 0) -
-                        (p.tax_vat_amount ?? 0),
-                    );
-
-                  return (
-                    <TableRow key={p.id}>
-                      <TableCell className="whitespace-nowrap text-sm">
-                        {formatDate(p.created_at)}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {p.profile?.display_name ?? '—'}
-                      </TableCell>
-                      <TableCell className="max-w-[180px] truncate">
-                        {p.course?.title ?? '—'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{p.method ?? '—'}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <StatusBadge
-                          status={
-                            p.status === 'PAID'
-                              ? 'success'
-                              : p.status === 'PENDING'
-                                ? 'pending'
-                                : 'failed'
-                          }
-                          label={p.status}
-                        />
-                      </TableCell>
-                      <TableCell className="text-end">
-                        {formatCurrency(p.tax_vat_amount ?? 0, p.currency)}
-                      </TableCell>
-                      <TableCell className="text-end">
-                        {formatCurrency(p.platform_fee ?? 0, p.currency)}
-                      </TableCell>
-                      <TableCell className="text-end">
-                        {formatCurrency(p.instructor_fee ?? 0, p.currency)}
-                      </TableCell>
-                      <TableCell className="text-end">
-                        {formatCurrency(schoolNet, p.currency)}
-                      </TableCell>
-                      <TableCell className="text-end font-semibold">
-                        {formatCurrency(p.amount, p.currency)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <AllPaymentsCard
+        formatCurrency={formatCurrency}
+        formatDate={formatDate}
+        payments={payments}
+      />
     </div>
   );
 }

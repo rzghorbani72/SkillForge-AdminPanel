@@ -1,167 +1,23 @@
 'use client';
 
-import {
-  ExternalLink,
-  FileText,
-  Image as ImageIcon,
-  Loader2,
-  Mic,
-  ShieldCheck,
-  Video,
-  X,
-  type LucideIcon,
-} from 'lucide-react';
-import Image from 'next/image';
+import { FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useEffect, useRef, useState } from 'react';
-import Link from '@/components/ui/link';
-import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
 import { apiClient } from '@/lib/api';
 import { getBrowserApiBaseUrl } from '@/lib/api-base-url';
 import { ErrorHandler } from '@/lib/error-handler';
-import { pickFile } from '@/lib/file-picker';
 import { useVideoCover } from '@/hooks/use-video-cover';
-import { isVideoFileAcceptable } from '@/lib/validate-video-upload';
-import { VIDEO_CONSTRAINTS } from '@/constants/video-constraints';
 import type { LessonDraft, LessonType } from './useCourseForm';
-import { DEFAULT_DURATION, secondsToDuration } from './course-drafts';
+import { secondsToDuration } from './course-drafts';
 import { LESSON_TYPE_BY_KEY } from './lesson-type-config';
-import { SecureVideoPlayer } from '@/components/media/secure-video-player';
-import { IMAGE_ACCEPT } from '@/lib/upload-limits';
-
-type SlotKey = 'video' | 'audio' | 'document' | 'cover';
-
-/**
- * Viewport slots — video, audio and cover. They sit side by side in equal grid
- * columns, so one shared 16:9 ratio makes them exactly the same size as each
- * other at every breakpoint, and the video fills its box with no letterbox bars.
- */
-export const LESSON_MEDIA_SLOT_CLASS = 'aspect-video w-full';
-
-/**
- * Info slots — the attachment box and the live-class hint. These hold a line of
- * text, not a picture, and they span a whole row on their own: a 16:9 ratio
- * there would stretch a one-line label into a huge empty panel.
- */
-export const LESSON_INFO_SLOT_CLASS = 'h-40 w-full';
-
-function ProgressBar({ value }: { value: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (ref.current) ref.current.style.width = `${value}%`;
-  }, [value]);
-  return <div ref={ref} className="h-full rounded-full bg-current transition-all" />;
-}
-
-interface UploadSlotProps {
-  label: string;
-  Icon: LucideIcon;
-  uploadLabel: string;
-  accept: string;
-  toneClass: string;
-  filled: React.ReactNode | null;
-  uploading: boolean;
-  progress: number;
-  hint?: string;
-  /** Box size: a 16:9 viewport by default, overridden for info-only slots. */
-  boxClass?: string;
-  onSelect: (file: File) => void;
-  onCancel?: () => void;
-}
-
-function UploadSlot({
-  label,
-  Icon,
-  uploadLabel,
-  accept,
-  toneClass,
-  filled,
-  uploading,
-  progress,
-  hint,
-  boxClass = LESSON_MEDIA_SLOT_CLASS,
-  onSelect,
-  onCancel,
-}: UploadSlotProps) {
-  const { t } = useTranslation();
-  const percentLabel = usePercentLabel();
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  async function handleActivate(e: React.MouseEvent<HTMLLabelElement>) {
-    e.preventDefault();
-    const picked = await pickFile(accept);
-    if (picked === undefined) {
-      inputRef.current?.click();
-      return;
-    }
-    if (picked) onSelect(picked);
-  }
-
-  const frameClass = cn(
-    'flex shrink-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border border-dashed px-3 text-center transition-colors',
-    boxClass,
-    toneClass,
-  );
-
-  return (
-    <div className="w-full space-y-2">
-      {/* Fixed height, top-aligned: a one-line hint and a two-line hint must
-          leave the media box at the same Y, or the columns sit out of step. */}
-      <div className="flex min-h-8 items-start justify-between gap-2">
-        <Label className="shrink-0 text-xs font-medium leading-5 text-muted-foreground">
-          {label}
-        </Label>
-        {hint ? (
-          <span className="line-clamp-2 text-end text-[11px] leading-snug text-muted-foreground">
-            {hint}
-          </span>
-        ) : null}
-      </div>
-      {filled ? (
-        filled
-      ) : uploading ? (
-        <div className={frameClass} role="status" aria-live="polite">
-          <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-          <span className="text-sm font-semibold tabular-nums">{percentLabel(progress)}</span>
-          <div className="bg-current/15 h-1.5 w-24 overflow-hidden rounded-full">
-            <ProgressBar value={progress} />
-          </div>
-          {onCancel && (
-            <button
-              type="button"
-              className="text-[11px] opacity-70 hover:text-destructive hover:opacity-100"
-              onClick={onCancel}
-            >
-              {t('courses.cancelUpload')}
-            </button>
-          )}
-        </div>
-      ) : (
-        <label onClick={handleActivate} className={cn(frameClass, 'cursor-pointer')}>
-          <span className="bg-current/10 flex h-10 w-10 items-center justify-center rounded-full">
-            <Icon className="h-5 w-5" aria-hidden />
-          </span>
-          <span className="max-w-[16rem] text-xs font-medium leading-snug">{uploadLabel}</span>
-          <input
-            ref={inputRef}
-            type="file"
-            accept={accept}
-            className="sr-only"
-            tabIndex={-1}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) onSelect(file);
-              e.target.value = '';
-            }}
-          />
-        </label>
-      )}
-    </div>
-  );
-}
+import { LessonDocumentSlot } from './lesson-media/lesson-document-slot';
+import { LessonCoverSlot } from './lesson-media/lesson-cover-slot';
+import { LessonAudioSlot } from './lesson-media/lesson-audio-slot';
+import { LessonVideoSlot } from './lesson-media/lesson-video-slot';
+import { SlotKey, revokeIfBlob } from './_lib/LessonMedia-helpers';
 
 interface LessonMediaProps {
   lesson: LessonDraft;
@@ -174,6 +30,7 @@ const ZERO: Record<SlotKey, number> = {
   document: 0,
   cover: 0,
 };
+
 const FALSE: Record<SlotKey, boolean> = {
   video: false,
   audio: false,
@@ -183,10 +40,6 @@ const FALSE: Record<SlotKey, boolean> = {
 
 function toneFor(type: LessonType): string {
   return LESSON_TYPE_BY_KEY[type]?.dropzoneClass ?? LESSON_TYPE_BY_KEY.VIDEO.dropzoneClass;
-}
-
-function revokeIfBlob(url: string | undefined) {
-  if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
 }
 
 export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
@@ -319,335 +172,72 @@ export function LessonMedia({ lesson, onUpdate }: LessonMediaProps) {
   return (
     <div className={cn('grid gap-3', showCover && 'md:grid-cols-2')}>
       {showVideo && (
-        <UploadSlot
-          label={t('courses.lessonVideo')}
-          Icon={Video}
-          uploadLabel={t('courses.uploadVideo')}
-          accept={VIDEO_CONSTRAINTS.ALLOWED_FORMATS.join(',')}
-          hint={t('courses.videoUploadSizeLimit')}
-          toneClass={tone}
-          uploading={uploading.video && !lesson.videoPreviewUrl}
-          progress={progress.video}
-          onCancel={() => abortRefs.current.video?.abort()}
-          onSelect={(file) => {
-            void (async () => {
-              if (!(await isVideoFileAcceptable(file))) return;
-
-              startLocalPreview('video', file);
-              await runUpload(
-                'video',
-                (abort, onP) =>
-                  apiClient.uploadVideoWithProgress(
-                    file,
-                    { title: lesson.title || file.name },
-                    undefined,
-                    onP,
-                    abort,
-                  ),
-                (data) => {
-                  onVideoAttached(String(data.id));
-                  replacePreview('video', {
-                    video_id: String(data.id),
-                    videoPreviewUrl: apiClient.getVideoStreamUrl(String(data.id)),
-                  });
-                },
-              );
-            })();
-          }}
-          filled={
-            lesson.videoPreviewUrl ? (
-              <div
-                className={cn(
-                  'relative shrink-0 overflow-hidden rounded-lg border bg-black',
-                  LESSON_MEDIA_SLOT_CLASS,
-                )}
-              >
-                {lesson.videoPreviewUrl.startsWith('blob:') || !lesson.video_id ? (
-                  // The file the teacher just picked, still on their disk. Kept
-                  // native because reading its duration is the whole point and
-                  // there is nothing to protect yet.
-                  <video
-                    key={lesson.videoPreviewUrl}
-                    src={lesson.videoPreviewUrl}
-                    poster={lesson.coverPreviewUrl}
-                    className="h-full w-full object-contain"
-                    controls
-                    preload="metadata"
-                    onLoadedMetadata={handleMediaMetadata}
-                  />
-                ) : (
-                  <SecureVideoPlayer
-                    key={lesson.video_id}
-                    videoId={lesson.video_id}
-                    title={lesson.title}
-                    fill
-                    className="h-full w-full"
-                  />
-                )}
-                {uploading.video && (
-                  <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-center text-[10px] text-white">
-                    {percentLabel(progress.video)}
-                  </div>
-                )}
-                {needsSecuring && !uploading.video && (
-                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-black/70 px-2 py-1.5 text-[11px] text-white">
-                    <span className="truncate">
-                      {securing
-                        ? t('courses.videoSecuringInProgress')
-                        : lesson.videoHlsStatus === 'FAILED'
-                          ? t('courses.videoSecuringFailed')
-                          : t('courses.videoNeedsSecuring')}
-                    </span>
-                    <button
-                      type="button"
-                      disabled={securing}
-                      onClick={secureVideo}
-                      className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 font-medium hover:bg-white/25 disabled:opacity-60"
-                    >
-                      {securing ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <ShieldCheck className="h-3 w-3" />
-                      )}
-                      {t('courses.secureThisVideo')}
-                    </button>
-                  </div>
-                )}
-                <button
-                  type="button"
-                  aria-label={t('courses.removeVideo')}
-                  onClick={() => {
-                    revokeIfBlob(blobRefs.current.video ?? undefined);
-                    blobRefs.current.video = null;
-                    onUpdate({
-                      video_id: undefined,
-                      videoPreviewUrl: undefined,
-                      duration: DEFAULT_DURATION,
-                    });
-                  }}
-                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ) : null
-          }
+        <LessonVideoSlot
+          abortRefs={abortRefs}
+          blobRefs={blobRefs}
+          handleMediaMetadata={handleMediaMetadata}
+          lesson={lesson}
+          needsSecuring={needsSecuring}
+          onUpdate={onUpdate}
+          onVideoAttached={onVideoAttached}
+          percentLabel={percentLabel}
+          progress={progress}
+          replacePreview={replacePreview}
+          runUpload={runUpload}
+          secureVideo={secureVideo}
+          securing={securing}
+          startLocalPreview={startLocalPreview}
+          tone={tone}
+          uploading={uploading}
         />
       )}
 
       {showAudio && (
-        <UploadSlot
-          label={t('courses.lessonAudio')}
-          Icon={Mic}
-          uploadLabel={t('courses.uploadAudio')}
-          accept="audio/*"
-          toneClass={tone}
-          uploading={uploading.audio && !lesson.audioPreviewUrl}
-          progress={progress.audio}
-          onCancel={() => abortRefs.current.audio?.abort()}
-          onSelect={(file) => {
-            startLocalPreview('audio', file);
-            void runUpload(
-              'audio',
-              (abort, onP) =>
-                apiClient.uploadAudio(file, { title: lesson.title || file.name }, onP, abort),
-              (data) => {
-                const url =
-                  (data.publicUrl as string) ||
-                  `${getBrowserApiBaseUrl()}/audios/fetch-audio-by-id/${data.id}`;
-                replacePreview('audio', {
-                  audio_id: String(data.id),
-                  audioPreviewUrl: url,
-                });
-              },
-            );
-          }}
-          filled={
-            lesson.audioPreviewUrl ? (
-              <div
-                className={cn(
-                  'relative flex shrink-0 flex-col items-center justify-center gap-2 rounded-lg border px-3',
-                  LESSON_MEDIA_SLOT_CLASS,
-                  tone,
-                )}
-              >
-                <span className="bg-current/10 flex h-9 w-9 items-center justify-center rounded-full">
-                  <Mic className="h-4 w-4" aria-hidden />
-                </span>
-                <audio
-                  key={lesson.audioPreviewUrl}
-                  src={lesson.audioPreviewUrl}
-                  controls
-                  preload="metadata"
-                  onLoadedMetadata={handleMediaMetadata}
-                  className="h-8 w-full max-w-[20rem]"
-                />
-                {uploading.audio && (
-                  <span className="text-[10px] opacity-70">{percentLabel(progress.audio)}</span>
-                )}
-                <button
-                  type="button"
-                  aria-label={t('courses.removeAudio')}
-                  onClick={() => {
-                    revokeIfBlob(blobRefs.current.audio ?? undefined);
-                    blobRefs.current.audio = null;
-                    onUpdate({
-                      audio_id: undefined,
-                      audioPreviewUrl: undefined,
-                      duration: DEFAULT_DURATION,
-                    });
-                  }}
-                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ) : null
-          }
+        <LessonAudioSlot
+          abortRefs={abortRefs}
+          blobRefs={blobRefs}
+          handleMediaMetadata={handleMediaMetadata}
+          lesson={lesson}
+          onUpdate={onUpdate}
+          percentLabel={percentLabel}
+          progress={progress}
+          replacePreview={replacePreview}
+          runUpload={runUpload}
+          startLocalPreview={startLocalPreview}
+          tone={tone}
+          uploading={uploading}
         />
       )}
 
       {showCover && (
-        <UploadSlot
-          label={t('courses.lessonCover')}
-          Icon={ImageIcon}
-          uploadLabel={t('courses.uploadCoverImage')}
-          accept={IMAGE_ACCEPT}
-          hint={t('courses.lessonCoverHint')}
-          toneClass={tone}
-          uploading={uploading.cover && !lesson.coverPreviewUrl}
-          progress={progress.cover}
-          onCancel={() => abortRefs.current.cover?.abort()}
-          onSelect={(file) => {
-            onCoverPicked(file, lesson.video_id);
-            startLocalPreview('cover', file);
-            void runUpload(
-              'cover',
-              (abort, onP) =>
-                apiClient.uploadImage(file, { title: lesson.title || file.name }, onP, abort),
-              (data) => {
-                const url = data.publicUrl as string | undefined;
-                replacePreview('cover', {
-                  cover_id: String(data.id),
-                  coverPreviewUrl: url?.startsWith('http')
-                    ? url
-                    : `${getBrowserApiBaseUrl()}/images/fetch-image-by-id/${data.id}`,
-                });
-              },
-            );
-          }}
-          filled={
-            lesson.coverPreviewUrl ? (
-              <div
-                className={cn(
-                  'relative shrink-0 overflow-hidden rounded-lg border bg-muted',
-                  LESSON_MEDIA_SLOT_CLASS,
-                )}
-              >
-                <Image
-                  key={lesson.coverPreviewUrl}
-                  src={lesson.coverPreviewUrl}
-                  alt={t('courses.lessonCover')}
-                  fill
-                  sizes="400px"
-                  className="object-cover"
-                />
-                {uploading.cover && (
-                  <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-center text-[10px] text-white">
-                    {percentLabel(progress.cover)}
-                  </div>
-                )}
-                <button
-                  type="button"
-                  aria-label={t('courses.removeCover')}
-                  onClick={() => {
-                    revokeIfBlob(blobRefs.current.cover ?? undefined);
-                    blobRefs.current.cover = null;
-                    onUpdate({
-                      cover_id: undefined,
-                      coverPreviewUrl: undefined,
-                    });
-                  }}
-                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ) : null
-          }
+        <LessonCoverSlot
+          abortRefs={abortRefs}
+          blobRefs={blobRefs}
+          lesson={lesson}
+          onCoverPicked={onCoverPicked}
+          onUpdate={onUpdate}
+          percentLabel={percentLabel}
+          progress={progress}
+          replacePreview={replacePreview}
+          runUpload={runUpload}
+          startLocalPreview={startLocalPreview}
+          tone={tone}
+          uploading={uploading}
         />
       )}
 
       {showDocument && (
-        <UploadSlot
-          label={t('courses.lessonDocument')}
-          Icon={DocIcon}
-          uploadLabel={t('courses.uploadDocument')}
-          accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
-          toneClass={tone}
-          boxClass={LESSON_INFO_SLOT_CLASS}
-          uploading={uploading.document && !lesson.documentPreviewName}
-          progress={progress.document}
-          onCancel={() => abortRefs.current.document?.abort()}
-          onSelect={(file) => {
-            onUpdate({ documentPreviewName: file.name });
-            void runUpload(
-              'document',
-              (abort, onP) =>
-                apiClient.uploadDocument(file, { title: lesson.title || file.name }, onP, abort),
-              (data) =>
-                onUpdate({
-                  document_id: String(data.id),
-                  documentPreviewName: (data.title as string) || file.name,
-                }),
-            );
-          }}
-          filled={
-            lesson.documentPreviewName || lesson.document_id ? (
-              <div
-                className={cn(
-                  'relative flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border px-3 text-center',
-                  LESSON_INFO_SLOT_CLASS,
-                  tone,
-                )}
-              >
-                <span className="bg-current/10 flex h-9 w-9 items-center justify-center rounded-full">
-                  <DocIcon className="h-4 w-4" aria-hidden />
-                </span>
-                <span className="line-clamp-2 max-w-[18rem] break-all text-xs font-medium leading-snug">
-                  {lesson.documentPreviewName ?? t('courses.lessonDocument')}
-                </span>
-                {documentPreviewUrl && (
-                  <Link
-                    href={documentPreviewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[11px] text-primary underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <ExternalLink className="h-3 w-3" aria-hidden />
-                    {t('media.openPreview')}
-                  </Link>
-                )}
-                {uploading.document && (
-                  <span className="text-[10px] opacity-70">{percentLabel(progress.document)}</span>
-                )}
-                <button
-                  type="button"
-                  aria-label={t('courses.removeDocument')}
-                  onClick={() =>
-                    onUpdate({
-                      document_id: undefined,
-                      documentPreviewName: undefined,
-                    })
-                  }
-                  className="absolute end-1.5 top-1.5 rounded-full bg-background/80 p-0.5 text-muted-foreground hover:text-destructive"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ) : null
-          }
+        <LessonDocumentSlot
+          DocIcon={DocIcon}
+          abortRefs={abortRefs}
+          documentPreviewUrl={documentPreviewUrl}
+          lesson={lesson}
+          onUpdate={onUpdate}
+          percentLabel={percentLabel}
+          progress={progress}
+          runUpload={runUpload}
+          tone={tone}
+          uploading={uploading}
         />
       )}
     </div>
