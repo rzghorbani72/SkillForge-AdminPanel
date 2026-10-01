@@ -16,20 +16,13 @@ import { AcademiesListView } from './_components/academies-list-view';
 import { AcademyDetailView } from './_components/academy-detail-view';
 import { logger } from '@/lib/logging/app-logger';
 import { errorFields } from '@/lib/logging/error-fields';
+import type {
+  AcademySettlementLine,
+  AcademySettlementRow,
+  AcademySettlementTotals,
+} from '@/types/financial';
 
-export type AcademySettlementRow = {
-  academy_id: string;
-  academy_uuid: string;
-  academy_name: string;
-  academy_slug: string;
-  is_active: boolean;
-  platform_commission_total: number;
-  vat_total: number;
-  academy_revenue_total: number;
-  settled_total_amount: number;
-  payable_now: number;
-  latest_settlement_at?: string | null;
-};
+export type { AcademySettlementRow };
 
 export default function PlatformAcademiesPage() {
   const { t } = useTranslation();
@@ -49,8 +42,8 @@ export default function PlatformAcademiesPage() {
 
   // Store detail data
   const [selectedStore, setSelectedStore] = useState<Academy | null>(null);
-  const [storeFinancial, setStoreFinancial] = useState<any>(null);
-  const [storePayments, setStorePayments] = useState<any[]>([]);
+  const [storeFinancial, setStoreFinancial] = useState<AcademySettlementTotals | null>(null);
+  const [storePayments, setStorePayments] = useState<AcademySettlementLine[]>([]);
   const [storeStats, setStoreStats] = useState({
     totalCourses: 0,
     totalStudents: 0,

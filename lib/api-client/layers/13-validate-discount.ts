@@ -1,6 +1,8 @@
 import { ApiLayer12 } from './12-review-academy-enamad';
 
-import { unwrapDataEnvelope } from '../helpers';
+import { unwrapData, unwrapDataEnvelope } from '../helpers';
+import type { AcademySettlementDetail, AcademySettlementTable } from '@/types/financial';
+import type { StoreFinancialRecord } from '@/types/api';
 import type {
   ChurnMonth,
   CohortCell,
@@ -24,7 +26,7 @@ export class ApiLayer13 extends ApiLayer12 {
   async validateDiscount(
     code: string,
     amount: number,
-    user_id?: number,
+    user_id?: string,
     options?: { academy_id?: string | null; profile_id?: string },
   ) {
     const response = await this.request<{
@@ -48,7 +50,7 @@ export class ApiLayer13 extends ApiLayer12 {
       }),
     });
 
-    return unwrapDataEnvelope(response.data) ?? (response.data as any);
+    return unwrapDataEnvelope(response.data);
   }
 
   // ============================================================================
@@ -57,36 +59,36 @@ export class ApiLayer13 extends ApiLayer12 {
 
   // Cost Categories
   async getCostCategories() {
-    const response = await this.request<any>('/financial/cost-categories', {
+    const response = await this.request<unknown>('/financial/cost-categories', {
       method: 'GET',
     });
-    return response.data as any[];
+    return unwrapData<unknown[]>(response.data);
   }
 
   async createCostCategory(data: { name: string; description?: string; is_active?: boolean }) {
-    const response = await this.request<any>('/financial/cost-categories', {
+    const response = await this.request<unknown>('/financial/cost-categories', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async updateCostCategory(
     id: number,
     data: Partial<{ name: string; description?: string; is_active?: boolean }>,
   ) {
-    const response = await this.request<any>(`/financial/cost-categories/${id}`, {
+    const response = await this.request<unknown>(`/financial/cost-categories/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async deleteCostCategory(id: number) {
-    const response = await this.request<any>(`/financial/cost-categories/${id}`, {
+    const response = await this.request<unknown>(`/financial/cost-categories/${id}`, {
       method: 'DELETE',
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async getAcademyFinancialRecords(params?: {
@@ -107,14 +109,14 @@ export class ApiLayer13 extends ApiLayer12 {
     if (params?.month) queryParams.append('month', params.month.toString());
 
     const url = `/financial/academy-records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
-    return response.data as any[];
+    const response = await this.request<unknown>(url, { method: 'GET' });
+    return unwrapData<StoreFinancialRecord[]>(response.data);
   }
 
   async getAcademyFinancialSummary(academyId?: string) {
     const url = `/financial/academy-records/summary${academyId ? `?academy_id=${academyId}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
-    return response.data as any;
+    const response = await this.request<unknown>(url, { method: 'GET' });
+    return unwrapData<unknown>(response.data);
   }
 
   async getAcademyRevenueFromPayments(academyId?: string, startDate?: string, endDate?: string) {
@@ -124,8 +126,8 @@ export class ApiLayer13 extends ApiLayer12 {
     if (endDate) queryParams.append('end_date', endDate);
 
     const url = `/financial/academy/revenue${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
-    return response.data as any;
+    const response = await this.request<unknown>(url, { method: 'GET' });
+    return unwrapData<unknown>(response.data);
   }
 
   async getMonetizationSummary(params?: {
@@ -145,8 +147,8 @@ export class ApiLayer13 extends ApiLayer12 {
     }
 
     const url = `/financial/monetization/summary${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
-    return response.data as any;
+    const response = await this.request<unknown>(url, { method: 'GET' });
+    return unwrapData<unknown>(response.data);
   }
 
   async getIranSettlementStatement(params?: {
@@ -165,11 +167,11 @@ export class ApiLayer13 extends ApiLayer12 {
       queryParams.append('end_date', params.end_date);
     }
     const url = `/financial/settlement${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
+    const response = await this.request<unknown>(url, { method: 'GET' });
     if (response.data && typeof response.data === 'object' && 'data' in response.data) {
-      return (response.data as any).data;
+      return unwrapData<unknown>(response.data);
     }
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async getAcademySettlementTable(params?: {
@@ -184,17 +186,15 @@ export class ApiLayer13 extends ApiLayer12 {
     if (params?.search) queryParams.append('search', params.search);
     if (params?.uuid) queryParams.append('uuid', params.uuid);
     const url = `/financial/academies/settlement-table${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
-    if ((response.data as any)?.data) return (response.data as any).data;
-    return response.data as any;
+    const response = await this.request<unknown>(url, { method: 'GET' });
+    return unwrapData<AcademySettlementTable>(response.data);
   }
 
   async getAcademySettlementDetail(academyId: string) {
-    const response = await this.request<any>(`/financial/academies/${academyId}/settlement`, {
+    const response = await this.request<unknown>(`/financial/academies/${academyId}/settlement`, {
       method: 'GET',
     });
-    if ((response.data as any)?.data) return (response.data as any).data;
-    return response.data as any;
+    return unwrapData<AcademySettlementDetail>(response.data);
   }
 
   async settleAcademy(
@@ -205,15 +205,14 @@ export class ApiLayer13 extends ApiLayer12 {
       note?: string;
     },
   ) {
-    const response = await this.request<any>(
+    const response = await this.request<unknown>(
       `/financial/settlement/academies/${academyId}/settle`,
       {
         method: 'POST',
         body: JSON.stringify(payload),
       },
     );
-    if ((response.data as any)?.data) return (response.data as any).data;
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async getIranSettlementReconciliation(params?: {
@@ -226,16 +225,16 @@ export class ApiLayer13 extends ApiLayer12 {
     if (params?.start_date) queryParams.append('start_date', params.start_date);
     if (params?.end_date) queryParams.append('end_date', params.end_date);
     const url = `/financial/settlement/reconciliation${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
-    return response.data as any;
+    const response = await this.request<unknown>(url, { method: 'GET' });
+    return unwrapData<unknown>(response.data);
   }
 
   async lockIranFinancialPeriod(data: { academy_id: string; lock_until: string }) {
-    const response = await this.request<any>('/financial/settlement/lock', {
+    const response = await this.request<unknown>('/financial/settlement/lock', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async setTeacherRevenueVisibility(data: {
@@ -243,11 +242,11 @@ export class ApiLayer13 extends ApiLayer12 {
     teacher_id: number;
     is_visible: boolean;
   }) {
-    const response = await this.request<any>('/financial/teacher-revenue-visibility', {
+    const response = await this.request<unknown>('/financial/teacher-revenue-visibility', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   // -------------------------------------------------------------------------

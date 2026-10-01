@@ -12,21 +12,21 @@ import type {
   CertificateRoster,
   IssuedCertificate,
 } from '@/types/learning-operations';
-import { unwrapDataEnvelope } from '../helpers';
+import { unwrapData, unwrapDataEnvelope } from '../helpers';
 
 export class ApiLayer15 extends ApiLayer14 {
   async applyFormulaApplication(id: number) {
-    const response = await this.request<any>(`/financial/formula-applications/${id}/apply`, {
+    const response = await this.request<unknown>(`/financial/formula-applications/${id}/apply`, {
       method: 'POST',
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async deleteFormulaApplication(id: number) {
-    const response = await this.request<any>(`/financial/formula-applications/${id}`, {
+    const response = await this.request<unknown>(`/financial/formula-applications/${id}`, {
       method: 'DELETE',
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   // ============================================================================
@@ -34,14 +34,14 @@ export class ApiLayer15 extends ApiLayer14 {
   // ============================================================================
 
   async getDatabaseModels() {
-    const response = await this.request<any>('/database/models', {
+    const response = await this.request<unknown>('/database/models', {
       method: 'GET',
     });
     return response.data as string[];
   }
 
   async getModelFields(modelName: string) {
-    const response = await this.request<any>(`/database/models/${modelName}/fields`, {
+    const response = await this.request<unknown>(`/database/models/${modelName}/fields`, {
       method: 'GET',
     });
     return response.data as { fields: any[]; sample: any };
@@ -63,7 +63,7 @@ export class ApiLayer15 extends ApiLayer14 {
     if (params?.orderBy) queryParams.append('orderBy', params.orderBy);
 
     const url = `/database/models/${modelName}/records${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.request<any>(url, { method: 'GET' });
+    const response = await this.request<unknown>(url, { method: 'GET' });
     return response.data as {
       data: any[];
       total: number;
@@ -73,33 +73,33 @@ export class ApiLayer15 extends ApiLayer14 {
   }
 
   async getModelRecord(modelName: string, id: number) {
-    const response = await this.request<any>(`/database/models/${modelName}/records/${id}`, {
+    const response = await this.request<unknown>(`/database/models/${modelName}/records/${id}`, {
       method: 'GET',
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async createModelRecord(modelName: string, data: any) {
-    const response = await this.request<any>(`/database/models/${modelName}/records`, {
+    const response = await this.request<unknown>(`/database/models/${modelName}/records`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async updateModelRecord(modelName: string, id: number, data: any) {
-    const response = await this.request<any>(`/database/models/${modelName}/records/${id}`, {
+    const response = await this.request<unknown>(`/database/models/${modelName}/records/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   async deleteModelRecord(modelName: string, id: number) {
-    const response = await this.request<any>(`/database/models/${modelName}/records/${id}`, {
+    const response = await this.request<unknown>(`/database/models/${modelName}/records/${id}`, {
       method: 'DELETE',
     });
-    return response.data as any;
+    return unwrapData<unknown>(response.data);
   }
 
   // ─── Assignments ───────────────────────────────────────────────────────────

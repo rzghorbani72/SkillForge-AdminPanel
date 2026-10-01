@@ -20,6 +20,7 @@ import { formatPlatformToman } from '@/lib/utils';
 import type { Academy } from '@/types/api';
 import { AcademyCustomPlanCard } from '@/components/plans/AcademyCustomPlanCard';
 import { CopyableId } from '@/components/academies/copyable-id';
+import type { AcademySettlementLine, AcademySettlementTotals } from '@/types/financial';
 
 export function AcademyDetailView({
   formatDate,
@@ -34,8 +35,8 @@ export function AcademyDetailView({
   formatNumber: (value: number, options?: Intl.NumberFormatOptions) => string;
   isLoadingDetail: boolean;
   selectedStore: Academy;
-  storeFinancial: any;
-  storePayments: any[];
+  storeFinancial: AcademySettlementTotals | null;
+  storePayments: AcademySettlementLine[];
   storeStats: {
     totalCourses: number;
     totalStudents: number;

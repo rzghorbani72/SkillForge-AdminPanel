@@ -250,3 +250,41 @@ export interface RefundEligibility {
   max_refundable?: number;
   reason?: string;
 }
+
+export type AcademySettlementRow = {
+  academy_id: string;
+  academy_uuid: string;
+  academy_name: string;
+  academy_slug: string;
+  is_active: boolean;
+  platform_commission_total: number;
+  vat_total: number;
+  academy_revenue_total: number;
+  settled_total_amount: number;
+  payable_now: number;
+  latest_settlement_at?: string | null;
+};
+
+export interface AcademySettlementTable {
+  rows?: AcademySettlementRow[];
+}
+
+export interface AcademySettlementTotals {
+  total_revenue?: number;
+  total_costs?: number;
+  academy_revenue_total?: number;
+}
+
+export interface AcademySettlementLine {
+  id: string;
+  amount: number;
+  status: string;
+  course_name?: string | null;
+  description?: string | null;
+  payment_date?: string | null;
+}
+
+export interface AcademySettlementDetail {
+  totals?: AcademySettlementTotals;
+  lines?: AcademySettlementLine[];
+}

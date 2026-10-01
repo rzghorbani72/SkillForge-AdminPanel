@@ -10,9 +10,9 @@ export interface CostCategory {
 }
 
 export interface StoreFinancialRecord {
-  id: number;
+  id: string;
   academy_id: string;
-  cost_category_id?: number;
+  cost_category_id?: string;
   period_start: string;
   period_end: string;
   revenue: number;
@@ -25,7 +25,7 @@ export interface StoreFinancialRecord {
   created_at: string;
   updated_at: string;
   store?: {
-    id: number;
+    id: string;
     name: string;
     slug: string;
   };
