@@ -1,6 +1,8 @@
 import { CountryCode, getCountryByCode, getDefaultCountry } from './country-codes';
 import { DEFAULT_GEO_SERVICE_URLS } from './security/config';
 import { assertAllowedExternalFetchUrl } from './security/ssrf';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 const GEO_ALLOWED_HOSTS = ['ipapi.co', 'ip-api.com', 'api.country.is'] as const;
 
@@ -49,7 +51,7 @@ export const detectUserCountry = async (): Promise<CountryCode> => {
           return country;
         }
       } catch (error) {
-        console.warn(`Failed to fetch from ${service}:`, error);
+        logger.warn('Geo', 'ServiceFetchFailed', { service, ...errorFields(error) });
         continue;
       }
     }
@@ -57,7 +59,7 @@ export const detectUserCountry = async (): Promise<CountryCode> => {
     // Fallback to default country
     return getDefaultCountry();
   } catch (error) {
-    console.warn('Failed to detect user country:', error);
+    logger.warn('Geo', 'DetectUserCountryFailed', errorFields(error));
     return getDefaultCountry();
   }
 };
@@ -70,7 +72,7 @@ export const getStoredCountry = (): CountryCode | null => {
       return country || null;
     }
   } catch (error) {
-    console.warn('Failed to get stored country:', error);
+    logger.warn('Geo', 'ReadStoredCountryFailed', errorFields(error));
   }
   return null;
 };
@@ -79,6 +81,6 @@ export const storeCountry = (country: CountryCode): void => {
   try {
     localStorage.setItem('user_country', country.code);
   } catch (error) {
-    console.warn('Failed to store country:', error);
+    logger.warn('Geo', 'SaveCountryFailed', errorFields(error));
   }
 };

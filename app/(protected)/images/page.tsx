@@ -15,6 +15,8 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { ImageGrid } from './_components/image-grid';
 import { ImagesToolbar } from './_components/images-toolbar';
 import { ImageItem, resolveImageSrc } from './_lib/page-helpers';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export default function ImagesPage() {
   const { t } = useTranslation();
@@ -50,7 +52,7 @@ export default function ImagesPage() {
         setError('Failed to load images');
       }
     } catch (err) {
-      console.error('Error fetching images:', err);
+      logger.error('Images', 'FetchingImagesFailed', errorFields(err));
       setError('Failed to load images');
       ErrorHandler.handleApiError(err);
     } finally {
@@ -87,7 +89,7 @@ export default function ImagesPage() {
       fetchImages();
       setEditImage(null);
     } catch (error) {
-      console.error('Error updating image:', error);
+      logger.error('Images', 'UpdatingImageFailed', errorFields(error));
       ErrorHandler.handleApiError(error);
       throw error;
     }
@@ -101,7 +103,7 @@ export default function ImagesPage() {
       setDeleteImage(null);
       fetchImages();
     } catch (error) {
-      console.error('Error deleting image:', error);
+      logger.error('Images', 'DeletingImageFailed', errorFields(error));
       ErrorHandler.handleApiError(error);
     } finally {
       setIsDeleting(false);

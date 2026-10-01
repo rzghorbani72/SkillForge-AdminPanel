@@ -5,6 +5,8 @@ import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useStore } from '@/hooks/useStore';
 import { Academy, User } from '@/types/api';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface SettingsSnapshot {
   user: User | null;
@@ -39,7 +41,7 @@ export function useSettingsData(): SettingsSnapshot {
         if (!isMounted) return;
         setUser(((userResult as { data?: User })?.data as User) ?? null);
       } catch (error) {
-        console.error('Failed to load current user', error);
+        logger.error('Settings', 'LoadCurrentUserFailed', errorFields(error));
         ErrorHandler.handleApiError(error);
         if (isMounted) setUser(null);
       } finally {

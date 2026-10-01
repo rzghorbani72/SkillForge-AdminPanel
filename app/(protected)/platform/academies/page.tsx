@@ -14,6 +14,8 @@ import type { Academy } from '@/types/api';
 import { canAccessSupportOps, isPlatformAdmin } from '@/lib/roles';
 import { AcademiesListView } from './_components/academies-list-view';
 import { AcademyDetailView } from './_components/academy-detail-view';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export type AcademySettlementRow = {
   academy_id: string;
@@ -97,7 +99,7 @@ export default function PlatformAcademiesPage() {
           }) as Academy[],
         );
       } catch (error) {
-        console.error('Error fetching stores:', error);
+        logger.error('Academies', 'FetchingStoresFailed', errorFields(error));
         setStores([]);
       } finally {
         setIsLoading(false);
@@ -136,10 +138,10 @@ export default function PlatformAcademiesPage() {
             totalPayments: detail?.lines?.length || 0,
           });
         } catch (error) {
-          console.error('Error fetching store financial data:', error);
+          logger.error('Academies', 'FetchingStoreFinancialDataFailed', errorFields(error));
         }
       } catch (error) {
-        console.error('Error fetching store detail:', error);
+        logger.error('Academies', 'FetchingStoreDetailFailed', errorFields(error));
       } finally {
         setIsLoadingDetail(false);
       }

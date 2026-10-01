@@ -2,6 +2,8 @@
 
 import type { Academy } from '@/types/api';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 const ACADEMY_STORAGE_KEYS = {
   SELECTED_ACADEMY_ID: 'selected_academy_id',
@@ -49,7 +51,7 @@ export function getCachedAcademies(): Academy[] {
       }
     }
   } catch (error) {
-    console.error('Error reading cached academies:', error);
+    logger.error('Academies', 'ReadingCachedAcademiesFailed', errorFields(error));
   }
 
   return [];
@@ -62,7 +64,7 @@ export function setCachedAcademies(academies: Academy[]): void {
     localStorage.setItem(ACADEMY_STORAGE_KEYS.ACADEMIES_CACHE, JSON.stringify(academies));
     localStorage.setItem(ACADEMY_STORAGE_KEYS.LAST_FETCH, Date.now().toString());
   } catch (error) {
-    console.error('Error caching academies:', error);
+    logger.error('Academies', 'CachingAcademiesFailed', errorFields(error));
   }
 }
 
@@ -87,7 +89,7 @@ export function clearAcademyData(): void {
     // re-scope an academy-less session and every scoped request would fail.
     sessionStorage.removeItem(ACADEMY_RESCOPE_FLAG);
   } catch (error) {
-    console.error('Error clearing academy data:', error);
+    logger.error('Academies', 'ClearingAcademyDataFailed', errorFields(error));
   }
 }
 

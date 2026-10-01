@@ -3,6 +3,7 @@ import { apiClient } from '@/lib/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
 import { apiErrorMessage } from '@/lib/api-error-message';
+import { logger } from '@/lib/logging/app-logger';
 
 export interface ImageUploadOptions {
   title?: string;
@@ -90,7 +91,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
           toast.success(tNow('toasts.imageUploaded'));
           options.onSuccess?.({ id: imageId, url: fullUrl });
         } else {
-          console.error('Upload response structure:', uploadResponse);
+          logger.error('Images', 'UnexpectedUploadResponse');
           toast.error(tNow('toasts.imageBadResponse'));
           options.onError?.(new Error('Upload failed: Invalid response structure'));
         }

@@ -3,6 +3,8 @@ import { useRouter } from 'next/navigation';
 import { useAccessControl } from './useAccessControl';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface ResourceAccessOptions {
   resourceId: string;
@@ -81,7 +83,10 @@ export function useResourceAccess({
         requireResourceAccess(response, action, fallbackPath);
       }
     } catch (error) {
-      console.error(`Error fetching ${resourceType}:`, error);
+      logger.error('AccessControl', 'FetchResourceFailed', {
+        resource_type: String(resourceType),
+        ...errorFields(error),
+      });
       setAccessError(error instanceof Error ? error.message : `Failed to fetch ${resourceType}`);
       setHasAccess(false);
 

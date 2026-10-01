@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { apiClient } from '@/lib/api';
 import { useTheme } from 'next-themes';
 import { useBrandingStore } from '@/lib/store';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 // Only the academy's logo is read here — the admin panel's own colors are
 // fixed to the platform brand (globals.css) and must never pick up the
@@ -27,7 +29,7 @@ export function ThemeInitializer() {
         setLogoUrl((dataLevel?.logoUrl as string) ?? null);
         setTheme('light');
       } catch (error) {
-        console.error('Failed to load academy branding', error);
+        logger.error('Branding', 'LoadAcademyBrandingFailed', errorFields(error));
         if (!isMounted) return;
         setTheme('light');
       }

@@ -22,6 +22,8 @@ import {
 } from '../kyc-error';
 import type { ApiResponse, LegalConsentRequiredDetail } from './types-1';
 import { RequestGate } from './request-gate';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export class HttpClient extends RequestGate {
   protected isRefreshing: boolean = false;
@@ -58,14 +60,14 @@ export class HttpClient extends RequestGate {
         });
 
         if (response.ok) {
-          console.log('[Auth] Token refreshed successfully');
+          logger.ok('Auth', 'TokenRefreshed');
           return true;
         }
 
-        console.warn('[Auth] Token refresh failed:', response.status);
+        logger.warn('Auth', 'TokenRefreshRejected', { status_code: response.status });
         return false;
       } catch (error) {
-        console.error('[Auth] Token refresh error:', error);
+        logger.error('Auth', 'TokenRefreshFailed', errorFields(error));
         return false;
       } finally {
         this.isRefreshing = false;
@@ -182,7 +184,7 @@ export class HttpClient extends RequestGate {
         const isAuthEndpoint = isAuthFlowEndpoint;
 
         if (!isAuthEndpoint) {
-          console.log('[Auth] Access token expired, attempting refresh...');
+          logger.ok('Auth', 'AccessTokenExpired');
           const refreshSuccess = await this.refreshToken();
 
           if (refreshSuccess) {
@@ -360,7 +362,7 @@ export class HttpClient extends RequestGate {
         status: response.status,
       };
     } catch (error) {
-      console.error('API request failed:', error);
+      logger.error('Api', 'RequestFailed', errorFields(error));
       throw error;
     }
   }

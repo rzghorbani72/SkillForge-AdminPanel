@@ -2,6 +2,8 @@
 
 import { cookies } from 'next/headers';
 import { buildTrustedBackendUrl } from '@/lib/security/ssrf';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 const AUTH_COOKIES = ['jwt', 'refresh_token', 'csrf-token'];
 
@@ -40,7 +42,7 @@ export async function logout(): Promise<{ success: boolean; error?: string }> {
 
     return { success: true };
   } catch (error) {
-    console.error('Logout error:', error);
+    logger.error('Auth', 'LogoutFailed', errorFields(error));
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Logout failed',

@@ -16,6 +16,8 @@ import {
 } from '@/lib/phone-utils';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { getDefaultCountryByLanguage } from '@/lib/country-codes';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface PhoneInputWithCountryProps {
   id: string;
@@ -110,7 +112,7 @@ export function PhoneInputWithCountry({
           storeCountry(detectedCountry);
         }
       } catch (error) {
-        console.warn('Failed to detect country:', error);
+        logger.warn('Geo', 'DetectCountryFailed', errorFields(error));
       } finally {
         setIsLoadingCountry(false);
       }

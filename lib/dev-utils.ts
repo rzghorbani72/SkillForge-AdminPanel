@@ -3,6 +3,7 @@
  */
 
 import { ACADEMY_DOMAIN } from './slug';
+import { logger } from '@/lib/logging/app-logger';
 
 /**
  * Check if the application is running in development mode
@@ -49,7 +50,7 @@ export function getAdminPanelUrl(): string {
  */
 export function logDevInfo(message: string, data?: any): void {
   if (isDevelopmentMode()) {
-    console.log(`[DEV] ${message}`, data || '');
+    logger.ok('Dev', 'Info', { message, has_data: data !== undefined });
   }
 }
 
@@ -58,7 +59,7 @@ export function logDevInfo(message: string, data?: any): void {
  */
 export function showDevNotification(message: string): void {
   if (isDevelopmentMode()) {
-    console.log(`[DEV NOTIFICATION] ${message}`);
+    logger.ok('Dev', 'Notification', { message });
     // You can also show a toast notification here if needed
   }
 }

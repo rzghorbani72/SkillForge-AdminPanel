@@ -123,18 +123,12 @@ export const useVideoUpload = (options: VideoUploadOptions = {}) => {
           },
           selectedPosterFile || undefined,
           (progress) => {
-            console.log(`Progress callback received: ${progress}%`);
             // Stop simulation when real progress is received
             stopProgressSimulation();
             // Use requestAnimationFrame to ensure smooth UI updates
             requestAnimationFrame(() => {
               setUploadProgress(progress);
             });
-
-            // If progress reaches 100%, the upload is complete
-            if (progress >= 100) {
-              console.log('Upload progress reached 100% - upload complete');
-            }
           },
           abortController,
         );

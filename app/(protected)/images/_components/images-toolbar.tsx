@@ -7,6 +7,8 @@ import { ErrorHandler } from '@/lib/error-handler';
 import ImageUploadModal from '@/components/modal/image-upload-modal';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { ImageItem } from '../_lib/page-helpers';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export function ImagesToolbar({
   fetchImages,
@@ -51,7 +53,7 @@ export function ImagesToolbar({
           fetchImages();
         }}
         onError={(error) => {
-          console.error('Error uploading image:', error);
+          logger.error('Images', 'UploadingImageFailed', errorFields(error));
           ErrorHandler.handleApiError(error);
         }}
         modalTitle={t('media.uploadImage')}

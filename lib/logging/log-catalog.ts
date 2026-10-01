@@ -7,6 +7,101 @@
 import type { LogCatalog } from './logger';
 
 export const LOG_CATALOG = {
+  Academies: {
+    description: 'Loading and caching the academies a user can switch between.',
+    actions: {
+      CachingAcademiesFailed: {
+        description: 'Academies caching academies failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      ClearingAcademyDataFailed: {
+        description: 'Academies clearing academy data failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingAcademiesFailed: {
+        description: 'Academies fetching academies failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingCategoriesFailed: {
+        description: 'Academies fetching categories failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingStoreDetailFailed: {
+        description: 'Academies fetching store detail failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingStoreFinancialDataFailed: {
+        description: 'Academies fetching store financial data failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingStoresFailed: {
+        description: 'Academies fetching stores failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingUserFailed: {
+        description: 'Academies fetching user failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      LoadingAcademiesFailed: {
+        description: 'Academies loading academies failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      MissingCurrencyConfig: {
+        description: 'Academies missing currency config.',
+        level: 'warn',
+        fields: ['academy_id', 'has_currency', 'has_currency_symbol'] as const,
+      },
+      MissingCurrencyFields: {
+        description: 'Academies missing currency fields.',
+        level: 'warn',
+        fields: ['academy_id'] as const,
+      },
+      ReadingCachedAcademiesFailed: {
+        description: 'Academies reading cached academies failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      UnexpectedStoresResponse: {
+        description: 'Academies unexpected stores response.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
+  AccessControl: {
+    description: 'Permission checks before showing a screen.',
+    actions: {
+      AccessControlCheckFailed: {
+        description: 'Access control access control check failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchResourceFailed: {
+        description: 'Access control fetch resource failed.',
+        level: 'error',
+        fields: ['resource_type'] as const,
+      },
+    },
+  },
+  Api: {
+    description: 'Failures of calls from the panel to the API.',
+    actions: {
+      RequestFailed: {
+        description: 'API request failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
   Assignments: {
     description: 'Homework a teacher sets on a lesson and the submissions it collects.',
     actions: {
@@ -14,6 +109,86 @@ export const LOG_CATALOG = {
         description: 'Teacher created or updated the homework attached to a course lesson or season.',
         level: 'info',
         fields: ['assignment_id', 'parent_id', 'parent_kind'] as const,
+      },
+    },
+  },
+  Audios: {
+    description: 'Audio library actions in the manager panel.',
+    actions: {
+      DeletingAudioFailed: {
+        description: 'Audios deleting audio failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      PlayAudioFailed: {
+        description: 'Audios play audio failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      UpdatingAudioFailed: {
+        description: 'Audios updating audio failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
+  Auth: {
+    description: 'Sign-in, sign-out and token refresh in the panel.',
+    actions: {
+      AccessTokenExpired: {
+        description: 'Auth access token expired.',
+        level: 'info',
+        fields: [] as const,
+      },
+      CheckFailed: {
+        description: 'Auth check failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchStoresFailed: {
+        description: 'Auth fetch stores failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchUserStoresFailed: {
+        description: 'Auth fetch user stores failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      LoadStoresFailed: {
+        description: 'Auth load stores failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      LogoutFailed: {
+        description: 'Auth logout failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      TokenRefreshed: {
+        description: 'Auth token refreshed.',
+        level: 'info',
+        fields: [] as const,
+      },
+      TokenRefreshFailed: {
+        description: 'Auth token refresh failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      TokenRefreshRejected: {
+        description: 'Auth token refresh rejected.',
+        level: 'warn',
+        fields: ['status_code'] as const,
+      },
+    },
+  },
+  Branding: {
+    description: 'Applying an academy\'s branding to the panel.',
+    actions: {
+      LoadAcademyBrandingFailed: {
+        description: 'Branding load academy branding failed.',
+        level: 'error',
+        fields: [] as const,
       },
     },
   },
@@ -32,6 +207,31 @@ export const LOG_CATALOG = {
       },
     },
   },
+  Dev: {
+    description: 'Development-only helper messages.',
+    actions: {
+      Info: {
+        description: 'Dev info.',
+        level: 'info',
+        fields: ['has_data', 'message'] as const,
+      },
+      Notification: {
+        description: 'Dev notification.',
+        level: 'info',
+        fields: ['message'] as const,
+      },
+    },
+  },
+  Financial: {
+    description: 'Financial reports and records in the manager panel.',
+    actions: {
+      LoadingReportsDataFailed: {
+        description: 'Financial loading reports data failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
   Gdpr: {
     description: 'Cookie and privacy consent captured in the browser.',
     actions: {
@@ -44,6 +244,76 @@ export const LOG_CATALOG = {
         description: 'GDPR consent declined.',
         level: 'info',
         fields: ['surface'] as const,
+      },
+    },
+  },
+  Geo: {
+    description: 'Detecting the visitor\'s country for phone inputs.',
+    actions: {
+      DetectCountryFailed: {
+        description: 'Geo detect country failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      DetectUserCountryFailed: {
+        description: 'Geo detect user country failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      LookupFailed: {
+        description: 'Geo lookup failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      ReadStoredCountryFailed: {
+        description: 'Geo read stored country failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      SaveCountryFailed: {
+        description: 'Geo save country failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      ServiceFetchFailed: {
+        description: 'Geo service fetch failed.',
+        level: 'warn',
+        fields: ['service'] as const,
+      },
+    },
+  },
+  Images: {
+    description: 'Image library actions in the manager panel.',
+    actions: {
+      DeletingImageFailed: {
+        description: 'Images deleting image failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingImagesFailed: {
+        description: 'Images fetching images failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      SavingImageFailed: {
+        description: 'Images saving image failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      UnexpectedUploadResponse: {
+        description: 'Images unexpected upload response.',
+        level: 'error',
+        fields: [] as const,
+      },
+      UpdatingImageFailed: {
+        description: 'Images updating image failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      UploadingImageFailed: {
+        description: 'Images uploading image failed.',
+        level: 'error',
+        fields: [] as const,
       },
     },
   },
@@ -97,6 +367,61 @@ export const LOG_CATALOG = {
       },
     },
   },
+  Payments: {
+    description: 'Payment and transaction screens in the manager panel.',
+    actions: {
+      FetchPaymentsFailed: {
+        description: 'Payments fetch payments failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchTransactionsFailed: {
+        description: 'Payments fetch transactions failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      LoadingPaymentsDataFailed: {
+        description: 'Payments loading payments data failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
+  Products: {
+    description: 'Product screens in the manager panel.',
+    actions: {
+      CreatingProductFailed: {
+        description: 'Products creating product failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      DeletingProductFailed: {
+        description: 'Products deleting product failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingCoursesFailed: {
+        description: 'Products fetching courses failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingProductFailed: {
+        description: 'Products fetching product failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingProductsFailed: {
+        description: 'Products fetching products failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      UpdatingProductFailed: {
+        description: 'Products updating product failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
   RequestStorm: {
     description: 'Client-side circuit breaker: one API route called far above human speed.',
     actions: {
@@ -107,8 +432,28 @@ export const LOG_CATALOG = {
       },
     },
   },
+  Session: {
+    description: 'Loading and scoping the signed-in user\'s session.',
+    actions: {
+      ExtractingUserRoleFailed: {
+        description: 'Session extracting user role failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      FetchingAuthenticatedUserFailed: {
+        description: 'Session fetching authenticated user failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      ScopeSessionToAnAcademyFailed: {
+        description: 'Session scope session to an academy failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+    },
+  },
   Settings: {
-    description: 'Manager account settings in the academy panel (profile, contact verification).',
+    description: 'Panel settings screens.',
     actions: {
       ContactOtpSendFailed: {
         description: 'Profile contact OTP request failed (cooldown, delivery, or validation).',
@@ -129,6 +474,11 @@ export const LOG_CATALOG = {
         description: 'Profile contact OTP verification failed.',
         level: 'warn',
         fields: ['channel', 'error_code'] as const,
+      },
+      LoadCurrentUserFailed: {
+        description: 'Settings load current user failed.',
+        level: 'error',
+        fields: [] as const,
       },
     },
   },

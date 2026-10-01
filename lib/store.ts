@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Category } from '@/types/api';
 import { apiClient } from './api';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 // Categories Store
 function parseCategoriesPayload(payload: unknown): Category[] {
@@ -107,7 +109,7 @@ export const useCategoriesStore = create<CategoriesState & CategoriesActions>()(
               lastFetchedAt: Date.now(),
             });
           } catch (fetchError) {
-            console.error('Error fetching categories:', fetchError);
+            logger.error('Academies', 'FetchingCategoriesFailed', errorFields(fetchError));
             set({
               error: 'Failed to load categories',
               isLoading: false,
@@ -248,7 +250,7 @@ export const useUserStore = create<UserState & UserActions>()((set, get) => ({
 
       set({ user, isLoading: false, isInitialized: true });
     } catch (error: any) {
-      console.error('Error fetching user:', error);
+      logger.error('Academies', 'FetchingUserFailed', errorFields(error));
       set({
         error: error?.message || 'Failed to fetch user',
         isLoading: false,

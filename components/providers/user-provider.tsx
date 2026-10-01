@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { clearLegacyAuthStorage } from '@/lib/clear-legacy-auth-storage';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export interface AcademyProfile {
   academy_id: string | null;
@@ -155,7 +157,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           },
         });
       } catch (err: any) {
-        console.error('Error fetching authenticated user:', err);
+        logger.error('Session', 'FetchingAuthenticatedUserFailed', errorFields(err));
         setError(err?.message || 'Failed to fetch user');
 
         // If unauthorized or token invalid, redirect to login (after one retry

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { apiClient } from '@/lib/api';
 import { Payment, Transaction } from '@/types/api';
 import { ErrorHandler } from '@/lib/error-handler';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export interface PaymentsSnapshot {
   payments: Payment[];
@@ -53,7 +55,7 @@ export function usePaymentsData(): PaymentsSnapshot {
                   : [];
           setPayments(list);
         } else {
-          console.error('Failed to fetch payments:', paymentsResponse.reason);
+          logger.error('Payments', 'FetchPaymentsFailed', errorFields(paymentsResponse.reason));
           setPayments([]);
         }
 
@@ -74,7 +76,11 @@ export function usePaymentsData(): PaymentsSnapshot {
                       : [];
           setTransactions(list);
         } else {
-          console.error('Failed to fetch transactions:', transactionsResponse.reason);
+          logger.error(
+            'Payments',
+            'FetchTransactionsFailed',
+            errorFields(transactionsResponse.reason),
+          );
           setTransactions([]);
         }
         if (monetizationResponse?.status === 'fulfilled') {
@@ -84,7 +90,7 @@ export function usePaymentsData(): PaymentsSnapshot {
           setMonetizationSummary(null);
         }
       } catch (error) {
-        console.error('Error loading payments data:', error);
+        logger.error('Payments', 'LoadingPaymentsDataFailed', errorFields(error));
         ErrorHandler.handleApiError(error);
         if (isMounted) {
           setPayments([]);

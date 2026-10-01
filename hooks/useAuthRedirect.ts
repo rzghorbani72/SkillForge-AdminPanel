@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { authService } from '@/lib/auth';
 import { isPanelStaffRole } from '@/lib/roles';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface UseAuthRedirectOptions {
   redirectTo?: string;
@@ -81,7 +83,7 @@ export function useAuthRedirect(options: UseAuthRedirectOptions = {}) {
         // Default case - allow access
         setIsLoading(false);
       } catch (error) {
-        console.error('Auth check error:', error);
+        logger.error('Auth', 'CheckFailed', errorFields(error));
 
         if (requireAuth) {
           // Page requires authentication but check failed

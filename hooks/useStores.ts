@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api';
 import type { Academy } from '@/types/api';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface UseStoresReturn {
   stores: Academy[];
@@ -31,18 +33,18 @@ export function useStores(): UseStoresReturn {
           // Fallback for legacy response structure
           storesData = response.data.data;
         } else {
-          console.error('Unexpected response structure:', response.data);
+          logger.error('Academies', 'UnexpectedStoresResponse');
           setError('Invalid response structure from server');
           return;
         }
 
         setStores(storesData);
       } else {
-        console.error('Unexpected response:', response);
+        logger.error('Academies', 'UnexpectedStoresResponse');
         setError('Failed to fetch stores');
       }
     } catch (err) {
-      console.error('Error fetching stores:', err);
+      logger.error('Academies', 'FetchingStoresFailed', errorFields(err));
       setError(err instanceof Error ? err.message : 'Failed to fetch stores');
     } finally {
       setIsLoading(false);

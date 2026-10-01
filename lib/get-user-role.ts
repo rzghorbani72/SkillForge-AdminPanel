@@ -1,5 +1,7 @@
 import { authService } from './auth';
 import { PanelRole } from '@/lib/roles';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 const PANEL_ROLES: PanelRole[] = [
   'PLATFORM_OWNER',
@@ -32,7 +34,7 @@ export function getUserRole(): PanelRole | null {
       }
     }
   } catch (error) {
-    console.error('Error extracting user role:', error);
+    logger.error('Session', 'ExtractingUserRoleFailed', errorFields(error));
   }
 
   return null;

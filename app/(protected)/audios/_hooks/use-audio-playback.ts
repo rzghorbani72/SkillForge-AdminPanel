@@ -4,6 +4,8 @@ import { useState, useRef, MouseEvent } from 'react';
 import { toast } from 'react-toastify';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { DEFAULT_AUDIO_BITRATES_KBPS, AudioItem } from '../_lib/page-helpers';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export function useAudioPlayback() {
   const { t } = useTranslation();
@@ -53,7 +55,7 @@ export function useAudioPlayback() {
           setPlayingId(audio.id);
         })
         .catch((err) => {
-          console.error('Failed to play audio:', err);
+          logger.error('Audios', 'PlayAudioFailed', errorFields(err));
           toast.error(t('media.unableToPlayAudioFile'));
         });
     } else {

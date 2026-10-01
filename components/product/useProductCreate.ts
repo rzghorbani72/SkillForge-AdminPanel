@@ -10,6 +10,8 @@ import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export const productFormSchema = z.object({
   title: z.string().min(5, 'validation.titleMin5').max(80, 'validation.titleMax80'),
@@ -164,7 +166,7 @@ export const useProductCreate = () => {
       toast.success(tNow('toasts.productCreated'));
       router.push('/products');
     } catch (error) {
-      console.error('Error creating product:', error);
+      logger.error('Products', 'CreatingProductFailed', errorFields(error));
       ErrorHandler.handleApiError(error);
     } finally {
       setIsLoading(false);

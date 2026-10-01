@@ -15,6 +15,8 @@ import { AuthWideLayout } from '@/components/auth/auth-wide-layout';
 import { AuthBrand } from '@/components/auth/auth-brand';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { ACADEMY_DOMAIN } from '@/lib/slug';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export default function SelectStorePage() {
   const { t } = useTranslation();
@@ -55,7 +57,7 @@ export default function SelectStorePage() {
         setStores(userStores);
         setFilteredStores(userStores);
       } catch (error) {
-        console.error('Failed to load stores:', error);
+        logger.error('Auth', 'LoadStoresFailed', errorFields(error));
         ErrorHandler.handleApiError(error);
         router.push('/login');
       } finally {

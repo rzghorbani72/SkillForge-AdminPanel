@@ -8,6 +8,8 @@ import {
   setSelectedAcademyId,
 } from '@/lib/store-utils';
 import type { Academy } from '@/types/api';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 /**
  * A staff session can carry no academy even though the user is a member of one
@@ -40,7 +42,7 @@ export function useSessionAcademyRescope({
         setSelectedAcademyId(target.id);
         window.location.reload();
       } catch (error) {
-        console.error('Could not scope session to an academy:', error);
+        logger.error('Session', 'ScopeSessionToAnAcademyFailed', errorFields(error));
       }
     };
 

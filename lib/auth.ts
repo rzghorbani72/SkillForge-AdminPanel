@@ -4,6 +4,8 @@ import { User, Profile, Academy } from '@/types/api';
 import { isDevelopmentMode, getStoreUrl, logDevInfo } from './dev-utils';
 import { wipeNonPlatformStorage } from './wipe-non-platform-storage';
 import { ACADEMY_DOMAIN } from './slug';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export interface AuthUser {
   user: User;
@@ -388,7 +390,7 @@ class AuthService {
       const list = Array.isArray(raw) ? raw : raw?.data;
       return Array.isArray(list) ? list : [];
     } catch (error) {
-      console.error('Failed to fetch user stores:', error);
+      logger.error('Auth', 'FetchUserStoresFailed', errorFields(error));
       return [];
     }
   }

@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Academy } from '@/types/api';
 import { DEFAULT_LANGUAGE, getLocaleForLanguage } from '@/lib/i18n/config';
+import { logger } from '@/lib/logging/app-logger';
 
 export type AcademyCurrencyFormatting =
   | Academy
@@ -147,11 +148,10 @@ export function formatCurrencyWithStore(
   if (!hasCurrencyConfig) {
     // Fallback to default USD formatting if no currency config
     if (process.env.NODE_ENV === 'development') {
-      console.warn('Store missing currency config:', {
-        academyId: 'id' in store ? store.id : undefined,
-        storeName: 'name' in store ? store.name : undefined,
-        hasCurrency: !!storeWithCurrency.currency,
-        hasCurrencySymbol: !!storeWithCurrency.currency_symbol,
+      logger.warn('Academies', 'MissingCurrencyConfig', {
+        academy_id: 'id' in store ? String(store.id) : '',
+        has_currency: !!storeWithCurrency.currency,
+        has_currency_symbol: !!storeWithCurrency.currency_symbol,
       });
     }
     return formatCurrency(amount, { divideBy: divideBy || 100, language });

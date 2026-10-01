@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface ImageEditModalProps {
   /** Whether the dialog is open */
@@ -48,7 +50,7 @@ const ImageEditModal: React.FC<ImageEditModalProps> = ({ open, onOpenChange, ima
       await onSave({ alt: alt.trim() });
       onOpenChange(false);
     } catch (error) {
-      console.error('Error saving image:', error);
+      logger.error('Images', 'SavingImageFailed', errorFields(error));
     } finally {
       setIsSaving(false);
     }

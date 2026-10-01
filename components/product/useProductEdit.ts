@@ -12,6 +12,8 @@ import { tNow } from '@/lib/i18n/t-now';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
 import { ProductCreateFormData } from './useProductCreate';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export type ProductEditFormData = ProductCreateFormData;
 
@@ -93,7 +95,7 @@ export const useProductEdit = () => {
         });
       }
     } catch (error) {
-      console.error('Error fetching product:', error);
+      logger.error('Products', 'FetchingProductFailed', errorFields(error));
       ErrorHandler.handleApiError(error);
       router.push('/products');
     } finally {
@@ -187,7 +189,7 @@ export const useProductEdit = () => {
       toast.success(tNow('toasts.productUpdated'));
       router.push('/products');
     } catch (error) {
-      console.error('Error updating product:', error);
+      logger.error('Products', 'UpdatingProductFailed', errorFields(error));
       ErrorHandler.handleApiError(error);
     } finally {
       setIsSubmitting(false);

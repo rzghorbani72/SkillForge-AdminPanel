@@ -7,6 +7,8 @@ import { Product } from '@/types/api';
 import { toast } from 'react-toastify';
 import { tNow } from '@/lib/i18n/t-now';
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 type UseProductsReturn = {
   products: Product[];
@@ -80,7 +82,7 @@ const useProducts = (): UseProductsReturn => {
 
       setProducts(nextProducts);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      logger.error('Products', 'FetchingProductsFailed', errorFields(error));
       ErrorHandler.handleApiError(error);
       setProducts([]);
     } finally {
@@ -106,7 +108,7 @@ const useProducts = (): UseProductsReturn => {
         toast.error(tNow('toasts.productDeleteFailed'));
       }
     } catch (error) {
-      console.error('Error deleting product:', error);
+      logger.error('Products', 'DeletingProductFailed', errorFields(error));
       ErrorHandler.handleApiError(error);
     }
   };

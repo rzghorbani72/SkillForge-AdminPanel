@@ -14,6 +14,8 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { ReportsTabs } from './_components/reports-tabs';
 import { ReportsSummaryCards } from './_components/reports-summary-cards';
 import { ReportsFiltersCard } from './_components/reports-filters-card';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export default function StoreReportsPage() {
   const { t, language } = useTranslation();
@@ -68,7 +70,7 @@ export default function StoreReportsPage() {
       setSummary(summaryData);
       setRecords(recordsData);
     } catch (error: any) {
-      console.error('Error loading reports data:', error);
+      logger.error('Financial', 'LoadingReportsDataFailed', errorFields(error));
       toast.error(apiErrorMessage(error, tNow('toasts.reportsLoadFailed')));
     } finally {
       setLoading(false);

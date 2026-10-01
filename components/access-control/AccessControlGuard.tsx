@@ -7,6 +7,8 @@ import { ErrorHandler } from '@/lib/error-handler';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock, ArrowLeft } from 'lucide-react';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface AccessControlGuardProps {
   children: ReactNode;
@@ -188,7 +190,7 @@ export default function AccessControlGuard({
         }
       }
     } catch (error) {
-      console.error('Access control check failed:', error);
+      logger.error('AccessControl', 'AccessControlCheckFailed', errorFields(error));
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to verify access permissions.';
       ErrorHandler.showWarning(errorMessage);

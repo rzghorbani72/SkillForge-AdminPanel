@@ -17,6 +17,8 @@ import {
   validateNewPassword as validateChosenPassword,
   validatePhone,
 } from '@/lib/auth-validation';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 type Step = 'identifier' | 'otp' | 'password' | 'success';
 type AuthMethod = 'email' | 'phone';
@@ -71,7 +73,7 @@ export function useForgetPassword() {
         setStores(Array.isArray(response.data) ? response.data : []);
       })
       .catch((error) => {
-        console.error('Failed to fetch stores:', error);
+        logger.error('Auth', 'FetchStoresFailed', errorFields(error));
       });
   }, []);
 

@@ -17,6 +17,8 @@ import { Course } from '@/types/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCategoriesStore } from '@/lib/store';
 import { useAutoSelect } from '@/hooks/useAutoSelect';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 type Props = {
   form: UseFormReturn<ProductCreateFormData>;
@@ -70,7 +72,7 @@ const CreateProductAssociations = ({ form }: Props) => {
 
       setCourses(coursesData);
     } catch (error) {
-      console.error('Error fetching courses:', error);
+      logger.error('Products', 'FetchingCoursesFailed', errorFields(error));
       setCoursesError('Failed to fetch courses');
       setCourses([]);
     } finally {

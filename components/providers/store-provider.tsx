@@ -28,6 +28,8 @@ import { isApiResponseError, resolveApiErrorMessage } from '@/lib/api-error';
 import { currentLanguage } from '@/lib/current-language';
 import { isStudentRankSeat } from '@/components/academies/academy-helpers';
 import { setLogContext } from '@/lib/logging/browser-context';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface StoreContextValue {
   academies: Academy[];
@@ -121,7 +123,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         if (process.env.NODE_ENV === 'development') {
           list.forEach((a) => {
             if (!a.currency && !a.currency_symbol) {
-              console.warn(`Academy ${a.id} (${a.name}) missing currency fields`);
+              logger.warn('Academies', 'MissingCurrencyFields', { academy_id: String(a.id) });
             }
           });
         }
@@ -130,7 +132,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         setCachedAcademies(visible);
         setAcademies(visible);
       } catch (err) {
-        console.error('Error fetching academies:', err);
+        logger.error('Academies', 'FetchingAcademiesFailed', errorFields(err));
         setError(resolveApiErrorMessage(err, currentLanguage()));
 
         if (isApiResponseError(err) && err.error.status === 401) {
@@ -164,7 +166,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
       await fetchFreshAcademies();
     } catch (err) {
-      console.error('Error loading academies:', err);
+      logger.error('Academies', 'LoadingAcademiesFailed', errorFields(err));
       setError('Failed to load academies');
       setIsLoading(false);
     }
