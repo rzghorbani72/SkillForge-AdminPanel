@@ -20,8 +20,8 @@ interface HumanCheckProps {
 
 /**
  * Self-hosted ALTCHA proof-of-work check shown on every anonymous login and
- * code-send form. Starts solving when the form gets focus, so it is usually
- * done before the user presses submit. Remount (change `key`) after a submit.
+ * code-send form. Solves only when the user clicks it. Remount (change `key`)
+ * after a submit.
  */
 export function HumanCheck({ onVerify }: HumanCheckProps) {
   const ref = useRef<HTMLElement>(null);
@@ -48,7 +48,6 @@ export function HumanCheck({ onVerify }: HumanCheckProps) {
     <altcha-widget
       ref={ref}
       challenge={`${getBrowserApiBaseUrl()}/captcha/challenge`}
-      auto="onfocus"
       language={language}
       configuration={WIDGET_CONFIGURATION}
       suppressHydrationWarning
