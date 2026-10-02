@@ -79,7 +79,7 @@ export function useLoginOtp({
 
       toast.success(t('success.otpVerified'), { toastId: 'login-success' });
       scheduleRedirect({
-        href: result.redirect_to ?? '/my-affiliate',
+        href: result.redirect_to ?? '/dashboard',
         title: t('success.otpVerified'),
         message: t('auth.redirectingToAffiliate'),
       });

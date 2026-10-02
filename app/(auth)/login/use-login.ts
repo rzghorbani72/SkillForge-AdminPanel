@@ -92,7 +92,7 @@ export function useLogin() {
     scheduleRedirect({
       href,
       title: t('success.loginSuccess'),
-      message: href.startsWith('/my-affiliate')
+      message: href.startsWith('/dashboard')
         ? t('auth.redirectingToAffiliate')
         : t('auth.redirectingToDashboard'),
     });
