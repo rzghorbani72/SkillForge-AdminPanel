@@ -107,22 +107,18 @@ export default function AffiliatesPage() {
         <StatCard
           label={t('affiliates.statActiveAffiliates')}
           value={activeCount.toLocaleString('fa-IR')}
-          delta={18}
         />
         <StatCard
           label={t('affiliates.statTotalClicks')}
           value={totalClicks.toLocaleString('fa-IR')}
-          delta={24}
         />
         <StatCard
           label={t('affiliates.statMonthlySales')}
           value={totalSales.toLocaleString('fa-IR')}
-          delta={32}
         />
         <StatCard
           label={t('affiliates.statCommissionPaid')}
           value={formatCurrency(totalCommission)}
-          delta={12}
         />
       </div>
 
