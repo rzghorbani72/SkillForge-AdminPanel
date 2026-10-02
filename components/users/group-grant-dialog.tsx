@@ -88,7 +88,6 @@ export function GroupGrantDialog({
     try {
       const data = (await apiClient.getLessons({
         course_id: selectedCourseId,
-        limit: COURSE_PAGE_SIZE,
       })) as LessonRecord[];
       setLessons(toEntities(Array.isArray(data) ? data : []));
     } catch (error) {

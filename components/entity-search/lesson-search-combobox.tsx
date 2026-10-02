@@ -30,7 +30,6 @@ export function LessonSearchCombobox({ courseId, disabled, ...props }: LessonSea
 
       const lessons = (await apiClient.getLessons({
         course_id: courseId,
-        limit: 200,
       })) as LessonRecord[];
 
       const normalizedQuery = query.trim().toLowerCase();

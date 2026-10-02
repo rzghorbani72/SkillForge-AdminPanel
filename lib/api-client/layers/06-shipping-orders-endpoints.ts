@@ -77,8 +77,8 @@ export class ApiLayer06 extends ApiLayer05 {
   async getLessons(params?: {
     course_id?: string;
     season_id?: string;
-    page?: number;
-    limit?: number;
+    published?: boolean;
+    is_free?: boolean;
   }) {
     const queryParams = new URLSearchParams();
     if (params) {
