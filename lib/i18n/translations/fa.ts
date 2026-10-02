@@ -7462,6 +7462,7 @@ export const fa = {
       TEACHER: 'مدرس',
       STUDENT: 'دانشجو',
       USER: 'کاربر',
+      AFFILIATE: 'بازاریاب',
     },
   },
 

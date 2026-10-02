@@ -3641,6 +3641,7 @@ export const ar = {
       TEACHER: 'مدرس',
       STUDENT: 'طالب',
       USER: 'مستخدم',
+      AFFILIATE: 'مسوّق',
     },
   },
 

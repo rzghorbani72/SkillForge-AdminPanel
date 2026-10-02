@@ -7466,6 +7466,7 @@ export const en = {
       TEACHER: 'Instructor',
       STUDENT: 'Student',
       USER: 'User',
+      AFFILIATE: 'Affiliate',
     },
   },
 

@@ -3703,6 +3703,7 @@ const tr = {
       TEACHER: 'Eğitmen',
       STUDENT: 'Öğrenci',
       USER: 'Kullanıcı',
+      AFFILIATE: 'Pazarlamacı',
     },
   },
 
