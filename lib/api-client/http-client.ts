@@ -332,8 +332,8 @@ export class HttpClient extends RequestGate {
 
       // Handle payment required (402) - subscription expired/inactive.
       // A lapsed academy stays read-only (GETs still work); only writes 402 here.
-      // Surface a toast + dismissible warning + Upgrade CTA and leave the panel
-      // usable, instead of throwing (freezes the panel) or force-redirecting.
+      // Surface a toast + dismissible warning + Upgrade CTA, then reject so the
+      // caller can reset its pending state (a never-settling promise froze forms).
       if (response.status === 402) {
         const subscriptionError = new ApiResponseError(parseApiError(response.status, data));
         const errorMessage = resolveApiErrorMessage(subscriptionError, currentLanguage());
@@ -346,9 +346,6 @@ export class HttpClient extends RequestGate {
             toastId: `subscription:${errorMessage}`,
           });
           this.notifySubscriptionRequired(errorMessage);
-          // The blocked write is intentionally left unresolved: the caller keeps
-          // its pending state while the gate prompts the manager to upgrade.
-          return new Promise<ApiResponse<T>>(() => {});
         }
         throw subscriptionError;
       }
