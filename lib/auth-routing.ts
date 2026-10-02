@@ -11,11 +11,6 @@ import { isPlatformStaff } from './roles';
  * import browser-only or app-only modules.
  */
 
-/**
- * Every role may use the panel except these. Academies invent their own roles, so
- * an allowlist would lock out each new one — the rule is stated as "student rank
- * and below cannot sign in", and everything else is staff.
- */
 const NON_PANEL_ROLES = ['STUDENT', 'USER'] as const;
 
 /** Affiliates are external referrers: they sign in, but only to their own area. */
@@ -24,13 +19,6 @@ const AFFILIATE_ROUTES = ['/dashboard', '/user', '/settings'] as const;
 /** Banned or deactivated staff land here. Not a fallback for missing panel roles. */
 export const NO_HOME_ROUTE = '/unauthorized';
 
-/**
- * Academy-defined roles are stored under a generated name — `TEACHER_1`,
- * `MANAGER_2` — and rank, not name, is the authorization signal (see the
- * Backend's `auth/role-access.ts`). Comparing the raw name against `'TEACHER'`
- * therefore misses every custom role, which is what left those users stranded
- * on the login screen. Strip the generated suffix back to its base role.
- */
 export function normalizeRoleName(name: string): string {
   return name.replace(/_\d+$/, '');
 }
@@ -44,13 +32,6 @@ type SessionShape = {
   } | null;
 };
 
-/**
- * The authoritative role of a login response or JWT payload.
- *
- * `roles[0]` is what the backend put into the JWT, so it is the only value that can
- * agree with the proxy. `currentProfile.Role.name` is a fallback because platform
- * staff sessions carry an AdminProfile, which has no Role relation at all.
- */
 export function resolveSessionRole(session: unknown): string | null {
   if (!session || typeof session !== 'object') return null;
   const { roles, role, currentProfile } = session as SessionShape;
