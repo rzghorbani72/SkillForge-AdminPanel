@@ -13,6 +13,7 @@ interface SettingsSnapshot {
   academy: Academy | null;
   isLoading: boolean;
   refresh: () => void;
+  refreshUser: () => void;
 }
 
 export function useSettingsData(): SettingsSnapshot {
@@ -26,10 +27,12 @@ export function useSettingsData(): SettingsSnapshot {
     refreshAcademies,
   } = useStore();
 
+  const refreshUser = useCallback(() => setRefreshToken(Date.now()), []);
+
   const refresh = useCallback(() => {
-    setRefreshToken(Date.now());
+    refreshUser();
     void refreshAcademies();
-  }, [refreshAcademies]);
+  }, [refreshUser, refreshAcademies]);
 
   useEffect(() => {
     let isMounted = true;
@@ -64,7 +67,8 @@ export function useSettingsData(): SettingsSnapshot {
       academy,
       isLoading: isLoadingUser || isLoadingAcademies,
       refresh,
+      refreshUser,
     }),
-    [user, academy, isLoadingUser, isLoadingAcademies, refresh],
+    [user, academy, isLoadingUser, isLoadingAcademies, refresh, refreshUser],
   );
 }
