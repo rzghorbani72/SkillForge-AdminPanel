@@ -4155,6 +4155,8 @@ export const en = {
     messengerHint: 'Telegram and Bale only reach students who have started the bot.',
   },
   users: {
+    changeRoleTitle: 'Change role for {{name}}',
+    rolePermissions: 'Role permissions',
     allUsers: 'All Users',
     loadUserDetailsFailed: 'Failed to load user details',
     enterNewPasswordPrompt: 'Enter new password (min 6 chars)',

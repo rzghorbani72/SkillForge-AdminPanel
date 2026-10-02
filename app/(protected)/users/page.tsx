@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useAuthUser } from '@/hooks/useAuthUser';
@@ -52,7 +52,6 @@ const PLACEHOLDER_STATS: UserStat[] = [
 
 export default function UsersPage() {
   const { t } = useTranslation();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { user: authUser } = useAuthUser();
   const systemRoles = useSystemRoles();
@@ -217,7 +216,6 @@ export default function UsersPage() {
             totalCount={totalCount}
             page={page}
             onPageChange={setPage}
-            onRoleClick={() => router.push('/settings/roles')}
             onChanged={refresh}
           />
         ))}

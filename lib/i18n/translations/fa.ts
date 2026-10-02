@@ -4145,6 +4145,8 @@ export const fa = {
     messengerHint: 'تلگرام و بله فقط برای دانشجویانی کار می‌کند که ربات را استارت کرده باشند.',
   },
   users: {
+    changeRoleTitle: 'تغییر نقش «{{name}}»',
+    rolePermissions: 'دسترسی‌های نقش',
     allUsers: 'همه کاربران',
     loadUserDetailsFailed: 'بارگذاری جزئیات کاربر ناموفق بود',
     enterNewPasswordPrompt: 'رمز عبور جدید را وارد کنید (حداقل ۶ کاراکتر)',

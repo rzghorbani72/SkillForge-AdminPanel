@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { KeyRound, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { KeyRound, Plus, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AssignAccessDialog } from '@/components/access/assign-access-dialog';
 import { AddUserDialog } from '@/components/users/add-user-dialog';
@@ -31,6 +32,11 @@ export function UsersPageHeader({ onChanged }: UsersPageHeaderProps) {
           <p className="mt-1 text-[14px] text-muted-foreground">{t('users.pageDescription')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm" variant="outline" className="gap-1.5" asChild>
+            <Link href="/settings/roles">
+              <ShieldCheck className="h-3.5 w-3.5" /> {t('roles.title')}
+            </Link>
+          </Button>
           <Button
             size="sm"
             variant="outline"

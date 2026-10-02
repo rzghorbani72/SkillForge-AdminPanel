@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useAuthUser } from '@/hooks/useAuthUser';
 import { useLanguage, useTranslation } from '@/lib/i18n/hooks';
 import { formatPhoneDisplay } from '@/lib/phone-utils';
@@ -7,6 +8,7 @@ import { UserAvatar } from './user-avatar';
 import { UserStatusPill } from './user-status-pill';
 import { UserRoleBadge, type RoleConfig } from './user-role-badge';
 import { UserRowActions } from './user-row-actions';
+import { ChangeRoleDialog } from './change-role-dialog';
 import { getRoleLabel } from '@/lib/i18n/role-label';
 import type { User } from '@/types/api';
 
@@ -97,7 +99,6 @@ type UsersTableProps = {
   totalCount: number;
   page: number;
   onPageChange: (page: number) => void;
-  onRoleClick: () => void;
   onChanged: () => void;
 };
 
@@ -107,7 +108,6 @@ export function UsersTable({
   totalCount,
   page,
   onPageChange,
-  onRoleClick,
   onChanged,
 }: UsersTableProps) {
   const { t } = useTranslation();
@@ -115,6 +115,7 @@ export function UsersTable({
   // Profile ids are cuids; authUser.id is typed as a number but holds one.
   const selfId = String(authUser?.id ?? '');
   const totalPages = Math.ceil(totalCount / 20);
+  const [roleUser, setRoleUser] = useState<User | null>(null);
 
   // The list endpoints disagree on shape: /users returns a flat role_name,
   // while /users/{students,teachers,managers} nest it under profiles[0].
@@ -131,6 +132,12 @@ export function UsersTable({
 
   return (
     <div className="table-h-scroll rounded-xl border border-border bg-card">
+      <ChangeRoleDialog
+        user={roleUser}
+        currentRoleName={roleUser ? getUserRoleId(roleUser) : undefined}
+        onClose={() => setRoleUser(null)}
+        onChanged={onChanged}
+      />
       <table className="w-full border-collapse text-base">
         <thead>
           <tr className="border-b border-border bg-muted/50">
@@ -171,7 +178,7 @@ export function UsersTable({
                 currentRoleId={getUserRoleId(u)}
                 isSelf={String(u.id) === selfId}
                 callerRole={authUser?.role}
-                onRoleClick={onRoleClick}
+                onRoleClick={() => setRoleUser(u)}
                 onChanged={onChanged}
               />
             ))
