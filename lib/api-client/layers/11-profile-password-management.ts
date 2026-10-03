@@ -110,6 +110,17 @@ export class ApiLayer11 extends ApiLayer10 {
     });
   }
 
+  async getTemplateChoiceMade(): Promise<boolean> {
+    const response = await this.request<{ made?: boolean; data?: { made?: boolean } }>(
+      '/profiles/me/template-choice',
+    );
+    return (response.data?.data?.made ?? response.data?.made) === true;
+  }
+
+  async markTemplateChoiceMade() {
+    return this.request('/profiles/me/template-choice', { method: 'PUT' });
+  }
+
   // UI Template endpoints
   async getCurrentUITemplate() {
     const response = await this.request('/ui-template/current');

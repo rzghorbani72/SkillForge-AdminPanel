@@ -194,7 +194,10 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
         open={choiceOpen}
         presetKey={presetKey}
         onConfirm={confirmTemplateChoice}
-        onClose={() => setChoiceOpen(false)}
+        onClose={() => {
+          markChoiceMade('default');
+          setChoiceOpen(false);
+        }}
       />
     </div>
   );

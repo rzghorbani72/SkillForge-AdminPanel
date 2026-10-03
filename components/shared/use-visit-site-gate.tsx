@@ -45,7 +45,10 @@ export function useVisitSiteGate(academyId: string | null, enabled: boolean) {
       open={pendingHref !== null}
       presetKey={gate.presetKey}
       onConfirm={confirm}
-      onClose={() => setPendingHref(null)}
+      onClose={() => {
+        gate.markChoiceMade('default');
+        setPendingHref(null);
+      }}
     />
   );
 
