@@ -1873,6 +1873,11 @@ export const fa = {
       linkCopied: 'لینک کپی شد',
       allSessionsDone: 'همهٔ جلسه‌ها برگزار شده است.',
       openLink: 'ورود به جلسه',
+      linkNotOpenYet: 'لینک جلسه از ۳۰ دقیقه پیش از شروع کلاس باز می‌شود.',
+      publishCourseFirst: 'اول دوره را منتشر کنید، بعد کلاس را.',
+      planSeats:
+        'سقف پلن شما: حداکثر {{max}} نفر در هر کلاس · دانشجوی کلاس خصوصی: {{used}} از {{limit}}',
+      planSeatsHint: 'دانشجویان کلاس‌های گروهیِ عمومی از این سقف کم نمی‌کنند.',
       termColumn: 'بازهٔ برگزاری',
       termRange: 'از {{from}} تا {{to}}',
       startDateMissing: 'تاریخ شروع هنوز ثبت نشده',

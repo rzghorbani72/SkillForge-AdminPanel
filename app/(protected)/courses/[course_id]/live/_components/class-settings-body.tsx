@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ClassSellingFields } from '@/components/class/class-selling-fields';
 import { ClassInviteBlock } from '@/components/class/class-invite-block';
+import { ClassPlanSeatsNote } from '@/components/class/class-plan-seats-note';
 import { GroupActionsCard } from '@/components/class/group-actions-card';
 import { GroupSlotEditor } from '@/app/(protected)/tutoring/groups/_components/group-slot-editor';
 import { useClassDetail } from '@/hooks/use-class-detail';
@@ -52,12 +53,14 @@ function ClassTimetableBlock({
 
 function ClassSettingsFooter({
   isDraft,
+  coursePublished,
   busy,
   saving,
   onPublish,
   onSave,
 }: {
   isDraft: boolean;
+  coursePublished: boolean;
   busy: boolean;
   saving: boolean;
   onPublish: () => void;
@@ -66,21 +69,26 @@ function ClassSettingsFooter({
   const { t } = useTranslation();
 
   return (
-    <div className="flex shrink-0 gap-2 border-t bg-background p-4 sm:px-6">
-      {isDraft && (
-        <Button
-          type="button"
-          variant="outline"
-          className="flex-1"
-          disabled={busy || saving}
-          onClick={onPublish}
-        >
-          {busy || saving ? t('common.saving') : t('courses.live.publishClass')}
-        </Button>
+    <div className="shrink-0 space-y-2 border-t bg-background p-4 sm:px-6">
+      {isDraft && !coursePublished && (
+        <p className="text-xs text-muted-foreground">{t('courses.live.publishCourseFirst')}</p>
       )}
-      <Button type="button" className="flex-1" disabled={busy || saving} onClick={onSave}>
-        {saving ? t('common.saving') : t('common.saveChanges')}
-      </Button>
+      <div className="flex gap-2">
+        {isDraft && (
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            disabled={busy || saving || !coursePublished}
+            onClick={onPublish}
+          >
+            {busy || saving ? t('common.saving') : t('courses.live.publishClass')}
+          </Button>
+        )}
+        <Button type="button" className="flex-1" disabled={busy || saving} onClick={onSave}>
+          {saving ? t('common.saving') : t('common.saveChanges')}
+        </Button>
+      </div>
     </div>
   );
 }
@@ -117,6 +125,7 @@ function ClassSettingsSections({
           canEditSchedule={settings.canEditSchedule}
           patch={settings.patch}
         />
+        <ClassPlanSeatsNote />
         <ClassSellingFields
           idPrefix="edit-group"
           capacity={Number(settings.draft.capacity) || 1}
@@ -163,6 +172,7 @@ function ClassSettingsSections({
       </div>
       <ClassSettingsFooter
         isDraft={group.status === 'DRAFT'}
+        coursePublished={coursePublished}
         busy={detail.busy}
         saving={settings.saving}
         onPublish={() => void settings.doPublish()}

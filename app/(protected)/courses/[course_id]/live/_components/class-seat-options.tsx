@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { ClassSellingFields } from '@/components/class/class-selling-fields';
+import { ClassPlanSeatsNote } from '@/components/class/class-plan-seats-note';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { clampClassCapacity, MAX_CLASS_CAPACITY } from '@/lib/live-room';
 import { classSeats, type useScheduleBuilder } from '../hooks/use-schedule-builder';
@@ -33,6 +34,7 @@ export function ClassSeatOptions({ fields, set, offerPrice, className }: ClassSe
       aside={t('common.optional')}
       className={className}
     >
+      <ClassPlanSeatsNote />
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-0.5">
           <Label htmlFor="private-class">{t('courses.live.privateClass')}</Label>

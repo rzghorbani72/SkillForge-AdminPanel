@@ -23,6 +23,8 @@ export const queryKeys = {
 
   categories: (academyId: AcademyId) => scope(academyId, 'categories'),
 
+  classPlanSeats: (academyId: AcademyId) => scope(academyId, 'class-plan-seats'),
+
   assignableRoles: (academyId: AcademyId) => scope(academyId, 'assignable-roles'),
 
   accessControl: (academyId: AcademyId) => scope(academyId, 'access-control'),

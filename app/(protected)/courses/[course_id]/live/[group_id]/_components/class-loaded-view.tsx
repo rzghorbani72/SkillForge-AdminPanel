@@ -48,7 +48,11 @@ export function ClassLoadedView({
 
       <ClassSummaryCard group={group} coursePublished={coursePublished} />
 
-      <NextSessionCard sessions={timetable.sessions} classMeetingUrl={group.meeting_url} />
+      <NextSessionCard
+        sessions={timetable.sessions}
+        classMeetingUrl={group.meeting_url}
+        joinTarget={{ kind: 'group', id: group.id }}
+      />
 
       <GroupRosterCard
         members={group.members ?? []}

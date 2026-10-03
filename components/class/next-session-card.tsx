@@ -1,20 +1,22 @@
 'use client';
 
-import { CalendarClock, Copy, Link2, Radio, Video } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { CalendarClock, Link2, Radio, Video } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataPanel } from '@/components/shared/data-list/data-panel';
+import { useOpenClassMeeting } from '@/hooks/use-open-class-meeting';
 import { classProgress } from '@/lib/class-sessions';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import type { ClassSession } from '@/types/learning-operations';
+import type { ClassJoinTarget, ClassSession } from '@/types/learning-operations';
 
 interface NextSessionCardProps {
   sessions: ClassSession[];
   /** The class-wide link, used by any meeting that has none of its own. */
   classMeetingUrl?: string | null;
+  /** The room the join button asks the server to sign a link for. */
+  joinTarget: ClassJoinTarget;
 }
 
 /**
@@ -22,7 +24,7 @@ interface NextSessionCardProps {
  * running), which link that meeting will actually use, and how much of the term
  * is left. Everything else on the page is editing; this is just answering.
  */
-export function NextSessionCard({ sessions, classMeetingUrl }: NextSessionCardProps) {
+export function NextSessionCard({ sessions, classMeetingUrl, joinTarget }: NextSessionCardProps) {
   const { t, language } = useTranslation();
   const formatNumber = useNumberFormat();
   const progress = classProgress(sessions);
@@ -31,11 +33,7 @@ export function NextSessionCard({ sessions, classMeetingUrl }: NextSessionCardPr
   const percent = progress.total ? Math.round((progress.done / progress.total) * 100) : 0;
 
   const link = session?.meeting_url || classMeetingUrl || null;
-  const copy = async () => {
-    if (!link) return;
-    await navigator.clipboard.writeText(link);
-    toast.success(t('courses.live.linkCopied'));
-  };
+  const meeting = useOpenClassMeeting(joinTarget);
 
   const when = session
     ? new Intl.DateTimeFormat(language, {
@@ -86,17 +84,14 @@ export function NextSessionCard({ sessions, classMeetingUrl }: NextSessionCardPr
                     : t('courses.live.noLinkYet')}
               </Badge>
               {link ? (
-                <>
-                  <Button type="button" size="sm" asChild>
-                    <a href={link} target="_blank" rel="noreferrer">
-                      {t('courses.live.openLink')}
-                    </a>
-                  </Button>
-                  <Button type="button" size="sm" variant="outline" onClick={() => void copy()}>
-                    <Copy className="h-3.5 w-3.5" />
-                    {t('courses.live.copyLink')}
-                  </Button>
-                </>
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={meeting.opening}
+                  onClick={() => void meeting.open()}
+                >
+                  {t('courses.live.openLink')}
+                </Button>
               ) : null}
             </div>
           </>

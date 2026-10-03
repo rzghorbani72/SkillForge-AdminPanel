@@ -72,7 +72,10 @@ export default function EngagementClassPage() {
         ) : (
           <>
             <EngagementSummaryCard engagement={cls.engagement} />
-            <NextSessionCard sessions={cls.sessions} />
+            <NextSessionCard
+              sessions={cls.sessions}
+              joinTarget={{ kind: 'engagement', id: engagementId }}
+            />
 
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
               <div className="space-y-6">

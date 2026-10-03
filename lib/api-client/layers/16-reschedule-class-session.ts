@@ -10,6 +10,9 @@ import type {
   ClassSessionCancelResolution,
   CancelClassSessionResult,
   CancelClassPreview,
+  ClassJoinLink,
+  ClassJoinTarget,
+  ClassPlanSeats,
   CancelTutoringGroupPayload,
   CancelTutoringGroupResult,
   ClassSession,
@@ -142,6 +145,23 @@ export class ApiLayer16 extends ApiLayer15 {
     const res = await this.request<TutoringGroup | { data: TutoringGroup }>(
       `/tutoring/groups/${groupId}`,
     );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  async getClassPlanSeats(): Promise<ClassPlanSeats> {
+    const res = await this.request<ClassPlanSeats | { data: ClassPlanSeats }>(
+      '/tutoring/groups/plan-seats',
+    );
+    return unwrapDataEnvelope(res.data);
+  }
+
+  /** The server signs the meeting link; the raw room URL is refused by our Meet server. */
+  async getClassJoinLink(target: ClassJoinTarget): Promise<ClassJoinLink> {
+    const path =
+      target.kind === 'group'
+        ? `/tutoring/groups/${target.id}/room`
+        : `/tutoring/engagements/${target.id}/room`;
+    const res = await this.request<ClassJoinLink | { data: ClassJoinLink }>(path);
     return unwrapDataEnvelope(res.data);
   }
 
