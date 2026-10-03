@@ -93,6 +93,8 @@ export function CourseAccessSection({ courseId, onPendingChange }: CourseAccessS
           {...(onPendingChange
             ? { onSelectionChange: onPendingChange }
             : { onSubmit: handleGrant, isSaving })}
+          grantedStudentIds={students.map((grant) => grant.profile_id)}
+          onRevokeStudent={(profileId) => void handleRevoke({ profile_id: profileId })}
           targetsFooter={
             <AccessGrantList
               students={students}

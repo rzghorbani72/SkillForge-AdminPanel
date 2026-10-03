@@ -39,6 +39,9 @@ type AssignAccessFormProps = {
   hasExternalTarget?: boolean;
   /** Rendered inside step 1, under the pickers (e.g. who already has access). */
   targetsFooter?: ReactNode;
+  /** Students who already hold access: shown checked, unchecking revokes. */
+  grantedStudentIds?: string[];
+  onRevokeStudent?: (profileId: string) => void;
 };
 
 /**
@@ -55,6 +58,8 @@ export function AssignAccessForm({
   disabledHint,
   hasExternalTarget = false,
   targetsFooter,
+  grantedStudentIds,
+  onRevokeStudent,
 }: AssignAccessFormProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
@@ -131,6 +136,8 @@ export function AssignAccessForm({
               items={students}
               selected={profileIds}
               onChange={setProfileIds}
+              granted={grantedStudentIds}
+              onRevoke={onRevokeStudent}
               disabled={isLoading || isSaving}
               labels={{
                 placeholder: t('accessGrants.selectStudents'),

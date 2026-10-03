@@ -26,6 +26,9 @@ type EntityMultiSelectProps = {
   /** Optional trailing cell per row — e.g. a course price. */
   renderMeta?: (item: SelectableEntity) => ReactNode;
   disabled?: boolean;
+  /** Already-saved ids: shown checked; clicking one calls `onRevoke` instead of selecting. */
+  granted?: string[];
+  onRevoke?: (id: string) => void;
 };
 
 /**
@@ -40,6 +43,8 @@ export function EntityMultiSelect({
   labels,
   renderMeta,
   disabled = false,
+  granted = [],
+  onRevoke,
 }: EntityMultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -50,6 +55,10 @@ export function EntityMultiSelect({
   const selectedItems = items.filter((item) => selected.includes(item.id));
 
   function toggle(id: string) {
+    if (granted.includes(id)) {
+      onRevoke?.(id);
+      return;
+    }
     onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
   }
 
@@ -91,11 +100,12 @@ export function EntityMultiSelect({
               <p className="px-3 py-4 text-center text-sm text-muted-foreground">{labels.empty}</p>
             ) : (
               filtered.map((item) => {
-                const isChecked = selected.includes(item.id);
+                const isChecked = selected.includes(item.id) || granted.includes(item.id);
                 return (
                   <button
                     key={item.id}
                     type="button"
+                    disabled={disabled}
                     onClick={() => toggle(item.id)}
                     className="flex w-full items-center gap-3 px-3 py-2 text-start text-sm transition-colors hover:bg-accent"
                   >
