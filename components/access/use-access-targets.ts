@@ -14,6 +14,12 @@ type StudentRecord = {
   full_name?: string | null;
 };
 
+type UserListPayload = { users?: StudentRecord[]; profiles?: StudentRecord[] } | null;
+
+function listRecords(payload: UserListPayload): StudentRecord[] {
+  return payload?.users ?? payload?.profiles ?? [];
+}
+
 /**
  * The two things a manager can hand access to: individual students and student
  * groups. Loaded once per panel so the same lists back every assign surface.
@@ -28,22 +34,22 @@ export function useAccessTargets(enabled: boolean) {
   const load = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [studentResponse, groupResponse] = await Promise.all([
+      // Plain USER members are learners too; the server makes them STUDENT on grant.
+      const [studentResponse, userResponse, groupResponse] = await Promise.all([
         apiClient.getStudentUsers({ page: 1, limit: STUDENT_PAGE_SIZE }),
+        apiClient.getUsers({ page: 1, limit: STUDENT_PAGE_SIZE, role: 'USER' }).catch(() => null),
         studentGroupsApi.list(),
       ]);
 
-      const payload = studentResponse as {
-        users?: StudentRecord[];
-        profiles?: StudentRecord[];
-      } | null;
-      const records = payload?.users ?? payload?.profiles ?? [];
+      const seen = new Set<string>([selfId]);
+      const records = [...listRecords(studentResponse), ...listRecords(userResponse)];
       setStudents(
         records
-          .filter(
-            (record): record is StudentRecord & { id: string } =>
-              !!record.id && record.id !== selfId,
-          )
+          .filter((record): record is StudentRecord & { id: string } => {
+            if (!record.id || seen.has(record.id)) return false;
+            seen.add(record.id);
+            return true;
+          })
           .map((record) => ({
             id: record.id,
             title: record.full_name || record.display_name || '—',
