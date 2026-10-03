@@ -14,6 +14,7 @@ interface SortableTopicRowProps {
   index: number;
   title: string;
   onChange: (title: string) => void;
+  onBlur: () => void;
   onRemove: () => void;
 }
 
@@ -23,6 +24,7 @@ export default function SortableTopicRow({
   index,
   title,
   onChange,
+  onBlur,
   onRemove,
 }: SortableTopicRowProps) {
   const { t } = useTranslation();
@@ -56,6 +58,7 @@ export default function SortableTopicRow({
         <Input
           value={title}
           onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
           placeholder={t('courses.live.topicPlaceholder')}
         />
         <Button

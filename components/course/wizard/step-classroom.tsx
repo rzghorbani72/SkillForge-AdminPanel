@@ -4,7 +4,6 @@ import { Loader2 } from 'lucide-react';
 import TopicListEditor from '@/app/(protected)/courses/[course_id]/live/_components/topic-list-editor';
 import LivePricingCard from '@/app/(protected)/courses/[course_id]/live/_components/live-pricing-card';
 import { useLiveCourse } from '@/app/(protected)/courses/[course_id]/live/hooks/use-live-course';
-import { offersKey } from '@/app/(protected)/courses/[course_id]/live/hooks/use-schedule-builder';
 
 /**
  * A live course has no lesson tree — this step replaces `content` for it:
@@ -31,7 +30,6 @@ export function StepClassroom({ courseId }: { courseId: string }) {
         onSaved={(saved) => patch({ topics: saved })}
       />
       <LivePricingCard
-        key={offersKey(offers)}
         courseId={courseId}
         courseTitle={course.title}
         tutorProfileId={String(course.author_id)}

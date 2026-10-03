@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PriceInput } from '@/components/ui/price-input';
 import { PriceLadderPreview } from '@/components/class/price-ladder-preview';
@@ -56,21 +55,16 @@ export default function LivePricingCard({
     return createOffer({ courseId, courseTitle, tutorProfileId }, kind, price);
   };
 
-  const save = async () => {
-    if (!groupPrice && !soloPrice) {
-      toast.error(t('courses.live.pricesRequired'));
-      return;
-    }
+  const save = async (kind: TutoringOfferKind, raw: string) => {
+    if (isSaving || !raw || raw === priceOf(offers, kind)) return;
     setIsSaving(true);
     try {
-      const saved: SavedOffer[] = [];
-      if (groupPrice) saved.push(await saveOne('GROUP', groupPrice));
-      if (soloPrice) saved.push(await saveOne('SOLO', soloPrice));
-      onSaved(saved);
+      const offer: SavedOffer = await saveOne(kind, raw);
+      onSaved([offer]);
 
       // Pricing a live course switches class selling on; say so, because it
       // also adds the class pages to the sidebar.
-      if (saved.some((offer) => offer.feature_enabled_now)) {
+      if (offer.feature_enabled_now) {
         toast.success(
           <span>
             {t('courses.live.pricesSavedAndSellingEnabled')}{' '}
@@ -89,7 +83,9 @@ export default function LivePricingCard({
     }
   };
 
-  const dirty = groupPrice !== priceOf(offers, 'GROUP') || soloPrice !== priceOf(offers, 'SOLO');
+  const dirty =
+    (!!groupPrice && groupPrice !== priceOf(offers, 'GROUP')) ||
+    (!!soloPrice && soloPrice !== priceOf(offers, 'SOLO'));
 
   return (
     <SetupCard
@@ -107,6 +103,7 @@ export default function LivePricingCard({
               id="group-price"
               value={groupPrice}
               onChange={setGroupPrice}
+              onBlur={() => void save('GROUP', groupPrice)}
               suffix={t('common.toman')}
             />
             <p className="text-xs text-muted-foreground">{t('courses.live.groupPriceHint')}</p>
@@ -117,6 +114,7 @@ export default function LivePricingCard({
               id="solo-price"
               value={soloPrice}
               onChange={setSoloPrice}
+              onBlur={() => void save('SOLO', soloPrice)}
               suffix={t('common.toman')}
             />
             <p className="text-xs text-muted-foreground">{t('courses.live.soloPriceHint')}</p>
@@ -126,9 +124,6 @@ export default function LivePricingCard({
           groupPrice={Number(groupPrice) || 0}
           soloPrice={Number(soloPrice) || 0}
         />
-        <Button type="button" size="sm" onClick={save} disabled={isSaving || !dirty}>
-          {isSaving ? t('common.saving') : t('common.save')}
-        </Button>
       </div>
     </SetupCard>
   );

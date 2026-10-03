@@ -39,9 +39,9 @@ const signature = (rows: readonly { title: string }[]) =>
   rows.map((row) => row.title.trim()).join('\u0000');
 
 /**
- * The syllabus a live course promises. Saved as one ordered list rather than
- * row by row, so reordering and renaming are a single call the backend can
- * validate against the meetings already named after a topic.
+ * The syllabus a live course promises. Autosaved as one ordered list rather
+ * than row by row, so reordering and renaming are a single call the backend
+ * can validate against the meetings already named after a topic.
  */
 export default function TopicListEditor({ courseId, initial, onSaved }: TopicListEditorProps) {
   const { t } = useTranslation();
@@ -66,39 +66,42 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    setDrafts((rows) => {
-      const from = rows.findIndex((row) => row.key === active.id);
-      const to = rows.findIndex((row) => row.key === over.id);
-      if (from === -1 || to === -1) return rows;
-      const next = [...rows];
-      const [moved] = next.splice(from, 1);
-      next.splice(to, 0, moved);
-      return next;
-    });
+    const from = drafts.findIndex((row) => row.key === active.id);
+    const to = drafts.findIndex((row) => row.key === over.id);
+    if (from === -1 || to === -1) return;
+    const next = [...drafts];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    setDrafts(next);
+    void save(next);
   };
 
-  const save = async () => {
-    // Order is the list order: the backend stores it, so what the teacher sees
-    // here is the order a student is promised.
-    const topics = drafts
-      .map((row) => ({ id: row.id, title: row.title.trim() }))
-      .filter((row) => row.title);
-    if (!topics.length) {
-      toast.error(t('courses.live.topicsRequired'));
-      return;
-    }
+  const remove = (key: string) => {
+    const next = drafts.filter((row) => row.key !== key);
+    setDrafts(next);
+    void save(next);
+  };
+
+  // Autosave: runs on blur, remove and reorder. Order is the list order, so
+  // what the teacher sees is the order a student is promised.
+  const save = async (rows: Draft[] = drafts) => {
+    const filled = rows.filter((row) => row.title.trim());
+    if (isSaving || !filled.length || signature(filled) === saved) return;
     setIsSaving(true);
     try {
-      const saved = await apiClient.replaceCourseTopics(courseId, topics);
-      setDrafts(
-        saved.map((topic) => ({
-          key: topic.id,
-          id: topic.id,
-          title: topic.title,
-        })),
+      const result = await apiClient.replaceCourseTopics(
+        courseId,
+        filled.map((row) => ({ id: row.id, title: row.title.trim() })),
       );
-      setSaved(signature(saved));
-      onSaved?.(saved);
+      // Keep row keys so the field being typed in is not remounted.
+      let next = 0;
+      setDrafts((current) =>
+        current.map((row) =>
+          row.title.trim() ? { ...row, id: result[next++]?.id ?? row.id } : row,
+        ),
+      );
+      setSaved(signature(result));
+      onSaved?.(result);
       toast.success(t('courses.live.topicsSaved'));
     } catch (err) {
       ErrorHandler.handleApiError(err);
@@ -139,7 +142,8 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
                   index={index}
                   title={draft.title}
                   onChange={(title) => update(draft.key, title)}
-                  onRemove={() => setDrafts((rows) => rows.filter((row) => row.key !== draft.key))}
+                  onBlur={() => void save()}
+                  onRemove={() => remove(draft.key)}
                 />
               ))}
             </div>
@@ -155,9 +159,6 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
           >
             <Plus className="h-4 w-4" />
             {t('courses.live.addTopic')}
-          </Button>
-          <Button type="button" size="sm" onClick={save} disabled={isSaving || !dirty}>
-            {isSaving ? t('common.saving') : t('common.save')}
           </Button>
         </div>
       </div>

@@ -11,7 +11,6 @@ import type { CourseTopic, TutoringGroup, TutoringOffer } from '@/types/learning
 import TopicListEditor from './topic-list-editor';
 import LivePricingCard from './live-pricing-card';
 import { LiveClassesSection } from './live-classes-section';
-import { offersKey } from '../hooks/use-schedule-builder';
 
 export function LiveCourseLoaded({
   courseId,
@@ -57,7 +56,6 @@ export function LiveCourseLoaded({
       <div className="grid gap-6 lg:grid-cols-2">
         <TopicListEditor courseId={courseId} initial={topics} onSaved={onTopicsSaved} />
         <LivePricingCard
-          key={offersKey(offers)}
           courseId={courseId}
           courseTitle={course.title}
           tutorProfileId={String(course.author_id)}

@@ -8,6 +8,7 @@ type WizardNavProps = {
   index: number;
   isLast: boolean;
   isSaving: boolean;
+  showSave: boolean;
   onBack: () => void;
   onSave: () => void;
   onNext: () => void;
@@ -18,6 +19,7 @@ export function WizardNav({
   index,
   isLast,
   isSaving,
+  showSave,
   onBack,
   onSave,
   onNext,
@@ -39,7 +41,7 @@ export function WizardNav({
       </Button>
 
       <div className="flex items-center gap-3">
-        {!isLast && (
+        {!isLast && showSave && (
           <Button
             type="button"
             variant="outline"

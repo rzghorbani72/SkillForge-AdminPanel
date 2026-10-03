@@ -21,6 +21,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
   const { t } = useTranslation();
   const wizard = useCourseWizard(courseId);
   const { course, steps, step, index, isLast, isPublic } = wizard;
+  const autosaved = step === 'classroom';
 
   if (!course.selectedAcademy) return <NoAcademyState />;
   if (course.isLoading) {
@@ -38,7 +39,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
         steps={steps}
         onSelectStep={wizard.goTo}
         saveStatus={course.saveStatus}
-        onSave={wizard.saveStep}
+        onSave={autosaved ? undefined : wizard.saveStep}
         onRetrySave={course.retrySave}
       />
       <div className="mx-auto w-full max-w-[1200px] p-4 sm:p-6">
@@ -57,6 +58,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
               index={index}
               isLast={isLast}
               isSaving={course.isSaving}
+              showSave={!autosaved}
               onBack={() => wizard.goTo(steps[index - 1])}
               onSave={() => void wizard.saveStep()}
               onNext={() => void wizard.goNext()}
