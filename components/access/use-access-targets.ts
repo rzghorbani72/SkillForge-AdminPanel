@@ -34,10 +34,10 @@ export function useAccessTargets(enabled: boolean) {
   const load = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Plain USER members become STUDENT on grant; teachers keep their role.
+      // Plain USER members become STUDENT on grant; every other role keeps its role.
       const [studentResponse, userResponse, teacherResponse, groupResponse] = await Promise.all([
         apiClient.getStudentUsers({ page: 1, limit: STUDENT_PAGE_SIZE }),
-        apiClient.getUsers({ page: 1, limit: STUDENT_PAGE_SIZE, role: 'USER' }).catch(() => null),
+        apiClient.getUsers({ page: 1, limit: STUDENT_PAGE_SIZE }).catch(() => null),
         apiClient.getTeacherUsers({ page: 1, limit: STUDENT_PAGE_SIZE }).catch(() => null),
         studentGroupsApi.list(),
       ]);
