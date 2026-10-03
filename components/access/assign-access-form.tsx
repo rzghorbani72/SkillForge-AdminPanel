@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
@@ -37,6 +37,8 @@ type AssignAccessFormProps = {
   disabledHint?: string;
   /** True when the caller already fixed a target, so the pickers may stay empty. */
   hasExternalTarget?: boolean;
+  /** Rendered inside step 1, under the pickers (e.g. who already has access). */
+  targetsFooter?: ReactNode;
 };
 
 /**
@@ -52,6 +54,7 @@ export function AssignAccessForm({
   disabled = false,
   disabledHint,
   hasExternalTarget = false,
+  targetsFooter,
 }: AssignAccessFormProps) {
   const { t } = useTranslation();
   const { user } = useAuthUser();
@@ -157,6 +160,7 @@ export function AssignAccessForm({
             <p className="text-xs text-muted-foreground">{t('accessGrants.groupsHint')}</p>
           </div>
         </div>
+        {targetsFooter}
       </AccessFormStep>
 
       <AccessFormStep

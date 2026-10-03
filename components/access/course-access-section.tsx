@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { KeyRound } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { toast } from 'react-toastify';
 import { accessGrantsApi, type GroupAccessGrant, type StudentAccessGrant } from '@/lib/api-extra';
 import { apiErrorMessage } from '@/lib/api-error-message';
@@ -89,18 +88,19 @@ export function CourseAccessSection({ courseId, onPendingChange }: CourseAccessS
           {onPendingChange ? t('accessGrants.stagedDescription') : t('accessGrants.description')}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-5">
-        {onPendingChange ? (
-          <AssignAccessForm onSelectionChange={onPendingChange} />
-        ) : (
-          <AssignAccessForm onSubmit={handleGrant} isSaving={isSaving} />
-        )}
-        <Separator />
-        <AccessGrantList
-          students={students}
-          groups={groups}
-          onRevoke={handleRevoke}
-          isBusy={isSaving}
+      <CardContent>
+        <AssignAccessForm
+          {...(onPendingChange
+            ? { onSelectionChange: onPendingChange }
+            : { onSubmit: handleGrant, isSaving })}
+          targetsFooter={
+            <AccessGrantList
+              students={students}
+              groups={groups}
+              onRevoke={handleRevoke}
+              isBusy={isSaving}
+            />
+          }
         />
       </CardContent>
     </Card>
