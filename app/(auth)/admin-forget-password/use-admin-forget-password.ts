@@ -19,7 +19,6 @@ import {
 } from '@/lib/auth-validation';
 
 type Step = 'identifier' | 'otp' | 'password' | 'success';
-type AuthMethod = 'email' | 'phone';
 
 interface ForgetFields {
   email: string;
@@ -45,7 +44,6 @@ export function useAdminForgetPassword() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<Step>('identifier');
-  const [authMethod, setAuthMethod] = useState<AuthMethod>('email');
   const [formData, setFormData] = useState<ForgetFields>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState('');
@@ -84,19 +82,13 @@ export function useAdminForgetPassword() {
     setIsLoading(true);
     setErrors({});
     try {
-      if (authMethod === 'email') {
-        await apiClient.sendEmailOtp(formData.email, OtpType.RESET_PASSWORD_BY_EMAIL, captchaToken);
-        setMessage(t('forgotPassword.otpSentToEmail'));
-        notifyOtpSent(t('forgotPassword.otpSentToEmail'), 'admin-forget-password-otp-sent');
-      } else {
-        await apiClient.sendPhoneOtp(
-          toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
-          OtpType.RESET_PASSWORD_BY_PHONE,
-          captchaToken,
-        );
-        setMessage(t('forgotPassword.otpSentToPhone'));
-        notifyOtpSent(t('forgotPassword.otpSentToPhone'), 'admin-forget-password-otp-sent');
-      }
+      await apiClient.sendPhoneOtp(
+        toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
+        OtpType.RESET_PASSWORD_BY_PHONE,
+        captchaToken,
+      );
+      setMessage(t('forgotPassword.otpSentToPhone'));
+      notifyOtpSent(t('forgotPassword.otpSentToPhone'), 'admin-forget-password-otp-sent');
       setStep('otp');
     } catch (error: unknown) {
       const errorMessage = apiErrorMessage(error, t('forgotPassword.failedToSendOtp'));
@@ -116,19 +108,11 @@ export function useAdminForgetPassword() {
     setIsLoading(true);
     setErrors({});
     try {
-      if (authMethod === 'email') {
-        await apiClient.verifyEmailOtp(
-          formData.email,
-          formData.otp,
-          OtpType.RESET_PASSWORD_BY_EMAIL,
-        );
-      } else {
-        await apiClient.verifyPhoneOtp(
-          toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
-          formData.otp,
-          OtpType.RESET_PASSWORD_BY_PHONE,
-        );
-      }
+      await apiClient.verifyPhoneOtp(
+        toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
+        formData.otp,
+        OtpType.RESET_PASSWORD_BY_PHONE,
+      );
       setStep('password');
       setMessage(t('forgotPassword.otpVerifiedSuccess'));
     } catch (error: unknown) {
@@ -167,7 +151,6 @@ export function useAdminForgetPassword() {
 
   const resetForm = () => {
     setStep('identifier');
-    setAuthMethod('email');
     setFormData(EMPTY);
     setErrors({});
     setMessage('');
@@ -179,8 +162,6 @@ export function useAdminForgetPassword() {
     isLoading,
     step,
     setStep,
-    authMethod,
-    setAuthMethod,
     formData,
     errors,
     message,

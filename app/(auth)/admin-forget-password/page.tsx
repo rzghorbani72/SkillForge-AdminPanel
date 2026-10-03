@@ -34,11 +34,7 @@ function AdminForgetPasswordBody() {
     return (
       <PhoneOtpScreen
         activeTab="forgot"
-        otpPhone={
-          fp.authMethod === 'phone'
-            ? fp.formData.fullPhoneNumber || fp.formData.phoneNumber
-            : fp.formData.email
-        }
+        otpPhone={fp.formData.fullPhoneNumber || fp.formData.phoneNumber}
         otp={fp.formData.otp}
         setOtp={(v) => fp.handleInputChange('otp', v)}
         otpLoading={fp.isLoading}

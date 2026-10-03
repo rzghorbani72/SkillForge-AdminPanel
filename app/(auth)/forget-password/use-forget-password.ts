@@ -12,7 +12,6 @@ import { apiErrorMessage } from '@/lib/api-error-message';
 import {
   collectErrors,
   validateConfirmPassword,
-  validateEmail,
   validateOtp,
   validateNewPassword as validateChosenPassword,
   validatePhone,
@@ -21,10 +20,8 @@ import { logger } from '@/lib/logging/app-logger';
 import { errorFields } from '@/lib/logging/error-fields';
 
 type Step = 'identifier' | 'otp' | 'password' | 'success';
-type AuthMethod = 'email' | 'phone';
 
 interface ForgetFields {
-  email: string;
   phoneNumber: string;
   fullPhoneNumber: string;
   password: string;
@@ -34,7 +31,6 @@ interface ForgetFields {
 }
 
 const EMPTY: ForgetFields = {
-  email: '',
   phoneNumber: '',
   fullPhoneNumber: '',
   password: '',
@@ -49,7 +45,6 @@ export function useForgetPassword() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<Step>('identifier');
-  const [authMethod, setAuthMethod] = useState<AuthMethod>('email');
   const [formData, setFormData] = useState<ForgetFields>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState('');
@@ -83,12 +78,7 @@ export function useForgetPassword() {
   };
 
   const validateIdentifier = () => {
-    const newErrors = collectErrors(
-      authMethod === 'email'
-        ? { email: validateEmail(formData.email) }
-        : { phoneNumber: validatePhone(formData.phoneNumber) },
-      t,
-    );
+    const newErrors = collectErrors({ phoneNumber: validatePhone(formData.phoneNumber) }, t);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -110,20 +100,13 @@ export function useForgetPassword() {
     setIsLoading(true);
     setErrors({});
     try {
-      if (authMethod === 'email') {
-        await apiClient.sendEmailOtp(formData.email, OtpType.RESET_PASSWORD_BY_EMAIL, captchaToken);
-        setMessage(t('forgotPassword.otpSentToEmail'));
-        notifyOtpSent(t('forgotPassword.otpSentToEmail'), 'forget-password-otp-sent');
-      } else {
-        const phoneToSend = formData.fullPhoneNumber || formData.phoneNumber;
-        await apiClient.sendPhoneOtp(
-          toE164Iran(phoneToSend),
-          OtpType.RESET_PASSWORD_BY_PHONE,
-          captchaToken,
-        );
-        setMessage(t('forgotPassword.otpSentToPhone'));
-        notifyOtpSent(t('forgotPassword.otpSentToPhone'), 'forget-password-otp-sent');
-      }
+      await apiClient.sendPhoneOtp(
+        toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
+        OtpType.RESET_PASSWORD_BY_PHONE,
+        captchaToken,
+      );
+      setMessage(t('forgotPassword.otpSentToPhone'));
+      notifyOtpSent(t('forgotPassword.otpSentToPhone'), 'forget-password-otp-sent');
       setStep('otp');
     } catch (error: unknown) {
       const errorMessage = apiErrorMessage(error, t('forgotPassword.failedToSendOtp'));
@@ -143,19 +126,11 @@ export function useForgetPassword() {
     setIsLoading(true);
     setErrors({});
     try {
-      if (authMethod === 'email') {
-        await apiClient.verifyEmailOtp(
-          formData.email,
-          formData.otp,
-          OtpType.RESET_PASSWORD_BY_EMAIL,
-        );
-      } else {
-        await apiClient.verifyPhoneOtp(
-          toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
-          formData.otp,
-          OtpType.RESET_PASSWORD_BY_PHONE,
-        );
-      }
+      await apiClient.verifyPhoneOtp(
+        toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
+        formData.otp,
+        OtpType.RESET_PASSWORD_BY_PHONE,
+      );
       setStep('password');
       setMessage(t('forgotPassword.otpVerifiedSuccess'));
     } catch (error: unknown) {
@@ -174,10 +149,7 @@ export function useForgetPassword() {
     try {
       const selectedStore = stores.find((store) => store.slug === formData.store_slug);
       await apiClient.forgetPassword({
-        identifier:
-          authMethod === 'phone'
-            ? toE164Iran(formData.fullPhoneNumber || formData.phoneNumber)
-            : formData.email,
+        identifier: toE164Iran(formData.fullPhoneNumber || formData.phoneNumber),
         password: formData.password,
         confirmed_password: formData.confirmed_password,
         otp: formData.otp,
@@ -196,7 +168,6 @@ export function useForgetPassword() {
 
   const resetForm = () => {
     setStep('identifier');
-    setAuthMethod('email');
     setFormData(EMPTY);
     setErrors({});
     setMessage('');
@@ -208,8 +179,6 @@ export function useForgetPassword() {
     isLoading,
     step,
     setStep,
-    authMethod,
-    setAuthMethod,
     formData,
     errors,
     message,
