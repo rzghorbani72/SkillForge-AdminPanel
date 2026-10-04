@@ -95,7 +95,6 @@ export function useCourseForm(courseId: string) {
   const { buildPayload, save } = useCourseSave({
     clearDeleted,
     courseId,
-    courseType,
     deletedLessonIds,
     deletedSeasonIds,
     lastSavedRef,
