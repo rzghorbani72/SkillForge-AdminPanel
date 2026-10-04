@@ -44,8 +44,7 @@ export const en = {
     scheduleSummary: '{{count}} sessions · {{from}} to {{to}}',
     deadlineTitle: 'Registration deadline',
     deadline: 'Registration closes at',
-    deadlineHint:
-      'Default: the end of the day before the first session, so you have time to prepare.',
+    deadlineHint: 'Optional: if empty, registration stays open until you close it.',
     registrationCloses: 'Registration closes',
     firstSession: 'First session',
     lateJoinWarning:

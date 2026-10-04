@@ -143,12 +143,12 @@ function scheduleErrors(draft: LiveClassDraft, dates: readonly Date[], now: Date
   if (!Number.isInteger(count) || count < 1 || count > MAX_SESSIONS) {
     errors.sessionCount = 'liveWizard.errSessionsRequired';
   }
-  if (!draft.joinDeadline || Number.isNaN(deadline.getTime())) {
-    errors.joinDeadline = 'liveWizard.errDeadlineRequired';
-  } else if (deadline < now) {
-    errors.joinDeadline = 'liveWizard.errDeadlinePast';
-  } else if (last && deadline > sessionEnd(last, draft.slots)) {
-    errors.joinDeadline = 'liveWizard.errDeadlineAfterEnd';
+  if (draft.joinDeadline) {
+    if (Number.isNaN(deadline.getTime()) || deadline < now) {
+      errors.joinDeadline = 'liveWizard.errDeadlinePast';
+    } else if (last && deadline > sessionEnd(last, draft.slots)) {
+      errors.joinDeadline = 'liveWizard.errDeadlineAfterEnd';
+    }
   }
   return errors;
 }
@@ -176,7 +176,7 @@ export function groupWrite(draft: LiveClassDraft, title: string, timezone: strin
     visibility: 'PUBLIC',
     session_count: Number(draft.sessionCount),
     starts_on_requested: new Date(draft.startsOn).toISOString(),
-    join_deadline: new Date(draft.joinDeadline).toISOString(),
+    join_deadline: draft.joinDeadline ? new Date(draft.joinDeadline).toISOString() : undefined,
     slots: draft.slots,
   };
 }

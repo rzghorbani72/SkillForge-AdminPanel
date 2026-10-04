@@ -11,7 +11,6 @@ import type { TutoringGroup } from '@/types/learning-operations';
 import {
   EMPTY_LIVE_DRAFT,
   STEP_FIELDS,
-  defaultDeadline,
   draftErrors,
   draftFromGroup,
   groupWrite,
@@ -56,8 +55,6 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
 
   const update = (partial: Partial<LiveClassDraft>) => {
     const next = { ...draft, ...partial };
-    if (partial.startsOn && !draft.joinDeadline)
-      next.joinDeadline = defaultDeadline(partial.startsOn);
     setEdited(next);
     if (!group) writeStash(courseId, next);
   };

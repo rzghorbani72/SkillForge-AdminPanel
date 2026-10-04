@@ -30,9 +30,7 @@ export function DeadlineSection({ live }: { live: LiveClassDraftApi }) {
       hint={t('liveWizard.deadlineCardHint')}
     >
       <div className="flex max-w-[320px] flex-col gap-1.5">
-        <FieldLabel htmlFor="live-deadline" required>
-          {t('liveWizard.deadline')}
-        </FieldLabel>
+        <FieldLabel htmlFor="live-deadline">{t('liveWizard.deadline')}</FieldLabel>
         <DatePicker
           id="live-deadline"
           withTime

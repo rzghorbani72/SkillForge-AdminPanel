@@ -45,7 +45,7 @@ export const fa = {
     scheduleSummary: '{{count}} جلسه · از {{from}} تا {{to}}',
     deadlineTitle: 'مهلت ثبت‌نام',
     deadline: 'ثبت‌نام بسته می‌شود در',
-    deadlineHint: 'پیش‌فرض: پایان روزِ قبل از اولین جلسه، تا برای کلاس آماده شوید.',
+    deadlineHint: 'اختیاری: اگر خالی بماند، ثبت‌نام باز می‌ماند تا خودتان آن را ببندید.',
     registrationCloses: 'ثبت‌نام بسته می‌شود',
     firstSession: 'اولین جلسه',
     lateJoinWarning:

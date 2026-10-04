@@ -64,22 +64,6 @@ export const academyNavItems: NavItem[] = [
         requiresLearningCapability: 'assignments',
       },
       {
-        title: 'Tutoring',
-        href: '/tutoring',
-        icon: 'userPlus' as IconType,
-        label: 'tutoring',
-        scope: 'academy',
-        requiresLearningCapability: 'tutoring',
-      },
-      {
-        title: 'Group Classes',
-        href: '/tutoring/groups',
-        icon: 'users' as IconType,
-        label: 'tutoringGroups',
-        scope: 'academy',
-        requiresLearningCapability: 'tutoring',
-      },
-      {
         title: 'Ops Queue',
         href: '/learning/ops-queue',
         icon: 'trendingUp' as IconType,
