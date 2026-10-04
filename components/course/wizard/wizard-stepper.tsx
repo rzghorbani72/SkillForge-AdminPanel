@@ -14,20 +14,6 @@ type WizardStepperProps = {
   onSelect: (step: CourseWizardStep) => void;
 };
 
-const CHIP = {
-  todo: 'border-border bg-background text-muted-foreground hover:border-primary/40',
-  done: 'border-border bg-background text-success',
-  current: 'border-primary/30 bg-primary/10 font-bold text-primary',
-  invalid: 'border-destructive/30 bg-destructive/10 text-destructive',
-} as const;
-
-const DOT = {
-  todo: 'border-border bg-card',
-  done: 'border-success bg-success text-success-foreground',
-  current: 'border-primary bg-primary text-primary-foreground',
-  invalid: 'border-destructive bg-destructive text-destructive-foreground',
-} as const;
-
 /**
  * The course wizard's map. Every step is clickable at any time, in create and
  * in edit alike: the work autosaves, so jumping around never loses anything.
@@ -43,36 +29,37 @@ export function WizardStepper({
   const currentIndex = steps.indexOf(current);
 
   return (
-    <ol className="flex flex-wrap gap-1.5">
+    <ol className="flex items-center gap-1 overflow-x-auto py-1">
       {steps.map((step, index) => {
-        const state = invalid.includes(step)
-          ? 'invalid'
-          : index === currentIndex
-            ? 'current'
-            : index < currentIndex
-              ? 'done'
-              : 'todo';
+        const done = index < currentIndex;
+        const active = index === currentIndex;
+        const hasError = invalid.includes(step);
 
         return (
-          <li key={step}>
+          <li key={step} className="flex shrink-0 items-center">
             <button
               type="button"
               onClick={() => onSelect(step)}
-              aria-current={index === currentIndex ? 'step' : undefined}
+              aria-current={active ? 'step' : undefined}
               className={cn(
-                'inline-flex items-center gap-2 rounded-full border py-[5px] pe-3 ps-3.5 text-[13px] transition-colors',
-                CHIP[state],
+                'inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition-colors',
+                active
+                  ? 'bg-primary/10 font-medium text-foreground'
+                  : 'text-muted-foreground hover:bg-accent',
+                hasError && 'text-destructive',
               )}
             >
               <span
                 className={cn(
-                  'grid h-[22px] w-[22px] place-items-center rounded-full border text-xs',
-                  DOT[state],
+                  'inline-flex h-6 w-6 items-center justify-center rounded-full border text-xs tabular-nums',
+                  active && 'border-primary bg-primary text-primary-foreground',
+                  done && 'border-primary/40 bg-primary/10 text-primary',
+                  hasError && 'border-destructive bg-destructive text-destructive-foreground',
                 )}
               >
-                {state === 'invalid' ? (
+                {hasError ? (
                   '!'
-                ) : state === 'done' ? (
+                ) : done ? (
                   <Check className="h-3.5 w-3.5" aria-hidden />
                 ) : (
                   formatNumber(index + 1)
@@ -80,6 +67,9 @@ export function WizardStepper({
               </span>
               {t(WIZARD_STEP_LABEL[step])}
             </button>
+            {index < steps.length - 1 && (
+              <span className="mx-1 h-px w-4 shrink-0 bg-border sm:w-6" />
+            )}
           </li>
         );
       })}
