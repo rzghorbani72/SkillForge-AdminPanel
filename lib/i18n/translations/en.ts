@@ -6244,6 +6244,7 @@ export const en = {
     tabMessages: 'Student messages',
     messagesEmpty: 'No student has messaged the teacher in this course yet.',
     messagesPick: 'Pick a student to read and reply.',
+    messagesClose: 'Close chat',
     messagesCount: '{count} messages',
     messagesLoadFailed: 'Could not load messages. Try again.',
     tabFollowUp: 'Learning follow-up',

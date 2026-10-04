@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { MessagesSquare } from 'lucide-react';
+import { MessagesSquare, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { SectionCard } from '@/components/shared/section-card';
 import { useAuthUser } from '@/components/providers/user-provider';
 import { useCourseWorkspace } from '@/components/course/detail/course-workspace-context';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
 import { StudentChatList } from './_components/student-chat-list';
 import { StudentChatPane } from './_components/student-chat-pane';
 import { useTeacherChats } from './_components/use-teacher-chats';
@@ -38,14 +40,24 @@ export default function CourseMessagesPage() {
 
   return (
     <div className="grid gap-4 p-4 lg:grid-cols-[320px_minmax(0,1fr)]">
-      <StudentChatList students={students} selectedId={selectedId} onSelect={setSelectedId} />
-      <SectionCard>
+      <div className={cn('lg:sticky lg:top-4 lg:self-start', selected && 'hidden lg:block')}>
+        <StudentChatList students={students} selectedId={selectedId} onSelect={setSelectedId} />
+      </div>
+      <SectionCard className={cn(!selected && 'hidden lg:flex')}>
         {selected ? (
-          <StudentChatPane
-            chats={selected}
-            courseTitle={course?.title ?? ''}
-            currentProfileId={user ? String(user.id) : undefined}
-          />
+          <div className="space-y-4">
+            <div className="flex justify-end">
+              <Button variant="ghost" size="sm" onClick={() => setSelectedId(null)}>
+                <X className="h-4 w-4" />
+                {t('courseDetail.messagesClose')}
+              </Button>
+            </div>
+            <StudentChatPane
+              chats={selected}
+              courseTitle={course?.title ?? ''}
+              currentProfileId={user ? String(user.id) : undefined}
+            />
+          </div>
         ) : (
           <p className="text-sm text-muted-foreground">{t('courseDetail.messagesPick')}</p>
         )}

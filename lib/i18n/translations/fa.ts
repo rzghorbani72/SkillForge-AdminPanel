@@ -6250,6 +6250,7 @@ export const fa = {
     tabMessages: 'پیام‌های دانشجویان',
     messagesEmpty: 'هنوز هیچ دانشجویی در این دوره به مدرس پیام نداده است.',
     messagesPick: 'برای خواندن و پاسخ، یک دانشجو را انتخاب کنید.',
+    messagesClose: 'بستن گفت‌وگو',
     messagesCount: '{count} پیام',
     messagesLoadFailed: 'پیام‌ها بارگذاری نشد. دوباره تلاش کنید.',
     tabFollowUp: 'پیگیری آموزش',
