@@ -1,8 +1,8 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
 import { CourseTypePill } from '../course-type-pill';
 import type { CourseType } from '../course-drafts';
 import type { SaveStatus } from '../useCourseForm';
@@ -17,6 +17,7 @@ type WizardHeaderProps = {
   courseType?: CourseType;
   step: CourseWizardStep;
   steps?: readonly CourseWizardStep[];
+  invalidSteps?: readonly CourseWizardStep[];
   onSelectStep: (step: CourseWizardStep) => void;
   /** Absent while the course does not exist yet (nothing to autosave or save). */
   saveStatus?: SaveStatus;
@@ -35,6 +36,7 @@ export function WizardHeader({
   courseType,
   step,
   steps,
+  invalidSteps,
   onSelectStep,
   saveStatus,
   onSave,
@@ -42,38 +44,39 @@ export function WizardHeader({
   onBack,
 }: WizardHeaderProps) {
   const { t } = useTranslation();
+  const hasTitle = Boolean(title && onBack);
 
   return (
-    <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
-      {title && onBack && (
-        <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 shrink-0"
-              onClick={onBack}
-              aria-label={t('common.back')}
-            >
-              <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
-            </Button>
+    <div className="sticky top-0 z-20 border-b bg-card">
+      <div className="mx-auto w-full max-w-[1200px] px-4 pb-3.5 pt-4 sm:px-6">
+        {hasTitle ? (
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="truncate text-xl font-bold tracking-tight">{title}</h1>
-                <CourseTypePill type={courseType} />
+                <h1 className="truncate text-xl font-extrabold">{title}</h1>
+                {courseType === 'LIVE' ? null : <CourseTypePill type={courseType} />}
               </div>
-              <p className="mt-0.5 truncate text-sm text-muted-foreground">{subtitle}</p>
+              <p className="truncate text-[13px] text-muted-foreground">{subtitle}</p>
             </div>
+            <Button type="button" variant="outline" size="sm" onClick={onBack}>
+              {t('liveWizard.exit')}
+            </Button>
           </div>
-        </div>
-      )}
+        ) : null}
 
-      <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
-        <WizardStepper current={step} steps={steps} onSelect={onSelectStep} />
-        {saveStatus && onSave && onRetrySave && (
-          <WizardSaveButton saveStatus={saveStatus} onSave={onSave} onRetry={onRetrySave} />
-        )}
+        <div
+          className={cn('flex flex-wrap items-center justify-between gap-3', hasTitle && 'mt-3.5')}
+        >
+          <WizardStepper
+            current={step}
+            steps={steps}
+            invalid={invalidSteps}
+            onSelect={onSelectStep}
+          />
+          {saveStatus && onSave && onRetrySave && (
+            <WizardSaveButton saveStatus={saveStatus} onSave={onSave} onRetry={onRetrySave} />
+          )}
+        </div>
       </div>
     </div>
   );

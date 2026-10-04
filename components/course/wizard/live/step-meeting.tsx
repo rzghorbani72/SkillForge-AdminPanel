@@ -1,12 +1,14 @@
 'use client';
 
-import { Link2, LockKeyhole, Video } from 'lucide-react';
+import { LockKeyhole, ShieldCheck } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Note } from '@/components/shared/note';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import { FieldError, OptionCard, RiskHint } from './live-ui';
+import { ChoiceCard } from '@/components/shared/choice-card';
+import { FieldError, FieldLabel } from '@/components/shared/field-label';
+import { FlowSteps } from '@/components/shared/flow-steps';
+import { SectionCard } from '@/components/shared/section-card';
 import type { LiveClassDraftApi } from './use-live-class-draft';
 
 const ACCESS_STEPS = [
@@ -17,40 +19,42 @@ const ACCESS_STEPS = [
 
 export function StepMeeting({ live }: { live: LiveClassDraftApi }) {
   const { t } = useTranslation();
-  const formatNumber = useNumberFormat();
   const { draft, shownErrors: errors, update, group } = live;
   const roomReady = group?.meeting_url_source === 'AUTO_JITSI' && Boolean(group.meeting_url);
+  const isAuto = draft.meeting === 'AUTO';
 
   return (
-    <div className="space-y-6">
-      <section className="space-y-3 rounded-2xl border bg-card p-5">
-        <h2 className="text-base font-semibold">{t('liveWizard.howStudentsEnter')}</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <OptionCard
-            selected={draft.meeting === 'AUTO'}
+    <div className="flex flex-col gap-4">
+      <SectionCard
+        title={t('liveWizard.howStudentsEnter')}
+        hint={t('liveWizard.howStudentsEnterHint')}
+      >
+        <div role="radiogroup" className="flex flex-col gap-4">
+          <ChoiceCard
+            selected={isAuto}
             onSelect={() => update({ meeting: 'AUTO' })}
-            icon={Video}
             title={t('liveWizard.autoRoomTitle')}
             hint={t('liveWizard.autoRoomHint')}
             badge={t('liveWizard.recommended')}
           />
-          <OptionCard
-            selected={draft.meeting === 'OWN'}
+          {isAuto ? (
+            <Note tone="success" className="ms-8">
+              {t(roomReady ? 'liveWizard.autoRoomReady' : 'liveWizard.autoRoomOnPublish')}
+            </Note>
+          ) : null}
+          <ChoiceCard
+            selected={!isAuto}
             onSelect={() => update({ meeting: 'OWN' })}
-            icon={Link2}
             title={t('liveWizard.ownLinkTitle')}
             hint={t('liveWizard.ownLinkHint')}
           />
         </div>
-
-        {draft.meeting === 'AUTO' ? (
-          <RiskHint>
-            {t(roomReady ? 'liveWizard.autoRoomReady' : 'liveWizard.autoRoomOnPublish')}
-          </RiskHint>
-        ) : (
-          <div className="space-y-3">
-            <div className="max-w-xl space-y-1.5">
-              <Label htmlFor="live-meeting-url">{t('liveWizard.ownLinkLabel')} *</Label>
+        {isAuto ? null : (
+          <div className="ms-8 flex flex-col gap-3">
+            <div className="flex max-w-xl flex-col gap-1.5">
+              <FieldLabel htmlFor="live-meeting-url" required>
+                {t('liveWizard.ownLinkLabel')}
+              </FieldLabel>
               <Input
                 id="live-meeting-url"
                 dir="ltr"
@@ -61,30 +65,20 @@ export function StepMeeting({ live }: { live: LiveClassDraftApi }) {
               />
               <FieldError messageKey={errors.meetingUrl} />
             </div>
-            <RiskHint tone="warn">{t('liveWizard.ownLinkRisk')}</RiskHint>
+            <Note tone="warn">{t('liveWizard.ownLinkRisk')}</Note>
           </div>
         )}
-      </section>
+      </SectionCard>
 
-      <section className="space-y-4 rounded-2xl border bg-card p-5">
-        <div className="flex items-start gap-3">
-          <LockKeyhole className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
-          <div>
-            <h2 className="text-base font-semibold">{t('liveWizard.protectedTitle')}</h2>
-            <p className="text-sm text-muted-foreground">{t('liveWizard.protectedHint')}</p>
-          </div>
-        </div>
-        <ol className="grid gap-3 sm:grid-cols-3">
-          {ACCESS_STEPS.map((key, index) => (
-            <li key={key} className="flex items-start gap-2 rounded-xl border p-3 text-sm">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                {formatNumber(index + 1)}
-              </span>
-              {t(key)}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <SectionCard
+        icon={ShieldCheck}
+        iconTone="success"
+        title={t('liveWizard.protectedTitle')}
+        hint={t('liveWizard.protectedHint')}
+      >
+        <FlowSteps steps={ACCESS_STEPS.map((key) => ({ title: t(key) }))} />
+        <Note icon={LockKeyhole}>{t('liveWizard.notEnrolledBlocked')}</Note>
+      </SectionCard>
     </div>
   );
 }

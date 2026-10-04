@@ -35,7 +35,14 @@ export const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
   EXPERT: 'courses.expert',
 };
 
-export default function CourseFactsCard({ form }: { form: UseFormReturn<CourseFormData> }) {
+export default function CourseFactsCard({
+  form,
+  hideLevel = false,
+}: {
+  form: UseFormReturn<CourseFormData>;
+  /** The live course step shows the level beside the cover instead. */
+  hideLevel?: boolean;
+}) {
   const { t } = useTranslation();
 
   return (
@@ -44,31 +51,33 @@ export default function CourseFactsCard({ form }: { form: UseFormReturn<CourseFo
         <CardTitle>{t('courses.publicFacts')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <FormField
-          control={form.control}
-          name="difficulty"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('courses.level')}</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('courses.level')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {COURSE_DIFFICULTIES.map((level) => (
-                    <SelectItem key={level} value={level}>
-                      {t(DIFFICULTY_LABEL[level])}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormDescription>{t('courses.levelHint')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {hideLevel ? null : (
+          <FormField
+            control={form.control}
+            name="difficulty"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('courses.level')}</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('courses.level')} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {COURSE_DIFFICULTIES.map((level) => (
+                      <SelectItem key={level} value={level}>
+                        {t(DIFFICULTY_LABEL[level])}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>{t('courses.levelHint')}</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}

@@ -1,7 +1,8 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
+import { ListOrdered, Loader2 } from 'lucide-react';
 import type { AssignAccessSelection } from '@/components/access/assign-access-form';
+import { useTranslation } from '@/lib/i18n/hooks';
 import TopicListEditor from '@/app/(protected)/courses/[course_id]/live/_components/topic-list-editor';
 import { DIFFICULTY_LABEL } from '../CourseFactsCard';
 import { CoursePricingSection } from '../pricing/course-pricing-section';
@@ -12,6 +13,7 @@ import { StepContent } from './step-content';
 import { StepPreview } from './step-preview';
 import { StepClassType } from './live/step-class-type';
 import { StepMeeting } from './live/step-meeting';
+import { SectionCard } from '@/components/shared/section-card';
 import { StepReview } from './live/step-review';
 import { StepSchedule } from './live/step-schedule';
 import type { LiveClassDraftApi } from './live/use-live-class-draft';
@@ -51,6 +53,7 @@ export function WizardStepBody({
   publisher,
   onGoTo,
 }: WizardStepBodyProps) {
+  const { t } = useTranslation();
   const { form } = course;
   const isLive = course.courseType === 'LIVE';
   const liveStep = isLiveClassStep(step) || step === 'review';
@@ -60,7 +63,7 @@ export function WizardStepBody({
   return (
     <>
       {step === 'basics' && (
-        <div className="space-y-6">
+        <div className="flex flex-col gap-4">
           <StepBasics
             form={form}
             courseType={course.courseType}
@@ -68,11 +71,18 @@ export function WizardStepBody({
             onCoverChange={course.handleCoverImageChange}
           />
           {isLive && !live.isLoading ? (
-            <TopicListEditor
-              courseId={courseId}
-              initial={live.topics}
-              onSaved={(topics) => live.patchTopics({ topics })}
-            />
+            <SectionCard
+              icon={ListOrdered}
+              title={t('courses.live.topics')}
+              hint={t('liveWizard.topicsCardHint')}
+            >
+              <TopicListEditor
+                bare
+                courseId={courseId}
+                initial={live.topics}
+                onSaved={(topics) => live.patchTopics({ topics })}
+              />
+            </SectionCard>
           ) : null}
         </div>
       )}

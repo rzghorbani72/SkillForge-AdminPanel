@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
   closestCenter,
@@ -14,7 +13,7 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
-import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { SetupCard } from '@/components/course/live/setup-card';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -29,6 +28,8 @@ interface TopicListEditorProps {
   courseId: string;
   initial: CourseTopic[];
   onSaved?: (topics: CourseTopic[]) => void;
+  /** Renders without its own card, for a parent that already frames it. */
+  bare?: boolean;
 }
 
 let localKeySeq = 0;
@@ -43,7 +44,12 @@ const signature = (rows: readonly { title: string }[]) =>
  * than row by row, so reordering and renaming are a single call the backend
  * can validate against the meetings already named after a topic.
  */
-export default function TopicListEditor({ courseId, initial, onSaved }: TopicListEditorProps) {
+export default function TopicListEditor({
+  courseId,
+  initial,
+  onSaved,
+  bare = false,
+}: TopicListEditorProps) {
   const { t } = useTranslation();
   const [drafts, setDrafts] = useState<Draft[]>(
     initial.map((topic) => ({
@@ -53,6 +59,7 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
     })),
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [nextTitle, setNextTitle] = useState('');
   const [saved, setSaved] = useState(() => signature(initial));
   const sensors = useSensors(useSensor(PointerSensor));
   const dirty = useMemo(
@@ -73,6 +80,15 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
     const [moved] = next.splice(from, 1);
     next.splice(to, 0, moved);
     setDrafts(next);
+    void save(next);
+  };
+
+  const addTopic = () => {
+    const title = nextTitle.trim();
+    if (!title) return;
+    const next = [...drafts, { ...newDraft(), title }];
+    setDrafts(next);
+    setNextTitle('');
     void save(next);
   };
 
@@ -110,6 +126,56 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
     }
   };
 
+  const list = (
+    <div className="space-y-3">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        modifiers={[restrictToVerticalAxis]}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={drafts.map((row) => row.key)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-3">
+            {drafts.length === 0 ? (
+              <p className="rounded-xl border border-dashed p-4 text-center text-xs text-muted-foreground">
+                {t('courses.live.topicsEmpty')}
+              </p>
+            ) : null}
+            {drafts.map((draft, index) => (
+              <SortableTopicRow
+                key={draft.key}
+                rowKey={draft.key}
+                index={index}
+                title={draft.title}
+                onChange={(title) => update(draft.key, title)}
+                onBlur={() => void save()}
+                onRemove={() => remove(draft.key)}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+
+      <Input
+        value={nextTitle}
+        onChange={(e) => setNextTitle(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          addTopic();
+        }}
+        onBlur={addTopic}
+        placeholder={t('courses.live.nextTopicPlaceholder')}
+        aria-label={t('courses.live.addTopic')}
+      />
+    </div>
+  );
+
+  if (bare) return list;
+
   return (
     <SetupCard
       title={t('courses.live.topics')}
@@ -117,50 +183,7 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
       done={drafts.some((row) => row.title.trim()) && !dirty}
       dirty={dirty}
     >
-      <div className="space-y-3">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis]}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={drafts.map((row) => row.key)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="space-y-3">
-              {drafts.length === 0 ? (
-                <p className="rounded-xl border border-dashed p-4 text-center text-xs text-muted-foreground">
-                  {t('courses.live.topicsEmpty')}
-                </p>
-              ) : null}
-              {drafts.map((draft, index) => (
-                <SortableTopicRow
-                  key={draft.key}
-                  rowKey={draft.key}
-                  index={index}
-                  title={draft.title}
-                  onChange={(title) => update(draft.key, title)}
-                  onBlur={() => void save()}
-                  onRemove={() => remove(draft.key)}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-
-        <div className="flex flex-wrap gap-2 pt-1">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setDrafts((rows) => [...rows, newDraft()])}
-          >
-            <Plus className="h-4 w-4" />
-            {t('courses.live.addTopic')}
-          </Button>
-        </div>
-      </div>
+      {list}
     </SetupCard>
   );
 }

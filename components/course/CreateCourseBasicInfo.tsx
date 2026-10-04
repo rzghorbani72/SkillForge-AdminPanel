@@ -2,27 +2,14 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
-import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
-import {
-  COURSE_DESCRIPTION_MAX,
-  COURSE_LEARNING_OUTCOMES_MAX,
-  COURSE_REQUIREMENTS_MAX,
-  COURSE_TITLE_MAX,
-  CourseFormData,
-} from './schema';
+import { COURSE_DESCRIPTION_MAX, COURSE_TITLE_MAX, CourseFormData } from './schema';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { CourseLearningFields } from './course-learning-fields';
 
 type Props = {
   form: UseFormReturn<CourseFormData>;
@@ -79,49 +66,7 @@ const CreateCourseBasicInfo = ({ form }: Props) => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="learning_outcomes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('courses.whatYouWillLearn')}</FormLabel>
-              <FormControl>
-                <Textarea
-                  value={field.value ?? ''}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  placeholder={t('courses.whatYouWillLearnPlaceholder')}
-                  maxLength={COURSE_LEARNING_OUTCOMES_MAX}
-                  className="min-h-[120px]"
-                />
-              </FormControl>
-              <FormDescription>{t('courses.whatYouWillLearnHint')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="requirements"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('courses.requirements')}</FormLabel>
-              <FormControl>
-                <Textarea
-                  value={field.value ?? ''}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  placeholder={t('courses.requirementsPlaceholder')}
-                  maxLength={COURSE_REQUIREMENTS_MAX}
-                  className="min-h-[120px]"
-                />
-              </FormControl>
-              <FormDescription>{t('courses.requirementsHint')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <CourseLearningFields form={form} />
       </CardContent>
     </Card>
   );

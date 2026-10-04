@@ -29,7 +29,7 @@ export function LiveStepLayout({
   if ((publisher.justPublished && step === 'review') || live.isLoading) return <>{children}</>;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
       <div className="min-w-0">{children}</div>
       <aside className="lg:sticky lg:top-32">
         {step === 'review' ? (

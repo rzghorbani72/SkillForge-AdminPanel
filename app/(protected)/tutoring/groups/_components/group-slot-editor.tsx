@@ -1,6 +1,8 @@
 'use client';
 
-import { NumberInput } from '@/components/ui/number-input';
+import type { ReactNode } from 'react';
+import { CircleAlert } from 'lucide-react';
+
 import { TimePicker } from '@/components/ui/time-picker';
 import { WeekdayPicker } from '@/components/shared/weekday-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -14,19 +16,18 @@ type Props = {
   slots: TutoringGroupSlot[];
   onChange: (next: TutoringGroupSlot[]) => void;
   disabled?: boolean;
+  daysLabel?: ReactNode;
+  timesLabel?: ReactNode;
 };
 
 type SlotTime = Omit<TutoringGroupSlot, 'weekday'>;
 
 const DEFAULT_TIME: SlotTime = { start_minute: 9 * 60, duration_minutes: 90 };
-
-/** The lengths almost every class actually uses, so typing is the exception. */
-const DURATION_PRESETS = [45, 60, 90, 120] as const;
-
-const LINE_GRID = 'grid grid-cols-[4rem_minmax(0,7rem)_minmax(0,1fr)] items-center gap-3';
+const DAY_MINUTES = 24 * 60;
+const TIME_INPUT = 'h-10 bg-card text-center font-bold';
 
 const weekPosition = (slot: TutoringGroupSlot) =>
-  WEEK_ORDER.indexOf(slot.weekday) * 24 * 60 + slot.start_minute;
+  WEEK_ORDER.indexOf(slot.weekday) * DAY_MINUTES + slot.start_minute;
 
 function SlotLine({
   slot,
@@ -39,53 +40,59 @@ function SlotLine({
 }) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const dayLabel = t(WEEKDAY_LABEL_KEYS[slot.weekday]);
+  const invalid = slot.duration_minutes <= 0;
+  const end = (slot.start_minute + slot.duration_minutes) % DAY_MINUTES;
+  const wholeHours = slot.duration_minutes % 60 === 0;
 
   return (
-    <li className={cn(LINE_GRID, 'px-3 py-2.5')}>
-      <span className="text-sm font-medium">{dayLabel}</span>
-      <TimePicker
-        disabled={disabled}
-        value={minutesToTime(slot.start_minute)}
-        onChange={(next) => onPatch({ start_minute: timeToMinutes(next) })}
-      />
-      <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-        <div className="w-28 shrink-0">
-          <NumberInput
-            aria-label={`${dayLabel} ${t('tutoring.groups.slotDurationLabel')}`}
-            disabled={disabled}
-            value={slot.duration_minutes}
-            suffix={t('common.minutes')}
-            onChange={(raw) => onPatch({ duration_minutes: Number(raw) || 0 })}
-          />
-        </div>
-        {DURATION_PRESETS.map((preset) => (
-          <button
-            key={preset}
-            type="button"
-            disabled={disabled}
-            onClick={() => onPatch({ duration_minutes: preset })}
-            className={cn(
-              'h-7 min-w-9 rounded-full border px-2 text-[11px] transition-colors',
-              slot.duration_minutes === preset
-                ? 'border-primary bg-primary/10 font-medium text-primary'
-                : 'text-muted-foreground hover:bg-muted',
-            )}
-          >
-            {formatNumber(preset)}
-          </button>
-        ))}
+    <li
+      className={cn(
+        'flex flex-wrap items-center gap-3 rounded-[10px] border px-3.5 py-2.5',
+        invalid ? 'border-destructive/30 bg-destructive/10' : 'bg-background',
+      )}
+    >
+      <span className="w-[84px] font-extrabold">{t(WEEKDAY_LABEL_KEYS[slot.weekday])}</span>
+      <span className="text-[13px] text-muted-foreground">{t('tutoring.groups.from')}</span>
+      <div className="w-24">
+        <TimePicker
+          className={TIME_INPUT}
+          disabled={disabled}
+          value={minutesToTime(slot.start_minute)}
+          onChange={(next) => onPatch({ start_minute: timeToMinutes(next) })}
+        />
       </div>
+      <span className="text-[13px] text-muted-foreground">{t('tutoring.groups.to')}</span>
+      <div className="w-24">
+        <TimePicker
+          className={cn(TIME_INPUT, invalid && 'border-destructive')}
+          disabled={disabled}
+          value={minutesToTime(end)}
+          onChange={(next) =>
+            onPatch({ duration_minutes: timeToMinutes(next) - slot.start_minute })
+          }
+        />
+      </div>
+      {invalid ? (
+        <span className="flex items-center gap-1.5 text-xs font-semibold text-destructive">
+          <CircleAlert className="h-4 w-4 shrink-0" aria-hidden />
+          {t('tutoring.groups.endBeforeStart')}
+        </span>
+      ) : (
+        <span className="rounded-full bg-muted px-2.5 py-px text-xs font-bold text-muted-foreground">
+          {t(wholeHours ? 'tutoring.groups.durationHours' : 'tutoring.groups.durationMinutes', {
+            count: formatNumber(wholeHours ? slot.duration_minutes / 60 : slot.duration_minutes),
+          })}
+        </span>
+      )}
     </li>
   );
 }
 
 /**
  * The weekly timetable of one class: pick the days, then one line per day.
- * A week has seven days, so the editor never grows past seven lines. A new
- * day copies the last time, so "same time every day" needs no typing.
+ * A new day copies the last time, so "same time every day" needs no typing.
  */
-export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
+export const GroupSlotEditor = ({ slots, onChange, disabled, daysLabel, timesLabel }: Props) => {
   const { t } = useTranslation();
   const days = slots
     .map((slot) => slot.weekday)
@@ -111,18 +118,17 @@ export const GroupSlotEditor = ({ slots, onChange, disabled }: Props) => {
     onChange(slots.map((slot, i) => (i === index ? { ...slot, ...next } : slot)));
 
   return (
-    <div className="space-y-2.5">
-      <WeekdayPicker compact disabled={disabled} value={days} onChange={setDays} />
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        {daysLabel}
+        <WeekdayPicker disabled={disabled} value={days} onChange={setDays} />
+      </div>
       {lines.length === 0 ? (
         <p className="text-xs text-muted-foreground">{t('tutoring.groups.pickDaysHint')}</p>
       ) : (
-        <div className="rounded-xl border">
-          <div className={cn(LINE_GRID, 'border-b px-3 py-1.5 text-[11px] text-muted-foreground')}>
-            <span />
-            <span>{t('tutoring.groups.slotStart')}</span>
-            <span>{t('tutoring.groups.slotDurationLabel')}</span>
-          </div>
-          <ol className="divide-y">
+        <div className="flex flex-col gap-1.5">
+          {timesLabel}
+          <ol className="flex flex-col gap-1.5">
             {lines.map(({ slot, index }) => (
               <SlotLine
                 key={`${slot.weekday}-${index}`}

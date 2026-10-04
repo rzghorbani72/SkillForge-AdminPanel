@@ -2,15 +2,17 @@
 
 import { User, Users } from 'lucide-react';
 
-import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
 import { PriceInput } from '@/components/ui/price-input';
 import { ClassPlanSeatsNote } from '@/components/class/class-plan-seats-note';
+import { Note } from '@/components/shared/note';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { MAX_CLASS_CAPACITY } from '@/lib/live-room';
 import { seatCount } from './live-class-draft';
-import { FieldError, OptionCard, RiskHint } from './live-ui';
+import { ChoiceCard } from '@/components/shared/choice-card';
+import { FieldError, FieldLabel } from '@/components/shared/field-label';
+import { SectionCard } from '@/components/shared/section-card';
 import type { LiveClassDraftApi } from './use-live-class-draft';
 
 export function StepClassType({ live }: { live: LiveClassDraftApi }) {
@@ -23,14 +25,12 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
   const seatsSold = group?.seats_taken ?? 0;
   const priceChanged =
     group !== null && draft.price !== String(group.seat_price ?? group.Offer?.price ?? '');
-  const toman = t('common.toman');
 
   return (
-    <div className="space-y-6">
-      <section className="space-y-3 rounded-2xl border bg-card p-5">
-        <h2 className="text-base font-semibold">{t('liveWizard.whoIsItFor')}</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <OptionCard
+    <div className="flex flex-col gap-4">
+      <SectionCard title={t('liveWizard.whoIsItFor')} hint={t('liveWizard.whoIsItForHint')}>
+        <div role="radiogroup" className="grid gap-4 sm:grid-cols-2">
+          <ChoiceCard
             selected={isPrivate}
             onSelect={() => update({ kind: 'PRIVATE' })}
             icon={User}
@@ -38,7 +38,7 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
             hint={t('liveWizard.privateHint')}
             disabled={seatsSold > 1}
           />
-          <OptionCard
+          <ChoiceCard
             selected={!isPrivate}
             onSelect={() => update({ kind: 'GROUP' })}
             icon={Users}
@@ -46,22 +46,27 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
             hint={t('liveWizard.groupHint')}
           />
         </div>
-      </section>
+      </SectionCard>
 
-      <section className="space-y-4 rounded-2xl border bg-card p-5">
-        <h2 className="text-base font-semibold">
-          {t(isPrivate ? 'liveWizard.privateTitle' : 'liveWizard.groupTitle')}
-        </h2>
+      <SectionCard
+        icon={isPrivate ? User : Users}
+        title={t(isPrivate ? 'liveWizard.privateTitle' : 'liveWizard.groupTitle')}
+        hint={
+          isPrivate
+            ? t('liveWizard.privateCardHint', { count: formatNumber(sessions) })
+            : t('liveWizard.groupCardHint')
+        }
+      >
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="live-price">
-              {t(isPrivate ? 'liveWizard.privatePrice' : 'liveWizard.seatPrice')} *
-            </Label>
+          <div className="flex flex-col gap-1.5">
+            <FieldLabel htmlFor="live-price" required>
+              {t(isPrivate ? 'liveWizard.privatePrice' : 'liveWizard.seatPrice')}
+            </FieldLabel>
             <PriceInput
               id="live-price"
               value={draft.price}
               onChange={(value) => update({ price: value })}
-              suffix={toman}
+              suffix={t(isPrivate ? 'common.toman' : 'liveWizard.tomanPerSeat')}
             />
             {price > 0 && sessions > 0 ? (
               <p className="text-xs text-muted-foreground">
@@ -73,14 +78,17 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
             ) : null}
             <FieldError messageKey={errors.price} />
           </div>
-          {!isPrivate ? (
-            <div className="space-y-1.5">
-              <Label htmlFor="live-capacity">{t('liveWizard.capacity')} *</Label>
+          {isPrivate ? null : (
+            <div className="flex flex-col gap-1.5">
+              <FieldLabel htmlFor="live-capacity" required>
+                {t('liveWizard.capacity')}
+              </FieldLabel>
               <NumberInput
                 id="live-capacity"
                 value={draft.capacity}
                 min={Math.max(2, seatsSold)}
                 max={MAX_CLASS_CAPACITY}
+                suffix={t('liveWizard.personUnit')}
                 onChange={(capacity) => update({ capacity })}
               />
               <p className="text-xs text-muted-foreground">
@@ -88,25 +96,24 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
               </p>
               <FieldError messageKey={errors.capacity} />
             </div>
-          ) : null}
+          )}
         </div>
 
         {price > 0 ? (
-          <RiskHint>
+          <Note>
             {t(isPrivate ? 'liveWizard.privateRevenue' : 'liveWizard.groupRevenue', {
               total: formatNumber(price * seatCount(draft)),
             })}
-          </RiskHint>
+          </Note>
         ) : null}
-        {draft.price === '0' ? (
-          <RiskHint tone="warn">{t('liveWizard.freeClassWarning')}</RiskHint>
-        ) : null}
+        {draft.price === '0' ? <Note tone="warn">{t('liveWizard.freeClassWarning')}</Note> : null}
         {priceChanged && seatsSold > 0 ? (
-          <RiskHint tone="warn">{t('liveWizard.priceChangeWarning')}</RiskHint>
+          <Note tone="warn">{t('liveWizard.priceChangeWarning')}</Note>
         ) : null}
-        {isPrivate ? <RiskHint>{t('liveWizard.privateOneSeat')}</RiskHint> : null}
-        <ClassPlanSeatsNote />
-      </section>
+        {isPrivate ? <Note>{t('liveWizard.privateOneSeat')}</Note> : null}
+      </SectionCard>
+
+      <ClassPlanSeatsNote />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { Fragment } from 'react';
+
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { cn } from '@/lib/utils';
@@ -20,31 +22,48 @@ export function DeadlineTimeline({
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const points: Point[] = [
-    { key: 'today', label: t('liveWizard.today'), date: new Date(), dot: 'bg-muted-foreground' },
+    {
+      key: 'today',
+      label: t('liveWizard.today'),
+      date: new Date(),
+      dot: 'bg-muted-foreground border-muted',
+    },
     {
       key: 'deadline',
       label: t('liveWizard.registrationCloses'),
       date: deadline,
-      dot: 'bg-amber-500',
+      dot: 'bg-amber-500 border-amber-500/20',
     },
-    { key: 'first', label: t('liveWizard.firstSession'), date: first, dot: 'bg-primary' },
-    { key: 'last', label: t('liveWizard.lastSession'), date: last, dot: 'bg-foreground' },
+    {
+      key: 'first',
+      label: t('liveWizard.firstSession'),
+      date: first,
+      dot: 'bg-primary border-primary/20',
+    },
+    {
+      key: 'last',
+      label: t('liveWizard.lastSession'),
+      date: last,
+      dot: 'bg-foreground border-foreground/15',
+    },
   ];
   points.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
-    <ol className="grid gap-3 sm:grid-cols-4">
-      {points.map((point) => (
-        <li key={point.key} className="flex items-start gap-2 text-sm sm:flex-col sm:gap-1.5">
-          <span className="flex items-center gap-2 sm:w-full">
-            <span className={cn('h-3 w-3 shrink-0 rounded-full', point.dot)} aria-hidden />
-            <span className="hidden h-px flex-1 bg-border sm:block" aria-hidden />
-          </span>
-          <span>
-            <span className="block font-medium">{point.label}</span>
-            <span className="text-xs text-muted-foreground">{formatDate(point.date, DAY)}</span>
-          </span>
-        </li>
+    <ol className="flex flex-wrap items-start pt-2 sm:flex-nowrap">
+      {points.map((point, index) => (
+        <Fragment key={point.key}>
+          {index > 0 ? (
+            <li aria-hidden className="mt-1.5 hidden h-0.5 min-w-4 flex-1 bg-border sm:block" />
+          ) : null}
+          <li className="flex w-[120px] flex-none flex-col items-center gap-1 text-center text-xs leading-normal">
+            <span
+              className={cn('h-3.5 w-3.5 rounded-full border-[3px] bg-clip-padding', point.dot)}
+            />
+            <b className="text-[13px]">{point.label}</b>
+            {formatDate(point.date, DAY)}
+          </li>
+        </Fragment>
       ))}
     </ol>
   );

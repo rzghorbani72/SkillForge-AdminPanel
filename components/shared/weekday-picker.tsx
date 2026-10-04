@@ -44,7 +44,7 @@ export const WeekdayPicker = ({
           disabled={disabled}
           variant={value.includes(day) ? 'default' : 'outline'}
           onClick={() => toggle(day)}
-          className={compact ? 'h-7 px-2 text-xs' : undefined}
+          className={compact ? 'h-7 px-2 text-xs' : 'h-11 min-w-[68px] rounded-lg font-semibold'}
         >
           {t(WEEKDAY_LABEL_KEYS[day])}
         </Button>

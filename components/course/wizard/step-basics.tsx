@@ -1,7 +1,7 @@
 'use client';
 
 import type { UseFormReturn } from 'react-hook-form';
-import { ChevronDown } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -15,6 +15,9 @@ import CourseSettingsCard from '../CourseSettingsCard';
 import { CourseTypePicker } from '../course-type-picker';
 import type { CourseType } from '../course-drafts';
 import type { CourseFormData } from '../schema';
+import { CourseLearningFields } from '../course-learning-fields';
+import { LiveBasicsCard } from './live/live-basics-card';
+import { SectionCard } from '@/components/shared/section-card';
 
 type StepBasicsProps = {
   form: UseFormReturn<CourseFormData>;
@@ -79,41 +82,49 @@ export function StepBasics({
     </Card>
   );
 
-  const extras = (
-    <>
-      <CreateCourseAssociations
-        categoryId={form.watch('category_id')}
-        onCategoryChange={(id) =>
-          form.setValue('category_id', id ?? '', {
-            shouldDirty: true,
-            shouldTouch: true,
-          })
-        }
-        error={form.formState.errors.category_id?.message}
-      />
-      <CourseFactsCard form={form} />
-      <CourseSettingsCard form={form} />
-    </>
+  const associations = (
+    <CreateCourseAssociations
+      categoryId={form.watch('category_id')}
+      onCategoryChange={(id) =>
+        form.setValue('category_id', id ?? '', {
+          shouldDirty: true,
+          shouldTouch: true,
+        })
+      }
+      error={form.formState.errors.category_id?.message}
+    />
   );
 
   if (isLive) {
     return (
-      <div className="space-y-6">
-        {onCourseTypeChange ? typeCard : null}
-        <CreateCourseBasicInfo form={form} />
-        {coverCard}
-        <Collapsible>
+      <Collapsible className="flex flex-col gap-4">
+        {onCourseTypeChange ? (
+          <SectionCard title={t('courses.courseTypeLabel')}>
+            <CourseTypePicker value={courseType} onChange={onCourseTypeChange} />
+          </SectionCard>
+        ) : null}
+        <LiveBasicsCard form={form} coverPreviewUrl={coverPreviewUrl} onCoverChange={onCoverChange}>
           <CollapsibleTrigger asChild>
-            <Button type="button" variant="ghost" size="sm" className="group gap-2 px-0">
-              <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              className="group h-auto gap-1.5 self-start p-0 font-bold"
+            >
+              <Plus className="h-4 w-4 transition-transform group-data-[state=open]:rotate-45" />
               {t('liveWizard.moreDetails')}
             </Button>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-4 grid gap-6 md:grid-cols-2">
-            {extras}
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+        </LiveBasicsCard>
+        <CollapsibleContent className="grid gap-4 md:grid-cols-2">
+          <SectionCard>
+            <CourseLearningFields form={form} />
+          </SectionCard>
+          {associations}
+          <CourseFactsCard form={form} hideLevel />
+          <CourseSettingsCard form={form} />
+        </CollapsibleContent>
+      </Collapsible>
     );
   }
 
@@ -128,7 +139,9 @@ export function StepBasics({
 
       <div className="space-y-6">
         {coverCard}
-        {extras}
+        {associations}
+        <CourseFactsCard form={form} />
+        <CourseSettingsCard form={form} />
       </div>
     </div>
   );

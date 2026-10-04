@@ -6,10 +6,11 @@ import { Form } from '@/components/ui/form';
 import { useTranslation } from '@/lib/i18n/hooks';
 import NoAcademyState from '../NoAcademyState';
 import { LiveStepLayout } from './live/live-step-layout';
+import { PublishFooterActions } from './live/publish-actions';
 import { WizardHeader } from './wizard-header';
 import { WizardNav } from './wizard-nav';
 import { WizardStepBody } from './wizard-step-body';
-import { WIZARD_STEP_HINT, WIZARD_STEP_LABEL } from './wizard-steps';
+import { LIVE_CLASS_STEPS, WIZARD_STEP_HINT, WIZARD_STEP_LABEL } from './wizard-steps';
 import { useCourseWizard } from './use-course-wizard';
 
 /**
@@ -24,6 +25,10 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
   const { course, steps, step, index, isLast, isPublic } = wizard;
   const liveReview = step === 'review';
   const nextStep = steps.at(index + 1);
+  const { live, publisher } = wizard;
+  const invalidSteps = wizard.isLive
+    ? LIVE_CLASS_STEPS.filter((liveStep) => live.stepHasErrors(liveStep) && live.errorsShown)
+    : [];
 
   if (!course.selectedAcademy) return <NoAcademyState />;
   if (course.isLoading) {
@@ -47,8 +52,8 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
       accessVersion={wizard.accessVersion}
       onVisibilityChange={wizard.setVisibility}
       onPendingAccessChange={wizard.setPendingAccess}
-      live={wizard.live}
-      publisher={wizard.publisher}
+      live={live}
+      publisher={publisher}
       onGoTo={wizard.goTo}
     />
   );
@@ -58,20 +63,23 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
       <WizardHeader
         step={step}
         steps={steps}
+        invalidSteps={invalidSteps}
         onSelectStep={wizard.goTo}
         saveStatus={course.saveStatus}
         onSave={liveReview ? undefined : wizard.saveStep}
         onRetrySave={course.retrySave}
       />
       <div className="mx-auto w-full max-w-[1200px] p-4 sm:p-6">
-        <p className="mb-6 text-sm text-muted-foreground">{t(WIZARD_STEP_HINT[step])}</p>
+        {wizard.isLive ? null : (
+          <p className="mb-6 text-sm text-muted-foreground">{t(WIZARD_STEP_HINT[step])}</p>
+        )}
         <Form {...course.form}>
           <form onSubmit={(e) => e.preventDefault()} noValidate>
             {wizard.isLive ? (
               <LiveStepLayout
                 step={step}
-                live={wizard.live}
-                publisher={wizard.publisher}
+                live={live}
+                publisher={publisher}
                 title={course.form.watch('title')}
                 isPublished={wizard.isPublished}
               >
@@ -80,18 +88,28 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
             ) : (
               body
             )}
-            <WizardNav
-              index={index}
-              isLast={isLast}
-              isSaving={course.isSaving}
-              nextLabel={nextStep ? t(WIZARD_STEP_LABEL[nextStep]) : undefined}
-              showFinish={!liveReview}
-              offerPublish={!wizard.isPublished}
-              onBack={() => wizard.goTo(steps[index - 1])}
-              onSaveAndExit={() => void saveAndExit()}
-              onNext={() => void wizard.goNext()}
-              onFinish={(publish) => void wizard.finish(publish)}
-            />
+            {liveReview && publisher.justPublished ? null : (
+              <WizardNav
+                index={index}
+                isLast={isLast}
+                isSaving={course.isSaving}
+                nextLabel={nextStep ? t(WIZARD_STEP_LABEL[nextStep]) : undefined}
+                finishActions={
+                  liveReview ? (
+                    <PublishFooterActions
+                      live={live}
+                      publisher={publisher}
+                      isPublished={wizard.isPublished}
+                    />
+                  ) : undefined
+                }
+                offerPublish={!wizard.isPublished}
+                onBack={() => wizard.goTo(steps[index - 1])}
+                onSaveAndExit={() => void saveAndExit()}
+                onNext={() => void wizard.goNext()}
+                onFinish={(publish) => void wizard.finish(publish)}
+              />
+            )}
           </form>
         </Form>
       </div>

@@ -137,6 +137,9 @@ function scheduleErrors(draft: LiveClassDraft, dates: readonly Date[], now: Date
   if (!draft.startsOn) errors.startsOn = 'liveWizard.errStartRequired';
   else if (new Date(`${draft.startsOn}T23:59`) < now) errors.startsOn = 'liveWizard.errStartPast';
   if (draft.slots.length === 0) errors.slots = 'liveWizard.errDaysRequired';
+  else if (draft.slots.some((slot) => slot.duration_minutes <= 0)) {
+    errors.slots = 'tutoring.groups.endBeforeStart';
+  }
   if (!Number.isInteger(count) || count < 1 || count > MAX_SESSIONS) {
     errors.sessionCount = 'liveWizard.errSessionsRequired';
   }

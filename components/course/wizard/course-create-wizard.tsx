@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowRight, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
@@ -17,6 +15,7 @@ import { courseFormSchema, parseAccessDurationDays, type CourseFormData } from '
 import type { CourseType } from '../course-drafts';
 import { StepBasics } from './step-basics';
 import { WizardHeader } from './wizard-header';
+import { WizardNav } from './wizard-nav';
 import { WIZARD_STEP_LABEL, stepsFor, type CourseWizardStep } from './wizard-steps';
 
 function newCourseId(response: unknown): string | undefined {
@@ -75,7 +74,7 @@ export default function CourseCreateWizard() {
    * whichever step was asked for — the manager lands in the same builder they
    * would reach with Next, already filled in.
    */
-  const createAndContinue = async (step: CourseWizardStep) => {
+  const createAndContinue = async (step: CourseWizardStep | null) => {
     if (!(await form.trigger(['title', 'description']))) {
       toast.error(t('courses.fixErrorsBeforeSaving'));
       return;
@@ -103,7 +102,7 @@ export default function CourseCreateWizard() {
       if (!id) throw new Error('Course creation returned no id');
 
       toast.success(t('courses.createdDraftToast'));
-      router.push(`/courses/${id}/edit?step=${step}`);
+      router.push(step ? `/courses/${id}/edit?step=${step}` : '/courses');
     } catch (error) {
       ErrorHandler.handleApiError(error);
       setIsSaving(false);
@@ -111,12 +110,13 @@ export default function CourseCreateWizard() {
   };
 
   if (!selectedAcademy) return <NoAcademyState />;
+  const isLive = courseType === 'LIVE';
 
   return (
     <>
       <WizardHeader
-        title={t('courses.createCourse')}
-        subtitle={selectedAcademy.name}
+        title={t(isLive ? 'liveWizard.createTitle' : 'courses.createCourse')}
+        subtitle={isLive ? t('liveWizard.createSubtitle') : selectedAcademy.name}
         courseType={courseType}
         step="basics"
         steps={steps}
@@ -127,14 +127,16 @@ export default function CourseCreateWizard() {
       />
 
       <div className="mx-auto w-full max-w-[1200px] p-4 sm:p-6">
-        <p className="mb-6 text-sm text-muted-foreground">{t('courses.wizard.stepBasicsHint')}</p>
+        {isLive ? null : (
+          <p className="mb-6 text-sm text-muted-foreground">{t('courses.wizard.stepBasicsHint')}</p>
+        )}
 
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} noValidate>
             <StepBasics
               form={form}
               courseType={courseType}
-              onCourseTypeChange={setCourseType}
+              onCourseTypeChange={requestedType === 'LIVE' ? undefined : setCourseType}
               coverPreviewUrl={coverUrl}
               onCoverChange={(image) => {
                 form.setValue('cover_id', image.id, { shouldDirty: true });
@@ -142,29 +144,17 @@ export default function CourseCreateWizard() {
               }}
             />
 
-            <div className="mt-6 flex items-center justify-end gap-3 rounded-lg border bg-muted/30 px-4 py-3">
-              <Button type="button" variant="ghost" onClick={() => router.push('/courses')}>
-                {t('common.cancel')}
-              </Button>
-              <Button
-                type="button"
-                disabled={isSaving}
-                onClick={() => void createAndContinue(steps[1])}
-                className="gap-2"
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {t('courses.creatingCourse')}
-                  </>
-                ) : (
-                  <>
-                    {t('courses.wizard.continueTo', { step: t(WIZARD_STEP_LABEL[steps[1]]) })}
-                    <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-                  </>
-                )}
-              </Button>
-            </div>
+            <WizardNav
+              index={0}
+              isLast={false}
+              isSaving={isSaving}
+              nextBusy={isSaving}
+              nextLabel={t(WIZARD_STEP_LABEL[steps[1]])}
+              onBack={() => router.push('/courses')}
+              onSaveAndExit={() => void createAndContinue(null)}
+              onNext={() => void createAndContinue(steps[1])}
+              onFinish={() => undefined}
+            />
           </form>
         </Form>
       </div>

@@ -7,7 +7,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { StepNumber } from '@/components/shared/flow-steps';
 
 interface SortableTopicRowProps {
   rowKey: string;
@@ -28,7 +28,6 @@ export default function SortableTopicRow({
   onRemove,
 }: SortableTopicRowProps) {
   const { t } = useTranslation();
-  const formatNumber = useNumberFormat();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: rowKey,
   });
@@ -42,7 +41,7 @@ export default function SortableTopicRow({
       }}
       className={isDragging ? 'relative z-10 opacity-80' : undefined}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5 rounded-lg border bg-card py-1 pe-1 ps-2">
         <button
           type="button"
           className="cursor-grab text-muted-foreground active:cursor-grabbing"
@@ -52,14 +51,13 @@ export default function SortableTopicRow({
         >
           <GripVertical className="h-4 w-4" />
         </button>
-        <span className="w-6 shrink-0 text-sm text-muted-foreground">
-          {formatNumber(index + 1)}
-        </span>
+        <StepNumber value={index + 1} />
         <Input
           value={title}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
           placeholder={t('courses.live.topicPlaceholder')}
+          className="h-9 border-0 px-1 shadow-none"
         />
         <Button
           type="button"

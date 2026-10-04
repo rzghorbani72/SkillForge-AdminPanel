@@ -46,6 +46,12 @@ test('a deadline after the last session is refused', () => {
   );
 });
 
+test('a day whose end time is not after its start is refused', () => {
+  const [first, ...rest] = READY.slots;
+  const broken = { ...READY, slots: [{ ...first, duration_minutes: -60 }, ...rest] };
+  expect(errorsOf(broken).slots).toBe('tutoring.groups.endBeforeStart');
+});
+
 test('a deadline after the start is allowed but counts missed sessions', () => {
   const late = { ...READY, joinDeadline: '2026-10-17T12:00' };
   expect(errorsOf(late).joinDeadline).toBeUndefined();

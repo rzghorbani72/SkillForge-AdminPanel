@@ -112,6 +112,7 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
     dates,
     errors,
     shownErrors: revealErrors ? errors : {},
+    errorsShown: revealErrors,
     missedAtDeadline: sessionsMissedAtDeadline(draft, dates),
     isComplete,
     isSaving,

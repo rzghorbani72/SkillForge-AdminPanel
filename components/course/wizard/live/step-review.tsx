@@ -1,7 +1,9 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
+import { ImageIcon } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import { Note } from '@/components/shared/note';
 import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { resolveMediaUrl } from '@/lib/media-url';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -9,7 +11,7 @@ import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { CourseWizardStep } from '../wizard-steps';
 import { LIVE_CLASS_STEPS, WIZARD_STEP_LABEL } from '../wizard-steps';
-import { RiskHint } from './live-ui';
+import { Badge } from '@/components/ui/badge';
 import { PublishedCard } from './published-card';
 import { ReviewRows, ReviewSection, Row } from './review-parts';
 import type { LiveClassDraftApi } from './use-live-class-draft';
@@ -52,9 +54,9 @@ export function StepReview({
   if (publisher.justPublished) return <PublishedCard live={live} title={title} />;
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       {brokenSteps.length > 0 ? (
-        <RiskHint tone="warn">
+        <Note tone="warn">
           <span className="block">{t('liveWizard.reviewIncomplete')}</span>
           <span className="mt-2 flex flex-wrap gap-2">
             {brokenSteps.map((step) => (
@@ -72,9 +74,9 @@ export function StepReview({
               </Button>
             ))}
           </span>
-        </RiskHint>
+        </Note>
       ) : (
-        <RiskHint>{t('liveWizard.reviewComplete')}</RiskHint>
+        <Note tone="success">{t('liveWizard.reviewComplete')}</Note>
       )}
 
       <ReviewSection title={t('liveWizard.reviewCourse')} onEdit={() => onEdit('basics')}>
@@ -83,13 +85,17 @@ export function StepReview({
             <img
               src={resolveMediaUrl(coverUrl)}
               alt=""
-              className="aspect-video w-48 shrink-0 rounded-lg border object-cover"
+              className="h-28 w-[200px] shrink-0 rounded-[10px] border object-cover"
             />
-          ) : null}
-          <div className="min-w-0 flex-1 space-y-1">
-            <p className="text-base font-bold">{title}</p>
-            <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p>
-            <p className="text-xs text-muted-foreground">
+          ) : (
+            <span className="grid h-28 w-[200px] shrink-0 place-items-center rounded-[10px] border bg-muted text-muted-foreground">
+              <ImageIcon className="h-6 w-6" aria-hidden />
+            </span>
+          )}
+          <div className="min-w-0 flex-[1_1_280px]">
+            <p className="text-[17px] font-extrabold">{title}</p>
+            <p className="line-clamp-2 text-[13px] text-muted-foreground">{description}</p>
+            <p className="mt-1.5 text-[13px] text-muted-foreground">
               {t('liveWizard.reviewLevel')}: {t(levelKey)} ·{' '}
               {t('liveWizard.topicsCount', { count: formatNumber(live.topics.length) })}
             </p>
@@ -109,11 +115,11 @@ export function StepReview({
           <Row label={t('liveWizard.deadline')}>
             {summary.deadline ?? '—'}{' '}
             {leadDays === null ? null : leadDays > 0 ? (
-              <Badge variant="secondary">
+              <Badge variant="success">
                 {t('liveWizard.daysBeforeStart', { count: formatNumber(leadDays) })}
               </Badge>
             ) : (
-              <Badge variant="outline">{t('liveWizard.afterStart')}</Badge>
+              <Badge variant="muted">{t('liveWizard.afterStart')}</Badge>
             )}
           </Row>
         </ReviewRows>
