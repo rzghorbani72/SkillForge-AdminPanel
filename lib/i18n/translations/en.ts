@@ -2257,7 +2257,6 @@ export const en = {
       stepPricingHint: 'Set the price and every way a student can enrol in this course.',
       stepPreview: 'Preview',
       stepPreviewHint: 'This is what a student sees. Check it, then publish the course.',
-      typeLockedHint: 'The course type is chosen once and cannot be changed.',
       visibilityTitle: 'Who can see this course',
       visibilityPublicTitle: 'Public',
       visibilityPublicHint:

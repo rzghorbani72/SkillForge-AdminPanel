@@ -2251,7 +2251,6 @@ export const fa = {
       stepPricingHint: 'قیمت دوره و همهٔ راه‌های ثبت‌نام در آن را مشخص کنید.',
       stepPreview: 'پیش‌نمایش',
       stepPreviewHint: 'این چیزی است که دانشجو می‌بیند. آن را بررسی کنید و سپس دوره را منتشر کنید.',
-      typeLockedHint: 'نوع دوره یک‌بار انتخاب می‌شود و قابل تغییر نیست.',
       visibilityTitle: 'چه کسی این دوره را می‌بیند',
       visibilityPublicTitle: 'عمومی',
       visibilityPublicHint:

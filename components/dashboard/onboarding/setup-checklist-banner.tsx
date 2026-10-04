@@ -30,7 +30,7 @@ const STEP_META: Record<
     titleKey: 'onboarding.setupStepTemplate',
   },
   course: {
-    href: '/courses/create',
+    href: '/courses',
     icon: BookOpen,
     titleKey: 'onboarding.setupStepCourse',
   },

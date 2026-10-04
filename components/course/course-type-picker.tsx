@@ -25,18 +25,13 @@ const COURSE_TYPES: {
   },
 ];
 
-/**
- * Recorded or live. The choice decides how the whole course is built, so it is
- * made once at creation and shown read-only afterwards.
- */
+/** Recorded or live. Picked once, before the create wizard opens. */
 export function CourseTypePicker({
   value,
   onChange,
-  disabled = false,
 }: {
-  value: CourseType;
+  value?: CourseType;
   onChange: (type: CourseType) => void;
-  disabled?: boolean;
 }) {
   const { t } = useTranslation();
 
@@ -46,13 +41,11 @@ export function CourseTypePicker({
         <button
           key={type}
           type="button"
-          disabled={disabled}
           onClick={() => onChange(type)}
           aria-pressed={value === type}
           className={cn(
             'flex items-start gap-3 rounded-lg border p-4 text-start transition-colors',
             value === type ? 'border-primary bg-primary/5' : 'border-input hover:bg-accent',
-            disabled && 'cursor-not-allowed opacity-60',
           )}
         >
           <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />

@@ -12,7 +12,6 @@ import CreateCourseBasicInfo from '../CreateCourseBasicInfo';
 import CreateCourseAssociations from '../CreateCourseAssociations';
 import CourseFactsCard from '../CourseFactsCard';
 import CourseSettingsCard from '../CourseSettingsCard';
-import { CourseTypePicker } from '../course-type-picker';
 import type { CourseType } from '../course-drafts';
 import type { CourseFormData } from '../schema';
 import { CourseLearningFields } from '../course-learning-fields';
@@ -22,8 +21,6 @@ import { SectionCard } from '@/components/shared/section-card';
 type StepBasicsProps = {
   form: UseFormReturn<CourseFormData>;
   courseType: CourseType;
-  /** Missing on a saved course: the type is fixed once the course exists. */
-  onCourseTypeChange?: (type: CourseType) => void;
   coverPreviewUrl: string | null;
   onCoverChange: (image: { id: string; url: string }) => void;
 };
@@ -33,33 +30,9 @@ type StepBasicsProps = {
  * here may depend on there being a lesson tree. A live course shares the page
  * with its class summary, so it is one column with the extras folded away.
  */
-export function StepBasics({
-  form,
-  courseType,
-  onCourseTypeChange,
-  coverPreviewUrl,
-  onCoverChange,
-}: StepBasicsProps) {
+export function StepBasics({ form, courseType, coverPreviewUrl, onCoverChange }: StepBasicsProps) {
   const { t } = useTranslation();
   const isLive = courseType === 'LIVE';
-
-  const typeCard = (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('courses.courseTypeLabel')}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <CourseTypePicker
-          value={courseType}
-          onChange={(type) => onCourseTypeChange?.(type)}
-          disabled={!onCourseTypeChange}
-        />
-        {!onCourseTypeChange && (
-          <p className="text-xs text-muted-foreground">{t('courses.wizard.typeLockedHint')}</p>
-        )}
-      </CardContent>
-    </Card>
-  );
 
   const coverCard = (
     <Card>
@@ -98,11 +71,6 @@ export function StepBasics({
   if (isLive) {
     return (
       <Collapsible className="flex flex-col gap-4">
-        {onCourseTypeChange ? (
-          <SectionCard title={t('courses.courseTypeLabel')}>
-            <CourseTypePicker value={courseType} onChange={onCourseTypeChange} />
-          </SectionCard>
-        ) : null}
         <LiveBasicsCard form={form} coverPreviewUrl={coverPreviewUrl} onCoverChange={onCoverChange}>
           <CollapsibleTrigger asChild>
             <Button
@@ -131,7 +99,6 @@ export function StepBasics({
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="flex flex-col gap-6 lg:col-span-2">
-        {typeCard}
         <div className="flex flex-1 flex-col *:flex-1">
           <CreateCourseBasicInfo form={form} />
         </div>

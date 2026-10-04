@@ -34,11 +34,8 @@ export default function CourseCreateWizard() {
   const { selectedAcademy } = useStore();
   const requestedType = useSearchParams().get('type');
 
-  const [courseType, setCourseType] = useState<CourseType>(
-    requestedType === 'LIVE' ? 'LIVE' : 'OFFLINE',
-  );
-  // Switching the type reshapes the wizard: a live course has no lesson tree,
-  // so its `content` step disappears from the stepper as soon as it is picked.
+  // The type is picked on the courses page before the wizard opens.
+  const courseType: CourseType = requestedType === 'LIVE' ? 'LIVE' : 'OFFLINE';
   const steps = stepsFor(courseType);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -136,7 +133,6 @@ export default function CourseCreateWizard() {
             <StepBasics
               form={form}
               courseType={courseType}
-              onCourseTypeChange={requestedType === 'LIVE' ? undefined : setCourseType}
               coverPreviewUrl={coverUrl}
               onCoverChange={(image) => {
                 form.setValue('cover_id', image.id, { shouldDirty: true });

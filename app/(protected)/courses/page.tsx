@@ -15,6 +15,7 @@ import { CourseRow } from '@/components/course/CourseRow';
 import { GridSkeleton } from '@/components/course/GridSkeleton';
 import { CourseFilterBar } from '@/components/course/CourseFilterBar';
 import { CourseTypeEntry } from '@/components/course/course-type-entry';
+import { NewCourseDialog } from '@/components/course/new-course-dialog';
 import { COURSE_CARD_GRID_COLUMNS } from '@/components/course/courseUtils';
 import { ConfirmDeleteDialog } from '@/components/shared/ConfirmDeleteDialog';
 import { RequirePermission } from '@/components/access-control/RequirePermission';
@@ -27,6 +28,7 @@ export default function CoursesPage() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [category, setCategory] = useState<string>('all');
   const [courseToDelete, setCourseToDelete] = useState<CourseWithRevenue | null>(null);
+  const [isTypeDialogOpen, setIsTypeDialogOpen] = useState(false);
 
   const {
     courses,
@@ -39,7 +41,7 @@ export default function CoursesPage() {
   } = useCourses();
 
   function handleCreate() {
-    router.push('/courses/create');
+    setIsTypeDialogOpen(true);
   }
 
   function handleEditCard(course: CourseWithRevenue) {
@@ -179,6 +181,8 @@ export default function CoursesPage() {
             </table>
           </div>
         )}
+
+        <NewCourseDialog open={isTypeDialogOpen} onOpenChange={setIsTypeDialogOpen} />
 
         <ConfirmDeleteDialog
           open={!!courseToDelete}
