@@ -2290,7 +2290,6 @@ export const en = {
     builderPublishedHint:
       'This course is published and visible to students. Changes go live as soon as you save.',
     updatedToast: 'Course updated',
-    publishTitleRequired: 'Write a course title before publishing.',
     fixErrorsBeforeSaving: 'Please fix the highlighted fields before saving',
     createdDraftToast: 'Course created as a draft — publish it when it is ready',
     courseTypeLabel: 'Course type',

@@ -34,10 +34,12 @@ export function parseCourseDifficulty(value: unknown): CourseDifficultyLevel {
 export const courseFormFields = z.object({
   title: z
     .string()
+    .trim()
     .min(5, 'courses.errors.titleMin')
     .max(COURSE_TITLE_MAX, 'courses.errors.titleMax'),
   description: z
     .string()
+    .trim()
     .min(1, 'courses.errors.descriptionRequired')
     .max(COURSE_DESCRIPTION_MAX, 'courses.errors.descriptionMax'),
   // One outcome per line. Empty hides the public "what you will learn" block.

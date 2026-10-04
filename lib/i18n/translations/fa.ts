@@ -2284,7 +2284,6 @@ export const fa = {
     builderPublishedHint:
       'این دوره منتشر شده و برای دانشجویان قابل مشاهده است. تغییرات به‌محض ذخیره اعمال می‌شود.',
     updatedToast: 'دوره به‌روزرسانی شد',
-    publishTitleRequired: 'پیش از انتشار، عنوان دوره را بنویسید.',
     fixErrorsBeforeSaving: 'قبل از ذخیره، خطاهای مشخص‌شده را برطرف کنید',
     createdDraftToast: 'دوره به‌صورت پیش‌نویس ساخته شد — هر وقت آماده بود آن را منتشر کنید',
     courseTypeLabel: 'نوع دوره',

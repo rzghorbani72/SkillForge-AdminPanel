@@ -123,12 +123,6 @@ export function useCourseSave({
       if (savingRef.current) return false;
       savingRef.current = true;
 
-      if (data.published && !data.title.trim()) {
-        savingRef.current = false;
-        if (!silent) toast.error(t('courses.publishTitleRequired'));
-        return false;
-      }
-
       const payload = buildPayload(data, seasons, lessons, deletedSeasonIds, deletedLessonIds);
 
       // Nothing changed since the last successful save, so there is nothing to
