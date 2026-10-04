@@ -4,7 +4,9 @@ import { useMemo, useState } from 'react';
 
 import { useLiveCourse } from '@/app/(protected)/courses/[course_id]/live/hooks/use-live-course';
 import { useCreateTutoringOffer } from '@/app/(protected)/courses/[course_id]/live/hooks/use-create-tutoring-offer';
+import { useClassPlanSeats } from '@/hooks/use-class-plan-seats';
 import { defaultTimezone } from '@/lib/class-slot-time';
+import { classCapacityLimit } from '@/lib/live-room';
 import { ErrorHandler } from '@/lib/error-handler';
 import type { Course } from '@/types/api';
 import type { TutoringGroup } from '@/types/learning-operations';
@@ -35,6 +37,7 @@ const liveClasses = (groups: readonly TutoringGroup[]): TutoringGroup[] =>
 export function useLiveClassDraft(courseId: string, enabled: boolean) {
   const live = useLiveCourse(courseId, enabled);
   const createOffer = useCreateTutoringOffer();
+  const maxCapacity = classCapacityLimit(useClassPlanSeats()?.class_capacity_limit);
   const [edited, setEdited] = useState<LiveClassDraft | null>(null);
   const [revealErrors, setRevealErrors] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -44,8 +47,10 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
   const draft = useMemo(
     () =>
       edited ??
-      (groups.length > 0 ? draftFromGroups(groups) : (readStash(courseId) ?? emptyLiveDraft())),
-    [edited, groups, courseId],
+      (groups.length > 0
+        ? draftFromGroups(groups)
+        : (readStash(courseId) ?? emptyLiveDraft(maxCapacity))),
+    [edited, groups, courseId, maxCapacity],
   );
 
   const update = (partial: Partial<LiveClassDraft>) => {
@@ -55,7 +60,14 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
   };
   const setClasses = (classes: ClassScheduleDraft[]) => update({ classes });
 
-  const { classes, errors } = useClassSchedules(draft, groups, timezone, revealErrors, setClasses);
+  const { classes, errors } = useClassSchedules(
+    draft,
+    groups,
+    timezone,
+    revealErrors,
+    maxCapacity,
+    setClasses,
+  );
   const isComplete = Object.keys(errors.shared).length === 0 && !stepHasErrors(errors, 'schedule');
 
   const resolveOfferId = async (course: Course): Promise<string> => {
@@ -114,6 +126,7 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
     patchTopics: live.patch,
     groups,
     timezone,
+    maxCapacity,
     draft,
     classes,
     shownErrors: revealErrors ? errors.shared : {},

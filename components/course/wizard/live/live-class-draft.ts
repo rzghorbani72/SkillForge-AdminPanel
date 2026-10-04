@@ -41,11 +41,13 @@ export function stepHasErrors(errors: LiveDraftErrors, step: LiveClassStepName):
   return STEP_FIELDS[step].some((field) => errors.shared[field] !== undefined);
 }
 
-export const emptyLiveDraft = (): LiveClassDraft => ({
+const DEFAULT_CAPACITY = 12;
+
+export const emptyLiveDraft = (maxCapacity = MAX_CLASS_CAPACITY): LiveClassDraft => ({
   classes: [newClassDraft()],
   kind: 'GROUP',
   price: '',
-  capacity: '12',
+  capacity: String(Math.min(DEFAULT_CAPACITY, maxCapacity)),
   meeting: 'AUTO',
   meetingUrl: '',
 });
@@ -72,15 +74,23 @@ const isHttpsUrl = (value: string) => {
   }
 };
 
-export function sharedErrors(draft: LiveClassDraft): SharedErrors {
+export function sharedErrors(
+  draft: LiveClassDraft,
+  maxCapacity = MAX_CLASS_CAPACITY,
+): SharedErrors {
   const errors: SharedErrors = {};
   const price = Number(draft.price);
   if (draft.price === '' || !Number.isFinite(price) || price < 0) {
     errors.price = 'liveWizard.errPriceRequired';
   }
   const capacity = Number(draft.capacity);
-  const capacityOk = Number.isInteger(capacity) && capacity >= 2 && capacity <= MAX_CLASS_CAPACITY;
-  if (draft.kind === 'GROUP' && !capacityOk) errors.capacity = 'liveWizard.errCapacity';
+  if (draft.kind === 'GROUP') {
+    if (!Number.isInteger(capacity) || capacity < 2 || capacity > MAX_CLASS_CAPACITY) {
+      errors.capacity = 'liveWizard.errCapacity';
+    } else if (capacity > maxCapacity) {
+      errors.capacity = 'liveWizard.errCapacityOverPlan';
+    }
+  }
   if (draft.meeting === 'OWN' && !isHttpsUrl(draft.meetingUrl.trim())) {
     errors.meetingUrl = 'liveWizard.errMeetingUrl';
   }

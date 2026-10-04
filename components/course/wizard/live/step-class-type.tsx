@@ -8,7 +8,6 @@ import { ClassPlanSeatsNote } from '@/components/class/class-plan-seats-note';
 import { Note } from '@/components/shared/note';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import { MAX_CLASS_CAPACITY } from '@/lib/live-room';
 import { seatCount } from './live-class-draft';
 import { ChoiceCard } from '@/components/shared/choice-card';
 import { FieldError, FieldLabel } from '@/components/shared/field-label';
@@ -88,12 +87,12 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
                 id="live-capacity"
                 value={draft.capacity}
                 min={Math.max(2, seatsSold)}
-                max={MAX_CLASS_CAPACITY}
+                max={live.maxCapacity}
                 suffix={t('liveWizard.personUnit')}
                 onChange={(capacity) => update({ capacity })}
               />
               <p className="text-xs text-muted-foreground">
-                {t('liveWizard.capacityHint', { max: formatNumber(MAX_CLASS_CAPACITY) })}
+                {t('liveWizard.capacityHint', { max: formatNumber(live.maxCapacity) })}
               </p>
               <FieldError messageKey={errors.capacity} />
             </div>

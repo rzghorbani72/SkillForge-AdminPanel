@@ -32,6 +32,7 @@ export function useClassSchedules(
   groups: readonly TutoringGroup[],
   timezone: string,
   revealErrors: boolean,
+  maxCapacity: number,
   setClasses: (classes: ClassScheduleDraft[]) => void,
 ): { classes: ClassScheduleApi[]; errors: LiveDraftErrors } {
   const nameRequired = draft.classes.length > 1;
@@ -63,6 +64,9 @@ export function useClassSchedules(
 
   return {
     classes,
-    errors: { shared: sharedErrors(draft), classes: computed.map((item) => item.errors) },
+    errors: {
+      shared: sharedErrors(draft, maxCapacity),
+      classes: computed.map((item) => item.errors),
+    },
   };
 }

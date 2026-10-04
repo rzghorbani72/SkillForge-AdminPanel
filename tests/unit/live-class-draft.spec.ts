@@ -108,3 +108,15 @@ test('a private class is one seat at the whole-course price', () => {
 test('a free class is valid', () => {
   expect(sharedErrors({ ...READY, price: '0' }).price).toBeUndefined();
 });
+
+test('a new class starts within the plan seat cap', () => {
+  expect(emptyLiveDraft(10).capacity).toBe('10');
+  expect(emptyLiveDraft().capacity).toBe('12');
+});
+
+test('more seats than the plan allows is refused', () => {
+  expect(sharedErrors({ ...READY, capacity: '12' }, 10).capacity).toBe(
+    'liveWizard.errCapacityOverPlan',
+  );
+  expect(sharedErrors({ ...READY, capacity: '10' }, 10).capacity).toBeUndefined();
+});

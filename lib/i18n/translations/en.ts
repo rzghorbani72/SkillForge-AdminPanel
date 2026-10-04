@@ -31,6 +31,8 @@ export const en = {
       'The registration deadline is after the last session. Pick a time before the class ends.',
     errPriceRequired: 'Enter a price.',
     errCapacity: 'A group class needs 2 to 48 seats.',
+    errCapacityOverPlan:
+      'This is more seats than your plan allows per class. Lower it or upgrade your plan.',
     errMeetingUrl: 'Enter a full link that starts with https.',
     scheduleLocked:
       'This class has started; change its session dates from the class page so students are told.',
