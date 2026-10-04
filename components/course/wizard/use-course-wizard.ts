@@ -33,6 +33,7 @@ export function useCourseWizard(courseId: string) {
   const [pendingAccess, setPendingAccess] = useState<AssignAccessSelection | null>(null);
   const [accessVersion, setAccessVersion] = useState(0);
   const [visibility, setVisibility] = useState<boolean | null>(null);
+  const [isAdvancing, setIsAdvancing] = useState(false);
   // The form's flag changes only on save, so it is the published state students see.
   const isPublished = Boolean(course.form.watch('published'));
   const isPublic = visibility ?? isPublished;
@@ -50,20 +51,6 @@ export function useCourseWizard(courseId: string) {
     document.getElementById('app-scroll-area')?.scrollTo({ top: 0 });
   };
 
-  const goNext = async () => {
-    if (isLiveClassStep(step) && live.stepHasErrors(step)) {
-      live.revealErrors();
-      toast.error(t('courses.fixErrorsBeforeSaving'));
-      return;
-    }
-    const fields = WIZARD_STEP_FIELDS[step];
-    if (fields.length > 0 && !(await course.form.trigger(fields))) {
-      toast.error(t('courses.fixErrorsBeforeSaving'));
-      return;
-    }
-    goTo(steps[index + 1]);
-  };
-
   const saveCourse = (publish: boolean = isPublic) =>
     persistWizardStep(courseId, course, publish, pendingAccess, () => {
       setPendingAccess(null);
@@ -77,6 +64,26 @@ export function useCourseWizard(courseId: string) {
     if (live.isComplete) return (await live.save()) !== null;
     toast.info(t('liveWizard.keptOnDevice'));
     return true;
+  };
+
+  const goNext = async () => {
+    if (isAdvancing) return;
+    if (isLiveClassStep(step) && live.stepHasErrors(step)) {
+      live.revealErrors();
+      toast.error(t('courses.fixErrorsBeforeSaving'));
+      return;
+    }
+    const fields = WIZARD_STEP_FIELDS[step];
+    if (fields.length > 0 && !(await course.form.trigger(fields))) {
+      toast.error(t('courses.fixErrorsBeforeSaving'));
+      return;
+    }
+    setIsAdvancing(true);
+    try {
+      if (await saveStep()) goTo(steps[index + 1]);
+    } finally {
+      setIsAdvancing(false);
+    }
   };
 
   const publisher = useLivePublish(live, course, saveCourse);
@@ -99,6 +106,7 @@ export function useCourseWizard(courseId: string) {
     isLast: index === steps.length - 1,
     isPublic,
     isPublished,
+    isAdvancing,
     accessVersion,
     goTo,
     goNext,

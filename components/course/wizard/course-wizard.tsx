@@ -14,8 +14,8 @@ import { LIVE_CLASS_STEPS, WIZARD_STEP_HINT, WIZARD_STEP_LABEL } from './wizard-
 import { useCourseWizard } from './use-course-wizard';
 
 /**
- * Builds one course in steps. Each step autosaves, so stepping back and forth
- * never loses work; publishing happens only on the final step. A live course
+ * Builds one course in steps. Next saves the step before moving on, so stepping
+ * back and forth never loses work; publishing happens only on the final step. A live course
  * swaps content/access/pricing for schedule, class type, class access and review.
  */
 export default function CourseWizard({ courseId }: { courseId: string }) {
@@ -93,6 +93,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 index={index}
                 isLast={isLast}
                 isSaving={course.isSaving}
+                nextBusy={wizard.isAdvancing}
                 nextLabel={nextStep ? t(WIZARD_STEP_LABEL[nextStep]) : undefined}
                 finishActions={
                   liveReview ? (
