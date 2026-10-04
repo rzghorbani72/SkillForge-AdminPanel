@@ -6229,6 +6229,8 @@ export const en = {
     notSet: 'Not set',
     seoFallback: 'Course title and description are used',
     tabFinancial: 'Financial statistics',
+    tabAssignments: 'Assignments',
+    tabFollowUp: 'Learning follow-up',
     moreActions: 'More actions',
     quickSettings: 'Quick settings',
     quickSettingsDesc: 'Small changes, without leaving this page',

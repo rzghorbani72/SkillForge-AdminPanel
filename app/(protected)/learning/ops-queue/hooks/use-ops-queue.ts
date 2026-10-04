@@ -15,11 +15,11 @@ const EMPTY_QUEUE: OpsQueueResponse = {
   unanswered_threads: [],
 };
 
-export function useOpsQueue(featureEnabled: boolean | null) {
+export function useOpsQueue(featureEnabled: boolean | null, lockedCourseId?: string) {
   const { t } = useTranslation();
   const [queue, setQueue] = useState<OpsQueueResponse>(EMPTY_QUEUE);
   const [loading, setLoading] = useState(false);
-  const [courseId, setCourseId] = useState('');
+  const [courseId, setCourseId] = useState(lockedCourseId ?? '');
   const [inactiveDays, setInactiveDays] = useState('14');
   const [lowScoreThreshold, setLowScoreThreshold] = useState('50');
   const [noteProfileId, setNoteProfileId] = useState('');

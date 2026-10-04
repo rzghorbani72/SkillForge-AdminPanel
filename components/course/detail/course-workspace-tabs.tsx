@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Award, BarChart3, Eye } from 'lucide-react';
+import { Award, BarChart3, ClipboardCheck, Eye, TrendingUp } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
 /**
  * Real links, not a JS tab widget: every tab is a URL the manager can share,
- * bookmark or open in a new tab. Only the three reading views live here —
+ * bookmark or open in a new tab. Only the reading and follow-up views live here —
  * building the course is its own step-by-step page, reached from the header.
  */
 export function CourseWorkspaceTabs({ courseId }: { courseId: string }) {
@@ -33,6 +33,18 @@ export function CourseWorkspaceTabs({ courseId }: { courseId: string }) {
       href: `${base}/certificates`,
       label: t('certificates.tab'),
       icon: Award,
+      exact: false,
+    },
+    {
+      href: `${base}/assignments`,
+      label: t('courseDetail.tabAssignments'),
+      icon: ClipboardCheck,
+      exact: false,
+    },
+    {
+      href: `${base}/follow-up`,
+      label: t('courseDetail.tabFollowUp'),
+      icon: TrendingUp,
       exact: false,
     },
     // Instalment plans are hidden until a gateway supports them; the page and

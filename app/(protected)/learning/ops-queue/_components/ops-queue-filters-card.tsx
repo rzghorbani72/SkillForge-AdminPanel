@@ -11,6 +11,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 
 interface OpsQueueFiltersCardProps {
   courseId: string;
+  courseLocked: boolean;
   onCourseIdChange: (value: string) => void;
   inactiveDays: string;
   onInactiveDaysChange: (value: string) => void;
@@ -48,6 +49,7 @@ function OpsQueueFilterField({ id, label, appliesTo, hint, children }: OpsQueueF
 
 export function OpsQueueFiltersCard({
   courseId,
+  courseLocked,
   onCourseIdChange,
   inactiveDays,
   onInactiveDaysChange,
@@ -64,20 +66,22 @@ export function OpsQueueFiltersCard({
         <CardDescription>{t('opsQueue.filtersDescription')}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <OpsQueueFilterField
-          id="courseId"
-          label={t('opsQueue.courseId')}
-          appliesTo={t('opsQueue.filterAppliesAll')}
-          hint={t('opsQueue.courseFilterHint')}
-        >
-          <CourseSearchCombobox
+        {courseLocked ? null : (
+          <OpsQueueFilterField
             id="courseId"
-            value={courseId}
-            onValueChange={onCourseIdChange}
-            placeholder={t('opsQueue.courseIdPlaceholder')}
-            clearable
-          />
-        </OpsQueueFilterField>
+            label={t('opsQueue.courseId')}
+            appliesTo={t('opsQueue.filterAppliesAll')}
+            hint={t('opsQueue.courseFilterHint')}
+          >
+            <CourseSearchCombobox
+              id="courseId"
+              value={courseId}
+              onValueChange={onCourseIdChange}
+              placeholder={t('opsQueue.courseIdPlaceholder')}
+              clearable
+            />
+          </OpsQueueFilterField>
+        )}
 
         <OpsQueueFilterField
           id="inactiveDays"

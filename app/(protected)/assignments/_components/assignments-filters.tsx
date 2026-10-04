@@ -23,6 +23,7 @@ const STATUS_OPTIONS: Array<SubmissionStatus | 'ALL'> = [
 
 interface AssignmentsFiltersProps {
   courseId: string;
+  courseLocked: boolean;
   onCourseIdChange: (value: string) => void;
   status: SubmissionStatus | 'ALL';
   onStatusChange: (value: SubmissionStatus | 'ALL') => void;
@@ -32,6 +33,7 @@ interface AssignmentsFiltersProps {
 
 export function AssignmentsFilters({
   courseId,
+  courseLocked,
   onCourseIdChange,
   status,
   onStatusChange,
@@ -42,15 +44,17 @@ export function AssignmentsFilters({
 
   return (
     <div className="flex flex-wrap items-end gap-4">
-      <div className="min-w-0 flex-1 space-y-2 sm:min-w-[220px]">
-        <Label htmlFor="assignments-course-filter">{t('assignmentsPage.filterByCourse')}</Label>
-        <CourseSearchCombobox
-          id="assignments-course-filter"
-          value={courseId}
-          onValueChange={onCourseIdChange}
-          placeholder={t('assignmentsPage.filterByCourse')}
-        />
-      </div>
+      {courseLocked ? null : (
+        <div className="min-w-0 flex-1 space-y-2 sm:min-w-[220px]">
+          <Label htmlFor="assignments-course-filter">{t('assignmentsPage.filterByCourse')}</Label>
+          <CourseSearchCombobox
+            id="assignments-course-filter"
+            value={courseId}
+            onValueChange={onCourseIdChange}
+            placeholder={t('assignmentsPage.filterByCourse')}
+          />
+        </div>
+      )}
       {showStatusFilter ? (
         <div className="w-full space-y-2 sm:w-48">
           <Label htmlFor="assignments-status-filter">{t('assignmentsPage.filterByStatus')}</Label>

@@ -33,6 +33,7 @@ export function AssignmentsContent({
   assignments,
   clearFilters,
   courseFilter,
+  courseLocked,
   fetchStats,
   fetchSubmissions,
   filteredAssignments,
@@ -62,6 +63,7 @@ export function AssignmentsContent({
   assignments: LearningAssignment[];
   clearFilters: () => void;
   courseFilter: string;
+  courseLocked: boolean;
   fetchStats: () => Promise<void>;
   fetchSubmissions: () => Promise<void>;
   filteredAssignments: LearningAssignment[];
@@ -109,6 +111,7 @@ export function AssignmentsContent({
           <CardContent>
             <AssignmentsFilters
               courseId={courseFilter}
+              courseLocked={courseLocked}
               onCourseIdChange={setCourseFilter}
               status={statusFilter}
               onStatusChange={setStatusFilter}
