@@ -33,7 +33,9 @@ export function useCourseWizard(courseId: string) {
   const [pendingAccess, setPendingAccess] = useState<AssignAccessSelection | null>(null);
   const [accessVersion, setAccessVersion] = useState(0);
   const [visibility, setVisibility] = useState<boolean | null>(null);
-  const isPublic = visibility ?? course.form.watch('published');
+  // The form's flag changes only on save, so it is the published state students see.
+  const isPublished = Boolean(course.form.watch('published'));
+  const isPublic = visibility ?? isPublished;
   const index = steps.indexOf(step);
 
   useEffect(() => {
@@ -62,8 +64,8 @@ export function useCourseWizard(courseId: string) {
     goTo(steps[index + 1]);
   };
 
-  const saveCourse = () =>
-    persistWizardStep(courseId, course, isPublic, pendingAccess, () => {
+  const saveCourse = (publish: boolean = isPublic) =>
+    persistWizardStep(courseId, course, publish, pendingAccess, () => {
       setPendingAccess(null);
       setAccessVersion((version) => version + 1);
     });
@@ -79,8 +81,10 @@ export function useCourseWizard(courseId: string) {
 
   const publisher = useLivePublish(live, course, saveCourse);
 
-  const finish = async () => {
-    if (!(await saveStep())) return;
+  // Only a recorded course ends here; a live one publishes from its review step.
+  const finish = async (publish: boolean = isPublic) => {
+    if (!(await saveCourse(publish))) return;
+    if (publish && !isPublished) toast.success(t('courseDetail.publishedToast'));
     router.push(`/courses/${courseId}`);
   };
 
@@ -94,6 +98,7 @@ export function useCourseWizard(courseId: string) {
     index,
     isLast: index === steps.length - 1,
     isPublic,
+    isPublished,
     accessVersion,
     goTo,
     goNext,

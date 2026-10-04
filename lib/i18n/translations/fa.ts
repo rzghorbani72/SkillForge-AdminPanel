@@ -2224,7 +2224,7 @@ export const fa = {
       stepPricing: 'قیمت',
       stepPricingHint: 'قیمت دوره و همهٔ راه‌های ثبت‌نام در آن را مشخص کنید.',
       stepPreview: 'پیش‌نمایش',
-      stepPreviewHint: 'این چیزی است که دانشجو می‌بیند. آن را بررسی کنید و سپس دوره را ذخیره کنید.',
+      stepPreviewHint: 'این چیزی است که دانشجو می‌بیند. آن را بررسی کنید و سپس دوره را منتشر کنید.',
       typeLockedHint: 'نوع دوره یک‌بار انتخاب می‌شود و قابل تغییر نیست.',
       visibilityTitle: 'چه کسی این دوره را می‌بیند',
       visibilityPublicTitle: 'عمومی',
@@ -2234,6 +2234,8 @@ export const fa = {
       visibilityPrivateHint:
         'در وب‌سایت نمایش داده نمی‌شود. فقط دانشجویان و گروه‌هایی که به آن‌ها دسترسی می‌دهید می‌توانند آن را باز کنند.',
       saveCourse: 'ذخیرهٔ دوره',
+      saveWithoutPublishing: 'ذخیره بدون انتشار',
+      publishCourse: 'انتشار دوره',
       previewUntitled: 'دورهٔ بدون عنوان',
       previewUntitledLesson: 'درس بدون عنوان',
       previewEmptySeason: 'هنوز درسی در این فصل نیست',

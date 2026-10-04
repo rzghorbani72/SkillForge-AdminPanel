@@ -28,8 +28,15 @@ export default function CoursesPage() {
   const [category, setCategory] = useState<string>('all');
   const [courseToDelete, setCourseToDelete] = useState<CourseWithRevenue | null>(null);
 
-  const { courses, isLoading, searchTerm, setSearchTerm, pricingFilter, handleDeleteCourse } =
-    useCourses();
+  const {
+    courses,
+    isLoading,
+    searchTerm,
+    setSearchTerm,
+    pricingFilter,
+    handleDeleteCourse,
+    refresh,
+  } = useCourses();
 
   function handleCreate() {
     router.push('/courses/create');
@@ -115,6 +122,7 @@ export default function CoursesPage() {
                 onClick={() => router.push(`/courses/${c.id}`)}
                 onEdit={() => handleEditCard(c)}
                 onDelete={() => setCourseToDelete(c)}
+                onPublishChanged={refresh}
               />
             ))}
             <button
@@ -164,6 +172,7 @@ export default function CoursesPage() {
                     onClick={() => router.push(`/courses/${c.id}`)}
                     onEdit={() => handleEditCard(c)}
                     onDelete={() => setCourseToDelete(c)}
+                    onPublishChanged={refresh}
                   />
                 ))}
               </tbody>

@@ -10,17 +10,20 @@ import { StatusPill } from './StatusPill';
 import { CourseTypePill } from './course-type-pill';
 import { courseHue, formatCourseDurationMinutes, groupSeatPrice } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
+import { CoursePublishButton } from './detail/course-publish-button';
 
 export function CourseCard({
   course,
   onEdit,
   onDelete,
   onClick,
+  onPublishChanged,
 }: {
   course: CourseWithRevenue;
   onEdit?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
+  onPublishChanged?: () => void;
 }) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -161,8 +164,15 @@ export function CourseCard({
             </div>
           </div>
 
-          {(onEdit || onDelete) && (
+          {(onEdit || onDelete || onPublishChanged) && (
             <div className="mt-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
+              {onPublishChanged && (
+                <CoursePublishButton
+                  course={course}
+                  onChanged={onPublishChanged}
+                  className="h-9 flex-1"
+                />
+              )}
               {onEdit && (
                 <Button
                   type="button"

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Globe, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -12,10 +12,13 @@ type WizardNavProps = {
   nextLabel?: string;
   /** Off when the last step brings its own actions. */
   showFinish?: boolean;
+  /** A draft ends with a clear choice: publish now, or keep it unpublished. */
+  offerPublish?: boolean;
   onBack: () => void;
   onSaveAndExit?: () => void;
   onNext: () => void;
-  onFinish: () => void;
+  /** `undefined` keeps the visibility picked on the access step. */
+  onFinish: (publish?: boolean) => void;
 };
 
 export function WizardNav({
@@ -24,6 +27,7 @@ export function WizardNav({
   isSaving,
   nextLabel,
   showFinish = true,
+  offerPublish = false,
   onBack,
   onSaveAndExit,
   onNext,
@@ -48,8 +52,30 @@ export function WizardNav({
             {t('common.back')}
           </Button>
         )}
-        {isLast && !showFinish ? null : isLast ? (
-          <Button type="button" disabled={isSaving} onClick={onFinish} className="gap-2">
+        {isLast && !showFinish ? null : isLast && offerPublish ? (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSaving}
+              onClick={() => onFinish(false)}
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {t('courses.wizard.saveWithoutPublishing')}
+            </Button>
+            <Button
+              type="button"
+              disabled={isSaving}
+              onClick={() => onFinish(true)}
+              className="gap-2"
+            >
+              <Globe className="h-4 w-4" />
+              {t('courses.wizard.publishCourse')}
+            </Button>
+          </>
+        ) : isLast ? (
+          <Button type="button" disabled={isSaving} onClick={() => onFinish()} className="gap-2">
             <Save className="h-4 w-4" />
             {t('courses.wizard.saveCourse')}
           </Button>

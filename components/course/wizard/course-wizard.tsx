@@ -73,7 +73,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 live={wizard.live}
                 publisher={wizard.publisher}
                 title={course.form.watch('title')}
-                isPublished={Boolean(course.form.watch('published'))}
+                isPublished={wizard.isPublished}
               >
                 {body}
               </LiveStepLayout>
@@ -86,10 +86,11 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
               isSaving={course.isSaving}
               nextLabel={nextStep ? t(WIZARD_STEP_LABEL[nextStep]) : undefined}
               showFinish={!liveReview}
+              offerPublish={!wizard.isPublished}
               onBack={() => wizard.goTo(steps[index - 1])}
               onSaveAndExit={() => void saveAndExit()}
               onNext={() => void wizard.goNext()}
-              onFinish={() => void wizard.finish()}
+              onFinish={(publish) => void wizard.finish(publish)}
             />
           </form>
         </Form>

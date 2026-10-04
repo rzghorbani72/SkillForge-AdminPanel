@@ -2228,7 +2228,7 @@ export const en = {
       stepPricing: 'Pricing',
       stepPricingHint: 'Set the price and every way a student can enrol in this course.',
       stepPreview: 'Preview',
-      stepPreviewHint: 'This is what a student sees. Check it, then save the course.',
+      stepPreviewHint: 'This is what a student sees. Check it, then publish the course.',
       typeLockedHint: 'The course type is chosen once and cannot be changed.',
       visibilityTitle: 'Who can see this course',
       visibilityPublicTitle: 'Public',
@@ -2238,6 +2238,8 @@ export const en = {
       visibilityPrivateHint:
         'Hidden from your website. Only the students and groups you give access to can open it.',
       saveCourse: 'Save course',
+      saveWithoutPublishing: 'Save without publishing',
+      publishCourse: 'Publish course',
       previewUntitled: 'Untitled course',
       previewUntitledLesson: 'Untitled lesson',
       previewEmptySeason: 'No lessons in this section yet',

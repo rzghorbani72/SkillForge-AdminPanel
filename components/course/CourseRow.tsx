@@ -7,17 +7,20 @@ import { StatusPill } from './StatusPill';
 import { CourseTypePill } from './course-type-pill';
 import { courseHue, groupSeatPrice } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
+import { CoursePublishButton } from './detail/course-publish-button';
 
 export function CourseRow({
   course,
   onEdit,
   onDelete,
   onClick,
+  onPublishChanged,
 }: {
   course: CourseWithRevenue;
   onEdit?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
+  onPublishChanged?: () => void;
 }) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
@@ -110,6 +113,9 @@ export function CourseRow({
       </td>
       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-1">
+          {onPublishChanged && (
+            <CoursePublishButton course={course} onChanged={onPublishChanged} className="me-1" />
+          )}
           {onEdit && (
             <button
               type="button"

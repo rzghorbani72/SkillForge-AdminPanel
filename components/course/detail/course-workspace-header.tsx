@@ -52,7 +52,7 @@ export function CourseWorkspaceHeader({
   showTabs?: boolean;
 }) {
   const { t } = useTranslation();
-  const { courseId, course, loading } = useCourseWorkspace();
+  const { courseId, course, loading, refresh } = useCourseWorkspace();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   if (loading && !course) {
@@ -123,7 +123,7 @@ export function CourseWorkspaceHeader({
               </Link>
             </Button>
           )}
-          <CoursePublishButton />
+          <CoursePublishButton course={course} onChanged={refresh} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
