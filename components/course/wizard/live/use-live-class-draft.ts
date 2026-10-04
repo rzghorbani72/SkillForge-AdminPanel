@@ -8,30 +8,29 @@ import { defaultTimezone } from '@/lib/class-slot-time';
 import { ErrorHandler } from '@/lib/error-handler';
 import type { Course } from '@/types/api';
 import type { TutoringGroup } from '@/types/learning-operations';
+import { newClassDraft, type ClassScheduleDraft } from './class-schedule-draft';
 import {
-  EMPTY_LIVE_DRAFT,
-  STEP_FIELDS,
-  draftErrors,
-  draftFromGroup,
+  draftFromGroups,
+  emptyLiveDraft,
   groupWrite,
-  sessionDates,
-  sessionsMissedAtDeadline,
   stepHasErrors,
   type LiveClassDraft,
+  type LiveClassStepName,
 } from './live-class-draft';
-import { isScheduleEditable, saveLiveClass } from './persist-live-class';
+import { saveLiveClass } from './persist-live-class';
 import { clearStash, readStash, writeStash } from './draft-stash';
+import { useClassSchedules } from './use-class-schedules';
 
-export type LiveClassStepName = keyof typeof STEP_FIELDS;
+const ENDED_STATUSES: readonly string[] = ['CANCELLED', 'COMPLETED'];
 
-/** The class the wizard edits: the oldest one still alive; others live on the classes page. */
-const primaryClass = (groups: readonly TutoringGroup[]): TutoringGroup | null =>
-  groups.filter((group) => group.status !== 'CANCELLED').at(-1) ?? null;
+/** Oldest first, so "class 1" in the wizard stays the first class made. */
+const liveClasses = (groups: readonly TutoringGroup[]): TutoringGroup[] =>
+  groups.filter((group) => !ENDED_STATUSES.includes(group.status)).reverse();
 
 /**
- * The live class behind the wizard's schedule, class-type and meeting steps.
- * It is written to the server as one unit, because a class needs a price before
- * it can exist; until then the draft is kept on this device so nothing is lost.
+ * The course's live classes behind the schedule, class-type and meeting steps.
+ * They are written to the server together, because a class needs a price before
+ * it can exist; until then a new course's draft is kept on this device.
  */
 export function useLiveClassDraft(courseId: string, enabled: boolean) {
   const live = useLiveCourse(courseId, enabled);
@@ -40,26 +39,24 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
   const [revealErrors, setRevealErrors] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const group = primaryClass(live.groups);
-  const timezone = group?.timezone ?? defaultTimezone();
-  const scheduleLocked = !isScheduleEditable(group);
+  const groups = useMemo(() => liveClasses(live.groups), [live.groups]);
+  const timezone = groups[0]?.timezone ?? defaultTimezone();
   const draft = useMemo(
-    () => edited ?? (group ? draftFromGroup(group) : (readStash(courseId) ?? EMPTY_LIVE_DRAFT)),
-    [edited, group, courseId],
-  );
-  const dates = useMemo(() => sessionDates(draft, timezone), [draft, timezone]);
-  const errors = useMemo(
-    () => draftErrors(draft, dates, new Date(), scheduleLocked),
-    [draft, dates, scheduleLocked],
+    () =>
+      edited ??
+      (groups.length > 0 ? draftFromGroups(groups) : (readStash(courseId) ?? emptyLiveDraft())),
+    [edited, groups, courseId],
   );
 
   const update = (partial: Partial<LiveClassDraft>) => {
     const next = { ...draft, ...partial };
     setEdited(next);
-    if (!group) writeStash(courseId, next);
+    if (groups.length === 0) writeStash(courseId, next);
   };
+  const setClasses = (classes: ClassScheduleDraft[]) => update({ classes });
 
-  const isComplete = Object.keys(errors).length === 0;
+  const { classes, errors } = useClassSchedules(draft, groups, timezone, revealErrors, setClasses);
+  const isComplete = Object.keys(errors.shared).length === 0 && !stepHasErrors(errors, 'schedule');
 
   const resolveOfferId = async (course: Course): Promise<string> => {
     const existing = live.offers.find((offer) => offer.kind === 'GROUP');
@@ -72,22 +69,35 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
     return (await createOffer(target, 'GROUP', Number(draft.price))).id;
   };
 
-  /** Returns the saved class, or null after showing why it could not be saved. */
-  const save = async (): Promise<TutoringGroup | null> => {
+  /**
+   * Saves classes one by one. A class created before a later one fails keeps
+   * its new id, so the next try updates it instead of creating it twice.
+   */
+  const save = async (): Promise<TutoringGroup[] | null> => {
     if (!isComplete || !live.course) {
       setRevealErrors(true);
       return null;
     }
     setIsSaving(true);
+    let saved = draft.classes;
     try {
       const offerId = await resolveOfferId(live.course);
-      const write = groupWrite(draft, live.course.title, timezone);
-      const saved = await saveLiveClass(group, offerId, write, draft);
+      const results: TutoringGroup[] = [];
+      for (const schedule of draft.classes) {
+        const previous = groups.find((group) => group.id === schedule.groupId) ?? null;
+        const write = groupWrite(draft, schedule, live.course.title, timezone);
+        const group = await saveLiveClass(previous, offerId, write, draft);
+        results.push(group);
+        saved = saved.map((item) =>
+          item.key === schedule.key ? { ...item, groupId: group.id } : item,
+        );
+      }
       clearStash(courseId);
       await live.reload();
       setEdited(null);
-      return saved;
+      return results;
     } catch (error) {
+      setEdited({ ...draft, classes: saved });
       ErrorHandler.handleApiError(error);
       return null;
     } finally {
@@ -102,18 +112,18 @@ export function useLiveClassDraft(courseId: string, enabled: boolean) {
     isLoading: live.isLoading,
     reload: live.reload,
     patchTopics: live.patch,
-    group,
-    otherClasses: Math.max(live.groups.length - 1, 0),
-    scheduleLocked,
+    groups,
+    timezone,
     draft,
-    dates,
-    errors,
-    shownErrors: revealErrors ? errors : {},
+    classes,
+    shownErrors: revealErrors ? errors.shared : {},
     errorsShown: revealErrors,
-    missedAtDeadline: sessionsMissedAtDeadline(draft, dates),
     isComplete,
     isSaving,
     update,
+    addClass: () => setClasses([...draft.classes, newClassDraft()]),
+    removeClass: (key: string) =>
+      setClasses(draft.classes.filter((item) => item.key !== key || item.groupId !== null)),
     revealErrors: () => setRevealErrors(true),
     stepHasErrors: (step: LiveClassStepName) => stepHasErrors(errors, step),
     save,

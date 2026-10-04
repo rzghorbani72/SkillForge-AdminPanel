@@ -40,7 +40,7 @@ async function syncMeetingLink(
   if (wasOwnLink) await apiClient.updateTutoringGroupMeetingLink(group.id, null, notify, true);
 }
 
-/** Creates or updates the course's class from the wizard draft. */
+/** Creates or updates one of the course's classes from the wizard draft. */
 export async function saveLiveClass(
   previous: TutoringGroup | null,
   offerId: string,

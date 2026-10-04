@@ -4,22 +4,18 @@ import { ImageIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Note } from '@/components/shared/note';
-import { GroupScheduleSummary } from '@/components/class/group-schedule-summary';
 import { resolveMediaUrl } from '@/lib/media-url';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { CourseWizardStep } from '../wizard-steps';
 import { LIVE_CLASS_STEPS, WIZARD_STEP_LABEL } from '../wizard-steps';
-import { Badge } from '@/components/ui/badge';
 import { ClassLinkField } from './class-link-field';
 import { PublishedCard } from './published-card';
+import { ClassReviewRows } from './class-review-rows';
 import { ReviewRows, ReviewSection, Row } from './review-parts';
 import type { LiveClassDraftApi } from './use-live-class-draft';
 import type { LivePublishApi } from './use-live-publish';
-import { DAY, useLiveSummary } from './use-live-summary';
-
-const DAY_MS = 86_400_000;
+import { useOfferSummary } from './use-live-summary';
 
 type StepReviewProps = {
   live: LiveClassDraftApi;
@@ -41,16 +37,10 @@ export function StepReview({
   onEdit,
 }: StepReviewProps) {
   const { t } = useTranslation();
-  const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
-  const summary = useLiveSummary(live);
+  const summary = useOfferSummary(live.draft);
   const { draft } = live;
   const brokenSteps = LIVE_CLASS_STEPS.filter((step) => live.stepHasErrors(step));
-  const deadline = draft.joinDeadline ? new Date(draft.joinDeadline) : null;
-  const leadDays =
-    deadline && summary.first
-      ? Math.ceil((summary.first.getTime() - deadline.getTime()) / DAY_MS)
-      : null;
 
   if (publisher.justPublished) return <PublishedCard live={live} title={title} />;
 
@@ -105,25 +95,13 @@ export function StepReview({
       </ReviewSection>
 
       <ReviewSection title={t('liveWizard.stepSchedule')} onEdit={() => onEdit('schedule')}>
-        <ReviewRows>
-          <Row label={t('liveWizard.startDate')}>
-            {summary.first ? formatDate(summary.first, DAY) : '—'}
-          </Row>
-          <Row label={t('liveWizard.weeklyTitle')}>
-            <GroupScheduleSummary slots={draft.slots} timezone={live.group?.timezone} />
-          </Row>
-          <Row label={t('liveWizard.reviewWholeCourse')}>{summary.sessions ?? '—'}</Row>
-          <Row label={t('liveWizard.deadline')}>
-            {summary.deadline ?? '—'}{' '}
-            {leadDays === null ? null : leadDays > 0 ? (
-              <Badge variant="success">
-                {t('liveWizard.daysBeforeStart', { count: formatNumber(leadDays) })}
-              </Badge>
-            ) : (
-              <Badge variant="muted">{t('liveWizard.afterStart')}</Badge>
-            )}
-          </Row>
-        </ReviewRows>
+        <div className="flex flex-col divide-y">
+          {live.classes.map((item) => (
+            <div key={item.schedule.key} className="py-3 first:pt-0 last:pb-0">
+              <ClassReviewRows item={item} timezone={live.timezone} />
+            </div>
+          ))}
+        </div>
       </ReviewSection>
 
       <ReviewSection title={t('liveWizard.stepClassType')} onEdit={() => onEdit('classType')}>

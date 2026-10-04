@@ -12,8 +12,12 @@ import type { LiveClassDraftApi } from './use-live-class-draft';
 
 export function StepMeeting({ live }: { live: LiveClassDraftApi }) {
   const { t } = useTranslation();
-  const { draft, shownErrors: errors, update, group } = live;
-  const roomReady = group?.meeting_url_source === 'AUTO_JITSI' && Boolean(group.meeting_url);
+  const { draft, shownErrors: errors, update, groups } = live;
+  const roomReady =
+    groups.length > 0 &&
+    groups.every(
+      (group) => group.meeting_url_source === 'AUTO_JITSI' && Boolean(group.meeting_url),
+    );
   const isAuto = draft.meeting === 'AUTO';
 
   return (

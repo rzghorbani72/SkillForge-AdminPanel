@@ -1,21 +1,18 @@
 import { MAX_CLASS_CAPACITY } from '@/lib/live-room';
-import { previewSessionDates } from '@/lib/session-plan-preview';
-import type {
-  CreateTutoringGroupPayload,
-  TutoringGroup,
-  TutoringGroupSlot,
-} from '@/types/learning-operations';
+import type { CreateTutoringGroupPayload, TutoringGroup } from '@/types/learning-operations';
+import {
+  classFromGroup,
+  newClassDraft,
+  type ClassErrors,
+  type ClassScheduleDraft,
+} from './class-schedule-draft';
 
 export type LiveClassKind = 'GROUP' | 'PRIVATE';
 export type MeetingChoice = 'AUTO' | 'OWN';
 
+/** The course's classes; kind, price, seats and meeting are shared by all of them. */
 export interface LiveClassDraft {
-  /** `YYYY-MM-DD` */
-  startsOn: string;
-  slots: TutoringGroupSlot[];
-  sessionCount: string;
-  /** `YYYY-MM-DDTHH:mm`, local time */
-  joinDeadline: string;
+  classes: ClassScheduleDraft[];
   kind: LiveClassKind;
   /** Seat price for a group class, whole-course price for a private one. */
   price: string;
@@ -24,79 +21,48 @@ export interface LiveClassDraft {
   meetingUrl: string;
 }
 
-export type LiveDraftField =
-  | 'startsOn'
-  | 'slots'
-  | 'sessionCount'
-  | 'joinDeadline'
-  | 'price'
-  | 'capacity'
-  | 'meetingUrl';
+export type SharedField = 'price' | 'capacity' | 'meetingUrl';
+export type SharedErrors = Partial<Record<SharedField, string>>;
 
-export type LiveDraftErrors = Partial<Record<LiveDraftField, string>>;
+export interface LiveDraftErrors {
+  shared: SharedErrors;
+  classes: ClassErrors[];
+}
 
 export const STEP_FIELDS = {
-  schedule: ['startsOn', 'slots', 'sessionCount', 'joinDeadline'],
   classType: ['price', 'capacity'],
   meeting: ['meetingUrl'],
-} as const satisfies Record<string, readonly LiveDraftField[]>;
+} as const satisfies Record<string, readonly SharedField[]>;
 
-const MAX_SESSIONS = 200;
+export type LiveClassStepName = 'schedule' | keyof typeof STEP_FIELDS;
 
-export const stepHasErrors = (errors: LiveDraftErrors, step: keyof typeof STEP_FIELDS): boolean =>
-  STEP_FIELDS[step].some((field) => errors[field] !== undefined);
+export function stepHasErrors(errors: LiveDraftErrors, step: LiveClassStepName): boolean {
+  if (step === 'schedule') return errors.classes.some((item) => Object.keys(item).length > 0);
+  return STEP_FIELDS[step].some((field) => errors.shared[field] !== undefined);
+}
 
-export const EMPTY_LIVE_DRAFT: LiveClassDraft = {
-  startsOn: '',
-  slots: [{ weekday: 6, start_minute: 18 * 60, duration_minutes: 90 }],
-  sessionCount: '12',
-  joinDeadline: '',
+export const emptyLiveDraft = (): LiveClassDraft => ({
+  classes: [newClassDraft()],
   kind: 'GROUP',
   price: '',
   capacity: '12',
   meeting: 'AUTO',
   meetingUrl: '',
-};
+});
 
-const pad = (value: number) => String(value).padStart(2, '0');
-
-export const toLocalDateTime = (date: Date): string =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-
-/** Registration closes at the end of the day before the first class. */
-export function defaultDeadline(startsOn: string): string {
-  const day = new Date(`${startsOn}T23:59`);
-  if (Number.isNaN(day.getTime())) return '';
-  day.setDate(day.getDate() - 1);
-  return toLocalDateTime(day);
-}
-
-export function draftFromGroup(group: TutoringGroup): LiveClassDraft {
-  const isPrivate = group.capacity === 1;
+/** Shared settings are read from the first class; every save writes them to all. */
+export function draftFromGroups(groups: readonly TutoringGroup[]): LiveClassDraft {
+  const [first] = groups;
+  const isPrivate = first.capacity === 1;
   return {
-    startsOn: group.starts_on_requested?.slice(0, 10) ?? '',
-    slots: group.Slots ?? [],
-    sessionCount: group.session_count ? String(group.session_count) : '',
-    joinDeadline: group.join_deadline ? toLocalDateTime(new Date(group.join_deadline)) : '',
+    classes: groups.map(classFromGroup),
     kind: isPrivate ? 'PRIVATE' : 'GROUP',
-    price: String(group.seat_price ?? group.Offer?.price ?? ''),
-    capacity: String(group.capacity),
-    meeting: group.meeting_url && group.meeting_url_source === 'MANUAL' ? 'OWN' : 'AUTO',
-    meetingUrl: group.meeting_url_source === 'MANUAL' ? (group.meeting_url ?? '') : '',
+    price: String(first.seat_price ?? first.Offer?.price ?? ''),
+    capacity: String(first.capacity),
+    meeting: first.meeting_url && first.meeting_url_source === 'MANUAL' ? 'OWN' : 'AUTO',
+    meetingUrl: first.meeting_url_source === 'MANUAL' ? (first.meeting_url ?? '') : '',
   };
 }
-
-export function sessionDates(draft: LiveClassDraft, timezone: string): Date[] {
-  const count = Number(draft.sessionCount) || 0;
-  const from = new Date(draft.startsOn);
-  if (!draft.startsOn || Number.isNaN(from.getTime())) return [];
-  return previewSessionDates(draft.slots, Math.min(count, MAX_SESSIONS), from, timezone);
-}
-
-const sessionEnd = (start: Date, slots: readonly TutoringGroupSlot[]) => {
-  const longest = Math.max(...slots.map((slot) => slot.duration_minutes), 0);
-  return new Date(start.getTime() + longest * 60_000);
-};
 
 const isHttpsUrl = (value: string) => {
   try {
@@ -106,15 +72,8 @@ const isHttpsUrl = (value: string) => {
   }
 };
 
-/** Every problem that blocks saving, keyed by field; values are i18n keys. */
-export function draftErrors(
-  draft: LiveClassDraft,
-  dates: readonly Date[],
-  now: Date,
-  scheduleLocked = false,
-): LiveDraftErrors {
-  const errors: LiveDraftErrors = scheduleLocked ? {} : scheduleErrors(draft, dates, now);
-
+export function sharedErrors(draft: LiveClassDraft): SharedErrors {
+  const errors: SharedErrors = {};
   const price = Number(draft.price);
   if (draft.price === '' || !Number.isFinite(price) || price < 0) {
     errors.price = 'liveWizard.errPriceRequired';
@@ -128,55 +87,30 @@ export function draftErrors(
   return errors;
 }
 
-function scheduleErrors(draft: LiveClassDraft, dates: readonly Date[], now: Date): LiveDraftErrors {
-  const errors: LiveDraftErrors = {};
-  const count = Number(draft.sessionCount);
-  const deadline = new Date(draft.joinDeadline);
-  const last = dates.at(-1);
-
-  if (!draft.startsOn) errors.startsOn = 'liveWizard.errStartRequired';
-  else if (new Date(`${draft.startsOn}T23:59`) < now) errors.startsOn = 'liveWizard.errStartPast';
-  if (draft.slots.length === 0) errors.slots = 'liveWizard.errDaysRequired';
-  else if (draft.slots.some((slot) => slot.duration_minutes <= 0)) {
-    errors.slots = 'tutoring.groups.endBeforeStart';
-  }
-  if (!Number.isInteger(count) || count < 1 || count > MAX_SESSIONS) {
-    errors.sessionCount = 'liveWizard.errSessionsRequired';
-  }
-  if (draft.joinDeadline) {
-    if (Number.isNaN(deadline.getTime()) || deadline < now) {
-      errors.joinDeadline = 'liveWizard.errDeadlinePast';
-    } else if (last && deadline > sessionEnd(last, draft.slots)) {
-      errors.joinDeadline = 'liveWizard.errDeadlineAfterEnd';
-    }
-  }
-  return errors;
-}
-
-/** Sessions a student who buys right at the deadline has already missed. */
-export function sessionsMissedAtDeadline(draft: LiveClassDraft, dates: readonly Date[]): number {
-  const deadline = new Date(draft.joinDeadline);
-  if (Number.isNaN(deadline.getTime())) return 0;
-  return dates.filter((date) => date < deadline).length;
-}
-
 export const seatCount = (draft: LiveClassDraft): number =>
   draft.kind === 'PRIVATE' ? 1 : Number(draft.capacity) || 1;
 
 export type GroupWrite = Omit<CreateTutoringGroupPayload, 'offer_id'>;
 
-export function groupWrite(draft: LiveClassDraft, title: string, timezone: string): GroupWrite {
-  const seats = seatCount(draft);
+/** An unnamed class (only possible when it is the only one) is named after the course. */
+export function groupWrite(
+  draft: LiveClassDraft,
+  schedule: ClassScheduleDraft,
+  courseTitle: string,
+  timezone: string,
+): GroupWrite {
   return {
-    title,
+    title: schedule.title.trim() || courseTitle,
     timezone,
-    capacity: seats,
+    capacity: seatCount(draft),
     min_students: 1,
     seat_price: Number(draft.price),
     visibility: 'PUBLIC',
-    session_count: Number(draft.sessionCount),
-    starts_on_requested: new Date(draft.startsOn).toISOString(),
-    join_deadline: draft.joinDeadline ? new Date(draft.joinDeadline).toISOString() : undefined,
-    slots: draft.slots,
+    session_count: Number(schedule.sessionCount),
+    starts_on_requested: new Date(schedule.startsOn).toISOString(),
+    join_deadline: schedule.joinDeadline
+      ? new Date(schedule.joinDeadline).toISOString()
+      : undefined,
+    slots: schedule.slots,
   };
 }

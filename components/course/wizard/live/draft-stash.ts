@@ -5,10 +5,9 @@ const keyOf = (courseId: string) => `live-class-draft:${courseId}`;
 const isDraft = (value: unknown): value is LiveClassDraft =>
   typeof value === 'object' &&
   value !== null &&
-  'slots' in value &&
-  Array.isArray(value.slots) &&
-  'startsOn' in value &&
-  typeof value.startsOn === 'string';
+  'classes' in value &&
+  Array.isArray(value.classes) &&
+  value.classes.length > 0;
 
 /** A class not yet on the server survives a closed tab on this device only. */
 export function readStash(courseId: string): LiveClassDraft | null {

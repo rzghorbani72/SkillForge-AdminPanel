@@ -103,7 +103,7 @@ export function WizardStepBody({
           onEdit={onGoTo}
         />
       )}
-      {step === 'access' && isLive && <StepClassMembers group={live.group} />}
+      {step === 'access' && isLive && <StepClassMembers groups={live.groups} />}
       {step === 'access' && !isLive && (
         <StepAccess
           courseId={courseId}

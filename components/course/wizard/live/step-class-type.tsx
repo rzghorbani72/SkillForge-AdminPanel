@@ -18,13 +18,14 @@ import type { LiveClassDraftApi } from './use-live-class-draft';
 export function StepClassType({ live }: { live: LiveClassDraftApi }) {
   const { t } = useTranslation();
   const formatNumber = useNumberFormat();
-  const { draft, shownErrors: errors, update, group } = live;
+  const { draft, shownErrors: errors, update, groups } = live;
   const isPrivate = draft.kind === 'PRIVATE';
   const price = Number(draft.price) || 0;
-  const sessions = Number(draft.sessionCount) || 0;
-  const seatsSold = group?.seats_taken ?? 0;
-  const priceChanged =
-    group !== null && draft.price !== String(group.seat_price ?? group.Offer?.price ?? '');
+  const sessions = Number(draft.classes[0]?.sessionCount) || 0;
+  const seatsSold = Math.max(0, ...groups.map((group) => group.seats_taken ?? 0));
+  const priceChanged = groups.some(
+    (group) => draft.price !== String(group.seat_price ?? group.Offer?.price ?? ''),
+  );
 
   return (
     <div className="flex flex-col gap-4">

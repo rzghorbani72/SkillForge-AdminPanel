@@ -8,24 +8,33 @@ Builds one course step by step. `stepsFor(courseType)` picks the steps.
 
 ## Live course (`live/`)
 
-A live course sells one class (a `TutoringGroup`). The three middle steps edit
-one draft (`live-class-draft.ts`, pure and unit-tested) that is written as a
-unit, because a class needs a price (a GROUP offer) before it can exist:
+A live course sells one or more classes (each a `TutoringGroup`, e.g. a
+morning and an evening group). The three middle steps edit one draft
+(`live-class-draft.ts` + `class-schedule-draft.ts`, pure and unit-tested):
 
-- Before the class exists, the draft is kept in `localStorage` per course
+- Each class has its own name, start date, weekly days/times, session count
+  and registration close. Kind, price, seats and meeting link are shared by
+  all classes. A name is required only when there are 2+ classes; a lone
+  unnamed class is named after the course.
+- All classes are written together, because a class needs a price (a GROUP
+  offer) before it can exist. They are saved one by one, and a class created
+  before a later one fails keeps its id, so a retry never creates it twice.
+- Only an unsaved class can be removed here; a saved one is cancelled from the
+  classes page (it may already have paid students).
+- Before any class exists, the draft is kept in `localStorage` per course
   (`draft-stash.ts`), so a closed tab loses nothing.
-- `review` → **Save as draft** creates/updates the class only.
-  **Publish** saves the class, publishes the course, then publishes the class.
-  If the class publish fails (e.g. teacher time clash) the course is put back
-  to draft, so students never see a course with nothing to buy.
+- `review` → **Save as draft** creates/updates the classes only.
+  **Publish** saves the classes, publishes the course, then publishes each
+  draft class. If none can go on sale (e.g. teacher time clash) the course is
+  put back to draft, so students never see a course with nothing to buy.
 - The meeting room is created by the server on class publish (`AUTO_JITSI`)
   and handed to students only as a signed, time-boxed link. An own link
   (Skyroom, Meet) is hidden behind the same Join button but cannot be locked —
   the step says so.
 - Live steps use the full width; only review gets a side panel with the
   publish-vs-draft choice (`live-step-layout.tsx`). Both places that describe
-  the class (review, success page) word it through
-  `use-live-summary.ts`, so they never disagree.
+  the classes (review, success page) word them through
+  `use-live-summary.ts` and `class-review-rows.tsx`, so they never disagree.
 - The empty course list (`course-type-entry.tsx`) opens `/courses/create?type=LIVE`
   with the type already picked.
 - A class that has started (`CONFIRMED`/`RUNNING`) has its dates locked here;

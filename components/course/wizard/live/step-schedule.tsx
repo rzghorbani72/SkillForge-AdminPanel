@@ -1,43 +1,40 @@
 'use client';
 
-import Link from 'next/link';
+import { Plus } from 'lucide-react';
 
-import { Note } from '@/components/shared/note';
+import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import { DeadlineSection } from './deadline-section';
-import { SessionsCard } from './sessions-card';
+import { ClassCard } from './class-card';
 import type { LiveClassDraftApi } from './use-live-class-draft';
-import { WeeklyScheduleCard } from './weekly-schedule-card';
 
+/** Every class of the course, each with its own name, timetable and registration close. */
 export function StepSchedule({ live }: { live: LiveClassDraftApi }) {
   const { t } = useTranslation();
-  const formatNumber = useNumberFormat();
-  const classesPage = `/courses/${live.courseId}/live`;
+  const canRemove = live.classes.length > 1;
 
   return (
-    <div className="flex flex-col gap-4">
-      {live.scheduleLocked ? (
-        <Note tone="warn">
-          {t('liveWizard.scheduleLocked')}{' '}
-          <Link href={classesPage} className="font-bold underline">
-            {t('liveWizard.openClassesPage')}
-          </Link>
-        </Note>
-      ) : null}
-      {live.otherClasses > 0 ? (
-        <Note>
-          {t('liveWizard.otherClasses', { count: formatNumber(live.otherClasses) })}{' '}
-          <Link href={classesPage} className="font-bold underline">
-            {t('liveWizard.openClassesPage')}
-          </Link>
-        </Note>
-      ) : null}
-
-      <WeeklyScheduleCard live={live} />
-      <SessionsCard live={live} />
-
-      <DeadlineSection live={live} />
+    <div className="flex flex-col gap-3">
+      {live.classes.map((item) => (
+        <ClassCard
+          key={item.schedule.key}
+          item={item}
+          courseId={live.courseId}
+          onRemove={
+            canRemove && item.schedule.groupId === null
+              ? () => live.removeClass(item.schedule.key)
+              : null
+          }
+        />
+      ))}
+      <Button
+        type="button"
+        variant="outline"
+        className="h-11 gap-2 border-dashed text-muted-foreground hover:text-foreground"
+        onClick={live.addClass}
+      >
+        <Plus className="h-4 w-4" aria-hidden />
+        {t('liveWizard.addClass')}
+      </Button>
     </div>
   );
 }
