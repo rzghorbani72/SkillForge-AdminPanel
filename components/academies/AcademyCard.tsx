@@ -117,7 +117,7 @@ export function AcademyCard({
         isCurrent && 'border-2 border-primary',
       )}
     >
-      <div className={cn('relative isolate flex h-24 items-start px-4 pt-3', color.bg)}>
+      <div className={cn('relative isolate flex aspect-[16/9] items-start px-4 pt-3', color.bg)}>
         {bannerUrl && (
           <img
             src={resizedMediaUrl(bannerUrl, BANNER_WIDTH)}
