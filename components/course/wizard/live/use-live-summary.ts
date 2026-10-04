@@ -36,9 +36,5 @@ export function useLiveSummary(live: LiveClassDraftApi) {
       : t(isPrivate ? 'liveWizard.priceWhole' : 'liveWizard.pricePerSeat', {
           price: formatNumber(Number(draft.price)),
         });
-  const meeting = t(
-    draft.meeting === 'AUTO' ? 'liveWizard.autoRoomTitle' : 'liveWizard.ownLinkTitle',
-  );
-
-  return { first, last, sessions, deadline, kind, price, meeting };
+  return { first, last, sessions, deadline, kind, price };
 }

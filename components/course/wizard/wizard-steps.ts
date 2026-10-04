@@ -17,12 +17,7 @@ export const COURSE_WIZARD_STEPS = [
 export type CourseWizardStep = (typeof COURSE_WIZARD_STEPS)[number];
 
 const LIVE_ONLY_STEPS: readonly CourseWizardStep[] = ['schedule', 'classType', 'meeting', 'review'];
-const RECORDED_ONLY_STEPS: readonly CourseWizardStep[] = [
-  'content',
-  'access',
-  'pricing',
-  'preview',
-];
+const RECORDED_ONLY_STEPS: readonly CourseWizardStep[] = ['content', 'pricing', 'preview'];
 
 export const LIVE_CLASS_STEPS = ['schedule', 'classType', 'meeting'] as const;
 export type LiveClassStep = (typeof LIVE_CLASS_STEPS)[number];
@@ -32,7 +27,7 @@ export const isLiveClassStep = (step: CourseWizardStep): step is LiveClassStep =
 
 /**
  * A live course is built as: what it is → when it meets → who it is for and
- * the price → how students enter → review and publish.
+ * the price → how students enter → who is in the class → review and publish.
  */
 export function stepsFor(courseType: CourseType): readonly CourseWizardStep[] {
   const hidden = courseType === 'LIVE' ? RECORDED_ONLY_STEPS : LIVE_ONLY_STEPS;
@@ -65,12 +60,12 @@ export const WIZARD_STEP_HINT: Record<CourseWizardStep, string> = {
 
 /** Fields each step owns, so Next validates only what is on screen. */
 export const WIZARD_STEP_FIELDS: Record<CourseWizardStep, (keyof CourseFormData)[]> = {
-  basics: ['title', 'description', 'requirements', 'difficulty', 'access_duration_days'],
+  basics: ['title', 'description', 'requirements', 'difficulty'],
   content: [],
   schedule: [],
   classType: [],
   meeting: [],
-  access: ['meta_title', 'meta_description', 'keywords'],
+  access: [],
   pricing: ['primary_price', 'secondary_price'],
   preview: [],
   review: [],

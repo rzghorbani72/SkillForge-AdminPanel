@@ -9,7 +9,7 @@ import { PublishFooterActions } from './live/publish-actions';
 import { WizardHeader } from './wizard-header';
 import { WizardNav } from './wizard-nav';
 import { WizardStepBody } from './wizard-step-body';
-import { LIVE_CLASS_STEPS, WIZARD_STEP_HINT, WIZARD_STEP_LABEL } from './wizard-steps';
+import { LIVE_CLASS_STEPS, WIZARD_STEP_HINT } from './wizard-steps';
 import { useCourseWizard } from './use-course-wizard';
 
 /**
@@ -22,7 +22,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
   const wizard = useCourseWizard(courseId);
   const { course, steps, step, index, isLast, isPublic } = wizard;
   const liveReview = step === 'review';
-  const nextStep = steps.at(index + 1);
   const { live, publisher } = wizard;
   const invalidSteps = wizard.isLive
     ? LIVE_CLASS_STEPS.filter((liveStep) => live.stepHasErrors(liveStep) && live.errorsShown)
@@ -87,7 +86,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 isLast={isLast}
                 isSaving={course.isSaving}
                 nextBusy={wizard.isAdvancing}
-                nextLabel={nextStep ? t(WIZARD_STEP_LABEL[nextStep]) : undefined}
                 finishActions={
                   liveReview ? (
                     <PublishFooterActions

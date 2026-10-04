@@ -10,6 +10,7 @@ import { Note } from '@/components/shared/note';
 import { useStore } from '@/hooks/useStore';
 import { academySiteUrl } from '@/lib/academy-site-url';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { ClassLinkField } from './class-link-field';
 import { ReviewRows, Row } from './review-parts';
 import type { LiveClassDraftApi } from './use-live-class-draft';
 import { useLiveSummary } from './use-live-summary';
@@ -52,7 +53,9 @@ export function PublishedCard({ live, title }: { live: LiveClassDraftApi; title:
           <Row label={t('liveWizard.successPrice')}>
             {summary.kind} · {summary.price ?? '—'}
           </Row>
-          <Row label={t('liveWizard.stepMeeting')}>{t('liveWizard.onlyEnrolled')}</Row>
+          <Row label={t('liveWizard.stepMeeting')}>
+            <ClassLinkField live={live} />
+          </Row>
         </ReviewRows>
       </div>
 

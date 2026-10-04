@@ -12,6 +12,15 @@ export const en = {
     stepMeetingHint: 'Where students enter the live class.',
     stepReview: 'Review & publish',
     stepReviewHint: 'Check everything once, then publish or keep it as a draft.',
+    classLinkPending: 'The class link is created once the course is saved.',
+    classLinkCopied: 'Class link copied.',
+    classLinkAutoHint:
+      'This is the class page on the academy site. Only enrolled students can enter, at class time.',
+    classLinkOwnHint: 'This is the link of the class room you made yourself.',
+    membersTitle: 'Add students to the class',
+    membersHint: 'Pick academy students to give them a free seat in this class, so they can enter.',
+    membersAdd: 'Add to class',
+    membersNeedClass: 'First finish the schedule, class type and class access steps.',
     errStartRequired: 'Pick a start date.',
     errStartPast: 'The start date cannot be in the past.',
     errDaysRequired: 'Pick at least one class day.',
@@ -80,8 +89,6 @@ export const en = {
     reviewDescription: 'Description',
     classKind: 'Class type',
     groupSummary: 'Group · {{count}} seats',
-    whoCanEnter: 'Who can enter',
-    onlyEnrolled: 'Only enrolled students, with the “Join class” button',
     draftExplain: 'Draft: saved, but no student can see it and registration is closed.',
     saveDraft: 'Save as draft',
     publishExplain:
@@ -2219,7 +2226,7 @@ export const en = {
     manageDocuments: 'Manage Documents',
     createCourse: 'Create Course',
     wizard: {
-      continueTo: 'Continue: {{step}}',
+      confirmAndContinue: 'Confirm and continue',
       tabBuilder: 'Course steps',
       stepBasics: 'Course details',
       stepBasicsHint:

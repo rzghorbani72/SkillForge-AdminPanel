@@ -3,15 +3,7 @@
 import { Award } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { NumberInput } from '@/components/ui/number-input';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -21,12 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
-import {
-  CERTIFICATE_RULES,
-  COURSE_DIFFICULTIES,
-  type CourseDifficultyLevel,
-  type CourseFormData,
-} from './schema';
+import { CERTIFICATE_RULES, type CourseDifficultyLevel, type CourseFormData } from './schema';
 
 export const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
   BEGINNER: 'courses.beginner',
@@ -35,14 +22,7 @@ export const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
   EXPERT: 'courses.expert',
 };
 
-export default function CourseFactsCard({
-  form,
-  hideLevel = false,
-}: {
-  form: UseFormReturn<CourseFormData>;
-  /** The live course step shows the level beside the cover instead. */
-  hideLevel?: boolean;
-}) {
+export default function CourseFactsCard({ form }: { form: UseFormReturn<CourseFormData> }) {
   const { t } = useTranslation();
 
   return (
@@ -51,54 +31,6 @@ export default function CourseFactsCard({
         <CardTitle>{t('courses.publicFacts')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {hideLevel ? null : (
-          <FormField
-            control={form.control}
-            name="difficulty"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('courses.level')}</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('courses.level')} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {COURSE_DIFFICULTIES.map((level) => (
-                      <SelectItem key={level} value={level}>
-                        {t(DIFFICULTY_LABEL[level])}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>{t('courses.levelHint')}</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
-        <FormField
-          control={form.control}
-          name="access_duration_days"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('courseDetail.accessDuration')}</FormLabel>
-              <FormControl>
-                <NumberInput
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  placeholder={t('courses.accessDurationDaysPlaceholder')}
-                />
-              </FormControl>
-              <FormDescription>{t('courses.accessDurationDaysHint')}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="is_certificate"

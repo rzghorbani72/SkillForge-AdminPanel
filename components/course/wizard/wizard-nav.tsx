@@ -11,8 +11,6 @@ type WizardNavProps = {
   isSaving: boolean;
   /** Shows a spinner on "Continue" while it is working. */
   nextBusy?: boolean;
-  /** Label of the step "Continue" leads to. */
-  nextLabel?: string;
   /** Replaces the finish buttons when the last step brings its own actions. */
   finishActions?: ReactNode;
   /** A draft ends with a clear choice: publish now, or keep it unpublished. */
@@ -29,7 +27,6 @@ export function WizardNav({
   isLast,
   isSaving,
   nextBusy = false,
-  nextLabel,
   finishActions,
   offerPublish = false,
   onBack,
@@ -83,7 +80,7 @@ export function WizardNav({
             <>
               {back}
               <Button type="button" disabled={nextBusy} onClick={onNext} className="gap-2">
-                {nextLabel ? t('courses.wizard.continueTo', { step: nextLabel }) : t('common.next')}
+                {t('courses.wizard.confirmAndContinue')}
                 {nextBusy ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (

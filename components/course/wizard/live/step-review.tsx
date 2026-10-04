@@ -12,6 +12,7 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { CourseWizardStep } from '../wizard-steps';
 import { LIVE_CLASS_STEPS, WIZARD_STEP_LABEL } from '../wizard-steps';
 import { Badge } from '@/components/ui/badge';
+import { ClassLinkField } from './class-link-field';
 import { PublishedCard } from './published-card';
 import { ReviewRows, ReviewSection, Row } from './review-parts';
 import type { LiveClassDraftApi } from './use-live-class-draft';
@@ -137,10 +138,7 @@ export function StepReview({
       </ReviewSection>
 
       <ReviewSection title={t('liveWizard.stepMeeting')} onEdit={() => onEdit('meeting')}>
-        <ReviewRows>
-          <Row label={t('liveWizard.howStudentsEnter')}>{summary.meeting}</Row>
-          <Row label={t('liveWizard.whoCanEnter')}>{t('liveWizard.onlyEnrolled')}</Row>
-        </ReviewRows>
+        <ClassLinkField live={live} />
       </ReviewSection>
     </div>
   );

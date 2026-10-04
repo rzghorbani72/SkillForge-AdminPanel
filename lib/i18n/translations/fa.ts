@@ -12,6 +12,16 @@ export const fa = {
     stepMeetingHint: 'دانشجوها از کجا وارد کلاس زنده می‌شوند.',
     stepReview: 'بازبینی و انتشار',
     stepReviewHint: 'همه‌چیز را یک بار ببینید، بعد منتشر کنید یا پیش‌نویس نگه دارید.',
+    classLinkPending: 'لینک کلاس بعد از ذخیرهٔ دوره ساخته می‌شود.',
+    classLinkCopied: 'لینک کلاس کپی شد.',
+    classLinkAutoHint:
+      'این لینک صفحهٔ کلاس در سایت آکادمی است. فقط دانشجوهای ثبت‌نام‌شده، سر ساعت کلاس، وارد می‌شوند.',
+    classLinkOwnHint: 'این لینک کلاسی است که خودتان ساخته‌اید.',
+    membersTitle: 'افزودن دانشجو به کلاس',
+    membersHint:
+      'دانشجوهای آکادمی را انتخاب کنید تا بدون پرداخت در کلاس صندلی بگیرند و بتوانند وارد شوند.',
+    membersAdd: 'افزودن به کلاس',
+    membersNeedClass: 'اول مراحل زمان‌بندی، نوع کلاس و ورود به کلاس را کامل کنید.',
     errStartRequired: 'تاریخ شروع را انتخاب کنید.',
     errStartPast: 'تاریخ شروع نمی‌تواند در گذشته باشد.',
     errDaysRequired: 'حداقل یک روز کلاس انتخاب کنید.',
@@ -78,8 +88,6 @@ export const fa = {
     reviewDescription: 'توضیحات',
     classKind: 'نوع کلاس',
     groupSummary: 'گروهی · ظرفیت {{count}} نفر',
-    whoCanEnter: 'چه کسی وارد می‌شود',
-    onlyEnrolled: 'فقط دانشجوهای ثبت‌نام‌شده، با دکمهٔ «ورود به کلاس»',
     draftExplain: 'پیش‌نویس: ذخیره می‌شود ولی هیچ دانشجویی آن را نمی‌بیند و ثبت‌نام بسته است.',
     saveDraft: 'ذخیرهٔ پیش‌نویس',
     publishExplain:
@@ -2216,7 +2224,7 @@ export const fa = {
     manageDocuments: 'مدیریت اسناد',
     createCourse: 'ایجاد دوره',
     wizard: {
-      continueTo: 'ادامه: {{step}}',
+      confirmAndContinue: 'تایید و ادامه',
       tabBuilder: 'گام‌های دوره',
       stepBasics: 'مشخصات دوره',
       stepBasicsHint: 'نام دوره، توضیح آن، نوع دوره، دسته‌بندی و تصویر جلد را مشخص کنید.',

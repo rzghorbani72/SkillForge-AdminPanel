@@ -11,6 +11,7 @@ import { StepAccess } from './step-access';
 import { StepBasics } from './step-basics';
 import { StepContent } from './step-content';
 import { StepPreview } from './step-preview';
+import { StepClassMembers } from './live/step-class-members';
 import { StepClassType } from './live/step-class-type';
 import { StepMeeting } from './live/step-meeting';
 import { SectionCard } from '@/components/shared/section-card';
@@ -56,7 +57,7 @@ export function WizardStepBody({
   const { t } = useTranslation();
   const { form } = course;
   const isLive = course.courseType === 'LIVE';
-  const liveStep = isLiveClassStep(step) || step === 'review';
+  const liveStep = isLiveClassStep(step) || step === 'review' || (isLive && step === 'access');
 
   if (liveStep && live.isLoading) return <LiveLoading />;
 
@@ -66,7 +67,6 @@ export function WizardStepBody({
         <div className="flex flex-col gap-4">
           <StepBasics
             form={form}
-            courseType={course.courseType}
             coverPreviewUrl={course.coverPreviewUrl}
             onCoverChange={course.handleCoverImageChange}
           />
@@ -101,10 +101,10 @@ export function WizardStepBody({
           onEdit={onGoTo}
         />
       )}
-      {step === 'access' && (
+      {step === 'access' && isLive && <StepClassMembers group={live.group} />}
+      {step === 'access' && !isLive && (
         <StepAccess
           courseId={courseId}
-          form={form}
           isPublic={isPublic}
           onVisibilityChange={onVisibilityChange}
           accessVersion={accessVersion}

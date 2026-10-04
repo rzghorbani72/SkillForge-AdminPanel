@@ -1,18 +1,14 @@
 'use client';
 
-import type { UseFormReturn } from 'react-hook-form';
 import { Globe, Lock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CourseAccessSection } from '@/components/access/course-access-section';
 import type { AssignAccessSelection } from '@/components/access/assign-access-form';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
-import CourseSeoCard from '../CourseSeoCard';
-import type { CourseFormData } from '../schema';
 
 type StepAccessProps = {
   courseId: string;
-  form: UseFormReturn<CourseFormData>;
   /**
    * Publishing is a decision, not a side effect: the choice is held here and
    * written into the course only by the final save.
@@ -45,7 +41,6 @@ const VISIBILITY = [
  */
 export function StepAccess({
   courseId,
-  form,
   isPublic,
   onVisibilityChange,
   accessVersion,
@@ -88,8 +83,6 @@ export function StepAccess({
         courseId={courseId}
         onPendingChange={onPendingAccessChange}
       />
-
-      {isPublic && <CourseSeoCard form={form} />}
     </div>
   );
 }

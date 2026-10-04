@@ -23,11 +23,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { DIFFICULTY_LABEL } from '../../CourseFactsCard';
-import { COURSE_DESCRIPTION_MAX, COURSE_DIFFICULTIES, type CourseFormData } from '../../schema';
+import { DIFFICULTY_LABEL } from '../CourseFactsCard';
+import { COURSE_DESCRIPTION_MAX, COURSE_DIFFICULTIES, type CourseFormData } from '../schema';
 import { SectionCard } from '@/components/shared/section-card';
 
-type LiveBasicsCardProps = {
+type CourseAboutCardProps = {
   form: UseFormReturn<CourseFormData>;
   coverPreviewUrl: string | null;
   onCoverChange: (image: { id: string; url: string }) => void;
@@ -35,12 +35,12 @@ type LiveBasicsCardProps = {
 };
 
 /** "About the course": what a student reads on the course page. */
-export function LiveBasicsCard({
+export function CourseAboutCard({
   form,
   coverPreviewUrl,
   onCoverChange,
   children,
-}: LiveBasicsCardProps) {
+}: CourseAboutCardProps) {
   const { t } = useTranslation();
 
   return (

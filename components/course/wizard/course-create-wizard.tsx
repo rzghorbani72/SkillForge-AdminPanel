@@ -16,7 +16,7 @@ import type { CourseType } from '../course-drafts';
 import { StepBasics } from './step-basics';
 import { WizardHeader } from './wizard-header';
 import { WizardNav } from './wizard-nav';
-import { WIZARD_STEP_LABEL, stepsFor, type CourseWizardStep } from './wizard-steps';
+import { stepsFor, type CourseWizardStep } from './wizard-steps';
 
 function newCourseId(response: unknown): string | undefined {
   const body = response as { data?: { data?: { id?: string }; id?: string } };
@@ -124,15 +124,10 @@ export default function CourseCreateWizard() {
       />
 
       <div className="mx-auto w-full max-w-[1200px] p-4 sm:p-6">
-        {isLive ? null : (
-          <p className="mb-6 text-sm text-muted-foreground">{t('courses.wizard.stepBasicsHint')}</p>
-        )}
-
         <Form {...form}>
           <form onSubmit={(e) => e.preventDefault()} noValidate>
             <StepBasics
               form={form}
-              courseType={courseType}
               coverPreviewUrl={coverUrl}
               onCoverChange={(image) => {
                 form.setValue('cover_id', image.id, { shouldDirty: true });
@@ -145,7 +140,6 @@ export default function CourseCreateWizard() {
               isLast={false}
               isSaving={isSaving}
               nextBusy={isSaving}
-              nextLabel={t(WIZARD_STEP_LABEL[steps[1]])}
               onBack={() => router.push('/courses')}
               onNext={() => void createAndContinue(steps[1])}
               onFinish={() => undefined}
