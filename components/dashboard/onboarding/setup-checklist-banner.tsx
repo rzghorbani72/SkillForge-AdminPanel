@@ -50,7 +50,11 @@ function SetupChecklistBannerInner({ hasCourse }: BannerProps) {
   const { user } = useAuthUser();
   const { selectedAcademy } = useStore();
   const enabled =
-    !!user && !isPlatformStaff(user) && user.isSelfRegisteredManager === true && !!selectedAcademy;
+    !!user &&
+    !isPlatformStaff(user) &&
+    user.isSelfRegisteredManager === true &&
+    user.role === 'MANAGER' &&
+    !!selectedAcademy;
 
   const [choiceOpen, setChoiceOpen] = useState(false);
   const router = useRouter();

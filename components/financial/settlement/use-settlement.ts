@@ -12,14 +12,14 @@ interface UseSettlementResult {
 }
 
 /** Loads the settlement overview and the request history together. */
-export function useSettlement(academyId: string | null): UseSettlementResult {
+export function useSettlement(academyId: string | null, enabled = true): UseSettlementResult {
   const [summary, setSummary] = useState<SettlementSummary | null>(null);
   const [history, setHistory] = useState<WithdrawalRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
-    if (!academyId) return;
+    if (!enabled || !academyId) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -34,7 +34,7 @@ export function useSettlement(academyId: string | null): UseSettlementResult {
     } finally {
       setIsLoading(false);
     }
-  }, [academyId]);
+  }, [enabled, academyId]);
 
   useEffect(() => {
     void reload();

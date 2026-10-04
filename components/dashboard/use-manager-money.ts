@@ -13,7 +13,7 @@ import {
  * The money side of the dashboard. Every figure is aggregated by the API, so
  * the browser never pages through payments to add them up.
  */
-export function useManagerMoney(period: DashboardPeriodKey) {
+export function useManagerMoney(period: DashboardPeriodKey, enabled = true) {
   const { selectedAcademy, isLoading: storeLoading } = useStore();
   const academyId = selectedAcademy?.id ?? null;
   const [data, setData] = useState<ManagerDashboard>(EMPTY_MANAGER_DASHBOARD);
@@ -36,8 +36,8 @@ export function useManagerMoney(period: DashboardPeriodKey) {
       }
     };
 
-    if (!academyId) {
-      if (!storeLoading) setIsLoading(false);
+    if (!enabled || !academyId) {
+      if (!enabled || !storeLoading) setIsLoading(false);
       return;
     }
     void load();
@@ -45,7 +45,7 @@ export function useManagerMoney(period: DashboardPeriodKey) {
     return () => {
       cancelled = true;
     };
-  }, [academyId, period, storeLoading, version]);
+  }, [enabled, academyId, period, storeLoading, version]);
 
   return { ...data, isLoading, reload };
 }

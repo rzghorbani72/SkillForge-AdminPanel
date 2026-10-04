@@ -8,9 +8,11 @@ import { HeaderUpgradeButton } from './header-upgrade-button';
 import { HeaderPlanBadge } from './header-plan-badge';
 import { VisitSiteLink } from '@/components/shared/visit-site-link';
 import { useCurrentAcademy } from '@/hooks/useCurrentAcademy';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 export default function Header() {
   const academy = useCurrentAcademy();
+  const { user } = useAuthUser();
 
   return (
     <header className="sticky inset-x-0 top-0 z-40 w-full">
@@ -27,7 +29,7 @@ export default function Header() {
           <AcademySelector />
           <VisitSiteLink
             academy={academy}
-            askTemplateChoice
+            askTemplateChoice={user?.role === 'MANAGER'}
             iconOnly
             className="hidden rounded-full sm:inline-flex"
           />

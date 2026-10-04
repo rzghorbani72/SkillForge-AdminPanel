@@ -65,8 +65,9 @@ export default function DashboardPage() {
 
   // Money, course and teacher figures are aggregated by the API so they stay
   // correct past the page caps the list endpoints impose.
-  const money = useManagerMoney(period);
-  const settlement = useSettlement(selectedAcademy?.id ?? null);
+  const canManagePlan = canManageSubscription(user);
+  const money = useManagerMoney(period, canManagePlan);
+  const settlement = useSettlement(selectedAcademy?.id ?? null, canManagePlan);
   const { exportReport } = useDashboardExport({
     period,
     periodLabel,
@@ -80,7 +81,6 @@ export default function DashboardPage() {
     status: statusData,
   });
 
-  const canManagePlan = canManageSubscription(user);
   const { needsPlanPurchase, isLoading: subscriptionLoading } =
     useAcademySubscription(canManagePlan);
   const showBuyPlans =
