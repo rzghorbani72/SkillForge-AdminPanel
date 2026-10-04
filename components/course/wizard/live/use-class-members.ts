@@ -14,6 +14,7 @@ const isSeated = (member: TutoringGroupMember) =>
  */
 export function useClassMembers(groupId: string | null) {
   const [members, setMembers] = useState<TutoringGroupMember[]>([]);
+  const [seatsLeft, setSeatsLeft] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
 
   const reload = useCallback(async () => {
@@ -21,6 +22,7 @@ export function useClassMembers(groupId: string | null) {
     try {
       const group = await apiClient.getTutoringGroup(groupId);
       setMembers(group.members ?? []);
+      setSeatsLeft(Math.max(group.capacity - group.seats_taken, 0));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     }
@@ -60,5 +62,5 @@ export function useClassMembers(groupId: string | null) {
     isSeated(member) && member.Student ? [member.Student.id] : [],
   );
 
-  return { members, memberIds, busy, add, remove };
+  return { members, memberIds, seatsLeft, busy, add, remove };
 }

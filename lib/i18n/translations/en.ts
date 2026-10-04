@@ -20,6 +20,11 @@ export const en = {
     membersTitle: 'Add students to the class',
     membersHint: 'Pick academy students to give them a free seat in this class, so they can enter.',
     membersAdd: 'Add to class',
+    membersSeatsLeft: '{{count}} free seat(s) left in this class.',
+    membersPrivateFull:
+      'This is a private class with one seat. To add more students, choose a group class in the "Class type and price" step, or remove the current student.',
+    membersClassFull:
+      'This class is full. Raise the class capacity or remove a student to add someone new.',
     membersNeedClass: 'First finish the schedule, class type and class access steps.',
     errStartRequired: 'Pick a start date.',
     errStartPast: 'The start date cannot be in the past.',

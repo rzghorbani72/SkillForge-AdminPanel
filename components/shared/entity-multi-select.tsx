@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -29,6 +29,8 @@ type EntityMultiSelectProps = {
   /** Already-saved ids: shown checked; clicking one calls `onRevoke` instead of selecting. */
   granted?: string[];
   onRevoke?: (id: string) => void;
+  /** Allow only one pick: choosing another replaces it. */
+  single?: boolean;
 };
 
 /**
@@ -45,9 +47,27 @@ export function EntityMultiSelect({
   disabled = false,
   granted = [],
   onRevoke,
+  single = false,
 }: EntityMultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOutside = (event: MouseEvent) => {
+      if (event.target instanceof Node && !rootRef.current?.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [open]);
 
   const filtered = query
     ? items.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
@@ -59,11 +79,13 @@ export function EntityMultiSelect({
       onRevoke?.(id);
       return;
     }
-    onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
+    if (selected.includes(id)) onChange(selected.filter((x) => x !== id));
+    else onChange(single ? [id] : [...selected, id]);
+    if (single) setOpen(false);
   }
 
   return (
-    <div className="space-y-2">
+    <div ref={rootRef} className="space-y-2">
       <button
         type="button"
         disabled={disabled}

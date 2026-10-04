@@ -18,16 +18,18 @@ import { EntityMultiSelect } from '@/components/shared/entity-multi-select';
 import { useAccessTargets } from '@/components/access/use-access-targets';
 import { GroupRosterCard } from '@/components/class/group-roster-card';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { TutoringGroup } from '@/types/learning-operations';
 import { useClassMembers } from './use-class-members';
 
 /** Hands a free seat in the class to students the academy already has. */
 export function StepClassMembers({ groups }: { groups: readonly TutoringGroup[] }) {
   const { t } = useTranslation();
+  const formatNumber = useNumberFormat();
   const [chosenId, setChosenId] = useState<string | null>(null);
   const group = groups.find((item) => item.id === chosenId) ?? groups[0] ?? null;
   const { students, isLoading } = useAccessTargets(Boolean(group));
-  const { members, memberIds, busy, add, remove } = useClassMembers(group?.id ?? null);
+  const { members, memberIds, seatsLeft, busy, add, remove } = useClassMembers(group?.id ?? null);
   const [picked, setPicked] = useState<string[]>([]);
 
   if (!group) return <Note tone="warn">{t('liveWizard.membersNeedClass')}</Note>;
@@ -36,6 +38,8 @@ export function StepClassMembers({ groups }: { groups: readonly TutoringGroup[] 
     setChosenId(id);
     setPicked([]);
   };
+
+  const overCapacity = seatsLeft !== null && picked.length > seatsLeft;
 
   const addPicked = async () => {
     await add(picked);
@@ -71,7 +75,8 @@ export function StepClassMembers({ groups }: { groups: readonly TutoringGroup[] 
           selected={picked}
           onChange={setPicked}
           granted={memberIds}
-          disabled={isLoading || busy}
+          single={group.capacity === 1}
+          disabled={isLoading || busy || seatsLeft === 0}
           labels={{
             placeholder: t('accessGrants.selectStudents'),
             selected: t('accessGrants.students'),
@@ -80,10 +85,21 @@ export function StepClassMembers({ groups }: { groups: readonly TutoringGroup[] 
             remove: t('common.remove'),
           }}
         />
+        {seatsLeft !== null ? (
+          <Note tone={overCapacity || seatsLeft === 0 ? 'warn' : 'info'}>
+            {seatsLeft === 0
+              ? t(
+                  group.capacity === 1
+                    ? 'liveWizard.membersPrivateFull'
+                    : 'liveWizard.membersClassFull',
+                )
+              : t('liveWizard.membersSeatsLeft', { count: formatNumber(seatsLeft) })}
+          </Note>
+        ) : null}
         <Button
           type="button"
           className="self-start"
-          disabled={picked.length === 0 || busy}
+          disabled={picked.length === 0 || overCapacity || busy}
           onClick={() => void addPicked()}
         >
           {t('liveWizard.membersAdd')}
