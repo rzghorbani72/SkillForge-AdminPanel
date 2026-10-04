@@ -28,6 +28,7 @@ type WizardStepBodyProps = {
   isPublic: boolean;
   onVisibilityChange: (isPublic: boolean) => void;
   accessVersion: number;
+  pendingAccess: AssignAccessSelection | null;
   onPendingAccessChange: (selection: AssignAccessSelection | null) => void;
   live: LiveClassDraftApi;
   publisher: LivePublishApi;
@@ -49,6 +50,7 @@ export function WizardStepBody({
   isPublic,
   onVisibilityChange,
   accessVersion,
+  pendingAccess,
   onPendingAccessChange,
   live,
   publisher,
@@ -108,6 +110,7 @@ export function WizardStepBody({
           isPublic={isPublic}
           onVisibilityChange={onVisibilityChange}
           accessVersion={accessVersion}
+          pendingAccess={pendingAccess}
           onPendingAccessChange={onPendingAccessChange}
         />
       )}

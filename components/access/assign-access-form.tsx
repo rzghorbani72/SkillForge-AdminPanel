@@ -22,6 +22,8 @@ export type AssignAccessSelection = {
 };
 
 type AssignAccessFormProps = {
+  /** Restores a selection the caller kept, so the form survives being unmounted. */
+  initialSelection?: AssignAccessSelection | null;
   onSubmit?: (selection: AssignAccessSelection) => Promise<void> | void;
   /**
    * Reports the current selection instead of submitting it. Given this, the
@@ -49,6 +51,7 @@ type AssignAccessFormProps = {
  * page and the users page so "give access" means the same thing everywhere.
  */
 export function AssignAccessForm({
+  initialSelection,
   onSubmit,
   onSelectionChange,
   isSaving = false,
@@ -68,14 +71,15 @@ export function AssignAccessForm({
   // no money. Hiding it here keeps the form from offering a guaranteed 403.
   const isTeacher = user?.role === 'TEACHER';
   const { students, groups, isLoading } = useAccessTargets(enabled);
-  const [profileIds, setProfileIds] = useState<string[]>([]);
-  const [groupIds, setGroupIds] = useState<string[]>([]);
-  const [duration, setDuration] = useState<AccessDuration>({
-    mode: 'days',
-    days: 365,
-  });
-  const [pricing, setPricing] = useState<GrantPricing>({ mode: 'FREE' });
-  const [note, setNote] = useState('');
+  const [profileIds, setProfileIds] = useState<string[]>(initialSelection?.profile_ids ?? []);
+  const [groupIds, setGroupIds] = useState<string[]>(initialSelection?.group_ids ?? []);
+  const [duration, setDuration] = useState<AccessDuration>(
+    initialSelection?.duration ?? { mode: 'days', days: 365 },
+  );
+  const [pricing, setPricing] = useState<GrantPricing>(
+    initialSelection?.pricing ?? { mode: 'FREE' },
+  );
+  const [note, setNote] = useState(initialSelection?.note ?? '');
 
   const hasTarget = hasExternalTarget || profileIds.length > 0 || groupIds.length > 0;
 

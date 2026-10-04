@@ -17,13 +17,18 @@ type CourseAccessSectionProps = {
    * upward and written when the page's own save runs.
    */
   onPendingChange?: (selection: AssignAccessSelection | null) => void;
+  initialSelection?: AssignAccessSelection | null;
 };
 
 /**
  * The "give access to students" box on a saved course: hand the course to
  * students or groups for a chosen term, and see/undo who already holds it.
  */
-export function CourseAccessSection({ courseId, onPendingChange }: CourseAccessSectionProps) {
+export function CourseAccessSection({
+  courseId,
+  onPendingChange,
+  initialSelection,
+}: CourseAccessSectionProps) {
   const { t } = useTranslation();
   const [students, setStudents] = useState<StudentAccessGrant[]>([]);
   const [groups, setGroups] = useState<GroupAccessGrant[]>([]);
@@ -90,6 +95,7 @@ export function CourseAccessSection({ courseId, onPendingChange }: CourseAccessS
       </CardHeader>
       <CardContent>
         <AssignAccessForm
+          initialSelection={initialSelection}
           {...(onPendingChange
             ? { onSelectionChange: onPendingChange }
             : { onSubmit: handleGrant, isSaving })}

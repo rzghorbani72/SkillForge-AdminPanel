@@ -113,6 +113,7 @@ export function useCourseWizard(courseId: string) {
     saveStep,
     finish,
     setVisibility,
+    pendingAccess,
     setPendingAccess,
   };
 }
@@ -133,8 +134,7 @@ async function persistWizardStep(
     return false;
   }
   if (pendingAccess) {
-    await applyAccessSelection(courseId, pendingAccess);
-    clearPending();
+    if (await applyAccessSelection(courseId, pendingAccess)) clearPending();
   }
   return true;
 }

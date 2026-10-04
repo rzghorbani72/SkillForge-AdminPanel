@@ -44,11 +44,13 @@ export function StagedAccessSection({ onChange }: StagedAccessSectionProps) {
 export async function applyAccessSelection(
   courseId: string,
   selection: AssignAccessSelection | null,
-): Promise<void> {
-  if (!selection) return;
+): Promise<boolean> {
+  if (!selection) return true;
   try {
     await accessGrantsApi.create({ course_ids: [courseId], ...selection });
+    return true;
   } catch (error) {
     toast.error(apiErrorMessage(error, tNow('accessGrants.stagedFailed')));
+    return false;
   }
 }

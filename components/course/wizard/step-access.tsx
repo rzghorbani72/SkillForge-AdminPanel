@@ -16,6 +16,8 @@ type StepAccessProps = {
   isPublic: boolean;
   onVisibilityChange: (isPublic: boolean) => void;
   accessVersion: number;
+  /** What was staged before, so leaving and re-entering this step keeps it. */
+  pendingAccess: AssignAccessSelection | null;
   onPendingAccessChange: (selection: AssignAccessSelection | null) => void;
 };
 
@@ -44,6 +46,7 @@ export function StepAccess({
   isPublic,
   onVisibilityChange,
   accessVersion,
+  pendingAccess,
   onPendingAccessChange,
 }: StepAccessProps) {
   const { t } = useTranslation();
@@ -81,6 +84,7 @@ export function StepAccess({
       <CourseAccessSection
         key={accessVersion}
         courseId={courseId}
+        initialSelection={pendingAccess}
         onPendingChange={onPendingAccessChange}
       />
     </div>
