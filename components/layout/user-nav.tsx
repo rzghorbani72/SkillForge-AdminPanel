@@ -66,7 +66,8 @@ export function UserNav() {
 
   async function handleLogout() {
     setIsLoggingOut(true);
-    await signOut();
+    await signOut('/login', router.replace);
+    router.refresh();
   }
 
   return (
