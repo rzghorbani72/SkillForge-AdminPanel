@@ -75,8 +75,7 @@ export function SeasonsSection({
     setOpenMap(Object.fromEntries(seasons.map((s) => [s.clientKey, next])));
   }
 
-  // "Empty" means no lessons — the same rule validateForPublish enforces.
-  // Blocking here stops a wall of empty seasons that can never be published.
+  // Blocking here stops a wall of empty seasons that would be dropped on save.
   const lastSeason = seasons[seasons.length - 1];
   const lastSeasonIsEmpty =
     lastSeason !== undefined && !lessons.some((l) => l.seasonClientKey === lastSeason.clientKey);

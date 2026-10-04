@@ -10,7 +10,6 @@ import {
   durationToSeconds,
   emptySeason,
   prepareCurriculumForSave,
-  validateForPublish,
   type CourseType,
   type LessonDraft,
   type SeasonDraft,
@@ -124,13 +123,10 @@ export function useCourseSave({
       if (savingRef.current) return false;
       savingRef.current = true;
 
-      if (data.published) {
-        const problem = validateForPublish(seasons, lessons, courseType);
-        if (problem) {
-          savingRef.current = false;
-          if (!silent) toast.error(t(problem));
-          return false;
-        }
+      if (data.published && !data.title.trim()) {
+        savingRef.current = false;
+        if (!silent) toast.error(t('courses.publishTitleRequired'));
+        return false;
       }
 
       const payload = buildPayload(data, seasons, lessons, deletedSeasonIds, deletedLessonIds);

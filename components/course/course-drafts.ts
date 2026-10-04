@@ -100,10 +100,6 @@ export function hasTimedMedia(lesson: LessonDraft): boolean {
 }
 
 /**
- * Pre-publish gate. Returns a translation key for the first problem found, or
- * null when the curriculum is publishable. Kept pure so it is unit-testable.
- */
-/**
  * Seasons with no titled lessons are UI placeholders only — they must not be
  * written to the API (and any existing DB row should be deleted).
  */
@@ -130,27 +126,6 @@ export function prepareCurriculumForSave(
     lessons: lessonsToSave,
     deletedSeasonIds: Array.from(new Set([...deletedSeasonIds, ...orphanSeasonIds])),
   };
-}
-
-export function validateForPublish(
-  seasons: SeasonDraft[],
-  lessons: LessonDraft[],
-  courseType: CourseType = 'OFFLINE',
-): string | null {
-  // A live course has no uploaded lessons at all — it promises a timetable
-  // instead, and the backend checks that promise on publish.
-  if (courseType === 'LIVE') return null;
-  // Season titles are not checked: an untitled season is saved under its
-  // number rather than dropped, so it can never block publishing.
-  if (lessons.some((l) => !l.title.trim())) {
-    return 'courses.publishLessonTitleRequired';
-  }
-  const hasEmptySeason = seasons.some(
-    (s) => !lessons.some((l) => l.seasonClientKey === s.clientKey),
-  );
-  if (hasEmptySeason) return 'courses.publishEmptySeason';
-  if (lessons.length === 0) return 'courses.publishNeedsLesson';
-  return null;
 }
 
 export interface LiveCourseReadiness {

@@ -2290,6 +2290,7 @@ export const en = {
     builderPublishedHint:
       'This course is published and visible to students. Changes go live as soon as you save.',
     updatedToast: 'Course updated',
+    publishTitleRequired: 'Write a course title before publishing.',
     fixErrorsBeforeSaving: 'Please fix the highlighted fields before saving',
     createdDraftToast: 'Course created as a draft — publish it when it is ready',
     courseTypeLabel: 'Course type',
@@ -2396,9 +2397,6 @@ export const en = {
     lessonSectionSettings: 'Lesson settings',
     seasonLength: 'Season length',
     courseLength: 'Total length',
-    publishLessonTitleRequired: 'Every lesson needs a title before publishing.',
-    publishEmptySeason: 'Each season must have at least one lesson before publishing.',
-    publishNeedsLesson: 'Add at least one lesson before publishing.',
     enterLessonTitle: 'Enter lesson title',
     freePreview: 'Free preview',
     allowDownload: 'Allow download',

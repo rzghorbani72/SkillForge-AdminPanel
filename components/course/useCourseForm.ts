@@ -16,7 +16,6 @@ import {
   emptySeason,
   newKey,
   secondsToDuration,
-  validateForPublish,
   type CourseType,
   type LessonDraft,
   type SeasonDraft,
@@ -32,7 +31,7 @@ import { SaveStatus } from './_lib/useCourseForm-helpers';
 const AUTOSAVE_DELAY_MS = 5000;
 
 export type { LessonDraft, LessonType, SeasonDraft } from './course-drafts';
-export { durationToSeconds, secondsToDuration, validateForPublish };
+export { durationToSeconds, secondsToDuration };
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
 

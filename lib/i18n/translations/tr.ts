@@ -1251,6 +1251,7 @@ const tr = {
     builderPublishedHint:
       'Bu kurs yayında ve öğrenciler tarafından görülüyor. Değişiklikler kaydeder kaydetmez yayına girer.',
     updatedToast: 'Kurs güncellendi',
+    publishTitleRequired: 'Yayınlamadan önce kurs başlığını yazın.',
     fixErrorsBeforeSaving: 'Kaydetmeden önce işaretli alanları düzeltin',
     createdDraftToast: 'Kurs taslak olarak oluşturuldu — hazır olduğunda yayınlayın',
     courseTypeLabel: 'Kurs türü',
@@ -1300,9 +1301,6 @@ const tr = {
     lessonTitle: 'Ders',
     lessonDescription: 'Ders açıklaması',
     lessonDuration: 'Süre',
-    publishLessonTitleRequired: 'Yayınlamadan önce her dersin bir başlığı olmalıdır.',
-    publishEmptySeason: 'Yayınlamadan önce her sezonun en az bir dersi olmalıdır.',
-    publishNeedsLesson: 'Yayınlamadan önce en az bir ders ekleyin.',
     enterLessonTitle: 'Ders başlığını girin',
     freePreview: 'Ücretsiz önizleme',
     allowDownload: 'İndirmeye izin ver',

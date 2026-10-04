@@ -2284,6 +2284,7 @@ export const fa = {
     builderPublishedHint:
       'این دوره منتشر شده و برای دانشجویان قابل مشاهده است. تغییرات به‌محض ذخیره اعمال می‌شود.',
     updatedToast: 'دوره به‌روزرسانی شد',
+    publishTitleRequired: 'پیش از انتشار، عنوان دوره را بنویسید.',
     fixErrorsBeforeSaving: 'قبل از ذخیره، خطاهای مشخص‌شده را برطرف کنید',
     createdDraftToast: 'دوره به‌صورت پیش‌نویس ساخته شد — هر وقت آماده بود آن را منتشر کنید',
     courseTypeLabel: 'نوع دوره',
@@ -2389,9 +2390,6 @@ export const fa = {
     lessonSectionSettings: 'تنظیمات درس',
     seasonLength: 'مدت فصل',
     courseLength: 'مدت کل',
-    publishLessonTitleRequired: 'پیش از انتشار، هر درس باید عنوان داشته باشد.',
-    publishEmptySeason: 'پیش از انتشار، هر فصل باید حداقل یک درس داشته باشد.',
-    publishNeedsLesson: 'پیش از انتشار حداقل یک درس اضافه کنید.',
     enterLessonTitle: 'عنوان درس را وارد کنید',
     freePreview: 'پیش‌نمایش رایگان',
     allowDownload: 'اجازه دانلود',
