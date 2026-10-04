@@ -27,7 +27,7 @@ import { LessonMedia } from './LessonMedia';
 import { LESSON_INFO_SLOT_CLASS } from './_lib/LessonMedia-helpers';
 import { LESSON_TYPE_BY_KEY, LESSON_TYPE_OPTIONS } from './lesson-type-config';
 import { LessonDurationInfo } from './lesson-duration-info';
-import { AssignmentDialog } from './assessment/assignment-dialog';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 import { QuizDialog } from './assessment/quiz-dialog';
 
 /**
@@ -62,6 +62,7 @@ interface LessonEditorPanelProps {
 
 export function LessonEditorPanel({ lesson, seasons, onUpdate, onAssign }: LessonEditorPanelProps) {
   const { t } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
   const { course_id: courseId } = useParams<{ course_id: string }>();
   // Live times and the download rule need a screen each, so an unsaved
   // lesson has nowhere to link to yet.
@@ -222,15 +223,9 @@ export function LessonEditorPanel({ lesson, seasons, onUpdate, onAssign }: Lesso
             className="text-xs"
           />
         </div>
-        {courseId && (
+        {courseId && quizzes_enabled && (
           <div className="flex flex-wrap gap-2">
             <QuizDialog kind="lesson" parentId={lesson.id} title={lesson.title} />
-            <AssignmentDialog
-              kind="lesson"
-              parentId={lesson.id}
-              courseId={courseId}
-              title={lesson.title}
-            />
           </div>
         )}
         {settingsHref && (

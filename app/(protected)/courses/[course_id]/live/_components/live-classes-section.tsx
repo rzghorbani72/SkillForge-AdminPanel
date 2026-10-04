@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -14,6 +15,9 @@ import { classOfferSource, type ScheduleBuilderPrefill } from '../hooks/use-sche
 import { ClassListCard } from './class-list-card';
 import { ClassRequestsCard, requestPrefill } from './class-requests-card';
 import ScheduleBuilder from './schedule-builder';
+
+/** `?new=1` opens the create form straight away (the course header's button). */
+export const NEW_CLASS_PARAM = 'new';
 
 type ClassDraft = { prefill?: ScheduleBuilderPrefill; request?: ClassRequest };
 
@@ -38,7 +42,8 @@ export function LiveClassesSection({
   onReload,
 }: LiveClassesSectionProps) {
   const { t } = useTranslation();
-  const [draft, setDraft] = useState<ClassDraft | null>(null);
+  const openNew = useSearchParams().get(NEW_CLASS_PARAM) === '1';
+  const [draft, setDraft] = useState<ClassDraft | null>(openNew ? {} : null);
   const [requestsVersion, setRequestsVersion] = useState(0);
   const formRef = useRef<HTMLElement>(null);
   const hasClasses = groups.length > 0;

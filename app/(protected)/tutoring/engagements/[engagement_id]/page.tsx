@@ -7,7 +7,6 @@ import { ArrowLeft } from 'lucide-react';
 
 import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 import { Button } from '@/components/ui/button';
-import { ClassHomeworkCard } from '@/components/class/class-homework-card';
 import { ClassTimetableCard } from '@/components/class/class-timetable-card';
 import { NextSessionCard } from '@/components/class/next-session-card';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -86,7 +85,6 @@ export default function EngagementClassPage() {
                   onSessionChanged={cls.replaceSession}
                   onCancelSession={cls.cancelSession}
                 />
-                <ClassHomeworkCard sessions={cls.sessions} />
               </div>
               <div className="space-y-6">
                 <RequestedTimesCard engagementId={engagementId} refreshKey={scheduledCount} />

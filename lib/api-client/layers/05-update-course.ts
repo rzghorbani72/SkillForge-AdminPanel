@@ -243,6 +243,17 @@ export class ApiLayer05 extends ApiLayer04 {
   }
 
   /** A file for a chat message; the returned id is sent with the message. */
+  async gradeDiscussionMessage(messageId: string, score: number) {
+    return this.quizData(`/discussions/messages/${messageId}/grade`, {
+      method: 'PATCH',
+      body: JSON.stringify({ score }),
+    });
+  }
+
+  async getCourseTeacherChats<T = unknown>(courseId: string) {
+    return this.quizData<T>(`/discussions/courses/${courseId}/teacher-chats`);
+  }
+
   async uploadDiscussionAttachment(file: File): Promise<{ id: string }> {
     const formData = new FormData();
     formData.append('file', file);

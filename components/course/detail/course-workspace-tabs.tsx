@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Award, BarChart3, ClipboardCheck, Eye, TrendingUp } from 'lucide-react';
+import { BarChart3, Eye, MessagesSquare, TrendingUp } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
@@ -30,15 +30,9 @@ export function CourseWorkspaceTabs({ courseId }: { courseId: string }) {
       exact: false,
     },
     {
-      href: `${base}/certificates`,
-      label: t('certificates.tab'),
-      icon: Award,
-      exact: false,
-    },
-    {
-      href: `${base}/assignments`,
-      label: t('courseDetail.tabAssignments'),
-      icon: ClipboardCheck,
+      href: `${base}/messages`,
+      label: t('courseDetail.tabMessages'),
+      icon: MessagesSquare,
       exact: false,
     },
     {

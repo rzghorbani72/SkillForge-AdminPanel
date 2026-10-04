@@ -24,6 +24,7 @@ import { CancelSessionDialog } from './cancel-session-dialog';
 import { SessionRecordingField } from './session-recording-field';
 import { SessionMaterialsField } from './session-materials-field';
 import { SessionQuizSheet } from './session-quiz-sheet';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 
 const NO_TOPIC = 'none';
@@ -56,6 +57,7 @@ export function SessionRow({
   onCancelled,
 }: SessionRowProps) {
   const { t, language } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
   const [title, setTitle] = useState(session.title ?? '');
   const [topicId, setTopicId] = useState(session.topic_id ?? NO_TOPIC);
   const [meetingUrl, setMeetingUrl] = useState(session.meeting_url ?? '');
@@ -262,7 +264,7 @@ export function SessionRow({
               <MessageSquare className="h-4 w-4" />
               {t('courses.live.sessionChat')}
             </Button>
-            <SessionQuizSheet sessionId={session.id} />
+            {quizzes_enabled ? <SessionQuizSheet sessionId={session.id} /> : null}
           </div>
           {showChat && (
             <div className="rounded-lg border p-3">

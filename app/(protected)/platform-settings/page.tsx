@@ -24,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { apiErrorMessage } from '@/lib/api-error-message';
+import { PlatformFeaturesCard } from './_components/platform-features-card';
 
 const settingsSchema = z.object({
   vat_rate_pct: z.coerce.number().min(0).max(100),
@@ -279,6 +280,7 @@ export default function PlatformSettingsPage() {
           </div>
         </form>
       </Form>
+      <PlatformFeaturesCard />
     </div>
   );
 }

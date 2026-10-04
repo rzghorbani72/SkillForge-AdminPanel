@@ -11,6 +11,7 @@ import {
   Pencil,
   Radio,
   Settings2,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +32,7 @@ import { CourseQuickSettingsDialog } from './course-quick-settings-dialog';
 import { CourseWorkspaceTabs } from './course-workspace-tabs';
 import { useCourseWorkspace } from './course-workspace-context';
 import type { CourseDetail } from './types';
+import { NEW_CLASS_PARAM } from '@/app/(protected)/courses/[course_id]/live/_components/live-classes-section';
 
 function thumbUrl(course: CourseDetail): string | null {
   const image = course.Image;
@@ -120,6 +122,14 @@ export function CourseWorkspaceHeader({
               <Link href={`${base}/edit`}>
                 <Pencil className="me-1.5 h-4 w-4" />
                 {t('courses.wizard.tabBuilder')}
+              </Link>
+            </Button>
+          )}
+          {isLive && (
+            <Button size="sm" className="h-8" asChild>
+              <Link href={`${base}/live?${NEW_CLASS_PARAM}=1`}>
+                <Plus className="me-1.5 h-4 w-4" />
+                {t('courses.live.createClass')}
               </Link>
             </Button>
           )}

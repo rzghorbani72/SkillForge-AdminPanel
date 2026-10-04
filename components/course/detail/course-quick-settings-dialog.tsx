@@ -36,6 +36,7 @@ import { Switch } from '@/components/ui/switch';
 import { apiClient } from '@/lib/api';
 import { ErrorHandler } from '@/lib/error-handler';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 import { useCourseWorkspace } from './course-workspace-context';
 
 const schema = z.object({
@@ -71,6 +72,7 @@ type CourseQuickSettingsDialogProps = {
  */
 export function CourseQuickSettingsDialog({ open, onOpenChange }: CourseQuickSettingsDialogProps) {
   const { t } = useTranslation();
+  const { certificates_enabled } = usePlatformFeatures();
   const { course, refresh } = useCourseWorkspace();
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [saving, setSaving] = useState(false);
@@ -189,46 +191,48 @@ export function CourseQuickSettingsDialog({ open, onOpenChange }: CourseQuickSet
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="is_certificate"
-              render={({ field }) => (
-                <FormItem className="space-y-3 rounded-lg border p-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <FormLabel>{t('courseDetail.certificate')}</FormLabel>
-                      <FormDescription>{t('certificates.rosterHint')}</FormDescription>
+            {certificates_enabled && (
+              <FormField
+                control={form.control}
+                name="is_certificate"
+                render={({ field }) => (
+                  <FormItem className="space-y-3 rounded-lg border p-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <FormLabel>{t('courseDetail.certificate')}</FormLabel>
+                        <FormDescription>{t('certificates.rosterHint')}</FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
                     </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </div>
 
-                  {field.value ? (
-                    <FormField
-                      control={form.control}
-                      name="certificate_min_percent"
-                      render={({ field: percentField }) => (
-                        <FormItem className="grid grid-cols-[1fr_auto] items-center gap-3 border-t pt-3">
-                          <div className="space-y-1">
-                            <FormLabel>{t('certificates.minPercentLabel')}</FormLabel>
-                            <FormDescription>{t('certificates.minPercentHint')}</FormDescription>
-                          </div>
-                          <FormControl>
-                            <NumberInput
-                              className="w-24"
-                              value={percentField.value}
-                              onChange={(raw) => percentField.onChange(Number(raw) || 0)}
-                              suffix="٪"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  ) : null}
-                </FormItem>
-              )}
-            />
+                    {field.value ? (
+                      <FormField
+                        control={form.control}
+                        name="certificate_min_percent"
+                        render={({ field: percentField }) => (
+                          <FormItem className="grid grid-cols-[1fr_auto] items-center gap-3 border-t pt-3">
+                            <div className="space-y-1">
+                              <FormLabel>{t('certificates.minPercentLabel')}</FormLabel>
+                              <FormDescription>{t('certificates.minPercentHint')}</FormDescription>
+                            </div>
+                            <FormControl>
+                              <NumberInput
+                                className="w-24"
+                                value={percentField.value}
+                                onChange={(raw) => percentField.onChange(Number(raw) || 0)}
+                                suffix="٪"
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    ) : null}
+                  </FormItem>
+                )}
+              />
+            )}
 
             <DialogFooter>
               <Button

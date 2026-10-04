@@ -13,6 +13,7 @@ import { mapPublicPlanToSubscriptionPlan, unwrapData, unwrapDataEnvelope } from 
 import type { AcademyCustomPlanData, AcademyRecord, StudentLessonAccessList } from '../types-3';
 import type {
   PlanEconomicsPreview,
+  PlatformFeatures,
   PlatformSettingsData,
   PublicSubscriptionPlanData,
   StructuredPlanLimits,
@@ -163,6 +164,18 @@ export class ApiLayer17 extends ApiLayer16 {
       throw new Error('Invalid platform settings response');
     }
     return settings as PlatformSettingsData;
+  }
+
+  async getPlatformFeatures(): Promise<PlatformFeatures> {
+    const res = await this.request<PlatformFeatures | { data?: PlatformFeatures }>(
+      '/platform-settings/features',
+    );
+    const body = res.data;
+    const features = body && 'quizzes_enabled' in body ? body : body?.data;
+    return {
+      quizzes_enabled: features?.quizzes_enabled === true,
+      certificates_enabled: features?.certificates_enabled === true,
+    };
   }
 
   async updatePlatformSettings(data: Partial<PlatformSettingsData>) {

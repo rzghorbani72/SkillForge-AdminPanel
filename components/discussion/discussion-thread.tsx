@@ -8,6 +8,7 @@ import {
   MessageAttachment,
   type ThreadAttachment,
 } from '@/components/discussion/message-attachment';
+import { MessageGrade } from '@/components/discussion/message-grade';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { DiscussionParent } from '@/types/learning-operations';
@@ -20,6 +21,7 @@ interface ThreadMessage {
   created_at: string;
   Author?: { id: string; display_name: string | null };
   Document?: ThreadAttachment | null;
+  score?: number | null;
 }
 
 interface DiscussionThreadProps {
@@ -27,8 +29,13 @@ interface DiscussionThreadProps {
   attemptId?: string;
   submissionId?: string;
   tutoringSessionId?: string;
+  engagementId?: string;
+  /** Course teacher chat: which student's chat staff are answering. */
+  courseChat?: { courseId: string; studentProfileId: string };
   threadId?: string;
   currentProfileId?: string;
+  /** Files this author hands in get a grade box (the chat's student). */
+  gradableAuthorId?: string;
 }
 
 /**
@@ -39,8 +46,11 @@ export function DiscussionThread({
   attemptId,
   submissionId,
   tutoringSessionId,
+  engagementId,
+  courseChat,
   threadId,
   currentProfileId,
+  gradableAuthorId,
 }: DiscussionThreadProps) {
   const { t, language } = useTranslation();
   const isRtl = language === 'fa' || language === 'ar';
@@ -56,7 +66,11 @@ export function DiscussionThread({
     ? { attempt_id: attemptId }
     : submissionId
       ? { submission_id: submissionId }
-      : { tutoring_session_id: tutoringSessionId };
+      : engagementId
+        ? { engagement_id: engagementId }
+        : courseChat
+          ? { course_id: courseChat.courseId, student_profile_id: courseChat.studentProfileId }
+          : { tutoring_session_id: tutoringSessionId };
   const parentRef = useRef(parent);
   parentRef.current = parent;
 
@@ -138,6 +152,9 @@ export function DiscussionThread({
                 </p>
                 {m.body && <p className="whitespace-pre-wrap break-words">{m.body}</p>}
                 {m.Document && <MessageAttachment attachment={m.Document} mine={Boolean(mine)} />}
+                {gradableAuthorId && m.Document && m.Author?.id === gradableAuthorId && (
+                  <MessageGrade messageId={m.id} score={m.score ?? null} onGraded={load} />
+                )}
               </div>
             </div>
           );

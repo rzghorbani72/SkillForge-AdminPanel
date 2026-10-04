@@ -56,14 +56,6 @@ export const academyNavItems: NavItem[] = [
     scope: 'academy',
     children: [
       {
-        title: 'Assignments',
-        href: '/assignments',
-        icon: 'bookOpen' as IconType,
-        label: 'assignments',
-        scope: 'academy',
-        requiresLearningCapability: 'assignments',
-      },
-      {
         title: 'Ops Queue',
         href: '/learning/ops-queue',
         icon: 'trendingUp' as IconType,

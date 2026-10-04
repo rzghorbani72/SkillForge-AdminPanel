@@ -7,6 +7,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import type { useCurriculumDraft } from '../useCurriculumDraft';
 import { SeasonsSection } from '../SeasonsSection';
 import { QuizDialog } from '../assessment/quiz-dialog';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 
 type Curriculum = ReturnType<typeof useCurriculumDraft>;
 
@@ -20,6 +21,7 @@ type StepContentProps = {
  */
 export function StepContent({ curriculum }: StepContentProps) {
   const { t } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
   const { course_id: courseId } = useParams<{ course_id?: string }>();
 
   return (
@@ -40,15 +42,17 @@ export function StepContent({ curriculum }: StepContentProps) {
         onReorderLessons={curriculum.reorderLessons}
       />
 
-      <Card>
-        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 space-y-0">
-          <div className="space-y-1">
-            <CardTitle className="text-base">{t('courses.courseQuiz')}</CardTitle>
-            <CardDescription>{t('courses.courseQuizHint')}</CardDescription>
-          </div>
-          <QuizDialog kind="course" parentId={courseId} title={t('courses.courseQuiz')} />
-        </CardHeader>
-      </Card>
+      {quizzes_enabled && (
+        <Card>
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 space-y-0">
+            <div className="space-y-1">
+              <CardTitle className="text-base">{t('courses.courseQuiz')}</CardTitle>
+              <CardDescription>{t('courses.courseQuizHint')}</CardDescription>
+            </div>
+            <QuizDialog kind="course" parentId={courseId} title={t('courses.courseQuiz')} />
+          </CardHeader>
+        </Card>
+      )}
     </div>
   );
 }

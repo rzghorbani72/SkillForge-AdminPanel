@@ -105,6 +105,11 @@ export type QuizSettingsPayload = {
   is_final: boolean;
 };
 
+export type PlatformFeatures = Pick<
+  PlatformSettingsData,
+  'quizzes_enabled' | 'certificates_enabled'
+>;
+
 export interface PlatformSettingsData {
   id: string;
   vat_rate: number;
@@ -118,6 +123,8 @@ export interface PlatformSettingsData {
   vat_registration_no: string | null;
   economic_code: string | null;
   owner_notify_phone: string | null;
+  quizzes_enabled: boolean;
+  certificates_enabled: boolean;
   /** Unit costs (Toman) the plan margin check is run against. */
   cost_storage_per_gb_toman: number;
   cost_egress_per_gb_toman: number;

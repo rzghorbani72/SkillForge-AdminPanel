@@ -14,7 +14,7 @@ import type { LessonDraft, SeasonDraft } from './useCourseForm';
 import { secondsToDuration, sumDurationSeconds } from './course-drafts';
 import { LessonList } from './LessonList';
 import { InlineConfirm } from './InlineConfirm';
-import { AssignmentDialog } from './assessment/assignment-dialog';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 import { QuizDialog } from './assessment/quiz-dialog';
 
 // Completeness helper — mirrors the one in SortableLessonRow
@@ -65,6 +65,7 @@ export function SortableSeasonAccordion({
   onReorderLessons,
 }: SeasonAccordionProps) {
   const { t, language } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
   const { course_id: courseId } = useParams<{ course_id: string }>();
   const formatNumber = useNumberFormat();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -216,7 +217,7 @@ export function SortableSeasonAccordion({
             onAssignLesson={onAssignLesson}
             onReorderLessons={onReorderLessons}
           />
-          {courseId && (
+          {courseId && quizzes_enabled && (
             <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-dashed px-3 py-2">
               <span className="text-xs font-medium text-muted-foreground">
                 {t('courses.seasonAssessmentLabel')}
@@ -225,12 +226,6 @@ export function SortableSeasonAccordion({
                 <QuizDialog
                   kind="season"
                   parentId={season.id}
-                  title={season.title || fallbackTitle}
-                />
-                <AssignmentDialog
-                  kind="season"
-                  parentId={season.id}
-                  courseId={courseId}
                   title={season.title || fallbackTitle}
                 />
               </div>

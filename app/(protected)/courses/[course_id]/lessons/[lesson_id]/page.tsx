@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
-import { LessonAssignmentEditor } from '@/components/lesson/lesson-assignment-editor';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 import { LessonDownloadPolicyEditor } from '@/components/lesson/lesson-download-policy-editor';
 import LiveSessionEditor from '@/components/lesson/LiveSessionEditor';
 import { QuizBuilder } from '@/components/quiz/quiz-builder';
@@ -27,6 +27,7 @@ export default function LessonSettingsPage() {
     lesson_id: string;
   }>();
   const { t } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
   // The lesson id alone would load, so a lesson reached under the wrong
   // course's address reads as not found rather than opening here.
   const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -77,9 +78,7 @@ export default function LessonSettingsPage() {
             />
           )}
 
-          <QuizBuilder parent={{ kind: 'lesson', id: lesson.id }} />
-
-          <LessonAssignmentEditor parent={{ kind: 'lesson', id: lesson.id }} courseId={courseId} />
+          {quizzes_enabled ? <QuizBuilder parent={{ kind: 'lesson', id: lesson.id }} /> : null}
 
           <LessonDownloadPolicyEditor lesson={lesson} />
         </>

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { usePercentLabel } from '@/lib/i18n/use-percent-label';
@@ -52,6 +53,7 @@ export function CourseIdentityCard({ course }: { course: CourseDetail }) {
 /** Who may open the course, for how long, and what they get for finishing. */
 export function CourseAccessCard({ course }: { course: CourseDetail }) {
   const { t } = useTranslation();
+  const { certificates_enabled } = usePlatformFeatures();
   const formatNumber = useNumberFormat();
   const percentLabel = usePercentLabel();
 
@@ -72,10 +74,12 @@ export function CourseAccessCard({ course }: { course: CourseDetail }) {
       <Fact label={t('courses.secureMode')}>
         {t(course.allow_downloads ? 'common.no' : 'common.yes')}
       </Fact>
-      <Fact label={t('courseDetail.certificate')}>
-        {t(course.is_certificate ? 'common.yes' : 'common.no')}
-      </Fact>
-      {course.is_certificate && course.certificate_min_percent != null && (
+      {certificates_enabled && (
+        <Fact label={t('courseDetail.certificate')}>
+          {t(course.is_certificate ? 'common.yes' : 'common.no')}
+        </Fact>
+      )}
+      {certificates_enabled && course.is_certificate && course.certificate_min_percent != null && (
         <Fact label={t('certificates.passMark')}>
           {percentLabel(course.certificate_min_percent)}
         </Fact>

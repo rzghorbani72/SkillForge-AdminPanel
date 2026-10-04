@@ -259,6 +259,8 @@ export interface DiscussionParent {
   engagement_id?: string;
   tutoring_session_id?: string;
   tutoring_group_id?: string;
+  course_id?: string;
+  student_profile_id?: string;
 }
 
 export interface ClassSession {

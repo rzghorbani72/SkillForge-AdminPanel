@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ClassHomeworkCard } from '@/components/class/class-homework-card';
 import { ClassTimetableCard } from '@/components/class/class-timetable-card';
 import { NextSessionCard } from '@/components/class/next-session-card';
 import { GroupActionsCard } from '@/components/class/group-actions-card';
@@ -77,8 +76,6 @@ export function ClassLoadedView({
         onSessionChanged={timetable.replace}
         onCancelled={timetable.reload}
       />
-
-      <ClassHomeworkCard groupId={group.id} sessions={timetable.sessions} />
     </>
   );
 }

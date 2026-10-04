@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { usePlatformFeatures } from '@/hooks/use-platform-features';
 import { CERTIFICATE_RULES, type CourseDifficultyLevel, type CourseFormData } from './schema';
 
 export const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
@@ -24,6 +25,8 @@ export const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
 
 export default function CourseFactsCard({ form }: { form: UseFormReturn<CourseFormData> }) {
   const { t } = useTranslation();
+  const { certificates_enabled } = usePlatformFeatures();
+  if (!certificates_enabled) return null;
 
   return (
     <Card>
