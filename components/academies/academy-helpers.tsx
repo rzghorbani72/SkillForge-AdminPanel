@@ -6,6 +6,7 @@ import type { Academy } from '@/types/api';
 export interface AcademyRow extends Academy {
   course_count?: number;
   student_count?: number;
+  template_banner?: string | null;
 }
 
 export function canEnterAcademy(academy: Academy): boolean {

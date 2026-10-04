@@ -8,6 +8,7 @@ import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { colorIndexForId } from '@/lib/id-color';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
+import { resolveMediaUrl } from '@/lib/media-url';
 import {
   AcademyStatusPill,
   academyDomain,
@@ -104,6 +105,7 @@ export function AcademyCard({
   const canEnter = canEnterAcademy(academy);
   const canEdit = canEditAcademy(academy);
   const domain = academyDomain(academy);
+  const bannerUrl = resolveMediaUrl(academy.template_banner);
 
   return (
     <div
@@ -112,8 +114,15 @@ export function AcademyCard({
         isCurrent && 'border-2 border-primary',
       )}
     >
-      {/* Colored header band */}
-      <div className={cn('relative flex h-24 items-start px-4 pt-3', color.bg)}>
+      <div className={cn('relative isolate flex h-24 items-start px-4 pt-3', color.bg)}>
+        {bannerUrl && (
+          <img
+            src={bannerUrl}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 -z-10 h-full w-full object-cover"
+          />
+        )}
         <AcademyStatusPill academy={academy} t={t} />
         {academy.listed_publicly === false && (
           <span className="ms-auto inline-flex shrink-0 items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
