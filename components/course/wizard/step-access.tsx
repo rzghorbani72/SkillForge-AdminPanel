@@ -19,6 +19,7 @@ type StepAccessProps = {
    */
   isPublic: boolean;
   onVisibilityChange: (isPublic: boolean) => void;
+  accessVersion: number;
   onPendingAccessChange: (selection: AssignAccessSelection | null) => void;
 };
 
@@ -47,6 +48,7 @@ export function StepAccess({
   form,
   isPublic,
   onVisibilityChange,
+  accessVersion,
   onPendingAccessChange,
 }: StepAccessProps) {
   const { t } = useTranslation();
@@ -81,7 +83,11 @@ export function StepAccess({
         </CardContent>
       </Card>
 
-      <CourseAccessSection courseId={courseId} onPendingChange={onPendingAccessChange} />
+      <CourseAccessSection
+        key={accessVersion}
+        courseId={courseId}
+        onPendingChange={onPendingAccessChange}
+      />
 
       {isPublic && <CourseSeoCard form={form} />}
     </div>

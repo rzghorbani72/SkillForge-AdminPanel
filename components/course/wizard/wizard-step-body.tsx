@@ -17,6 +17,7 @@ type WizardStepBodyProps = {
   course: ReturnType<typeof useCourseForm>;
   isPublic: boolean;
   onVisibilityChange: (isPublic: boolean) => void;
+  accessVersion: number;
   onPendingAccessChange: (selection: AssignAccessSelection | null) => void;
 };
 
@@ -26,6 +27,7 @@ export function WizardStepBody({
   course,
   isPublic,
   onVisibilityChange,
+  accessVersion,
   onPendingAccessChange,
 }: WizardStepBodyProps) {
   const { form } = course;
@@ -49,6 +51,7 @@ export function WizardStepBody({
           form={form}
           isPublic={isPublic}
           onVisibilityChange={onVisibilityChange}
+          accessVersion={accessVersion}
           onPendingAccessChange={onPendingAccessChange}
         />
       )}

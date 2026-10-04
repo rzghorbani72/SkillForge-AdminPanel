@@ -51,6 +51,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
               courseId={courseId}
               course={course}
               isPublic={isPublic}
+              accessVersion={wizard.accessVersion}
               onVisibilityChange={wizard.setVisibility}
               onPendingAccessChange={wizard.setPendingAccess}
             />

@@ -21,6 +21,7 @@ export function useCourseWizard(courseId: string) {
   );
   const step = steps.includes(requestedStep) ? requestedStep : 'basics';
   const [pendingAccess, setPendingAccess] = useState<AssignAccessSelection | null>(null);
+  const [accessVersion, setAccessVersion] = useState(0);
   const [visibility, setVisibility] = useState<boolean | null>(null);
   const isPublic = visibility ?? course.form.watch('published');
   const index = steps.indexOf(step);
@@ -48,7 +49,10 @@ export function useCourseWizard(courseId: string) {
 
   // Live courses go public only from the live setup page after the timetable is ready.
   const saveStep = () =>
-    persistWizardStep(courseId, course, isPublic, pendingAccess, () => setPendingAccess(null));
+    persistWizardStep(courseId, course, isPublic, pendingAccess, () => {
+      setPendingAccess(null);
+      setAccessVersion((version) => version + 1);
+    });
 
   const finish = async () => {
     if (!(await saveStep())) return;
@@ -62,6 +66,7 @@ export function useCourseWizard(courseId: string) {
     index,
     isLast: index === steps.length - 1,
     isPublic,
+    accessVersion,
     goTo,
     goNext,
     saveStep,
@@ -79,7 +84,7 @@ async function persistWizardStep(
   clearPending: () => void,
 ): Promise<boolean> {
   const previous = course.form.getValues('published');
-  const publishOnSave = course.courseType === 'LIVE' ? false : isPublic;
+  const publishOnSave = course.courseType === 'LIVE' ? previous : isPublic;
   course.form.setValue('published', publishOnSave);
   if (!(await course.saveNow({ silentSuccess: true }))) {
     course.form.setValue('published', previous);
