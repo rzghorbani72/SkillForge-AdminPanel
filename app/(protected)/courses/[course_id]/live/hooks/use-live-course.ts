@@ -25,14 +25,14 @@ const EMPTY: LiveCourseData = {
  * Everything the live course page edits, loaded in one pass. The four calls are
  * independent, so one failing list never blanks the whole page.
  */
-export function useLiveCourse(courseId: string) {
+export function useLiveCourse(courseId: string, enabled = true) {
   const [data, setData] = useState<LiveCourseData>(EMPTY);
   const [isLoading, setIsLoading] = useState(true);
 
   // Only the first fetch shows the spinner: a reload after a save must keep the
   // page mounted, or an open sheet (and its unsaved fields) is thrown away.
   const load = useCallback(async () => {
-    if (!courseId) return;
+    if (!courseId || !enabled) return;
     try {
       const [course, topics, offers, groups] = await Promise.all([
         apiClient.getCourse(courseId),
@@ -46,7 +46,7 @@ export function useLiveCourse(courseId: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [courseId]);
+  }, [courseId, enabled]);
 
   useEffect(() => {
     void load();

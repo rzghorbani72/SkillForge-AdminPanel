@@ -1,19 +1,32 @@
 # Course builder wizard
 
-Builds one course step by step. `stepsFor(courseType)` picks the steps: a
-**recorded (OFFLINE)** course gets the five below; a **LIVE** course swaps
-`content` and `pricing` for two steps: `classroom` (its topics and default
-seat price) and `classes` (its classes, created in the page, not a modal).
+Builds one course step by step. `stepsFor(courseType)` picks the steps.
 
-## The steps
+**Recorded (OFFLINE):** `basics` → `content` → `access` → `pricing` → `preview`.
 
-| #   | Step      | What it writes                                              |
-| --- | --------- | ----------------------------------------------------------- |
-| 1   | `basics`  | title, description, what you will learn, course type, cover |
-| 2   | `content` | category, sections, lessons (video + attached file)         |
-| 3   | `access`  | public vs invited-only, plus per-student/group grants       |
-| 4   | `pricing` | base price and every other way to enrol                     |
-| 5   | `preview` | nothing — the student's view of the unsaved draft           |
+**Live:** `basics` (+ optional topics) → `schedule` → `classType` → `meeting` → `review`.
+
+## Live course (`live/`)
+
+A live course sells one class (a `TutoringGroup`). The three middle steps edit
+one draft (`live-class-draft.ts`, pure and unit-tested) that is written as a
+unit, because a class needs a price (a GROUP offer) before it can exist:
+
+- Before the class exists, the draft is kept in `localStorage` per course
+  (`draft-stash.ts`), so a closed tab loses nothing.
+- `review` → **Save as draft** creates/updates the class only.
+  **Publish** saves the class, publishes the course, then publishes the class.
+  If the class publish fails (e.g. teacher time clash) the course is put back
+  to draft, so students never see a course with nothing to buy.
+- The meeting room is created by the server on class publish (`AUTO_JITSI`)
+  and handed to students only as a signed, time-boxed link. An own link
+  (Skyroom, Meet) is hidden behind the same Join button but cannot be locked —
+  the step says so.
+- A class that has started (`CONFIRMED`/`RUNNING`) has its dates locked here;
+  they change from the class page so students are notified.
+- Registration may stay open after the first session (a warning, with a
+  one-click fix); after the last session it is refused, in the UI and on the
+  server.
 
 ## Data flow
 

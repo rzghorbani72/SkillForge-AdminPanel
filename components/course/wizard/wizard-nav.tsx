@@ -9,6 +9,8 @@ type WizardNavProps = {
   isLast: boolean;
   isSaving: boolean;
   showSave: boolean;
+  /** Off when the last step brings its own actions. */
+  showFinish?: boolean;
   onBack: () => void;
   onSave: () => void;
   onNext: () => void;
@@ -20,6 +22,7 @@ export function WizardNav({
   isLast,
   isSaving,
   showSave,
+  showFinish = true,
   onBack,
   onSave,
   onNext,
@@ -53,7 +56,7 @@ export function WizardNav({
             {t('common.save')}
           </Button>
         )}
-        {isLast ? (
+        {isLast && !showFinish ? null : isLast ? (
           <Button type="button" disabled={isSaving} onClick={onFinish} className="gap-2">
             <Save className="h-4 w-4" />
             {t('courses.wizard.saveCourse')}

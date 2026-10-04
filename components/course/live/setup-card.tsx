@@ -8,7 +8,8 @@ import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { cn } from '@/lib/utils';
 
 interface SetupCardProps {
-  step: number;
+  /** Omitted for an optional card that is not a numbered step. */
+  step?: number;
   title: string;
   description: string;
   done: boolean;
@@ -43,7 +44,7 @@ export function SetupCard({
               : 'border-dashed text-muted-foreground',
           )}
         >
-          {done ? <Check className="h-3.5 w-3.5" /> : formatNumber(step)}
+          {done ? <Check className="h-3.5 w-3.5" /> : step != null ? formatNumber(step) : null}
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

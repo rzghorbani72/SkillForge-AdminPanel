@@ -53,7 +53,7 @@ export function LiveSetupChecklist({ steps, action, compact = false }: LiveSetup
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
 
-      <ol className="mt-4 grid grid-cols-3 gap-x-2 gap-y-4">
+      <ol className="mt-4 grid grid-cols-2 gap-x-2 gap-y-4">
         {steps.map((step, index) => {
           const isCurrent = current?.id === step.id;
           return (

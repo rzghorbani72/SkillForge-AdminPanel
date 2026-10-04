@@ -7,7 +7,15 @@ import { applyAccessSelection } from '@/components/access/staged-access-section'
 import type { AssignAccessSelection } from '@/components/access/assign-access-form';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useCourseForm } from '../useCourseForm';
-import { WIZARD_STEP_FIELDS, stepFromParam, stepsFor, type CourseWizardStep } from './wizard-steps';
+import {
+  WIZARD_STEP_FIELDS,
+  isLiveClassStep,
+  stepFromParam,
+  stepsFor,
+  type CourseWizardStep,
+} from './wizard-steps';
+import { useLiveClassDraft } from './live/use-live-class-draft';
+import { useLivePublish } from './live/use-live-publish';
 
 export function useCourseWizard(courseId: string) {
   const { t } = useTranslation();
@@ -16,6 +24,8 @@ export function useCourseWizard(courseId: string) {
   const searchParams = useSearchParams();
   const course = useCourseForm(courseId);
   const steps = stepsFor(course.courseType);
+  const isLive = course.courseType === 'LIVE';
+  const live = useLiveClassDraft(courseId, isLive && !course.isLoading);
   const [requestedStep, setStep] = useState<CourseWizardStep>(() =>
     stepFromParam(searchParams.get('step')),
   );
@@ -39,6 +49,11 @@ export function useCourseWizard(courseId: string) {
   };
 
   const goNext = async () => {
+    if (isLiveClassStep(step) && live.stepHasErrors(step)) {
+      live.revealErrors();
+      toast.error(t('courses.fixErrorsBeforeSaving'));
+      return;
+    }
     const fields = WIZARD_STEP_FIELDS[step];
     if (fields.length > 0 && !(await course.form.trigger(fields))) {
       toast.error(t('courses.fixErrorsBeforeSaving'));
@@ -47,12 +62,22 @@ export function useCourseWizard(courseId: string) {
     goTo(steps[index + 1]);
   };
 
-  // Live courses go public only from the live setup page after the timetable is ready.
-  const saveStep = () =>
+  const saveCourse = () =>
     persistWizardStep(courseId, course, isPublic, pendingAccess, () => {
       setPendingAccess(null);
       setAccessVersion((version) => version + 1);
     });
+
+  // An unfinished class stays on this device until the step that completes it.
+  const saveStep = async () => {
+    if (!(await saveCourse())) return false;
+    if (!isLive || !isLiveClassStep(step)) return true;
+    if (live.isComplete) return (await live.save()) !== null;
+    toast.info(t('liveWizard.keptOnDevice'));
+    return true;
+  };
+
+  const publisher = useLivePublish(live, course, saveCourse);
 
   const finish = async () => {
     if (!(await saveStep())) return;
@@ -61,6 +86,9 @@ export function useCourseWizard(courseId: string) {
 
   return {
     course,
+    live,
+    publisher,
+    isLive,
     steps,
     step,
     index,
@@ -84,6 +112,7 @@ async function persistWizardStep(
   clearPending: () => void,
 ): Promise<boolean> {
   const previous = course.form.getValues('published');
+  // A live course is published only by the review step, after its class exists.
   const publishOnSave = course.courseType === 'LIVE' ? previous : isPublic;
   course.form.setValue('published', publishOnSave);
   if (!(await course.saveNow({ silentSuccess: true }))) {

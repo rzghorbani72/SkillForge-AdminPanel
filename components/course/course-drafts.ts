@@ -170,7 +170,6 @@ export interface LiveCourseReadiness {
  * not a non-zero price.
  */
 export function validateLiveForPublish(readiness: LiveCourseReadiness): string | null {
-  if (readiness.topics === 0) return 'courses.live.publishNeedsTopic';
   if (readiness.sellingOffers === 0) return 'courses.live.publishNeedsPrice';
   if (readiness.classes === 0) return 'courses.live.publishNeedsClass';
   if (readiness.classesWithSchedule === 0) {

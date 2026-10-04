@@ -89,7 +89,7 @@ export default function LivePricingCard({
 
   return (
     <SetupCard
-      step={2}
+      step={1}
       title={t('courses.live.pricing')}
       description={t('courses.live.pricingHint')}
       done={offers.length > 0 && !dirty}

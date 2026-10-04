@@ -112,7 +112,6 @@ export default function TopicListEditor({ courseId, initial, onSaved }: TopicLis
 
   return (
     <SetupCard
-      step={1}
       title={t('courses.live.topics')}
       description={t('courses.live.topicsHint')}
       done={drafts.some((row) => row.title.trim()) && !dirty}
