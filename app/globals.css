@@ -764,6 +764,7 @@ html.transitioning *::after {
   --altcha-checkbox-border-color: #c7c7c7;
   --altcha-checkbox-border-radius: 6px;
   --altcha-checkbox-outline-color: hsl(var(--brand));
+  --altcha-input-background-color: #fff;
   --altcha-input-border-radius: 10px;
   --altcha-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.18);
 }

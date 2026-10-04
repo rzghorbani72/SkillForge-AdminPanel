@@ -62,12 +62,6 @@ export function CreateAdminUserDialog({
 
   // The code-send routes need a solved captcha even for a logged-in admin.
   const captcha = useHumanCheck();
-  const takeCaptchaToken = () => {
-    const token = captcha.token;
-    captcha.reset();
-    return token;
-  };
-
   const handleSendPhoneOtp = async () => {
     if (!formData.phone || !formData.countryCode) {
       ErrorHandler.showError(t('createAdminUser.phoneNumberRequired'));
@@ -77,16 +71,13 @@ export function CreateAdminUserDialog({
     try {
       setIsSendingOtp(true);
       const fullPhone = `${formData.countryCode}${formData.phone.replace(/^\+/, '')}`;
-      await apiClient.sendPhoneOtp(
-        fullPhone,
-        OtpType.REGISTER_PHONE_VERIFICATION,
-        takeCaptchaToken(),
-      );
+      await apiClient.sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captcha.take());
       setOtpSent((prev) => ({ ...prev, phone: true }));
       ErrorHandler.showSuccess(t('createAdminUser.phoneOtpSent'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
+      captcha.reset();
       setIsSendingOtp(false);
     }
   };
@@ -102,13 +93,14 @@ export function CreateAdminUserDialog({
       await apiClient.sendEmailOtp(
         formData.email,
         OtpType.REGISTER_EMAIL_VERIFICATION,
-        takeCaptchaToken(),
+        captcha.take(),
       );
       setOtpSent((prev) => ({ ...prev, email: true }));
       ErrorHandler.showSuccess(t('createAdminUser.emailOtpSent'));
     } catch (error) {
       ErrorHandler.handleApiError(error);
     } finally {
+      captcha.reset();
       setIsSendingOtp(false);
     }
   };

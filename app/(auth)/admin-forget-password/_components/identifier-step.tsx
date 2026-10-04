@@ -17,9 +17,7 @@ export function IdentifierStep({ fp }: { fp: Fp }) {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        const captchaToken = captcha.token;
-        captcha.reset();
-        void fp.handleSendOtp(captchaToken);
+        void captcha.run(fp.handleSendOtp);
       }}
       className="space-y-5"
       noValidate

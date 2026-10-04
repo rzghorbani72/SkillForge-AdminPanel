@@ -153,10 +153,9 @@ export function useAdminLogin() {
     e.preventDefault();
     if (loginMethod === 'otp' && otpSent) return handleVerifyOtp();
     if (!validateForm()) return;
-    const captchaToken = captcha.token;
-    captcha.reset();
-    if (loginMethod === 'otp') return handleSendOtp(captchaToken);
-    return handlePasswordLogin(captchaToken);
+    return captcha.run((captchaToken) =>
+      loginMethod === 'otp' ? handleSendOtp(captchaToken) : handlePasswordLogin(captchaToken),
+    );
   };
 
   const handleInputChange = (field: keyof AdminLoginFields, value: string) => {

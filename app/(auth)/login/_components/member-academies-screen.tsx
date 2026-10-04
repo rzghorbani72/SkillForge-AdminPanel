@@ -117,9 +117,7 @@ export function MemberAcademiesScreen({
           loading={lookup.loading}
           disabled={lookup.loading || !captcha.solved}
           onClick={() => {
-            const token = captcha.token;
-            captcha.reset();
-            void lookup.sendCode(token);
+            void captcha.run(lookup.sendCode);
           }}
         >
           {t('auth.memberAcademiesSendCode')}

@@ -95,10 +95,9 @@ export function useLoginSubmit({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.validate()) return;
-    const captchaToken = captcha.token;
-    captcha.reset();
-    if (form.loginMethod === 'otp') return requestLoginOtp(captchaToken);
-    return submitPassword(captchaToken);
+    return captcha.run((captchaToken) =>
+      form.loginMethod === 'otp' ? requestLoginOtp(captchaToken) : submitPassword(captchaToken),
+    );
   }
 
   return { isLoading, handleSubmit };

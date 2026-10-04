@@ -102,10 +102,8 @@ export function PhoneOtpScreen({
                   className="text-primary hover:underline disabled:opacity-50"
                   disabled={resending || !captcha.solved}
                   onClick={async () => {
-                    const token = captcha.token;
-                    captcha.reset();
                     timer.start();
-                    await onResend(token);
+                    await captcha.run(async (token) => onResend(token));
                   }}
                 >
                   {resending ? t('auth.resending') : t('auth.resendCode')}

@@ -132,8 +132,7 @@ function RegisterPageBody() {
         return;
       }
 
-      const captchaToken = detailsCaptcha.token;
-      detailsCaptcha.reset();
+      const captchaToken = detailsCaptcha.take();
       const response = await apiClient.sendPhoneOtp(
         toE164Iran(values.phone),
         OtpType.REGISTER_PHONE_VERIFICATION,
@@ -147,6 +146,7 @@ function RegisterPageBody() {
         toastId: 'register-otp-error',
       });
     } finally {
+      detailsCaptcha.reset();
       setOtpLoading(false);
     }
   }
@@ -159,13 +159,9 @@ function RegisterPageBody() {
   async function signInNewAccount(identifier: string, password: string) {
     setDone(true);
     try {
-      const captchaToken = loginCaptcha.token;
-      loginCaptcha.reset();
-      const session = await authService.login({
-        identifier,
-        password,
-        captcha_token: captchaToken,
-      });
+      const session = await loginCaptcha.run((captchaToken) =>
+        authService.login({ identifier, password, captcha_token: captchaToken }),
+      );
       // No role means no session was created — the backend answered with a
       // verification/reset gate the login page knows how to finish, not us.
       const role = resolveSessionRole(session);
