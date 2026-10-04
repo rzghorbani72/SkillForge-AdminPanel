@@ -3,6 +3,7 @@
 import { Loader2 } from 'lucide-react';
 import type { AssignAccessSelection } from '@/components/access/assign-access-form';
 import TopicListEditor from '@/app/(protected)/courses/[course_id]/live/_components/topic-list-editor';
+import { DIFFICULTY_LABEL } from '../CourseFactsCard';
 import { CoursePricingSection } from '../pricing/course-pricing-section';
 import { useCourseForm } from '../useCourseForm';
 import { StepAccess } from './step-access';
@@ -85,7 +86,8 @@ export function WizardStepBody({
           publisher={publisher}
           title={form.getValues('title')}
           description={form.getValues('description')}
-          isPublished={Boolean(form.watch('published'))}
+          coverUrl={course.coverPreviewUrl}
+          levelKey={DIFFICULTY_LABEL[form.getValues('difficulty')]}
           onEdit={onGoTo}
         />
       )}

@@ -14,6 +14,7 @@ import { CourseCard } from '@/components/course/CourseCard';
 import { CourseRow } from '@/components/course/CourseRow';
 import { GridSkeleton } from '@/components/course/GridSkeleton';
 import { CourseFilterBar } from '@/components/course/CourseFilterBar';
+import { CourseTypeEntry } from '@/components/course/course-type-entry';
 import { COURSE_CARD_GRID_COLUMNS } from '@/components/course/courseUtils';
 import { ConfirmDeleteDialog } from '@/components/shared/ConfirmDeleteDialog';
 import { RequirePermission } from '@/components/access-control/RequirePermission';
@@ -95,6 +96,8 @@ export default function CoursesPage() {
 
         {isLoading ? (
           <GridSkeleton />
+        ) : courses.length === 0 && !searchTerm ? (
+          <CourseTypeEntry />
         ) : filteredCourses.length === 0 ? (
           <div className="py-16 text-center text-muted-foreground">
             <BookOpen className="mx-auto mb-3 h-10 w-10 opacity-30" />

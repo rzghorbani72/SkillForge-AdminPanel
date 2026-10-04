@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Loader2 } from 'lucide-react';
@@ -17,7 +17,7 @@ import { courseFormSchema, parseAccessDurationDays, type CourseFormData } from '
 import type { CourseType } from '../course-drafts';
 import { StepBasics } from './step-basics';
 import { WizardHeader } from './wizard-header';
-import { stepsFor, type CourseWizardStep } from './wizard-steps';
+import { WIZARD_STEP_LABEL, stepsFor, type CourseWizardStep } from './wizard-steps';
 
 function newCourseId(response: unknown): string | undefined {
   const body = response as { data?: { data?: { id?: string }; id?: string } };
@@ -33,8 +33,11 @@ export default function CourseCreateWizard() {
   const { t } = useTranslation();
   const router = useRouter();
   const { selectedAcademy } = useStore();
+  const requestedType = useSearchParams().get('type');
 
-  const [courseType, setCourseType] = useState<CourseType>('OFFLINE');
+  const [courseType, setCourseType] = useState<CourseType>(
+    requestedType === 'LIVE' ? 'LIVE' : 'OFFLINE',
+  );
   // Switching the type reshapes the wizard: a live course has no lesson tree,
   // so its `content` step disappears from the stepper as soon as it is picked.
   const steps = stepsFor(courseType);
@@ -156,7 +159,7 @@ export default function CourseCreateWizard() {
                   </>
                 ) : (
                   <>
-                    {t('common.next')}
+                    {t('courses.wizard.continueTo', { step: t(WIZARD_STEP_LABEL[steps[1]]) })}
                     <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                   </>
                 )}

@@ -22,6 +22,12 @@ unit, because a class needs a price (a GROUP offer) before it can exist:
   and handed to students only as a signed, time-boxed link. An own link
   (Skyroom, Meet) is hidden behind the same Join button but cannot be locked —
   the step says so.
+- Every live step sits beside one side panel (`live-step-layout.tsx`): "your class
+  at a glance" while building, the publish-vs-draft choice on review. All three
+  places that describe the class (panel, review, success page) word it through
+  `use-live-summary.ts`, so they never disagree.
+- The empty course list (`course-type-entry.tsx`) opens `/courses/create?type=LIVE`
+  with the type already picked.
 - A class that has started (`CONFIRMED`/`RUNNING`) has its dates locked here;
   they change from the class page so students are notified.
 - Registration may stay open after the first session (a warning, with a

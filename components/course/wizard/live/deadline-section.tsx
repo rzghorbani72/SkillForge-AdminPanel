@@ -7,28 +7,21 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Label } from '@/components/ui/label';
 import { FormSection } from '@/app/(protected)/courses/[course_id]/live/_components/form-section';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
+import { DeadlineTimeline } from './deadline-timeline';
 import { defaultDeadline } from './live-class-draft';
 import { FieldError, RiskHint } from './live-ui';
 import type { LiveClassDraftApi } from './use-live-class-draft';
 
-const DAY_TIME: Intl.DateTimeFormatOptions = {
-  weekday: 'long',
-  month: 'long',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-};
-
 /** Registration close date beside the first session, so their order is obvious. */
 export function DeadlineSection({ live }: { live: LiveClassDraftApi }) {
   const { t } = useTranslation();
-  const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
   const { draft, shownErrors: errors, update } = live;
   const first = live.dates.at(0);
-  const deadline = draft.joinDeadline ? new Date(draft.joinDeadline) : null;
+  const last = live.dates.at(-1);
+  const parsed = new Date(draft.joinDeadline);
+  const deadline = Number.isNaN(parsed.getTime()) ? null : parsed;
 
   return (
     <section className="space-y-4 rounded-2xl border bg-card p-5">
@@ -45,21 +38,8 @@ export function DeadlineSection({ live }: { live: LiveClassDraftApi }) {
           <p className="text-xs text-muted-foreground">{t('liveWizard.deadlineHint')}</p>
           <FieldError messageKey={errors.joinDeadline} />
         </div>
-        {deadline && first ? (
-          <ul className="grid gap-2 text-sm sm:grid-cols-2">
-            <li className="rounded-lg border px-3 py-2">
-              <span className="block text-xs text-muted-foreground">
-                {t('liveWizard.registrationCloses')}
-              </span>
-              <span className="font-medium">{formatDate(deadline, DAY_TIME)}</span>
-            </li>
-            <li className="rounded-lg border px-3 py-2">
-              <span className="block text-xs text-muted-foreground">
-                {t('liveWizard.firstSession')}
-              </span>
-              <span className="font-medium">{formatDate(first, DAY_TIME)}</span>
-            </li>
-          </ul>
+        {deadline && first && last ? (
+          <DeadlineTimeline deadline={deadline} first={first} last={last} />
         ) : null}
         {live.missedAtDeadline > 0 && !live.errors.joinDeadline ? (
           <RiskHint tone="warn">

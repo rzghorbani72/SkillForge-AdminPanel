@@ -1,7 +1,10 @@
 'use client';
 
 import type { UseFormReturn } from 'react-hook-form';
+import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { FormLabel } from '@/components/ui/form';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -23,9 +26,9 @@ type StepBasicsProps = {
 };
 
 /**
- * Step 1 — what the course is: its type, title, description, cover, category
- * and the two switches that apply to the whole course. Every course type has
- * this step, so nothing here may depend on there being a lesson tree.
+ * Step 1 — what the course is. Every course type has this step, so nothing
+ * here may depend on there being a lesson tree. A live course shares the page
+ * with its class summary, so it is one column with the extras folded away.
  */
 export function StepBasics({
   form,
@@ -35,65 +38,97 @@ export function StepBasics({
   onCoverChange,
 }: StepBasicsProps) {
   const { t } = useTranslation();
+  const isLive = courseType === 'LIVE';
+
+  const typeCard = (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('courses.courseTypeLabel')}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <CourseTypePicker
+          value={courseType}
+          onChange={(type) => onCourseTypeChange?.(type)}
+          disabled={!onCourseTypeChange}
+        />
+        {!onCourseTypeChange && (
+          <p className="text-xs text-muted-foreground">{t('courses.wizard.typeLockedHint')}</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  const coverCard = (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('courses.coverImage')}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <FormLabel className="sr-only">{t('courses.coverImage')}</FormLabel>
+        <ImageUploadPreview
+          title={form.watch('title')}
+          description={form.watch('description')}
+          existingImageUrl={coverPreviewUrl}
+          onSuccess={onCoverChange}
+          selectedImageId={form.watch('cover_id')}
+          className="aspect-video w-full"
+          placeholderText={t('courses.noCoverImageSelected')}
+          placeholderSubtext={t('courses.uploadImageToPreview')}
+        />
+      </CardContent>
+    </Card>
+  );
+
+  const extras = (
+    <>
+      <CreateCourseAssociations
+        categoryId={form.watch('category_id')}
+        onCategoryChange={(id) =>
+          form.setValue('category_id', id ?? '', {
+            shouldDirty: true,
+            shouldTouch: true,
+          })
+        }
+        error={form.formState.errors.category_id?.message}
+      />
+      <CourseFactsCard form={form} />
+      <CourseSettingsCard form={form} />
+    </>
+  );
+
+  if (isLive) {
+    return (
+      <div className="space-y-6">
+        {onCourseTypeChange ? typeCard : null}
+        <CreateCourseBasicInfo form={form} />
+        {coverCard}
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button type="button" variant="ghost" size="sm" className="group gap-2 px-0">
+              <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+              {t('liveWizard.moreDetails')}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4 grid gap-6 md:grid-cols-2">
+            {extras}
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="flex flex-col gap-6 lg:col-span-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('courses.courseTypeLabel')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <CourseTypePicker
-              value={courseType}
-              onChange={(type) => onCourseTypeChange?.(type)}
-              disabled={!onCourseTypeChange}
-            />
-            {!onCourseTypeChange && (
-              <p className="text-xs text-muted-foreground">{t('courses.wizard.typeLockedHint')}</p>
-            )}
-          </CardContent>
-        </Card>
-
+        {typeCard}
         <div className="flex flex-1 flex-col *:flex-1">
           <CreateCourseBasicInfo form={form} />
         </div>
       </div>
 
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('courses.coverImage')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <FormLabel className="sr-only">{t('courses.coverImage')}</FormLabel>
-            <ImageUploadPreview
-              title={form.watch('title')}
-              description={form.watch('description')}
-              existingImageUrl={coverPreviewUrl}
-              onSuccess={onCoverChange}
-              selectedImageId={form.watch('cover_id')}
-              className="aspect-video w-full"
-              placeholderText={t('courses.noCoverImageSelected')}
-              placeholderSubtext={t('courses.uploadImageToPreview')}
-            />
-          </CardContent>
-        </Card>
-
-        <CreateCourseAssociations
-          categoryId={form.watch('category_id')}
-          onCategoryChange={(id) =>
-            form.setValue('category_id', id ?? '', {
-              shouldDirty: true,
-              shouldTouch: true,
-            })
-          }
-          error={form.formState.errors.category_id?.message}
-        />
-
-        <CourseFactsCard form={form} />
-
-        <CourseSettingsCard form={form} />
+        {coverCard}
+        {extras}
       </div>
     </div>
   );

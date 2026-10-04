@@ -49,6 +49,9 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
       </section>
 
       <section className="space-y-4 rounded-2xl border bg-card p-5">
+        <h2 className="text-base font-semibold">
+          {t(isPrivate ? 'liveWizard.privateTitle' : 'liveWizard.groupTitle')}
+        </h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="live-price">

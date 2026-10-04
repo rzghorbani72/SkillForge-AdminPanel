@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 import { tryPublishClass } from '@/app/(protected)/courses/[course_id]/live/hooks/publish-draft-classes';
@@ -22,6 +23,7 @@ export function useLivePublish(
   saveCourse: () => Promise<boolean>,
 ) {
   const { t } = useTranslation();
+  const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);
   const [justPublished, setJustPublished] = useState(false);
 
@@ -38,7 +40,9 @@ export function useLivePublish(
   const saveDraft = () =>
     run(async () => {
       if (!(await saveCourse())) return;
-      if (await live.save()) toast.success(t('liveWizard.draftSaved'));
+      if (!(await live.save())) return;
+      toast.success(t('liveWizard.draftSaved'));
+      router.push('/courses');
     });
 
   const publish = () =>

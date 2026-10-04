@@ -28,7 +28,7 @@ import {
   type CourseFormData,
 } from './schema';
 
-const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
+export const DIFFICULTY_LABEL: Record<CourseDifficultyLevel, string> = {
   BEGINNER: 'courses.beginner',
   INTERMEDIATE: 'courses.intermediate',
   ADVANCED: 'courses.advanced',

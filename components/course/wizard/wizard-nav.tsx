@@ -8,11 +8,12 @@ type WizardNavProps = {
   index: number;
   isLast: boolean;
   isSaving: boolean;
-  showSave: boolean;
+  /** Label of the step "Continue" leads to. */
+  nextLabel?: string;
   /** Off when the last step brings its own actions. */
   showFinish?: boolean;
   onBack: () => void;
-  onSave: () => void;
+  onSaveAndExit?: () => void;
   onNext: () => void;
   onFinish: () => void;
 };
@@ -21,39 +22,30 @@ export function WizardNav({
   index,
   isLast,
   isSaving,
-  showSave,
+  nextLabel,
   showFinish = true,
   onBack,
-  onSave,
+  onSaveAndExit,
   onNext,
   onFinish,
 }: WizardNavProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="mt-6 flex items-center justify-between gap-3 rounded-lg border bg-muted/30 px-4 py-3">
-      <Button
-        type="button"
-        variant="ghost"
-        disabled={index === 0}
-        onClick={onBack}
-        className="gap-2"
-      >
-        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
-        {t('common.back')}
-      </Button>
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-muted/30 px-4 py-3">
+      {onSaveAndExit && !isLast ? (
+        <Button type="button" variant="ghost" disabled={isSaving} onClick={onSaveAndExit}>
+          {t('courses.wizard.saveAndExit')}
+        </Button>
+      ) : (
+        <span />
+      )}
 
       <div className="flex items-center gap-3">
-        {!isLast && showSave && (
-          <Button
-            type="button"
-            variant="outline"
-            disabled={isSaving}
-            onClick={onSave}
-            className="gap-2"
-          >
-            <Save className="h-4 w-4" />
-            {t('common.save')}
+        {index > 0 && (
+          <Button type="button" variant="outline" onClick={onBack} className="gap-2">
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+            {t('common.back')}
           </Button>
         )}
         {isLast && !showFinish ? null : isLast ? (
@@ -63,7 +55,7 @@ export function WizardNav({
           </Button>
         ) : (
           <Button type="button" onClick={onNext} className="gap-2">
-            {t('common.next')}
+            {nextLabel ? t('courses.wizard.continueTo', { step: nextLabel }) : t('common.next')}
             <ArrowRight className="h-4 w-4 rtl:rotate-180" />
           </Button>
         )}

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Clock } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
@@ -26,6 +27,17 @@ export function StepSchedule({ live }: { live: LiveClassDraftApi }) {
   const first = dates.at(0);
   const last = dates.at(-1);
   const classesPage = `/courses/${live.courseId}/live`;
+  const [firstSlot] = draft.slots;
+  const timesDiffer = draft.slots.some(
+    (slot) =>
+      slot.start_minute !== firstSlot?.start_minute ||
+      slot.duration_minutes !== firstSlot?.duration_minutes,
+  );
+  const sameTimeForAll = () => {
+    if (!firstSlot) return;
+    const { start_minute, duration_minutes } = firstSlot;
+    update({ slots: draft.slots.map((slot) => ({ ...slot, start_minute, duration_minutes })) });
+  };
 
   return (
     <div className="space-y-6">
@@ -60,7 +72,20 @@ export function StepSchedule({ live }: { live: LiveClassDraftApi }) {
             <FieldError messageKey={errors.startsOn} />
           </div>
           <div className="space-y-1.5">
-            <Label>{t('liveWizard.classDays')} *</Label>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Label>{t('liveWizard.classDays')} *</Label>
+              {timesDiffer && !scheduleLocked ? (
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  className="h-auto p-0"
+                  onClick={sameTimeForAll}
+                >
+                  {t('liveWizard.sameTimeAllDays')}
+                </Button>
+              ) : null}
+            </div>
             <GroupSlotEditor
               slots={draft.slots}
               onChange={(slots) => update({ slots })}
