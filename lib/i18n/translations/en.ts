@@ -74,11 +74,6 @@ export const en = {
     ownLinkLabel: 'Class link',
     ownLinkRisk:
       'We cannot lock links from other tools. We show it only to enrolled students and only near class time, but if someone shares it elsewhere, that tool will not stop them. For full protection, choose “Create a class room for me”.',
-    protectedTitle: 'The class link is not public',
-    protectedHint: 'You do not need to send the link to anyone; the system controls access.',
-    accessStep1: 'The student registers and pays.',
-    accessStep2: 'A “Join class” button turns on in their account, shortly before each session.',
-    accessStep3: 'One click and they are in.',
     reviewIncomplete: 'To publish, complete these steps:',
     reviewCourse: 'Course',
     reviewTitle: 'Title',
@@ -107,16 +102,6 @@ export const en = {
       'The class was not published, so the course stays a draft too. Fix the problem above and publish again.',
     keptOnDevice:
       'Course saved. Class details are kept on this device and saved to the server once a price is set.',
-    glanceTitle: 'Your class at a glance',
-    glanceHint: 'Fills in as you go.',
-    glanceWhat: 'What are you creating?',
-    glanceWhatValue: 'Live course: {{title}}',
-    glanceWhen: 'When does it happen?',
-    glancePrice: 'Class type and price',
-    glanceEnter: 'How do students get in?',
-    glanceEnterValue: 'The “Join class” button after enrolling',
-    glanceInStep: 'In step {{step}}',
-    glanceDeadline: 'Registration until {{date}}',
     privateSummary: 'Private · 1 student',
     groupSeats: 'Group · {{count}} seats',
     pricePerSeat: '{{price}} Toman per person',
@@ -184,8 +169,6 @@ export const en = {
     tomanPerSeat: 'Toman / person',
     personUnit: 'people',
     howStudentsEnterHint: 'Pick one. You can change it later.',
-    notEnrolledBlocked:
-      'Someone who has not registered cannot enter the class, even with the link.',
     liveClassBadge: 'Live class',
   },
   monitoring: {
@@ -2237,7 +2220,6 @@ export const en = {
     createCourse: 'Create Course',
     wizard: {
       continueTo: 'Continue: {{step}}',
-      saveAndExit: 'Save draft and exit',
       tabBuilder: 'Course steps',
       stepBasics: 'Course details',
       stepBasicsHint:

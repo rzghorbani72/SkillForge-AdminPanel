@@ -22,9 +22,9 @@ unit, because a class needs a price (a GROUP offer) before it can exist:
   and handed to students only as a signed, time-boxed link. An own link
   (Skyroom, Meet) is hidden behind the same Join button but cannot be locked —
   the step says so.
-- Every live step sits beside one side panel (`live-step-layout.tsx`): "your class
-  at a glance" while building, the publish-vs-draft choice on review. All three
-  places that describe the class (panel, review, success page) word it through
+- Live steps use the full width; only review gets a side panel with the
+  publish-vs-draft choice (`live-step-layout.tsx`). Both places that describe
+  the class (review, success page) word it through
   `use-live-summary.ts`, so they never disagree.
 - The empty course list (`course-type-entry.tsx`) opens `/courses/create?type=LIVE`
   with the type already picked.

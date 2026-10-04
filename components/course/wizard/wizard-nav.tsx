@@ -18,7 +18,6 @@ type WizardNavProps = {
   /** A draft ends with a clear choice: publish now, or keep it unpublished. */
   offerPublish?: boolean;
   onBack: () => void;
-  onSaveAndExit?: () => void;
   onNext: () => void;
   /** `undefined` keeps the visibility picked on the access step. */
   onFinish: (publish?: boolean) => void;
@@ -34,7 +33,6 @@ export function WizardNav({
   finishActions,
   offerPublish = false,
   onBack,
-  onSaveAndExit,
   onNext,
   onFinish,
 }: WizardNavProps) {
@@ -76,15 +74,7 @@ export function WizardNav({
   return (
     <div className="sticky bottom-0 z-10 -mx-4 -mb-4 mt-6 border-t bg-card px-4 py-3 sm:-mx-6 sm:-mb-6 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {isLast ? (
-          (back ?? <span />)
-        ) : onSaveAndExit ? (
-          <Button type="button" variant="ghost" disabled={isSaving} onClick={onSaveAndExit}>
-            {t('courses.wizard.saveAndExit')}
-          </Button>
-        ) : (
-          <span />
-        )}
+        {isLast ? (back ?? <span />) : <span />}
 
         <div className="flex flex-wrap items-center gap-3">
           {isLast ? (

@@ -71,7 +71,7 @@ export default function CourseCreateWizard() {
    * whichever step was asked for — the manager lands in the same builder they
    * would reach with Next, already filled in.
    */
-  const createAndContinue = async (step: CourseWizardStep | null) => {
+  const createAndContinue = async (step: CourseWizardStep) => {
     if (!(await form.trigger(['title', 'description']))) {
       toast.error(t('courses.fixErrorsBeforeSaving'));
       return;
@@ -99,7 +99,7 @@ export default function CourseCreateWizard() {
       if (!id) throw new Error('Course creation returned no id');
 
       toast.success(t('courses.createdDraftToast'));
-      router.push(step ? `/courses/${id}/edit?step=${step}` : '/courses');
+      router.push(`/courses/${id}/edit?step=${step}`);
     } catch (error) {
       ErrorHandler.handleApiError(error);
       setIsSaving(false);
@@ -147,7 +147,6 @@ export default function CourseCreateWizard() {
               nextBusy={isSaving}
               nextLabel={t(WIZARD_STEP_LABEL[steps[1]])}
               onBack={() => router.push('/courses')}
-              onSaveAndExit={() => void createAndContinue(null)}
               onNext={() => void createAndContinue(steps[1])}
               onFinish={() => undefined}
             />

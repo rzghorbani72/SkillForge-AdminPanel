@@ -1,21 +1,14 @@
 'use client';
 
-import { LockKeyhole, ShieldCheck } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 import { Note } from '@/components/shared/note';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { ChoiceCard } from '@/components/shared/choice-card';
 import { FieldError, FieldLabel } from '@/components/shared/field-label';
-import { FlowSteps } from '@/components/shared/flow-steps';
 import { SectionCard } from '@/components/shared/section-card';
 import type { LiveClassDraftApi } from './use-live-class-draft';
-
-const ACCESS_STEPS = [
-  'liveWizard.accessStep1',
-  'liveWizard.accessStep2',
-  'liveWizard.accessStep3',
-] as const;
 
 export function StepMeeting({ live }: { live: LiveClassDraftApi }) {
   const { t } = useTranslation();
@@ -24,61 +17,51 @@ export function StepMeeting({ live }: { live: LiveClassDraftApi }) {
   const isAuto = draft.meeting === 'AUTO';
 
   return (
-    <div className="flex flex-col gap-4">
-      <SectionCard
-        title={t('liveWizard.howStudentsEnter')}
-        hint={t('liveWizard.howStudentsEnterHint')}
-      >
-        <div role="radiogroup" className="flex flex-col gap-4">
-          <ChoiceCard
-            selected={isAuto}
-            onSelect={() => update({ meeting: 'AUTO' })}
-            title={t('liveWizard.autoRoomTitle')}
-            hint={t('liveWizard.autoRoomHint')}
-            badge={t('liveWizard.recommended')}
-          />
+    <SectionCard
+      title={t('liveWizard.howStudentsEnter')}
+      hint={t('liveWizard.howStudentsEnterHint')}
+    >
+      <div role="radiogroup" className="flex flex-col gap-4">
+        <ChoiceCard
+          selected={isAuto}
+          onSelect={() => update({ meeting: 'AUTO' })}
+          title={t('liveWizard.autoRoomTitle')}
+          hint={t('liveWizard.autoRoomHint')}
+          badge={t('liveWizard.recommended')}
+        >
           {isAuto ? (
-            <Note tone="success" className="ms-8">
+            <span className="mt-2 flex items-center gap-2 border-t border-primary/15 pt-3 text-[13px] font-medium text-success">
+              <CircleCheck className="h-4 w-4 shrink-0" aria-hidden />
               {t(roomReady ? 'liveWizard.autoRoomReady' : 'liveWizard.autoRoomOnPublish')}
-            </Note>
+            </span>
           ) : null}
-          <ChoiceCard
-            selected={!isAuto}
-            onSelect={() => update({ meeting: 'OWN' })}
-            title={t('liveWizard.ownLinkTitle')}
-            hint={t('liveWizard.ownLinkHint')}
-          />
-        </div>
-        {isAuto ? null : (
-          <div className="ms-8 flex flex-col gap-3">
-            <div className="flex max-w-xl flex-col gap-1.5">
-              <FieldLabel htmlFor="live-meeting-url" required>
-                {t('liveWizard.ownLinkLabel')}
-              </FieldLabel>
-              <Input
-                id="live-meeting-url"
-                dir="ltr"
-                inputMode="url"
-                placeholder="https://"
-                value={draft.meetingUrl}
-                onChange={(event) => update({ meetingUrl: event.target.value })}
-              />
-              <FieldError messageKey={errors.meetingUrl} />
-            </div>
-            <Note tone="warn">{t('liveWizard.ownLinkRisk')}</Note>
+        </ChoiceCard>
+        <ChoiceCard
+          selected={!isAuto}
+          onSelect={() => update({ meeting: 'OWN' })}
+          title={t('liveWizard.ownLinkTitle')}
+          hint={t('liveWizard.ownLinkHint')}
+        />
+      </div>
+      {isAuto ? null : (
+        <div className="ms-8 flex flex-col gap-3">
+          <div className="flex max-w-xl flex-col gap-1.5">
+            <FieldLabel htmlFor="live-meeting-url" required>
+              {t('liveWizard.ownLinkLabel')}
+            </FieldLabel>
+            <Input
+              id="live-meeting-url"
+              dir="ltr"
+              inputMode="url"
+              placeholder="https://"
+              value={draft.meetingUrl}
+              onChange={(event) => update({ meetingUrl: event.target.value })}
+            />
+            <FieldError messageKey={errors.meetingUrl} />
           </div>
-        )}
-      </SectionCard>
-
-      <SectionCard
-        icon={ShieldCheck}
-        iconTone="success"
-        title={t('liveWizard.protectedTitle')}
-        hint={t('liveWizard.protectedHint')}
-      >
-        <FlowSteps steps={ACCESS_STEPS.map((key) => ({ title: t(key) }))} />
-        <Note icon={LockKeyhole}>{t('liveWizard.notEnrolledBlocked')}</Note>
-      </SectionCard>
-    </div>
+          <Note tone="warn">{t('liveWizard.ownLinkRisk')}</Note>
+        </div>
+      )}
+    </SectionCard>
   );
 }

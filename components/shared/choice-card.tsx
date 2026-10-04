@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,8 @@ type ChoiceCardProps = {
   icon?: LucideIcon;
   badge?: string;
   disabled?: boolean;
+  /** Extra inline content under the hint (phrasing content only — the card is a button). */
+  children?: ReactNode;
 };
 
 /** A radio-style option card: the whole card is the button. Wrap a set in `role="radiogroup"`. */
@@ -23,6 +26,7 @@ export function ChoiceCard({
   icon,
   badge,
   disabled,
+  children,
 }: ChoiceCardProps) {
   return (
     <button
@@ -49,6 +53,7 @@ export function ChoiceCard({
           {badge ? <Badge variant="success">{badge}</Badge> : null}
         </span>
         <span className="text-[13px] text-muted-foreground">{hint}</span>
+        {children}
       </span>
       {icon ? <IconBox icon={icon} tone={selected ? 'primary' : 'muted'} /> : null}
     </button>

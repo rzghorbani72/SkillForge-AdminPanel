@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -20,7 +19,6 @@ import { useCourseWizard } from './use-course-wizard';
  */
 export default function CourseWizard({ courseId }: { courseId: string }) {
   const { t } = useTranslation();
-  const router = useRouter();
   const wizard = useCourseWizard(courseId);
   const { course, steps, step, index, isLast, isPublic } = wizard;
   const liveReview = step === 'review';
@@ -38,10 +36,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
       </div>
     );
   }
-
-  const saveAndExit = async () => {
-    if (await wizard.saveStep()) router.push('/courses');
-  };
 
   const body = (
     <WizardStepBody
@@ -80,7 +74,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 step={step}
                 live={live}
                 publisher={publisher}
-                title={course.form.watch('title')}
                 isPublished={wizard.isPublished}
               >
                 {body}
@@ -106,7 +99,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
                 }
                 offerPublish={!wizard.isPublished}
                 onBack={() => wizard.goTo(steps[index - 1])}
-                onSaveAndExit={() => void saveAndExit()}
                 onNext={() => void wizard.goNext()}
                 onFinish={(publish) => void wizard.finish(publish)}
               />
