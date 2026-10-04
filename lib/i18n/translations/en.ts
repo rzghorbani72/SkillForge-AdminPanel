@@ -6264,7 +6264,7 @@ export const en = {
     showLess: 'Show less',
     noDescription: 'No description was added for this course',
     publish: 'Publish course',
-    publishLiveCourse: 'Publish from live setup',
+    publishLiveCourse: 'Publish',
     unpublish: 'Unpublish',
     viewPublicPage: 'View public page',
     publishedToast: 'Course published',

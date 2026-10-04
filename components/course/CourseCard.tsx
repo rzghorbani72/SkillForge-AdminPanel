@@ -6,8 +6,6 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { StatusPill } from './StatusPill';
-import { CourseTypePill } from './course-type-pill';
 import { courseHue, formatCourseDurationMinutes, groupSeatPrice } from './courseUtils';
 import type { CourseWithRevenue } from './useCourses';
 import { CoursePublishButton } from './detail/course-publish-button';
@@ -46,7 +44,6 @@ export function CourseCard({
     (course as any).Teacher?.display_name ??
     '—';
   const categoryName = (course as any).Category?.name ?? (course as any).category ?? null;
-  const status = course.is_published ? 'PUBLISHED' : ((course as any).status ?? 'DRAFT');
   const isLive = course.course_type === 'LIVE';
   const seatPrice = groupSeatPrice(course);
   const rawDuration = (course as any).duration;
@@ -107,10 +104,6 @@ export function CourseCard({
             </span>
           </div>
         ) : null}
-        <div className="absolute start-3 top-3 flex flex-wrap items-center gap-1.5">
-          <StatusPill status={status} />
-          <CourseTypePill type={course.course_type} />
-        </div>
         {durationLabel ? (
           <div className="absolute bottom-3 end-3 flex items-center gap-1.5 rounded-md bg-black/60 px-2.5 py-1 text-xs text-white backdrop-blur-sm">
             <Clock className="h-3 w-3" />

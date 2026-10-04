@@ -6270,7 +6270,7 @@ export const fa = {
     showLess: 'کمتر',
     noDescription: 'برای این دوره توضیحی ثبت نشده است',
     publish: 'انتشار دوره',
-    publishLiveCourse: 'انتشار از راه‌اندازی کلاس زنده',
+    publishLiveCourse: 'انتشار',
     unpublish: 'برداشتن از انتشار',
     viewPublicPage: 'مشاهده صفحه عمومی',
     publishedToast: 'دوره منتشر شد',
