@@ -28,8 +28,6 @@ export function notificationHref(link: NotificationLink | null): string | null {
       return '/payments';
     case 'BILLING':
       return '/billing';
-    case 'WALLET':
-      return '/withdrawals';
     case 'BANK_ACCOUNT':
       return '/settings/profile#kyc';
     default:
