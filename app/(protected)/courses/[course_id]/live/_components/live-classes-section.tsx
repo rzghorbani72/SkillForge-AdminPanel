@@ -13,7 +13,7 @@ import type { Course } from '@/types/api';
 import type { ClassRequest, TutoringGroup, TutoringOffer } from '@/types/learning-operations';
 import { classOfferSource, type ScheduleBuilderPrefill } from '../hooks/use-schedule-builder';
 import { ClassListCard } from './class-list-card';
-import { ClassRequestsCard, requestPrefill } from './class-requests-card';
+import { REQUEST_PARAM, requestPrefill } from './request-prefill';
 import ScheduleBuilder from './schedule-builder';
 
 /** `?new=1` opens the create form straight away (the course header's button). */
@@ -30,7 +30,7 @@ interface LiveClassesSectionProps {
 }
 
 /**
- * Every class of a live course on one page: student requests, the create form
+ * Every class of a live course on one page: the create form
  * and the list. The form is part of the page, not a modal, so it can be as
  * tall as it needs. With no class yet, the form is simply open.
  */
@@ -42,12 +42,30 @@ export function LiveClassesSection({
   onReload,
 }: LiveClassesSectionProps) {
   const { t } = useTranslation();
-  const openNew = useSearchParams().get(NEW_CLASS_PARAM) === '1';
+  const searchParams = useSearchParams();
+  const openNew = searchParams.get(NEW_CLASS_PARAM) === '1';
+  const requestId = searchParams.get(REQUEST_PARAM);
   const [draft, setDraft] = useState<ClassDraft | null>(openNew ? {} : null);
-  const [requestsVersion, setRequestsVersion] = useState(0);
   const formRef = useRef<HTMLElement>(null);
   const hasClasses = groups.length > 0;
   const formOpen = draft !== null || !hasClasses;
+
+  useEffect(() => {
+    if (!requestId) return;
+    const openFromRequest = async () => {
+      try {
+        const pending = await apiClient.getClassRequests({
+          course_id: courseId,
+          status: 'PENDING',
+        });
+        const request = pending.find((row) => row.id === requestId);
+        if (request) setDraft({ prefill: requestPrefill(request), request });
+      } catch (err) {
+        ErrorHandler.handleApiError(err);
+      }
+    };
+    void openFromRequest();
+  }, [courseId, requestId]);
 
   useEffect(() => {
     if (draft) formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -60,7 +78,6 @@ export function LiveClassesSection({
     } catch (err) {
       ErrorHandler.handleApiError(err);
     }
-    setRequestsVersion((version) => version + 1);
   };
 
   const onCreated = async (groupId: string) => {
@@ -71,12 +88,6 @@ export function LiveClassesSection({
 
   return (
     <div className="space-y-6">
-      <ClassRequestsCard
-        key={requestsVersion}
-        courseId={courseId}
-        onOpenClass={(request) => setDraft({ prefill: requestPrefill(request), request })}
-      />
-
       {formOpen ? (
         <section ref={formRef} className="scroll-mt-4 space-y-6 rounded-2xl border bg-card p-5">
           <header className="space-y-1">

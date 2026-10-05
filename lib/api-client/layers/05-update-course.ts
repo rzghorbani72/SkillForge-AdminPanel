@@ -1,5 +1,5 @@
 import { ApiLayer04 } from './04-set-academy-showcase';
-import type { DiscussionParent } from '@/types/learning-operations';
+import type { CourseQnA, DiscussionParent } from '@/types/learning-operations';
 import { unwrapDataEnvelope } from '../helpers';
 import type { QuizSettingsPayload } from '../types-1';
 
@@ -60,37 +60,19 @@ export class ApiLayer05 extends ApiLayer04 {
     });
   }
 
-  // Q&A endpoints
-  async getCourseQnAs(courseId: number) {
-    const response = await this.request(`/courses/${courseId}/qna`);
-    const payload = response.data as { data?: unknown } | undefined;
-    const nested = payload && typeof payload === 'object' ? payload.data : undefined;
-    if (Array.isArray(nested)) return nested;
-    if (
-      nested &&
-      typeof nested === 'object' &&
-      Array.isArray((nested as { items?: unknown }).items)
-    ) {
-      return (nested as { items: unknown[] }).items;
-    }
-    return [];
+  async getCourseQnAs(courseId: string): Promise<CourseQnA[]> {
+    const res = await this.request<{ data: { items: CourseQnA[] } }>(`/courses/${courseId}/qna`);
+    return unwrapDataEnvelope(res.data).items ?? [];
   }
 
-  async createCourseQnA(courseId: number, question: string) {
-    return this.request(`/courses/${courseId}/qna`, {
-      method: 'POST',
-      body: JSON.stringify({ question }),
-    });
-  }
-
-  async answerCourseQnA(courseId: number, qnaId: number, answer: string) {
+  async answerCourseQnA(courseId: string, qnaId: string, answer: string) {
     return this.request(`/courses/${courseId}/qna/${qnaId}/answer`, {
       method: 'PUT',
       body: JSON.stringify({ answer }),
     });
   }
 
-  async approveCourseQnA(courseId: number, qnaId: number, isApproved: boolean) {
+  async approveCourseQnA(courseId: string, qnaId: string, isApproved: boolean) {
     return this.request(`/courses/${courseId}/qna/${qnaId}/approve`, {
       method: 'PUT',
       body: JSON.stringify({ is_approved: isApproved }),

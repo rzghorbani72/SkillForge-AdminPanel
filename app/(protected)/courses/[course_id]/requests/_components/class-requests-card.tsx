@@ -12,38 +12,19 @@ import { formatRequestWindows } from '@/lib/class-request-windows';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import type {
-  ClassRequest,
-  ClassRequestWindow,
-  TutoringGroupSlot,
-} from '@/types/learning-operations';
-import type { ScheduleBuilderPrefill } from '../hooks/use-schedule-builder';
-
-/** A requested window becomes a weekly slot starting at its start time. */
-const toSlots = (windows: ClassRequestWindow[]): TutoringGroupSlot[] =>
-  windows.map((w) => ({
-    weekday: w.weekday,
-    start_minute: w.start_minute,
-    duration_minutes: Math.max(30, Math.min(180, w.end_minute - w.start_minute)),
-  }));
-
-export const requestPrefill = (request: ClassRequest): ScheduleBuilderPrefill => ({
-  slots: toSlots(request.windows),
-  capacity: request.seats,
-  minStudents: request.seats,
-});
+import type { ClassRequest } from '@/types/learning-operations';
+import { REQUEST_PARAM } from '../../live/_components/request-prefill';
 
 interface ClassRequestsCardProps {
   courseId: string;
-  /** Opens the page's create-class form prefilled from this request. */
-  onOpenClass: (request: ClassRequest) => void;
 }
 
 /**
  * Students who asked for a class at their own times. The teacher answers by
- * opening a class prefilled from the request; the student is then texted.
+ * opening a class on the live page, prefilled from the request; the student is
+ * then texted.
  */
-export function ClassRequestsCard({ courseId, onOpenClass }: ClassRequestsCardProps) {
+export function ClassRequestsCard({ courseId }: ClassRequestsCardProps) {
   const { t } = useTranslation();
   const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
@@ -79,8 +60,6 @@ export function ClassRequestsCard({ courseId, onOpenClass }: ClassRequestsCardPr
     }
   };
 
-  if (requests.length === 0) return null;
-
   return (
     <DataPanel
       title={t('courses.live.requestsTitle')}
@@ -88,6 +67,11 @@ export function ClassRequestsCard({ courseId, onOpenClass }: ClassRequestsCardPr
         count: formatNumber(requests.length),
       })}
     >
+      {requests.length === 0 ? (
+        <p className="border-t px-5 py-6 text-sm text-muted-foreground">
+          {t('courseDetail.requestsNoClassRequests')}
+        </p>
+      ) : null}
       <ul className="divide-y">
         {requests.map((request) => (
           <li key={request.id} className="flex flex-wrap items-start justify-between gap-3 p-4">
@@ -117,14 +101,11 @@ export function ClassRequestsCard({ courseId, onOpenClass }: ClassRequestsCardPr
                   </Link>
                 </Button>
               ) : (
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={busyId === request.id}
-                  onClick={() => onOpenClass(request)}
-                >
-                  <CalendarPlus className="me-1.5 h-4 w-4" />
-                  {t('courses.live.openClassForRequest')}
+                <Button type="button" size="sm" asChild>
+                  <Link href={`/courses/${courseId}/live?${REQUEST_PARAM}=${request.id}`}>
+                    <CalendarPlus className="me-1.5 h-4 w-4" />
+                    {t('courses.live.openClassForRequest')}
+                  </Link>
                 </Button>
               )}
               <Button

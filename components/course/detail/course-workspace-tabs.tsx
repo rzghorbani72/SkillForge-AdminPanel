@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Eye, MessagesSquare } from 'lucide-react';
+import { BarChart3, Eye, Inbox, MessagesSquare } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
@@ -33,6 +33,12 @@ export function CourseWorkspaceTabs({ courseId }: { courseId: string }) {
       href: `${base}/messages`,
       label: t('courseDetail.tabMessages'),
       icon: MessagesSquare,
+      exact: false,
+    },
+    {
+      href: `${base}/requests`,
+      label: t('courseDetail.tabRequests'),
+      icon: Inbox,
       exact: false,
     },
     // Instalment plans are hidden until a gateway supports them; the page and
