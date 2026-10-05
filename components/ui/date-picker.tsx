@@ -57,6 +57,9 @@ export function DatePicker({
     () => (withTime ? fromDateTimeInputValue(value) : fromInputValue(value)),
     [value, withTime],
   );
+  // RMDP compares the picked moment to minDate, so a "now" minimum blocks today.
+  const minDay = minDate?.toDateString();
+  const minDayStart = useMemo(() => (minDay ? new Date(minDay) : undefined), [minDay]);
 
   const emit = (picked: PickedDate | null) => {
     if (!picked) return onChange('');
@@ -74,7 +77,7 @@ export function DatePicker({
       calendarPosition={isPersian ? 'bottom-right' : 'bottom-left'}
       format={withTime ? 'YYYY/MM/DD HH:mm' : 'YYYY/MM/DD'}
       plugins={withTime ? [<TimePickerPlugin key="time" position="bottom" hideSeconds />] : []}
-      minDate={minDate}
+      minDate={minDayStart}
       maxDate={maxDate}
       disabled={disabled}
       placeholder={placeholder}
