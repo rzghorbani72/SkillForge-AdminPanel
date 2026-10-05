@@ -123,9 +123,13 @@ export default function CourseCreateWizard() {
         onBack={() => router.push('/courses')}
       />
 
-      <div className="mx-auto w-full max-w-[1200px] p-4 sm:p-6">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col p-4 sm:p-6">
         <Form {...form}>
-          <form onSubmit={(e) => e.preventDefault()} noValidate>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            noValidate
+            className="flex flex-1 flex-col gap-6"
+          >
             <StepBasics
               form={form}
               coverPreviewUrl={coverUrl}

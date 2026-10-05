@@ -21,7 +21,7 @@ type WizardNavProps = {
   onFinish: (publish?: boolean) => void;
 };
 
-/** The step's own action row, right under its content. */
+/** The step's action row, stuck to the bottom of the steps container. */
 export function WizardNav({
   index,
   isLast,
@@ -70,7 +70,7 @@ export function WizardNav({
     ));
 
   return (
-    <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+    <div className="sticky bottom-0 z-10 -mx-4 mt-auto flex flex-wrap items-center justify-between gap-3 border-t bg-background px-4 py-3 sm:-mx-6 sm:px-6">
       {back ?? <span />}
 
       <div className="flex flex-wrap items-center gap-3">

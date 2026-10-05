@@ -46,12 +46,16 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
         onSave={liveReview ? undefined : wizard.saveStep}
         onRetrySave={course.retrySave}
       />
-      <div className="mx-auto w-full max-w-[1200px] p-4 sm:p-6">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col p-4 sm:p-6">
         {wizard.isLive ? null : (
           <p className="mb-6 text-sm text-muted-foreground">{t(WIZARD_STEP_HINT[step])}</p>
         )}
         <Form {...course.form}>
-          <form onSubmit={(e) => e.preventDefault()} noValidate>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            noValidate
+            className="flex flex-1 flex-col gap-6"
+          >
             <WizardStepBody
               step={step}
               courseId={courseId}
