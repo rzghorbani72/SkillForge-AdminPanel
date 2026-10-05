@@ -2052,9 +2052,9 @@ export const en = {
       openLink: 'Join meeting',
       linkNotOpenYet: 'The meeting link opens 30 minutes before class starts.',
       publishCourseFirst: 'Publish the course first, then the class.',
-      planSeats:
-        'Your plan: up to {{max}} people per class · private-class students: {{used}} of {{limit}}',
-      planSeatsHint: 'Students in public group classes do not count toward this limit.',
+      planSeats: 'Your plan allows up to {{max}} people per class.',
+      planSeatsHint:
+        'Private-class seats in your plan: {{used}} of {{limit}} used. Public group classes do not use these seats.',
       termColumn: 'Term',
       termRange: 'From {{from}} to {{to}}',
       startDateMissing: 'Start date not set yet',

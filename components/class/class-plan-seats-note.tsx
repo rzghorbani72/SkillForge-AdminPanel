@@ -13,15 +13,16 @@ export function ClassPlanSeatsNote() {
   if (!seats) return null;
 
   return (
-    <Note tone="warn">
+    <Note>
       <b className="block">
         {t('courses.live.planSeats', {
           max: formatNumber(seats.class_capacity_limit),
-          used: formatNumber(seats.tutoring_students.used),
-          limit: formatNumber(seats.tutoring_students.limit),
         })}
       </b>
-      {t('courses.live.planSeatsHint')}
+      {t('courses.live.planSeatsHint', {
+        used: formatNumber(seats.tutoring_students.used),
+        limit: formatNumber(seats.tutoring_students.limit),
+      })}
     </Note>
   );
 }
