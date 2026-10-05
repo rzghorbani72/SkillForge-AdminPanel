@@ -62,6 +62,7 @@ export function CourseQuestionRow({ item, onChanged }: CourseQuestionRowProps) {
         placeholder={t('courseDetail.questionAnswerPlaceholder')}
         rows={3}
         maxLength={2000}
+        dir="rtl"
       />
       <div className="flex flex-wrap gap-2">
         <Button

@@ -200,6 +200,7 @@ export function DiscussionThread({
           aria-label={t('discussion.replyPlaceholder')}
           rows={2}
           maxLength={5000}
+          dir="rtl"
           className="flex-1"
         />
         <Button onClick={send} disabled={sending || (!body.trim() && !file)} size="sm">
