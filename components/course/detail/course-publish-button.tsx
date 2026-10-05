@@ -59,7 +59,7 @@ export function CoursePublishButton({
     if (course.course_type === 'LIVE') {
       return (
         <Button size="sm" variant="secondary" className={className} asChild>
-          <a href={`/courses/${course.id}/live`}>
+          <a href={`/courses/${course.id}/edit?step=review`}>
             <Globe className="me-1.5 h-3.5 w-3.5" />
             {t('courseDetail.publishLiveCourse')}
           </a>

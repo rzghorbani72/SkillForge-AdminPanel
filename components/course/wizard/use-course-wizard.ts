@@ -16,6 +16,7 @@ import {
 } from './wizard-steps';
 import { useLiveClassDraft } from './live/use-live-class-draft';
 import { useLivePublish } from './live/use-live-publish';
+import { useClassUrlIntent } from './live/use-class-url-intent';
 
 export function useCourseWizard(courseId: string) {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export function useCourseWizard(courseId: string) {
   const steps = stepsFor(course.courseType);
   const isLive = course.courseType === 'LIVE';
   const live = useLiveClassDraft(courseId, isLive && !course.isLoading);
+  useClassUrlIntent(live, isLive && !live.isLoading);
   const [requestedStep, setStep] = useState<CourseWizardStep>(() =>
     stepFromParam(searchParams.get('step')),
   );

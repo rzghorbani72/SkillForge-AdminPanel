@@ -13,7 +13,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import type { ClassRequest } from '@/types/learning-operations';
-import { REQUEST_PARAM } from '../../live/_components/request-prefill';
+import { REQUEST_PARAM, scheduleStepHref } from '@/components/course/wizard/live/class-url-intent';
 
 interface ClassRequestsCardProps {
   courseId: string;
@@ -102,7 +102,7 @@ export function ClassRequestsCard({ courseId }: ClassRequestsCardProps) {
                 </Button>
               ) : (
                 <Button type="button" size="sm" asChild>
-                  <Link href={`/courses/${courseId}/live?${REQUEST_PARAM}=${request.id}`}>
+                  <Link href={scheduleStepHref(courseId, `${REQUEST_PARAM}=${request.id}`)}>
                     <CalendarPlus className="me-1.5 h-4 w-4" />
                     {t('courses.live.openClassForRequest')}
                   </Link>

@@ -10,14 +10,14 @@ Everything about one course lives under `/courses/[course_id]`, which keeps a
 sticky header and tabs mounted so moving between them feels like staying inside
 the course.
 
-| Page                                | What it is for                                                     |
-| ----------------------------------- | ------------------------------------------------------------------ |
-| `/courses/[id]`                     | Overview: enrolments, money, a read-only look at the content       |
-| `/courses/[id]/seasons`             | **The** curriculum editor — seasons and lessons, drag to reorder   |
-| `/courses/[id]/live`                | A live course's syllabus, group price, and the list of its classes |
-| `/courses/[id]/live/[group_id]`     | One class: roster, timetable, homework, actions                    |
-| `/courses/[id]/lessons/[lesson_id]` | The three lesson settings that need a screen of their own          |
-| `/courses/[id]/edit`                | The course itself: basics, cover, category, pricing, SEO, access   |
+| Page                                | What it is for                                                                            |
+| ----------------------------------- | ----------------------------------------------------------------------------------------- |
+| `/courses/[id]`                     | Overview: enrolments, money, a read-only look at the content                              |
+| `/courses/[id]/seasons`             | **The** curriculum editor — seasons and lessons, drag to reorder                          |
+| `/courses/[id]/live`                | Redirects to the course steps (`edit?step=schedule`); classes are added and managed there |
+| `/courses/[id]/live/[group_id]`     | One class: roster, timetable, homework, actions                                           |
+| `/courses/[id]/lessons/[lesson_id]` | The three lesson settings that need a screen of their own                                 |
+| `/courses/[id]/edit`                | The course itself: basics, cover, category, pricing, SEO, access                          |
 
 ## Curriculum
 

@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import { LearningNavGate } from '@/components/access-control/learning-nav-gate';
 import { useClassDetail } from '@/hooks/use-class-detail';
 import { useClassSessions } from '@/hooks/use-class-sessions';
+import { scheduleStepHref } from '@/components/course/wizard/live/class-url-intent';
 import { apiClient } from '@/lib/api';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { CourseTopic } from '@/types/learning-operations';
@@ -49,7 +50,7 @@ export default function ClassPage() {
     <LearningNavGate requiredCapability="tutoring">
       <main className="space-y-6 p-4 sm:p-6">
         <Link
-          href={`/courses/${courseId}/live`}
+          href={scheduleStepHref(courseId)}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:underline"
         >
           <ArrowLeft className="h-4 w-4 rtl:rotate-180" />

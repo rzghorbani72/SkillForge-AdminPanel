@@ -40,8 +40,7 @@ export const en = {
       'This is more seats than your plan allows per class. Lower it or upgrade your plan.',
     errMeetingUrl: 'Enter a full link that starts with https.',
     scheduleLocked:
-      'This class has started; change its session dates from the class page so students are told.',
-    openClassesPage: 'Classes page',
+      'This class has started. To change session dates and times, capacity, or cancel the class, use "Manage class" so students are told.',
     weeklyTitle: 'Weekly schedule',
     className: 'Class name',
     classNamePlaceholder: 'Class name — e.g. Morning group',
@@ -6235,7 +6234,6 @@ export const en = {
     classroom: 'Classroom',
     liveSummary:
       'This course is taught live. Its topics, prices, timetable and meetings are managed in the classroom.',
-    manageClassroom: 'Open classroom',
     liveLeftoverLessons:
       'This course still has {{count}} recorded lesson(s) from before it was switched to live. Students do not see them here — the live classroom is what they get.',
     tabOverview: 'Overview',

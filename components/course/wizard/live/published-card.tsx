@@ -62,7 +62,7 @@ export function PublishedCard({ live, title }: { live: LiveClassDraftApi; title:
 
       <div className="flex flex-wrap justify-center gap-3">
         <Button asChild>
-          <Link href={`/courses/${live.courseId}/live`}>{t('liveWizard.viewCourse')}</Link>
+          <Link href={`/courses/${live.courseId}`}>{t('liveWizard.viewCourse')}</Link>
         </Button>
         {registrationUrl ? (
           <Button type="button" variant="outline" className="gap-2" onClick={() => void copyLink()}>

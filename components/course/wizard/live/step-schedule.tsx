@@ -19,6 +19,8 @@ export function StepSchedule({ live }: { live: LiveClassDraftApi }) {
           key={item.schedule.key}
           item={item}
           courseId={live.courseId}
+          coursePublished={Boolean(live.course?.is_published)}
+          onManaged={() => void live.reload()}
           onRemove={
             canRemove && item.schedule.groupId === null
               ? () => live.removeClass(item.schedule.key)
@@ -30,7 +32,7 @@ export function StepSchedule({ live }: { live: LiveClassDraftApi }) {
         type="button"
         variant="outline"
         className="h-11 gap-2 border-dashed text-muted-foreground hover:text-foreground"
-        onClick={live.addClass}
+        onClick={() => live.addClass()}
       >
         <Plus className="h-4 w-4" aria-hidden />
         {t('liveWizard.addClass')}
