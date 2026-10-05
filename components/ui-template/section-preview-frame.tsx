@@ -1,7 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { ScaledIframe } from '@/components/shared/scaled-iframe';
 
 interface SectionPreviewFrameProps {
   // Storefront origin that serves /preview/blocks (from the preview session).
@@ -11,53 +10,25 @@ interface SectionPreviewFrameProps {
   blockId?: string;
   // Preview token carrying academy scope (lets dedicated templates resolve).
   token?: string;
-  // Virtual render width the iframe is scaled down from. 1280 ≈ desktop.
   virtualWidth?: number;
-  // Allows scrolling/clicking inside the frame instead of the default inert
-  // thumbnail behavior.
   interactive?: boolean;
   // Extra query params forwarded to /preview/blocks (e.g. heroStyle override).
   params?: Record<string, string>;
-  // Fires once the embedded storefront finishes loading (for fade-in/placeholder).
   onLoad?: () => void;
-  // Renders a built-in spinner until the frame loads. Skip it when the caller
-  // already draws its own placeholder (the gallery card does).
+  // Skip when the caller already draws its own placeholder (the gallery card does).
   showLoading?: boolean;
   className?: string;
 }
 
 // Real storefront render of a template/section, scaled to fit its container.
-// Non-interactive by default (pointer-events-none) so a surrounding card stays
-// clickable; pass `interactive` for a scrollable embedded page.
 export function SectionPreviewFrame({
   baseUrl,
   templateKey,
   blockId,
   token,
-  virtualWidth = 1280,
-  interactive = false,
   params,
-  onLoad,
-  showLoading = false,
-  className = '',
+  ...frameProps
 }: SectionPreviewFrameProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [zoom, setZoom] = useState(0.2);
-  const [loaded, setLoaded] = useState(false);
-
-  const recalc = useCallback(() => {
-    if (containerRef.current) {
-      setZoom(containerRef.current.clientWidth / virtualWidth);
-    }
-  }, [virtualWidth]);
-
-  useEffect(() => {
-    recalc();
-    const ro = new ResizeObserver(recalc);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
-  }, [recalc]);
-
   // embed=1 makes the storefront proxy allow AdminPanel as a frame ancestor;
   // sample=1 swaps the visitor's academy brand for the neutral sample brand.
   const queryParams = new URLSearchParams({
@@ -74,37 +45,5 @@ export function SectionPreviewFrame({
   }
   const src = `${baseUrl.replace(/\/$/, '')}/preview/blocks?${queryParams.toString()}`;
 
-  return (
-    // dir=ltr keeps the oversized inner box anchored at the visual left edge —
-    // in an RTL page it would overflow leftward and the scaled content would
-    // land outside the container. The iframe document handles its own RTL.
-    <div ref={containerRef} dir="ltr" className={`relative overflow-hidden ${className}`}>
-      <div
-        className="origin-top-left"
-        style={{
-          width: virtualWidth,
-          height: `${100 / zoom}%`,
-          transform: `scale(${zoom})`,
-        }}
-      >
-        <iframe
-          src={src}
-          title="Section preview"
-          loading="lazy"
-          onLoad={() => {
-            setLoaded(true);
-            onLoad?.();
-          }}
-          className={`h-full w-full border-0 ${interactive ? '' : 'pointer-events-none'}`}
-          sandbox="allow-scripts allow-same-origin"
-        />
-      </div>
-
-      {showLoading && !loaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-zinc-100">
-          <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
-        </div>
-      )}
-    </div>
-  );
+  return <ScaledIframe src={src} title="Section preview" {...frameProps} />;
 }

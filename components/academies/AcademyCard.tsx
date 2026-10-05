@@ -8,7 +8,6 @@ import { ACADEMY_DOMAIN } from '@/lib/slug';
 import { colorIndexForId } from '@/lib/id-color';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { useDateFormat } from '@/lib/i18n/use-date-format';
-import { resizedMediaUrl, resolveMediaUrl } from '@/lib/media-url';
 import {
   AcademyStatusPill,
   academyDomain,
@@ -18,6 +17,7 @@ import {
   type AcademyRow,
 } from './academy-helpers';
 import { AcademyStaffActions } from './academy-staff-actions';
+import { AcademyCardBanner } from './academy-card-banner';
 import { CopyableId } from './copyable-id';
 
 const CARD_COLORS = [
@@ -33,9 +33,6 @@ const CARD_COLORS = [
 
 const ACTION_BUTTON = 'h-9 flex-1 gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-medium';
 const ACTION_ICON = 'h-4 w-4 shrink-0';
-const BANNER_WIDTH = 480;
-const BANNER_WIDTH_2X = 828;
-const BANNER_SIZES = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw';
 
 export function AcademyIcon({
   name,
@@ -108,7 +105,6 @@ export function AcademyCard({
   const canEnter = canEnterAcademy(academy);
   const canEdit = canEditAcademy(academy);
   const domain = academyDomain(academy);
-  const bannerUrl = resolveMediaUrl(academy.template_banner);
 
   return (
     <div
@@ -118,17 +114,7 @@ export function AcademyCard({
       )}
     >
       <div className={cn('relative isolate flex aspect-[16/9] items-start px-4 pt-3', color.bg)}>
-        {bannerUrl && (
-          <img
-            src={resizedMediaUrl(bannerUrl, BANNER_WIDTH)}
-            srcSet={`${resizedMediaUrl(bannerUrl, BANNER_WIDTH)} ${BANNER_WIDTH}w, ${resizedMediaUrl(bannerUrl, BANNER_WIDTH_2X)} ${BANNER_WIDTH_2X}w`}
-            sizes={BANNER_SIZES}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 -z-10 h-full w-full object-cover"
-          />
-        )}
+        <AcademyCardBanner academy={academy} />
         <AcademyStatusPill academy={academy} t={t} />
         {academy.listed_publicly === false && (
           <span className="ms-auto inline-flex shrink-0 items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
