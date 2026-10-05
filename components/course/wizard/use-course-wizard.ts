@@ -80,9 +80,15 @@ export function useCourseWizard(courseId: string) {
       toast.error(t('courses.fixErrorsBeforeSaving'));
       return;
     }
+    await saveAndGo(steps[index + 1]);
+  };
+
+  // Like the Save button: picking a step in the header saves this one first.
+  const saveAndGo = async (next: CourseWizardStep) => {
+    if (isAdvancing || next === step) return;
     setIsAdvancing(true);
     try {
-      if (await saveStep()) goTo(steps[index + 1]);
+      if (await saveStep()) goTo(next);
     } finally {
       setIsAdvancing(false);
     }
@@ -112,6 +118,7 @@ export function useCourseWizard(courseId: string) {
     accessVersion,
     goTo,
     goNext,
+    saveAndGo,
     saveStep,
     finish,
     setVisibility,

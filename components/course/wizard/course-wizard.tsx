@@ -41,7 +41,7 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
         step={step}
         steps={steps}
         invalidSteps={invalidSteps}
-        onSelectStep={wizard.goTo}
+        onSelectStep={(next) => void wizard.saveAndGo(next)}
         saveStatus={course.saveStatus}
         onSave={liveReview ? undefined : wizard.saveStep}
         onRetrySave={course.retrySave}
