@@ -1976,6 +1976,11 @@ const tr = {
     goToLogin: 'Girişe Git',
   },
   media: {
+    cropTitle: 'Görseli kırp',
+    cropHint: 'Görselin en iyi kısmı çerçeveye sığacak şekilde sürükleyip yakınlaştırın.',
+    cropZoom: 'Yakınlaştır',
+    cropConfirm: 'Kırp ve yükle',
+    cropFailed: 'Görsel kırpılamadı. Lütfen başka bir görsel deneyin.',
     videoLoading: 'Güvenli oynatma hazırlanıyor…',
     videoPlaybackFailed: 'Bu video oynatılamadı. Lütfen sayfayı yenileyin.',
     changeImage: 'Görseli değiştir',

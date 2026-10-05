@@ -77,6 +77,7 @@
     "Geo.SaveCountryFailed": "Geo save country failed.",
     "Geo.ServiceFetchFailed": "Geo service fetch failed.",
     "Geo.StoreCountryFailed": "Geo store country failed.",
+    "Images.CropFailed": "Browser could not crop a picked image before upload.",
     "Images.DeletingImageFailed": "Images deleting image failed.",
     "Images.FetchingImagesFailed": "Images fetching images failed.",
     "Images.SavingImageFailed": "Images saving image failed.",

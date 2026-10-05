@@ -4057,6 +4057,11 @@ export const en = {
     limitMultiple: 'Up to {{count}} files, {{size}} each',
   },
   media: {
+    cropTitle: 'Crop image',
+    cropHint: 'Drag and zoom so the best part of the image fits the frame.',
+    cropZoom: 'Zoom',
+    cropConfirm: 'Crop and upload',
+    cropFailed: 'Could not crop the image. Please try another image.',
     videoLoading: 'Preparing secure playback…',
     videoPlaybackFailed: 'This video could not be played. Please refresh the page.',
     changeImage: 'Change image',

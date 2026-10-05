@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UseFormReturn } from 'react-hook-form';
 import { ProductCreateFormData } from './useProductCreate';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
+import { CROP_PRESETS } from '@/lib/image-crop';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 type Props = {
@@ -35,7 +36,8 @@ const CreateProductCoverImage = ({ form }: Props) => {
           }}
           selectedImageId={form.watch('cover_id')}
           alt={t('products.productCoverPreview')}
-          className="aspect-[5/4] w-full max-w-md"
+          crop={CROP_PRESETS.cover}
+          className="w-full max-w-md"
           placeholderText={t('products.noCoverImageSelected')}
           placeholderSubtext={t('products.uploadImageToPreview')}
         />

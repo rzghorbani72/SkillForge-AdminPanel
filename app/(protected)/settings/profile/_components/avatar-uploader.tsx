@@ -8,6 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { CROP_PRESETS } from '@/lib/image-crop';
+import { useImageCrop } from '@/hooks/use-image-crop';
+import { ImageCropDialog } from '@/components/shared/image-crop-dialog';
 import { AVATAR_ACCEPT } from '../_hooks/use-avatar-upload';
 
 interface AvatarUploaderProps {
@@ -32,82 +35,92 @@ export function AvatarUploader({
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const cropper = useImageCrop(CROP_PRESETS.avatar, onFile);
 
   const openPicker = () => {
     if (!isUploading) inputRef.current?.click();
   };
 
   return (
-    <div
-      onDragOver={(e) => {
-        e.preventDefault();
-        setIsDragging(true);
-      }}
-      onDragLeave={() => setIsDragging(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setIsDragging(false);
-        const file = e.dataTransfer.files?.[0];
-        if (file) onFile(file);
-      }}
-      className={cn(
-        'flex flex-col items-center gap-5 rounded-xl border border-dashed p-5 transition-colors sm:flex-row sm:items-center sm:p-6',
-        isDragging
-          ? 'border-primary bg-primary/5'
-          : 'border-border bg-muted/30 hover:border-primary/40',
-      )}
-    >
-      <div className="relative shrink-0">
-        <Avatar className="h-24 w-24 shadow-md ring-2 ring-background sm:h-28 sm:w-28">
-          {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} /> : null}
-          <AvatarFallback className="bg-primary/10 text-2xl font-semibold text-primary">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-        {isUploading && (
-          <span className="absolute inset-0 grid place-items-center rounded-full bg-black/55">
-            <Loader2 className="h-6 w-6 animate-spin text-white" />
-          </span>
+    <>
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragging(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) cropper.pick(file);
+        }}
+        className={cn(
+          'flex flex-col items-center gap-5 rounded-xl border border-dashed p-5 transition-colors sm:flex-row sm:items-center sm:p-6',
+          isDragging
+            ? 'border-primary bg-primary/5'
+            : 'border-border bg-muted/30 hover:border-primary/40',
         )}
-      </div>
-
-      <div className="min-w-0 flex-1 space-y-2 text-center sm:text-start">
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-          <p className="truncate text-lg font-semibold leading-none">
-            {displayName || t('settings.fullNamePlaceholder')}
-          </p>
-          {roleLabel && (
-            <Badge variant="secondary" className="shrink-0 text-xs">
-              {roleLabel}
-            </Badge>
+      >
+        <div className="relative shrink-0">
+          <Avatar className="h-24 w-24 shadow-md ring-2 ring-background sm:h-28 sm:w-28">
+            {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} /> : null}
+            <AvatarFallback className="bg-primary/10 text-2xl font-semibold text-primary">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          {isUploading && (
+            <span className="absolute inset-0 grid place-items-center rounded-full bg-black/55">
+              <Loader2 className="h-6 w-6 animate-spin text-white" />
+            </span>
           )}
         </div>
 
-        <p className="text-xs text-muted-foreground">{t('settings.photoDropHint')}</p>
-        <p className="text-xs text-muted-foreground">{t('settings.photoFormatHint')}</p>
+        <div className="min-w-0 flex-1 space-y-2 text-center sm:text-start">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+            <p className="truncate text-lg font-semibold leading-none">
+              {displayName || t('settings.fullNamePlaceholder')}
+            </p>
+            {roleLabel && (
+              <Badge variant="secondary" className="shrink-0 text-xs">
+                {roleLabel}
+              </Badge>
+            )}
+          </div>
 
-        {isUploading ? (
-          <Progress value={progress} className="h-1.5 max-w-xs" />
-        ) : (
-          <Button type="button" variant="outline" size="sm" onClick={openPicker} className="gap-2">
-            <ImagePlus className="h-4 w-4" />
-            {avatarUrl ? t('settings.changePhoto') : t('settings.uploadPhoto')}
-          </Button>
-        )}
+          <p className="text-xs text-muted-foreground">{t('settings.photoDropHint')}</p>
+          <p className="text-xs text-muted-foreground">{t('settings.photoFormatHint')}</p>
+
+          {isUploading ? (
+            <Progress value={progress} className="h-1.5 max-w-xs" />
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={openPicker}
+              className="gap-2"
+            >
+              <ImagePlus className="h-4 w-4" />
+              {avatarUrl ? t('settings.changePhoto') : t('settings.uploadPhoto')}
+            </Button>
+          )}
+        </div>
+
+        <input
+          ref={inputRef}
+          type="file"
+          accept={AVATAR_ACCEPT}
+          aria-label={t('settings.uploadPhoto')}
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) cropper.pick(file);
+            e.target.value = '';
+          }}
+        />
       </div>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept={AVATAR_ACCEPT}
-        aria-label={t('settings.uploadPhoto')}
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) onFile(file);
-          e.target.value = '';
-        }}
-      />
-    </div>
+      {cropper.dialog && <ImageCropDialog {...cropper.dialog} />}
+    </>
   );
 }

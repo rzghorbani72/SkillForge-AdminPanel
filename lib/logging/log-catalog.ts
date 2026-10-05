@@ -285,6 +285,11 @@ export const LOG_CATALOG = {
   Images: {
     description: 'Image library actions in the manager panel.',
     actions: {
+      CropFailed: {
+        description: 'Browser could not crop a picked image before upload.',
+        level: 'error',
+        fields: [] as const,
+      },
       DeletingImageFailed: {
         description: 'Images deleting image failed.',
         level: 'error',

@@ -1942,6 +1942,11 @@ export const ar = {
     goToLogin: 'الذهاب إلى تسجيل الدخول',
   },
   media: {
+    cropTitle: 'قص الصورة',
+    cropHint: 'اسحب الصورة وكبّرها ليظهر أفضل جزء منها داخل الإطار.',
+    cropZoom: 'تكبير',
+    cropConfirm: 'قص ورفع',
+    cropFailed: 'تعذّر قص الصورة. يرجى تجربة صورة أخرى.',
     videoLoading: 'جارٍ تجهيز التشغيل الآمن…',
     videoPlaybackFailed: 'تعذر تشغيل هذا الفيديو. يرجى تحديث الصفحة.',
     changeImage: 'تغيير الصورة',

@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import ImageUploadPreview from '@/components/ui/ImageUploadPreview';
+import { CROP_PRESETS } from '@/lib/image-crop';
 import { Input } from '@/components/ui/input';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import {
@@ -105,7 +106,8 @@ export function CourseAboutCard({
             existingImageUrl={coverPreviewUrl}
             onSuccess={onCoverChange}
             selectedImageId={form.watch('cover_id')}
-            className="aspect-video w-full"
+            crop={CROP_PRESETS.cover}
+            className="w-full"
             placeholderText={t('liveWizard.coverPlaceholder')}
             placeholderSubtext={t('liveWizard.coverHint')}
           />

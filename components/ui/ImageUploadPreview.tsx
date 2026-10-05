@@ -9,12 +9,15 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import { useTranslation } from '@/lib/i18n/hooks';
 import ProgressBar from './ProgressBar';
 import { IMAGE_ACCEPT } from '@/lib/upload-limits';
+import type { CropPreset } from '@/lib/image-crop';
+import { useImageCrop } from '@/hooks/use-image-crop';
+import { ImageCropDialog } from '@/components/shared/image-crop-dialog';
 
 interface ImageUploadPreviewProps {
   title?: string;
   description?: string;
   onSuccess?: (image: { id: string; url: string }) => void;
-  onError?: (error: any) => void;
+  onError?: (error: Error) => void;
   existingImageUrl?: string | null;
   existingImageId?: string | number | null;
   alt?: string;
@@ -25,6 +28,8 @@ interface ImageUploadPreviewProps {
   disabled?: boolean;
   /** Gives the caller the picked file, e.g. to reuse it as a video poster. */
   onFileSelected?: (file: File) => void;
+  /** Crops to this preset's aspect before upload; the box takes the same shape. */
+  crop?: CropPreset;
 }
 
 /** Prefer relative same-origin paths; absolute / blob / data URLs pass through. */
@@ -47,6 +52,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   selectedImageId,
   disabled = false,
   onFileSelected,
+  crop,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -59,14 +65,18 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
     onError,
   });
 
-  const handleFile = useCallback(
-    (file: File | undefined) => {
-      if (!file) return;
+  const upload = useCallback(
+    (file: File) => {
       onFileSelected?.(file);
       imageUpload.selectAndUpload(file);
     },
     [imageUpload, onFileSelected],
   );
+  const cropper = useImageCrop(crop, upload);
+
+  const handleFile = (file: File | undefined) => {
+    if (file) cropper.pick(file);
+  };
 
   const currentSrc = imageUpload.preview
     ? resolveImageSrc(imageUpload.preview)
@@ -88,95 +98,104 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   };
 
   return (
-    <div
-      className={cn(
-        'relative h-64 w-full max-w-md overflow-hidden rounded-lg border-2 border-dashed transition-colors',
-        isDragging ? 'border-primary bg-primary/5' : 'border-border',
-        !disabled && 'cursor-pointer hover:border-primary/60',
-        className,
-      )}
-      onClick={() => !disabled && inputRef.current?.click()}
-      onDragOver={(e) => {
-        e.preventDefault();
-        if (!disabled) setIsDragging(true);
-      }}
-      onDragLeave={() => setIsDragging(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setIsDragging(false);
-        if (!disabled) handleFile(e.dataTransfer.files?.[0]);
-      }}
-    >
-      <input
-        ref={inputRef}
-        type="file"
-        accept={IMAGE_ACCEPT}
-        className="hidden"
-        disabled={disabled}
-        onChange={(e) => {
-          handleFile(e.target.files?.[0]);
-          e.target.value = '';
+    <>
+      <div
+        className={cn(
+          'relative w-full max-w-md overflow-hidden rounded-lg border-2 border-dashed transition-colors',
+          crop ? 'h-auto' : 'h-64',
+          isDragging ? 'border-primary bg-primary/5' : 'border-border',
+          !disabled && 'cursor-pointer hover:border-primary/60',
+          className,
+        )}
+        style={crop ? { aspectRatio: crop.aspect } : undefined}
+        onClick={() => !disabled && inputRef.current?.click()}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (!disabled) setIsDragging(true);
         }}
-      />
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragging(false);
+          if (!disabled) handleFile(e.dataTransfer.files?.[0]);
+        }}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          accept={IMAGE_ACCEPT}
+          className="hidden"
+          disabled={disabled}
+          onChange={(e) => {
+            handleFile(e.target.files?.[0]);
+            e.target.value = '';
+          }}
+        />
 
-      {currentSrc ? (
-        <div className="group relative aspect-[5/4] h-64 w-full">
-          <Image
-            src={currentSrc}
-            alt={alt ?? t('media.imagePreview')}
-            fill
-            sizes="400px"
-            className="object-cover"
-          />
-          {!imageUpload.isUploading && !disabled && (
-            <span className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-              <Pencil className="h-4 w-4" />
-              {t('media.changeImage')}
-            </span>
-          )}
-          {!imageUpload.isUploading && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemove();
-              }}
-              disabled={disabled}
-              className="absolute end-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
-              aria-label={t('common.remove')}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="flex aspect-[5/4] h-64 w-full flex-col items-center justify-center gap-2 px-4 text-center">
-          <ImageIcon className="h-8 w-8 text-muted-foreground" />
-          <p className="text-sm font-medium text-foreground">
-            {placeholderText ?? t('media.noImageSelected')}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {placeholderSubtext ?? t('media.dropImageHint')}
-          </p>
-        </div>
-      )}
-
-      {imageUpload.isUploading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/85 px-6">
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-            <p className="text-xs font-medium text-foreground">{t('common.uploading')}</p>
+        {currentSrc ? (
+          <div className="group relative h-full w-full">
+            <Image
+              src={currentSrc}
+              alt={alt ?? t('media.imagePreview')}
+              fill
+              sizes="400px"
+              className="object-cover"
+            />
+            {!imageUpload.isUploading && !disabled && (
+              <span className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                <Pencil className="h-4 w-4" />
+                {t('media.changeImage')}
+              </span>
+            )}
+            {!imageUpload.isUploading && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove();
+                }}
+                disabled={disabled}
+                className="absolute end-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
+                aria-label={t('common.remove')}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
-          <ProgressBar progress={imageUpload.uploadProgress} size="sm" className="max-w-[220px]" />
-        </div>
-      )}
+        ) : (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2 px-4 text-center">
+            <ImageIcon className="h-8 w-8 text-muted-foreground" />
+            <p className="text-sm font-medium text-foreground">
+              {placeholderText ?? t('media.noImageSelected')}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {placeholderSubtext ?? t('media.dropImageHint')}
+            </p>
+          </div>
+        )}
 
-      {!currentSrc && !imageUpload.isUploading && (
-        <div className="pointer-events-none absolute bottom-2 end-2 text-muted-foreground/60">
-          <UploadCloud className="h-4 w-4" />
-        </div>
-      )}
-    </div>
+        {imageUpload.isUploading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/85 px-6">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <p className="text-xs font-medium text-foreground">{t('common.uploading')}</p>
+            </div>
+            <ProgressBar
+              progress={imageUpload.uploadProgress}
+              size="sm"
+              className="max-w-[220px]"
+            />
+          </div>
+        )}
+
+        {!currentSrc && !imageUpload.isUploading && (
+          <div className="pointer-events-none absolute bottom-2 end-2 text-muted-foreground/60">
+            <UploadCloud className="h-4 w-4" />
+          </div>
+        )}
+      </div>
+      {cropper.dialog && <ImageCropDialog {...cropper.dialog} />}
+    </>
   );
 };
 
