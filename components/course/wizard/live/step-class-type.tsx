@@ -36,7 +36,6 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
             icon={User}
             title={t('liveWizard.privateTitle')}
             hint={t('liveWizard.privateHint')}
-            disabled={seatsSold > 1}
           />
           <ChoiceCard
             selected={!isPrivate}
@@ -109,6 +108,11 @@ export function StepClassType({ live }: { live: LiveClassDraftApi }) {
         {draft.price === '0' ? <Note tone="warn">{t('liveWizard.freeClassWarning')}</Note> : null}
         {priceChanged && seatsSold > 0 ? (
           <Note tone="warn">{t('liveWizard.priceChangeWarning')}</Note>
+        ) : null}
+        {isPrivate && seatsSold > 1 ? (
+          <Note tone="error">
+            {t('liveWizard.privateHasMoreSeats', { count: formatNumber(seatsSold) })}
+          </Note>
         ) : null}
         {isPrivate ? <Note>{t('liveWizard.privateOneSeat')}</Note> : null}
       </SectionCard>

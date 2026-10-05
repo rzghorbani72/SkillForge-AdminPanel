@@ -79,6 +79,8 @@ export const en = {
       'This class is free: anyone can register without paying, and each student uses one seat of your plan quota.',
     priceChangeWarning:
       'Some seats are already sold. The new price applies only to new registrations; paid amounts do not change.',
+    privateHasMoreSeats:
+      'This class already has {{count}} students, but a private class has only one seat. To keep them all, change the class type to Group and set the capacity to at least {{count}}.',
     privateOneSeat:
       'A private class has one seat; registration closes by itself after the first enrolment.',
     howStudentsEnter: 'Where do students enter the class?',
