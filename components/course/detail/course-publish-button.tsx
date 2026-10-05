@@ -24,6 +24,7 @@ type CoursePublishButtonProps = {
   course: Pick<CourseDetail, 'id' | 'is_published' | 'course_type'>;
   onChanged: () => void | Promise<void>;
   className?: string;
+  compactUnpublish?: boolean;
 };
 
 /**
@@ -31,7 +32,12 @@ type CoursePublishButtonProps = {
  * hides a live page from every visitor, so it asks first. Used on the course
  * page and on every course in the list.
  */
-export function CoursePublishButton({ course, onChanged, className }: CoursePublishButtonProps) {
+export function CoursePublishButton({
+  course,
+  onChanged,
+  className,
+  compactUnpublish,
+}: CoursePublishButtonProps) {
   const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const published = course.is_published;
@@ -71,8 +77,13 @@ export function CoursePublishButton({ course, onChanged, className }: CoursePubl
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="sm" variant="secondary" className={className} disabled={saving}>
-          <EyeOff className="me-1.5 h-3.5 w-3.5" />
+        <Button
+          size="sm"
+          variant={compactUnpublish ? 'ghost' : 'secondary'}
+          className={compactUnpublish ? 'h-9 px-2 text-xs text-muted-foreground' : className}
+          disabled={saving}
+        >
+          <EyeOff className="me-1 h-3.5 w-3.5" />
           {t('courseDetail.unpublish')}
         </Button>
       </AlertDialogTrigger>

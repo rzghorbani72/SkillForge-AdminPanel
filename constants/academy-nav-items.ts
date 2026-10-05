@@ -46,25 +46,6 @@ export const academyNavItems: NavItem[] = [
     roles: ['MANAGER', 'TEACHER'],
     scope: 'academy',
   },
-  // Teaching — every child is capability-gated, so an academy that sells only
-  // recorded courses never sees this group at all.
-  {
-    title: 'Teaching',
-    icon: 'bookOpen' as IconType,
-    label: 'teaching',
-    roles: ['PLATFORM_OWNER', 'ADMIN', 'FINANCE', 'SUPPORT', 'MANAGER', 'TEACHER'],
-    scope: 'academy',
-    children: [
-      {
-        title: 'Ops Queue',
-        href: '/learning/ops-queue',
-        icon: 'trendingUp' as IconType,
-        label: 'opsQueue',
-        scope: 'academy',
-        requiresLearningCapability: 'ops_queue',
-      },
-    ],
-  },
   // Money — student income, settlement / teacher share, and Mentoma bills in one place
   {
     title: 'Money',

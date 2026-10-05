@@ -6283,7 +6283,7 @@ export const fa = {
     noDescription: 'برای این دوره توضیحی ثبت نشده است',
     publish: 'انتشار دوره',
     publishLiveCourse: 'انتشار',
-    unpublish: 'برداشتن از انتشار',
+    unpublish: 'لغو انتشار',
     viewPublicPage: 'مشاهده صفحه عمومی',
     publishedToast: 'دوره منتشر شد',
     unpublishedToast: 'دوره از انتشار خارج شد',

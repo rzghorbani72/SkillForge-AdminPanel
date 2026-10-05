@@ -164,6 +164,7 @@ export function CourseCard({
                   course={course}
                   onChanged={onPublishChanged}
                   className="h-9 flex-1"
+                  compactUnpublish
                 />
               )}
               {onEdit && (
