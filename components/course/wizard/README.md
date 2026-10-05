@@ -31,8 +31,8 @@ morning and an evening group). The three middle steps edit one draft
   and handed to students only as a signed, time-boxed link. An own link
   (Skyroom, Meet) is hidden behind the same Join button but cannot be locked —
   the step says so.
-- Live steps use the full width; only review gets a side panel with the
-  publish-vs-draft choice (`live-step-layout.tsx`). Both places that describe
+- Every step uses the full width; publish/draft live in the step's own
+  action row (`publish-actions.tsx`). Both places that describe
   the classes (review, success page) word them through
   `use-live-summary.ts` and `class-review-rows.tsx`, so they never disagree.
 - The empty course list (`course-type-entry.tsx`) opens `/courses/create?type=LIVE`

@@ -4,7 +4,6 @@ import { Loader2 } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 import { useTranslation } from '@/lib/i18n/hooks';
 import NoAcademyState from '../NoAcademyState';
-import { LiveStepLayout } from './live/live-step-layout';
 import { PublishFooterActions } from './live/publish-actions';
 import { WizardHeader } from './wizard-header';
 import { WizardNav } from './wizard-nav';
@@ -36,22 +35,6 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
     );
   }
 
-  const body = (
-    <WizardStepBody
-      step={step}
-      courseId={courseId}
-      course={course}
-      isPublic={isPublic}
-      accessVersion={wizard.accessVersion}
-      onVisibilityChange={wizard.setVisibility}
-      pendingAccess={wizard.pendingAccess}
-      onPendingAccessChange={wizard.setPendingAccess}
-      live={live}
-      publisher={publisher}
-      onGoTo={wizard.goTo}
-    />
-  );
-
   return (
     <>
       <WizardHeader
@@ -69,18 +52,19 @@ export default function CourseWizard({ courseId }: { courseId: string }) {
         )}
         <Form {...course.form}>
           <form onSubmit={(e) => e.preventDefault()} noValidate>
-            {wizard.isLive ? (
-              <LiveStepLayout
-                step={step}
-                live={live}
-                publisher={publisher}
-                isPublished={wizard.isPublished}
-              >
-                {body}
-              </LiveStepLayout>
-            ) : (
-              body
-            )}
+            <WizardStepBody
+              step={step}
+              courseId={courseId}
+              course={course}
+              isPublic={isPublic}
+              accessVersion={wizard.accessVersion}
+              onVisibilityChange={wizard.setVisibility}
+              pendingAccess={wizard.pendingAccess}
+              onPendingAccessChange={wizard.setPendingAccess}
+              live={live}
+              publisher={publisher}
+              onGoTo={wizard.goTo}
+            />
             {liveReview && publisher.justPublished ? null : (
               <WizardNav
                 index={index}

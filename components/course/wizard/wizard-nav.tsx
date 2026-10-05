@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { ArrowRight, Globe, Loader2, Save } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Globe, Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -21,7 +21,7 @@ type WizardNavProps = {
   onFinish: (publish?: boolean) => void;
 };
 
-/** Pinned to the bottom of the page, so the next move is always one click away. */
+/** The step's own action row, right under its content. */
 export function WizardNav({
   index,
   isLast,
@@ -37,7 +37,8 @@ export function WizardNav({
 
   const back =
     index > 0 ? (
-      <Button type="button" variant="outline" onClick={onBack}>
+      <Button type="button" variant="outline" onClick={onBack} className="gap-2">
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
         {t('common.previous')}
       </Button>
     ) : null;
@@ -69,27 +70,22 @@ export function WizardNav({
     ));
 
   return (
-    <div className="sticky bottom-0 z-10 -mx-4 -mb-4 mt-6 border-t bg-card px-4 py-3 sm:-mx-6 sm:-mb-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {isLast ? (back ?? <span />) : <span />}
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+      {back ?? <span />}
 
-        <div className="flex flex-wrap items-center gap-3">
-          {isLast ? (
-            finish
-          ) : (
-            <>
-              {back}
-              <Button type="button" disabled={nextBusy} onClick={onNext} className="gap-2">
-                {t('courses.wizard.confirmAndContinue')}
-                {nextBusy ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-                )}
-              </Button>
-            </>
-          )}
-        </div>
+      <div className="flex flex-wrap items-center gap-3">
+        {isLast ? (
+          finish
+        ) : (
+          <Button type="button" disabled={nextBusy} onClick={onNext} className="gap-2">
+            {t('courses.wizard.confirmAndContinue')}
+            {nextBusy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

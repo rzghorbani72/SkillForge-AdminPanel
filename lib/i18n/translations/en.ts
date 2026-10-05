@@ -99,12 +99,8 @@ export const en = {
     reviewDescription: 'Description',
     classKind: 'Class type',
     groupSummary: 'Group · {{count}} seats',
-    draftExplain: 'Draft: saved, but no student can see it and registration is closed.',
     saveDraft: 'Save as draft',
-    publishExplain:
-      'Publish: shown on the academy website, with registration open until the deadline.',
     publish: 'Publish course',
-    saveChangesExplain: 'This course is published. Changes apply to students right away.',
     saveChanges: 'Save changes',
     publishedTitle: 'Your live course is ready!',
     publishedHint: '“{{title}}” is on the academy website and registration is open.',
@@ -145,7 +141,6 @@ export const en = {
     howStep3Hint: 'Only through the “Join class” button in their own account',
     reviewComplete:
       'Everything is complete. Take one look; change any part with “Edit” without losing anything.',
-    reviewReady: 'Ready?',
     reviewLevel: 'Level',
     reviewTopics: 'Topics',
     topicsCount: '{{count}} topics',
