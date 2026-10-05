@@ -34,6 +34,9 @@ export interface AcademyHealthView {
   limits?: PlanLimitUsageSnapshot;
 }
 
+/** `target` plus the ids it needs; see lib/notifications/notification-href.ts. */
+export type NotificationLink = Readonly<Record<string, string>>;
+
 export interface PanelNotification {
   id: string;
   title: string;
@@ -41,6 +44,7 @@ export interface PanelNotification {
   type: string;
   is_read: boolean;
   created_at: string;
+  link: NotificationLink | null;
 }
 
 export interface NotificationListResponse {

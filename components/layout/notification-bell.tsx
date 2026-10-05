@@ -8,15 +8,12 @@ import { Loader2 } from 'lucide-react';
 import { AnimatedHoverIcon } from '@/components/layout/animated-hover-icon';
 import { apiClient, PanelNotification } from '@/lib/api';
 import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
-import { useDateFormat } from '@/lib/i18n/use-date-format';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
-import { localizeNotificationText } from '@/lib/i18n/localize-notification-text';
-import { cn } from '@/lib/utils';
+import { NotificationItem } from './notification-item';
 
 export function NotificationBell() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const { isRTL } = useLanguage();
-  const formatDate = useDateFormat();
   const formatNumber = useNumberFormat();
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -55,9 +52,11 @@ export function NotificationBell() {
     if (open) loadList();
   }, [open]);
 
-  const markRead = async (id: string) => {
-    await apiClient.markNotificationRead(id);
-    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
+  const openItem = async (notification: PanelNotification) => {
+    if (notification.link) setOpen(false);
+    if (notification.is_read) return;
+    setItems((prev) => prev.map((n) => (n.id === notification.id ? { ...n, is_read: true } : n)));
+    await apiClient.markNotificationRead(notification.id);
     await refreshCount();
   };
 
@@ -114,30 +113,7 @@ export function NotificationBell() {
               {t('notifications.bell.empty')}
             </p>
           ) : (
-            items.map((n) => (
-              <button
-                key={n.id}
-                type="button"
-                onClick={() => !n.is_read && markRead(n.id)}
-                className={cn(
-                  'block w-full border-b px-3 py-2 text-start text-sm transition-colors hover:bg-muted/50',
-                  !n.is_read && 'bg-primary/5',
-                )}
-              >
-                <p className="font-medium">
-                  {localizeNotificationText(n.title, language, formatDate)}
-                </p>
-                <p className="line-clamp-2 text-xs text-muted-foreground">
-                  {localizeNotificationText(n.message, language, formatDate)}
-                </p>
-                <p className="mt-1 text-[10px] text-muted-foreground">
-                  {formatDate(n.created_at, {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
-              </button>
-            ))
+            items.map((n) => <NotificationItem key={n.id} notification={n} onOpen={openItem} />)
           )}
         </div>
       </PopoverContent>

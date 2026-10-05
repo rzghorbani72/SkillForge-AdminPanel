@@ -7,6 +7,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { useNumberFormat } from '@/lib/i18n/use-number-format';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pagination } from '@/components/shared/Pagination';
+import { useUrlSelection } from '@/hooks/use-url-selection';
 import { StaffTicketDetail } from './staff-ticket-detail';
 import { SupportInboxFilters, SupportInboxFiltersState } from './support-inbox-filters';
 import { StaffTicketListItem, TicketTeam } from './staff-support-types';
@@ -35,7 +36,7 @@ export function SupportInbox({ scope }: Props) {
   const [summary, setSummary] = useState<SupportInboxSummary | null>(null);
   const [total, setTotal] = useState(0);
   const [limit, setLimit] = useState(20);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useUrlSelection('ticket');
 
   const load = useCallback(async () => {
     setItems(null);

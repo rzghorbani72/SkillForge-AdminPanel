@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useUrlSelection } from '@/hooks/use-url-selection';
 import { MessagesSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -21,7 +21,7 @@ export default function CourseMessagesPage() {
   const { user } = useAuthUser();
   const { course } = useCourseWorkspace();
   const { students, loading, failed } = useTeacherChats(courseId);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useUrlSelection('student');
   const selected = students.find((row) => row.student.id === selectedId) ?? null;
 
   if (loading) return <LoadingSpinner />;
